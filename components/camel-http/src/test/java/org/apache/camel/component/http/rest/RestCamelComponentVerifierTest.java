@@ -24,14 +24,14 @@ import java.util.Map;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.http.BaseHttpTest;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.camel.component.http.interceptor.RequestBasicAuth;
+import org.apache.camel.component.http.interceptor.ResponseBasicUnauthorized;
 import org.apache.camel.component.rest.RestComponent;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.localserver.RequestBasicAuth;
-import org.apache.http.localserver.ResponseBasicUnauthorized;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.ImmutableHttpProcessor;
-import org.apache.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
-                .registerHandler("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .create();
 
         localServer.start();
@@ -62,7 +62,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         verifier = component.getVerifier();
 
         parameters = new HashMap<>();
-        parameters.put("componentName", "http");
+        parameters.put("producerComponentName", "http");
         parameters.put("host", "http://localhost:" + localServer.getLocalPort());
         parameters.put("path", "verify");
     }
@@ -83,7 +83,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     }
 
     private HttpProcessor getHttpProcessor() {
-        return new ImmutableHttpProcessor(
+        return new DefaultHttpProcessor(
                 Collections.singletonList(
                         new RequestBasicAuth()),
                 Arrays.asList(
@@ -97,9 +97,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
     @SuppressWarnings("unused")
     protected String getLocalServerUri(String contextPath) {
-        return "http://"
-               + localServer.getInetAddress().getHostName()
-               + ":"
+        return "http://localhost:"
                + localServer.getLocalPort()
                + (contextPath != null
                        ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
@@ -110,7 +108,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     // Tests
     // *************************************************
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
 
         parameters.put("method", "get");
 
@@ -120,7 +118,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     }
 
     @Test
-    public void testMissingRestParameters() throws Exception {
+    public void testMissingRestParameters() {
         // This parameter does not belong to the rest component and validation
         // is delegated to the transport component
         parameters.put("copyHeaders", false);
@@ -155,7 +153,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
 
         parameters.put("method", "get");
 

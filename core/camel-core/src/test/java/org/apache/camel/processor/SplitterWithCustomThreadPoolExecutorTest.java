@@ -37,9 +37,9 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
 
     @Test
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorService();
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorServiceBean();
         if (threadPoolExecutor == null) {
-            threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorServiceRef(),
+            threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorService(),
                     ThreadPoolExecutor.class);
         }
         // this should be sufficient as core pool size is the only thing I

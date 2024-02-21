@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
 
@@ -54,12 +54,9 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
                         .end().to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+
+        assertThrows(Exception.class, () -> context.start(),
+                "Should have thrown an exception");
     }
 
 }

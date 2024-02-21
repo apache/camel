@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -38,7 +37,7 @@ final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
     @Override
     public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toLocalDateTime();

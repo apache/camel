@@ -27,8 +27,10 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.http.HttpUtil;
 
 @Converter(generateLoader = true)
 public final class NettyHttpConverter {
@@ -48,12 +50,8 @@ public final class NettyHttpConverter {
             // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the NettyHttpMessage
             // so if the message instance is a NettyHttpMessage and its body is the value, then we can grab the
             // HttpRequest from the NettyHttpMessage
-            NettyHttpMessage msg;
-            if (exchange.hasOut()) {
-                msg = exchange.getOut(NettyHttpMessage.class);
-            } else {
-                msg = exchange.getIn(NettyHttpMessage.class);
-            }
+            NettyHttpMessage msg = exchange.getMessage(NettyHttpMessage.class);
+
             if (msg != null && msg.getBody() == value) {
                 // ensure the http request content is reset so we can read all the content out-of-the-box
                 FullHttpRequest request = msg.getHttpRequest();
@@ -77,12 +75,8 @@ public final class NettyHttpConverter {
             // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the NettyHttpMessage
             // so if the message instance is a NettyHttpMessage and its body is the value, then we can grab the
             // HttpRequest from the NettyHttpMessage
-            NettyHttpMessage msg;
-            if (exchange.hasOut()) {
-                msg = exchange.getOut(NettyHttpMessage.class);
-            } else {
-                msg = exchange.getIn(NettyHttpMessage.class);
-            }
+            NettyHttpMessage msg = exchange.getMessage(NettyHttpMessage.class);
+
             if (msg != null && msg.getBody() == value) {
                 return msg.getHttpResponse();
             }
@@ -93,10 +87,10 @@ public final class NettyHttpConverter {
 
     @Converter
     public static String toString(FullHttpResponse response, Exchange exchange) {
-        String contentType = response.headers().get(Exchange.CONTENT_TYPE);
-        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        String contentType = response.headers().get(NettyHttpConstants.CONTENT_TYPE);
+        String charset = HttpUtil.getCharsetFromContentType(contentType);
         if (charset == null && exchange != null) {
-            charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
         }
         if (charset != null) {
             return response.content().toString(Charset.forName(charset));

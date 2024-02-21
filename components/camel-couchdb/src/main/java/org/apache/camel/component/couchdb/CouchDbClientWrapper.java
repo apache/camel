@@ -68,7 +68,7 @@ public class CouchDbClientWrapper {
      * In CouchDB 2.3.x, the purge_seq field type was changed from number to string. As such, calling
      * {@link org.lightcouch.CouchDbContext#info()} was throwing an exception. This method workarounds the issue by
      * getting the update_seq field while ignoring the purge_seq field.
-     * 
+     *
      * @return The latest update sequence
      */
     public String getLatestUpdateSequence() {

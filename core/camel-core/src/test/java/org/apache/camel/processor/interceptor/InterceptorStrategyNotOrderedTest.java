@@ -19,7 +19,6 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -45,8 +44,8 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // interceptors should be invoked in the default order they are
                 // added
-                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new FooInterceptStrategy());
-                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new BarInterceptStrategy());
+                context.getCamelContextExtension().addInterceptStrategy(new FooInterceptStrategy());
+                context.getCamelContextExtension().addInterceptStrategy(new BarInterceptStrategy());
 
                 from("direct:start").to("mock:result");
             }

@@ -19,11 +19,9 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:broker="http://activemq.apache.org/schema/core"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
@@ -43,30 +41,23 @@
 
     <!-- this is the Spring JmsTransactionManager which under the hood uses Atomikos -->
     <bean id="jmsTransactionManager2"
-          class="org.springframework.jms.connection.JmsTransactionManager" depends-on="my-broker2">
+          class="org.springframework.jms.connection.JmsTransactionManager">
         <property name="connectionFactory" ref="jmsConnectionFactory2"/>
     </bean>
 
     <!-- Is the ConnectionFactory to connect to the JMS broker -->
-    <bean id="jmsConnectionFactory2" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="my-broker2">
-        <property name="brokerURL" value="tcp://localhost:${ITestSupport.port3}"/>
+    <bean id="jmsConnectionFactory2" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <!-- define the activemq Camel component so we can integrate with the AMQ broker below -->
-    <bean id="activemq2" class="org.apache.camel.component.activemq.ActiveMQComponent" depends-on="my-broker2">
-        <property name="brokerURL" value="tcp://localhost:${ITestSupport.port3}"/>
+    <bean id="activemq2" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory" ref="jmsConnectionFactory2"/>
         <!-- must indicate that we use transacted acknowledge mode -->
         <property name="transacted" value="true"/>
         <!-- refer to the transaction manager -->
         <property name="transactionManager" ref="jmsTransactionManager2"/>
     </bean>
-
-    <!-- setup a local JMS Broker for testing purpose -->
-    <broker:broker id="my-broker2" useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector uri="tcp://localhost:${ITestSupport.port3}"/>
-        </broker:transportConnectors>
-    </broker:broker>
 
     <!-- datasource used to create the database tables -->
     <jdbc:embedded-database id="myNonXADataSource" type="DERBY"/>

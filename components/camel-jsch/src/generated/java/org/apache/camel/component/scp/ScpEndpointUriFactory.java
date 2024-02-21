@@ -19,44 +19,46 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(26);
-        props.add("useUserKnownHostsFile");
+        props.add("allowNullBody");
+        props.add("checksumFileAlgorithm");
+        props.add("chmod");
+        props.add("ciphers");
+        props.add("connectTimeout");
+        props.add("directoryName");
         props.add("disconnect");
         props.add("disconnectOnBatchComplete");
-        props.add("moveExistingFileStrategy");
         props.add("fileName");
-        props.add("strictHostKeyChecking");
-        props.add("synchronous");
-        props.add("timeout");
         props.add("flatten");
-        props.add("password");
-        props.add("jailStartingDirectory");
-        props.add("privateKeyFile");
         props.add("host");
-        props.add("connectTimeout");
-        props.add("ciphers");
-        props.add("chmod");
-        props.add("privateKeyBytes");
-        props.add("directoryName");
-        props.add("allowNullBody");
-        props.add("privateKeyFilePassphrase");
-        props.add("soTimeout");
+        props.add("jailStartingDirectory");
+        props.add("knownHostsFile");
         props.add("lazyStartProducer");
+        props.add("moveExistingFileStrategy");
+        props.add("password");
         props.add("port");
         props.add("preferredAuthentications");
-        props.add("knownHostsFile");
+        props.add("privateKeyBytes");
+        props.add("privateKeyFile");
+        props.add("privateKeyFilePassphrase");
+        props.add("soTimeout");
+        props.add("strictHostKeyChecking");
+        props.add("timeout");
+        props.add("useUserKnownHostsFile");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(7);
-        secretProps.add("password");
-        secretProps.add("privateKeyFile");
-        secretProps.add("preferredAuthentications");
-        secretProps.add("privateKeyFilePassphrase");
-        secretProps.add("privateKeyBytes");
         secretProps.add("knownHostsFile");
+        secretProps.add("password");
+        secretProps.add("preferredAuthentications");
+        secretProps.add("privateKeyBytes");
+        secretProps.add("privateKeyFile");
+        secretProps.add("privateKeyFilePassphrase");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -86,6 +88,11 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

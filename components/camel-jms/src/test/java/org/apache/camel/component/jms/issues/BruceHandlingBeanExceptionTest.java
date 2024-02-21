@@ -16,59 +16,76 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for request-reply with jms where processing the input could cause: OK or Exception
  */
-public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
+public class BruceHandlingBeanExceptionTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
-    public void testSendOK() throws Exception {
-        Object out = template.requestBody("activemq:queue:ok", "Hello World");
+    public void testSendOK() {
+        Object out = template.requestBody("activemq:queue:BruceHandlingBeanExceptionTest.ok", "Hello World");
         assertEquals("Bye World", out);
     }
 
     @Test
-    public void testSendError() throws Exception {
-        Object out = template.requestBody("activemq:queue:error", "Hello World");
+    public void testSendError() {
+        Object out = template.requestBody("activemq:queue:BruceHandlingBeanExceptionTest.error", "Hello World");
         IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Forced exception by unit test", e.getMessage());
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:ok").transform(constant("Bye World"));
+            public void configure() {
+                from("activemq:queue:BruceHandlingBeanExceptionTest.ok").transform(constant("Bye World"));
 
-                from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
+                from("activemq:queue:BruceHandlingBeanExceptionTest.error?transferException=true").bean(MyExceptionBean.class);
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
+
     public static class MyExceptionBean {
-        public String doSomething(String input) throws Exception {
+        public String doSomething(String input) {
             throw new IllegalArgumentException("Forced exception by unit test");
         }
     }

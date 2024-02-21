@@ -53,11 +53,11 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
     private Olingo2AppWrapper apiProxy;
 
     public Olingo2Component() {
-        super(Olingo2Endpoint.class, Olingo2ApiName.class, Olingo2ApiCollection.getCollection());
+        super(Olingo2ApiName.class, Olingo2ApiCollection.getCollection());
     }
 
     public Olingo2Component(CamelContext context) {
-        super(context, Olingo2Endpoint.class, Olingo2ApiName.class, Olingo2ApiCollection.getCollection());
+        super(context, Olingo2ApiName.class, Olingo2ApiCollection.getCollection());
     }
 
     @Override
@@ -118,10 +118,10 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
 
     public Olingo2AppWrapper createApiProxy(Olingo2Configuration endpointConfiguration) {
         final Olingo2AppWrapper result;
-        if (endpointConfiguration.equals(this.configuration)) {
+        if (endpointConfiguration.equals(getConfiguration())) {
             synchronized (this) {
                 if (apiProxy == null) {
-                    apiProxy = createOlingo2App(this.configuration);
+                    apiProxy = createOlingo2App(getConfiguration());
                 }
             }
             result = apiProxy;

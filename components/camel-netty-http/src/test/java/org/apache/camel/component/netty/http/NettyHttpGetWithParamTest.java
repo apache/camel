@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice";
-    private MyParamsProcessor processor = new MyParamsProcessor();
+    private final String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice";
+    private final MyParamsProcessor processor = new MyParamsProcessor();
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
@@ -39,7 +39,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
         template.requestBody(serverUri + "?one=uno&two=dos", (Object) null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,13 +51,13 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
         template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(serverUri).process(processor).to("mock:result");
             }
         };
@@ -65,7 +65,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
     private static class MyParamsProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             NettyHttpMessage message = exchange.getIn(NettyHttpMessage.class);
             assertNotNull(message.getHttpRequest());
 

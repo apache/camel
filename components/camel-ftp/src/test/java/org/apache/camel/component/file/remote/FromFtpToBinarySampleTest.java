@@ -26,15 +26,15 @@ import org.junit.jupiter.api.Test;
 public class FromFtpToBinarySampleTest extends CamelTestSupport {
 
     @Test
-    public void testDummy() throws Exception {
+    public void testDummy() {
         // this is a noop test
     }
 
     // START SNIPPET: e1
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // we use a delay of 60 minutes (eg. once pr. hour we poll the
                 // FTP server
                 long delay = 3600000;

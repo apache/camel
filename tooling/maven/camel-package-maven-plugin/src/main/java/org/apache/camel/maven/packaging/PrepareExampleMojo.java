@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -62,6 +63,9 @@ public class PrepareExampleMojo extends AbstractMojo {
     @Parameter(property = "filter", required = true, readonly = true, defaultValue = "camel-example")
     protected String filter = "camel-example";
 
+    @Parameter(property = "filterMiddleFolder", required = false, readonly = true)
+    protected String filterMiddleFolder = "aws,azure,google,resume-api,vault";
+
     /**
      * Maven ProjectHelper.
      */
@@ -81,7 +85,7 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
-
+        List<String> middleFolders = Arrays.asList(filterMiddleFolder.split(","));
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
         if (startingFolder != null && !startingFolder.isEmpty()) {
             // only run in examples directory where the main readme.adoc file is located
@@ -101,52 +105,22 @@ public class PrepareExampleMojo extends AbstractMojo {
 
             for (File file : examples) {
                 if (file.isDirectory()) {
-
-                    // must match filter
-                    if (filter != null && !filter.isEmpty()) {
-                        if (!file.getName().startsWith(filter)) {
-                            continue;
+                    if (!middleFolders.contains(file.getName())) {
+                        File pom = new File(file, "pom.xml");
+                        if (pom.exists()) {
+                            processExamples(models, file, pom, null);
                         }
-                    }
-
-                    File pom = new File(file, "pom.xml");
-                    if (pom.exists()) {
-                        String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
-
-                        ExampleModel model = new ExampleModel();
-                        model.setFileName(file.getName());
-
-                        String name = Strings.between(existing, "<name>", "</name>");
-                        String title = Strings.between(existing, "<title>", "</title>");
-                        String description = Strings.between(existing, "<description>", "</description>");
-                        String category = Strings.between(existing, "<category>", "</category>");
-
-                        if (title != null) {
-                            model.setTitle(title);
-                        } else {
-                            // fallback and use file name as title
-                            model.setTitle(asTitle(file.getName()));
+                    } else {
+                        File[] subFiles = file.listFiles();
+                        String middleFolder = file.getName();
+                        for (File innerFile : subFiles) {
+                            if (innerFile.isDirectory()) {
+                                File pom = new File(innerFile, "pom.xml");
+                                if (pom.exists()) {
+                                    processExamples(models, innerFile, pom, middleFolder);
+                                }
+                            }
                         }
-                        if (description != null) {
-                            model.setDescription(description);
-                        }
-                        if (category != null) {
-                            model.setCategory(category);
-                        }
-                        if (name != null && name.contains("(deprecated)")) {
-                            model.setDeprecated("true");
-                        } else {
-                            model.setDeprecated("false");
-                        }
-
-                        // readme files is either readme.md or readme.adoc
-                        String[] readmes = new File(file, ".")
-                                .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
-                        if (readmes != null && readmes.length == 1) {
-                            model.setReadmeFileName(readmes[0]);
-                        }
-
-                        models.add(model);
                     }
                 }
             }
@@ -168,7 +142,9 @@ public class PrepareExampleMojo extends AbstractMojo {
             if (updated) {
                 getLog().info("Updated readme.adoc file: " + file);
             } else if (exists) {
-                getLog().debug("No changes to readme.adoc file: " + file);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("No changes to readme.adoc file: " + file);
+                }
             } else {
                 getLog().warn("No readme.adoc file: " + file);
             }
@@ -178,15 +154,56 @@ public class PrepareExampleMojo extends AbstractMojo {
         }
     }
 
+    private void processExamples(List<ExampleModel> models, File file, File pom, String middleFolder) throws IOException {
+        String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
+
+        ExampleModel model = new ExampleModel();
+        model.setFileName(file.getName());
+
+        String name = Strings.between(existing, "<name>", "</name>");
+        String title = Strings.between(existing, "<title>", "</title>");
+        String description = Strings.between(existing, "<description>", "</description>");
+        String category = Strings.between(existing, "<category>", "</category>");
+
+        if (title != null) {
+            model.setTitle(title);
+        } else {
+            // fallback and use file name as title
+            model.setTitle(asTitle(file.getName()));
+        }
+        if (description != null) {
+            model.setDescription(description);
+        }
+        if (category != null) {
+            model.setCategory(category);
+        }
+        if (name != null && name.contains("(deprecated)")) {
+            model.setDeprecated("true");
+        } else {
+            model.setDeprecated("false");
+        }
+        if (middleFolder != null) {
+            model.setMiddleFolder(middleFolder);
+        }
+
+        // readme files is either readme.md or readme.adoc
+        String[] readmes = new File(file, ".")
+                .list((folder, fileName) -> fileName.regionMatches(true, 0, "readme", 0, "readme".length()));
+        if (readmes != null && readmes.length == 1) {
+            model.setReadmeFileName(readmes[0]);
+            models.add(model);
+        }
+
+        // Don't add if no readme found
+    }
+
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {
-        try {
-            String template = PackageHelper
-                    .loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
+        try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel")) {
+            String template = PackageHelper.loadText(templateStream);
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
-            return out;
+            return (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }

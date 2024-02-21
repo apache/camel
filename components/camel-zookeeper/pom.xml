@@ -24,16 +24,13 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zookeeper</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Zookeeper</name>
     <description>Camel Zookeeper Support</description>
-
-    <properties>
-    </properties>
 
     <dependencies>
 
@@ -69,17 +66,6 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-client</artifactId>
             <version>${curator-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava-eventbus-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
@@ -174,20 +160,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- test infra -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-zookeeper</artifactId>
@@ -198,59 +177,12 @@
 
     </dependencies>
 
-
     <profiles>
         <profile>
-            <id>zookeeper-skip-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the docker socket file is accessible -->
-        <profile>
-            <id>zookeeper-tests-docker-file</id>
-            <activation>
-                <file>
-                    <exists>/var/run/docker.sock</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the DOCKER_HOST env var is set -->
-        <profile>
-            <id>zookeeper-tests-docker-env</id>
+            <id>full</id>
             <activation>
                 <property>
-                    <name>env.DOCKER_HOST</name>
+                    <name>!quickly</name>
                 </property>
             </activation>
             <build>
@@ -258,15 +190,32 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <skipTests>${skipTests}</skipTests>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>${skipTests}</skipITs>
                             <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                            <systemPropertyVariables>
+                                 <zookeeper.container>icr.io/ppc64le-oss/zookeeper-ppc64le:3.5.10</zookeeper.container>
+                           </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -274,5 +223,4 @@
         </profile>
 
     </profiles>
-
 </project>

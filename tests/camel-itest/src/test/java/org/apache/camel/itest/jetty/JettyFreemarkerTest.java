@@ -21,14 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +69,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header.ftl", "",
+        String response = template.requestBodyAndHeaders("freemarker://http://localhost:" + port + "/test?name=header", "",
                 map, String.class);
 
         assertEquals("Dear Doe, John", response);
@@ -84,23 +82,17 @@ public class JettyFreemarkerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String name = exchange.getIn().getHeader("name", String.class);
-                                ObjectHelper.notNull(name, "name");
+                        .process(exchange -> {
+                            String name = exchange.getIn().getHeader("name", String.class);
+                            ObjectHelper.notNull(name, "name");
 
-                                // strip off the locale
-                                name = StringHelper.before(name, "_");
+                            name = "org/apache/camel/itest/jetty/" + name + ".ftl";
+                            InputStream is
+                                    = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                                name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                                InputStream is
-                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                                String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
-
-                                exchange.getMessage().setBody(xml);
-                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                            }
+                            exchange.getMessage().setBody(xml);
+                            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                         });
             }
         };

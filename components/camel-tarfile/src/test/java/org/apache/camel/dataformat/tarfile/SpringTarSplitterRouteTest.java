@@ -29,7 +29,7 @@ public class SpringTarSplitterRouteTest extends CamelSpringTestSupport {
 
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

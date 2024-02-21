@@ -6,3 +6,5 @@ Listed here are the notes on how to migrate between major versions, and what to 
 
 - xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 migration guide]
 - xref:camel-3x-upgrade-guide.adoc[Upgrade guide for 3.x releases]
+- xref:camel-4-migration-guide.adoc[Camel 3.x to 4.0 migration guide]
+- xref:camel-4x-upgrade-guide.adoc[Upgrade guide for 4.x releases]

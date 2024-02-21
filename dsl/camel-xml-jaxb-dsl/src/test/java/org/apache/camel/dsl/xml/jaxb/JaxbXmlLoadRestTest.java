@@ -16,12 +16,12 @@
  */
 package org.apache.camel.dsl.xml.jaxb;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +31,7 @@ public class JaxbXmlLoadRestTest {
     @Test
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind("dummy-rest", new DummyRestConsumerFactory());
+            context.getCamelContextExtension().getRegistry().bind("dummy-rest", new DummyRestConsumerFactory());
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -57,11 +57,10 @@ public class JaxbXmlLoadRestTest {
             foo.assertIsSatisfied();
 
             // load rest from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-            Resource resource = ecc.getResourceLoader().resolveResource(
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/jaxb/barRest.xml");
 
-            context.getRoutesLoader().loadRoutes(resource);
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertEquals(2, context.getRoutes().size());
 

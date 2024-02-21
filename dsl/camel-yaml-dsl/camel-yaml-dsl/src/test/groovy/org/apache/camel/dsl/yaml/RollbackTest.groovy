@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.RollbackDefinition
+import org.junit.jupiter.api.Assertions
 
 class RollbackTest extends YamlTestSupport {
 
@@ -28,7 +29,7 @@ class RollbackTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                       - rollback:  
-                          mark-rollback-only: true
+                          markRollbackOnly: true
                           message: "test"
             '''
         then:
@@ -36,5 +37,24 @@ class RollbackTest extends YamlTestSupport {
                 markRollbackOnly == "true"
                 message == 'test'
             }
+    }
+
+    def "Error: kebab-case: mark-rollback-only"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - rollback:  
+                          mark-rollback-only: true
+                          message: "test"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

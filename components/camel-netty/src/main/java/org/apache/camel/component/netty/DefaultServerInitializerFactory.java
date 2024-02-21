@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -79,7 +80,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
-        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {
@@ -89,7 +90,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             addToPipeline("encoder-" + x, channelPipeline, encoder);
         }
 
-        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {
@@ -164,7 +165,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand() {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
         }
@@ -175,6 +176,11 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(consumer.getConfiguration().isClientMode());
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            if (consumer.getConfiguration().isHostnameVerification()) {
+                SSLParameters sslParams = engine.getSSLParameters();
+                sslParams.setEndpointIdentificationAlgorithm("HTTPS");
+                engine.setSSLParameters(sslParams);
+            }
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));

@@ -275,6 +275,20 @@ public class MockExpressionClauseSupport<T> {
         return expression(ExpressionBuilder.languageExpression(language, expression));
     }
 
+    /**
+     * An expression of a variable of the given name
+     */
+    public T variable(String name) {
+        return expression(ExpressionBuilder.variableExpression(name));
+    }
+
+    /**
+     * An expression of the exchange scoped variables
+     */
+    public T variables() {
+        return expression(ExpressionBuilder.variablesExpression());
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 

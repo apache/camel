@@ -29,7 +29,7 @@ import org.apache.camel.support.SynchronousDelegateProducer;
  * Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "thrift", title = "Thrift", syntax = "thrift:host:port/service",
-             category = { Category.RPC, Category.TRANSFORMATION })
+             category = { Category.RPC, Category.TRANSFORMATION }, headersClass = ThriftConstants.class)
 public class ThriftEndpoint extends DefaultEndpoint {
     @UriParam
     private ThriftConfiguration configuration;
@@ -40,7 +40,7 @@ public class ThriftEndpoint extends DefaultEndpoint {
     private String serviceName;
     private String servicePackage;
 
-    public ThriftEndpoint(String uri, ThriftComponent component, ThriftConfiguration config) throws Exception {
+    public ThriftEndpoint(String uri, ThriftComponent component, ThriftConfiguration config) {
         super(uri, component);
         this.configuration = config;
 

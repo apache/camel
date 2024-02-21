@@ -16,17 +16,22 @@
  */
 package org.apache.camel.spring.xml;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractKeyStoreParametersFactoryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Key store facility for cryptographic keys and certificates
+ */
+@Metadata(label = "security,configuration")
 @XmlRootElement(name = "keyStoreParameters")
 public class KeyStoreParametersFactoryBean extends AbstractKeyStoreParametersFactoryBean
         implements FactoryBean<KeyStoreParameters>, ApplicationContextAware {

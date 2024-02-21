@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.health;
 
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -24,9 +23,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.health.HealthCheckResultStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,25 +36,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Base implementation for {@link HealthCheck}.
  */
-public abstract class AbstractHealthCheck implements HealthCheck {
-    public static final String CHECK_ID = "check.id";
-    public static final String CHECK_GROUP = "check.group";
-    public static final String CHECK_ENABLED = "check.enabled";
-    public static final String INVOCATION_COUNT = "invocation.count";
-    public static final String INVOCATION_TIME = "invocation.time";
-    public static final String INVOCATION_ATTEMPT_TIME = "invocation.attempt.time";
-    public static final String FAILURE_COUNT = "failure.count";
+public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAware {
+    public static final String SERVICE_STATUS_CODE = "service.status.code";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHealthCheck.class);
+    public static final String SERVICE_ERROR_CODE = "service.error.code";
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractHealthCheck.class);
+
+    private CamelContext camelContext;
+    private boolean enabled = true;
     private final Object lock;
     private final String group;
     private final String id;
     private final ConcurrentMap<String, Object> meta;
-
-    private HealthCheckConfiguration configuration;
-    private HealthCheck.Result lastResult;
-    private ZonedDateTime lastInvocation;
 
     protected AbstractHealthCheck(String id) {
         this(null, id, null);
@@ -66,7 +62,6 @@ public abstract class AbstractHealthCheck implements HealthCheck {
         this.lock = new Object();
         this.group = group;
         this.id = ObjectHelper.notNull(id, "HealthCheck ID");
-        this.configuration = new HealthCheckConfiguration();
         this.meta = new ConcurrentHashMap<>();
 
         if (meta != null) {
@@ -80,6 +75,16 @@ public abstract class AbstractHealthCheck implements HealthCheck {
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -90,17 +95,18 @@ public abstract class AbstractHealthCheck implements HealthCheck {
     }
 
     @Override
-    public Map<String, Object> getMetaData() {
-        return Collections.unmodifiableMap(this.meta);
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
-    public HealthCheckConfiguration getConfiguration() {
-        return this.configuration;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public void setConfiguration(HealthCheckConfiguration configuration) {
-        this.configuration = configuration;
+    @Override
+    public Map<String, Object> getMetaData() {
+        return Collections.unmodifiableMap(this.meta);
     }
 
     @Override
@@ -110,101 +116,137 @@ public abstract class AbstractHealthCheck implements HealthCheck {
 
     @Override
     public Result call(Map<String, Object> options) {
+        HealthCheckResultBuilder builder;
         synchronized (lock) {
-            final HealthCheckConfiguration conf = getConfiguration();
-            final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
-            final ZonedDateTime now = ZonedDateTime.now();
-            final boolean enabled = conf.isEnabled();
-            final long interval = conf.getInterval();
-            final int threshold = conf.getFailureThreshold();
-
-            // Extract relevant information from meta data.
-            int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
-            int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
-
-            String invocationTime = now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-            boolean call = true;
-
-            // Set common meta-data
-            meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
-
-            if (!enabled) {
-                LOGGER.debug("health-check {}/{} won't be invoked as not enabled", getGroup(), getId());
-
-                builder.message("Disabled");
-                builder.detail(CHECK_ENABLED, false);
-
-                return builder.unknown().build();
-            }
-
-            // check if the last invocation is far enough to have this check invoked
-            // again without violating the interval configuration.
-            if (lastResult != null && lastInvocation != null && interval > 0) {
-                Duration elapsed = Duration.between(lastInvocation, now);
-
-                if (elapsed.compareTo(Duration.ofMillis(interval)) < 0) {
-                    LOGGER.debug("health-check {}/{} won't be invoked as interval ({}) is not yet expired (last-invocation={})",
-                            getGroup(),
-                            getId(),
-                            elapsed,
-                            lastInvocation);
-
-                    call = false;
-                }
-            }
-
-            // Invoke the check.
-            if (call) {
-                LOGGER.debug("Invoke health-check {}/{}", getGroup(), getId());
-
-                doCall(builder, options);
-
-                // State should be set here
-                ObjectHelper.notNull(builder.state(), "Response State");
-
-                if (builder.state() == State.DOWN) {
-                    // If the service is un-healthy but the number of time it
-                    // has been consecutively reported in this state is less
-                    // than the threshold configured, mark it as UP. This is
-                    // used to avoid false positive in case of glitches.
-                    if (failureCount++ < threshold) {
-                        LOGGER.debug(
-                                "Health-check {}/{} has status DOWN but failure count ({}) is less than configured threshold ({})",
-                                getGroup(),
-                                getId(),
-                                failureCount,
-                                threshold);
-
-                        builder.up();
-                    }
-                } else {
-                    failureCount = 0;
-                }
-
-                meta.put(INVOCATION_TIME, invocationTime);
-                meta.put(FAILURE_COUNT, failureCount);
-                meta.put(INVOCATION_COUNT, ++invocationCount);
-
-                // Copy some of the meta-data bits to the response attributes so the
-                // response caches the health-check state at the time of the invocation.
-                builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
-                builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
-                builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
-
-                // update last invocation time.
-                lastInvocation = now;
-            } else if (lastResult != null) {
-                lastResult.getMessage().ifPresent(builder::message);
-                lastResult.getError().ifPresent(builder::error);
-
-                builder.state(lastResult.getState());
-                builder.details(lastResult.getDetails());
-            }
-
-            lastResult = builder.build();
-
-            return lastResult;
+            builder = doCall(options);
         }
+
+        HealthCheckResultStrategy strategy = customHealthCheckResponseStrategy();
+        if (strategy != null) {
+            strategy.processResult(this, options, builder);
+        }
+
+        return builder.build();
+    }
+
+    protected HealthCheckResultBuilder doCall(Map<String, Object> options) {
+        final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
+
+        // set initial state
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        if (registry != null) {
+            builder.state(registry.getInitialState());
+        }
+
+        // what kind of check is this
+        HealthCheck.Kind kind;
+        if (isLiveness() && isReadiness()) {
+            // if we can do both then use kind from what type we were invoked as
+            kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        } else {
+            // we can only be either live or ready so report that
+            kind = isLiveness() ? Kind.LIVENESS : Kind.READINESS;
+        }
+        builder.detail(CHECK_KIND, kind);
+        builder.detail(CHECK_ID, meta.get(CHECK_ID));
+        if (meta.containsKey(CHECK_GROUP)) {
+            builder.detail(CHECK_GROUP, meta.get(CHECK_GROUP));
+        }
+        // Extract relevant information from meta data.
+        int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
+        int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
+        String failureTime = (String) meta.get(FAILURE_TIME);
+        String failureStartTime = (String) meta.get(FAILURE_START_TIME);
+        int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
+        String successTime = (String) meta.get(SUCCESS_TIME);
+        String successStartTime = (String) meta.get(SUCCESS_START_TIME);
+        String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
+
+        if (!isEnabled()) {
+            LOG.debug("health-check ({}) {}/{} disabled", kind, getGroup(), getId());
+            builder.message("Disabled");
+            builder.detail(CHECK_ENABLED, false);
+            builder.unknown();
+            return builder;
+        }
+
+        LOG.debug("Invoke health-check ({}) {}/{}", kind, getGroup(), getId());
+        doCall(builder, options);
+
+        if (builder.state() == null) {
+            builder.unknown();
+        }
+
+        if (builder.state() == State.DOWN) {
+            // reset success since it failed
+            successCount = 0;
+            successStartTime = null;
+            failureCount++;
+            failureTime = invocationTime;
+            if (failureStartTime == null) {
+                failureStartTime = invocationTime;
+            }
+        } else if (builder.state() == State.UP) {
+            // reset failure since it ok
+            failureCount = 0;
+            failureStartTime = null;
+            successCount++;
+            if (successTime == null) {
+                // first time we are OK, then reset failure as we only want to capture
+                // failures that is happening after we have been ok (such as during bootstrap)
+                failureTime = null;
+            }
+            successTime = invocationTime;
+            if (successStartTime == null) {
+                successStartTime = invocationTime;
+            }
+        }
+
+        meta.put(INVOCATION_TIME, invocationTime);
+        meta.put(INVOCATION_COUNT, ++invocationCount);
+        meta.put(FAILURE_COUNT, failureCount);
+        if (failureTime != null) {
+            meta.put(FAILURE_TIME, failureTime);
+        } else {
+            meta.remove(FAILURE_TIME);
+        }
+        if (failureStartTime != null) {
+            meta.put(FAILURE_START_TIME, failureStartTime);
+        } else {
+            meta.remove(FAILURE_START_TIME);
+        }
+        meta.put(SUCCESS_COUNT, successCount);
+        if (successTime != null) {
+            meta.put(SUCCESS_TIME, successTime);
+        } else {
+            meta.remove(SUCCESS_TIME);
+        }
+        if (successStartTime != null) {
+            meta.put(SUCCESS_START_TIME, successStartTime);
+        } else {
+            meta.remove(SUCCESS_START_TIME);
+        }
+
+        // Copy some meta-data bits to the response attributes so the
+        // response caches the health-check state at the time of the invocation.
+        builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
+        builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
+        builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
+        if (meta.containsKey(FAILURE_TIME)) {
+            builder.detail(FAILURE_TIME, meta.get(FAILURE_TIME));
+        }
+        if (meta.containsKey(FAILURE_START_TIME)) {
+            builder.detail(FAILURE_START_TIME, meta.get(FAILURE_START_TIME));
+        }
+        builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
+        if (meta.containsKey(SUCCESS_TIME)) {
+            builder.detail(SUCCESS_TIME, meta.get(SUCCESS_TIME));
+        }
+        if (meta.containsKey(SUCCESS_START_TIME)) {
+            builder.detail(SUCCESS_START_TIME, meta.get(SUCCESS_START_TIME));
+        }
+
+        return builder;
     }
 
     @Override
@@ -233,7 +275,15 @@ public abstract class AbstractHealthCheck implements HealthCheck {
     /**
      * Invoke the health check.
      *
-     * @see {@link HealthCheck#call(Map)}
+     * @see HealthCheck#call(Map)
      */
     protected abstract void doCall(HealthCheckResultBuilder builder, Map<String, Object> options);
+
+    private HealthCheckResultStrategy customHealthCheckResponseStrategy() {
+        if (camelContext != null) {
+            return camelContext.getRegistry().findSingleByType(HealthCheckResultStrategy.class);
+        }
+        return null;
+    }
+
 }

@@ -91,7 +91,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     protected void beginTime(Exchange exchange) {
-        counter.processExchange(exchange);
+        counter.processExchange(exchange, type);
     }
 
     protected void recordTime(Exchange exchange, long duration) {

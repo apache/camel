@@ -25,12 +25,12 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
                 "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
-            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
             if (beanIntrospection.getProperties(bootstrapConfiguration, options, null, false)) {
                 PropertyBindingSupport.bindProperties(getCamelContext(), config, options);
             }

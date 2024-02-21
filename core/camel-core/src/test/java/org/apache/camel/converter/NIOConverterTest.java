@@ -17,7 +17,6 @@
 package org.apache.camel.converter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
@@ -95,9 +94,9 @@ public class NIOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToByteBufferFile() throws Exception {
-        template.sendBodyAndHeader("file://target/data/nio", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        ByteBuffer bb = NIOConverter.toByteBuffer(new File("target/data/nio/hello.txt"));
+        ByteBuffer bb = NIOConverter.toByteBuffer(testFile("hello.txt").toFile());
         assertNotNull(bb);
 
         assertEquals("Hello World", NIOConverter.toString(bb, null));

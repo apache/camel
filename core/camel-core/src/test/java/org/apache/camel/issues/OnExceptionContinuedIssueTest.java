@@ -18,10 +18,8 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -34,11 +32,11 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
 
     @Test
     public void testOnExceptionWrappedMatch() throws Exception {
-        final DefaultErrorHandlerBuilder defaultErrorHandlerBuilder = new DeadLetterChannelBuilder("direct:dead");
+        final DeadLetterChannelBuilder defaultErrorHandlerBuilder = new DeadLetterChannelBuilder("direct:dead");
         defaultErrorHandlerBuilder.redeliveryDelay(0); // run fast
         defaultErrorHandlerBuilder.maximumRedeliveries(2);
 
-        context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(defaultErrorHandlerBuilder);
+        context.getCamelContextExtension().setErrorHandlerFactory(defaultErrorHandlerBuilder);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -88,7 +86,7 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public class OrderFailedException extends Exception {
+    public static class OrderFailedException extends Exception {
 
         public OrderFailedException(String s) {
             super(s);

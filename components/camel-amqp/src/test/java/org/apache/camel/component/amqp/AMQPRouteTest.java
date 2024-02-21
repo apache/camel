@@ -18,61 +18,47 @@ package org.apache.camel.component.amqp;
 
 import java.util.function.Consumer;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.qpid.jms.message.JmsMessage;
 import org.apache.qpid.jms.provider.amqp.message.AmqpJmsMessageFacade;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AMQPRouteTest extends CamelTestSupport {
+public class AMQPRouteTest extends AMQPTestSupport {
 
-    static int amqpPort = AvailablePortFinder.getNextAvailable();
+    private ProducerTemplate template;
 
-    static BrokerService broker;
+    private MockEndpoint resultEndpoint;
+    private final String expectedBody = "Hello there!";
 
-    @EndpointInject("mock:result")
-    MockEndpoint resultEndpoint;
-
-    String expectedBody = "Hello there!";
-
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:" + amqpPort);
-        broker.start();
-
-        System.setProperty(AMQP_PORT, amqpPort + "");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        broker.stop();
+    @BeforeEach
+    void setupTemplate() {
+        template = contextExtension.getProducerTemplate();
+        resultEndpoint = contextExtension.getMockEndpoint("mock:result");
     }
 
     @Test
     public void testJmsQueue() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
+
         template.sendBodyAndHeader("amqp-customized:queue:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
@@ -112,13 +98,13 @@ public class AMQPRouteTest extends CamelTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         // default doesn't map annotations to headers
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isNull();
-        sendAmqpMessage(context.getComponent("amqp-customized", AMQPComponent.class),
+        sendAmqpMessage(contextExtension.getContext().getComponent("amqp-customized", AMQPComponent.class),
                 "ping", expectedBody, facade -> {
                     try {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
                     } catch (JMSException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 });
         resultEndpoint.assertIsSatisfied();
@@ -129,13 +115,13 @@ public class AMQPRouteTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isEqualTo(456);
-        sendAmqpMessage(context.getComponent("amqp-customized2", AMQPComponent.class),
+        sendAmqpMessage(contextExtension.getContext().getComponent("amqp-customized2", AMQPComponent.class),
                 "ping2", expectedBody, facade -> {
                     try {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
                     } catch (JMSException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 });
         resultEndpoint.assertIsSatisfied();
@@ -155,20 +141,22 @@ public class AMQPRouteTest extends CamelTestSupport {
         }
     }
 
-    // Routes fixtures
+    @ContextFixture
+    public void configureContext(CamelContext context) {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        camelContext.addComponent("amqp-customized", amqpComponent("amqp://localhost:" + amqpPort));
-        camelContext.addComponent("amqp-customized2", amqpComponent("amqp://localhost:" + amqpPort));
-        camelContext.getComponent("amqp-customized2", AMQPComponent.class).setIncludeAmqpAnnotations(true);
-        return camelContext;
+        context.getRegistry().bind("amqpConnection", discoverAMQP(context));
+        context.addComponent("amqp-customized", amqpComponent(service.serviceAddress()));
+        context.addComponent("amqp-customized2", amqpComponent(service.serviceAddress()));
+        context.getComponent("amqp-customized2", AMQPComponent.class).setIncludeAmqpAnnotations(true);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("amqp-customized:queue:ping")
@@ -190,7 +178,7 @@ public class AMQPRouteTest extends CamelTestSupport {
                         .to("log:routing")
                         .to("mock:result");
 
-                from("amqp-customized:queue:wildcard.>")
+                from("amqp-customized:queue:wildcard.#")
                         .to("log:routing")
                         .to("mock:result");
 
@@ -200,5 +188,4 @@ public class AMQPRouteTest extends CamelTestSupport {
             }
         };
     }
-
 }

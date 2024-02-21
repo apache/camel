@@ -65,8 +65,9 @@ import static org.apache.camel.builder.Builder.language;
 
 === Using custom type converters
 
-If you are using custom type converters and they have not source code generated a loader class (by `@Converter(generateLoader = true)`)
-then Camel needs to be instructed to scan for custom converters. This can be done as shown:
+If you are using custom type converters, you can now generate loader classes and have Camel discover them automatically. To generate loader class, Change  `@Converter` to `@Converter(generateLoader = true)` at class level and implement maven plugin as described in xref:camel-component-maven-plugin.adoc[here].
+
+If a loader class is not to be used, Camel needs to be instructed to scan for custom converters. This can be done as shown:
 
 [source,java]
 ----
@@ -150,5 +151,3 @@ You need to have a look at the following issue for more information: https://iss
 === Camel-Karaf
 
 Removed `camel-hdfs` and `camel-pulsar` Karaf features.
-
-

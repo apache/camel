@@ -16,54 +16,72 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTestSupport {
+public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Test
     public void testUseOriginalMessage() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+        mockResult.expectedBodiesReceived("Hello World");
+        mockResult.expectedHeaderReceived("header-key", "header-value");
+
+        template.sendBodyAndHeader("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest", "Hello World", "header-key",
+                "header-value");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Override
+    protected String getComponentName() {
+        return "jms";
+    }
+
+    @RouteFixture
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .useOriginalMessage()
                         .to(mockResult);
 
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest")
                         .throwException(new Exception("forced exception for test"));
             }
-        });
-        context.start();
-
-        mockResult.expectedBodiesReceived("Hello World");
-        mockResult.expectedHeaderReceived("header-key", "header-value");
-
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "header-key", "header-value");
-
-        assertMockEndpointsSatisfied();
+        };
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

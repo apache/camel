@@ -87,13 +87,4 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
         return excludePattern;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

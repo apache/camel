@@ -50,7 +50,9 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "decodermaxlinelength":
         case "DecoderMaxLineLength": target.setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
         case "decoders":
-        case "Decoders": target.setDecoders(property(camelContext, java.util.List.class, value)); return true;
+        case "Decoders": target.setDecoders(property(camelContext, java.lang.String.class, value)); return true;
+        case "decodersaslist":
+        case "DecodersAsList": target.setDecodersAsList(property(camelContext, java.util.List.class, value)); return true;
         case "delimiter":
         case "Delimiter": target.setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
         case "disconnect":
@@ -60,11 +62,15 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "enabledprotocols":
         case "EnabledProtocols": target.setEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "encoders":
-        case "Encoders": target.setEncoders(property(camelContext, java.util.List.class, value)); return true;
+        case "Encoders": target.setEncoders(property(camelContext, java.lang.String.class, value)); return true;
+        case "encodersaslist":
+        case "EncodersAsList": target.setEncodersAsList(property(camelContext, java.util.List.class, value)); return true;
         case "encoding":
         case "Encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "host":
         case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverification":
+        case "HostnameVerification": target.setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "KeepAlive": target.setKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "keystorefile":
@@ -91,12 +97,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": target.setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "port":
         case "Port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": target.setProducerPoolBlockWhenExhausted(property(camelContext, boolean.class, value)); return true;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": target.setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": target.setProducerPoolMaxActive(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": target.setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": target.setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": target.setProducerPoolMaxWait(property(camelContext, long.class, value)); return true;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": target.setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -153,6 +163,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": target.setUdpByteArrayCodec(property(camelContext, boolean.class, value)); return true;
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": target.setUdpConnectionlessSending(property(camelContext, boolean.class, value)); return true;
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": target.setUnixDomainSocketPath(property(camelContext, java.lang.String.class, value)); return true;
         case "usebytebuf":
         case "UseByteBuf": target.setUseByteBuf(property(camelContext, boolean.class, value)); return true;
         case "usingexecutorservice":
@@ -197,7 +209,9 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "decodermaxlinelength":
         case "DecoderMaxLineLength": return int.class;
         case "decoders":
-        case "Decoders": return java.util.List.class;
+        case "Decoders": return java.lang.String.class;
+        case "decodersaslist":
+        case "DecodersAsList": return java.util.List.class;
         case "delimiter":
         case "Delimiter": return org.apache.camel.component.netty.TextLineDelimiter.class;
         case "disconnect":
@@ -207,11 +221,15 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "enabledprotocols":
         case "EnabledProtocols": return java.lang.String.class;
         case "encoders":
-        case "Encoders": return java.util.List.class;
+        case "Encoders": return java.lang.String.class;
+        case "encodersaslist":
+        case "EncodersAsList": return java.util.List.class;
         case "encoding":
         case "Encoding": return java.lang.String.class;
         case "host":
         case "Host": return java.lang.String.class;
+        case "hostnameverification":
+        case "HostnameVerification": return boolean.class;
         case "keepalive":
         case "KeepAlive": return boolean.class;
         case "keystorefile":
@@ -238,12 +256,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": return java.lang.String.class;
         case "port":
         case "Port": return int.class;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return boolean.class;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return boolean.class;
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return int.class;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return int.class;
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return int.class;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return long.class;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -300,6 +322,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": return boolean.class;
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": return boolean.class;
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": return java.lang.String.class;
         case "usebytebuf":
         case "UseByteBuf": return boolean.class;
         case "usingexecutorservice":
@@ -346,6 +370,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "DecoderMaxLineLength": return target.getDecoderMaxLineLength();
         case "decoders":
         case "Decoders": return target.getDecoders();
+        case "decodersaslist":
+        case "DecodersAsList": return target.getDecodersAsList();
         case "delimiter":
         case "Delimiter": return target.getDelimiter();
         case "disconnect":
@@ -356,10 +382,14 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "EnabledProtocols": return target.getEnabledProtocols();
         case "encoders":
         case "Encoders": return target.getEncoders();
+        case "encodersaslist":
+        case "EncodersAsList": return target.getEncodersAsList();
         case "encoding":
         case "Encoding": return target.getEncoding();
         case "host":
         case "Host": return target.getHost();
+        case "hostnameverification":
+        case "HostnameVerification": return target.isHostnameVerification();
         case "keepalive":
         case "KeepAlive": return target.isKeepAlive();
         case "keystorefile":
@@ -386,12 +416,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": return target.getPassphrase();
         case "port":
         case "Port": return target.getPort();
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return target.isProducerPoolBlockWhenExhausted();
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return target.isProducerPoolEnabled();
-        case "producerpoolmaxactive":
-        case "ProducerPoolMaxActive": return target.getProducerPoolMaxActive();
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return target.getProducerPoolMaxIdle();
+        case "producerpoolmaxtotal":
+        case "ProducerPoolMaxTotal": return target.getProducerPoolMaxTotal();
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return target.getProducerPoolMaxWait();
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return target.getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
@@ -448,6 +482,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": return target.isUdpByteArrayCodec();
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": return target.isUdpConnectionlessSending();
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": return target.getUnixDomainSocketPath();
         case "usebytebuf":
         case "UseByteBuf": return target.isUseByteBuf();
         case "usingexecutorservice":
@@ -463,10 +499,10 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "decoders":
-        case "Decoders": return io.netty.channel.ChannelHandler.class;
-        case "encoders":
-        case "Encoders": return io.netty.channel.ChannelHandler.class;
+        case "decodersaslist":
+        case "DecodersAsList": return io.netty.channel.ChannelHandler.class;
+        case "encodersaslist":
+        case "EncodersAsList": return io.netty.channel.ChannelHandler.class;
         case "options":
         case "Options": return java.lang.Object.class;
         default: return null;

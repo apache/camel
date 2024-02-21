@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,9 +39,8 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
                 .setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy())
                 .setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier())
                 .setSslContext(getSSLContext())
-                .registerHandler("/dynamicAware", new BasicValidationHandler("GET", "par1=val1&par2=val2", null, null))
+                .register("/dynamicAware", new BasicValidationHandler("GET", "par1=val1&par2=val2", null, null))
                 .create();
         localServer.start();
 
@@ -59,10 +58,10 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dynamicAwareWithRaw")
                         .toD("http://localhost:" + localServer.getLocalPort()
                              + "/dynamicAware?par1=RAW(${headers.par1})&par2=RAW{${headers.par2}}");
@@ -71,7 +70,7 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareHeadersQuery() throws Exception {
+    public void testDynamicAwareHeadersQuery() {
         Exchange e = fluentTemplate
                 .to("direct:dynamicAwareWithRaw")
                 .withHeader("par1", "val1")

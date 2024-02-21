@@ -3,6 +3,9 @@
 The Camel Maven Plugin supports the following goals
 
  - camel:run - To run your Camel application
+ - camel:dev - To run your Camel application in developer mode
+ - camel:debug - To run your Camel application in debug mode
+ - camel:prepare-fatjar - To prepare your Camel application for being packaged as a fat-jar (such as by maven-assembly-plugin)
 
 == camel:run
 
@@ -32,74 +35,10 @@ The maven plugin *run* goal supports the following options which can be configur
 | durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
 | durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
 | logClasspath | false | Whether to log the classpath when starting
+| loggingLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
 |===
 
 
-=== Running OSGi Blueprint
-
-The `camel:run` plugin also supports running a Blueprint application, and by default it scans for OSGi blueprint files in
-`OSGI-INF/blueprint/*.xml`
-
-You would need to configure the camel:run plugin to use blueprint, by setting useBlueprint to true as shown below
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <useBlueprint>true</useBlueprint>
-  </configuration>
-</plugin>
-----
-
-This allows you to boot up any Blueprint services you wish - whether they are Camel-related, or any other Blueprint.
-
-The `camel:run` goal is able to auto detect if camel-blueprint is on the classpath or there is blueprint XML files
-in the project, and therefore you no longer have to configure the useBlueprint option.
-
-=== Using limited Blueprint container
-
-We use the Felix Connector project as the blueprint container. This project is not a full fledged blueprint container.
-For that you can use Apache Karaf or Apache ServiceMix.
-You can use the applicationContextUri configuration to specify an explicit blueprint XML file, such as:
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-maven-plugin</artifactId>
-  <configuration>
-    <useBlueprint>true</useBlueprint>
-    <applicationContextUri>myBlueprint.xml</applicationContextUri>
-    <!-- ConfigAdmin options which have been added since Camel 2.12.0 -->
-    <configAdminPid>test</configAdminPid>
-    <configAdminFileName>/user/test/etc/test.cfg</configAdminFileName>
-  </configuration>
-</plugin>
-----
-
-The `applicationContextUri` will currently load the file from the classpath, so in the example above the
-`myBlueprint.xml` file must be in the root of the classpath.
-
-The `configAdminPid` is the pid name which will be used as the pid name for configuration admin service when
-loading the persistence properties file.
-
-The `configAdminFileName` is the file name which will be used to load the configuration admin service properties file.
-
-=== Running CDI
-
-The `camel:run` plugin also supports running a CDI application
-
-This allows you to boot up any CDI services you wish - whether they are Camel-related, or any other CDI enabled services.
-You should add the CDI container of your choice (e.g. Weld or OpenWebBeans) to the dependencies of the camel-maven-plugin such as in this example.
-
-From the source of Camel you can run a CDI example via
-
-----
-cd examples/camel-example-cdi
-mvn compile camel:run
-----
 
 === Logging the classpath
 
@@ -117,9 +56,9 @@ You can enable this in the configuration using:
 </plugin>
 ----
 
-=== Using live reload of XML files
+=== Using built-in logging
 
-You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
+If you want quickly to have logging to console, you can use the built-in logging by setting the logging level as shown:
 
 [source,xml]
 ----
@@ -127,14 +66,120 @@ You can configure the plugin to scan for XML file changes and trigger a reload o
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-maven-plugin</artifactId>
   <configuration>
-    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+    <loggingLevel>INFO</loggingLevel>
   </configuration>
 </plugin>
 ----
 
-Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
-    the running Camel application pickup those changes.
+This runs the application with console logging, in color that is similar to Spring Boot logging.
+This is default turned off, to use the configured logging system in the project.
 
-Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
-You cannot change Spring or OSGi Blueprint `<bean>` elements.
+The idea with the built-in logging is that you sometimes want to avoid messing with setting
+up logging, and just want a quick and easy log to console that looks good.
 
+
+== camel:dev
+
+The `camel:dev` is an extension to `camel:run` to run the Camel application in developer mode.
+In this mode, among others, Camel will use hot-reloading of DSL routes (xml, yaml and java) that are located from
+the `src/main/resources` directory.
+
+=== Options
+
+The maven plugin *dev* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| routesDirectory | src/main/resources | To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly.
+| duration | -1 | Sets the time duration (seconds) that the application will run for before terminating. A value <= 0 will run forever.
+| durationIdle | -1 | Sets the idle time duration (seconds) duration that the application can be idle before terminating. A value <= 0 will run forever.
+| durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
+| logClasspath | false | Whether to log the classpath when starting
+| loggingLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+|===
+
+== camel:debug
+
+The `camel:debug` is an extension to `camel:dev` to run the Camel application in debug mode which allows to debug the Camel routes thanks to the Camel textual route debugger.
+
+=== Options
+
+The maven plugin *debug* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| suspend | true | Indicates whether the message processing done by Camel should be suspended as long as a debugger is not attached.
+|===
+
+== camel:prepare-fatjar
+
+The `camel:prepare-fatjar` goal of the Camel Maven Plugin is used to prepare your Camel application
+for being packaged as a _fat jar_. The goal scans the Maven dependencies to discover Camel JARs and
+extract if they have type converters, which gets merged together into a single _uber_ file stored
+in `target/classes/META-INF/services/org/apache/camel/UberTypeConverterLoader`.
+
+This _uber_ loader file contains all the combined type converters the Camel application uses at runtime.
+They are merged together into this single file.
+
+This is needed as otherwise the _fat jar_ maven plugins (such as maven-assembly-plugin, or maven-shade-plugin)
+causes the `TypeConverterLoader` files to be overwritten in the assembled JAR which causes not all type converters
+to be loaded by Camel.
+
+The `UberTypeConverterLoader` ensures they all type converters gets loaded as this file contains all the known
+type converter files.
+
+To use this goal, you can add the following to your Camel application `pom.xml` file:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+----
+
+For example to use this with the `maven-assembly-plugin` you can do as below.
+Remember to specify the class name of *your* main class where it says `com.foo.NameOfMainClass`:
+
+[source,xml]
+----
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-fatjar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.foo.NameOfMainClass</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+----

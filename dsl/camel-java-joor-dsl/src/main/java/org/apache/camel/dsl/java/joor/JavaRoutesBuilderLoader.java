@@ -16,77 +16,212 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Modifier;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.StartupStep;
-import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
+import org.apache.camel.language.joor.CamelJoorClassLoader;
+import org.apache.camel.language.joor.CompilationUnit;
+import org.apache.camel.language.joor.JavaJoorClassLoader;
+import org.apache.camel.language.joor.MultiCompile;
+import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.RoutesBuilderLoaderSupport;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.util.IOHelper;
-import org.joor.Reflect;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.dsl.java.joor.Helper.determineName;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
-public class JavaRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
-    public static final String EXTENSION = "java";
-    public static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
-    private StartupStepRecorder recorder;
+    public static final String EXTENSION = "java";
+
+    private static final Logger LOG = LoggerFactory.getLogger(JavaRoutesBuilderLoader.class);
+
+    private final ConcurrentMap<Collection<Resource>, CompilationUnit.Result> compiled = new ConcurrentHashMap<>();
+    private final Map<String, Resource> nameToResource = new HashMap<>();
+    private JavaJoorClassLoader classLoader;
+
+    public JavaRoutesBuilderLoader() {
+        super(EXTENSION);
+    }
 
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-        recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-    }
 
-    @ManagedAttribute(description = "Supported file extension")
-    @Override
-    public String getSupportedExtension() {
-        return EXTENSION;
-    }
-
-    @Override
-    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
-        try (InputStream is = resource.getInputStream()) {
-            final String content = IOHelper.loadText(is);
-            final String name = determineName(resource, content);
-
-            StartupStep step = recorder != null
-                    ? recorder.beginStep(JavaRoutesBuilderLoader.class, name, "Compiling RouteBuilder")
-                    : null;
-
-            try {
-                return Reflect.compile(name, content).create().get();
-            } finally {
-                if (recorder != null) {
-                    recorder.endStep(step);
-                }
+        // register jOOR classloader to camel, so we are able to load classes we have compiled
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            // use existing class loader if available
+            classLoader = (JavaJoorClassLoader) context.getClassResolver().getClassLoader("JavaJoorClassLoader");
+            if (classLoader == null) {
+                classLoader = new JavaJoorClassLoader();
+                context.getClassResolver().addClassLoader(classLoader);
+            }
+            // use work dir for classloader as it writes compiled classes to disk
+            CompileStrategy cs = context.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs != null && cs.getWorkDir() != null) {
+                classLoader.setCompileDirectory(cs.getWorkDir());
             }
         }
     }
 
-    private static String determineName(Resource resource, String content) {
-        String loc = resource.getLocation();
-        // strip scheme to compute the name
-        String scheme = ResourceHelper.getScheme(loc);
-        if (scheme != null) {
-            loc = loc.substring(scheme.length());
-        }
-        final String name = FileUtil.onlyName(loc, true);
-        final Matcher matcher = PACKAGE_PATTERN.matcher(content);
+    @Override
+    public void preParseRoute(Resource resource) throws Exception {
+        Collection<Resource> key = List.of(resource);
+        preParseRoutes(key);
+    }
 
-        return matcher.find()
-                ? matcher.group(1) + "." + name
-                : name;
+    @Override
+    public void preParseRoutes(Collection<Resource> resources) throws Exception {
+        CompilationUnit.Result result = compiled.get(resources);
+        if (result == null) {
+            result = compileResources(resources);
+            compiled.put(resources, result);
+        }
+    }
+
+    @Override
+    protected RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
+        Collection<Resource> key = List.of(resource);
+        CompilationUnit.Result result = compiled.get(key);
+        if (result == null) {
+            result = compileResources(key);
+            compiled.put(key, result);
+        }
+
+        Collection<RoutesBuilder> answer = doLoadRoutesBuilders(key);
+        if (answer.size() == 1) {
+            RoutesBuilder builder = answer.iterator().next();
+            return (RouteBuilder) builder;
+        }
+
+        return super.doLoadRouteBuilder(resource);
+    }
+
+    @Override
+    protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
+        Collection<RoutesBuilder> answer = new ArrayList<>();
+
+        // remove from pre-compiled
+        CompilationUnit.Result result = compiled.remove(resources);
+        if (result == null) {
+            result = compileResources(resources);
+        }
+
+        for (String className : result.getClassNames()) {
+            Object obj = null;
+
+            Class<?> clazz = result.getClass(className);
+            if (clazz != null) {
+                boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())
+                        || Modifier.isPrivate(clazz.getModifiers());
+                // must have a default no-arg constructor to be able to create an instance
+                boolean ctr = ObjectHelper.hasDefaultNoArgConstructor(clazz);
+                if (ctr && !skip) {
+                    // create a new instance of the class
+                    try {
+                        obj = getCamelContext().getInjector().newInstance(clazz);
+                        if (obj != null) {
+                            LOG.debug("Compiled: {} -> {}", className, obj);
+
+                            // inject context and resource
+                            CamelContextAware.trySetCamelContext(obj, getCamelContext());
+                            ResourceAware.trySetResource(obj, nameToResource.remove(className));
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeCamelException("Cannot create instance of class: " + className, e);
+                    }
+                }
+            }
+
+            // support custom annotation scanning post compilation
+            // such as to register custom beans, type converters, etc.
+            for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                byte[] byteCode = result.getByteCode(className);
+                pre.postCompile(getCamelContext(), className, clazz, byteCode, obj);
+            }
+
+            if (obj instanceof RouteBuilder) {
+                RouteBuilder builder = (RouteBuilder) obj;
+                answer.add(builder);
+            }
+        }
+
+        return answer;
+    }
+
+    protected CompilationUnit.Result compileResources(Collection<Resource> resources) throws Exception {
+        LOG.debug("Loading .java resources from: {}", resources);
+
+        CompilationUnit unit = CompilationUnit.input();
+
+        for (Resource resource : resources) {
+            try (InputStream is = resourceInputStream(resource)) {
+                if (is == null) {
+                    throw new FileNotFoundException(resource.getLocation());
+                }
+                String content = IOHelper.loadText(is);
+                String name = determineName(resource, content);
+                unit.addClass(name, content);
+                nameToResource.put(name, resource);
+            }
+        }
+
+        // include classloader from Camel, so we can load any already compiled and loaded classes
+        ClassLoader parent = MethodHandles.lookup().lookupClass().getClassLoader();
+        if (parent instanceof URLClassLoader ucl) {
+            ClassLoader cl = new CamelJoorClassLoader(ucl, getCamelContext());
+            unit.withClassLoader(cl);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            String names = String.join(", ", unit.getInput().keySet());
+            LOG.debug("Compiling: {}", names);
+        }
+        CompilationUnit.Result result = MultiCompile.compileUnit(unit);
+
+        // remember the last loaded resource-set if route reloading is enabled
+        if (getCamelContext().hasService(RouteWatcherReloadStrategy.class) != null) {
+            getCamelContext().getRegistry().bind(RouteWatcherReloadStrategy.RELOAD_RESOURCES, nameToResource.values());
+        }
+
+        for (String className : result.getClassNames()) {
+            Class<?> clazz = result.getClass(className);
+            byte[] code = result.getByteCode(className);
+            classLoader.addClass(className, clazz, code);
+        }
+
+        return result;
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        compiled.clear();
+        nameToResource.clear();
     }
 }

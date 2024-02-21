@@ -21,8 +21,8 @@ package org.apache.camel.language.csimple;
  */
 public final class CSimpleGeneratedCode {
 
-    private String fqn;
-    private String code;
+    private final String fqn;
+    private final String code;
 
     public CSimpleGeneratedCode(String fqn, String code) {
         this.fqn = fqn;

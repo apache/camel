@@ -52,7 +52,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
+                        String target = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
 
@@ -108,9 +108,9 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
         context.start();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:foo").message(0).header(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
+        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).header(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://fail");
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://fail");
 
         String foo = "direct:foo,direct:fail";
 

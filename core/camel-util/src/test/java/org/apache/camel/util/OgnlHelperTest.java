@@ -42,4 +42,29 @@ public class OgnlHelperTest {
         assertEquals(".replaceFirst(\".*;?iwanttoknow=([^;]+);?.*\", \"$1\")", strings.get(2));
     }
 
+    @Test
+    public void splitOgnlWithParenthesisInQuotes() {
+        String ognl = "body.replace(\"((\", \"--\")";
+        assertFalse(OgnlHelper.isInvalidValidOgnlExpression(ognl));
+        assertTrue(OgnlHelper.isValidOgnlExpression(ognl));
+
+        List<String> strings = OgnlHelper.splitOgnl(ognl);
+        assertEquals(2, strings.size());
+        assertEquals("body", strings.get(0));
+        assertEquals(".replace(\"((\", \"--\")", strings.get(1));
+    }
+
+    @Test
+    public void splitOgnlWithParenthesisInQuotesTwo() {
+        String ognl = "body.replace(\"((\", \"--\").replace(\"((((\", \"----\")";
+        assertFalse(OgnlHelper.isInvalidValidOgnlExpression(ognl));
+        assertTrue(OgnlHelper.isValidOgnlExpression(ognl));
+
+        List<String> strings = OgnlHelper.splitOgnl(ognl);
+        assertEquals(3, strings.size());
+        assertEquals("body", strings.get(0));
+        assertEquals(".replace(\"((\", \"--\")", strings.get(1));
+        assertEquals(".replace(\"((((\", \"----\")", strings.get(2));
+    }
+
 }

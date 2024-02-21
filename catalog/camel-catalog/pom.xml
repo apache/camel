@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -43,29 +43,42 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-catalog</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-model</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- disable all components -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-allcomponents</artifactId>
-            <version>${project.version}</version>
             <type>pom</type>
-            <scope>provided</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.camel</groupId>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--
+        Enforce the dependency with all the core artifacts to ensure that the parallel build won't build this module
+        before the core artifacts to prevent inconsistencies in the catalog
+        -->
+        <!-- disable all core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-all</artifactId>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
@@ -94,12 +107,6 @@
 
         <!-- for testing activemq component -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-activemq</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -108,14 +115,19 @@
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
             <!-- generate and include all components in the catalog -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -125,12 +137,12 @@
                         <goals>
                             <!-- prepare the catalog, readme files, etc. -->
                             <goal>prepare-catalog</goal>
-                            <!-- prepare apache-camel assembly -->
-                            <goal>prepare-assembly</goal>
                             <!-- update secrets in camel-util -->
                             <goal>update-sensitive-helper</goal>
+                            <!-- update names in camel-main -->
+                            <goal>update-main-helper</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -157,28 +169,30 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- sync properties -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>sync-properties-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <!-- prepare the catalog, readme files, etc. -->
-                        <goals>
-                            <goal>sync-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sourcePom>${basedir}/../../parent/pom.xml</sourcePom>
-                    <targetPom>${basedir}/../../camel-dependencies/pom.xml</targetPom>
-                    <licenseHeader>${basedir}/../../etc/apache-header.xml</licenseHeader>
-                </configuration>
-            </plugin>
         </plugins>
-
     </build>
+
+    <profiles>
+        <profile>
+            <id>update-camel-releases</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!-- update camel release details from camel-website -->
+                                    <goal>update-camel-releases</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

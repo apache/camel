@@ -16,32 +16,31 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Tokenize text payloads using the specified delimiter patterns.
- *
- * @see org.apache.camel.language.tokenizer.TokenizeLanguage
+ * Tokenize text payloads using delimiter patterns.
  */
 @Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TokenizerExpression extends ExpressionDefinition {
+public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
+
     @XmlAttribute(required = true)
     private String token;
     @XmlAttribute
     private String endToken;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String inheritNamespaceTagName;
     @XmlAttribute
-    private String headerName;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String regex;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -50,11 +49,13 @@ public class TokenizerExpression extends ExpressionDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String includeTokens;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String group;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String groupDelimiter;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String skipFirst;
 
     public TokenizerExpression() {
@@ -62,6 +63,19 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     public TokenizerExpression(String token) {
         this.token = token;
+    }
+
+    private TokenizerExpression(Builder builder) {
+        super(builder);
+        this.token = builder.token;
+        this.endToken = builder.endToken;
+        this.inheritNamespaceTagName = builder.inheritNamespaceTagName;
+        this.regex = builder.regex;
+        this.xml = builder.xml;
+        this.includeTokens = builder.includeTokens;
+        this.group = builder.group;
+        this.groupDelimiter = builder.groupDelimiter;
+        this.skipFirst = builder.skipFirst;
     }
 
     @Override
@@ -91,17 +105,6 @@ public class TokenizerExpression extends ExpressionDefinition {
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to tokenize instead of using the message body.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
     }
 
     /**
@@ -145,7 +148,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to include the tokens in the parts when using pairs
+     * Whether to include the tokens in the parts when using pairs. When including tokens then the endToken property
+     * must also be configured (to use pair mode).
      * <p/>
      * The default value is false
      */
@@ -187,12 +191,162 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.skipFirst = skipFirst;
     }
 
-    @Override
     public String toString() {
         if (endToken != null) {
             return "tokenize{body() using tokens: " + token + "..." + endToken + "}";
         } else {
-            return "tokenize{" + (headerName != null ? "header: " + headerName : "body()") + " using token: " + token + "}";
+            String s = getSource();
+            if (s == null) {
+                s = "body";
+            }
+            return "tokenize{" + s + " using token: " + token + "}";
+        }
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link TokenizerExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, TokenizerExpression> {
+
+        private String token;
+        private String endToken;
+        private String inheritNamespaceTagName;
+        private String regex;
+        private String xml;
+        private String includeTokens;
+        private String group;
+        private String groupDelimiter;
+        private String skipFirst;
+
+        /**
+         * The (start) token to use as tokenizer, for example you can use the new line token. You can use simple
+         * language as the token to support dynamic tokens.
+         */
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        /**
+         * The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to
+         * support dynamic tokens.
+         */
+        public Builder endToken(String endToken) {
+            this.endToken = endToken;
+            return this;
+        }
+
+        /**
+         * To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name
+         * to support dynamic names.
+         */
+        public Builder inheritNamespaceTagName(String inheritNamespaceTagName) {
+            this.inheritNamespaceTagName = inheritNamespaceTagName;
+            return this;
+        }
+
+        /**
+         * If the token is a regular expression pattern.
+         * <p/>
+         * The default value is false
+         */
+        public Builder regex(String regex) {
+            this.regex = regex;
+            return this;
+        }
+
+        /**
+         * If the token is a regular expression pattern.
+         * <p/>
+         * The default value is false
+         */
+        public Builder regex(boolean regex) {
+            this.regex = Boolean.toString(regex);
+            return this;
+        }
+
+        /**
+         * Whether the input is XML messages. This option must be set to true if working with XML payloads.
+         */
+        public Builder xml(String xml) {
+            this.xml = xml;
+            return this;
+        }
+
+        /**
+         * Whether the input is XML messages. This option must be set to true if working with XML payloads.
+         */
+        public Builder xml(boolean xml) {
+            this.xml = Boolean.toString(xml);
+            return this;
+        }
+
+        /**
+         * Whether to include the tokens in the parts when using pairs
+         * <p/>
+         * The default value is false
+         */
+        public Builder includeTokens(String includeTokens) {
+            this.includeTokens = includeTokens;
+            return this;
+        }
+
+        /**
+         * Whether to include the tokens in the parts when using pairs
+         * <p/>
+         * The default value is false
+         */
+        public Builder includeTokens(boolean includeTokens) {
+            this.includeTokens = Boolean.toString(includeTokens);
+            return this;
+        }
+
+        /**
+         * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple
+         * language as the group to support dynamic group sizes.
+         */
+        public Builder group(String group) {
+            this.group = group;
+            return this;
+        }
+
+        /**
+         * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple
+         * language as the group to support dynamic group sizes.
+         */
+        public Builder group(int group) {
+            this.group = Integer.toString(group);
+            return this;
+        }
+
+        /**
+         * Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
+         */
+        public Builder groupDelimiter(String groupDelimiter) {
+            this.groupDelimiter = groupDelimiter;
+            return this;
+        }
+
+        /**
+         * To skip the very first element
+         */
+        public Builder skipFirst(String skipFirst) {
+            this.skipFirst = skipFirst;
+            return this;
+        }
+
+        /**
+         * To skip the very first element
+         */
+        public Builder skipFirst(boolean skipFirst) {
+            this.skipFirst = Boolean.toString(skipFirst);
+            return this;
+        }
+
+        @Override
+        public TokenizerExpression end() {
+            return new TokenizerExpression(this);
         }
     }
 }

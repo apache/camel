@@ -39,7 +39,7 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
 
         template.sendBody("direct:startUnmarshal", csv);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final List<WickedHeaderWithCommaCsv> wickedHeaderWithCommaCsvs
                 = unmarshalMock.getReceivedExchanges().get(0).getIn().getBody(List.class);
@@ -56,7 +56,7 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
         template.sendBody("direct:startMarshal", wickedHeaderWithCommaCsvs);
 
         marshalMock.expectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final String result = marshalMock.getReceivedExchanges().get(0).getIn().getBody(String.class);
 
@@ -64,10 +64,10 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startUnmarshal")
                         .unmarshal(new BindyCsvDataFormat(WickedHeaderWithCommaCsv.class))
                         .to("mock:receiveUnmarshal");

@@ -67,7 +67,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             sendBuffer(body1, client1);
             sendBuffer(new String("9").getBytes(), client2);
         } catch (Exception e) {
-            LOG.error("", e);
+            LOG.error("{}", e.getMessage(), e);
         } finally {
             client1.close();
             client2.close();
@@ -77,9 +77,9 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 port = getPort();
 
                 from("netty:tcp://localhost:{{port}}?decoders=#length-decoder&sync=false").process(processor).to("mock:result");
@@ -108,8 +108,8 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
     class P implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(exchange.getIn().getBody(String.class));
+        public void process(Exchange exchange) {
+            exchange.getMessage().setBody(exchange.getIn().getBody(String.class));
         }
     }
 }

@@ -20,39 +20,90 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PredicateToExpressionAdapter;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
 /**
  * A language for referred expressions or predicates.
  */
 @org.apache.camel.spi.annotations.Language("ref")
-public class RefLanguage extends LanguageSupport {
+public class RefLanguage extends TypedLanguageSupport {
 
     @Override
     public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
+        if (hasSimpleFunction(expression)) {
+            return createDynamic(expression);
+        } else {
+            return createStaticPredicate(expression);
+        }
     }
 
     @Override
-    public Expression createExpression(final String expression) {
-        Expression answer = new ExpressionAdapter() {
+    public Expression createExpression(String expression) {
+        if (hasSimpleFunction(expression)) {
+            return createDynamic(expression);
+        } else {
+            return createStaticExpression(expression);
+        }
+    }
+
+    protected Expression createStaticExpression(String expression) {
+        Expression answer;
+
+        Object exp = getCamelContext().getRegistry().lookupByName(expression);
+        if (exp instanceof Expression) {
+            answer = (Expression) exp;
+        } else if (exp instanceof Predicate) {
+            answer = PredicateToExpressionAdapter.toExpression((Predicate) exp);
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find expression or predicate in registry with ref: " + expression);
+        }
+
+        answer.init(getCamelContext());
+        return answer;
+    }
+
+    protected Predicate createStaticPredicate(String expression) {
+        Predicate answer;
+
+        Object exp = getCamelContext().getRegistry().lookupByName(expression);
+        if (exp instanceof Expression) {
+            answer = ExpressionToPredicateAdapter.toPredicate((Expression) exp);
+        } else if (exp instanceof Predicate) {
+            answer = (Predicate) exp;
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find expression or predicate in registry with ref: " + expression);
+        }
+
+        answer.init(getCamelContext());
+        return answer;
+    }
+
+    protected ExpressionAdapter createDynamic(final String expression) {
+        ExpressionAdapter answer = new ExpressionAdapter() {
 
             private Expression exp;
+            private Registry registry;
 
             @Override
             public void init(CamelContext context) {
-                exp = ExpressionBuilder.refExpression(expression);
+                registry = context.getRegistry();
+                exp = ExpressionBuilder.simpleExpression(expression);
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Expression target = null;
 
-                Object lookup = exp.evaluate(exchange, Object.class);
+                String ref = exp.evaluate(exchange, String.class);
+                Object lookup = ref != null ? registry.lookupByName(ref) : null;
 
                 // must favor expression over predicate
                 if (lookup instanceof Expression) {
@@ -65,12 +116,12 @@ public class RefLanguage extends LanguageSupport {
                     return target.evaluate(exchange, Object.class);
                 } else {
                     throw new IllegalArgumentException(
-                            "Cannot find expression or predicate in registry with ref: " + expression);
+                            "Cannot find expression or predicate in registry with ref: " + ref);
                 }
             }
 
             public String toString() {
-                return exp.toString();
+                return "ref:" + exp.toString();
             }
         };
 

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.UUID;
 
 import org.apache.camel.Exchange;
@@ -69,7 +70,7 @@ public class ExecJava8IssueTest {
 
         String tempFilePath = tempDir.getAbsolutePath() + "/" + tempFileName;
 
-        final File script = File.createTempFile("script", ".sh", tempDir);
+        final File script = Files.createTempFile(tempDir.toPath(), "script", ".sh").toFile();
 
         writeScript(script);
 
@@ -78,13 +79,13 @@ public class ExecJava8IssueTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:source")
                         .to("file:" + tempDir.getAbsolutePath() + "?fileName=" + tempFileName)
                         .to("exec:" + exec)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String output = exchange.getIn().getBody(String.class);
                                 assertEquals("hello world\n", output);
                             }

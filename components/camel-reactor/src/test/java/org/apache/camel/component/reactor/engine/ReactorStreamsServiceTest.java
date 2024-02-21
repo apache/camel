@@ -88,8 +88,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testFromStreamTimer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("timer:tick?period=5&repeatCount=30")
+            public void configure() {
+                from("timer:tick?period=5&repeatCount=30&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:tick");
@@ -117,7 +117,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.start();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:reactive")
                         .to("reactive-streams:direct");
             }
@@ -144,8 +144,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testMultipleSubscriptionsWithTimer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("timer:tick?period=50")
+            public void configure() {
+                from("timer:tick?period=50&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:tick");
             }
@@ -182,7 +182,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testFrom() throws Exception {
         context.start();
 
-        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3");
+        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3&includeMetadata=true");
 
         AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(3);
@@ -205,7 +205,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.start();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:source")
                         .to("direct:stream")
                         .setBody()
@@ -217,7 +217,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
                 publisher -> Flux.from(publisher)
                         .map(e -> {
                             int i = e.getIn().getBody(Integer.class);
-                            e.getOut().setBody(-i);
+                            e.getMessage().setBody(-i);
 
                             return e;
                         }));
@@ -234,7 +234,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.start();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:source")
                         .to("direct:stream")
                         .setBody()
@@ -362,7 +362,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.start();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:reactor")
                         .to("mock:result");
             }
@@ -389,7 +389,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testOnlyOneCamelProducerPerPublisher() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:one")
                         .to("reactive-streams:stream");
                 from("direct:two")

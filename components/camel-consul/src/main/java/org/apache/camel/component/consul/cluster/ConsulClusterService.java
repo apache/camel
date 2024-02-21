@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.consul.cluster;
 
+import java.time.Duration;
+
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ConsulClusterService extends AbstractCamelClusterService<ConsulClusterView> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterService.class);
-
     private ConsulClusterConfiguration configuration;
 
     public ConsulClusterService() {
@@ -95,28 +93,28 @@ public final class ConsulClusterService extends AbstractCamelClusterService<Cons
         configuration.setPassword(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return configuration.getConnectTimeoutMillis();
+    public Duration getConnectTimeout() {
+        return configuration.getConnectTimeout();
     }
 
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        configuration.setConnectTimeoutMillis(connectTimeoutMillis);
+    public void setConnectTimeout(Duration connectTimeout) {
+        configuration.setConnectTimeout(connectTimeout);
     }
 
-    public Long getReadTimeoutMillis() {
-        return configuration.getReadTimeoutMillis();
+    public Duration getReadTimeout() {
+        return configuration.getReadTimeout();
     }
 
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        configuration.setReadTimeoutMillis(readTimeoutMillis);
+    public void setReadTimeout(Duration readTimeout) {
+        configuration.setReadTimeout(readTimeout);
     }
 
-    public Long getWriteTimeoutMillis() {
-        return configuration.getWriteTimeoutMillis();
+    public Duration getWriteTimeout() {
+        return configuration.getWriteTimeout();
     }
 
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        configuration.setWriteTimeoutMillis(writeTimeoutMillis);
+    public void setWriteTimeout(Duration writeTimeout) {
+        configuration.setWriteTimeout(writeTimeout);
     }
 
     public Integer getBlockSeconds() {

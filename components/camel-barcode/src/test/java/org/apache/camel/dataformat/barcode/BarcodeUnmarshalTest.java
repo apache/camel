@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.barcode;
 
 import java.io.*;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
@@ -30,48 +31,27 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BarcodeUnmarshalTest extends BarcodeTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BarcodeUnmarshalTest.class);
-
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // clean directory
-        File directory = new File(PATH);
-        if (!directory.isDirectory() || !directory.exists()) {
-            LOG.error(String.format(
-                    "cannot delete files from directory '%s', because path is not a directory, or it doesn't exist.", PATH));
-        } else {
-            LOG.info("deleting files from " + PATH + "...");
-            File[] files = directory.listFiles();
-            for (File file : files) {
-                LOG.info(String.format("deleting %s", file.getName()));
-                file.delete();
-            }
-        }
-    }
+    @TempDir
+    Path testDirectory;
 
     @Test
-    void testOrientation() throws Exception {
+    void testOrientation() {
 
         Exchange exchange = template.request("direct:code1", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(MSG);
             }
         });
 
-        assertEquals(180, exchange.getOut().getHeader("ORIENTATION"));
+        assertEquals(180, exchange.getMessage().getHeader("ORIENTATION"));
 
     }
 
@@ -88,12 +68,12 @@ public class BarcodeUnmarshalTest extends BarcodeTestBase {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) exchange.getIn().getBody());
+                                InputStream bis = exchange.getIn().getBody(InputStream.class);
                                 BinaryBitmap bitmap = new BinaryBitmap(
                                         new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(bis))));
                                 BitMatrix blackMatrix = bitmap.getBlackMatrix();
                                 blackMatrix.rotate180();
-                                File file = new File(PATH + "/TestImage.png");
+                                File file = testDirectory.resolve("TestImage.png").toFile();
                                 FileOutputStream outputStream = new FileOutputStream(file);
                                 MatrixToImageWriter.writeToStream(blackMatrix, "png", outputStream);
                                 exchange.getIn().setBody(file);

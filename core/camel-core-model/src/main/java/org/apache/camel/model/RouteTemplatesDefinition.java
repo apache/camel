@@ -19,14 +19,18 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A series of route templates
@@ -35,11 +39,17 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
-        implements RouteTemplateContainer {
-    @XmlElementRef
-    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+        implements RouteTemplateContainer, CamelContextAware, ResourceAware {
+
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private ErrorHandlerFactory errorHandlerFactory;
+    @XmlTransient
+    private Resource resource;
+
+    @XmlElementRef
+    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     public RouteTemplatesDefinition() {
     }
@@ -68,18 +78,36 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     }
 
     /**
-     * The rest services
+     * The route templates
      */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        return errorHandlerFactory;
+    }
+
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API
@@ -99,9 +127,9 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     /**
      * Adds the {@link RouteTemplatesDefinition}
      */
-    public RouteTemplateDefinition routeTemplate(RouteTemplateDefinition rest) {
-        getRouteTemplates().add(rest);
-        return rest;
+    public RouteTemplateDefinition routeTemplate(RouteTemplateDefinition template) {
+        getRouteTemplates().add(template);
+        return template;
     }
 
     // Implementation methods
@@ -109,6 +137,13 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
 
     protected RouteTemplateDefinition createRouteTemplate() {
         RouteTemplateDefinition template = new RouteTemplateDefinition();
+        ErrorHandlerFactory handler = getErrorHandlerFactory();
+        if (handler != null) {
+            template.getRoute().setErrorHandlerFactoryIfNull(handler);
+        }
+        if (resource != null) {
+            template.setResource(resource);
+        }
         return template;
     }
 

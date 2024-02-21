@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,9 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 /**
  * Represents the configuration data for communicating over email
@@ -138,6 +142,12 @@ public class MailConfiguration implements Cloneable {
     private Properties javaMailProperties;
     @UriParam(label = "advanced")
     private MailAuthenticator authenticator;
+    @UriParam(label = "consumer,advanced")
+    private boolean failOnDuplicateFileAttachment;
+    @UriParam(label = "consumer,advanced")
+    private String generateMissingAttachmentNames = MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+    @UriParam(label = "consumer,advanced")
+    private String handleDuplicateAttachmentNames = MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
     public MailConfiguration() {
     }
@@ -185,23 +195,23 @@ public class MailConfiguration implements Cloneable {
             }
         }
 
-        int port = uri.getPort();
-        if (port > 0) {
-            setPort(port);
+        int uriPort = uri.getPort();
+        if (uriPort > 0) {
+            setPort(uriPort);
         } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
     }
 
-    protected JavaMailSender createJavaMailSender() {
+    protected JavaMailSender createJavaMailSender(CamelContext context) {
         JavaMailSender answer = new DefaultJavaMailSender();
 
         if (javaMailProperties != null) {
             answer.setJavaMailProperties(javaMailProperties);
         } else {
             // set default properties if none provided
-            answer.setJavaMailProperties(createJavaMailProperties());
+            answer.setJavaMailProperties(createJavaMailProperties(context));
             // add additional properties if provided
             if (additionalJavaMailProperties != null) {
                 answer.getJavaMailProperties().putAll(additionalJavaMailProperties);
@@ -228,13 +238,13 @@ public class MailConfiguration implements Cloneable {
         }
         if (session != null) {
             answer.setSession(session);
-            String host = session.getProperty("mail.smtp.host");
-            if (host != null && !host.isEmpty()) {
-                answer.setHost(host);
+            String hostPropertyValue = session.getProperty("mail.smtp.host");
+            if (hostPropertyValue != null && !hostPropertyValue.isEmpty()) {
+                answer.setHost(hostPropertyValue);
             }
-            String port = session.getProperty("mail.smtp.port");
-            if (port != null && !port.isEmpty()) {
-                answer.setPort(Integer.parseInt(port));
+            String portPropertyValue = session.getProperty("mail.smtp.port");
+            if (portPropertyValue != null && !portPropertyValue.isEmpty()) {
+                answer.setPort(Integer.parseInt(portPropertyValue));
             }
         } else {
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
@@ -243,11 +253,11 @@ public class MailConfiguration implements Cloneable {
                     Thread.currentThread().setContextClassLoader(applicationClassLoader);
                 }
                 // use our authenticator that does no live user interaction but returns the already configured username and password
-                Session session = Session.getInstance(answer.getJavaMailProperties(),
+                Session sessionInstance = Session.getInstance(answer.getJavaMailProperties(),
                         authenticator == null ? new DefaultAuthenticator(getUsername(), getPassword()) : authenticator);
                 // sets the debug mode of the underlying mail framework
-                session.setDebug(debugMode);
-                answer.setSession(session);
+                sessionInstance.setDebug(debugMode);
+                answer.setSession(sessionInstance);
             } finally {
                 Thread.currentThread().setContextClassLoader(tccl);
             }
@@ -256,13 +266,13 @@ public class MailConfiguration implements Cloneable {
         return answer;
     }
 
-    private Properties createJavaMailProperties() {
+    private Properties createJavaMailProperties(CamelContext context) {
         // clone the system properties and set the java mail properties
         Properties properties = (Properties) System.getProperties().clone();
         properties.put("mail." + protocol + ".connectiontimeout", connectionTimeout);
         properties.put("mail." + protocol + ".timeout", connectionTimeout);
         properties.put("mail." + protocol + ".host", host);
-        properties.put("mail." + protocol + ".port", "" + port);
+        properties.put("mail." + protocol + ".port", Integer.toString(port));
         String pUserName = getPasswordAuthentication().getUserName();
         if (pUserName != null) {
             properties.put("mail." + protocol + ".user", pUserName);
@@ -281,13 +291,13 @@ public class MailConfiguration implements Cloneable {
         }
 
         if (sslContextParameters != null && isSecureProtocol()) {
-            properties.put("mail." + protocol + ".socketFactory", createSSLContext().getSocketFactory());
+            properties.put("mail." + protocol + ".socketFactory", createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
-            properties.put("mail." + protocol + ".socketFactory.port", "" + port);
+            properties.put("mail." + protocol + ".socketFactory.port", Integer.toString(port));
         }
         if (sslContextParameters != null && isStartTlsEnabled()) {
-            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext().getSocketFactory());
-            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
+            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext(context).getSocketFactory());
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", Integer.toString(port));
         }
 
         return properties;
@@ -302,9 +312,9 @@ public class MailConfiguration implements Cloneable {
                 ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
     }
 
-    private SSLContext createSSLContext() {
+    private SSLContext createSSLContext(CamelContext context) {
         try {
-            return sslContextParameters.createSSLContext(null);
+            return sslContextParameters.createSSLContext(context);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error initializing SSLContext.", e);
         }
@@ -511,8 +521,8 @@ public class MailConfiguration implements Cloneable {
      * Specifies whether Camel should map the received mail message to Camel body/headers/attachments. If set to true,
      * the body of the mail message is mapped to the body of the Camel IN message, the mail headers are mapped to IN
      * headers, and the attachments to Camel IN attachment message. If this option is set to false then the IN message
-     * contains a raw javax.mail.Message. You can retrieve this raw message by calling
-     * exchange.getIn().getBody(javax.mail.Message.class).
+     * contains a raw jakarta.mail.Message. You can retrieve this raw message by calling
+     * exchange.getIn().getBody(jakarta.mail.Message.class).
      */
     public void setMapMailMessage(boolean mapMailMessage) {
         this.mapMailMessage = mapMailMessage;
@@ -754,7 +764,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Will mark the javax.mail.Message as peeked before processing the mail message. This applies to IMAPMessage
+     * Will mark the jakarta.mail.Message as peeked before processing the mail message. This applies to IMAPMessage
      * messages types only. By using peek the mail will not be eager marked as SEEN on the mail server, which allows us
      * to rollback the mail message if there is an error processing in Camel.
      */
@@ -827,5 +837,48 @@ public class MailConfiguration implements Cloneable {
      */
     public void setDecodeFilename(boolean decodeFilename) {
         this.decodeFilename = decodeFilename;
+    }
+
+    public boolean isFailOnDuplicateFileAttachment() {
+        return failOnDuplicateFileAttachment;
+    }
+
+    /**
+     * Whether to fail processing the mail if the mail message contains attachments with duplicate file names. If set to
+     * false, then the duplicate attachment is skipped and a WARN is logged. If set to true then an exception is thrown
+     * failing to process the mail message.
+     */
+    public void setFailOnDuplicateFileAttachment(boolean failOnDuplicateFileAttachment) {
+        this.failOnDuplicateFileAttachment = failOnDuplicateFileAttachment;
+    }
+
+    public String getGenerateMissingAttachmentNames() {
+        return generateMissingAttachmentNames;
+    }
+
+    /**
+     * Set this to 'uuid' to set a UUID for the filename of the attachment if no filename was set
+     *
+     * @param generateMissingAttachmentNames
+     */
+    public void setGenerateMissingAttachmentNames(String generateMissingAttachmentNames) {
+        this.generateMissingAttachmentNames = generateMissingAttachmentNames;
+    }
+
+    public String getHandleDuplicateAttachmentNames() {
+        return handleDuplicateAttachmentNames;
+    }
+
+    /**
+     * Set the strategy to handle duplicate filenames of attachments never: attachments that have a filename which is
+     * already present in the attachments will be ignored unless failOnDuplicateFileAttachment is set to true.
+     * uuidPrefix: this will prefix the duplicate attachment filenames each with a uuid and underscore
+     * (uuid_filename.fileextension). uuidSuffix: this will suffix the duplicate attachment filenames each with a
+     * underscore and uuid (filename_uuid.fileextension).
+     *
+     * @param handleDuplicateAttachmentNames
+     */
+    public void setHandleDuplicateAttachmentNames(String handleDuplicateAttachmentNames) {
+        this.handleDuplicateAttachmentNames = handleDuplicateAttachmentNames;
     }
 }

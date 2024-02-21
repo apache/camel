@@ -40,11 +40,11 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
     private int latestPullRequestNumber;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:validPullRequest")
                         .process(new MockPullFilesProducerProcessor())
                         .to("github://pullRequestFiles?repoOwner=anotherguy&repoName=somerepo");
@@ -54,7 +54,7 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
     }
 
     @Test
-    public void testPullRequestFilesProducer() throws Exception {
+    public void testPullRequestFilesProducer() {
         PullRequest pullRequest = pullRequestService.addPullRequest("testPullRequestFilesProducer");
         latestPullRequestNumber = pullRequest.getNumber();
 
@@ -75,7 +75,7 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
 
     public class MockPullFilesProducerProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestNumber);

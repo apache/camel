@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
@@ -59,7 +60,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAsyncWithConcurrentThreads() throws Exception {
+    public void testAsyncWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
@@ -79,7 +80,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 requestObserver.onNext(pingRequest);
                 requestObserver.onCompleted();
                 try {
-                    latch.await(5, TimeUnit.SECONDS);
+                    assertTrue(latch.await(5, TimeUnit.SECONDS));
                 } catch (InterruptedException e) {
                     LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
                 }
@@ -99,7 +100,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHeadersWithConcurrentThreads() throws Exception {
+    public void testHeadersWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
@@ -120,7 +121,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 requestObserver.onNext(pingRequest);
                 requestObserver.onCompleted();
                 try {
-                    latch.await(5, TimeUnit.SECONDS);
+                    assertTrue(latch.await(5, TimeUnit.SECONDS));
                 } catch (InterruptedException e) {
                     LOG.debug("Interrupted while waiting for the response", e);
                 }
@@ -140,17 +141,17 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
                 from("grpc://localhost:" + GRPC_HEADERS_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .process(new HeaderExchangeProcessor());
+                        .process(new HeaderExchangeProcessor());
             }
         };
     }
@@ -184,18 +185,18 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         }
     }
 
-    public class GrpcMessageBuilder {
+    static class GrpcMessageBuilder {
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
             return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
                     .setPongId(pingRequests.get(0).getPingId()).build();
         }
     }
 
-    public class HeaderExchangeProcessor implements Processor {
+    static class HeaderExchangeProcessor implements Processor {
 
         @Override
         @SuppressWarnings("unchecked")
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             List<PingRequest> pingRequests = (List<PingRequest>) exchange.getIn().getBody();
             String userAgentName = (String) exchange.getIn().getHeader(GrpcConstants.GRPC_USER_AGENT_HEADER);
 

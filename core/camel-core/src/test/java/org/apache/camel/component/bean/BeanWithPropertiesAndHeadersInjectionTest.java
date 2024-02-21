@@ -91,7 +91,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
         public void myMethod(@ExchangeProperties Map<?, ?> foo, @Headers Map<?, ?> bar) {
             this.foo = foo;
             this.bar = bar;
-            LOG.info("myMethod() method called on " + this);
+            LOG.info("myMethod() method called on {}", this);
         }
     }
 }

@@ -57,16 +57,13 @@ public class BeanReturnCallableReturnNullTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        public Callable doSomething(final Exchange exchange) {
-            return new Callable() {
-                @Override
-                public Object call() throws Exception {
-                    String body = exchange.getIn().getBody(String.class);
-                    exchange.getIn().setHeader("user", "admin");
-                    exchange.getIn().setBody(body + "MyBean");
-                    // return null as we have set changes already
-                    return null;
-                }
+        public Callable<Object> doSomething(final Exchange exchange) {
+            return () -> {
+                String body = exchange.getIn().getBody(String.class);
+                exchange.getIn().setHeader("user", "admin");
+                exchange.getIn().setBody(body + "MyBean");
+                // return null as we have set changes already
+                return null;
             };
         }
     }

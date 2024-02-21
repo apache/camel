@@ -1,24 +1,23 @@
-[[djl-component]]
 = Deep Java Library Component
-:docTitle: Deep Java Library
-:artifactId: camel-djl
+:doctitle: Deep Java Library
+:shortname: djl
+:artifactid: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/djl.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: djl
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The *Deep Java Library* component is used to infer Deep Learning models from message exchanges data.
-This component uses https://djl.ai/[Deep Java Library] as underlying library.
+The *Deep Java Library* component is used to infer deep learning models from message exchanges data.
+This component uses the https://djl.ai/[Deep Java Library] as the underlying library.
 
-In order to use the DJL component, Maven users will need to add the
-following dependency to their `pom.xml`:
-
-*pom.xml*
+To use the DJL component, Maven users will need to add the following dependency to their `pom.xml`:
 
 [source,xml]
 ----
@@ -32,59 +31,21 @@ following dependency to their `pom.xml`:
 
 == URI format
 
-[source,text]
 ----
 djl:application
 ----
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Deep Java Library component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-The DJL component only supports producer endpoints.
-
 // endpoint options: START
-The Deep Java Library endpoint is configured using URI syntax:
 
-----
-djl:application
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *application* | *Required* Application name |  | String
-|===
-
-
-=== Query Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *artifactId* (producer) | Model Artifact |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *model* (producer) | Model |  | String
-| *translator* (producer) | Translator |  | String
-|===
 // endpoint options: END
 
 
@@ -116,7 +77,7 @@ The following table contains supported models in the model zoo:
 
 == DJL Engine implementation
 
-Because DJL is deep learning framework agnostic, you don't have to make a choice between frameworks when creating your projects.
+Because DJL is deep learning framework-agnostic, you don't have to make a choice between frameworks when creating your projects.
 You can switch frameworks at any point.
 To ensure the best performance, DJL also provides automatic CPU/GPU choice based on hardware configuration.
 
@@ -147,7 +108,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/blob/master/mxnet/mxnet-engine/README.md#installation[MxNet engine installation]
+More information about https://docs.djl.ai/engines/mxnet/index.html[MxNet engine installation]
 
 === PyTorch engine
 
@@ -176,7 +137,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/blob/master/pytorch/pytorch-engine/README.md#installation[PyTorch engine installation]
+More information about https://docs.djl.ai/engines/pytorch/index.html[PyTorch engine installation]
 
 === Tensorflow engine
 
@@ -205,7 +166,7 @@ It will automatically determine the appropriate jars for your system based on th
     </dependency>
 ----
 
-More information about https://github.com/awslabs/djl/tree/master/tensorflow#installation[Tensorflow engine installation]
+More information about https://docs.djl.ai/engines/tensorflow/index.html[Tensorflow engine installation]
 
 
 
@@ -229,7 +190,7 @@ from("file:/data/mnist/0/10.png")
 === Custom deep learning model
 [source,java]
 ----
-// create deep learning model
+// create a deep learning model
 Model model = Model.newInstance();
 model.setBlock(new Mlp(28 * 28, 10, new int[]{128, 64}));
 model.load(Paths.get(MODEL_DIR), MODEL_NAME);
@@ -248,3 +209,5 @@ context.getRegistry().bind("MyTranslator", translator);
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
+
+include::spring-boot:partial$starter.adoc[]

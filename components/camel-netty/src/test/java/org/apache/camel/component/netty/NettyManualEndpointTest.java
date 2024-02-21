@@ -23,6 +23,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.Delimiters;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,16 +41,16 @@ public class NettyManualEndpointTest extends BaseNettyTest {
 
         template.sendBody(endpoint, "Hello World\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("netty:tcp://localhost:" + getPort(), endpoint.getEndpointUri());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 NettyConfiguration nettyConfig = new NettyConfiguration();
                 nettyConfig.setProtocol("tcp");
                 nettyConfig.setHost("localhost");

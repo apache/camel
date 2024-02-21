@@ -24,22 +24,24 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "In case of Virtual Threads, the thread pools are not ThreadPoolExecutor")
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteRemoveWireTapTest extends ManagementTestSupport {
 
     @Test
     public void testRemove() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
+        ObjectName on = getCamelObjectName(TYPE_ROUTE, "foo");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:tap").expectedMessageCount(1);

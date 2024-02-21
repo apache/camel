@@ -43,7 +43,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JobDetail job = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
         assertNotNull(job);
@@ -62,7 +62,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("my", new MyComponent());
     }
 

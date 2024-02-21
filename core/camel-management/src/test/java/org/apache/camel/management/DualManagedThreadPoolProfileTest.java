@@ -23,21 +23,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledOnOs(OS.AIX)
 public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
     @Test
     public void testManagedThreadPool() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads1(threads)\"");
+        ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "threads1(threads)");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(5, corePoolSize.intValue());
@@ -57,7 +59,7 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
         String profile = (String) mbeanServer.getAttribute(on, "ThreadPoolProfileId");
         assertEquals("custom", profile);
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads2(threads)\"");
+        on = getCamelObjectName(TYPE_THREAD_POOL, "threads2(threads)");
 
         corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(5, corePoolSize.intValue());
@@ -92,9 +94,9 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").threads().executorServiceRef("custom").to("mock:result");
+                from("direct:start").threads().id("threads1").executorService("custom").to("mock:result");
 
-                from("direct:foo").threads().executorServiceRef("custom").to("mock:foo");
+                from("direct:foo").threads().id("threads2").executorService("custom").to("mock:foo");
             }
         };
     }

@@ -25,8 +25,14 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrenttasks":
-        case "concurrentTasks": target.setConcurrentTasks(property(camelContext, int.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "includemetadata":
+        case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.setPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -38,8 +44,14 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "concurrenttasks":
-        case "concurrentTasks": return int.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
+        case "poolsize":
+        case "poolSize": return int.class;
         default: return null;
         }
     }
@@ -52,8 +64,14 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "concurrenttasks":
-        case "concurrentTasks": return target.getConcurrentTasks();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "includemetadata":
+        case "includeMetadata": return target.isIncludeMetadata();
+        case "poolsize":
+        case "poolSize": return target.getPoolSize();
         default: return null;
         }
     }

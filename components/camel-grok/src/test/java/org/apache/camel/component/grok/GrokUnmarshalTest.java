@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrokUnmarshalTest extends CamelTestSupport {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 bindToRegistry("myCustomPatternBean", new GrokPattern("FOOBAR", "foo|bar"));
                 bindToRegistry("myAnotherCustomPatternBean",
                         new GrokPattern("FOOBAR_WITH_PREFIX_AND_SUFFIX", "-- %{FOOBAR}+ --"));

@@ -26,12 +26,12 @@ import org.apache.camel.component.xmlsecurity.api.DefaultValidationFailedHandler
 public class ValidationFailedHandlerIgnoreManifestFailures extends DefaultValidationFailedHandler {
 
     @Override
-    public void manifestReferenceValidationFailed(Reference ref) throws Exception {
+    public void manifestReferenceValidationFailed(Reference ref) {
         // do nothing
     }
 
     @Override
-    public boolean ignoreCoreValidationFailure() throws Exception {
+    public boolean ignoreCoreValidationFailure() {
         return true;
     }
 }

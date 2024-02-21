@@ -24,6 +24,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogMaskTest {
@@ -32,8 +33,7 @@ public class LogMaskTest {
 
     protected CamelContext createCamelContext() throws Exception {
         registry = new DefaultRegistry();
-        CamelContext context = new DefaultCamelContext(registry);
-        return context;
+        return new DefaultCamelContext(registry);
     }
 
     @Test
@@ -42,9 +42,11 @@ public class LogMaskTest {
         context.setLogMask(true);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
-        template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("log:mask?showProperties=true", "password=passw0rd@", "propertyPassphrase",
-                "#property-passphrase$");
+        assertDoesNotThrow(() -> template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword",
+                "#header-password$"));
+        assertDoesNotThrow(
+                () -> template.sendBodyAndProperty("log:mask?showProperties=true", "password=passw0rd@", "propertyPassphrase",
+                        "#property-passphrase$"));
         context.stop();
     }
 
@@ -54,9 +56,11 @@ public class LogMaskTest {
         context.setLogMask(true);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
-        template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
-        template.sendBodyAndProperty("log:no-mask?showProperties=true&logMask=false", "password=passw0rd@",
-                "propertyPassphrase", "#property-passphrase$");
+        assertDoesNotThrow(() -> template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword",
+                "#header-password$"));
+        assertDoesNotThrow(
+                () -> template.sendBodyAndProperty("log:no-mask?showProperties=true&logMask=false", "password=passw0rd@",
+                        "propertyPassphrase", "#property-passphrase$"));
         context.stop();
     }
 

@@ -66,8 +66,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             // handler can react afterwards
             inherit = true;
         }
-        Processor target = wrapChannel(loadBalancer, definition, inherit);
-        return target;
+        return wrapChannel(loadBalancer, definition, inherit);
     }
 
 }

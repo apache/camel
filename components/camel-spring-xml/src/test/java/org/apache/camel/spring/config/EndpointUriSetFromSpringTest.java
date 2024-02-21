@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.config;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
@@ -36,7 +36,7 @@ public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
     public void testEndpointCreatedWithCorrectUri() throws Exception {
         assertNotNull(endpoint, "foo");
         assertEquals("foo:bar", endpoint.getEndpointUri(), "foo.getEndpointUri()");
-        log.info("Found endpoint " + endpoint + " with URI: " + endpoint.getEndpointUri());
+        log.info("Found endpoint {} with URI: {}", endpoint, endpoint.getEndpointUri());
     }
 
 }

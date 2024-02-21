@@ -17,16 +17,17 @@
 package org.apache.camel.language.joor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JoorTransformTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().joor("'Hello ' + body")
                         .to("mock:result");
@@ -41,7 +42,7 @@ public class JoorTransformTest extends CamelTestSupport {
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

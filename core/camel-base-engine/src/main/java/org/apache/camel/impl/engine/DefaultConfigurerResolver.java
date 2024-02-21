@@ -16,11 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -33,6 +30,31 @@ import org.slf4j.LoggerFactory;
  * <b>META-INF/services/org/apache/camel/configurer/</b>.
  */
 public class DefaultConfigurerResolver implements ConfigurerResolver {
+    /**
+     * This is a special container for the CamelContext because, with Camel 4, we split the CamelContext and the former
+     * ExtendedCamelContext. This holds them in a single configuration, directing the target appropriately
+     */
+    public static class ContextConfigurer implements PropertyConfigurer {
+        private final PropertyConfigurer contextConfigurer;
+        private final PropertyConfigurer extensionConfigurer;
+
+        public ContextConfigurer(PropertyConfigurer contextConfigurer, PropertyConfigurer extensionConfigurer) {
+            this.contextConfigurer = contextConfigurer;
+            this.extensionConfigurer = extensionConfigurer;
+        }
+
+        @Override
+        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            if (target instanceof CamelContext contextTarget) {
+                if (!contextConfigurer.configure(camelContext, contextTarget, name, value, ignoreCase)) {
+                    return extensionConfigurer.configure(camelContext, contextTarget.getCamelContextExtension(), name, value,
+                            ignoreCase);
+                }
+            }
+
+            return false;
+        }
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurerResolver.class);
 
@@ -65,23 +87,35 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         // not in registry then use configurer factory
         Class<?> type;
         try {
-            type = findConfigurer(name, context);
-            if (type == null) {
-                if (name.startsWith("org.apache.camel.") && name.contains("CamelContext")) {
-                    // fallback special for camel context itself as we have an extended configurer
-                    type = findConfigurer(ExtendedCamelContext.class.getName(), context);
+            // fallback special for camel context itself as we have an extended configurer
+            if (name.startsWith("org.apache.camel.") && name.contains("CamelContext") && !name.contains("Extension")) {
+                type = findConfigurer(CamelContext.class.getName(), context);
+
+                if (type != null) {
+                    var extensionType = findConfigurer(ExtendedCamelContext.class.getName(), context);
+
+                    if (extensionType != null) {
+                        return createPropertyConfigurerForContext(name, context, type, extensionType);
+                    }
                 }
+                //
+            } else {
+                type = findConfigurer(name, context);
                 if (type == null) {
-                    // not found
-                    return null;
+
+                    if (type == null) {
+                        return null;
+                    }
                 }
             }
-        } catch (NoFactoryAvailableException e) {
-            return null;
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Configurer registered for scheme: " + name, e);
         }
 
+        return createPropertyConfigurer(name, context, type);
+    }
+
+    private PropertyConfigurer createPropertyConfigurer(String name, CamelContext context, Class<?> type) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
                     name);
@@ -96,9 +130,28 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
     }
 
-    private Class<?> findConfigurer(String name, CamelContext context) throws IOException {
+    private PropertyConfigurer createPropertyConfigurerForContext(
+            String name, CamelContext context, Class<?> type, Class<?> extensionType) {
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
+                    name);
+        }
+
+        var contextConfigurer = (PropertyConfigurer) context.getInjector().newInstance(type, false);
+        var extensionConfigurer = (PropertyConfigurer) context.getInjector().newInstance(extensionType, false);
+
+        // create the component
+        if (PropertyConfigurer.class.isAssignableFrom(type)) {
+            return new ContextConfigurer(contextConfigurer, extensionConfigurer);
+        } else {
+            throw new IllegalArgumentException(
+                    "Type is not a PropertyConfigurer implementation. Found: " + type.getName());
+        }
+    }
+
+    private Class<?> findConfigurer(String name, CamelContext context) {
         if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
+            factoryFinder = context.getCamelContextExtension().getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
     }

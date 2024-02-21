@@ -34,7 +34,7 @@ import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.camel.support.component.ArgumentSubstitutionParser;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.velocity.VelocityContext;
@@ -88,7 +88,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         setCompileSourceRoots();
 
         // load proxy class and get enumeration file to generate
-        final Class proxyType = getProxyType();
+        final Class<?> proxyType = getProxyType();
 
         // parse pattern for excluded endpoint properties
         if (excludeConfigNames != null) {
@@ -99,7 +99,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
 
         // create parser
-        ApiMethodParser parser = createAdapterParser(proxyType);
+        ApiMethodParser<?> parser = createAdapterParser(proxyType);
 
         List<String> signatures = new ArrayList<>();
         Map<String, Map<String, String>> parameters = new HashMap<>();
@@ -125,7 +125,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         parser.setClassLoader(getProjectClassLoader());
 
         // parse signatures
-        @SuppressWarnings("unchecked")
         final List<ApiMethodParser.ApiMethodModel> models = parser.parse();
 
         // generate enumeration from model
@@ -142,9 +141,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected ApiMethodParser createAdapterParser(Class proxyType) {
-        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
+    protected ApiMethodParser<?> createAdapterParser(Class<?> proxyType) {
+        return new ArgumentSubstitutionParser<>(proxyType, getArgumentSubstitutions());
     }
 
     public abstract List<SignatureModel> getSignatureList() throws MojoExecutionException;
@@ -167,14 +165,14 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return context;
     }
 
-    public File getApiMethodFile() throws MojoExecutionException {
+    public File getApiMethodFile() {
         final StringBuilder fileName = new StringBuilder();
         fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getEnumName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
 
-    private String getEnumName() throws MojoExecutionException {
+    private String getEnumName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
@@ -190,18 +188,18 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return context;
     }
 
-    private String getTestFilePath() throws MojoExecutionException {
+    private String getTestFilePath() {
         final StringBuilder fileName = new StringBuilder();
         fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getUnitTestName()).append(".java");
         return fileName.toString();
     }
 
-    private String getUnitTestName() throws MojoExecutionException {
+    private String getUnitTestName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "IntegrationTest";
+               + "IT";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -259,16 +257,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return context;
     }
 
-    private String replaceAlias(String name) {
-        for (ApiMethodAlias alias : aliases) {
-            if (name.matches(alias.getMethodPattern())) {
-                return alias.getMethodAlias();
-            }
-        }
-        return name;
-    }
-
-    private File getConfigurationFile() throws MojoExecutionException {
+    private File getConfigurationFile() {
         final StringBuilder fileName = new StringBuilder();
         // endpoint configuration goes in component package
         fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
@@ -276,7 +265,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return new File(generatedSrcDir, fileName.toString());
     }
 
-    private String getConfigName() throws MojoExecutionException {
+    private String getConfigName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
@@ -321,18 +310,28 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getAliases() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         if (!aliases.isEmpty()) {
             StringJoiner sj = new StringJoiner(", ");
             aliases.forEach(a -> sj.add("\"" + a.getMethodPattern() + "=" + a.getMethodAlias() + "\""));
-            sb.append(sj.toString());
+            sb.append(sj);
         }
         sb.append("}");
         return sb.toString();
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static String getApiMethodsForParam(List<ApiMethodParser.ApiMethodModel> models, ApiMethodArg argument) {
         StringBuilder sb = new StringBuilder();
 
@@ -377,6 +376,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return "{" + answer + "}";
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static String getTestName(ApiMethodParser.ApiMethodModel model) {
         final StringBuilder builder = new StringBuilder();
         final String name = model.getMethod().getName();
@@ -390,15 +394,30 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return builder.toString();
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static boolean isVoidType(Class<?> resultType) {
         return resultType == Void.TYPE;
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getExchangePropertyPrefix() {
         // exchange property prefix
         return "Camel" + componentName + ".";
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static String getResultDeclaration(Class<?> resultType) {
         if (resultType.isPrimitive()) {
             return ClassUtils.primitiveToWrapper(resultType).getSimpleName();
@@ -419,10 +438,20 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         PRIMITIVE_VALUES.put(Double.TYPE, "0.0d");
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public boolean hasDoc(ApiMethodArg argument) {
         return argument.getDescription() != null && !argument.getDescription().isEmpty();
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getDoc(ApiMethodArg argument) {
         if (argument.getDescription() == null || argument.getDescription().isEmpty()) {
             return "";
@@ -430,6 +459,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return argument.getDescription();
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getApiName(String apiName) {
         if (apiName == null || apiName.isEmpty()) {
             return "DEFAULT";
@@ -437,6 +471,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return apiName;
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getApiDescription(String apiDescription) {
         if (apiDescription == null) {
             return "";
@@ -444,6 +483,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return apiDescription;
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public boolean isOptionalParameter(ApiMethodArg argument) {
         String name = argument.getName();
         if (nullableOptions != null) {
@@ -456,6 +500,28 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return false;
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
+    public String getCanonicalName(ApiMethodArg argument) {
+        // replace primitives with wrapper classes (as that makes them option and avoid boolean because false by default)
+        final Class<?> type = argument.getType();
+        if (type.isPrimitive()) {
+            return getCanonicalName(ClassUtils.primitiveToWrapper(type));
+        }
+        String fqn = argument.getRawTypeArgs();
+        // the type may use $ for classloader, so replace it back with dot
+        fqn = fqn.replace('$', '.');
+        return fqn;
+    }
+
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public String getApiMethods(List<ApiMethodParser.ApiMethodModel> models) {
         models.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
@@ -478,7 +544,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                     sb.append(", signatures={");
                     StringJoiner sj = new StringJoiner(", ");
                     signatures.forEach(s -> sj.add("\"" + s + "\""));
-                    sb.append(sj.toString());
+                    sb.append(sj);
                     sb.append("}");
                 }
                 sb.append(")");
@@ -503,6 +569,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return list;
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static String getDefaultArgValue(Class<?> aClass) {
         if (aClass.isPrimitive()) {
             // lookup default primitive value string
@@ -513,24 +584,16 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
     }
 
+    /*
+     * This is used when configuring the plugin instead of directly, which is why it reports as unused
+     * without the annotation
+     */
+    @SuppressWarnings("unused")
     public static String getBeanPropertySuffix(String parameter) {
         // capitalize first character
         StringBuilder builder = new StringBuilder();
         builder.append(Character.toUpperCase(parameter.charAt(0)));
         builder.append(parameter, 1, parameter.length());
         return builder.toString();
-    }
-
-    public String getCanonicalName(ApiMethodArg argument) throws MojoExecutionException {
-        // replace primitives with wrapper classes (as that makes them option and avoid boolean because false by default)
-        final Class<?> type = argument.getType();
-        if (type.isPrimitive()) {
-            return getCanonicalName(ClassUtils.primitiveToWrapper(type));
-        }
-
-        String fqn = argument.getRawTypeArgs();
-        // the type may use $ for classloader, so replace it back with dot
-        fqn = fqn.replace('$', '.');
-        return fqn;
     }
 }

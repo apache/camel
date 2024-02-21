@@ -112,7 +112,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     // Make a defensive byte copy (the buffer will be reused)
     // and omit the start and the two end bytes of the MLLP message
     // returning a byte array
-    private Object parseMessageToByteArray(IoBuffer buf) throws CharacterCodingException {
+    private Object parseMessageToByteArray(IoBuffer buf) {
         int len = buf.limit() - 3;
         LOG.debug("Making byte array of length {}", len);
         byte[] dst = new byte[len];

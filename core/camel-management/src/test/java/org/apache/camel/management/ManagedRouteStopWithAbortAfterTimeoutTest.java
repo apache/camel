@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.time.Duration;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -24,21 +25,20 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.WINDOWS, OS.AIX })
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        // JMX tests dont work well on AIX or windows CI servers (hangs them)
-        if (isPlatform("aix") || isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
 
@@ -76,11 +76,6 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        // JMX tests dont work well on AIX or windows CI servers (hangs them)
-        if (isPlatform("aix") || isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
         MBeanServer mbeanServer = getMBeanServer();
@@ -112,9 +107,9 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
             template.sendBody("seda:start", "message-" + i);
         }
 
-        Thread.sleep(1000);
-
-        assertTrue(mockEP.getExchanges().size() <= 5, "Should not have received more than 5 messages");
+        Awaitility.await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(
+                        () -> assertTrue(mockEP.getExchanges().size() <= 5, "Should not have received more than 5 messages"));
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

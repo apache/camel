@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UriConfigurationTest {
 
     private CamelContext context = new DefaultCamelContext();
-    private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
+    private CamelTwitterITSupport support = new CamelTwitterITSupport();
 
     @Test
-    public void testBasicAuthentication() throws Exception {
+    public void testBasicAuthentication() {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
@@ -45,7 +45,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testPageSetting() throws Exception {
+    public void testPageSetting() {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2&" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
@@ -55,7 +55,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testHttpProxySetting() throws Exception {
+    public void testHttpProxySetting() {
         Endpoint endpoint = context.getEndpoint(
                 "twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd&"
                                                 + support.getUriTokens());
@@ -69,20 +69,20 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testDirectMessageEndpoint() throws Exception {
+    public void testDirectMessageEndpoint() {
         Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo?" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterDirectMessageEndpoint,
                 "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
     }
 
     @Test
-    public void testSearchEndpoint() throws Exception {
+    public void testSearchEndpoint() {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
     }
 
     @Test
-    public void testTimelineEndpoint() throws Exception {
+    public void testTimelineEndpoint() {
         // set on component level instead
         AbstractTwitterComponent twitter = context.getComponent("twitter-timeline", AbstractTwitterComponent.class);
         twitter.setAccessToken(support.accessToken);
@@ -98,13 +98,14 @@ public class UriConfigurationTest {
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.MENTIONS, timelineEndpoint.getTimelineType());
-        endpoint = context.getEndpoint("twitter-timeline:retweetsofme");
-        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
-        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
-        assertEquals(TimelineType.RETWEETSOFME, timelineEndpoint.getTimelineType());
         endpoint = context.getEndpoint("twitter-timeline:user");
         assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
         timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
         assertEquals(TimelineType.USER, timelineEndpoint.getTimelineType());
+
+        endpoint = context.getEndpoint("twitter-timeline:list");
+        assertTrue(endpoint instanceof TwitterTimelineEndpoint, "Endpoint not a TwitterTimelineEndpoint: " + endpoint);
+        timelineEndpoint = (TwitterTimelineEndpoint) endpoint;
+        assertEquals(TimelineType.LIST, timelineEndpoint.getTimelineType());
     }
 }

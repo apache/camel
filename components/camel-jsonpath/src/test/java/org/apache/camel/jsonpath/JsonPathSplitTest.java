@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JsonPathSplitTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .split().jsonpath("$.store.book[*]")
                         .to("mock:authors")
@@ -57,12 +57,12 @@ public class JsonPathSplitTest extends CamelTestSupport {
 
     @Test
     public void testSplit() throws Exception {
-        getMockEndpoint("mock:authors").expectedMessageCount(2);
+        getMockEndpoint("mock:authors").expectedMessageCount(3);
 
         String out = template.requestBody("direct:start", new File("src/test/resources/books.json"), String.class);
         assertNotNull(out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Map row = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(Map.class);
         assertEquals("Nigel Rees", row.get("author"));
@@ -75,7 +75,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
         // should preserve quotes etc
         assertTrue(out.contains("\"author\": \"Nigel Rees\""));
         assertTrue(out.contains("\"price\": 8.95"));
-        assertTrue(out.contains("\"title\": \"Sword of Honour\""));
+        assertTrue(out.contains("\"title\": \"Sword's of Honour\""));
         assertTrue(out.contains("\"price\": 12.99,"));
     }
 

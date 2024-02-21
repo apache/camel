@@ -39,10 +39,22 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * This implementation is based on the usage pattern, that a top level DefaultFluentProducerTemplate instance is created
+ * as singleton and provided to the Camel end user (such as injected into a POJO).
+ * <p>
+ * The top level instance is then cloned once per message that is being built using the fluent method calls and then
+ * reset when the message has been sent.
+ * <p>
+ * Each cloned instance is not thread-safe as its assumed that its a single thread that calls the fluent method to build
+ * up the message to be sent.
+ */
 public class DefaultFluentProducerTemplate extends ServiceSupport implements FluentProducerTemplate {
 
-    // transient state of endpoint, headers and body which needs to be thread local scoped to be thread-safe
+    // transient state of endpoint, headers, exchange properties, variables, and body which needs to be thread local scoped to be thread-safe
     private Map<String, Object> headers;
+    private Map<String, Object> exchangeProperties;
+    private Map<String, Object> variables;
     private Object body;
     private Supplier<Exchange> exchangeSupplier;
     private Supplier<Processor> processorSupplier;
@@ -53,16 +65,16 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
     private boolean eventNotifierEnabled;
-    private volatile DefaultFluentProducerTemplate parent;
     private volatile Endpoint endpoint;
     private volatile String endpointUri;
     private volatile ProducerTemplate template;
     private volatile boolean cloned;
+    private volatile boolean useDefaultEndpoint = true;
 
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
         this.eventNotifierEnabled = true;
-        this.resultProcessors = new ClassValue<Processor>() {
+        this.resultProcessors = new ClassValue<>() {
             @Override
             protected Processor computeValue(Class<?> type) {
                 return new ConvertBodyProcessor(type);
@@ -70,11 +82,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         };
     }
 
-    private DefaultFluentProducerTemplate(DefaultFluentProducerTemplate parent, CamelContext context,
+    private DefaultFluentProducerTemplate(CamelContext context,
                                           ClassValue<Processor> resultProcessors,
                                           Endpoint defaultEndpoint, int maximumCacheSize, boolean eventNotifierEnabled,
                                           ProducerTemplate template, Endpoint endpoint, String endpointUri) {
-        this.parent = parent;
         this.context = context;
         this.resultProcessors = resultProcessors;
         this.defaultEndpoint = defaultEndpoint;
@@ -87,9 +98,8 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     private DefaultFluentProducerTemplate newClone() {
-        this.cloned = true;
         return new DefaultFluentProducerTemplate(
-                this, context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
+                context, resultProcessors, defaultEndpoint, maximumCacheSize, eventNotifierEnabled, template, endpoint,
                 endpointUri);
     }
 
@@ -166,16 +176,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     @Override
-    public FluentProducerTemplate clearAll() {
-        clearBody();
-        clearHeaders();
-
-        return this;
-    }
-
-    @Override
     public FluentProducerTemplate withHeaders(Map<String, Object> headers) {
         DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withHeaders and withProcessor with FluentProducerTemplate");
+        }
 
         Map<String, Object> map = clone.headers;
         if (map == null) {
@@ -190,6 +196,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withHeader(String key, Object value) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withHeader and withProcessor with FluentProducerTemplate");
+        }
+
         Map<String, Object> map = clone.headers;
         if (map == null) {
             map = new LinkedHashMap<>();
@@ -200,12 +210,72 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     @Override
-    public FluentProducerTemplate clearHeaders() {
+    public FluentProducerTemplate withExchangeProperties(Map<String, Object> properties) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
-        if (clone.headers != null) {
-            clone.headers.clear();
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException(
+                    "Cannot use both withExchangeProperties and withProcessor with FluentProducerTemplate");
         }
+
+        Map<String, Object> map = clone.exchangeProperties;
+        if (map == null) {
+            map = new LinkedHashMap<>();
+            clone.exchangeProperties = map;
+        }
+        map.putAll(properties);
+        return clone;
+    }
+
+    @Override
+    public FluentProducerTemplate withExchangeProperty(String key, Object value) {
+        DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException(
+                    "Cannot use both withExchangeProperty and withProcessor with FluentProducerTemplate");
+        }
+
+        Map<String, Object> map = clone.exchangeProperties;
+        if (map == null) {
+            map = new LinkedHashMap<>();
+            clone.exchangeProperties = map;
+        }
+        map.put(key, value);
+        return clone;
+    }
+
+    @Override
+    public FluentProducerTemplate withVariables(Map<String, Object> variables) {
+        DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withVariables and withProcessor with FluentProducerTemplate");
+        }
+
+        Map<String, Object> map = clone.variables;
+        if (map == null) {
+            map = new LinkedHashMap<>();
+            clone.variables = map;
+        }
+        map.putAll(variables);
+        return clone;
+    }
+
+    @Override
+    public FluentProducerTemplate withVariable(String key, Object value) {
+        DefaultFluentProducerTemplate clone = checkCloned();
+
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withVariable and withProcessor with FluentProducerTemplate");
+        }
+
+        Map<String, Object> map = clone.variables;
+        if (map == null) {
+            map = new LinkedHashMap<>();
+            clone.variables = map;
+        }
+        map.put(key, value);
         return clone;
     }
 
@@ -213,6 +283,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withBody(Object body) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
         clone.body = body;
         return clone;
     }
@@ -221,18 +294,13 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withBodyAs(Object body, Class<?> type) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
-        Object b = type != null
+        if (clone.processorSupplier != null) {
+            throw new IllegalArgumentException("Cannot use both withBodyAs and withProcessor with FluentProducerTemplate");
+        }
+
+        clone.body = type != null
                 ? clone.context.getTypeConverter().convertTo(type, body)
                 : body;
-        clone.body = b;
-        return clone;
-    }
-
-    @Override
-    public FluentProducerTemplate clearBody() {
-        DefaultFluentProducerTemplate clone = checkCloned();
-
-        clone.body = null;
         return clone;
     }
 
@@ -302,6 +370,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate withProcessor(final Supplier<Processor> processorSupplier) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        if (clone.body != null) {
+            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+        }
         clone.processorSupplier = processorSupplier;
         return clone;
     }
@@ -310,28 +381,17 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public FluentProducerTemplate to(String endpointUri) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
-        // optimize if we send to the same endpoint as before
-        if (clone.endpoint != null && clone.endpointUri != null && clone.endpointUri.equals(endpointUri)) {
-            return clone;
-        } else {
-            // store state of this endpoint so we can potentially reuse it again if sending to same endpoint next time
-            clone.endpointUri = endpointUri;
-            clone.endpoint = context.getEndpoint(endpointUri);
-            if (this.parent != null) {
-                this.parent.endpointUri = endpointUri;
-                this.parent.endpoint = clone.endpoint;
-            } else {
-                this.endpointUri = endpointUri;
-                this.endpoint = clone.endpoint;
-            }
-            return clone;
-        }
+        clone.useDefaultEndpoint = false;
+        clone.endpointUri = endpointUri;
+        clone.endpoint = context.getEndpoint(endpointUri);
+        return clone;
     }
 
     @Override
     public FluentProducerTemplate to(Endpoint endpoint) {
         DefaultFluentProducerTemplate clone = checkCloned();
 
+        clone.useDefaultEndpoint = false;
         clone.endpoint = endpoint;
         return clone;
     }
@@ -362,9 +422,6 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         Processor processor = clone.processorSupplier != null ? clone.processorSupplier.get() : null;
         final Processor processorSupplier = processor != null ? processor : clone.defaultProcessor();
 
-        // reset cloned flag so when we use it again it has to set values again
-        cloned = false;
-
         T result;
         if (type == Exchange.class) {
             result = (T) clone.template().request(target, processorSupplier);
@@ -383,6 +440,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
                     ExchangeHelper.extractResultBody(exchange, exchange.getPattern()));
         }
 
+        // reset cloned flag so when we use it again it has to set values again
+        cloned = false;
+        useDefaultEndpoint = true;
+
         return result;
     }
 
@@ -398,24 +459,27 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         // Determine the target endpoint
         final Endpoint target = clone.target();
 
-        // reset cloned flag so when we use it again it has to set values again
-        cloned = false;
-
-        Future<T> result;
-        if (ObjectHelper.isNotEmpty(clone.headers)) {
+        Future<T> result = clone.template().asyncSend(target, exchange -> {
             // Make a copy of the headers and body so that async processing won't
             // be invalidated by subsequent reuse of the template
-            final Map<String, Object> headersCopy = new HashMap<>(clone.headers);
-            final Object bodyCopy = clone.body;
+            Object bodyCopy = clone.body;
 
-            result = clone.template().asyncRequestBodyAndHeaders(target, bodyCopy, headersCopy, type);
-        } else {
-            // Make a copy of the and body so that async processing won't be
-            // invalidated by subsequent reuse of the template
-            final Object bodyCopy = clone.body;
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getMessage().setBody(bodyCopy);
+            if (clone.headers != null) {
+                exchange.getMessage().setHeaders(new HashMap<>(clone.headers));
+            }
+            if (clone.exchangeProperties != null) {
+                exchange.getProperties().putAll(clone.exchangeProperties);
+            }
+            if (clone.variables != null) {
+                clone.variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
+            }
+        }).thenApply(answer -> answer.getMessage().getBody(type));
 
-            result = clone.template().asyncRequestBody(target, bodyCopy, type);
-        }
+        // reset cloned flag so when we use it again it has to set values again
+        cloned = false;
+        useDefaultEndpoint = true;
 
         return result;
     }
@@ -431,17 +495,21 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         // Determine the target endpoint
         final Endpoint target = clone.target();
 
-        // reset cloned flag so when we use it again it has to set values again
-        cloned = false;
-
+        Exchange result;
         Exchange exchange = clone.exchangeSupplier != null ? clone.exchangeSupplier.get() : null;
         if (exchange != null) {
-            return clone.template().send(target, exchange);
+            result = clone.template().send(target, exchange);
         } else {
             Processor proc = clone.processorSupplier != null ? clone.processorSupplier.get() : null;
             final Processor processor = proc != null ? proc : clone.defaultProcessor();
-            return clone.template().send(target, processor);
+            result = clone.template().send(target, processor);
         }
+
+        // reset cloned flag so when we use it again it has to set values again
+        cloned = false;
+        useDefaultEndpoint = true;
+
+        return result;
     }
 
     @Override
@@ -451,17 +519,21 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         // Determine the target endpoint
         final Endpoint target = clone.target();
 
-        // reset cloned flag so when we use it again it has to set values again
-        cloned = false;
-
+        Future<Exchange> result;
         Exchange exchange = clone.exchangeSupplier != null ? clone.exchangeSupplier.get() : null;
         if (exchange != null) {
-            return clone.template().asyncSend(target, exchange);
+            result = clone.template().asyncSend(target, exchange);
         } else {
             Processor proc = clone.processorSupplier != null ? clone.processorSupplier.get() : null;
             final Processor processor = proc != null ? proc : clone.defaultAsyncProcessor();
-            return clone.template().asyncSend(target, processor);
+            result = clone.template().asyncSend(target, processor);
         }
+
+        // reset cloned flag so when we use it again it has to set values again
+        cloned = false;
+        useDefaultEndpoint = true;
+
+        return result;
     }
 
     // ************************
@@ -471,10 +543,61 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     /**
      * Create the FluentProducerTemplate by setting the camel context
      *
-     * @param context the camel context
+     * @param  context the camel context
+     * @return         a new created instance of the fluent producer template
      */
     public static FluentProducerTemplate on(CamelContext context) {
         DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
+        // we create a new private instance so mark it as cloned
+        fluent.cloned = true;
+        fluent.start();
+        return fluent;
+    }
+
+    /**
+     * Create the FluentProducerTemplate by setting the camel context and default endpoint
+     *
+     * @param  context  the camel context
+     * @param  endpoint the default endpoint
+     * @return          a new created instance of the fluent producer template
+     */
+    public static FluentProducerTemplate on(CamelContext context, Endpoint endpoint) {
+        DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
+        fluent.withDefaultEndpoint(endpoint);
+        // we create a new private instance so mark it as cloned
+        fluent.cloned = true;
+        fluent.start();
+        return fluent;
+    }
+
+    /**
+     * Create the FluentProducerTemplate by setting the camel context and default endpoint
+     *
+     * @param  context  the camel context
+     * @param  resolver the default endpoint
+     * @return          a new created instance of the fluent producer template
+     */
+    public static FluentProducerTemplate on(CamelContext context, EndpointProducerResolver resolver) {
+        DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
+        fluent.withDefaultEndpoint(resolver);
+        // we create a new private instance so mark it as cloned
+        fluent.cloned = true;
+        fluent.start();
+        return fluent;
+    }
+
+    /**
+     * Create the FluentProducerTemplate by setting the camel context and default endpoint
+     *
+     * @param  context  the camel context
+     * @param  endpoint the default endpoint
+     * @return          a new created instance of the fluent producer template
+     */
+    public static FluentProducerTemplate on(CamelContext context, String endpoint) {
+        DefaultFluentProducerTemplate fluent = new DefaultFluentProducerTemplate(context);
+        fluent.withDefaultEndpoint(endpoint);
+        // we create a new private instance so mark it as cloned
+        fluent.cloned = true;
         fluent.start();
         return fluent;
     }
@@ -485,23 +608,46 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     private Processor defaultProcessor() {
         return exchange -> {
-            ObjectHelper.ifNotEmpty(headers, exchange.getIn().getHeaders()::putAll);
-            ObjectHelper.ifNotEmpty(body, exchange.getIn()::setBody);
+            if (headers != null) {
+                exchange.getIn().getHeaders().putAll(headers);
+            }
+            if (exchangeProperties != null) {
+                exchange.getProperties().putAll(exchangeProperties);
+            }
+            if (body != null) {
+                exchange.getIn().setBody(body);
+            }
+            if (variables != null) {
+                variables.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
+            }
         };
     }
 
     private Processor defaultAsyncProcessor() {
         final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
+        final Map<String, Object> propertiesCopy
+                = ObjectHelper.isNotEmpty(this.exchangeProperties) ? new HashMap<>(this.exchangeProperties) : null;
+        final Map<String, Object> variablesCopy
+                = ObjectHelper.isNotEmpty(this.variables) ? new HashMap<>(this.variables) : null;
         final Object bodyCopy = this.body;
-
         return exchange -> {
-            ObjectHelper.ifNotEmpty(headersCopy, exchange.getIn().getHeaders()::putAll);
-            ObjectHelper.ifNotEmpty(bodyCopy, exchange.getIn()::setBody);
+            if (headersCopy != null) {
+                exchange.getIn().getHeaders().putAll(headersCopy);
+            }
+            if (propertiesCopy != null) {
+                exchange.getProperties().putAll(propertiesCopy);
+            }
+            if (bodyCopy != null) {
+                exchange.getIn().setBody(bodyCopy);
+            }
+            if (variablesCopy != null) {
+                variablesCopy.forEach((k, v) -> ExchangeHelper.setVariable(exchange, k, v));
+            }
         };
     }
 
     private Endpoint target() {
-        if (endpoint != null) {
+        if (!useDefaultEndpoint && endpoint != null) {
             return endpoint;
         }
         if (defaultEndpoint != null) {
@@ -537,8 +683,6 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     protected void doStop() throws Exception {
-        clearAll();
-        this.parent = null;
         this.endpoint = null;
         this.endpointUri = null;
         this.exchangeSupplier = null;

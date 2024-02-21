@@ -1,12 +1,14 @@
-[[grpc-component]]
 = gRPC Component
-:docTitle: gRPC
-:artifactId: camel-grpc
+:doctitle: gRPC
+:shortname: grpc
+:artifactid: camel-grpc
 :description: Expose gRPC endpoints and access external gRPC endpoints.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grpc.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grpc
 
 *Since Camel {since}*
 
@@ -29,106 +31,37 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-gRCP requires strong own of the Google Guava version. It's necessary to
-add following configuration property to the maven file
-
-[source,xml]
-------------------------------------------------------------
-<properties>
-    <google-guava-version>${grpc-guava-version}</google-guava-version>
-<properties>
-------------------------------------------------------------
-
 == URI format
 
-[source,java]
 -------------------------------------
-grpc://service[?options]
+grpc:host:port/service[?options]
 -------------------------------------
 
-== Endpoint Options
+
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The gRPC component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-The gRPC endpoint is configured using URI syntax:
 
-----
-grpc:host:port/service
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (3 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *host* | *Required* The gRPC server host name. This is localhost or 0.0.0.0 when being a consumer or remote server host name when using producer. |  | String
-| *port* | *Required* The gRPC local or remote server port |  | int
-| *service* | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
-|===
-
-
-=== Query Parameters (28 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *autoDiscoverClientInterceptors* (common) | Setting the autoDiscoverClientInterceptors mechanism, if true, the component will look for a ClientInterceptor instance in the registry automatically otherwise it will skip that checking. | true | boolean
-| *flowControlWindow* (common) | The HTTP/2 flow control window size (MiB) | 1048576 | int
-| *maxMessageSize* (common) | The maximum message size allowed to be received/sent (MiB) | 4194304 | int
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerStrategy* (consumer) | This option specifies the top-level strategy for processing service requests and responses in streaming mode. If an aggregation strategy is selected, all requests will be accumulated in the list, then transferred to the flow, and the accumulated responses will be sent to the sender. If a propagation strategy is selected, request is sent to the stream, and the response will be immediately sent back to the sender. There are 2 enums and the value can be one of: AGGREGATION, PROPAGATION | PROPAGATION | GrpcConsumerStrategy
-| *forwardOnCompleted* (consumer) | Determines if onCompleted events should be pushed to the Camel route. | false | boolean
-| *forwardOnError* (consumer) | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body. | false | boolean
-| *maxConcurrentCallsPer{zwsp}Connection* (consumer) | The maximum number of concurrent calls permitted for each incoming server connection | 2147483647 | int
-| *routeControlledStreamObserver* (consumer) | Lets the route to take control over stream observer. If this value is set to true, then the response observer of gRPC call will be set with the name GrpcConstants.GRPC_RESPONSE_OBSERVER in the Exchange object. Please note that the stream observer's onNext(), onError(), onCompleted() methods should be called in the route. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *method* (producer) | gRPC method name |  | String
-| *producerStrategy* (producer) | The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream'). There are 2 enums and the value can be one of: SIMPLE, STREAMING | SIMPLE | GrpcProducerStrategy
-| *streamRepliesTo* (producer) | When using STREAMING client mode, it indicates the endpoint where responses should be forwarded. |  | String
-| *userAgent* (producer) | The user agent header passed to the server |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
-| *authenticationType* (security) | Authentication method type in advance to the SSL/TLS negotiation. There are 3 enums and the value can be one of: NONE, GOOGLE, JWT | NONE | GrpcAuthType
-| *jwtAlgorithm* (security) | JSON Web Token sign algorithm. There are 3 enums and the value can be one of: HMAC256, HMAC384, HMAC512 | HMAC256 | JwtAlgorithm
-| *jwtIssuer* (security) | JSON Web Token issuer |  | String
-| *jwtSecret* (security) | JSON Web Token secret |  | String
-| *jwtSubject* (security) | JSON Web Token subject |  | String
-| *keyCertChainResource* (security) | The X.509 certificate chain file resource in PEM format link |  | String
-| *keyPassword* (security) | The PKCS#8 private key file password |  | String
-| *keyResource* (security) | The PKCS#8 private key file resource in PEM format link |  | String
-| *negotiationType* (security) | Identifies the security negotiation type used for HTTP/2 communication. There are 3 enums and the value can be one of: TLS, PLAINTEXT_UPGRADE, PLAINTEXT | PLAINTEXT | NegotiationType
-| *serviceAccountResource* (security) | Service Account key file in JSON format resource link supported by the Google Cloud SDK |  | String
-| *trustCertCollectionResource* (security) | The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate |  | String
-|===
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Transport security and authentication support
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
 * *SSL/TLS:* gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server, and to encrypt all the data exchanged between the client and the server. Optional mechanisms are available for clients to provide certificates for mutual authentication.
-* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general this mechanism must be used as well as SSL/TLS on the channel.
+* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel.
 
-To enable these features the following component properties combinations must be configured:
+To enable these features, the following component properties combinations must be configured:
 
 [width="100%",cols="10%,20%,25%,15%,30%",options="header",]
 |=======================================================================
@@ -148,15 +81,10 @@ To enable these features the following component properties combinations must be
 |||jwtIssuer||Optional
 |||jwtSubject||Optional
 |=======================================================================
-TLS with OpenSSL is currently the recommended approach for using gRPC over TLS component.
-Using the JDK for ALPN is generally much slower and may not support the necessary ciphers for HTTP2. This function is not implemented in the component.
-
-There might be a need to install additional libraries according to the Operating System of choice.
-For more information consult https://github.com/grpc/grpc-java/blob/master/SECURITY.md[the Security page of gRPC].
 
 == gRPC producer resource type mapping
 
-The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
+The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
 
 [width="100%",cols="15%,15%,15%,25%,25%",options="header",]
 |=======================================================================
@@ -174,17 +102,92 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-== gRPC consumer headers (will be installed after the consumer invocation)
+== gRPC Proxy
 
-[width="100%",cols="25%,50,25%",options="header",]
-|=======================================================================
-|Header name |Description|Possible values
+It is not possible to create a universal proxy-route for all methods, so you need to divide your gRPC service into several services by method's type: unary, server streaming, client streaming and bidirectional streaming.
 
-|*CamelGrpcMethodName*|Method name handled by the consumer service|
-|*CamelGrpcEventType*|Received event type from the sent request|onNext, onCompleted or onError
-|*CamelGrpcUserAgent*|If provided, the given agent will prepend the gRPC library's user agent information|
+=== Unary
 
-|=======================================================================
+For unary requests, it is enough to write the following code:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong"
+)
+    .toD("grpc://remotehost:1101" +
+        "/org.apache.camel.component.grpc.PingPong" +
+        "?method=${header.CamelGrpcMethodName}"
+    )
+----
+
+=== Server streaming
+
+Server streaming may be done by the same approach as unary, but in that configuration Camel route will wait stream for completion and will aggregate all responses to a list before sending that data as response stream.
+If this behavior is unacceptable, you need to apply a number of options:
+
+1. Set `routeControlledStreamObserver=true` for consumer. Later it will be used to publish responses;
+2. Set `streamRepliesTo` option for producer to handle streaming nature of responses;
+3. Set forwarding of `onError` and `onCompleted` for producer;
+4. Set `inheritExchangePropertiesForReplies=true` to inherit `StreamObserver` obtained on the first step;
+5. Create another route to process streamed data. That route must contain gRPC-producer step with the only parameter `toRouteControlledStreamObserver=true` which will publish incoming exchanges as response stream elements.
+
+Example:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong" +
+    "?routeControlledStreamObserver=true"
+)
+    .toD("grpc://remotehost:1101" +
+            "/org.apache.camel.component.grpc.PingPong" +
+            "?method=${header.CamelGrpcMethodName}" +
+            "&streamRepliesTo=direct:next" +
+            "&forwardOnError=true" +
+            "&forwardOnCompleted=true" +
+            "&inheritExchangePropertiesForReplies=true"
+    );
+
+from("direct:next")
+        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+----
+
+=== Client streaming and bidirectional streaming
+
+Both client streaming and bidirectional streaming gRPC methods expose `StreamObserver` as responses' handler.
+Therefore, you need the same technique as described in the server streaming section (all 5 steps).
+
+But there is another thing: requests also come in streaming mode. So you need the following:
+
+1. Set consumer strategy to DELEGATION -- that differs from the default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
+2. Forward `onError` and `onCompletion` on consumer;
+3. Set producer strategy to STREAMING.
+
+Example:
+
+[source,java]
+----
+from("grpc://localhost:1101" +
+    "/org.apache.camel.component.grpc.PingPong" +
+    "?routeControlledStreamObserver=true" +
+    "&consumerStrategy=DELEGATION" +
+    "&forwardOnError=true" +
+    "&forwardOnCompleted=true"
+)
+    .toD("grpc://remotehost:1101" +
+            "/org.apache.camel.component.grpc.PingPong" +
+            "?method=${header.CamelGrpcMethodName}" +
+            "&producerStrategy=STREAMING" +
+            "&streamRepliesTo=direct:next" +
+            "&forwardOnError=true" +
+            "&forwardOnCompleted=true" +
+            "&inheritExchangePropertiesForReplies=true"
+    );
+
+from("direct:next")
+        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+----
 
 == Examples
 
@@ -231,7 +234,7 @@ from("direct:grpc-response-stream")
 .log("Response received: ${body}");
 -------------------------------------------------------------------------------
 
-gRPC service consumer TLS/SLL security negotiation enable
+gRPC service consumer TLS/SSL security negotiation enabled
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -239,7 +242,7 @@ from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStr
 .to("direct:tls-enable")
 -------------------------------------------------------------------------------
 
-gRPC service producer with custom JSON Web Token implementation authentication
+gRPC service producer with custom JSON Web Token (JWT) implementation authentication
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -249,29 +252,30 @@ from("direct:grpc-jwt")
 
 == Configuration
 
-It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
+It is recommended to use the `protobuf-maven-plugin`, which calls the Protocol Buffer Compiler (protoc) to generate Java source files from .proto (protocol buffer definition) files. This plugin will generate procedure request and response classes, their builders and gRPC procedures stubs classes as well.
 
-Following steps are required:
+The following steps are required:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
   <extension>
     <groupId>kr.motd.maven</groupId>
     <artifactId>os-maven-plugin</artifactId>
-    <version>1.4.1.Final</version>
+    <version>1.7.1</version>
   </extension>
 </extensions>
 -------------------------------------------------------------------------
 
-Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project pom.xml
+Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** tag of the project pom.xml
+
 [source,xml]
 -------------------------------------------------------------------------
 <plugin>
   <groupId>org.xolstice.maven.plugins</groupId>
   <artifactId>protobuf-maven-plugin</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.1</version>
   <configuration>
     <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
     <pluginId>grpc-java</pluginId>
@@ -290,11 +294,13 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
 </plugin>
 -------------------------------------------------------------------------
 
-== For more information, see these resources
+== More information
 
-http://www.grpc.io/[gRPC project site]
+See these resources:
 
-https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
+- https://www.grpc.io/[gRPC project site]
+- https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
 
-include::camel-spring-boot::page$grpc-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

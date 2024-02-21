@@ -82,7 +82,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
             // let the ID be friendly for URL and file systems
             this.seed = generateSanitizedId(this.seed);
-            this.length = seed.length() + ("" + Long.MAX_VALUE).length();
+            this.length = seed.length() + (Long.toString(Long.MAX_VALUE)).length();
         }
     }
 
@@ -92,7 +92,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
 
     /**
      * As we have to find the hostname as a side-affect of generating a unique stub, we allow it's easy retrieval here
-     * 
+     *
      * @return the local host name
      */
     public static String getHostName() {
@@ -131,7 +131,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
 
     /**
      * Generate a unique ID - that is friendly for a URL or file system
-     * 
+     *
      * @return a unique id
      */
     public String generateSanitizedId() {

@@ -22,12 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregationRepositoryRecoverExistingTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
@@ -55,7 +58,7 @@ public class LevelDBAggregationRepositoryRecoverExistingTest extends LevelDBTest
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
         Exchange actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        assertNull(actual);
 
         // Remove it, which makes it in the pre confirm stage
         repo.remove(context, "foo", exchange1);

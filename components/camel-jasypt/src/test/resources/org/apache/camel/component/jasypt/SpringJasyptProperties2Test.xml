@@ -36,6 +36,7 @@
         <!-- define the camel properties placeholder, and let it leverage jasypt -->
         <propertyPlaceholder id="properties"
                              location="classpath:org/apache/camel/component/jasypt/myproperties.properties"
+                             nestedPlaceholder="true"
                              propertiesParserRef="jasypt"/>
         <route>
             <from uri="direct:start"/>

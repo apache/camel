@@ -19,15 +19,14 @@ package org.apache.camel.model;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Supplier;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
@@ -50,30 +49,40 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
-        implements ExecutorServiceAwareDefinition<AggregateDefinition> {
+        implements ExecutorServiceAwareDefinition<AggregateDefinition>,
+        AggregationStrategyAwareDefinition<AggregateDefinition> {
+
+    @XmlTransient
+    private ExpressionDefinition expression;
+    @XmlTransient
+    private AggregationStrategy aggregationStrategyBean;
+    @XmlTransient
+    private AggregationRepository aggregationRepositoryBean;
+    @XmlTransient
+    private AggregateController aggregateControllerBean;
+    @XmlTransient
+    private ExecutorService executorServiceBean;
+    @XmlTransient
+    private ScheduledExecutorService timeoutCheckerExecutorServiceBean;
+    @XmlTransient
+    private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
+
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeoutExpression")
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionTimeoutExpression;
     @XmlElement(name = "completionSizeExpression")
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlElement(name = "optimisticLockRetryPolicy")
+    @Metadata(label = "advanced")
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
-    @XmlTransient
-    private ExpressionDefinition expression;
-    @XmlTransient
-    private AggregationStrategy aggregationStrategy;
-    @XmlTransient
-    private ExecutorService executorService;
-    @XmlTransient
-    private ScheduledExecutorService timeoutCheckerExecutorService;
-    @XmlTransient
-    private AggregationRepository aggregationRepository;
-    @XmlTransient
-    private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
@@ -81,18 +90,26 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @Metadata(javaType = "java.lang.Boolean")
     private String optimisticLocking;
     @XmlAttribute
-    private String executorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String executorService;
     @XmlAttribute
-    private String timeoutCheckerExecutorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
+    private String timeoutCheckerExecutorService;
     @XmlAttribute
-    private String aggregationRepositoryRef;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")
+    private String aggregateController;
     @XmlAttribute
-    private String strategyRef;
+    @Metadata(javaType = "org.apache.camel.spi.AggregationRepository")
+    private String aggregationRepository;
+    @XmlAttribute(required = true)
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    private String aggregationStrategy;
     @XmlAttribute
-    private String strategyMethodName;
+    @Metadata(label = "advanced")
+    private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String strategyMethodAllowNull;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String completionSize;
@@ -103,39 +120,35 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @Metadata(javaType = "java.time.Duration")
     private String completionTimeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
-    private String completionTimeoutCheckerInterval = "1s";
+    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
+    private String completionTimeoutCheckerInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionFromBatchConsumer;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionOnNewCorrelationGroup;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String eagerCheckCompletion;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidCorrelationKeys;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String closeCorrelationKeyOnCompletion;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnCompletionTimeout;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnAggregationFailure;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String forceCompletionOnStop;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completeAllOnStop;
-    @XmlTransient
-    private AggregateController aggregateController;
-    @XmlAttribute
-    private String aggregateControllerRef;
 
     public AggregateDefinition() {
     }
@@ -158,7 +171,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this(correlationExpression);
-        this.aggregationStrategy = aggregationStrategy;
+        this.aggregationStrategyBean = aggregationStrategy;
     }
 
     @Override
@@ -207,84 +220,108 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         }
     }
 
-    public AggregationStrategy getAggregationStrategy() {
+    @Override
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
+
+    public AggregationRepository getAggregationRepositoryBean() {
+        return aggregationRepositoryBean;
+    }
+
+    @Override
+    public String getAggregationStrategyRef() {
         return aggregationStrategy;
+    }
+
+    public AggregateController getAggregateControllerBean() {
+        return aggregateControllerBean;
+    }
+
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
+    public ScheduledExecutorService getTimeoutCheckerExecutorServiceBean() {
+        return timeoutCheckerExecutorServiceBean;
+    }
+
+    public String getAggregationRepository() {
+        return aggregationRepository;
+    }
+
+    public void setAggregationRepository(AggregationRepository aggregationRepository) {
+        this.aggregationRepositoryBean = aggregationRepository;
+    }
+
+    /**
+     * The AggregationRepository to use.
+     * <p/>
+     * Sets the custom aggregate repository to use. Will by default use
+     * org.apache.camel.processor.aggregate.MemoryAggregationRepository
+     */
+    public void setAggregationRepository(String aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
     }
 
     /**
      * The AggregationStrategy to use.
+     * <p/>
+     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
      * <p/>
      * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
      * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
      * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
+    }
+
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    /**
+     * The AggregationStrategy to use.
+     * <p/>
+     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
+     * <p/>
+     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
+     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
+     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     */
+    public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public String getAggregationStrategyRef() {
-        return strategyRef;
-    }
-
-    /**
-     * A reference to lookup the AggregationStrategy in the Registry.
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
-    public void setAggregationStrategyRef(String aggregationStrategyRef) {
-        this.strategyRef = aggregationStrategyRef;
-    }
-
-    public String getStrategyRef() {
-        return strategyRef;
-    }
-
-    /**
-     * A reference to lookup the AggregationStrategy in the Registry.
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
-    public void setStrategyRef(String strategyRef) {
-        this.strategyRef = strategyRef;
-    }
-
     public String getAggregationStrategyMethodName() {
-        return strategyMethodName;
+        return aggregationStrategyMethodName;
     }
 
     /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
      */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
+        this.aggregationStrategyMethodName = strategyMethodName;
     }
 
-    public String getStrategyMethodAllowNull() {
-        return strategyMethodAllowNull;
-    }
-
-    public String getStrategyMethodName() {
-        return strategyMethodName;
-    }
-
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
-    public void setStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
+    public String getAggregationStrategyMethodAllowNull() {
+        return aggregationStrategyMethodAllowNull;
     }
 
     /**
      * If this option is false then the aggregate method is not used for the very first aggregation. If this option is
-     * true then null values is used as the oldExchange (at the very first aggregation), when using POJOs as the
+     * true then null values is used as the oldExchange (at the very first aggregation), when using beans as the
      * AggregationStrategy.
      */
-    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
-        this.strategyMethodAllowNull = strategyMethodAllowNull;
+    public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
+        this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
     /**
@@ -410,16 +447,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public String getOptimisticLocking() {
         return optimisticLocking;
     }
@@ -436,14 +463,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.parallelProcessing = parallelProcessing;
     }
 
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
+    public String getExecutorService() {
+        return executorService;
     }
 
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 
     public String getEagerCheckCompletion() {
@@ -470,22 +495,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
-    public AggregationRepository getAggregationRepository() {
-        return aggregationRepository;
-    }
-
-    public void setAggregationRepository(AggregationRepository aggregationRepository) {
-        this.aggregationRepository = aggregationRepository;
-    }
-
-    public String getAggregationRepositoryRef() {
-        return aggregationRepositoryRef;
-    }
-
-    public void setAggregationRepositoryRef(String aggregationRepositoryRef) {
-        this.aggregationRepositoryRef = aggregationRepositoryRef;
-    }
-
     public String getDiscardOnCompletionTimeout() {
         return discardOnCompletionTimeout;
     }
@@ -502,20 +511,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
-    public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
-        this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
-    }
-
-    public ScheduledExecutorService getTimeoutCheckerExecutorService() {
+    public String getTimeoutCheckerExecutorService() {
         return timeoutCheckerExecutorService;
     }
 
-    public void setTimeoutCheckerExecutorServiceRef(String timeoutCheckerExecutorServiceRef) {
-        this.timeoutCheckerExecutorServiceRef = timeoutCheckerExecutorServiceRef;
-    }
-
-    public String getTimeoutCheckerExecutorServiceRef() {
-        return timeoutCheckerExecutorServiceRef;
+    public void setTimeoutCheckerExecutorService(String timeoutCheckerExecutorService) {
+        this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
     }
 
     public String getForceCompletionOnStop() {
@@ -534,24 +535,20 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.completeAllOnStop = completeAllOnStop;
     }
 
-    public AggregateController getAggregateController() {
+    public String getAggregateController() {
         return aggregateController;
-    }
-
-    public void setAggregateController(AggregateController aggregateController) {
-        this.aggregateController = aggregateController;
-    }
-
-    public String getAggregateControllerRef() {
-        return aggregateControllerRef;
     }
 
     /**
      * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
      * this aggregator.
      */
-    public void setAggregateControllerRef(String aggregateControllerRef) {
-        this.aggregateControllerRef = aggregateControllerRef;
+    public void setAggregateController(String aggregateController) {
+        this.aggregateController = aggregateController;
+    }
+
+    public void setAggregateController(AggregateController aggregateController) {
+        this.aggregateControllerBean = aggregateController;
     }
 
     // Fluent API
@@ -789,30 +786,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      */
     public AggregationStrategyClause<AggregateDefinition> aggregationStrategy() {
         AggregationStrategyClause<AggregateDefinition> clause = new AggregationStrategyClause<>(this);
-        setAggregationStrategy(clause);
+        this.aggregationStrategyBean = clause;
         return clause;
-    }
-
-    /**
-     * Sets the AggregationStrategy to use with a fluent builder.
-     *
-     * @deprecated use {@link #aggregationStrategy()}
-     */
-    @Deprecated
-    public AggregationStrategyClause<AggregateDefinition> strategy() {
-        return aggregationStrategy();
-    }
-
-    /**
-     * Sets the aggregate strategy to use
-     *
-     * @param      aggregationStrategy the aggregate strategy to use
-     * @return                         the builder
-     * @deprecated                     use {@link #aggregationStrategy(AggregationStrategy)}
-     */
-    @Deprecated
-    public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
-        return aggregationStrategy(aggregationStrategy);
     }
 
     /**
@@ -821,35 +796,25 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @param  aggregationStrategy the aggregate strategy to use
      * @return                     the builder
      */
+    @Override
     public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
+        return this;
+    }
+
+    /**
+     * Sets the aggregate strategy to use
+     *
+     * @param  aggregationStrategy reference to the strategy to lookup in the registry
+     * @return                     the builder
+     */
+    public AggregateDefinition aggregationStrategy(String aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
 
     /**
-     * Sets the aggregate strategy to use
-     *
-     * @param  aggregationStrategy the aggregate strategy to use
-     * @return                     the builder
-     */
-    public AggregateDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
-        return this;
-    }
-
-    /**
-     * Sets the aggregate strategy to use
-     *
-     * @param  aggregationStrategyRef reference to the strategy to lookup in the registry
-     * @return                        the builder
-     */
-    public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setAggregationStrategyRef(aggregationStrategyRef);
-        return this;
-    }
-
-    /**
-     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     * Sets the method name to use when using a bean as {@link AggregationStrategy}.
      *
      * @param  methodName the method name to call
      * @return            the builder
@@ -860,12 +825,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
-     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     * Sets allowing null when using a bean as {@link AggregationStrategy}.
      *
      * @return the builder
      */
     public AggregateDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(Boolean.toString(true));
+        setAggregationStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -878,7 +843,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @return                       the builder
      */
     public AggregateDefinition aggregationRepository(AggregationRepository aggregationRepository) {
-        setAggregationRepository(aggregationRepository);
+        this.aggregationRepositoryBean = aggregationRepository;
         return this;
     }
 
@@ -887,24 +852,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * <p/>
      * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
-     * @param  aggregationRepository the aggregate repository to use
+     * @param  aggregationRepository reference to the repository to lookup in the registry
      * @return                       the builder
      */
-    public AggregateDefinition aggregationRepository(Supplier<AggregationRepository> aggregationRepository) {
-        setAggregationRepository(aggregationRepository.get());
-        return this;
-    }
-
-    /**
-     * Sets the custom aggregate repository to use.
-     * <p/>
-     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
-     *
-     * @param  aggregationRepositoryRef reference to the repository to lookup in the registry
-     * @return                          the builder
-     */
-    public AggregateDefinition aggregationRepositoryRef(String aggregationRepositoryRef) {
-        setAggregationRepositoryRef(aggregationRepositoryRef);
+    public AggregateDefinition aggregationRepository(String aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
         return this;
     }
 
@@ -1016,7 +968,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      */
     @Override
     public AggregateDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -1025,8 +977,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
      */
     @Override
-    public AggregateDefinition executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public AggregateDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -1036,7 +988,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * pool to be used rather than creating a new thread for every aggregator.
      */
     public AggregateDefinition timeoutCheckerExecutorService(ScheduledExecutorService executorService) {
-        setTimeoutCheckerExecutorService(executorService);
+        this.timeoutCheckerExecutorServiceBean = executorService;
         return this;
     }
 
@@ -1045,18 +997,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * thread is created to check for the completion for every aggregator. Set this option to provide a custom thread
      * pool to be used rather than creating a new thread for every aggregator.
      */
-    public AggregateDefinition timeoutCheckerExecutorService(Supplier<ScheduledExecutorService> executorService) {
-        setTimeoutCheckerExecutorService(executorService.get());
-        return this;
-    }
-
-    /**
-     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a background
-     * thread is created to check for the completion for every aggregator. Set this option to provide a custom thread
-     * pool to be used rather than creating a new thread for every aggregator.
-     */
-    public AggregateDefinition timeoutCheckerExecutorServiceRef(String executorServiceRef) {
-        setTimeoutCheckerExecutorServiceRef(executorServiceRef);
+    public AggregateDefinition timeoutCheckerExecutorService(String executorServiceRef) {
+        setTimeoutCheckerExecutorService(executorServiceRef);
         return this;
     }
 
@@ -1065,7 +1007,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * this aggregator.
      */
     public AggregateDefinition aggregateController(AggregateController aggregateController) {
-        setAggregateController(aggregateController);
+        this.aggregateControllerBean = aggregateController;
         return this;
     }
 
@@ -1073,8 +1015,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
      * this aggregator.
      */
-    public AggregateDefinition aggregateController(Supplier<AggregateController> aggregateController) {
-        setAggregateController(aggregateController.get());
+    public AggregateDefinition aggregateController(String aggregateController) {
+        setAggregateController(aggregateController);
         return this;
     }
 
@@ -1110,6 +1052,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);
     }

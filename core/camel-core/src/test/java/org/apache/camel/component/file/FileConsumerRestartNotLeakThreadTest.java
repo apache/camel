@@ -19,26 +19,20 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/leak");
-        super.setUp();
-    }
 
     @Test
     public void testLeak() throws Exception {
         int before = Thread.activeCount();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        template.sendBodyAndHeader("file:target/data/leak", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < 50; i++) {
@@ -49,7 +43,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         resetMocks();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        template.sendBodyAndHeader("file:target/data/leak", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
         assertMockEndpointsSatisfied();
 
         int active = Thread.activeCount() - before;
@@ -63,7 +57,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/leak").routeId("foo").to("mock:foo");
+                from(fileUri()).routeId("foo").to("mock:foo");
             }
         };
     }

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -72,9 +73,11 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         template2.sendBodyAndHeader("direct:start", "B", "id", 123);
         template2.sendBodyAndHeader("direct:start", "C", "id", 123);
 
-        // should complete before timeout
-        mock2.assertIsSatisfied(500);
-        mock.assertIsSatisfied(500);
+        Awaitility.await().untilAsserted(() -> {
+            // should complete before timeout
+            mock2.assertIsSatisfied(500);
+            mock.assertIsSatisfied(500);
+        });
 
         // should have not invoked the timeout method anymore
         assertEquals(1, invoked.get());

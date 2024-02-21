@@ -21,7 +21,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -46,7 +46,7 @@ public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSup
     }
 
     @Test
-    public void unmarshalParserErrorHandler() throws Throwable {
+    public void unmarshalParserErrorHandler() {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
             fail("Expected a DataFormatException");

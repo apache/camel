@@ -46,7 +46,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "headername":
         case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "httpclient":
-        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.http.impl.client.CloseableHttpClient.class, value)); return true;
+        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.hc.client5.http.impl.classic.CloseableHttpClient.class, value)); return true;
         case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -118,7 +118,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "headername":
         case "headerName": return java.lang.String.class;
         case "httpclient":
-        case "httpClient": return org.apache.http.impl.client.CloseableHttpClient.class;
+        case "httpClient": return org.apache.hc.client5.http.impl.classic.CloseableHttpClient.class;
         case "ids": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;

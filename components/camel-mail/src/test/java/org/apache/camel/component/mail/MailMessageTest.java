@@ -19,11 +19,11 @@ package org.apache.camel.component.mail;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -32,7 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;

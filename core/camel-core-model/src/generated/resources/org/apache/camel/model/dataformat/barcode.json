@@ -8,14 +8,15 @@
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.BarcodeDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "width": { "kind": "attribute", "displayName": "Width", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Width of the barcode" },
-    "height": { "kind": "attribute", "displayName": "Height", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Height of the barcode" },
-    "imageType": { "kind": "attribute", "displayName": "Image Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Image type of the barcode such as png" },
-    "barcodeFormat": { "kind": "attribute", "displayName": "Barcode Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Barcode format such as QR-Code" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "barcodeFormat": { "index": 1, "kind": "attribute", "displayName": "Barcode Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Barcode format such as QR-Code" },
+    "imageType": { "index": 2, "kind": "attribute", "displayName": "Image Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Image type of the barcode such as png" },
+    "width": { "index": 3, "kind": "attribute", "displayName": "Width", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Width of the barcode" },
+    "height": { "index": 4, "kind": "attribute", "displayName": "Height", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Height of the barcode" }
   }
 }

@@ -16,34 +16,43 @@
  */
 package org.apache.camel.component.jms.tuning;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Disabled
-public class PerformanceRouteTest extends CamelTestSupport {
+public class PerformanceRouteTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(PerformanceRouteTest.class);
-
-    private int size = 200;
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testPerformance() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
+        assumeTrue(canRunOnThisPlatform(), "Test is not intended for this platform");
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
+        int size = 200;
         getMockEndpoint("mock:audit").expectedMessageCount(size);
         getMockEndpoint("mock:audit").expectsNoDuplicates().body();
 
@@ -62,10 +71,10 @@ public class PerformanceRouteTest extends CamelTestSupport {
             template.sendBodyAndHeader("activemq:queue:inbox", "Message " + i, "type", type);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        long delta = System.currentTimeMillis() - start;
-        LOG.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        long duration = watch.taken();
+        LOG.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, duration);
     }
 
     private boolean canRunOnThisPlatform() {
@@ -75,20 +84,15 @@ public class PerformanceRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:inbox?concurrentConsumers=10")
                         .to("activemq:topic:audit")
                         .choice()
@@ -112,5 +116,17 @@ public class PerformanceRouteTest extends CamelTestSupport {
                 from("activemq:topic:audit").to("mock:audit");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

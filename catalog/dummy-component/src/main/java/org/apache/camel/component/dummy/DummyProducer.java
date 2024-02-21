@@ -36,7 +36,7 @@ public class DummyProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         total += amount;
 
         exchange.getIn().setBody("total " + total + " of " + drink.name().toLowerCase() + " ordered"

@@ -16,18 +16,37 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.support.service.BaseService;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SmppUtils {
-
     /**
      * See http://unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
@@ -58,6 +77,7 @@ public final class SmppUtils {
             { 60, 91 }, { 61, 126 }, { 62, 93 }, { 64, 124 }, { 101, 164 }
     };
 
+    private static final Logger LOG = LoggerFactory.getLogger(SmppUtils.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
 
     private SmppUtils() {
@@ -113,13 +133,31 @@ public final class SmppUtils {
         }
     }
 
+    /**
+     * Returns the payload of a deliverSm
+     *
+     * @param  deliverSm
+     * @return           the shortMessage, by first looking in the shortMessage field of the deliver_sm and if its null
+     *                   or empty, fallbacks to the optional parameter "MESSAGE_PAYLOAD".
+     */
+    public static byte[] getMessageBody(DeliverSm deliverSm) {
+        byte[] body = deliverSm.getShortMessage();
+        if (body == null || body.length == 0) {
+            OptionalParameter param = deliverSm.getOptionalParameter(Tag.MESSAGE_PAYLOAD);
+            if (param instanceof OctetString) {
+                body = ((OctetString) param).getValue();
+            }
+        }
+        return body;
+    }
+
     public static boolean is8Bit(Alphabet alphabet) {
         return alphabet == Alphabet.ALPHA_UNSPECIFIED_2 || alphabet == Alphabet.ALPHA_8_BIT;
     }
 
     /**
      * Decides if the characters in the argument are GSM 3.38 encodeable.
-     * 
+     *
      * @param  aMessage must be a set of characters encoded in ISO-8859-1 or a compatible character set. In particular,
      *                  UTF-8 encoded text should not be passed to this method.
      * @return          true if the characters can be represented in GSM 3.38
@@ -262,5 +300,76 @@ public final class SmppUtils {
             dest.setUdhiAndReplyPath();
         }
         return dest;
+    }
+
+    public static boolean isServiceStopping(BaseService service) {
+        return service.isStopping() || service.isStopped();
+    }
+
+    public static boolean isSessionClosed(SMPPSession session) {
+        return session == null || session.getSessionState().equals(SessionState.CLOSED);
+    }
+
+    public static ScheduledExecutorService createExecutor(BaseService service, Endpoint endpoint, String taskName) {
+        if (endpoint.getCamelContext() != null && endpoint.getCamelContext().getExecutorServiceManager() != null) {
+            ExecutorServiceManager manager = endpoint.getCamelContext().getExecutorServiceManager();
+            return manager.newSingleThreadScheduledExecutor(service, taskName);
+        } else {
+            LOG.warn("Not using the Camel scheduled thread executor");
+            return Executors.newSingleThreadScheduledExecutor();
+        }
+    }
+
+    public static BlockingTask newReconnectTask(
+            ScheduledExecutorService service, String taskName, long initialReconnectDelay,
+            long reconnectDelay, int maxReconnect) {
+        return Tasks.backgroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInitialDelay(Duration.ofMillis(initialReconnectDelay))
+                        .withMaxIterations(maxReconnect)
+                        .withUnlimitedDuration()
+                        .withInterval(Duration.ofMillis(reconnectDelay))
+                        .build())
+                .withScheduledExecutor(service)
+                .withName(taskName)
+                .build();
+    }
+
+    public static void shutdownReconnectService(ScheduledExecutorService service) throws InterruptedException {
+        service.shutdown();
+        if (!service.awaitTermination(1, TimeUnit.SECONDS)) {
+            LOG.warn("The reconnect service did not finish executing within the timeout");
+
+            service.shutdownNow();
+        }
+    }
+
+    /**
+     * This method would try to decode the bytes provided a dataCoding.
+     *
+     * Supports: US_ASCII, ISO_8859_1, UTF_16_BE alphabet values
+     *
+     * @param  body                         Body of the message in bytes
+     * @param  dataCoding                   The data coding value
+     * @param  defaultEncoding              The default encoding
+     * @return                              null if body is null or 8bit encoded, or the decoded body on success
+     * @throws UnsupportedEncodingException when the default encoding is unsupported
+     */
+    public static String decodeBody(byte[] body, byte dataCoding, String defaultEncoding)
+            throws UnsupportedEncodingException {
+        Alphabet alphabet = Alphabet.parseDataCoding(dataCoding);
+        if (body == null || SmppUtils.is8Bit(alphabet)) {
+            return null;
+        }
+        switch (alphabet) {
+            case ALPHA_IA5:
+                return new String(body, StandardCharsets.US_ASCII);
+            case ALPHA_LATIN1:
+                return new String(body, StandardCharsets.ISO_8859_1);
+            case ALPHA_UCS2:
+                return new String(body, StandardCharsets.UTF_16BE);
+            default:
+                return new String(body, defaultEncoding);
+        }
     }
 }

@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "protobuf-x-struct",
+    "title": "Protobuf X Struct",
+    "description": "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.jackson.protobuf.transform.ProtobufStructDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jackson-protobuf",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

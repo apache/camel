@@ -29,6 +29,7 @@ public class XJComponent extends XsltSaxonComponent {
     public XJComponent() {
     }
 
+    @Override
     protected XJEndpoint createXsltEndpoint(String uri) {
         return new XJEndpoint(uri, this);
     }

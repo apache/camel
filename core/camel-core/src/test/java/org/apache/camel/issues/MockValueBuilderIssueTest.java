@@ -21,8 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MockValueBuilderIssueTest extends ContextTestSupport {
 
@@ -38,20 +38,18 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMockValueBuilderFail() throws Exception {
+    public void testMockValueBuilderFail() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).exchangeProperty("foo").convertTo(String.class).contains("4");
 
         template.sendBody("direct:start", "Hello World");
 
-        try {
-            assertMockEndpointsSatisfied();
-            fail("Should fail");
-        } catch (Throwable e) {
-            String s = "Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4 evaluated as: 123 contains 4";
-            assertTrue(e.getMessage().startsWith(s));
-        }
+        Throwable e = assertThrows(Throwable.class, this::assertMockEndpointsSatisfied,
+                "Should fail");
+
+        String s = "Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4 evaluated as: 123 contains 4";
+        assertTrue(e.getMessage().startsWith(s));
     }
 
     @Test

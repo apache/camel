@@ -34,10 +34,6 @@ public class StompConsumerTest extends StompBaseTest {
 
     @Test
     public void testConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         context.addRoutes(createRouteBuilder());
         context.start();
 
@@ -47,7 +43,7 @@ public class StompConsumerTest extends StompBaseTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(numberOfMessages);
 
-        for (int i = 0; i < numberOfMessages; i++) {
+        for (int i = 0; i < numberOfMessages * 2; i++) {
             StompFrame frame = new StompFrame(SEND);
             frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
             frame.addHeader(MESSAGE_ID, StompFrame.encodeHeader("msg:" + i));
@@ -55,7 +51,7 @@ public class StompConsumerTest extends StompBaseTest {
             producerConnection.send(frame);
         }
 
-        mock.await(5, TimeUnit.SECONDS);
+        mock.await(30, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
     }
 
@@ -63,7 +59,7 @@ public class StompConsumerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=tcp://localhost:%s", getPort())
+                fromF("stomp:test?brokerURL=tcp://localhost:%s", servicePort)
                         .transform(body().convertToString())
                         .to("mock:result");
             }

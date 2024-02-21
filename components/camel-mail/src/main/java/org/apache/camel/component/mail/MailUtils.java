@@ -19,9 +19,9 @@ package org.apache.camel.component.mail;
 import java.text.DateFormat;
 import java.util.Date;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -134,7 +134,7 @@ public final class MailUtils {
 
             return sb.toString();
         } catch (MessagingException e) {
-            // ignore the error and just return tostring 
+            // ignore the error and just return tostring
             return message.toString();
         }
     }

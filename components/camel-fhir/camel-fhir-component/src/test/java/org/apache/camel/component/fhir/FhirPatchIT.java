@@ -26,11 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirPatchApiMethod;
-import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirPatchIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirPatchIT.class);
@@ -48,7 +51,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     private static final String PATCH = "[ { \"op\":\"replace\", \"path\":\"/active\", \"value\":true } ]";
 
     @Test
-    public void testPatchById() throws Exception {
+    public void testPatchById() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -63,7 +66,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testPatchByStringId() throws Exception {
+    public void testPatchByStringId() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -77,7 +80,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testPatchByStringIdPreferResponseTypes() throws Exception {
+    public void testPatchByStringIdPreferResponseTypes() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -96,7 +99,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
 
     @Test
     @Disabled(value = "https://github.com/jamesagnew/hapi-fhir/issues/955")
-    public void testPatchByUrl() throws Exception {
+    public void testPatchByUrl() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -108,12 +111,12 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_URL", null, headers);
 
         assertNotNull(result, "patchByUrl result");
-        LOG.debug("patchByUrl: " + result);
+        LOG.debug("patchByUrl: {}", result);
         assertActive(result);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for patchById
@@ -133,7 +136,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     private void assertActive(MethodOutcome result) {
-        LOG.debug("result: " + result);
+        LOG.debug("result: {}", result);
         IIdType id = result.getId();
 
         Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();

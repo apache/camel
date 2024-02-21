@@ -1,0 +1,22 @@
+:tablespec: width="100%",cols="2a,1m,1m,6a",options="header"
+:cellformats: 'util.boldLink(path[2], "language_option", value.group) \
+|util.valueAsString(value.defaultValue) \
+|util.pascalCase(value.type) \
+|util.description(value)'
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]']
+
+ifeval::[{optioncount} == 0]
+The {doctitle} language has no options.
+endif::[]
+ifeval::[{optioncount} != 0]
+The {doctitle} language supports {optioncount} options, which are listed below.
+
+
+[{tablespec}]
+|===
+| Name | Default | Java Type | Description
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="attribute" && @.displayName!="Id")]',{cellformats},{requires}]
+endif::[]
+

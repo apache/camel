@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "health",
+    "title": "Health",
+    "description": "Camel Health Support",
+    "deprecated": false,
+    "firstVersion": "3.4.0",
+    "label": "core,monitoring",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-health",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

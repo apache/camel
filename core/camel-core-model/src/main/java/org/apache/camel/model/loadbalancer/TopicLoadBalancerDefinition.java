@@ -16,17 +16,17 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
+ * Topic which sends to all destinations.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "topic")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {

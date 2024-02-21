@@ -30,6 +30,8 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
         case "outputheader":
         case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "templateoptions":
+        case "templateOptions": target.setTemplateOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": target.setUseMessageBodyForTemplate(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -48,6 +50,8 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": return boolean.class;
         case "outputheader":
         case "outputHeader": return java.lang.String.class;
+        case "templateoptions":
+        case "templateOptions": return java.util.Map.class;
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": return boolean.class;
         default: return null;
@@ -67,8 +71,19 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": return target.isNoop();
         case "outputheader":
         case "outputHeader": return target.getOutputHeader();
+        case "templateoptions":
+        case "templateOptions": return target.getTemplateOptions();
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": return target.isUseMessageBodyForTemplate();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "templateoptions":
+        case "templateOptions": return java.lang.Object.class;
         default: return null;
         }
     }

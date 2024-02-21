@@ -41,7 +41,7 @@ public class HL7RouteTest extends HL7TestSupport {
     MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addCodec() throws Exception {
+    public HL7MLLPCodec addCodec() {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
@@ -70,7 +70,7 @@ public class HL7RouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class HL7RouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123", lines[0]);
         assertEquals("PID|||123||Doe^John", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -112,13 +112,13 @@ public class HL7RouteTest extends HL7TestSupport {
 
         template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)

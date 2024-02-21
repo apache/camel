@@ -19,9 +19,10 @@ package org.apache.camel.component.fhir;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirSearchApiMethod;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,17 +33,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirSearchIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirSearchIT.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
 
     @Test
-    public void testSearchByUrl() throws Exception {
+    public void testSearchByUrl() {
         String url = "Patient?given=Vincent&family=Freeman&_format=json";
         Bundle result = requestBody("direct://SEARCH_BY_URL", url);
 
-        LOG.debug("searchByUrl: " + result);
+        LOG.debug("searchByUrl: {}", result);
         assertNotNull(result, "searchByUrl result");
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);
@@ -50,7 +53,7 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl

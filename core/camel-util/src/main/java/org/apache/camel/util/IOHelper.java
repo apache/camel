@@ -41,7 +41,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,8 @@ public final class IOHelper {
     public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+
+    public static final long INITIAL_OFFSET = 0;
 
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
 
@@ -116,11 +121,22 @@ public final class IOHelper {
     }
 
     public static String toString(Reader reader) throws IOException {
-        return toString(buffered(reader));
+        return toString(reader, INITIAL_OFFSET);
+    }
+
+    public static String toString(Reader reader, long offset) throws IOException {
+        return toString(buffered(reader), offset);
     }
 
     public static String toString(BufferedReader reader) throws IOException {
+        return toString(reader, INITIAL_OFFSET);
+    }
+
+    public static String toString(BufferedReader reader, long offset) throws IOException {
         StringBuilder sb = new StringBuilder(1024);
+
+        reader.skip(offset);
+
         char[] buf = new char[1024];
         try {
             int len;
@@ -260,7 +276,7 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
+                log.warn("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
             } else {
                 log.warn("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
             }
@@ -286,7 +302,7 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot sync FileDescriptor: " + name + ". Reason: " + e.getMessage(), e);
+                log.warn("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
             } else {
                 log.warn("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
             }
@@ -315,7 +331,7 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot flush Writer: " + name + ". Reason: " + e.getMessage(), e);
+                    log.warn("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
                     log.warn("Cannot flush Writer. Reason: {}", e.getMessage(), e);
                 }
@@ -343,7 +359,7 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
+                    log.warn("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
                     log.warn("Cannot close. Reason: {}", e.getMessage(), e);
                 }
@@ -460,6 +476,69 @@ public final class IOHelper {
     }
 
     /**
+     * Loads the entire stream into memory as a String and returns the given line number.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadTextLine(InputStream in, int lineNumber) throws IOException {
+        int i = 0;
+        InputStreamReader isr = new InputStreamReader(in);
+        try {
+            BufferedReader reader = buffered(isr);
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    i++;
+                    if (i >= lineNumber) {
+                        return line;
+                    }
+                } else {
+                    break;
+                }
+            }
+        } finally {
+            close(isr, in);
+        }
+
+        return null;
+    }
+
+    /**
+     * Appends the text to the file.
+     */
+    public static void appendText(String text, File file) throws IOException {
+        doWriteText(text, file, true);
+    }
+
+    /**
+     * Writes the text to the file.
+     */
+    public static void writeText(String text, File file) throws IOException {
+        doWriteText(text, file, false);
+    }
+
+    private static void doWriteText(String text, File file, boolean append) throws IOException {
+        if (!file.exists()) {
+            String path = FileUtil.onlyPath(file.getPath());
+            if (path != null) {
+                new File(path).mkdirs();
+            }
+        }
+        writeText(text, new FileOutputStream(file, append));
+    }
+
+    /**
+     * Writes the text to the stream.
+     */
+    public static void writeText(String text, OutputStream os) throws IOException {
+        try {
+            os.write(text.getBytes());
+        } finally {
+            close(os);
+        }
+    }
+
+    /**
      * Get the charset name from the content type string
      *
      * @param  contentType the content type
@@ -551,7 +630,7 @@ public final class IOHelper {
         private final Charset defaultStreamCharset;
 
         private ByteBuffer bufferBytes;
-        private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+        private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
 
         public EncodingInputStream(File file, String charset) throws IOException {
             this.file = file;
@@ -599,8 +678,16 @@ public final class IOHelper {
          * @param in      file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset) throws FileNotFoundException,
-                                                                      UnsupportedEncodingException {
+        public EncodingFileReader(FileInputStream in, String charset) throws UnsupportedEncodingException {
+            super(in, charset);
+            this.in = in;
+        }
+
+        /**
+         * @param in      file to read
+         * @param charset character set to use
+         */
+        public EncodingFileReader(FileInputStream in, Charset charset) {
             super(in, charset);
             this.in = in;
         }
@@ -626,8 +713,16 @@ public final class IOHelper {
          * @param out     file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset) throws FileNotFoundException,
-                                                                        UnsupportedEncodingException {
+        public EncodingFileWriter(FileOutputStream out, String charset) throws UnsupportedEncodingException {
+            super(out, charset);
+            this.out = out;
+        }
+
+        /**
+         * @param out     file to write
+         * @param charset character set to use
+         */
+        public EncodingFileWriter(FileOutputStream out, Charset charset) {
             super(out, charset);
             this.out = out;
         }
@@ -662,7 +757,41 @@ public final class IOHelper {
         return IOHelper.buffered(new EncodingFileReader(in, charset));
     }
 
+    public static BufferedReader toReader(File file, Charset charset) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        return IOHelper.buffered(new EncodingFileReader(in, charset));
+    }
+
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
+
+    public static BufferedWriter toWriter(FileOutputStream os, Charset charset) {
+        return IOHelper.buffered(new EncodingFileWriter(os, charset));
+    }
+
+    /**
+     * Reads the file under the given {@code path}, strips lines starting with {@code commentPrefix} and optionally also
+     * strips blank lines (the ones for which {@link String#isBlank()} returns {@code true}. Normalizes EOL characters
+     * to {@code '\n'}.
+     *
+     * @param  path            the path of the file to read
+     * @param  commentPrefix   the leading character sequence of comment lines.
+     * @param  stripBlankLines if true {@code true} the lines matching {@link String#isBlank()} will not appear in the
+     *                         result
+     * @return                 the filtered content of the file
+     */
+    public static String stripLineComments(Path path, String commentPrefix, boolean stripBlankLines) {
+        StringBuilder result = new StringBuilder();
+        try (Stream<String> lines = Files.lines(path)) {
+            lines
+                    .filter(l -> stripBlankLines ? !l.isBlank() : true)
+                    .filter(line -> !line.startsWith(commentPrefix))
+                    .forEach(line -> result.append(line).append('\n'));
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot read file: " + path, e);
+        }
+        return result.toString();
+    }
+
 }

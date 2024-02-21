@@ -17,16 +17,17 @@
 package org.apache.camel.language.joor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JoorPredicateTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when().joor("((int) body) / 2 > 10")
@@ -48,7 +49,7 @@ public class JoorPredicateTest extends CamelTestSupport {
         template.sendBody("direct:start", 123);
         template.sendBody("direct:start", 6);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

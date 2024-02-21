@@ -46,7 +46,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         assertTrue(b1, "List should not be empty!");
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
-        log.info("Found message with headers: " + in.getHeaders());
+        log.info("Found message with headers: {}", in.getHeaders());
 
         assertMessageHeader(in, Exchange.REDELIVERY_COUNTER, 2);
         assertMessageHeader(in, Exchange.REDELIVERY_MAX_COUNTER, 2);
@@ -66,7 +66,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         assertTrue(b1, "List should not be empty!");
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
-        log.info("Found message with headers: " + in.getHeaders());
+        log.info("Found message with headers: {}", in.getHeaders());
 
         assertMessageHeader(in, Exchange.REDELIVERY_COUNTER, 0);
         assertMessageHeader(in, Exchange.REDELIVERY_MAX_COUNTER, null);

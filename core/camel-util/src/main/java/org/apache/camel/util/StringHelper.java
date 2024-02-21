@@ -18,8 +18,10 @@ package org.apache.camel.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -45,7 +47,7 @@ public final class StringHelper {
      * @return                      sanitized version of <code>s</code>.
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
-    public static String sanitize(String s) {
+    public static String sanitize(final String s) {
         return s.replace(':', '-')
                 .replace('_', '-')
                 .replace('.', '-')
@@ -122,14 +124,13 @@ public final class StringHelper {
      * @param  s the string
      * @return   the string without quotes (single and double)
      */
-    public static String removeQuotes(String s) {
+    public static String removeQuotes(final String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
 
-        s = replaceAll(s, "'", "");
-        s = replaceAll(s, "\"", "");
-        return s;
+        return s.replace("'", "")
+                .replace("\"", "");
     }
 
     /**
@@ -138,12 +139,15 @@ public final class StringHelper {
      * @param  s the string
      * @return   the string without leading and ending quotes (single and double)
      */
-    public static String removeLeadingAndEndingQuotes(String s) {
+    public static String removeLeadingAndEndingQuotes(final String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
 
         String copy = s.trim();
+        if (copy.length() < 2) {
+            return s;
+        }
         if (copy.startsWith("'") && copy.endsWith("'")) {
             return copy.substring(1, copy.length() - 1);
         }
@@ -162,6 +166,16 @@ public final class StringHelper {
      * @return   <tt>true</tt> if the string starts and ends with either single or double quotes.
      */
     public static boolean isQuoted(String s) {
+        return isSingleQuoted(s) || isDoubleQuoted(s);
+    }
+
+    /**
+     * Whether the string starts and ends with single quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with single quotes.
+     */
+    public static boolean isSingleQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
         }
@@ -169,6 +183,21 @@ public final class StringHelper {
         if (s.startsWith("'") && s.endsWith("'")) {
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Whether the string starts and ends with double quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with double quotes.
+     */
+    public static boolean isDoubleQuoted(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return false;
+        }
+
         if (s.startsWith("\"") && s.endsWith("\"")) {
             return true;
         }
@@ -182,16 +211,15 @@ public final class StringHelper {
      * @param  text the text
      * @return      the encoded text
      */
-    public static String xmlEncode(String text) {
+    public static String xmlEncode(final String text) {
         if (text == null) {
             return "";
         }
         // must replace amp first, so we dont replace &lt; to amp later
-        text = replaceAll(text, "&", "&amp;");
-        text = replaceAll(text, "\"", "&quot;");
-        text = replaceAll(text, "<", "&lt;");
-        text = replaceAll(text, ">", "&gt;");
-        return text;
+        return text.replace("&", "&amp;")
+                .replace("\"", "&quot;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     /**
@@ -219,17 +247,16 @@ public final class StringHelper {
      * Determines if the string is a fully qualified class name
      */
     public static boolean isClassName(String text) {
-        boolean result = false;
         if (text != null) {
-            String[] split = text.split("\\.");
-            if (split.length > 0) {
-                String lastToken = split[split.length - 1];
-                if (lastToken.length() > 0) {
-                    result = Character.isUpperCase(lastToken.charAt(0));
-                }
+            int lastIndexOf = text.lastIndexOf('.');
+            if (lastIndexOf <= 0 || lastIndexOf == text.length()) {
+                return false;
             }
+
+            return Character.isUpperCase(text.charAt(lastIndexOf + 1));
         }
-        return result;
+
+        return false;
     }
 
     /**
@@ -254,58 +281,6 @@ public final class StringHelper {
         }
 
         return false;
-    }
-
-    /**
-     * Replaces all the from tokens in the given input string.
-     * <p/>
-     * This implementation is not recursive, not does it check for tokens in the replacement string.
-     *
-     * @param  input                    the input string
-     * @param  from                     the from string, must <b>not</b> be <tt>null</tt> or empty
-     * @param  to                       the replacement string, must <b>not</b> be empty
-     * @return                          the replaced string, or the input string if no replacement was needed
-     * @throws IllegalArgumentException if the input arguments is invalid
-     */
-    public static String replaceAll(String input, String from, String to) {
-        // TODO: Use String.replace instead of this method when using JDK11 as minimum (as its much faster in JDK 11 onwards)
-
-        if (ObjectHelper.isEmpty(input)) {
-            return input;
-        }
-        if (from == null) {
-            throw new IllegalArgumentException("from cannot be null");
-        }
-        if (to == null) {
-            // to can be empty, so only check for null
-            throw new IllegalArgumentException("to cannot be null");
-        }
-
-        // fast check if there is any from at all
-        if (!input.contains(from)) {
-            return input;
-        }
-
-        final int len = from.length();
-        final int max = input.length();
-        StringBuilder sb = new StringBuilder(max);
-        for (int i = 0; i < max;) {
-            if (i + len <= max) {
-                String token = input.substring(i, i + len);
-                if (from.equals(token)) {
-                    sb.append(to);
-                    // fast forward
-                    i = i + len;
-                    continue;
-                }
-            }
-
-            // append single char
-            sb.append(input.charAt(i));
-            // forward to next
-            i++;
-        }
-        return sb.toString();
     }
 
     /**
@@ -396,6 +371,86 @@ public final class StringHelper {
         return rc;
     }
 
+    public static Iterator<String> splitOnCharacterAsIterator(String value, char needle, int count) {
+        // skip leading and trailing needles
+        int end = value.length() - 1;
+        boolean skipStart = value.charAt(0) == needle;
+        boolean skipEnd = value.charAt(end) == needle;
+        if (skipStart && skipEnd) {
+            value = value.substring(1, end);
+            count = count - 2;
+        } else if (skipStart) {
+            value = value.substring(1);
+            count = count - 1;
+        } else if (skipEnd) {
+            value = value.substring(0, end);
+            count = count - 1;
+        }
+
+        final int size = count;
+        final String text = value;
+
+        return new Iterator<>() {
+            int i;
+            int pos;
+
+            @Override
+            public boolean hasNext() {
+                return i < size;
+            }
+
+            @Override
+            public String next() {
+                if (i == size) {
+                    throw new NoSuchElementException();
+                }
+                String answer;
+                int end = text.indexOf(needle, pos);
+                if (end != -1) {
+                    answer = text.substring(pos, end);
+                    pos = end + 1;
+                } else {
+                    answer = text.substring(pos);
+                    // no more data
+                    i = size;
+                }
+                return answer;
+            }
+        };
+    }
+
+    public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
+        // skip leading and trailing needles
+        int end = value.length() - 1;
+        boolean skipStart = value.charAt(0) == needle;
+        boolean skipEnd = value.charAt(end) == needle;
+        if (skipStart && skipEnd) {
+            value = value.substring(1, end);
+            count = count - 2;
+        } else if (skipStart) {
+            value = value.substring(1);
+            count = count - 1;
+        } else if (skipEnd) {
+            value = value.substring(0, end);
+            count = count - 1;
+        }
+
+        List<String> rc = new ArrayList<>(count);
+        int pos = 0;
+        for (int i = 0; i < count; i++) {
+            end = value.indexOf(needle, pos);
+            if (end != -1) {
+                String part = value.substring(pos, end);
+                pos = end + 1;
+                rc.add(part);
+            } else {
+                rc.add(value.substring(pos));
+                break;
+            }
+        }
+        return rc;
+    }
+
     /**
      * Removes any starting characters on the given text which match the given character
      *
@@ -432,22 +487,42 @@ public final class StringHelper {
      *                         helloGreatWorld)
      * @return                 the string capitalized (upper case first character)
      */
-    public static String capitalize(String text, boolean dashToCamelCase) {
+    public static String capitalize(final String text, boolean dashToCamelCase) {
+        String ret = text;
         if (dashToCamelCase) {
-            text = dashToCamelCase(text);
+            ret = dashToCamelCase(text);
         }
+        if (ret == null) {
+            return null;
+        }
+
+        final char[] chars = ret.toCharArray();
+
+        // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
+        // for which it does not return the capitalized value should not be used here (this is
+        // mostly used to capitalize setters/getters)
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
+    }
+
+    /**
+     * De-capitalize the string (lower case first character)
+     *
+     * @param  text the string
+     * @return      the string decapitalized (lower case first character)
+     */
+    public static String decapitalize(final String text) {
         if (text == null) {
             return null;
         }
-        int length = text.length();
-        if (length == 0) {
-            return text;
-        }
-        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
-        if (length > 1) {
-            answer += text.substring(1, length);
-        }
-        return answer;
+
+        final char[] chars = text.toCharArray();
+
+        // We are OK with the limitations of Character.toLowerCase. The symbols and ideographs
+        // for which it does not return the lower case value should not be used here (this is
+        // mostly used to convert part of setters/getters to properties)
+        chars[0] = Character.toLowerCase(chars[0]);
+        return new String(chars);
     }
 
     /**
@@ -456,7 +531,18 @@ public final class StringHelper {
      * @param  text the string
      * @return      the string camel cased
      */
-    public static String dashToCamelCase(String text) {
+    public static String dashToCamelCase(final String text) {
+        return dashToCamelCase(text, false);
+    }
+
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param  text              the string
+     * @param  skipQuotedOrKeyed flag to skip converting within quoted or keyed text
+     * @return                   the string camel cased
+     */
+    public static String dashToCamelCase(final String text, boolean skipQuotedOrKeyed) {
         if (text == null) {
             return null;
         }
@@ -471,8 +557,35 @@ public final class StringHelper {
         // there is at least 1 dash so the capacity can be shorter
         StringBuilder sb = new StringBuilder(length - 1);
         boolean upper = false;
+        int singleQuotes = 0;
+        int doubleQuotes = 0;
+        boolean skip = false;
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
+
+            // special for skip mode where we should keep text inside quotes or keys as-is
+            if (skipQuotedOrKeyed) {
+                if (c == ']') {
+                    skip = false;
+                } else if (c == '[') {
+                    skip = true;
+                } else if (c == '\'') {
+                    singleQuotes++;
+                } else if (c == '"') {
+                    doubleQuotes++;
+                }
+                if (singleQuotes > 0) {
+                    skip = singleQuotes % 2 == 1;
+                }
+                if (doubleQuotes > 0) {
+                    skip = doubleQuotes % 2 == 1;
+                }
+                if (skip) {
+                    sb.append(c);
+                    continue;
+                }
+            }
+
             if (c == '-') {
                 upper = true;
             } else {
@@ -494,6 +607,9 @@ public final class StringHelper {
      * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.indexOf(after);
         if (pos == -1) {
             return null;
@@ -539,6 +655,9 @@ public final class StringHelper {
      * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String afterLast(String text, String after) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.lastIndexOf(after);
         if (pos == -1) {
             return null;
@@ -567,6 +686,9 @@ public final class StringHelper {
      * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String before(String text, String before) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.indexOf(before);
         return pos == -1 ? null : text.substring(0, pos);
     }
@@ -580,8 +702,27 @@ public final class StringHelper {
      * @return              the text before the token, or the supplied defaultValue if text does not contain the token
      */
     public static String before(String text, String before, String defaultValue) {
-        String answer = before(text, before);
-        return answer != null ? answer : defaultValue;
+        if (text == null) {
+            return defaultValue;
+        }
+        int pos = text.indexOf(before);
+        return pos == -1 ? defaultValue : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String before(String text, char before, String defaultValue) {
+        if (text == null) {
+            return defaultValue;
+        }
+        int pos = text.indexOf(before);
+        return pos == -1 ? defaultValue : text.substring(0, pos);
     }
 
     /**
@@ -609,6 +750,9 @@ public final class StringHelper {
      * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String beforeLast(String text, String before) {
+        if (text == null) {
+            return null;
+        }
         int pos = text.lastIndexOf(before);
         return pos == -1 ? null : text.substring(0, pos);
     }
@@ -634,12 +778,12 @@ public final class StringHelper {
      * @param  before the after token
      * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
      */
-    public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
+    public static String between(final String text, String after, String before) {
+        String ret = after(text, after);
+        if (ret == null) {
             return null;
         }
-        return before(text, before);
+        return before(ret, before);
     }
 
     /**
@@ -890,7 +1034,7 @@ public final class StringHelper {
             return bytes + " B";
         }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = "KMGTPE".charAt(exp - 1) + "";
+        String pre = String.valueOf("KMGTPE".charAt(exp - 1));
         return String.format(locale, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
@@ -964,22 +1108,23 @@ public final class StringHelper {
             if (ch == '-' || ch == '_') {
                 answer.append("-");
             } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                if (prev != '-' && prev != '_') {
-                    answer.append("-");
-                }
-                answer.append(ch);
+                applyDashPrefix(prev, answer, ch);
             } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                if (prev != '-' && prev != '_') {
-                    answer.append("-");
-                }
-                answer.append(ch);
+                applyDashPrefix(prev, answer, ch);
             } else {
-                answer.append(ch);
+                answer.append(Character.toLowerCase(ch));
             }
             prev = ch;
         }
 
-        return answer.toString().toLowerCase(Locale.ENGLISH);
+        return answer.toString();
+    }
+
+    private static void applyDashPrefix(Character prev, StringBuilder answer, char ch) {
+        if (prev != '-' && prev != '_') {
+            answer.append("-");
+        }
+        answer.append(Character.toLowerCase(ch));
     }
 
     /**
@@ -990,7 +1135,7 @@ public final class StringHelper {
      */
     public static boolean startsWithIgnoreCase(String text, String prefix) {
         if (text != null && prefix != null) {
-            return prefix.length() > text.length() ? false : text.regionMatches(true, 0, prefix, 0, prefix.length());
+            return prefix.length() <= text.length() && text.regionMatches(true, 0, prefix, 0, prefix.length());
         } else {
             return text == null && prefix == null;
         }
@@ -999,16 +1144,16 @@ public final class StringHelper {
     /**
      * Converts the value to an enum constant value that is in the form of upper cased with underscore.
      */
-    public static String asEnumConstantValue(String value) {
+    public static String asEnumConstantValue(final String value) {
         if (value == null || value.isEmpty()) {
             return value;
         }
-        value = StringHelper.camelCaseToDash(value);
+        String ret = StringHelper.camelCaseToDash(value);
         // replace double dashes
-        value = value.replaceAll("-+", "-");
+        ret = ret.replaceAll("-+", "-");
         // replace dash with underscore and upper case
-        value = value.replace('-', '_').toUpperCase(Locale.ENGLISH);
-        return value;
+        ret = ret.replace('-', '_').toUpperCase(Locale.ENGLISH);
+        return ret;
     }
 
     /**
@@ -1034,13 +1179,13 @@ public final class StringHelper {
     }
 
     /**
-     * Returns the occurence of a search string in to a string
+     * Returns the occurrence of a search string in to a string.
      *
      * @param  text   the text
      * @param  search the string to search
-     * @return        an integer reporting the number of occurence of the searched string in to the text
+     * @return        an integer reporting the number of occurrence of the searched string in to the text
      */
-    public static int countOccurence(String text, String search) {
+    public static int countOccurrence(String text, String search) {
         int lastIndex = 0;
         int count = 0;
         while (lastIndex != -1) {
@@ -1054,21 +1199,21 @@ public final class StringHelper {
     }
 
     /**
-     * Replaces a string in to a text starting from his second occurence
+     * Replaces a string in to a text starting from his second occurrence.
      *
-     * @param  text   the text
-     * @param  search the string to search
-     * @param  repl   the replacement for the string
-     * @return        the string with the replacement
+     * @param  text        the text
+     * @param  search      the string to search
+     * @param  replacement the replacement for the string
+     * @return             the string with the replacement
      */
-    public static String replaceFromSecondOccurence(String text, String search, String repl) {
+    public static String replaceFromSecondOccurrence(String text, String search, String replacement) {
         int index = text.indexOf(search);
         boolean replace = false;
 
         while (index != -1) {
             String tempString = text.substring(index);
             if (replace) {
-                tempString = tempString.replaceFirst(search, repl);
+                tempString = tempString.replaceFirst(search, replacement);
                 text = text.substring(0, index) + tempString;
                 replace = false;
             } else {
@@ -1078,4 +1223,63 @@ public final class StringHelper {
         }
         return text;
     }
+
+    /**
+     * Pad the string with leading spaces
+     *
+     * @param level level (2 blanks per level)
+     */
+    public static String padString(int level) {
+        return padString(level, 2);
+    }
+
+    /**
+     * Pad the string with leading spaces
+     *
+     * @param level  level
+     * @param blanks number of blanks per level
+     */
+    public static String padString(int level, int blanks) {
+        if (level == 0) {
+            return "";
+        } else {
+            return " ".repeat(level * blanks);
+        }
+    }
+
+    /**
+     * Fills the string with repeating chars
+     *
+     * @param ch    the char
+     * @param count number of chars
+     */
+    public static String fillChars(char ch, int count) {
+        if (count <= 0) {
+            return "";
+        } else {
+            return Character.toString(ch).repeat(count);
+        }
+    }
+
+    public static boolean isDigit(String s) {
+        for (char ch : s.toCharArray()) {
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String bytesToHex(byte[] hash) {
+        StringBuilder sb = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
 }

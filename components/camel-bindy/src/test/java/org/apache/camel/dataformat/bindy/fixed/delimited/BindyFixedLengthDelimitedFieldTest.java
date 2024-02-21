@@ -81,7 +81,7 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFailWhenUnmarshallMessageWithUnmappedChars() throws Exception {
+    public void testFailWhenUnmarshallMessageWithUnmappedChars() {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
@@ -97,7 +97,7 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFailWhenUnmarshallMessageWithWhitespaceThenUnmappedChar() throws Exception {
+    public void testFailWhenUnmarshallMessageWithWhitespaceThenUnmappedChar() {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
@@ -113,7 +113,7 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFailWhenUnmarshallMessageWithUnmappedChar() throws Exception {
+    public void testFailWhenUnmarshallMessageWithUnmappedChar() {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
@@ -156,11 +156,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .classType(BindyFixedLengthDelimitedFieldTest.Order.class)
                         .locale("en")

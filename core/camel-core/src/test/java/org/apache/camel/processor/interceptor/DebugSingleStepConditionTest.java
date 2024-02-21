@@ -52,7 +52,7 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         };
 
         beerCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 return "beer".equals(exchange.getFromRouteId());
             }
         };
@@ -80,7 +80,8 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use debugger
+                // turn on debugging
+                context.setDebugging(true);
                 context.setDebugger(new DefaultDebugger());
 
                 from("direct:start").routeId("foo").to("log:foo").to("log:bar").to("mock:result");

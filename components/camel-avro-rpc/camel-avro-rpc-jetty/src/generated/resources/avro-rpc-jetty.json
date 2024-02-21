@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "avro-rpc-jetty",
+    "title": "Avro Rpc Jetty",
+    "description": "Camel Avro  RPC Jetty",
+    "deprecated": false,
+    "firstVersion": "3.11.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-avro-rpc-jetty",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

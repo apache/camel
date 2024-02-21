@@ -21,6 +21,7 @@ import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class EipDocumentationTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(EipDocumentationTest.class);
@@ -40,7 +42,7 @@ public class EipDocumentationTest extends CamelTestSupport {
     @Test
     void testDocumentation() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("from");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("from");
             LOG.info(json);
             assertNotNull(json, "Should have found json for from");
 
@@ -53,9 +55,9 @@ public class EipDocumentationTest extends CamelTestSupport {
     @Test
     void testSplitDocumentation() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("split");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("split");
             LOG.info(json);
-            assertNotNull("Should have found json for split", json);
+            assertNotNull(json, "Should have found json for split");
 
             assertTrue(json.contains("\"name\": \"split\""));
             // there should be javadoc included
@@ -69,9 +71,9 @@ public class EipDocumentationTest extends CamelTestSupport {
     @Test
     void testSimpleDocumentation() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("simple");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("simple");
             LOG.info(json);
-            assertNotNull("Should have found json for simple", json);
+            assertNotNull(json, "Should have found json for simple");
 
             assertTrue(json.contains("\"label\": \"language,core,java\""));
             assertTrue(json.contains("\"name\": \"simple\""));
@@ -81,9 +83,9 @@ public class EipDocumentationTest extends CamelTestSupport {
     @Test
     void testFailOverDocumentation() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("failover");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("failover");
             LOG.info(json);
-            assertNotNull("Should have found json for failover", json);
+            assertNotNull(json, "Should have found json for failover");
 
             assertTrue(json.contains("\"name\": \"failover\""));
             assertTrue(json.contains(
@@ -95,7 +97,7 @@ public class EipDocumentationTest extends CamelTestSupport {
     @Test
     void testNotFound() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("unknown");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("unknown");
             assertNull(json, "Should not have found json for unknown");
         }
     }

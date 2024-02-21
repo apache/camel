@@ -43,13 +43,13 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
     public abstract static class MockSecurityProvider implements UndertowSecurityProvider {
 
         @Override
-        public void addHeader(BiConsumer<String, Object> consumer, HttpServerExchange httpExchange) throws Exception {
+        public void addHeader(BiConsumer<String, Object> consumer, HttpServerExchange httpExchange) {
             String principalName = httpExchange.getAttachment(PRINCIPAL_NAME_KEY);
             consumer.accept(AbstractSecurityProviderTest.PRINCIPAL_PARAMETER, principalName);
         }
 
         @Override
-        public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) throws Exception {
+        public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) {
             ServletRequestContext servletRequestContext = httpExchange.getAttachment(ServletRequestContext.ATTACHMENT_KEY);
             assertServletContext(servletRequestContext);
 
@@ -92,10 +92,10 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/foo?allowedRoles=user")
                         .to("mock:input")
                         .transform(simple("${in.header." + AbstractSecurityProviderTest.PRINCIPAL_PARAMETER + "}"));

@@ -19,57 +19,62 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(47);
-        props.add("backoffMultiplier");
-        props.add("breakBatchOnConsumeFail");
-        props.add("onConsume");
-        props.add("onConsumeFailed");
-        props.add("useMessageBodyForSql");
-        props.add("dataSourceRef");
-        props.add("outputType");
-        props.add("transacted");
-        props.add("initialDelay");
-        props.add("useIterator");
         props.add("allowNamedParameters");
-        props.add("usePlaceholder");
-        props.add("parametersCount");
-        props.add("scheduler");
-        props.add("noop");
-        props.add("templateOptions");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("greedy");
-        props.add("maxMessagesPerPoll");
-        props.add("placeholder");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("query");
-        props.add("onConsumeBatchComplete");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("batch");
-        props.add("routeEmptyResultSet");
         props.add("alwaysPopulateStatement");
-        props.add("separator");
+        props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
-        props.add("processingStrategy");
-        props.add("prepareStatementStrategy");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("outputHeader");
-        props.add("pollStrategy");
-        props.add("startScheduler");
-        props.add("expectedUpdateCount");
-        props.add("outputClass");
+        props.add("backoffMultiplier");
+        props.add("batch");
+        props.add("breakBatchOnConsumeFail");
+        props.add("bridgeErrorHandler");
         props.add("dataSource");
+        props.add("delay");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("expectedUpdateCount");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
+        props.add("maxMessagesPerPoll");
+        props.add("noop");
+        props.add("onConsume");
+        props.add("onConsumeBatchComplete");
+        props.add("onConsumeFailed");
+        props.add("outputClass");
+        props.add("outputHeader");
+        props.add("outputType");
+        props.add("parametersCount");
+        props.add("placeholder");
+        props.add("pollStrategy");
+        props.add("prepareStatementStrategy");
+        props.add("processingStrategy");
+        props.add("query");
+        props.add("repeatCount");
+        props.add("routeEmptyResultSet");
+        props.add("rowMapperFactory");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("separator");
+        props.add("startScheduler");
+        props.add("templateOptions");
+        props.add("timeUnit");
+        props.add("transacted");
+        props.add("useFixedDelay");
+        props.add("useIterator");
+        props.add("useMessageBodyForSql");
+        props.add("usePlaceholder");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(2);
+        prefixes.add("scheduler.");
+        prefixes.add("template.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -97,6 +102,11 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

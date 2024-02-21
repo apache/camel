@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,14 +36,14 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
 
     @Test
     public void testSendMessages() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
 
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
         }
         assertEquals(size, processor.getCounter());
 
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         log.info("RoutePerformanceCountTest: Sent: {} Took: {} ms", size, delta);
     }
 

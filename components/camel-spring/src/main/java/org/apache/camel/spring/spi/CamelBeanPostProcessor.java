@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Service;
 import org.apache.camel.impl.engine.CamelPostProcessorHelper;
@@ -43,7 +44,8 @@ import org.springframework.core.Ordered;
  * @see DefaultCamelBeanPostProcessor
  */
 public class CamelBeanPostProcessor
-        implements org.apache.camel.spi.CamelBeanPostProcessor, BeanPostProcessor, ApplicationContextAware, Ordered {
+        implements org.apache.camel.spi.CamelBeanPostProcessor, CamelContextAware, BeanPostProcessor, ApplicationContextAware,
+        Ordered {
     private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
 
     private final Set<String> prototypeBeans = new LinkedHashSet<>();
@@ -57,21 +59,34 @@ public class CamelBeanPostProcessor
     private final DefaultCamelBeanPostProcessor delegate = new DefaultCamelBeanPostProcessor() {
         @Override
         public CamelContext getOrLookupCamelContext() {
-            if (camelContext == null) {
+            CamelContext answer = CamelBeanPostProcessor.this.camelContext;
+            if (answer == null) {
                 if (camelId != null) {
                     LOG.trace("Looking up CamelContext by id: {} from Spring ApplicationContext: {}", camelId,
                             applicationContext);
-                    camelContext = applicationContext.getBean(camelId, CamelContext.class);
+                    answer = applicationContext.getBean(camelId, CamelContext.class);
                 } else {
                     // lookup by type and grab the single CamelContext if exists
                     LOG.trace("Looking up CamelContext by type from Spring ApplicationContext: {}", applicationContext);
                     Map<String, CamelContext> contexts = applicationContext.getBeansOfType(CamelContext.class);
                     if (contexts.size() == 1) {
-                        camelContext = contexts.values().iterator().next();
+                        answer = contexts.values().iterator().next();
                     }
                 }
+                if (answer != null) {
+                    // we found a camel context
+                    CamelBeanPostProcessor.this.camelContext = answer;
+                }
             }
-            return camelContext;
+            return answer;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            super.setCamelContext(camelContext);
+            if (camelPostProcessorHelper != null) {
+                camelPostProcessorHelper.setCamelContext(camelContext);
+            }
         }
 
         @Override
@@ -93,15 +108,19 @@ public class CamelBeanPostProcessor
         public CamelPostProcessorHelper getPostProcessorHelper() {
             // lets lazily create the post processor
             if (camelPostProcessorHelper == null) {
-                camelPostProcessorHelper = new CamelPostProcessorHelper() {
+                camelPostProcessorHelper = new CamelPostProcessorHelper(camelContext) {
 
                     @Override
                     public CamelContext getCamelContext() {
-                        // lets lazily lookup the camel context here
-                        // as doing this will cause this context to be started immediately
-                        // breaking the lifecycle ordering of different camel contexts
-                        // so we only want to do this on demand
-                        return delegate.getOrLookupCamelContext();
+                        CamelContext answer = CamelBeanPostProcessor.this.camelContext;
+                        if (answer == null) {
+                            // lets lazily lookup the camel context here
+                            // as doing this will cause this context to be started immediately
+                            // breaking the lifecycle ordering of different camel contexts
+                            // so we only want to do this on demand
+                            answer = delegate.getOrLookupCamelContext();
+                        }
+                        return answer;
                     }
 
                     @Override
@@ -152,11 +171,9 @@ public class CamelBeanPostProcessor
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         try {
             return delegate.postProcessBeforeInitialization(bean, beanName);
+        } catch (BeansException e) {
+            throw e; // do not wrap already beans exceptions
         } catch (Exception e) {
-            // do not wrap already beans exceptions
-            if (e instanceof BeansException) {
-                throw (BeansException) e;
-            }
             throw new BeanCreationException("Error post processing bean: " + beanName, e);
         }
     }
@@ -193,6 +210,7 @@ public class CamelBeanPostProcessor
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.delegate.setCamelContext(camelContext);
     }
 
     public String getCamelId() {

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
@@ -34,38 +34,35 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
     int port2;
 
     @Test
-    public void testResponse() throws Exception {
+    public void testResponse() {
         Object out = template.requestBody("mina:tcp://localhost:" + port1 + "?sync=true", "Woodbine");
         assertEquals("Hello Chad", out);
     }
 
     @Test
-    public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
-        try {
-            template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=100", "London");
-            Thread.sleep(1000);
-            fail("Should throw an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-        }
+    public void testNoResponseDisconnectOnNoReplyFalse() {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=100", "London"),
+                "Should throw an exception");
+        assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("mina:tcp://localhost:" + port1 + "?sync=true")
+                fromF("mina:tcp://localhost:%d?sync=true", port1)
                         .choice()
                         .when(body().isEqualTo("Woodbine"))
                         .transform(constant("Hello Chad"))
                         .otherwise()
                         .transform(constant(null));
 
-                from("mina:tcp://localhost:" + port2 + "?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF").choice()
+                fromF("mina:tcp://localhost:%d?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF", port2).choice()
                         .when(body().isEqualTo("Woodbine"))
                         .transform(constant("Hello Chad")).otherwise()
                         .transform(constant(null));

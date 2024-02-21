@@ -1,5 +1,5 @@
-[[messageEndpoint-eip]]
 = Message Endpoint
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
@@ -8,21 +8,43 @@ patterns] using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
 interface.
 
+How does an application connect to a messaging channel to send and receive messages?
+
 image::eip/MessageEndpointSolution.gif[image]
 
-When using the xref:latest@manual:ROOT:dsl.adoc[DSL] to create xref:latest@manual:ROOT:routes.adoc[Routes] you
-typically refer to Message Endpoints by their xref:latest@manual:ROOT:uris.adoc[URIs]
+Connect an application to a messaging channel using a Message Endpoint, a client of the messaging system that the application can then use to send or receive messages.
+
+When using the xref:manual::dsl.adoc[DSL] to create xref:manual::routes.adoc[Routes] you
+typically refer to Message Endpoints by their xref:manual::uris.adoc[URIs]
 rather than directly using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
-interface. Its then a responsibility of the
+interface. It's then a responsibility of the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
-to create and activate the necessary Endpoint instances using the
-available
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Component.html[Component]
-implementations.
+to create and activate the necessary `Endpoint` instances using the
+available xref:ROOT:index.adoc[Components].
 
-[[messageEndpoint-Example]]
-== Samples
+== Example
 
-See first example in xref:to-eip.adoc[To EIP]
+The following example route demonstrates the use of a xref:ROOT:file-component.adoc[File] consumer endpoint and a xref:ROOT:jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:messages/foo")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+====

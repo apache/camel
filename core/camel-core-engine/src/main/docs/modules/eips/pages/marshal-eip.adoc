@@ -1,44 +1,72 @@
-[[marshal-eip]]
 = Marshal EIP
+:tabs-sync-option:
 
-Marshalling is the opposite of unmarshalling, where a bean is marshalled into some binary or textual format for transmission over some transport via a Camel xref:components::index.adoc[Components]. Marshalling is used in the same way as unmarshalling above; in the xref:latest@manual:ROOT:dsl.adoc[DSL] you can use a DataFormat instance, you can configure the DataFormat dynamically using the DSL or you can refer to a named instance of the format in the xref:latest@manual:ROOT:registry.adoc[Registry].
+The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used
+for xref:message-translator.adoc[Message Transformation].
 
-== Options
+image::eip/MessageTranslator.gif[image]
 
-// eip options: START
-The Marshal EIP supports 1 options which are listed below:
+Camel has support for message transformation using several techniques.
+One such technique is xref:components:dataformats:index.adoc[Data Formats],
+where marshal and unmarshal comes from.
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
-|===
-// eip options: END
+So in other words the xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs
+are used with xref:dataformats:index.adoc[Data Formats].
 
-== Samples
+- _Marshal_ - Transforms the message body (such as Java object) into a binary or textual format, ready to be wired over the network.
+- _Unmarshal_ - Transforms data in some binary or textual format (such as received over the network)
+into a Java object; or some other representation according to the data format being used.
 
-The following example unmarshals via serialization then marshals using a named JAXB data format to perform a kind of xref:message-translator.adoc[Message Translator].
+== Example
 
+The following example reads XML files from the inbox/xml directory.
+Each file is then transformed into Java Objects using xref:dataformats:jaxb-dataformat.adoc[JAXB].
+Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
+
+Then the reverse operation happens to transform the Java objects back into XML also via JAXB,
+but using the `marshal` operation. And finally the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://foo/bar").
-  unmarshal().serialization().
-  marshal("jaxb").
-  to("activemq:Some.Queue");
+from("file:inbox/xml")
+  .unmarshal().jaxb()
+  .to("bean:validateOrder")
+  .marshal().jaxb()
+  .to("jms:queue:order");
 ----
 
-[[DataFormat-UsingSpringXML]]
-=== Using Spring XML
-
-This example shows how to configure the data type just once and reuse it
-on multiple routes
-
-You can also define reusable data formats as Spring beans
-
+XML::
++
 [source,xml]
---------------------------------------------------------
-<bean id="myJaxb" class="org.apache.camel.model.dataformat.JaxbDataFormat">
-  <property name="prettyPrint" value="true"/>
-  <property name="contextPath" value="org.apache.camel.example"/>
-</bean> 
---------------------------------------------------------
+----
+<route>
+  <from uri="file:inbox/xml"/>
+  <unmarshal><jaxb/></unmarshal>
+  <to uri="bean:validateOrder"/>
+  <marshal><jaxb/></marshal>
+  <to uri="jms:queue:order"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inbox/xml
+    steps:
+      - unmarshal:
+          jaxb: {}
+      - to:
+          uri: bean:validateOrder
+      - marshal:
+          jaxb: {}
+      - to:
+          uri: jms:queue:order 
+----
+====
+

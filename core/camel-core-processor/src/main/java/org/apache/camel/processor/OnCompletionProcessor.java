@@ -25,7 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
@@ -34,6 +34,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -162,26 +163,25 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * @param exchange  the exchange
      */
     protected static void doProcess(Processor processor, Exchange exchange) {
-        ExtendedExchange ee = (ExtendedExchange) exchange;
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-        boolean stop = ee.isRouteStop();
-        ee.setRouteStop(false);
-        Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
-        Boolean errorhandlerHandled = ee.getErrorHandlerHandled();
-        ee.setErrorHandlerHandled(null);
-        boolean rollbackOnly = ee.isRollbackOnly();
-        ee.setRollbackOnly(false);
-        boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
-        ee.setRollbackOnlyLast(false);
+        boolean stop = exchange.isRouteStop();
+        exchange.setRouteStop(false);
+        boolean failureHandled = exchange.getExchangeExtension().isFailureHandled();
+        Boolean errorhandlerHandled = exchange.getExchangeExtension().getErrorHandlerHandled();
+        exchange.getExchangeExtension().setErrorHandlerHandled(null);
+        boolean rollbackOnly = exchange.isRollbackOnly();
+        exchange.setRollbackOnly(false);
+        boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
+        exchange.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
-        boolean exhausted = ee.adapt(ExtendedExchange.class).isRedeliveryExhausted();
-        ee.setRedeliveryExhausted(false);
+        boolean exhausted = exchange.getExchangeExtension().isRedeliveryExhausted();
+        exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
-        Exception cause = ee.getException();
+        Exception cause = exchange.getException();
         if (cause != null) {
-            ee.setException(null);
+            exchange.setException(null);
         }
 
         try {
@@ -190,18 +190,22 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             exchange.setException(e);
         } finally {
             // restore the options
-            ee.setRouteStop(stop);
-            if (failureHandled != null) {
-                ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+            exchange.setRouteStop(stop);
+            if (failureHandled) {
+                exchange.getExchangeExtension().setFailureHandled(true);
             }
             if (errorhandlerHandled != null) {
-                ee.setErrorHandlerHandled(errorhandlerHandled);
+                exchange.getExchangeExtension().setErrorHandlerHandled(errorhandlerHandled);
             }
-            ee.setRollbackOnly(rollbackOnly);
-            ee.setRollbackOnlyLast(rollbackOnlyLast);
-            ee.setRedeliveryExhausted(exhausted);
+            exchange.setRollbackOnly(rollbackOnly);
+            exchange.setRollbackOnlyLast(rollbackOnlyLast);
+            exchange.getExchangeExtension().setRedeliveryExhausted(exhausted);
             if (cause != null) {
-                ee.setException(cause);
+                // if there is any exception in onCompletionProcessor, the exception should be suppressed
+                if (exchange.isFailed()) {
+                    cause.addSuppressed(exchange.getException());
+                }
+                exchange.setException(cause);
             }
         }
     }
@@ -216,7 +220,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         Exchange answer;
 
         if (isCreateCopy()) {
-            // for asynchronous routing we must use a copy as we dont want it
+            // for asynchronous routing we must use a copy as we don't want it
             // to cause side effects of the original exchange
             // (the original thread will run in parallel)
             answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
@@ -240,7 +244,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         // add a header flag to indicate its a on completion exchange
-        answer.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+        answer.setProperty(ExchangePropertyKey.ON_COMPLETION, Boolean.TRUE);
 
         return answer;
     }
@@ -262,45 +266,36 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         @Override
-        @SuppressWarnings("unchecked")
-        public void onAfterRoute(Route route, Exchange exchange) {
-            // route scope = remember we have been at this route
-            if (routeScoped && route.getRouteId().equals(routeId)) {
-                List<String> routeIds = exchange.getProperty(Exchange.ON_COMPLETION_ROUTE_IDS, List.class);
-                if (routeIds == null) {
-                    routeIds = new ArrayList<>();
-                    exchange.setProperty(Exchange.ON_COMPLETION_ROUTE_IDS, routeIds);
+        public SynchronizationRouteAware getRouteSynchronization() {
+            return new SynchronizationRouteAware() {
+                @Override
+                public void onBeforeRoute(Route route, Exchange exchange) {
+                    // NO-OP
                 }
-                routeIds.add(route.getRouteId());
-            }
+
+                @Override
+                public void onAfterRoute(Route route, Exchange exchange) {
+                    // route scope = remember we have been at this route
+                    if (routeScoped && route.getRouteId().equals(routeId)) {
+                        @SuppressWarnings("unchecked")
+                        List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                        if (routeIds == null) {
+                            routeIds = new ArrayList<>();
+                            exchange.setProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, routeIds);
+                        }
+                        routeIds.add(route.getRouteId());
+                    }
+                }
+            };
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onComplete(final Exchange exchange) {
-            String currentRouteId = ExchangeHelper.getRouteId(exchange);
-            if (!routeScoped && currentRouteId != null && !routeId.equals(currentRouteId)) {
+            if (shouldSkip(exchange, onFailureOnly)) {
                 return;
             }
 
-            if (routeScoped) {
-                // check if we visited the route
-                List<String> routeIds = exchange.getProperty(Exchange.ON_COMPLETION_ROUTE_IDS, List.class);
-                if (routeIds == null || !routeIds.contains(routeId)) {
-                    return;
-                }
-            }
-
-            if (onFailureOnly) {
-                return;
-            }
-
-            if (onWhen != null && !onWhen.matches(exchange)) {
-                // predicate did not match so do not route the onComplete
-                return;
-            }
-
-            // must use a copy as we dont want it to cause side effects of the original exchange
+            // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
 
             if (executorService != null) {
@@ -320,16 +315,11 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public void onFailure(final Exchange exchange) {
-            if (onCompleteOnly) {
+            if (shouldSkip(exchange, onCompleteOnly)) {
                 return;
             }
 
-            if (onWhen != null && !onWhen.matches(exchange)) {
-                // predicate did not match so do not route the onComplete
-                return;
-            }
-
-            // must use a copy as we dont want it to cause side effects of the original exchange
+            // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
             final Exception original = copy.getException();
             if (original != null) {
@@ -357,6 +347,33 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             }
         }
 
+        @SuppressWarnings("unchecked")
+        private boolean shouldSkip(Exchange exchange, boolean onCompleteOrOnFailureOnly) {
+            String currentRouteId = ExchangeHelper.getRouteId(exchange);
+            if (!routeScoped && currentRouteId != null && !routeId.equals(currentRouteId)) {
+                return true;
+            }
+
+            if (routeScoped) {
+                // check if we visited the route
+                List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                if (routeIds == null || !routeIds.contains(routeId)) {
+                    return true;
+                }
+            }
+
+            if (onCompleteOrOnFailureOnly) {
+                return true;
+            }
+
+            if (onWhen != null && !onWhen.matches(exchange)) {
+                // predicate did not match so do not route the onComplete
+                return true;
+            }
+
+            return false;
+        }
+
         @Override
         public String toString() {
             if (!onCompleteOnly && !onFailureOnly) {
@@ -365,6 +382,26 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 return "onCompleteOnly";
             } else {
                 return "onFailureOnly";
+            }
+        }
+
+        @Override
+        public void beforeHandover(Exchange target) {
+            // The onAfterRoute method will not be called after the handover
+            // To ensure that completions are called, remember the route IDs here.
+            // Assumption: the fromRouteId on the target Exchange is the route
+            // which owns the completion
+            LOG.debug("beforeHandover from Route {}", target.getFromRouteId());
+            final String exchangeRouteId = target.getFromRouteId();
+            if (routeScoped && exchangeRouteId != null && exchangeRouteId.equals(routeId)) {
+                List<String> routeIds = target.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                if (routeIds == null) {
+                    routeIds = new ArrayList<>();
+                    target.setProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, routeIds);
+                }
+                if (!routeIds.contains(exchangeRouteId)) {
+                    routeIds.add(exchangeRouteId);
+                }
             }
         }
     }
@@ -386,46 +423,62 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         @Override
-        public void onAfterRoute(Route route, Exchange exchange) {
-            // route scope = should be from this route
-            if (routeScoped && !route.getRouteId().equals(routeId)) {
-                return;
-            }
+        public SynchronizationRouteAware getRouteSynchronization() {
+            return new SynchronizationRouteAware() {
+                @Override
+                public void onBeforeRoute(Route route, Exchange exchange) {
+                    // NO-OP
+                }
 
-            // global scope = should be from the original route
-            if (!routeScoped && (!route.getRouteId().equals(routeId) || !exchange.getFromRouteId().equals(routeId))) {
-                return;
-            }
+                @Override
+                public void onAfterRoute(Route route, Exchange exchange) {
+                    LOG.debug("onAfterRoute from Route {}", route.getRouteId());
+                    // route scope = should be from this route
+                    if (routeScoped && !route.getRouteId().equals(routeId)) {
+                        return;
+                    }
 
-            if (exchange.isFailed() && onCompleteOnly) {
-                return;
-            }
+                    // global scope = should be from the original route
+                    if (!routeScoped && (!route.getRouteId().equals(routeId) || !exchange.getFromRouteId().equals(routeId))) {
+                        return;
+                    }
 
-            if (!exchange.isFailed() && onFailureOnly) {
-                return;
-            }
+                    if (exchange.isFailed() && onCompleteOnly) {
+                        return;
+                    }
 
-            if (onWhen != null && !onWhen.matches(exchange)) {
-                // predicate did not match so do not route the onComplete
-                return;
-            }
+                    if (!exchange.isFailed() && onFailureOnly) {
+                        return;
+                    }
 
-            // must use a copy as we dont want it to cause side effects of the original exchange
-            final Exchange copy = prepareExchange(exchange);
+                    if (onWhen != null && !onWhen.matches(exchange)) {
+                        // predicate did not match so do not route the onComplete
+                        return;
+                    }
 
-            if (executorService != null) {
-                executorService.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
+                    // must use a copy as we don't want it to cause side effects of the original exchange
+                    final Exchange copy = prepareExchange(exchange);
+
+                    if (executorService != null) {
+                        executorService.submit(new Callable<Exchange>() {
+                            public Exchange call() throws Exception {
+                                LOG.debug("Processing onAfterRoute: {}", copy);
+                                doProcess(processor, copy);
+                                return copy;
+                            }
+                        });
+                    } else {
+                        // run without thread-pool
                         LOG.debug("Processing onAfterRoute: {}", copy);
                         doProcess(processor, copy);
-                        return copy;
                     }
-                });
-            } else {
-                // run without thread-pool
-                LOG.debug("Processing onAfterRoute: {}", copy);
-                doProcess(processor, copy);
-            }
+                }
+            };
+        }
+
+        @Override
+        public boolean allowHandover() {
+            return false;
         }
 
         @Override

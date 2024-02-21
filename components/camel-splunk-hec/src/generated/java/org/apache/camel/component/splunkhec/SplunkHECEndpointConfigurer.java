@@ -21,6 +21,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": target.getConfiguration().setBodyOnly(property(camelContext, boolean.class, value)); return true;
+        case "headersonly":
+        case "headersOnly": target.getConfiguration().setHeadersOnly(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "https": target.getConfiguration().setHttps(property(camelContext, boolean.class, value)); return true;
         case "index": target.getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
@@ -31,6 +35,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": target.getConfiguration().setSource(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcetype":
         case "sourceType": target.getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "splunkendpoint":
+        case "splunkEndpoint": target.getConfiguration().setSplunkEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "time": target.getConfiguration().setTime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -38,6 +46,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": return boolean.class;
+        case "headersonly":
+        case "headersOnly": return boolean.class;
         case "host": return java.lang.String.class;
         case "https": return boolean.class;
         case "index": return java.lang.String.class;
@@ -48,6 +60,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": return java.lang.String.class;
         case "sourcetype":
         case "sourceType": return java.lang.String.class;
+        case "splunkendpoint":
+        case "splunkEndpoint": return java.lang.String.class;
+        case "time": return java.lang.Long.class;
+        case "token": return java.lang.String.class;
         default: return null;
         }
     }
@@ -56,6 +72,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bodyonly":
+        case "bodyOnly": return target.getConfiguration().isBodyOnly();
+        case "headersonly":
+        case "headersOnly": return target.getConfiguration().isHeadersOnly();
         case "host": return target.getConfiguration().getHost();
         case "https": return target.getConfiguration().isHttps();
         case "index": return target.getConfiguration().getIndex();
@@ -66,6 +86,10 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "source": return target.getConfiguration().getSource();
         case "sourcetype":
         case "sourceType": return target.getConfiguration().getSourceType();
+        case "splunkendpoint":
+        case "splunkEndpoint": return target.getConfiguration().getSplunkEndpoint();
+        case "time": return target.getConfiguration().getTime();
+        case "token": return target.getConfiguration().getToken();
         default: return null;
         }
     }

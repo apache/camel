@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -38,7 +41,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     private static final Logger LOG = LoggerFactory.getLogger(MessageReceiverListenerImpl.class);
 
     private MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
-    private SmppConsumer consumer;
+    private Consumer consumer;
     private SmppEndpoint endpoint;
     private Processor processor;
     private ExceptionHandler exceptionHandler;
@@ -49,6 +52,20 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         this.endpoint = endpoint;
         this.processor = processor;
         this.exceptionHandler = exceptionHandler;
+    }
+
+    public MessageReceiverListenerImpl(SmppEndpoint endpoint, String messageReceiverRouteId) throws Exception {
+        this.endpoint = endpoint;
+
+        this.endpoint.getCamelContext().addStartupListener((context, alreadyStarted) -> {
+            Route route = context.getRoute(messageReceiverRouteId);
+            if (route == null) {
+                throw new IllegalArgumentException("No route with id '" + messageReceiverRouteId + "' found!");
+            }
+            this.consumer = route.getConsumer();
+            this.processor = this.consumer.getProcessor();
+            this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), this.getClass());
+        });
     }
 
     @Override

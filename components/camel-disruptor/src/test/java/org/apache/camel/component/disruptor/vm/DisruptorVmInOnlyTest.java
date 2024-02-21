@@ -17,6 +17,7 @@
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class DisruptorVmInOnlyTest extends AbstractVmTestSupport {
@@ -27,7 +28,7 @@ public class DisruptorVmInOnlyTest extends AbstractVmTestSupport {
 
         template2.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

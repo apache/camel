@@ -19,13 +19,13 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * An advice (before and after) to execute cross cutting functionality in the Camel routing engine.
+ * An advice (before and after) to execute cross-cutting functionality in the Camel routing engine.
  * <p/>
  * The Camel routing engine will execute the {@link #before(org.apache.camel.Exchange)} and
  * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order.
  *
  * @param <T>
- * @see       org.apache.camel.processor.CamelInternalProcessor
+ * @see       org.apache.camel.impl.engine.CamelInternalProcessor
  */
 public interface CamelInternalProcessorAdvice<T> {
 

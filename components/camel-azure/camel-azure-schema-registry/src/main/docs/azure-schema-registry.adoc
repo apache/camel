@@ -1,0 +1,13 @@
+= Azure Schema Registry Component
+:doctitle: Azure Schema Registry
+:shortname: azure-schema-registry
+:artifactid: camel-azure-schema-registry
+:description: Azure Schema Registry Component for utilities to deal with authentication
+:since: 4.2
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The camel-azure-schema-registry component contains some useful classes to deal with authentication against
+the Azure Schema Registry

@@ -18,14 +18,21 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
     @Override
@@ -42,17 +49,27 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         super.tearDown();
     }
 
+    private void sendUnauthorizedRequest() {
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
+                "Should have thrown a CamelExecutionException");
+
+        NettyHttpOperationFailedException cause
+                = assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
+        assertEquals(UNAUTHORIZED.code(), cause.getStatusCode(), "Should have sent back HTTP status 401");
+    }
+
+    @Order(1)
+    @DisplayName("Tests whether it returns unauthorized (HTTP 401) for unauthorized access")
     @Test
-    public void testBasicAuth() throws Exception {
+    void testBasicAuth() {
+        sendUnauthorizedRequest();
+    }
 
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
-
+    @Order(2)
+    @DisplayName("Tests whether it authorized access succeeds")
+    @Test
+    void testWithAuth() throws InterruptedException {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         // username:password is scott:secret
@@ -61,23 +78,21 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
                 auth, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
-
+    @Order(3)
+    @DisplayName("Tests whether it returns unauthorized (HTTP 401) for unauthorized access after a successful authorization")
+    @Test
+    void testBasicAuthPostAuth() {
+        sendUnauthorizedRequest();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf")
                         .to("mock:input")
                         .transform().constant("Bye World");

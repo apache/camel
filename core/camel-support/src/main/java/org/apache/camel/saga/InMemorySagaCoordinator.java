@@ -52,12 +52,12 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemorySagaCoordinator.class);
 
-    private CamelContext camelContext;
-    private InMemorySagaService sagaService;
-    private String sagaId;
-    private List<CamelSagaStep> steps;
-    private Map<CamelSagaStep, Map<String, Object>> optionValues;
-    private AtomicReference<Status> currentStatus;
+    private final CamelContext camelContext;
+    private final InMemorySagaService sagaService;
+    private final String sagaId;
+    private final List<CamelSagaStep> steps;
+    private final Map<CamelSagaStep, Map<String, Object>> optionValues;
+    private final AtomicReference<Status> currentStatus;
 
     public InMemorySagaCoordinator(CamelContext camelContext, InMemorySagaService sagaService, String sagaId) {
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
@@ -75,6 +75,13 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     @Override
     public CompletableFuture<Void> beginStep(Exchange exchange, CamelSagaStep step) {
+        Status status = currentStatus.get();
+        if (status != Status.RUNNING) {
+            CompletableFuture<Void> res = new CompletableFuture<>();
+            res.completeExceptionally(new IllegalStateException("Cannot begin: status is " + status));
+            return res;
+        }
+
         this.steps.add(step);
 
         if (!step.getOptions().isEmpty()) {
@@ -105,7 +112,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     @Override
-    public CompletableFuture<Void> compensate() {
+    public CompletableFuture<Void> compensate(Exchange exchange) {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
 
         if (doAction) {
@@ -123,7 +130,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     @Override
-    public CompletableFuture<Void> complete() {
+    public CompletableFuture<Void> complete(Exchange exchange) {
         boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
 
         if (doAction) {
@@ -168,9 +175,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         }
         return result.whenComplete((done, ex) -> {
             if (ex != null) {
-                LOG.error("Cannot finalize " + description + " the saga", ex);
+                LOG.error("Cannot finalize {} the saga", description, ex);
             } else if (!done) {
-                LOG.warn("Unable to finalize " + description + " for all required steps of the saga " + sagaId);
+                LOG.warn("Unable to finalize {} for all required steps of the saga {}", description, sagaId);
             }
         });
     }
@@ -186,9 +193,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             }
             return true;
         }, sagaService.getExecutorService()).exceptionally(ex -> {
-            LOG.warn("Exception thrown during " + description + " at " + endpoint.getEndpointUri()
-                     + ". Attempt " + (doneAttempts + 1) + " of " + sagaService.getMaxRetryAttempts(),
-                    ex);
+            LOG.warn("Exception thrown during {} at {}. Attempt {} of {}", description, endpoint.getEndpointUri(),
+                    doneAttempts + 1, sagaService.getMaxRetryAttempts(), ex);
             return false;
         }).thenCompose(executed -> {
             int currentAttempt = doneAttempts + 1;

@@ -1,20 +1,18 @@
-[[BeanInjection-BeanInjection]]
 = Bean Injection
 
-We support the injection of various resources using @EndpointInject or
-@BeanInject. This can be used to inject
+We support the injection of various resources using `@EndpointInject` or
+`@BeanInject`. This can be used to inject
 
 * xref:endpoint.adoc[Endpoint] instances which can be used for testing
 when used with xref:components::mock-component.adoc[Mock] endpoints; see the
-xref:spring-testing.adoc[Spring Testing] for an example.
+xref:testing.adoc[Testing] for an example.
 * xref:producertemplate.adoc[ProducerTemplate] instances for
 xref:pojo-producing.adoc[POJO Producing]
-* client side proxies for xref:pojo-producing.adoc[POJO Producing] 
+* client side proxies for xref:pojo-producing.adoc[POJO Producing]
 
-[[BeanInjection-Using-BeanInject]]
 == Using @BeanInject
 
-From *Camel 2.13* onwards you can inject beans (obtained from the
+You can inject beans (obtained from the
 xref:registry.adoc[Registry]) into your beans such as `RouteBuilder`
 classes.
 
@@ -51,3 +49,13 @@ xref:registry.adoc[Registry].
    @BeanInject
    MyFooBean foo;
 ----
+
+== Bean Injection with Quarkus
+
+When using Camel with Spring Boot, or Quarkus, then the `@Inject`, or `@Named` annotations can
+be used to inject Camel resources as well.
+
+== Bean Injection with Spring Boot
+
+Camel has first class support for Spring Boot, and you can use the Spring annotations
+such as `@Autowired` to also inject Camel resources.

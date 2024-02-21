@@ -23,10 +23,10 @@ import org.w3c.dom.Node;
 import net.sf.saxon.functions.CollectionFn;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;
-import org.apache.camel.util.ObjectHelper;
 
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
@@ -39,9 +39,7 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         if (annotation instanceof XQuery) {
             XQuery xQueryAnnotation = (XQuery) annotation;
             builder.setStripsAllWhiteSpace(xQueryAnnotation.stripsAllWhiteSpace());
-            if (ObjectHelper.isNotEmpty(xQueryAnnotation.headerName())) {
-                builder.setHeaderName(xQueryAnnotation.headerName());
-            }
+
             NamespacePrefix[] namespaces = xQueryAnnotation.namespaces();
             if (namespaces != null) {
                 for (NamespacePrefix namespacePrefix : namespaces) {
@@ -49,16 +47,41 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
                 }
             }
         }
-        if (expressionReturnType.isAssignableFrom(String.class)) {
+        String source = getSource(annotation);
+        if (source != null) {
+            builder.setSource(ExpressionBuilder.singleInputExpression(source));
+        }
+        Class<?> resultType = getResultType(annotation);
+        if (resultType.equals(Object.class)) {
+            resultType = expressionReturnType;
+        }
+        if (resultType.isAssignableFrom(String.class)) {
             builder.setResultsFormat(ResultFormat.String);
-        } else if (expressionReturnType.isAssignableFrom(CollectionFn.class)) {
+        } else if (resultType.isAssignableFrom(CollectionFn.class)) {
             builder.setResultsFormat(ResultFormat.List);
-        } else if (expressionReturnType.isAssignableFrom(Node.class)) {
+        } else if (resultType.isAssignableFrom(Node.class)) {
             builder.setResultsFormat(ResultFormat.DOM);
-        } else if (expressionReturnType.isAssignableFrom(byte[].class)) {
+        } else if (resultType.isAssignableFrom(byte[].class)) {
             builder.setResultsFormat(ResultFormat.Bytes);
         }
         return builder;
+    }
+
+    protected Class<?> getResultType(Annotation annotation) {
+        return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
+    }
+
+    protected String getSource(Annotation annotation) {
+        String answer = null;
+        try {
+            answer = (String) getAnnotationObjectValue(annotation, "source");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
     }
 
 }

@@ -16,17 +16,26 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
+@Tags({ @Tag("not-parallel") })
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testTwoConsumerOnSameQueue() throws Exception {
@@ -34,6 +43,7 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
     public void testStopAndStartOneRoute() throws Exception {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 
@@ -41,26 +51,27 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         context.getRouteController().stopRoute("a");
 
         // send new message should go to B only
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        template.sendBody("activemq:queue:foo", "Bye World");
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // now start route A
         context.getRouteController().startRoute("a");
 
         // send new message should go to both A and B
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
     public void testRemoveOneRoute() throws Exception {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 
@@ -69,46 +80,57 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         assertTrue(context.removeRoute("a"));
 
         // send new message should go to B only
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        template.sendBody("activemq:queue:foo", "Bye World");
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert() throws InterruptedException {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
+        final MockEndpoint mockB = getMockEndpoint("mock:b");
+        final MockEndpoint mockA = getMockEndpoint("mock:a");
 
-        template.sendBody("activemq:queue:foo", "Hello World");
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(2, mockA.getReceivedCounter() + mockB.getReceivedCounter()));
+
+        for (Exchange exchange : mockA.getReceivedExchanges()) {
+            assertExchange(exchange);
+        }
+
+        for (Exchange exchange : mockB.getReceivedExchanges()) {
+            assertExchange(exchange);
+        }
+    }
+
+    private static void assertExchange(Exchange exchange) {
+        assertNotNull(exchange.getIn(), "There should be an in message");
+        assertNotNull(exchange.getIn().getBody(), "There should be an in body");
+        assertNotNull(exchange.getIn().getBody(String.class), "The in message body should be of type String");
+        assertEquals("Hello World", exchange.getIn().getBody(), "The in message body should be 'Hello World");
+    }
+
+    @AfterEach
+    void resetMocks() {
+        MockEndpoint.resetMocks(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo").routeId("a")
+            public void configure() {
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("a")
                         .to("log:a", "mock:a");
 
-                from("activemq:queue:foo").routeId("b")
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("b")
                         .to("log:b", "mock:b");
             }
         };

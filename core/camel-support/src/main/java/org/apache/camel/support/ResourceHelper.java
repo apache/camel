@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.AntPathMatcher;
@@ -70,7 +68,8 @@ public final class ResourceHelper {
             return false;
         }
 
-        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("ref:") ||
+                uri.startsWith("bean:") || uri.startsWith("http:") || uri.startsWith("https:");
     }
 
     /**
@@ -101,7 +100,7 @@ public final class ResourceHelper {
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
      * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the Camel Context
      * @param  uri                 URI of the resource
@@ -121,7 +120,7 @@ public final class ResourceHelper {
     /**
      * Resolves the resource.
      * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the camel context
      * @param  uri                 URI of the resource
@@ -130,10 +129,7 @@ public final class ResourceHelper {
      * @throws java.io.IOException is thrown if error loading the resource
      */
     public static InputStream resolveResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        final ResourceLoader loader = ecc.getResourceLoader();
-        final Resource resource = loader.resolveResource(uri);
-
+        final Resource resource = resolveResource(camelContext, uri);
         return resource.getInputStream();
     }
 
@@ -166,11 +162,37 @@ public final class ResourceHelper {
      * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveResourceAsUrl(CamelContext camelContext, String uri) throws MalformedURLException {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        final ResourceLoader loader = ecc.getResourceLoader();
-        final Resource resource = loader.resolveResource(uri);
-
+        final Resource resource = resolveResource(camelContext, uri);
         return resource.getURL();
+    }
+
+    /**
+     * Resolves a mandatory resource.
+     *
+     * @param  camelContext          the camel context
+     * @param  uri                   the uri of the resource
+     * @return                       the {@link Resource}
+     * @throws FileNotFoundException if the resource could not be found
+     */
+    public static Resource resolveMandatoryResource(CamelContext camelContext, String uri) throws FileNotFoundException {
+        final Resource resource = resolveResource(camelContext, uri);
+        if (resource == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " for URI: " + uri);
+        }
+        return resource;
+    }
+
+    /**
+     * Resolves a resource.
+     *
+     * @param  camelContext the camel context
+     * @param  uri          the uri of the resource
+     * @return              the {@link Resource}. Or <tt>null</tt> if not found
+     */
+    public static Resource resolveResource(CamelContext camelContext, String uri) {
+        final ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
+        return loader.resolveResource(uri);
     }
 
     /**
@@ -234,29 +256,13 @@ public final class ResourceHelper {
     }
 
     /**
-     * Tries decoding the uri.
-     *
-     * @param  uri the uri
-     * @return     the decoded uri, or the original uri
-     */
-    private static String tryDecodeUri(String uri) {
-        try {
-            // try to decode as the uri may contain %20 for spaces etc
-            uri = URLDecoder.decode(uri, "UTF-8");
-        } catch (Exception e) {
-            LOG.trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
-            // ignore
-        }
-        return uri;
-    }
-
-    /**
-     * Find resources from the file system using Ant-style path patterns.
+     * Find resources from the file system using Ant-style path patterns (skips hidden files, or files from hidden
+     * folders).
      *
      * @param  root      the starting file
      * @param  pattern   the Ant pattern
-     * @return           a list of files matching the given pattern
-     * @throws Exception
+     * @return           set of files matching the given pattern
+     * @throws Exception is thrown if IO error
      */
     public static Set<Path> findInFileSystem(Path root, String pattern) throws Exception {
         try (Stream<Path> path = Files.walk(root)) {
@@ -266,9 +272,15 @@ public final class ResourceHelper {
                         Path relative = root.relativize(entry);
                         String str = relative.toString().replaceAll(Pattern.quote(File.separator),
                                 AntPathMatcher.DEFAULT_PATH_SEPARATOR);
-                        boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
-                        LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
-                        return match;
+                        // skip files in hidden folders
+                        boolean hidden = str.startsWith(".") || str.contains(AntPathMatcher.DEFAULT_PATH_SEPARATOR + ".");
+                        if (!hidden) {
+                            boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
+                            LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
+                            return match;
+                        } else {
+                            return false;
+                        }
                     })
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
@@ -282,19 +294,14 @@ public final class ResourceHelper {
      * @return          a resource wrapping the given byte array
      */
     public static Resource fromBytes(String location, byte[] content) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
+        return new ResourceSupport("mem", location) {
             @Override
             public boolean exists() {
                 return true;
             }
 
             @Override
-            public InputStream getInputStream() throws IOException {
+            public InputStream getInputStream() {
                 return new ByteArrayInputStream(content);
             }
         };

@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.sql.Connection;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
@@ -42,6 +42,8 @@ import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 public class SqlProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlProducer.class);
+
+    private static final Object EMPTY_RESULT = new Object();
 
     private final String query;
     private String resolvedQuery;
@@ -96,7 +98,12 @@ public class SqlProducer extends DefaultProducer {
             sql = exchange.getIn().getBody(String.class);
         } else {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-            sql = queryHeader != null ? queryHeader : resolvedQuery;
+            if (queryHeader != null) {
+                String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+                sql = SqlHelper.resolvePlaceholders(queryHeader, placeholder);
+            } else {
+                sql = resolvedQuery;
+            }
         }
         final String preparedQuery
                 = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
@@ -129,14 +136,10 @@ public class SqlProducer extends DefaultProducer {
         } else {
             data = processInternal(exchange, statementCreator, sql, preparedQuery, shouldRetrieveGeneratedKeys);
         }
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        if (getEndpoint().isNoop() || getEndpoint().getOutputHeader() != null || data == null) {
-            exchange.getOut().setBody(exchange.getIn().getBody());
-        }
         if (getEndpoint().getOutputHeader() != null) {
-            exchange.getOut().setHeader(getEndpoint().getOutputHeader(), data);
+            exchange.getIn().setHeader(getEndpoint().getOutputHeader(), data == EMPTY_RESULT ? null : data);
         } else if (data != null && !getEndpoint().isNoop()) {
-            exchange.getOut().setBody(data);
+            exchange.getIn().setBody(data == EMPTY_RESULT ? null : data);
         }
     }
 
@@ -175,26 +178,28 @@ public class SqlProducer extends DefaultProducer {
                                 data = getEndpoint().queryForObject(rs);
                                 if (data != null) {
                                     rowCount = 1;
+                                } else {
+                                    // need to mark special when no data
+                                    data = EMPTY_RESULT;
                                 }
                             } else {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
                             }
-                            exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, rowCount);
+                            exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, rowCount);
                         } else {
-                            exchange.getOut().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
-                            exchange.getOut().setBody(exchange.getIn().getBody());
+                            exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                         }
                     }
 
                     if (shouldRetrieveGeneratedKeys) {
                         if (isResultSet) {
                             // we won't return generated keys for SELECT statements
-                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
-                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
+                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.emptyList());
+                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
                         } else {
                             List<?> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys(), false);
-                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
-                            exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
+                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
+                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, generatedKeys.size());
                         }
                     }
 
@@ -231,7 +236,7 @@ public class SqlProducer extends DefaultProducer {
 
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
+                exchange.getExchangeExtension().addOnCompletion(new ResultSetIteratorCompletion(iterator));
             }
             return iterator;
         } catch (Exception e) {
@@ -245,7 +250,13 @@ public class SqlProducer extends DefaultProducer {
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
             throws SQLException {
-        int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+        int expected;
+        if (parametersCount > 0) {
+            expected = parametersCount;
+        } else {
+            ParameterMetaData meta = ps.getParameterMetaData();
+            expected = meta != null ? meta.getParameterCount() : 0;
+        }
 
         // only populate if really needed
         if (alwaysPopulateStatement || expected > 0) {

@@ -19,12 +19,16 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.function.Predicate;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -42,7 +46,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -123,12 +126,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     protected MavenProject project;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (pathToModelDir == null) {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
 
-        // skip if input file does not exists
+        // skip if input file does not exist
         if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
             getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
             return;
@@ -166,10 +169,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Set<File> files = new HashSet<>();
         PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
+        // spring/blueprint should not include SpringErrorHandlerDefinition (duplicates a file from camel-core-model)
+        Predicate<File> filter = f -> !f.getName().equals("errorHandler.json");
         if (blueprint) {
-            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files, filter);
         } else {
-            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files);
+            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files, filter);
         }
         Map<String, File> jsonFiles = new HashMap<>();
         files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));
@@ -189,7 +194,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
                 enriched++;
                 getLog().debug("Enriching " + elementName);
                 File file = jsonFiles.get(elementName);
-                injectAttributesDocumentation(domFinder, documentationEnricher, file, elementType, injectedTypes);
+                injectChildElementsDocumentation(domFinder, documentationEnricher, file, elementType, injectedTypes);
             } else {
                 boolean ignore = "ExpressionDefinition".equalsIgnoreCase(elementName);
                 if (!ignore) {
@@ -199,7 +204,36 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         }
         getLog().info("Enriched " + enriched + " models out of " + typeToNameMap.size() + " models");
 
-        saveToFile(document, outputCamelSchemaFile, XmlHelper.buildTransformer());
+        String xml = transformToXml(document, XmlHelper.buildTransformer());
+        xml = fixXmlOutput(xml);
+        xml = removeEmptyLines(xml);
+
+        saveToFile(document, outputCamelSchemaFile, xml);
+    }
+
+    public static String fixXmlOutput(String xml) {
+        xml = xml.replaceAll("><!\\[CDATA\\[", ">\n<![CDATA[");
+        xml = xml.replaceAll("\\h+<!\\[CDATA\\[", "<![CDATA[");
+        xml = xml.replaceAll("(\\h*)]]><", "]]>\n$1<");
+        return removeEmptyLines(xml);
+    }
+
+    public static String removeEmptyLines(String xml) {
+        StringJoiner sj = new StringJoiner("\n");
+        for (String l : xml.split("\n")) {
+            if (!l.isBlank()) {
+                sj.add(l);
+            }
+        }
+        return sj.toString();
+    }
+
+    private String transformToXml(Document document, Transformer transformer) throws TransformerException {
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        DOMSource source = new DOMSource(document);
+        transformer.transform(source, result);
+        return sw.toString();
     }
 
     private boolean jsonFileExistsForElement(
@@ -217,9 +251,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     /**
-     * Recursively injects documentation to complex type attributes and it's parents.
+     * Recursively injects documentation to complex type attributes and elements and it's parents.
      */
-    private void injectAttributesDocumentation(
+    private void injectChildElementsDocumentation(
             DomFinder domFinder,
             DocumentationEnricher documentationEnricher,
             File jsonFile,
@@ -233,13 +267,17 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         injectedTypes.add(type);
         NodeList attributeElements = domFinder.findAttributesElements(type);
         if (attributeElements.getLength() > 0) {
-            documentationEnricher.enrichTypeAttributesDocumentation(getLog(), attributeElements, jsonFile);
+            documentationEnricher.enrichElementDocumentation(getLog(), attributeElements, jsonFile);
+        }
+        NodeList elementElements = domFinder.findElementsElements(type);
+        if (elementElements.getLength() > 0) {
+            documentationEnricher.enrichElementDocumentation(getLog(), elementElements, jsonFile);
         }
 
         String baseType = domFinder.findBaseType(type);
         if (baseType != null && !StringUtils.isEmpty(baseType)) {
             baseType = truncateTypeNamespace(baseType);
-            injectAttributesDocumentation(domFinder, documentationEnricher, jsonFile, baseType, injectedTypes);
+            injectChildElementsDocumentation(domFinder, documentationEnricher, jsonFile, baseType, injectedTypes);
         }
     }
 
@@ -264,12 +302,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer)
-            throws IOException, TransformerException {
+    private void saveToFile(Document document, File outputFile, String xml) throws IOException {
         try (FileOutputStream os = new FileOutputStream(outputFile)) {
-            StreamResult result = new StreamResult(os);
-            DOMSource source = new DOMSource(document);
-            transformer.transform(source, result);
+            os.write(xml.getBytes(StandardCharsets.UTF_8));
         }
     }
 

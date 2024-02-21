@@ -166,10 +166,10 @@ public class MockValueBuilder implements Expression, Predicate {
         for (Object value : values) {
             Expression right = asExpression(value);
             right = ExpressionBuilder.convertToExpression(right, expression);
-            Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
+            Predicate predicate = PredicateBuilder.isEqualTo(expression, right);
             predicates.add(predicate);
         }
-        return in(predicates.toArray(new Predicate[predicates.size()]));
+        return in(predicates.toArray(new Predicate[0]));
     }
 
     public Predicate in(Predicate... predicates) {
@@ -188,7 +188,7 @@ public class MockValueBuilder implements Expression, Predicate {
 
     /**
      * Create a predicate that the left hand expression contains the value of the right hand expression
-     * 
+     *
      * @param  value the element which is compared to be contained within this expression
      * @return       a predicate which evaluates to true if the given value expression is contained within this
      *               expression value
@@ -200,7 +200,7 @@ public class MockValueBuilder implements Expression, Predicate {
 
     /**
      * Creates a predicate which is true if this expression matches the given regular expression
-     * 
+     *
      * @param  regex the regular expression to match
      * @return       a predicate which evaluates to true if the expression matches the regex
      */
@@ -221,7 +221,7 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     public MockValueBuilder tokenize(String token, int group, boolean skipFirst) {
-        return tokenize(token, "" + group, skipFirst);
+        return tokenize(token, Integer.toString(group), skipFirst);
     }
 
     public MockValueBuilder tokenize(String token, String group, boolean skipFirst) {
@@ -260,7 +260,7 @@ public class MockValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to the given type using the registered type converters
-     * 
+     *
      * @param  type the type to convert the value to
      * @return      the current builder
      */
@@ -271,7 +271,7 @@ public class MockValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to a String using the registered type converters
-     * 
+     *
      * @return the current builder
      */
     public MockValueBuilder convertToString() {

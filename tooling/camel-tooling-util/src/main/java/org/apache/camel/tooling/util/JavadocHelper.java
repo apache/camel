@@ -76,7 +76,7 @@ public final class JavadocHelper {
 
             boolean empty = isNullOrEmpty(s);
             boolean endWithDot = s.endsWith(".");
-            boolean haveText = sb.length() > 0;
+            boolean haveText = !sb.isEmpty();
 
             if (haveText && summary && (empty || endWithDot)) {
                 // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a dot

@@ -19,7 +19,7 @@ package org.apache.camel.attachment;
 import java.util.Collection;
 import java.util.List;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.camel.Message;
 
@@ -60,7 +60,7 @@ public interface Attachment {
 
     /**
      * Set the value for this headerName. Replaces all existing header values with this new value.
-     * 
+     *
      * @param headerName  the name of this header
      * @param headerValue the value for this header
      */
@@ -68,7 +68,7 @@ public interface Attachment {
 
     /**
      * Add this value to the existing values for this headerName.
-     * 
+     *
      * @param headerName  the name of this header
      * @param headerValue the value for this header
      */
@@ -76,7 +76,7 @@ public interface Attachment {
 
     /**
      * Remove all headers with this name.
-     * 
+     *
      * @param headerName the name of this header
      */
     void removeHeader(String headerName);

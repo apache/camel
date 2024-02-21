@@ -27,11 +27,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS;
+
 /**
  * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement",
-             category = { Category.DATABASE, Category.SQL })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MYBATIS, title = "MyBatis", syntax = "mybatis:statement",
+             category = { Category.DATABASE }, headersClass = MyBatisConstants.class)
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath

@@ -18,14 +18,18 @@ package org.apache.camel.impl.engine;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.support.LRUCache;
@@ -33,70 +37,68 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * Base implementation for {@link org.apache.camel.spi.TransformerRegistry},
- * {@link org.apache.camel.spi.ValidatorRegistry} and {@link org.apache.camel.spi.EndpointRegistry}.
+ * Base implementation for {@link org.apache.camel.spi.EndpointRegistry},
+ * {@link org.apache.camel.spi.TransformerRegistry}, and {@link org.apache.camel.spi.ValidatorRegistry}.
  */
 public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements StaticService {
 
-    protected final ExtendedCamelContext context;
+    protected final CamelContext context;
     protected final RouteController routeController;
     protected final int maxCacheSize;
     protected final Map<K, V> dynamicMap;
     protected final Map<K, V> staticMap;
 
     public AbstractDynamicRegistry(CamelContext context, int maxCacheSize) {
-        this.context = (ExtendedCamelContext) context;
+        this.context = context;
         this.routeController = context.getRouteController();
         this.maxCacheSize = maxCacheSize;
-        // do not stop on eviction, as the transformer may still be in use
+        // do not stop on eviction, as the endpoint or transformer may still be in use
         this.dynamicMap = LRUCacheFactory.newLRUCache(this.maxCacheSize, this.maxCacheSize, false);
-        // static map to hold transformers we do not want to be evicted
+        // static map to hold endpoint or transformer we do not want to be evicted
         this.staticMap = new ConcurrentHashMap<>();
     }
 
     @Override
     public void start() {
         if (dynamicMap instanceof LRUCache) {
-            ((LRUCache) dynamicMap).resetStatistics();
+            ((LRUCache<K, V>) dynamicMap).resetStatistics();
         }
     }
 
     @Override
     public V get(Object o) {
-        // try static map first
+        // keep this get optimized to only lookup
+        // try static map first and fallback to dynamic
         V answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
-            if (answer != null && (context.isSetupRoutes() || routeController.isStartingRoutes())) {
-                dynamicMap.remove(o);
-                staticMap.put((K) o, answer);
-            }
         }
         return answer;
     }
 
     @Override
-    public V put(K key, V transformer) {
+    public V put(K key, V obj) {
         // at first we must see if the key already exists and then replace it back, so it stays the same spot
         V answer = staticMap.remove(key);
         if (answer != null) {
             // replace existing
-            staticMap.put(key, transformer);
+            staticMap.put(key, obj);
             return answer;
         }
 
         answer = dynamicMap.remove(key);
         if (answer != null) {
             // replace existing
-            dynamicMap.put(key, transformer);
+            dynamicMap.put(key, obj);
             return answer;
         }
 
-        // we want transformers to be static if they are part of setting up or starting routes
-        if (context.isSetupRoutes() || routeController.isStartingRoutes()) {
-            answer = staticMap.put(key, transformer);
+        // we want endpoint or transformer to be static if they are part of
+        // starting up camel, or if new routes are being setup/added or routes started later
+        if (!context.isStarted() || context.getCamelContextExtension().isSetupRoutes() || routeController.isStartingRoutes()) {
+            answer = staticMap.put(key, obj);
         } else {
-            answer = dynamicMap.put(key, transformer);
+            answer = dynamicMap.put(key, obj);
         }
 
         return answer;
@@ -147,7 +149,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return new AbstractSet<Entry<K, V>>() {
+        return new AbstractSet<>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
                 return new CompoundIterator<>(
@@ -166,9 +168,6 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
         return maxCacheSize;
     }
 
-    /**
-     * Purges the cache
-     */
     public void purge() {
         // only purge the dynamic part
         dynamicMap.clear();
@@ -176,7 +175,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     public void cleanUp() {
         if (dynamicMap instanceof LRUCache) {
-            ((LRUCache) dynamicMap).cleanUp();
+            ((LRUCache<K, V>) dynamicMap).cleanUp();
         }
     }
 
@@ -188,6 +187,55 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
         return dynamicMap.containsKey(key);
     }
 
+    public Collection<V> getReadOnlyValues() {
+        if (isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // we want to avoid any kind of locking in get/put methods
+        // as getReadOnlyValues is only seldom used, such as when camel-mock
+        // is asserting endpoints at end of testing
+        // so this code will then just retry in case of a concurrency update
+        Collection<V> answer = new ArrayList<>();
+        boolean done = false;
+        while (!done) {
+            try {
+                answer.addAll(values());
+                done = true;
+            } catch (ConcurrentModificationException e) {
+                answer.clear();
+                // try again
+            }
+        }
+        return Collections.unmodifiableCollection(answer);
+    }
+
+    public Map<String, V> getReadOnlyMap() {
+        if (isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // we want to avoid any kind of locking in get/put methods
+        // as getReadOnlyValues is only seldom used, such as when camel-mock
+        // is asserting endpoints at end of testing
+        // so this code will then just retry in case of a concurrency update
+        Map<String, V> answer = new LinkedHashMap<>();
+        boolean done = false;
+        while (!done) {
+            try {
+                for (Entry<K, V> entry : entrySet()) {
+                    String k = entry.getKey().toString();
+                    answer.put(k, entry.getValue());
+                }
+                done = true;
+            } catch (ConcurrentModificationException e) {
+                answer.clear();
+                // try again
+            }
+        }
+        return Collections.unmodifiableMap(answer);
+    }
+
     @Override
     public void stop() {
         ServiceHelper.stopService(staticMap.values(), dynamicMap.values());
@@ -196,7 +244,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     @Override
     public String toString() {
-        return "Registry for " + context.getName() + ", capacity: " + maxCacheSize;
+        return "Registry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
 
 }

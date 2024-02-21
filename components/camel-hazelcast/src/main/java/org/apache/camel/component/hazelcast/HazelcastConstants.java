@@ -16,7 +16,24 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import org.apache.camel.spi.Metadata;
+
 public final class HazelcastConstants {
+
+    /**
+     * All the schemes
+     */
+    public static final String SCHEME_ATOMIC_VALUE = "hazelcast-atomicvalue";
+    public static final String SCHEME_INSTANCE = "hazelcast-instance";
+    public static final String SCHEME_LIST = "hazelcast-list";
+    public static final String SCHEME_MAP = "hazelcast-map";
+    public static final String SCHEME_MULTIMAP = "hazelcast-multimap";
+    public static final String SCHEME_QUEUE = "hazelcast-queue";
+    public static final String SCHEME_REPLICATED_MAP = "hazelcast-replicatedmap";
+    public static final String SCHEME_RING_BUFFER = "hazelcast-ringbuffer";
+    public static final String SCHEME_SEDA = "hazelcast-seda";
+    public static final String SCHEME_SET = "hazelcast-set";
+    public static final String SCHEME_TOPIC = "hazelcast-topic";
 
     /*
     * uri prefixes
@@ -36,27 +53,62 @@ public final class HazelcastConstants {
     /*
      * incoming header properties
      */
+    @Metadata(description = "the object id to store / find your object inside the cache", javaType = "String", applicableFor = {
+            SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC })
     public static final String OBJECT_ID = "CamelHazelcastObjectId";
+    @Metadata(label = "producer", description = "The index of the object", javaType = "Integer", applicableFor = SCHEME_LIST)
     public static final String OBJECT_POS = "CamelHazelcastObjectIndex";
+    @Metadata(label = "producer", description = "The old value", javaType = "Object", applicableFor = SCHEME_MAP)
     public static final String OBJECT_VALUE = "CamelHazelcastObjectValue";
+    @Metadata(label = "producer", description = "The value of the TTL", javaType = "Integer", applicableFor = SCHEME_MAP)
     public static final String TTL_VALUE = "CamelHazelcastObjectTtlValue";
+    @Metadata(label = "producer", description = "The value of time unit ( DAYS / HOURS / MINUTES / ....",
+              javaType = "java.util.concurrent.TimeUnit", applicableFor = SCHEME_MAP)
     public static final String TTL_UNIT = "CamelHazelcastObjectTtlUnit";
+    @Metadata(label = "producer",
+              description = "The query to execute against the map with a sql like syntax (see http://www.hazelcast.com/)",
+              javaType = "String", applicableFor = SCHEME_MAP)
     public static final String QUERY = "CamelHazelcastQuery";
     public static final String EXPECTED_VALUE = "CamelHazelcastExpectedValue";
+    @Metadata(label = "producer", description = "The collection to transfer elements into", javaType = "Collection",
+              applicableFor = SCHEME_QUEUE)
     public static final String DRAIN_TO_COLLECTION = "CamelHazelcastDrainToCollection";
 
     /*
      * outgoing header properties
      */
+    @Metadata(label = "consumer", description = "The type of event - here *added* and *removed*", javaType = "String",
+              applicableFor = {
+                      SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
+                      SCHEME_INSTANCE })
     public static final String LISTENER_ACTION = "CamelHazelcastListenerAction";
+    @Metadata(label = "consumer", description = "The map consumer", javaType = "String",
+              applicableFor = {
+                      SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
+                      SCHEME_INSTANCE })
     public static final String LISTENER_TYPE = "CamelHazelcastListenerType";
+    @Metadata(label = "consumer", description = "The time of the event in millis", javaType = "Long",
+              applicableFor = {
+                      SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
+                      SCHEME_INSTANCE })
     public static final String LISTENER_TIME = "CamelHazelcastListenerTime";
+    @Metadata(label = "consumer", description = "The host name of the instance", javaType = "String",
+              applicableFor = SCHEME_INSTANCE)
     public static final String INSTANCE_HOST = "CamelHazelcastInstanceHost";
+    @Metadata(label = "consumer", description = "The port number of the instance", javaType = "Integer",
+              applicableFor = SCHEME_INSTANCE)
     public static final String INSTANCE_PORT = "CamelHazelcastInstancePort";
+    @Metadata(label = "consumer", description = "The name of the cache - e.g. \"foo\"", javaType = "String", applicableFor = {
+            SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC })
     public static final String CACHE_NAME = "CamelHazelcastCacheName";
+    @Metadata(description = "The type of the cache - here multimap", javaType = "String", applicableFor = SCHEME_MULTIMAP)
     public static final String CACHE_TYPE = "CamelHazelcastCacheType";
 
     // actions (PUT, DELETE, GET, GET_ALL, UPDATE, CLEAR)
+    @Metadata(label = "producer", description = "The operation to perform", javaType = "String",
+              applicableFor = {
+                      SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
+                      SCHEME_ATOMIC_VALUE, SCHEME_RING_BUFFER })
     public static final String OPERATION = "CamelHazelcastOperationType";
 
     /**

@@ -1,0 +1,1 @@
+../../../../../components/camel-kubernetes/src/main/docs/kubernetes-cronjob-component.adoc

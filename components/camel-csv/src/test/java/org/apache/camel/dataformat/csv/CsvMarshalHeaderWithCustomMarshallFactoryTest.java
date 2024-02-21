@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -58,7 +58,7 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
     private File outputFile;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         outputFile = new File(folder, "output.csv");
     }
 
@@ -74,9 +74,11 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         body.put("first_name", "Max");
         body.put("last_name", "Mustermann");
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        List<String> lines = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> l.trim().length() > 0).collect(Collectors.toList());
-        assertEquals(3, lines.size());
+        try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
+                .filter(l -> !l.isBlank())) {
+            List<String> lines = stream.toList();
+            assertEquals(3, lines.size());
+        }
     }
 
     @Override
@@ -132,10 +134,15 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         @Override
         @SuppressWarnings("unchecked")
         public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws IOException {
-            Iterator<Map<String, String>> it = (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
             synchronized (printer) {
-                while (it.hasNext()) {
-                    printer.printRecord(getMapRecordValues(it.next()));
+                if (object instanceof Map) {
+                    Map map = (Map) object;
+                    printer.printRecord(getMapRecordValues(map));
+                } else {
+                    Iterator<Map<String, String>> it = (Iterator<Map<String, String>>) ObjectHelper.createIterator(object);
+                    while (it.hasNext()) {
+                        printer.printRecord(getMapRecordValues(it.next()));
+                    }
                 }
                 // Access the 'Appendable'
                 StringBuilder stringBuilder = (StringBuilder) printer.getOut();
@@ -148,8 +155,8 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             List<String> result = new ArrayList<>(map.size());
-            for (Object key : map.keySet()) {
-                result.add((String) map.get(key));
+            for (Object o : map.values()) {
+                result.add((String) o);
             }
             return result;
         }

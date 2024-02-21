@@ -46,16 +46,15 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     }
 
     protected static String getRouteMessage(String route) {
-        // ensure to sanitize uri's in the route so we do not show sensitive information such as passwords
-        route = URISupport.sanitizeUri(route);
-
-        // cut the route after 60 chars so it won't be too big in the message
-        // users just need to be able to identify the route so they know where to look
+        // cut the route after 60 chars, so it won't be too big in the message
+        // users just need to be able to identify the route, so they know where to look
         if (route.length() > 60) {
-            return route.substring(0, 60) + "...";
-        } else {
-            return route;
+            route = route.substring(0, 60) + "...";
         }
+
+        // ensure to sanitize uri's in the route, so we do not show sensitive information such as passwords
+        route = URISupport.sanitizeUri(route);
+        return route;
     }
 
 }

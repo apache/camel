@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Map;
 
 import org.apache.camel.support.SimpleRegistry;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +94,31 @@ public class SimpleRegistryTest {
         assertEquals(2, map2.size());
         assertEquals("foo", map2.get("c"));
         assertEquals("b", map2.get("a"));
+    }
+
+    @Test
+    public void testBindChange() {
+        String foo = "foo";
+        registry.bind("myKey", foo);
+        Assertions.assertEquals("foo", registry.lookupByName("myKey"));
+
+        String bar = "bar";
+        registry.bind("myKey", bar);
+        Assertions.assertEquals("bar", registry.lookupByName("myKey"));
+    }
+
+    @Test
+    public void testUnbind() {
+        String foo = "foo";
+        registry.bind("myKey", foo);
+        Assertions.assertEquals("foo", registry.lookupByName("myKey"));
+
+        registry.unbind("myKey");
+        Assertions.assertNull(registry.lookupByName("myKey"));
+
+        String bar = "bar";
+        registry.bind("myKey", bar);
+        Assertions.assertEquals("bar", registry.lookupByName("myKey"));
     }
 
 }

@@ -18,8 +18,8 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -82,7 +82,7 @@ public final class ProxyBuilder {
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
         // use proxy service
-        BeanProxyFactory factory = camelContext.adapt(ExtendedCamelContext.class).getBeanProxyFactory();
+        BeanProxyFactory factory = PluginHelper.getBeanProxyFactory(camelContext);
         return factory.createProxy(endpoint, binding, interfaceClasses);
     }
 

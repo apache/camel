@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RestJettyRequiredBodyTest extends BaseJettyTest {
 
     @Test
-    public void testJettyValid() throws Exception {
+    public void testJettyValid() {
         String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
@@ -41,7 +41,7 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyInvalid() {
+    public void testJettyInvalidNullBody() {
         fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
@@ -54,11 +54,26 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
         assertEquals("The request body is missing.", cause.getResponseBody());
     }
 
+    @Test
+    public void testJettyInvalidEmptyBody() {
+        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/json")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody(" ")
+                .to("http://localhost:" + getPort() + "/users/123/update");
+
+        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(400, cause.getStatusCode());
+        assertEquals("The request body is missing.", cause.getResponseBody());
+    }
+
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         // turn on client request validation
@@ -67,7 +82,8 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
                         .name("body").required(true).type(RestParamType.body)
-                        .endParam().route().setBody(constant("{ \"status\": \"ok\" }"));
+                        .endParam().to("direct:update");
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

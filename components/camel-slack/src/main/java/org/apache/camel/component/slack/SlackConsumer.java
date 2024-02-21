@@ -23,19 +23,25 @@ import java.util.List;
 import java.util.Queue;
 
 import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.conversations.ConversationsHistoryResponse;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.Message;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.slack.helper.SlackHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
+
+    public static final long DEFAULT_CONSUMER_DELAY = 10 * 1000L;
 
     private static final int CONVERSATIONS_LIST_LIMIT = 200;
     private final SlackEndpoint slackEndpoint;
@@ -50,7 +56,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        this.slack = Slack.getInstance(new CustomSlackHttpClient());
+        SlackConfig config = SlackHelper.createSlackConfig(slackEndpoint.getServerUrl());
+        CustomSlackHttpClient client = new CustomSlackHttpClient();
+        this.slack = Slack.getInstance(config, client);
         this.channelId = getChannelId(slackEndpoint.getChannel(), null);
         super.doStart();
     }
@@ -76,6 +84,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         if (!response.isOk()) {
             throw new RuntimeCamelException("API request conversations.history to Slack failed: " + response);
         }
+
+        // okay we have some response from slack so lets mark the consumer as ready
+        forceConsumerAsReady();
 
         Queue<Exchange> exchanges = createExchanges(response.getMessages());
         return processBatch(CastUtils.cast(exchanges));
@@ -115,16 +126,16 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, doneSync -> {
-                // noop
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
 
         return total;
@@ -147,7 +158,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
                     .filter(it -> it.getName().equals(channel))
                     .map(Conversation::getId)
                     .findFirst().orElseGet(() -> {
-                        if (ObjectHelper.isNotEmpty(response.getResponseMetadata().getNextCursor())) {
+                        if (ObjectHelper.isEmpty(response.getResponseMetadata().getNextCursor())) {
                             throw new RuntimeCamelException(String.format("Channel %s not found", channel));
                         }
                         return getChannelId(channel, response.getResponseMetadata().getNextCursor());

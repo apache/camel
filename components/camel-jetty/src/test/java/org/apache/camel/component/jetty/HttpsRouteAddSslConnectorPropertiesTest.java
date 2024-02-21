@@ -22,17 +22,21 @@ import java.net.URL;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+
+@ResourceLock(SSL_SYSPROPS)
 public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
                 // keystore path
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-                String path = keyStoreUrl.toURI().getPath();
+                String path = "file://" + keyStoreUrl.toURI().getPath();
 
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 setSSLProps(jetty, path, pwd, pwd);
@@ -41,7 +45,7 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

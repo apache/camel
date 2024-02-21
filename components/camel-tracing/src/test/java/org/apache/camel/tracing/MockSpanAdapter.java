@@ -24,7 +24,10 @@ import java.util.Map;
 public class MockSpanAdapter implements SpanAdapter {
 
     private List<LogEntry> logEntries = new ArrayList<>();
-    private HashMap<String, Object> tags = new HashMap<>();
+    private Map<String, Object> tags = new HashMap<>();
+    private String traceId;
+    private String spanId;
+    private boolean isCurrent;
 
     static long nowMicros() {
         return System.currentTimeMillis() * 1000;
@@ -34,28 +37,32 @@ public class MockSpanAdapter implements SpanAdapter {
         return new MockSpanAdapter().setOperation(operation);
     }
 
-    public HashMap<String, Object> tags() {
+    public Map<String, Object> tags() {
         return tags;
     }
 
     @Override
     public void setComponent(String component) {
         this.tags.put(Tag.COMPONENT.name(), component);
+        this.tags.put(TagConstants.COMPONENT, component);
     }
 
     @Override
     public void setError(boolean error) {
         this.tags.put(Tag.ERROR.name(), error);
+        this.tags.put(TagConstants.ERROR, error);
     }
 
     @Override
     public void setTag(Tag key, String value) {
         this.tags.put(key.name(), value);
+        this.tags.put(key.getAttribute(), value);
     }
 
     @Override
     public void setTag(Tag key, Number value) {
         this.tags.put(key.name(), value);
+        this.tags.put(key.getAttribute(), value);
     }
 
     @Override
@@ -73,13 +80,40 @@ public class MockSpanAdapter implements SpanAdapter {
         this.tags.put(key, value);
     }
 
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
+
+    public void setSpanId(String spanId) {
+        this.spanId = spanId;
+    }
+
     @Override
     public void log(Map<String, String> fields) {
         this.logEntries.add(new LogEntry(nowMicros(), fields));
     }
 
+    @Override
+    public String traceId() {
+        return this.traceId;
+    }
+
+    @Override
+    public String spanId() {
+        return this.spanId;
+    }
+
     public List<LogEntry> logEntries() {
         return new ArrayList<>(this.logEntries);
+    }
+
+    @Override
+    public AutoCloseable makeCurrent() {
+        return new Scope();
+    }
+
+    public boolean isCurrent() {
+        return this.isCurrent;
     }
 
     public static final class LogEntry {
@@ -102,5 +136,16 @@ public class MockSpanAdapter implements SpanAdapter {
 
     public MockSpanAdapter setOperation(String operation) {
         return this;
+    }
+
+    private final class Scope implements AutoCloseable {
+        public Scope() {
+            isCurrent = true;
+        }
+
+        @Override
+        public void close() {
+            isCurrent = false;
+        }
     }
 }

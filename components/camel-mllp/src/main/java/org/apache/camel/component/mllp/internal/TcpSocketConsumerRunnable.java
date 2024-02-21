@@ -26,6 +26,7 @@ import org.apache.camel.component.mllp.MllpInvalidMessageException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -44,11 +45,16 @@ public class TcpSocketConsumerRunnable implements Runnable {
     private final String localAddress;
     private final String remoteAddress;
     private final String combinedAddress;
+    private final Hl7Util hl7Util;
+    private final boolean logPhi;
 
-    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer) {
+    public TcpSocketConsumerRunnable(MllpTcpServerConsumer consumer, Socket clientSocket, MllpSocketBuffer mllpBuffer,
+                                     Hl7Util hl7Util, boolean logPhi) {
         this.consumer = consumer;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
+        this.hl7Util = hl7Util;
+        this.logPhi = logPhi;
 
         SocketAddress localSocketAddress = clientSocket.getLocalSocketAddress();
         if (localSocketAddress != null) {
@@ -102,15 +108,10 @@ public class TcpSocketConsumerRunnable implements Runnable {
      *
      * @return the thread name
      */
-    String createThreadName(Socket socket) {
+    String createThreadName() {
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
-        String endpointKey;
-        if (fullEndpointKey.contains("?")) {
-            endpointKey = fullEndpointKey.substring(0, fullEndpointKey.indexOf('?'));
-        } else {
-            endpointKey = fullEndpointKey;
-        }
+        String endpointKey = StringHelper.before(fullEndpointKey, "?", fullEndpointKey);
 
         // Now put it all together
         return String.format("%s[%s] - %s", this.getClass().getSimpleName(), endpointKey, combinedAddress);
@@ -120,7 +121,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
     public void run() {
         running = true;
         String originalThreadName = Thread.currentThread().getName();
-        Thread.currentThread().setName(createThreadName(clientSocket));
+        Thread.currentThread().setName(createThreadName());
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
@@ -149,16 +150,16 @@ public class TcpSocketConsumerRunnable implements Runnable {
                         hl7MessageBytes = mllpBuffer.toMllpPayload();
                         if (log.isDebugEnabled()) {
                             log.debug("Received {} byte message {}", hl7MessageBytes.length,
-                                    Hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
+                                    hl7Util.convertToPrintFriendlyString(hl7MessageBytes));
                         }
                         if (mllpBuffer.hasLeadingOutOfBandData()) {
                             // TODO:  Move the conversion utilities to the MllpSocketBuffer to avoid a byte[] copy
                             log.warn("Ignoring leading out-of-band data: {}",
-                                    Hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
+                                    hl7Util.convertToPrintFriendlyString(mllpBuffer.getLeadingOutOfBandData()));
                         }
                         if (mllpBuffer.hasTrailingOutOfBandData()) {
                             log.warn("Ignoring trailing out-of-band data: {}",
-                                    Hl7Util.convertToPrintFriendlyString(mllpBuffer.getTrailingOutOfBandData()));
+                                    hl7Util.convertToPrintFriendlyString(mllpBuffer.getTrailingOutOfBandData()));
                         }
                         mllpBuffer.reset();
 
@@ -166,12 +167,12 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     } else if (!mllpBuffer.hasStartOfBlock()) {
                         byte[] payload = mllpBuffer.toByteArray();
                         log.warn("Ignoring {} byte un-enveloped payload {}", payload.length,
-                                Hl7Util.convertToPrintFriendlyString(payload));
+                                hl7Util.convertToPrintFriendlyString(payload));
                         mllpBuffer.reset();
                     } else if (!mllpBuffer.isEmpty()) {
                         byte[] payload = mllpBuffer.toByteArray();
                         log.warn("Partial {} byte payload received {}", payload.length,
-                                Hl7Util.convertToPrintFriendlyString(payload));
+                                hl7Util.convertToPrintFriendlyString(payload));
                     }
                 } catch (SocketTimeoutException timeoutEx) {
                     if (mllpBuffer.isEmpty()) {
@@ -189,7 +190,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
                         new MllpInvalidMessageException(
-                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx,
+                                logPhi);
                         consumer.handleMessageTimeout("Timeout receiving complete message payload",
                                 mllpBuffer.toByteArrayAndReset(), timeoutEx);
                     }

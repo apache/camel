@@ -27,7 +27,7 @@ public final class StitchTestUtils {
         final Properties properties = new Properties();
         if (System.getProperty("token") == null) {
             throw new Exception(
-                    "Make sure to supply Stitch token, e.g:  mvn verify -PfullTests -Dtoken=mytoken");
+                    "Make sure to supply Stitch token, e.g:  mvn verify -Dtoken=mytoken");
         }
         properties.setProperty("token", System.getProperty("token"));
 

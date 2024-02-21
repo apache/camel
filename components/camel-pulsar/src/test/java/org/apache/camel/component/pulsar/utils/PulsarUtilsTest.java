@@ -73,4 +73,28 @@ public class PulsarUtilsTest {
 
         verify(consumer).close();
     }
+
+    @Test
+    public void pauseConsumers() {
+        Consumer<byte[]> consumer = mock(Consumer.class);
+
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(consumer);
+
+        PulsarUtils.pauseConsumers(consumers);
+
+        verify(consumer).pause();
+    }
+
+    @Test
+    public void resumeConsumers() {
+        Consumer<byte[]> consumer = mock(Consumer.class);
+
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(consumer);
+
+        PulsarUtils.resumeConsumers(consumers);
+
+        verify(consumer).resume();
+    }
 }

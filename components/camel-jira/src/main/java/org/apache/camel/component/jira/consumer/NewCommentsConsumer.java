@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NewCommentsConsumer extends AbstractJiraConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(NewCommentsConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NewCommentsConsumer.class);
 
     private Long lastCommentId = -1L;
 
@@ -46,7 +46,7 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
+    protected int doPoll() throws Exception {
         List<Comment> newComments = getComments();
         int max = newComments.size() - 1;
         // retrieve from last to first item LIFO

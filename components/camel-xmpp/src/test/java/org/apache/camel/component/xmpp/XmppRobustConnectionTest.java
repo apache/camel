@@ -20,23 +20,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Test to verify that the XMPP consumer will reconnect when the connection is lost. Also verifies that the XMPP
  * producer will lazily re-establish a lost connection.
  */
+@DisabledOnOs({ OS.AIX, OS.SOLARIS })
 public class XmppRobustConnectionTest extends XmppBaseContainerTest {
 
     @Disabled("Since upgrade to smack 4.2.0 the robust connection handling doesn't seem to work, as consumerEndpoint below receives only 5 payloads instead of the expected 9")
     @Test
     public void testXmppChatWithRobustConnection() throws Exception {
-        // does not work well on aix or solaris
-        if (isPlatform("aix") || isPlatform("sunos")) {
-            return;
-        }
-
         MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
         MockEndpoint errorEndpoint = context.getEndpoint("mock:error", MockEndpoint.class);
 

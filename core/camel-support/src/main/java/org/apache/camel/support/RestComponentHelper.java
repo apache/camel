@@ -35,7 +35,7 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * @param  queryMap   the map of Endpoint options to apply the HTTP restrict settings to
      * @param  verb       the HTTP verb for the route
      * @param  addOptions should OPTIONS verb be added.
@@ -51,12 +51,12 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
-     * Creates an Endpoint Property Map based on properies set in the component's RestConfiguration.
-     * 
+     *
+     * Creates an endpoint properties based on properties set in the component's RestConfiguration.
+     *
      * @param  componentName the Rest Component name
      * @param  config        the RestConfiguration
-     * @return               the map of Endpoint Properties set in the RestConfiguration
+     * @return               the map of endpoint properties set in the RestConfiguration
      */
     public static Map<String, Object> initRestEndpointProperties(String componentName, RestConfiguration config) {
         Map<String, Object> map = new HashMap<>();
@@ -71,9 +71,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Sets the Rest consumer host based on RestConfiguration
-     * 
+     *
      * @param  host                 the existing host configuration
      * @param  config               the RestConfiguration
      * @return                      the host based on RestConfiguration
@@ -91,9 +91,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  verb               the HTTP verb
      * @param  path               the HTTP path of the route
@@ -101,32 +101,30 @@ public final class RestComponentHelper {
      * @return                    a string of the component route url
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
-    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap) {
         String query = URISupport.createQueryString(queryMap);
         return applyFormatAndQuery("%s:%s:%s", query, componentName, verb, path);
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  path               the HTTP path of the route
      * @param  queryMap           the endpoint query options
      * @return                    a string of the component route url
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
-    public static String createRestConsumerUrl(String componentName, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+    public static String createRestConsumerUrl(String componentName, String path, Map<String, Object> queryMap) {
         String query = URISupport.createQueryString(queryMap);
         return applyFormatAndQuery("%s:/%s", query, componentName, path);
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  scheme             the scheme of the HTTP route http/https
      * @param  host               the host of the HTTP route
@@ -137,8 +135,7 @@ public final class RestComponentHelper {
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
     public static String createRestConsumerUrl(
-            String componentName, String scheme, String host, int port, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+            String componentName, String scheme, String host, int port, String path, Map<String, Object> queryMap) {
 
         String query = URISupport.createQueryString(queryMap);
 

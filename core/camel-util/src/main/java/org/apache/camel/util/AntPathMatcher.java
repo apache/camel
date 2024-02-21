@@ -140,9 +140,7 @@ public class AntPathMatcher {
         if (pathIdxStart > pathIdxEnd) {
             // Path is exhausted, only match if rest of pattern is * or **'s
             if (pattIdxStart > pattIdxEnd) {
-                return pattern.endsWith(this.pathSeparator)
-                        ? path.endsWith(this.pathSeparator) : !path
-                                .endsWith(this.pathSeparator);
+                return pattern.endsWith(this.pathSeparator) == path.endsWith(this.pathSeparator);
             }
             if (!fullMatch) {
                 return true;
@@ -401,6 +399,9 @@ public class AntPathMatcher {
      * does <strong>not</strong> enforce this.
      */
     public String extractPathWithinPattern(String pattern, String path) {
+        if (path == null) {
+            return null;
+        }
         String[] patternParts = tokenizeToStringArray(pattern, this.pathSeparator);
         String[] pathParts = tokenizeToStringArray(path, this.pathSeparator);
 
@@ -411,7 +412,7 @@ public class AntPathMatcher {
         for (int i = 0; i < patternParts.length; i++) {
             String patternPart = patternParts[i];
             if ((patternPart.indexOf('*') > -1 || patternPart.indexOf('?') > -1) && pathParts.length >= i + 1) {
-                if (puts > 0 || (i == 0 && !pattern.startsWith(this.pathSeparator))) {
+                if (puts > 0 || i == 0 && !pattern.startsWith(this.pathSeparator)) {
                     buffer.append(this.pathSeparator);
                 }
                 buffer.append(pathParts[i]);
@@ -453,11 +454,11 @@ public class AntPathMatcher {
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             token = token.trim();
-            if (token.length() > 0) {
+            if (!token.isEmpty()) {
                 tokens.add(token);
             }
         }
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[0]);
     }
 
     private static boolean different(boolean caseSensitive, char ch, char other) {

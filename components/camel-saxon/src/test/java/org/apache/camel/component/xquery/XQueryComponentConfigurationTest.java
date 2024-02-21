@@ -18,7 +18,7 @@ package org.apache.camel.component.xquery;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class XQueryComponentConfigurationTest extends CamelSpringTestSupport {
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);
         XQueryEndpoint endpoint
                 = context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);
@@ -38,7 +38,7 @@ public class XQueryComponentConfigurationTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/XQueryComponentConfigurationTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("XQueryComponentConfigurationTest.xml");
     }
 }

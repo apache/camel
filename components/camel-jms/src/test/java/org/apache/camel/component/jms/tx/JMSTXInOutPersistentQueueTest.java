@@ -18,14 +18,18 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMSTXInOutPersistentQueueTest extends AbstractSpringJMSTestSupport {
 
     private static int counter;
 
@@ -57,15 +61,15 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
         // now we succeed
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:start").to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")
+            public void configure() {
+                from("direct:start").to(ExchangePattern.InOut, "activemq:queue:JMSTXInOutPersistentQueueTest?replyTo=myReplies")
                         .to("mock:reply")
                         .process(exchange -> {
                             if (counter++ < 2) {
@@ -73,7 +77,7 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
                             }
                         }).to("mock:result");
 
-                from("activemq:queue:foo").to("mock:foo").transform(body().prepend("Bye "));
+                from("activemq:queue:JMSTXInOutPersistentQueueTest").to("mock:foo").transform(body().prepend("Bye "));
             }
         };
     }

@@ -24,10 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated("Parallel execution can cause timeout before all multicast messages are sent")
 public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;
@@ -76,7 +78,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        @RecipientList(strategyRef = "myStrategy", parallelProcessing = true, timeout = 1000)
+        @RecipientList(aggregationStrategy = "myStrategy", parallelProcessing = true, timeout = 1000)
         public String[] route(String body) {
             return new String[] { "direct:a", "direct:b", "direct:c" };
         }

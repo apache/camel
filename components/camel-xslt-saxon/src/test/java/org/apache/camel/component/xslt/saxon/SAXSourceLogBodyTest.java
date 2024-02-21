@@ -19,16 +19,17 @@ package org.apache.camel.component.xslt.saxon;
 import java.io.File;
 import java.io.InputStream;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -40,14 +41,14 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/xslt/staff/staff.xml"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").streamCaching()
                         // attach a SaxSource to body
                         .process(new Processor() {
@@ -55,7 +56,7 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 byte[] data = exchange.getIn().getBody(byte[].class);
                                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, data);
-                                XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+                                XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
                                 exchange.getIn().setBody(new SAXSource(xmlReader, new InputSource(is)));
                             }
                         })

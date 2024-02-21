@@ -40,6 +40,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
+                .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
                 .addScript("sql/createAndPopulateDatabase4.sql")
                 .build();
@@ -52,14 +53,16 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
     public void maxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertBodyMapValue(1, "ID", exchanges.get(0));
@@ -90,9 +93,9 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().setTracing(true);
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 

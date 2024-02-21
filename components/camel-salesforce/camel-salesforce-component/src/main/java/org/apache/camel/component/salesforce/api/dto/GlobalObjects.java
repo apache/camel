@@ -18,15 +18,10 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-@XStreamAlias("DescribeGlobal")
 public class GlobalObjects extends AbstractDTOBase {
 
     private String encoding;
     private Integer maxBatchSize;
-    @XStreamImplicit
     private List<SObject> sobjects;
 
     public String getEncoding() {
@@ -52,5 +47,4 @@ public class GlobalObjects extends AbstractDTOBase {
     public void setSobjects(List<SObject> sobjects) {
         this.sobjects = sobjects;
     }
-
 }

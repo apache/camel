@@ -16,16 +16,18 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LoopDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class LoopTest extends YamlTestSupport {
 
     def "loop definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], LoopDefinition) {
                 with(expression, ExpressionDefinition) {
@@ -56,4 +58,30 @@ class LoopTest extends YamlTestSupport {
                     ''')
             ]
     }
+
+    def "loop (flow)"() {
+        setup:
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:    
+                      - loop:
+                         copy: true 
+                         constant: "3"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 3
+            }
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('a').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
 }

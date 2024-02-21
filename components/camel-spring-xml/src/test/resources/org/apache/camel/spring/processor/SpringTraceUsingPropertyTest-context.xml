@@ -27,6 +27,7 @@
     <!-- START SNIPPET: e1 -->
     <camelContext trace="{{foo.trace}}" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/processor/myprop.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
 

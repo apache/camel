@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
+    public HL7MLLPCodec addHl7MllpCodec() {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("ISO-8859-1");
         codec.setConvertLFtoCR(false);
@@ -46,15 +46,15 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").unmarshal().hl7().process(exchange -> {
                     Message input = exchange.getIn().getBody(Message.class);
                     Message response = input.generateACK();
                     exchange.getMessage().setBody(response);
-                    Thread.sleep(50); // simulate some processing time
-                }).to("mock:result");
+                }).delay(50) // simulate some processing time
+                        .to("mock:result");
             }
         };
     }

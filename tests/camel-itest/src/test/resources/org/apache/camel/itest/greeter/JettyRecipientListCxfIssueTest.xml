@@ -19,10 +19,10 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:cxf="http://camel.apache.org/schema/cxf/jaxws"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/cxf/jaxws http://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
@@ -73,7 +73,7 @@
     <route>
       <from uri="cxf:bean:serviceEndpoint"/>
       <transform>
-        <simple resultType="java.io.File">src/test/resources/greetMe-reply1.xml</simple>
+        <simple>resource:greetMe-reply1.xml</simple>
       </transform>
     </route>
 
@@ -86,7 +86,7 @@
       </delay>
       -->
       <transform>
-        <simple resultType="java.io.File">src/test/resources/greetMe-reply2.xml</simple>
+        <simple>resource:greetMe-reply2.xml</simple>
       </transform>
     </route>
 

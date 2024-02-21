@@ -19,7 +19,6 @@ package org.apache.camel.converter.crypto;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +60,7 @@ public final class PGPDataFormatUtil {
     public static List<PGPPublicKey> findPublicKeys(
             CamelContext context, String filename, byte[] keyRing, List<String> userids,
             boolean forEncryption)
-            throws IOException, PGPException, NoSuchProviderException {
+            throws IOException, PGPException {
         InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
         try {
             return findPublicKeys(is, userids, forEncryption);
@@ -84,8 +83,7 @@ public final class PGPDataFormatUtil {
     public static PGPPrivateKey findPrivateKeyWithKeyId(
             CamelContext context, String filename, byte[] secretKeyRing, long keyid,
             String passphrase, PGPPassphraseAccessor passpraseAccessor, String provider)
-            throws IOException, PGPException,
-            NoSuchProviderException {
+            throws IOException, PGPException {
         InputStream is = determineKeyRingInputStream(context, filename, secretKeyRing, true);
         try {
             return findPrivateKeyWithKeyId(is, keyid, passphrase, passpraseAccessor, provider);
@@ -171,7 +169,7 @@ public final class PGPDataFormatUtil {
 
     private static List<PGPPublicKey> findPublicKeys(InputStream input, List<String> userids, boolean forEncryption)
             throws IOException,
-            PGPException, NoSuchProviderException {
+            PGPException {
 
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(
                 PGPUtil.getDecoderStream(input),
@@ -201,15 +199,14 @@ public final class PGPDataFormatUtil {
                 if (forEncryption) {
                     if (isEncryptionKey(key)) {
                         LOG.debug("Public encryption key with key user ID {} and key ID {} added to the encryption keys",
-                                foundKeyUserIdForUserIdPart[0], Long.toString(key.getKeyID()));
+                                foundKeyUserIdForUserIdPart[0], key.getKeyID());
                         result.add(key);
                     }
                 } else if (!forEncryption && isSignatureKey(key)) {
                     // not used!
                     result.add(key);
                     LOG.debug("Public key with key user ID {} and key ID {} added to the signing keys",
-                            foundKeyUserIdForUserIdPart[0],
-                            Long.toString(key.getKeyID()));
+                            foundKeyUserIdForUserIdPart[0], key.getKeyID());
                 }
             }
 
@@ -228,7 +225,7 @@ public final class PGPDataFormatUtil {
         if (hasEncryptionKeyFlags != null && !hasEncryptionKeyFlags) {
             LOG.debug(
                     "Public key with key key ID {} found for specified user ID. But this key will not be used for the encryption, because its key flags are not encryption key flags.",
-                    Long.toString(key.getKeyID()));
+                    key.getKeyID());
             return false;
         } else {
             // also without keyflags (hasEncryptionKeyFlags = null), true is returned!
@@ -266,7 +263,7 @@ public final class PGPDataFormatUtil {
             CamelContext context,
             String keychainFilename, byte[] secKeyRing, Map<String, String> sigKeyUserId2Password, String provider)
             throws IOException,
-            PGPException, NoSuchProviderException {
+            PGPException {
         InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, false);
         try {
             return findSecretKeysWithPrivateKeyAndUserId(keyChainInputStream, sigKeyUserId2Password, provider);
@@ -278,7 +275,7 @@ public final class PGPDataFormatUtil {
     private static List<PGPSecretKeyAndPrivateKeyAndUserId> findSecretKeysWithPrivateKeyAndUserId(
             InputStream keyringInput,
             Map<String, String> sigKeyUserId2Password, String provider)
-            throws IOException, PGPException, NoSuchProviderException {
+            throws IOException, PGPException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(
                 PGPUtil.getDecoderStream(keyringInput),
                 new BcKeyFingerprintCalculator());
@@ -317,7 +314,7 @@ public final class PGPDataFormatUtil {
                             result.add(
                                     new PGPSecretKeyAndPrivateKeyAndUserId(secKey, privateKey, foundKeyUserIdForUserIdPart[0]));
                             LOG.debug("Private key with user ID {} and key ID {} added to the signing keys",
-                                    foundKeyUserIdForUserIdPart[0], Long.toString(privateKey.getKeyID()));
+                                    foundKeyUserIdForUserIdPart[0], privateKey.getKeyID());
 
                         }
                     }
@@ -336,7 +333,7 @@ public final class PGPDataFormatUtil {
             // not a signing key --> ignore
             LOG.debug(
                     "Secret key with key ID {} found for specified user ID part. But this key will not be used for signing because of its key flags.",
-                    Long.toString(secKey.getKeyID()));
+                    secKey.getKeyID());
             return false;
         } else {
             // also if there are not any keyflags (hasSigningKeyFlag=null),  true is returned!
@@ -347,7 +344,7 @@ public final class PGPDataFormatUtil {
 
     /**
      * Checks whether one of the signatures of the key has one of the expected key flags
-     * 
+     *
      * @param  key
      * @return     {@link Boolean#TRUE} if key has one of the expected flag, <code>null</code> if the key does not have
      *             any key flags, {@link Boolean#FALSE} if the key has none of the expected flags
@@ -380,7 +377,7 @@ public final class PGPDataFormatUtil {
     /**
      * Determines a public key from the keyring collection which has a certain key ID and which has a User ID which
      * contains at least one of the User ID parts.
-     * 
+     *
      * @param  keyId                   key ID
      * @param  userIdParts             user ID parts, can be empty, than no filter on the User ID is executed
      * @param  publicKeyringCollection keyring collection
@@ -393,7 +390,7 @@ public final class PGPDataFormatUtil {
             throws PGPException {
         PGPPublicKeyRing publicKeyring = publicKeyringCollection.getPublicKeyRing(keyId);
         if (publicKeyring == null) {
-            LOG.debug("No public key found for key ID {}.", Long.toString(keyId));
+            LOG.debug("No public key found for key ID {}.", keyId);
             return null;
         }
         // publicKey can be a subkey the user IDs must therefore be provided by the primary/master key

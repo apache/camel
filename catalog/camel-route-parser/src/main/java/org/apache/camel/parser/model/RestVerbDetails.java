@@ -30,7 +30,7 @@ public class RestVerbDetails {
 
     // camel verb details
     private String method;
-    private String uri;
+    private String path;
     private String consumes;
     private String produces;
     private String bindingMode;
@@ -41,7 +41,6 @@ public class RestVerbDetails {
     private String description;
     private String apiDocs;
     private String to;
-    private String toD;
 
     public String getFileName() {
         return fileName;
@@ -99,12 +98,12 @@ public class RestVerbDetails {
         this.method = method;
     }
 
-    public String getUri() {
-        return uri;
+    public String getPath() {
+        return path;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getConsumes() {
@@ -187,11 +186,4 @@ public class RestVerbDetails {
         this.to = to;
     }
 
-    public String getToD() {
-        return toD;
-    }
-
-    public void setToD(String toD) {
-        this.toD = toD;
-    }
 }

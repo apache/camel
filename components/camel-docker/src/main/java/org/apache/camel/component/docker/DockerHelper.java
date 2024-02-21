@@ -20,7 +20,7 @@ import java.lang.reflect.Array;
 
 import org.apache.camel.Message;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * Utility methods for Docker Component

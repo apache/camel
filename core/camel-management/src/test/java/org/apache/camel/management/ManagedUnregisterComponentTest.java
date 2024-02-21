@@ -24,24 +24,22 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedUnregisterComponentTest extends ManagementTestSupport {
 
     @Test
     public void testUnregisterComponent() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);
-        assertEquals(2, set.size());
+        assertEquals(2 + 1, set.size()); // + 1 since seda is automatic added in ContextTestSupport
 
         ObjectName on = set.iterator().next();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
@@ -50,7 +48,7 @@ public class ManagedUnregisterComponentTest extends ManagementTestSupport {
         assertEquals(ServiceStatus.Started.name(), state);
 
         String id = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", id);
+        assertEquals(context.getManagementName(), id);
 
         context.stop();
 

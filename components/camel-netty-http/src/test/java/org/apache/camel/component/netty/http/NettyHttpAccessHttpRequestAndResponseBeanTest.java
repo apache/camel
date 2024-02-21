@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -25,9 +26,11 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConverter;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest {
@@ -37,19 +40,20 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel");
 
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
-        assertEquals("Bye World", out);
+
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Bye World", out));
 
         String out2 = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
-        assertEquals("Bye Camel", out2);
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Bye Camel", out2));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
                         .transform().method(NettyHttpAccessHttpRequestAndResponseBeanTest.class, "myTransformer");
@@ -61,7 +65,7 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
      * We can use both a netty http request and response type for transformation
      */
     public static HttpResponse myTransformer(FullHttpRequest request) {
-        String in = request.content().toString(Charset.forName("UTF-8"));
+        String in = request.content().toString(StandardCharsets.UTF_8);
         String reply = "Bye " + in;
 
         request.content().release();

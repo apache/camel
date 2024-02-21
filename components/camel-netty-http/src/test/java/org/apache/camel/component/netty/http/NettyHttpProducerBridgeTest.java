@@ -20,18 +20,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
-    private int port1;
-    private int port2;
-    private int port3;
+    final AvailablePortFinder.Port port1 = port;
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
     @Test
-    public void testProxy() throws Exception {
+    public void testProxy() {
         String reply = template.requestBody("netty-http:http://localhost:" + port1 + "/foo", "World", String.class);
         assertEquals("Bye World", reply);
     }
@@ -44,12 +48,12 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
         template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=%3B");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,24 +64,20 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
         template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
                 exchange.getIn().setHeader(Exchange.HTTP_RAW_QUERY, "x=%3B");
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=;");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-
+            public void configure() {
                 from("netty-http:http://0.0.0.0:" + port1 + "/foo")
                         .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 

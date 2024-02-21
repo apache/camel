@@ -43,16 +43,16 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
+        span.setLowCardinalityTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
         URI uri = URI.create(endpoint.getEndpointUri());
         if (uri.getPath() != null && uri.getPath().length() > 0) {
             // Strip leading '/' from path
             span.setTag(Tag.DB_INSTANCE, uri.getPath().substring(1));
         }
 
-        Object cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY);
+        String cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY, String.class);
         if (cql != null) {
-            span.setTag(Tag.DB_STATEMENT, cql.toString());
+            span.setTag(Tag.DB_STATEMENT, cql);
         } else {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             if (queryParameters.containsKey("cql")) {

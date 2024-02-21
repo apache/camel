@@ -17,14 +17,11 @@
 package org.apache.camel.component.salesforce.dto.generated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
-//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject Asset
  */
-@XStreamAlias("Asset")
 public class Asset extends AbstractSObjectBase {
 
     public Asset() {
@@ -175,4 +172,3 @@ public class Asset extends AbstractSObjectBase {
     }
 
 }
-//CHECKSTYLE:ON

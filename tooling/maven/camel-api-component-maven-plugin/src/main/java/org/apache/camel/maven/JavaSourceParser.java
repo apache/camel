@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,13 +64,17 @@ public class JavaSourceParser {
     private String errorMessage;
 
     private String classDoc;
-    private List<String> methodSignatures = new ArrayList<>();
+    private final List<String> methodSignatures = new ArrayList<>();
     private final Map<String, String> methodDocs = new HashMap<>();
-    private Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
-    private Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
+
+    public void parse(InputStream in, String innerClass) throws IOException {
+        parse(new String(in.readAllBytes()), innerClass);
+    }
 
     @SuppressWarnings("unchecked")
-    public synchronized void parse(InputStream in, String innerClass) throws Exception {
+    public synchronized void parse(String in, String innerClass) {
         AbstractGenericCapableJavaSource rootClazz = (AbstractGenericCapableJavaSource) Roaster.parse(in);
         AbstractGenericCapableJavaSource clazz = rootClazz;
 
@@ -103,7 +108,7 @@ public class JavaSourceParser {
 
             // should not be constructor and must not be private
             boolean isInterface = clazz instanceof JavaInterfaceSource;
-            boolean accept = isInterface || (!ms.isConstructor() && ms.isPublic());
+            boolean accept = isInterface || !ms.isConstructor() && ms.isPublic();
             if (!accept) {
                 continue;
             }
@@ -211,7 +216,7 @@ public class JavaSourceParser {
             // what base class that is
             answer = resolveTypeVariable(ms, clazz, answer);
         }
-        if ((ps != null && ps.isVarArgs()) || type.isArray()) {
+        if (ps != null && ps.isVarArgs() || type.isArray()) {
             // the old way with javadoc did not use varargs in the signature, so lets transform this to an array style
             answer = answer + "[]";
         }
@@ -287,7 +292,7 @@ public class JavaSourceParser {
                 for (Type arg : types) {
                     sj.add(resolveType(rootClazz, clazz, ms, arg));
                 }
-                answer = answer + "<" + sj.toString() + ">";
+                answer = answer + "<" + sj + ">";
             }
         }
         return answer;

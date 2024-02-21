@@ -50,7 +50,7 @@ import quickfix.field.TargetSubID;
 
 /**
  * Adapts the TradeExecutor for use as a Camel endpoint.
- * 
+ *
  * @see TradeExecutor
  */
 public class TradeExecutorComponent extends DefaultComponent {
@@ -83,7 +83,7 @@ public class TradeExecutorComponent extends DefaultComponent {
             if (endpoint == null) {
                 endpoint = new TradeExecutorEndpoint(uri, new TradeExecutor());
                 endpoints.put(uri, (TradeExecutorEndpoint) endpoint);
-                LOG.info("Created trade executor: " + uri);
+                LOG.info("Created trade executor: {}", uri);
             }
             return endpoint;
         }
@@ -126,10 +126,10 @@ public class TradeExecutorComponent extends DefaultComponent {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new DefaultProducer(this) {
                 @Override
-                public void process(final Exchange exchange) throws Exception {
+                public void process(final Exchange exchange) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -145,15 +145,15 @@ public class TradeExecutorComponent extends DefaultComponent {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return new DefaultConsumer(this, processor) {
                 @Override
-                protected void doStart() throws Exception {
+                protected void doStart() {
                     processors.add(getProcessor());
                 }
 
                 @Override
-                protected void doStop() throws Exception {
+                protected void doStop() {
                     processors.remove(getProcessor());
                 }
             };

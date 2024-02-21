@@ -5,9 +5,9 @@ The Camel Report Maven Plugin supports the following goals
  - camel-report:validate - To validate your source code for invalid Camel endpoint uris
  - camel-report:route-coverage - To report the coverage of your Camel routes after unit testing
 
-== camel:validate
+== camel-report:validate
 
-For validating the source code for mis configured Camel:
+For validating the source code for mis-configured Camel:
 
 - endpoint uris
 - simple expressions or predicates
@@ -15,13 +15,13 @@ For validating the source code for mis configured Camel:
 - seda/direct endpoint pairs
 - configuration in properties files
 
-Then you can run the validate goal from the command line or from within your Java editor such as IDEA or Eclipse.
+Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
 ----
 mvn camel-report:validate
 ----
 
-You can also enable the plugin to automatic run as part of the build to catch these errors.
+You can also enable the plugin to run automatically as part of the build to catch these errors.
 
 [source,xml]
 ----
@@ -105,7 +105,7 @@ is changed to include a typo error in the `period` option
 @Uri("timer:foo?perid=5000")
 ----
 
-And when running the validate goal again reports the following:
+And when running the `validate` goal again reports the following:
 
 ----
 [INFO] ------------------------------------------------------------------------
@@ -135,6 +135,8 @@ The maven plugin *validate* goal supports the following options which can be con
 | Parameter | Default Value | Description
 | downloadVersion | true | Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a different Camel version than this plugin is using by default.
 | failOnError | false | Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level.
+| coverageThreshold | 100 | The minimum route coverage in percent when using failOnError.
+| overallCoverageThreshold | 0 | The minimum coverage across all routes in percent when using failOnError.
 | logUnparseable | false | Whether to log endpoint URIs which was un-parsable and therefore not possible to validate.
 | includeJava | true | Whether to include Java files to be validated for invalid Camel endpoints.
 | includeXml | true | Whether to include XML files to be validated for invalid Camel endpoints.
@@ -151,10 +153,10 @@ The maven plugin *validate* goal supports the following options which can be con
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |===
 
-For example to turn off ignoring usage of deprecated options from the command line, you can run:
+For example to turn on ignoring usage of deprecated options from the command line, you can run:
 
 ----
-$mvn camel-report:validate -Dcamel.ignoreDeprecated=false
+$mvn camel-report:validate -Dcamel.ignoreDeprecated=true
 ----
 
 Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.ignoreDeprecated` as the option name.
@@ -166,22 +168,36 @@ You can pass in the options using `-D` style as shown:
 
 ----
 $cd myproject
-$mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -DincludeTest=true
+$mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTest=true
 ----
 
 
-== camel:route-coverage
+== camel-report:route-coverage
 
 For generating a report of the coverage of your Camel routes from unit testing.
 In the same manner you can generate Java code coverage reports, then this is the same but for Camel routes.
-You can therefore use this to know which parts of your Camel routes has been used or not.
+You can therefore use this to know which parts of your Camel routes have been used or not.
+
+Camel uses JMX to capture metrics during tests which are used for calculating route coverage.
+You must have `camel-management` JAR on the classpath (can be test scoped)
+such as by declaring the following Maven dependency in your pom.xml file:
+
+[source,xml]
+----
+<!-- JMX is needed for route coverage testing -->
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-management</artifactId>
+    <scope>test</scope>
+</dependency>
+----
 
 === Enabling route coverage
 
-You can enable route coverage while running unit tests either by
+You can enable route coverage while running unit tests either by:
 
 - setting global JVM system property enabling for all test classes
-- using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring` module
+- using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring-junit5` module
 - overriding `isDumpRouteCoverage` method per test class if using `camel-test` module
 
 ==== Enabling via JVM system property
@@ -211,7 +227,7 @@ mvn clean test -DCamelTestRouteCoverage=true
 ==== Enabling via @EnableRouteCoverage annotation
 
 You need to enable route coverage in the unit tests classes. You can do this by adding the `@EnableRouteCoverage`
-annotation to the test class if you are testing using `camel-test-spring`:
+annotation to the test class if you are testing using `camel-test-spring-junit5`:
 
 [source,java]
 ----
@@ -311,6 +327,7 @@ The maven plugin *coverage* goal supports the following options which can be con
  By using route id's then its safer to match the route cover data with the route source code.
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
-| generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format, when enabled it will generate a file: `target/site/jacoco/xmlJacoco.xml`
+| generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format. When enabled it will generate the file: `target/site/jacoco/xmlJacoco.xml`
+| generateHtmlReport | false | Whether to generate a coverage-report in HTML format. When enabled it will generate the file: `target/site/route-coverage/html/index.html`
 |===
 

@@ -49,7 +49,7 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setTag(Tag.DB_TYPE, getComponent());
+        span.setLowCardinalityTag(Tag.DB_TYPE, getComponent());
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String database = queryParameters.get("database");
         if (database != null) {

@@ -87,8 +87,10 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
             LOG.trace("New older than threshold: {}", newOlderThan);
 
+            // CHECKSTYLE:OFF
             if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
                     || (minAge != 0 && newLastModified < newOlderThan))) {
+            // CHECKSTYLE:ON
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -114,6 +116,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return true;
         }

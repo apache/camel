@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
@@ -30,9 +33,12 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
     private InflightRepository inflightRepository;
+
+    private final Map<String, Meter> meterMap = new HashMap<>();
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy
             = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
@@ -59,18 +65,41 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
     @Override
     protected void doStart() throws Exception {
-        inflightRepository = getCamelContext().getInflightRepository();
         super.doStart();
+
+        inflightRepository = getCamelContext().getInflightRepository();
+
+        // need to be able to remove meter if a route is removed
+        getCamelContext().getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRemovedEvent rre) {
+                    String id = rre.getRoute().getRouteId();
+                    Meter meter = meterMap.remove(id);
+                    if (meter != null) {
+                        getMeterRegistry().remove(meter);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        meterMap.values().forEach(m -> getMeterRegistry().remove(m));
+        meterMap.clear();
     }
 
     @Override
     public void notify(CamelEvent eventObject) {
         if (!(getIgnoreExchanges().test(((ExchangeEvent) eventObject).getExchange()))) {
             handleExchangeEvent((ExchangeEvent) eventObject);
-            if (eventObject instanceof ExchangeSentEvent) {
-                handleSentEvent((ExchangeSentEvent) eventObject);
-            } else if (eventObject instanceof ExchangeCreatedEvent) {
+            if (eventObject instanceof ExchangeCreatedEvent) {
                 handleCreatedEvent((ExchangeCreatedEvent) eventObject);
+            } else if (eventObject instanceof ExchangeSentEvent) {
+                handleSentEvent((ExchangeSentEvent) eventObject);
             } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
                 handleDoneEvent((ExchangeEvent) eventObject);
             }
@@ -82,16 +111,20 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         if (exchange.getFromRouteId() != null && exchange.getFromEndpoint() != null) {
             String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
             Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
-            Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
+            Meter meter = Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
+                    .description("Route inflight messages")
                     .tags(tags)
                     .register(getMeterRegistry());
+            meterMap.put(exchange.getFromRouteId(), meter);
         }
     }
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
         String name = namingStrategy.getName(sentEvent.getExchange(), sentEvent.getEndpoint());
         Tags tags = namingStrategy.getTags(sentEvent, sentEvent.getEndpoint());
-        getMeterRegistry().timer(name, tags).record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
+        Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
+                .register(getMeterRegistry());
+        timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {

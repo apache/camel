@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultProducer;
 import org.jivesoftware.smack.SmackException;
@@ -41,7 +42,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private MultiUserChat chat;
     private String room;
 
-    public XmppGroupChatProducer(XmppEndpoint endpoint) throws XMPPException {
+    public XmppGroupChatProducer(XmppEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -51,6 +52,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (connection == null) {
             try {
                 connection = endpoint.createConnection();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeExchangeException("Interrupted while connecting to XMPP server.", exchange, e);
             } catch (Exception e) {
                 throw new RuntimeExchangeException("Could not connect to XMPP server.", exchange, e);
             }
@@ -59,6 +63,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (chat == null) {
             try {
                 initializeChat();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeExchangeException("Interrupted while initializing XMPP chat.", exchange, e);
             } catch (Exception e) {
                 throw new RuntimeExchangeException("Could not initialize XMPP chat.", exchange, e);
             }
@@ -83,6 +90,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)
             chat.pollMessage();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeExchangeException("Interrupted while sending XMPP message: " + message, exchange, e);
         } catch (Exception e) {
             throw new RuntimeExchangeException("Could not send XMPP message: " + message, exchange, e);
         }
@@ -104,7 +114,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 connection = endpoint.createConnection();
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
-                    throw new RuntimeException("Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
+                    throw new RuntimeCamelException(
+                            "Could not connect to XMPP server:  " + endpoint.getConnectionDescription(), e);
                 } else {
                     LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.",
                             e.getMessage());

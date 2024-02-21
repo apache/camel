@@ -29,6 +29,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,7 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
                     frameDecoded = handleCompressedFrame(ctx, in, out);
                     break;
                 default:
-                    throw new RuntimeException("Unsupported frame type=" + frameType);
+                    throw new RuntimeCamelException("Unsupported frame type=" + frameType);
             }
         } finally {
             if (!frameDecoded) {
@@ -237,7 +238,7 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
     private void verifyVersion(byte version) {
         if (this.window == null || this.window.getVersion() == -1) {
             if (version != VERSION_V1 && version != VERSION_V2) {
-                throw new RuntimeException("Unsupported frame version=" + version);
+                throw new RuntimeCamelException("Unsupported frame version=" + version);
             }
             LOG.debug("Lumberjack protocol version is {}", (char) version);
         } else if (window.getVersion() != version) {

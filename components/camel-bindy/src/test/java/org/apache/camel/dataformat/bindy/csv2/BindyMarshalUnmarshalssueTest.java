@@ -41,7 +41,7 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
         body.setDate("Wednesday November 9 2011");
         template.sendBody("direct:start", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
 
@@ -51,10 +51,10 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("direct:middle");

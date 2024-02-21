@@ -97,10 +97,7 @@
             persistence manager of the workspace:
             class: FQN of class implementing the PersistenceManager interface
         -->
-        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
-          <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
-          <param name="schemaObjectPrefix" value="${wsp.name}_"/>
-        </PersistenceManager>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager"/>
         <!--
             Search index and the file system it uses.
             class: FQN of class implementing the QueryHandler interface
@@ -129,10 +126,7 @@
             a 'normal' persistence manager, but this could change in future
             implementations.
         -->
-        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
-          <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
-          <param name="schemaObjectPrefix" value="version_"/>
-        </PersistenceManager>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager"/>
     </Versioning>
 
     <!--
@@ -150,4 +144,5 @@
     <Cluster id="node1">
         <Journal class="org.apache.jackrabbit.core.journal.MemoryJournal"/>
     </Cluster>
+
 </Repository>

@@ -16,59 +16,55 @@
  */
 package org.apache.camel.component.amqp;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
-public class AMQPToDTest extends CamelTestSupport {
-
-    static int amqpPort = AvailablePortFinder.getNextAvailable();
-
-    static BrokerService broker;
-
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:" + amqpPort);
-        broker.start();
-
-        System.setProperty(AMQP_PORT, amqpPort + "");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        broker.stop();
-    }
+public class AMQPToDTest extends AMQPTestSupport {
+    private ProducerTemplate template;
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        contextExtension.getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
+        contextExtension.getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
 
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(contextExtension.getContext());
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    @BeforeAll
+    static void startContext() {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
+    }
+
+    @BeforeEach
+    void setupTemplate() {
+        template = contextExtension.getProducerTemplate();
+    }
+
+    @ContextFixture
+    public void configureContext(CamelContext camelContext) {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
+
         camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        return camelContext;
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    private RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // route message dynamic using toD
@@ -79,5 +75,4 @@ public class AMQPToDTest extends CamelTestSupport {
             }
         };
     }
-
 }

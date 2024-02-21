@@ -19,77 +19,80 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(66);
         props.add("apiName");
-        props.add("endDate");
-        props.add("pathConferenceSid");
-        props.add("postalCode");
-        props.add("initialDelay");
-        props.add("body");
-        props.add("pathIpAccessControlListSid");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("messagingServiceSid");
-        props.add("pathAddOnResultSid");
-        props.add("greedy");
         props.add("applicationSid");
-        props.add("from");
-        props.add("callbackUrl");
-        props.add("scheduledExecutorService");
-        props.add("isoCountry");
-        props.add("repeatCount");
-        props.add("mediaUrl");
-        props.add("pathQueueSid");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("ipAddress");
-        props.add("backoffIdleThreshold");
-        props.add("customerName");
-        props.add("lazyStartProducer");
         props.add("areaCode");
-        props.add("delay");
-        props.add("phoneNumber");
-        props.add("pathDomainSid");
-        props.add("startScheduler");
-        props.add("domainName");
-        props.add("pathSid");
-        props.add("region");
-        props.add("inBody");
-        props.add("exceptionHandler");
-        props.add("startDate");
-        props.add("status");
-        props.add("backoffMultiplier");
-        props.add("city");
-        props.add("triggerValue");
-        props.add("pathCredentialListSid");
-        props.add("pathReferenceSid");
-        props.add("pathCountryCode");
-        props.add("scheduler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
-        props.add("street");
-        props.add("qualityScore");
-        props.add("friendlyName");
-        props.add("timeUnit");
-        props.add("pathRecordingSid");
-        props.add("pathCallSid");
-        props.add("pathAccountSid");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("body");
+        props.add("bridgeErrorHandler");
+        props.add("callbackUrl");
+        props.add("city");
         props.add("credentialListSid");
+        props.add("customerName");
+        props.add("delay");
+        props.add("domainName");
+        props.add("endDate");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
-        props.add("methodName");
-        props.add("pathAddressSid");
-        props.add("pathMessageSid");
-        props.add("url");
-        props.add("pollStrategy");
+        props.add("friendlyName");
+        props.add("from");
+        props.add("greedy");
+        props.add("inBody");
+        props.add("initialDelay");
         props.add("ipAccessControlListSid");
+        props.add("ipAddress");
+        props.add("isoCountry");
+        props.add("lazyStartProducer");
+        props.add("mediaUrl");
+        props.add("messagingServiceSid");
+        props.add("methodName");
+        props.add("password");
+        props.add("pathAccountSid");
+        props.add("pathAddOnResultSid");
+        props.add("pathAddressSid");
+        props.add("pathCallSid");
+        props.add("pathConferenceSid");
+        props.add("pathCountryCode");
+        props.add("pathCredentialListSid");
+        props.add("pathDomainSid");
+        props.add("pathIpAccessControlListSid");
+        props.add("pathMessageSid");
+        props.add("pathQueueSid");
+        props.add("pathRecordingSid");
+        props.add("pathReferenceSid");
+        props.add("pathSid");
+        props.add("phoneNumber");
+        props.add("pollStrategy");
+        props.add("postalCode");
+        props.add("region");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startDate");
+        props.add("startScheduler");
+        props.add("status");
+        props.add("street");
+        props.add("timeUnit");
         props.add("to");
+        props.add("triggerValue");
         props.add("twiml");
-        props.add("username");
+        props.add("url");
         props.add("usageCategory");
+        props.add("useFixedDelay");
+        props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -118,6 +121,11 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

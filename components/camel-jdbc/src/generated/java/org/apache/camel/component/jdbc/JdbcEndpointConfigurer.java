@@ -25,6 +25,8 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
         case "beanrowmapper":
         case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
+        case "connectionstrategy":
+        case "connectionStrategy": target.setConnectionStrategy(property(camelContext, org.apache.camel.component.jdbc.ConnectionStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputclass":
@@ -56,6 +58,8 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowNamedParameters": return boolean.class;
         case "beanrowmapper":
         case "beanRowMapper": return org.apache.camel.component.jdbc.BeanRowMapper.class;
+        case "connectionstrategy":
+        case "connectionStrategy": return org.apache.camel.component.jdbc.ConnectionStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "outputclass":
@@ -88,6 +92,8 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowNamedParameters": return target.isAllowNamedParameters();
         case "beanrowmapper":
         case "beanRowMapper": return target.getBeanRowMapper();
+        case "connectionstrategy":
+        case "connectionStrategy": return target.getConnectionStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputclass":

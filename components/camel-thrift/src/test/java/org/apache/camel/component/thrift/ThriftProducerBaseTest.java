@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.thrift;
 
-import java.io.IOException;
-
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.test.AvailablePortFinder;
@@ -31,7 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThriftProducerBaseTest extends CamelTestSupport {
+public abstract class ThriftProducerBaseTest extends CamelTestSupport {
     protected static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
     protected static final int THRIFT_TEST_NUM1 = 12;
     protected static final int THRIFT_TEST_NUM2 = 13;
@@ -58,7 +56,7 @@ public class ThriftProducerBaseTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopThriftServer() throws IOException {
+    public static void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();

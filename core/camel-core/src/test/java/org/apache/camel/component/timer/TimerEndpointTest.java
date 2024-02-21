@@ -23,9 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TimerEndpointTest extends ContextTestSupport {
 
@@ -79,14 +78,10 @@ public class TimerEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTimerEndpointNoProducer() throws Exception {
+    public void testTimerEndpointNoProducer() {
         Endpoint te = context.getEndpoint("timer://foo");
-        try {
-            te.createProducer();
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+
+        Assertions.assertThrows(RuntimeCamelException.class, te::createProducer, "Should have thrown an exception");
     }
 
 }

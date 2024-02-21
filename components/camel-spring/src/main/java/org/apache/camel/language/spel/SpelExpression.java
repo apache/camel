@@ -97,8 +97,7 @@ public class SpelExpression extends ExpressionSupport {
     private Expression parseExpression() {
         // Support template parsing with #{ } delimiters
         ParserContext parserContext = new TemplateParserContext();
-        Expression expression = expressionParser.parseExpression(expressionString, parserContext);
-        return expression;
+        return expressionParser.parseExpression(expressionString, parserContext);
     }
 
     public Class<?> getType() {

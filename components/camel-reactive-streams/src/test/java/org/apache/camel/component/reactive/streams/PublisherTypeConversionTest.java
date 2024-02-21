@@ -26,12 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PublisherTypeConversionTest extends CamelTestSupport {
+public class PublisherTypeConversionTest extends BaseReactiveTest {
 
     @Test
     public void testConversion() throws Exception {
@@ -70,7 +69,7 @@ public class PublisherTypeConversionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -16,17 +16,18 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "dataformat,transformation,yaml", title = "YAML Type Filter")
 @XmlRootElement(name = "typeFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class YAMLTypeFilterDefinition {
+public class YAMLTypeFilterDefinition {
+
     @XmlAttribute
     private String value;
     @XmlAttribute

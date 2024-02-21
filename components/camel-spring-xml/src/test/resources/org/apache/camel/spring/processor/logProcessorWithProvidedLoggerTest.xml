@@ -38,7 +38,7 @@
 
         <route id="bar">
             <from uri="direct:bar"/>
-            <log message="Also got ${body}" loggingLevel="INFO" loggerRef="customLogger"/>
+            <log message="Also got ${body}" loggingLevel="INFO" logger="customLogger"/>
             <to uri="mock:bar"/>
         </route>
 

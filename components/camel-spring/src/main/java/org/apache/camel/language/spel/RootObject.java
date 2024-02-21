@@ -63,7 +63,7 @@ public final class RootObject {
     }
 
     public Map<String, Object> getProperties() {
-        return exchange.getProperties();
+        return exchange.getAllProperties();
     }
 
     public Object getProperty(String name) {
@@ -73,4 +73,17 @@ public final class RootObject {
     public <T> T getProperty(String name, Class<T> type) {
         return exchange.getProperty(name, type);
     }
+
+    public Map<String, Object> getHeaders() {
+        return exchange.getMessage().getHeaders();
+    }
+
+    public Object getHeader(String name) {
+        return exchange.getMessage().getHeader(name);
+    }
+
+    public <T> T getHeader(String name, Class<T> type) {
+        return exchange.getMessage().getHeader(name, type);
+    }
+
 }

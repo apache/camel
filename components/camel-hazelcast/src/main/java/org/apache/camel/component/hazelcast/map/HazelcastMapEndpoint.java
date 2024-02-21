@@ -22,15 +22,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MAP;
+
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-map", title = "Hazelcast Map", syntax = "hazelcast-map:cacheName",
-             category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MAP, title = "Hazelcast Map", syntax = "hazelcast-map:cacheName",
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,

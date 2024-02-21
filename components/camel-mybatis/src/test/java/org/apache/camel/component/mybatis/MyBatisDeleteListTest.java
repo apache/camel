@@ -33,7 +33,7 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", Arrays.asList(123, 456));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 0 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -47,7 +47,7 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", Arrays.asList(999));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -55,10 +55,10 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis:batchDeleteAccountById?statementType=DeleteList")
                         .to("mock:result");

@@ -16,17 +16,14 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +39,10 @@ public class RestOpenApiReaderApiDocsTest extends CamelTestSupport {
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
                         .description("Saying hi").param().name("name").type(RestParamType.path)
                         .dataType("string").description("Who is it").endParam().to("log:hi").get("/bye/{name}").apiDocs(false)
@@ -60,29 +57,28 @@ public class RestOpenApiReaderApiDocsTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderRead() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        config.setVersion("2.0");
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    public void testReaderRead(String version) throws Exception {
+        BeanConfig config = getBeanConfig();
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
-        assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"basePath\" : \"/api\""));
+        if (version.equals("2.0")) {
+            assertTrue(json.contains("\"host\" : \"" + config.getHost() + "\""));
+            assertTrue(json.contains("\"basePath\" : \"" + config.getBasePath() + "\""));
+        } else {
+            for (String schema : config.getSchemes()) {
+                assertTrue(json.contains("\"url\" : \"" + schema + "://" + config.getHost() + config.getBasePath() + "\""));
+            }
+        }
 
         assertFalse(json.contains("\"/hello/bye\""));
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
@@ -92,34 +88,12 @@ public class RestOpenApiReaderApiDocsTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testReaderReadV3() throws Exception {
+    protected BeanConfig getBeanConfig() {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-
-        log.info(json);
-
-        assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
-
-        assertFalse(json.contains("\"/hello/bye\""));
-        assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertFalse(json.contains("\"/hello/bye/{name}\""));
-        assertTrue(json.contains("\"/hello/hi/{name}\""));
-
-        context.stop();
+        return config;
     }
-
 }

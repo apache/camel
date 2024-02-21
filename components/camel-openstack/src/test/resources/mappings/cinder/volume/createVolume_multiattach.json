@@ -1,0 +1,18 @@
+{
+  "id" : "64cb434b-c6fa-4e5b-b330-863738c56727",
+  "name" : "createVolume_multiattach.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/volumes",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 201,
+    "body" : "{\"volume\":{\"id\":\"ac9ae248-cf21-4301-87b1-568ff20a0a02\",\"status\":\"creating\",\"size\":10,\"zone\":\"nova\",\"created\":\"Wed Aug 16 13:27:14 KST 2017\",\"multiattach\":true,\"metadata\":{},\"bootable\":false}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "64cb434b-c6fa-4e5b-b330-863738c56727",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -288,7 +288,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private class ContextScopedEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
             ExchangeCompletedEvent completedEvent = (ExchangeCompletedEvent) event;
             for (Route route : routes) {
                 throttle(route, completedEvent.getExchange());

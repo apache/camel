@@ -19,29 +19,30 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
-        props.add("deletes");
-        props.add("heartbeat");
-        props.add("exchangePattern");
-        props.add("updates");
+        Set<String> props = new HashSet<>(15);
+        props.add("bridgeErrorHandler");
         props.add("createDatabase");
-        props.add("protocol");
-        props.add("hostname");
         props.add("database");
+        props.add("deletes");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("heartbeat");
+        props.add("hostname");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("bridgeErrorHandler");
         props.add("port");
+        props.add("protocol");
         props.add("style");
-        props.add("exceptionHandler");
-        props.add("since");
+        props.add("updates");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -72,6 +73,11 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

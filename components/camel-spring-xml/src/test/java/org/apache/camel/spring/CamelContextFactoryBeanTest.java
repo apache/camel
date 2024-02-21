@@ -16,25 +16,17 @@
  */
 package org.apache.camel.spring;
 
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spring.xml.CamelContextFactoryBean;
-import org.apache.camel.spring.xml.CamelEndpointFactoryBean;
 import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import org.xmlunit.builder.DiffBuilder;
-import org.xmlunit.builder.Input;
-import org.xmlunit.diff.Diff;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelContextFactoryBeanTest {
@@ -70,31 +62,14 @@ public class CamelContextFactoryBeanTest {
     }
 
     @Test
-    public void testSetEndpoints() throws Exception {
-        // Create a new Camel context and add an endpoint
-        CamelContextFactoryBean camelContext = new CamelContextFactoryBean();
-        List<CamelEndpointFactoryBean> endpoints = new LinkedList<>();
-        CamelEndpointFactoryBean endpoint = new CamelEndpointFactoryBean();
-        endpoint.setId("endpoint1");
-        endpoint.setUri("mock:end");
-        endpoints.add(endpoint);
-        camelContext.setEndpoints(endpoints);
-
-        // Compare the new context with our reference context
-        URL expectedContext = getClass().getResource("/org/apache/camel/spring/context-with-endpoint.xml");
-        Diff diff = DiffBuilder.compare(expectedContext).withTest(Input.fromJaxb(camelContext))
-                .ignoreWhitespace().ignoreComments().checkForSimilar().build();
-        assertFalse(diff.hasDifferences(), "Expected context and actual context differ:\n" + diff.toString());
-    }
-
-    @Test
     public void testCustomModelJAXBContextFactory() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("customModelJAXBContextFactory", CustomModelJAXBContextFactory.class);
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
 
-        ModelJAXBContextFactory modelJAXBContextFactory = factory.getContext().getModelJAXBContextFactory();
+        ModelJAXBContextFactory modelJAXBContextFactory
+                = PluginHelper.getModelJAXBContextFactory(factory.getContext());
 
         assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
     }

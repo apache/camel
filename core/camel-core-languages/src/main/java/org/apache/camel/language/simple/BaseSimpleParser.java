@@ -41,14 +41,14 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public abstract class BaseSimpleParser {
 
-    protected CamelContext camelContext;
+    protected final CamelContext camelContext;
     protected final String expression;
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
-    protected boolean allowEscape;
+    protected final boolean allowEscape;
 
     protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
         this.camelContext = camelContext;
@@ -133,36 +133,30 @@ public abstract class BaseSimpleParser {
 
                 Block top = stack.pop();
                 // if there is a block on the stack then it should accept the child token
-                Block block = stack.isEmpty() ? null : stack.peek();
-                if (block != null) {
-                    if (!block.acceptAndAddNode(top)) {
-                        throw new SimpleParserException(
-                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
-                                token.getToken().getIndex());
-                    }
-                } else {
-                    // no block, so add to answer
-                    answer.add(top);
-                }
+                acceptOrAdd(answer, stack, top);
             } else {
                 // if there is a block on the stack then it should accept the child token
-                Block block = stack.isEmpty() ? null : stack.peek();
-                if (block != null) {
-                    if (!block.acceptAndAddNode(token)) {
-                        throw new SimpleParserException(
-                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
-                                token.getToken().getIndex());
-                    }
-                } else {
-                    // no block, so add to answer
-                    answer.add(token);
-                }
+                acceptOrAdd(answer, stack, token);
             }
         }
 
         // replace nodes from the stack
         nodes.clear();
         nodes.addAll(answer);
+    }
+
+    private static void acceptOrAdd(List<SimpleNode> answer, Deque<Block> stack, SimpleNode token) {
+        Block block = stack.isEmpty() ? null : stack.peek();
+        if (block != null) {
+            if (!block.acceptAndAddNode(token)) {
+                throw new SimpleParserException(
+                        block.getToken().getType() + " cannot accept " + token.getToken().getType(),
+                        token.getToken().getIndex());
+            }
+        } else {
+            // no block, so add to answer
+            answer.add(token);
+        }
     }
 
     /**

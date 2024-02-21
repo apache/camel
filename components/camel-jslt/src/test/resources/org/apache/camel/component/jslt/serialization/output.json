@@ -1,0 +1,1 @@
+{"safe":{"safe":"safe"},"unsafe":"sanitized unsafe","array":[1,2,3],"map":{"a":"sanitized unsafe"},"foo":"foo"}

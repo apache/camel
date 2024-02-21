@@ -35,10 +35,12 @@ import org.apache.camel.util.ObjectHelper;
 @Component("freemarker")
 public class FreemarkerComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
+    @Metadata
     private boolean allowTemplateFromHeader;
-    @Metadata(defaultValue = "false")
+    @Metadata
     private boolean allowContextMapAll;
+    @Metadata
+    private boolean localizedLookup;
     @Metadata(label = "advanced")
     private Configuration configuration;
     private Configuration noCacheConfiguration;
@@ -85,7 +87,8 @@ public class FreemarkerComponent extends DefaultComponent {
 
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            configuration = new Configuration(Configuration.VERSION_2_3_32);
+            configuration.setLocalizedLookup(isLocalizedLookup());
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
@@ -134,6 +137,17 @@ public class FreemarkerComponent extends DefaultComponent {
      */
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         this.allowContextMapAll = allowContextMapAll;
+    }
+
+    public boolean isLocalizedLookup() {
+        return localizedLookup;
+    }
+
+    /**
+     * Enables/disables localized template lookup. Disabled by default.
+     */
+    public void setLocalizedLookup(boolean localizedLookup) {
+        this.localizedLookup = localizedLookup;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {

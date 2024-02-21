@@ -57,7 +57,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(),
+            deleteLockFiles(file, endpoint.isRecursive(), endpoint.isHiddenFilesEnabled(), endpointPath, endpoint.getFilter(),
+                    endpoint.getAntFilter(),
                     excludePattern, includePattern);
 
             // log anything that takes more than a second
@@ -94,25 +95,35 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     public void releaseExclusiveReadLockOnAbort(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        doReleaseExclusiveReadLock(operations, file, exchange);
+        doReleaseExclusiveReadLock(file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        doReleaseExclusiveReadLock(operations, file, exchange);
+        doReleaseExclusiveReadLock(file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        doReleaseExclusiveReadLock(operations, file, exchange);
+        doReleaseExclusiveReadLock(file, exchange);
     }
 
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    /**
+     * Perform the releases of the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method due a
+     * commit operation.
+     *
+     * @param  file      the file
+     * @param  exchange  the exchange
+     * @throws Exception can be thrown in case of errors
+     * @see              #releaseExclusiveReadLockOnCommit(GenericFileOperations, GenericFile, Exchange)
+     * @see              #releaseExclusiveReadLockOnRollback(GenericFileOperations, GenericFile, Exchange)
+     * @see              #releaseExclusiveReadLockOnAbort(GenericFileOperations, GenericFile, Exchange)
+     */
+    protected void doReleaseExclusiveReadLock(GenericFile<File> file, Exchange exchange) throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release
             return;
@@ -158,8 +169,9 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         this.deleteOrphanLockFiles = deleteOrphanLockFiles;
     }
 
-    private static void deleteLockFiles(
-            File dir, boolean recursive, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
+    private static <T> void deleteLockFiles(
+            File dir, boolean recursive, boolean hiddenFilesEnabled, String endpointPath, GenericFileFilter<T> filter,
+            GenericFileFilter<T> antFilter,
             Pattern excludePattern,
             Pattern includePattern) {
         File[] files = dir.listFiles();
@@ -169,7 +181,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         for (File file : files) {
 
-            if (file.getName().startsWith(".")) {
+            if (!hiddenFilesEnabled && file.getName().startsWith(".")) {
                 // files starting with dot should be skipped
                 continue;
             }
@@ -202,16 +214,17 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
             } else if (recursive && file.isDirectory()) {
-                deleteLockFiles(file, true, endpointPath, filter, antFilter, excludePattern, includePattern);
+                deleteLockFiles(file, true, hiddenFilesEnabled, endpointPath, filter, antFilter, excludePattern,
+                        includePattern);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static boolean acceptFile(
-            File file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter, Pattern excludePattern,
+    private static <T> boolean acceptFile(
+            File file, String endpointPath, GenericFileFilter<T> filter, GenericFileFilter<T> antFilter, Pattern excludePattern,
             Pattern includePattern) {
-        GenericFile gf = new GenericFile();
+        GenericFile gf = new GenericFile<>();
         gf.setEndpointPath(endpointPath);
         gf.setFile(file);
         gf.setFileNameOnly(file.getName());

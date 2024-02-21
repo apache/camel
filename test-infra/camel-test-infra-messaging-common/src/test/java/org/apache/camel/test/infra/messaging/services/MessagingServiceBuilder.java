@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
+@Deprecated
 public class MessagingServiceBuilder<T extends GenericContainer<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(MessagingServiceBuilder.class);
 
@@ -34,7 +35,7 @@ public class MessagingServiceBuilder<T extends GenericContainer<T>> {
     }
 
     public static <T extends GenericContainer<T>> MessagingServiceBuilder<T> newBuilder(Supplier<T> containerSupplier) {
-        MessagingServiceBuilder messagingServiceBuilder = new MessagingServiceBuilder<>();
+        MessagingServiceBuilder<T> messagingServiceBuilder = new MessagingServiceBuilder<>();
 
         messagingServiceBuilder.withContainer(containerSupplier);
 
@@ -58,7 +59,7 @@ public class MessagingServiceBuilder<T extends GenericContainer<T>> {
 
         if (instanceType == null || instanceType.isEmpty()) {
             LOG.info("Creating a new messaging local container service");
-            return new MessagingLocalContainerService(containerSupplier.get(), this.endpointFunction);
+            return new MessagingLocalContainerService<>(containerSupplier.get(), this.endpointFunction);
         }
 
         if (instanceType.equals("remote")) {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>tooling-parent</artifactId>
@@ -33,20 +33,20 @@
     <description>Camel Tooling Parent POM</description>
 
     <properties>
-
-        <maven-version>3.1.1</maven-version>
+        <maven-version>3.9.6</maven-version>
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-project-version>2.2.1</maven-project-version>
-        <maven-dependency-tree-version>2.2</maven-dependency-tree-version>
-        <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
-        <maven-reporting-api-version>3.0</maven-reporting-api-version>
-        <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
-        <maven-resolver-version>1.0.3</maven-resolver-version>
-        <plexus-build-api-version>0.0.7</plexus-build-api-version>
-        <plexus-container-default-version>1.6</plexus-container-default-version>
-        <plexus-utils-version>3.3.0</plexus-utils-version>
-        <maven-archiver-version>3.5.0</maven-archiver-version>
-        <plexus-archiver-version>4.2.1</plexus-archiver-version>
+        <maven-dependency-tree-version>3.2.1</maven-dependency-tree-version>
+        <maven-plugin-annotations-version>3.11.0</maven-plugin-annotations-version>
+        <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
+        <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
+        <plexus-build-api-version>1.2.0</plexus-build-api-version>
+        <plexus-container-default-version>2.1.1</plexus-container-default-version>
+        <plexus-utils-version>4.0.0</plexus-utils-version>
+        <plexus-xml-version>4.0.3</plexus-xml-version>
+        <maven-archiver-version>3.6.1</maven-archiver-version>
+        <plexus-archiver-version>4.9.1</plexus-archiver-version>
+        <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +55,7 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -72,18 +73,51 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-repository-metadata</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-toolchain</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact-manager</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
                 <artifactId>maven-artifact</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-compat</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
@@ -94,6 +128,7 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-descriptor</artifactId>
                 <version>${maven-maven-plugin-descriptor-version}</version>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -105,11 +140,17 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-project</artifactId>
                 <version>${maven-project-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-dependency-tree</artifactId>
                 <version>${maven-dependency-tree-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-artifact-transfer</artifactId>
+                <version>${maven-artifact-transfer-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.reporting</groupId>
@@ -142,7 +183,12 @@
                 <version>${plexus-utils-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.sonatype.plexus</groupId>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-xml</artifactId>
+                <version>${plexus-xml-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-build-api</artifactId>
                 <version>${plexus-build-api-version}</version>
             </dependency>

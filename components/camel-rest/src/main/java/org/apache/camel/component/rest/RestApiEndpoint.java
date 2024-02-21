@@ -19,10 +19,10 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -42,8 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path/contextIdPattern",
-             consumerOnly = true, label = "core,rest", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
+             remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
@@ -52,8 +52,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String path;
-    @UriPath
-    private String contextIdPattern;
     @UriParam
     private String consumerComponentName;
     @UriParam
@@ -82,27 +80,15 @@ public class RestApiEndpoint extends DefaultEndpoint {
         this.path = path;
     }
 
-    public String getContextIdPattern() {
-        return contextIdPattern;
-    }
-
-    /**
-     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     */
-    public void setContextIdPattern(String contextIdPattern) {
-        this.contextIdPattern = contextIdPattern;
-    }
-
     public String getConsumerComponentName() {
         return consumerComponentName;
     }
 
     /**
-     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with
-     * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is
-     * found, then that is being used.
+     * The Camel Rest component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
+     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates
+     * with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one
+     * is found, then that is being used.
      */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
@@ -148,7 +134,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = DEFAULT_API_COMPONENT_NAME; //use openapi first
             }
-            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
         }
 
@@ -157,7 +143,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = "swagger"; //use swagger as fallback
             }
-            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
         }
 
@@ -199,11 +185,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
                 path = "/" + path;
             }
 
-            // whether listing of the context id's is enabled or not
-            boolean contextIdListing = config.isApiContextListing();
-
-            Processor processor = factory.createApiProcessor(getCamelContext(), path, getContextIdPattern(), contextIdListing,
-                    config, getParameters());
+            Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
             return new RestApiProducer(this, processor);
         } else {
             throw new IllegalStateException(

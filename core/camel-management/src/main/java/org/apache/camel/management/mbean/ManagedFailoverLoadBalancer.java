@@ -116,7 +116,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     }
 
     @Override
-    public TabularData exceptionStatistics() {
+    public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.loadbalancerExceptionsTabularType());
 

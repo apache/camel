@@ -19,12 +19,12 @@ package org.apache.camel.component.sjms.producer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerAsyncLoadTest";
     private MessageConsumer mc1;
     private MessageConsumer mc2;
 
@@ -75,7 +75,7 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
 
     /**
      * Test to verify that when using the consumer listener for the InOut producer we get the correct message back.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -112,7 +112,7 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

@@ -23,6 +23,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.MessageConstraintException;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
@@ -52,13 +53,14 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private int bufferlen;
     private CharBuffer cbuf;
 
+    private boolean lastLineReadEnrichedByCarriageReturn;
     private boolean lastLineReadTerminatedByLineFeed;
 
     public AS2SessionInputBuffer(final HttpTransportMetricsImpl metrics,
                                  final int buffersize,
                                  final int minChunkLimit,
                                  MessageConstraints constraints) {
-        this.metrics = Args.notNull(metrics, "metrics");
+        this.metrics = ObjectHelper.notNull(metrics, "metrics");
         Args.positive(buffersize, "buffersize");
         this.buffer = new byte[buffersize];
         this.bufferpos = 0;
@@ -186,10 +188,11 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     @Override
     public int readLine(CharArrayBuffer charbuffer) throws IOException {
-        Args.notNull(charbuffer, "Char array buffer");
+        ObjectHelper.notNull(charbuffer, "Char array buffer");
         final int maxLineLen = this.constraints.getMaxLineLength();
         int noRead = 0;
         boolean retry = true;
+        this.lastLineReadEnrichedByCarriageReturn = false;
         this.lastLineReadTerminatedByLineFeed = false;
         while (retry) {
             // attempt to find end of line (LF)
@@ -198,6 +201,9 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 if (this.buffer[i] == HTTP.LF) {
                     pos = i;
                     this.lastLineReadTerminatedByLineFeed = true;
+                    if (i > 0 && this.buffer[i - 1] == HTTP.CR) {
+                        this.lastLineReadEnrichedByCarriageReturn = true;
+                    }
                     break;
                 }
             }
@@ -250,6 +256,10 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     public boolean isLastLineReadTerminatedByLineFeed() {
         return lastLineReadTerminatedByLineFeed;
+    }
+
+    public boolean isLastLineReadEnrichedByCarriageReturn() {
+        return lastLineReadEnrichedByCarriageReturn;
     }
 
     @Override
@@ -324,15 +334,15 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         int len = 0;
         while (bbuf.hasRemaining()) {
             final CoderResult result = this.decoder.decode(bbuf, this.cbuf, true);
-            len += handleDecodingResult(result, charbuffer, bbuf);
+            len += handleDecodingResult(result, charbuffer);
         }
         final CoderResult result = this.decoder.flush(this.cbuf);
-        len += handleDecodingResult(result, charbuffer, bbuf);
+        len += handleDecodingResult(result, charbuffer);
         cast(this.cbuf).clear();
         return len;
     }
 
-    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer, final ByteBuffer bbuf)
+    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer)
             throws IOException {
         if (result.isError()) {
             result.throwException();

@@ -1,0 +1,1 @@
+../../../../../components/camel-azure/camel-azure-servicebus/src/main/docs/azure-servicebus-component.adoc

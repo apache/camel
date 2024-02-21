@@ -46,7 +46,7 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
 
         template.sendBody("sjms2:topic:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -64,10 +64,10 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms2:topic:foo?durableSubscriptionName=bar1")
                         .to("mock:result");
 

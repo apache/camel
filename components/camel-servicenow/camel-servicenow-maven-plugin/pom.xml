@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.maven</groupId>
     <artifactId>camel-servicenow-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: ServiceNow :: Maven plugin</name>
-    <description>Camel ServiceNow Maven plugin</description>
+    <name>Camel :: ServiceNow :: Maven Plugin</name>
+    <description>Camel ServiceNow Maven Plugin</description>
 
     <properties>
         <servicenow.component.root>..</servicenow.component.root>
@@ -79,32 +79,31 @@
             <artifactId>maven-plugin-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-descriptor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-container-default</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
+            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>${maven-plugin-annotations-version}</version>
+            <version>3.11.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
@@ -123,20 +122,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text-version}</version>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
         </dependency>
 
         <!-- testing -->
@@ -159,6 +144,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -177,23 +163,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>versions</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -259,6 +228,7 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skipTests>false</skipTests>
@@ -269,20 +239,9 @@
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>plugin-itest</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.8</version>
                         <configuration>
                             <debug>true</debug>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>

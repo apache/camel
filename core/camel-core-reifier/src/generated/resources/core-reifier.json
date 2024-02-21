@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-reifier",
+    "title": "Core Reifier",
+    "description": "Camel model to processor reifiers",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-reifier",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

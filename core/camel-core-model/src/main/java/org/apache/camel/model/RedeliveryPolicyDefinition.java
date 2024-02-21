@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
@@ -30,76 +30,79 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RedeliveryPolicyDefinition {
+public class RedeliveryPolicyDefinition extends IdentifiedType implements Cloneable {
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRedeliveries;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
     private String redeliveryDelay;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayedRedelivery;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Double")
+    @Metadata(javaType = "java.lang.Double", defaultValue = "2.0")
     private String backOffMultiplier;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useExponentialBackOff;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Double")
+    @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15")
     private String collisionAvoidanceFactor;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useCollisionAvoidance;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "60000")
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG")
     private String retryAttemptedLogLevel;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1")
     private String retryAttemptedLogInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logRetryAttempted;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logStackTrace;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logRetryStackTrace;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logHandled;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logNewException;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String logContinued;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logExhausted;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logExhaustedMessageHistory;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logExhaustedMessageBody;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disableRedelivery;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String delayPattern;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String exchangeFormatterRef;
 
     @Override
@@ -107,11 +110,19 @@ public class RedeliveryPolicyDefinition {
         return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
     }
 
+    public RedeliveryPolicyDefinition copy() {
+        try {
+            return (RedeliveryPolicyDefinition) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Could not clone: " + e, e);
+        }
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
     /**
-     * Allow synchronous delayed redelivery. The route, in particular the consumer's component, must support the
+     * Allow asynchronous delayed redelivery. The route, in particular the consumer's component, must support the
      * Asynchronous Routing Engine (e.g. seda).
      *
      * @return the builder
@@ -217,7 +228,7 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the logging level to use when retries has exhausted
+     * Sets the logging level to use when retries have been exhausted
      *
      * @param  retriesExhaustedLogLevel the logging level
      * @return                          the builder
@@ -227,7 +238,7 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets the logging level to use when retries has exhausted
+     * Sets the logging level to use when retries have been exhausted
      *
      * @param  retriesExhaustedLogLevel the logging level
      * @return                          the builder

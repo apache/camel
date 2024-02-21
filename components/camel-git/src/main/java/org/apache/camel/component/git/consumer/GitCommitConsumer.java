@@ -24,11 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 public class GitCommitConsumer extends AbstractGitConsumer {
 
-    private List commitsConsumed = new ArrayList();
+    private final List<ObjectId> commitsConsumed = new ArrayList<>();
 
     public GitCommitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

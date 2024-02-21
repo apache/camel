@@ -19,30 +19,39 @@ package org.apache.camel.component.hl7;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 
 @org.apache.camel.spi.annotations.Language("hl7terser")
-public class Hl7TerserLanguage implements Language {
+public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
 
     public static Expression terser(final String expression) {
+        return terser(ExpressionBuilder.bodyExpression(), expression);
+    }
+
+    public static Expression terser(final Expression source, final String expression) {
         ObjectHelper.notNull(expression, "expression");
         return new ExpressionAdapter() {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Message message = exchange.getIn().getBody(Message.class);
+                Message message = source.evaluate(exchange, Message.class);
                 try {
                     return new Terser(message).get(expression.trim());
                 } catch (HL7Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                source.init(context);
             }
 
             @Override
@@ -54,13 +63,7 @@ public class Hl7TerserLanguage implements Language {
     }
 
     @Override
-    public Predicate createPredicate(String expression) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
+        return terser(source, expression);
     }
-
-    @Override
-    public Expression createExpression(String expression) {
-        return terser(expression);
-    }
-
 }

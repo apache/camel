@@ -22,25 +22,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RefFileEndpointTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/foo");
-        super.setUp();
-    }
-
     @Test
     public void testRefFileEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -52,7 +44,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("foo", context.getEndpoint("file:target/data/foo?initialDelay=250&delay=3000&delete=true"));
+        context.getRegistry().bind("foo", context.getEndpoint(fileUri("?initialDelay=250&delay=3000&delete=true")));
         return context;
     }
 

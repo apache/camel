@@ -16,18 +16,24 @@
  */
 package org.apache.camel.component.openshift.build_configs;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_BUILD_CONFIG;
 
 /**
  * Perform operations on OpenShift Build Configs.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-build-configs", title = "Openshift Build Config",
-             syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILD_CONFIG, title = "Openshift Build Config",
+             syntax = "openshift-build-configs:masterUrl", producerOnly = true,
+             category = { Category.CONTAINER, Category.CLOUD },
+             headersClass = KubernetesConstants.class)
 public class OpenshiftBuildConfigsEndpoint extends AbstractKubernetesEndpoint {
 
     public OpenshiftBuildConfigsEndpoint(String uri, OpenshiftBuildConfigsComponent component, KubernetesConfiguration config) {

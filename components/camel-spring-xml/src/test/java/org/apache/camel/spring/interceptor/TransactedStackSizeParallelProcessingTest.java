@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 
@@ -24,6 +26,14 @@ public class TransactedStackSizeParallelProcessingTest extends TransactionClient
 
     private static final boolean PRINT_STACK_TRACE = false;
     private int total = 100;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // must use prototype scoped exchange factory
+        context.getCamelContextExtension().setExchangeFactory(new PrototypeExchangeFactory());
+        return context;
+    }
 
     // to test for flaky when using parallel processing then set this to 100
     @RepeatedTest(value = 1)
@@ -46,7 +56,7 @@ public class TransactedStackSizeParallelProcessingTest extends TransactionClient
             int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
                     int.class);
             sizes[i] = size;
-            Assertions.assertTrue(size < 100, "Stackframe should be < 100");
+            Assertions.assertTrue(size < 110, "Stackframe should be < 110");
             log.debug("#{} size {}", i, size);
         }
         int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);

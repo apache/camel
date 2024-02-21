@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -70,6 +71,21 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
         assertEquals(Arrays.asList("one", "two", "three"), body.get(2));
+    }
+
+    @Test
+    void shouldAutoloadHeaders() throws Exception {
+        output.expectedMessageCount(1);
+
+        template.sendBody("direct:autoload_headers", CSV_SAMPLE);
+        output.assertIsSatisfied();
+
+        Message message = output.getExchanges().get(0).getIn();
+        Map<String, Object> headers = message.getHeaders();
+        List<?> body = assertIsInstanceOf(List.class, message.getBody());
+        assertEquals(Arrays.asList("A", "B", "C"), headers.get("CamelCsvHeaderRecord"));
+        assertEquals(Arrays.asList("1", "2", "3"), body.get(0));
+        assertEquals(Arrays.asList("one", "two", "three"), body.get(1));
     }
 
     @Test
@@ -167,6 +183,11 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Format with special delimiter
                 from("direct:delimiter")
                         .unmarshal(new CsvDataFormat().setDelimiter('_'))
+                        .to("mock:output");
+
+                // Autoload headers
+                from("direct:autoload_headers")
+                        .unmarshal(new CsvDataFormat().setCaptureHeaderRecord(true))
                         .to("mock:output");
 
                 // Lazy load

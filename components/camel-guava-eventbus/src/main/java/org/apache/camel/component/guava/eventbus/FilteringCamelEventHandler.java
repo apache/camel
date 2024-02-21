@@ -45,7 +45,7 @@ public class FilteringCamelEventHandler extends CamelEventHandler {
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Cannot process event: {} as its class type: {} is not assignable with: {}",
-                        new Object[] { event, event.getClass().getName(), eventClass.getName() });
+                        event, event.getClass().getName(), eventClass.getName());
             }
         }
     }

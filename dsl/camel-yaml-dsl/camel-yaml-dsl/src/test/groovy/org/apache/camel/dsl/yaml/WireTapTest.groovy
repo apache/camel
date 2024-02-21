@@ -18,44 +18,59 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.WireTapDefinition
-import org.apache.camel.model.language.ConstantExpression
-import org.apache.camel.model.language.SimpleExpression
+import org.junit.jupiter.api.Assertions
 
 class WireTapTest extends YamlTestSupport {
 
-    def "wire-tap definition (#resource.location)"() {
+    def "wireTap definition (#resource.location)"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - wire-tap:
+                      - wireTap:
                          uri: "direct:wt"
-                         body:
-                             simple: "${body}"
-                         set-header:
-                           - name: "Header_1"
-                             simple: "${header.MyHeader1}"
-                           - name: "Header_2"
-                             constant: "test"
             '''
         then:
             with(context.routeDefinitions[0].outputs[0], WireTapDefinition) {
-                with (newExchangeExpression.expressionType, SimpleExpression) {
-                    language == 'simple'
-                    expression == '${body}'
-                }
-
-                headers?.size() == 2
-
-                with (headers[0].expression, SimpleExpression) {
-                    language == 'simple'
-                    expression == '${header.MyHeader1}'
-                }
-                with (headers[1].expression, ConstantExpression) {
-                    language == 'constant'
-                    expression == 'test'
-                }
+                uri == "direct:wt"
             }
+    }
+
+    def "wireTap uri parameters (#resource.location)"() {
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - wireTap:
+                         uri: direct
+                         parameters:
+                           name: wt2  
+            '''
+        then:
+            with(context.routeDefinitions[0].outputs[0], WireTapDefinition) {
+                uri == "direct:wt2"
+            }
+    }
+
+    def "Error: kebab-case"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - wire-tap:
+                         uri: direct
+                         parameters:
+                           name: wt2  
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

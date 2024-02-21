@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
@@ -42,6 +42,8 @@ import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * The AS2 consumer.
@@ -115,13 +117,14 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         try {
             if (request instanceof HttpEntityEnclosingRequest) {
                 EntityParser.parseAS2MessageEntity(request);
-                // TODO derive last to parameters from configuration.
-                apiProxy.handleMDNResponse((HttpEntityEnclosingRequest) request, response, context, "MDN Response",
-                        "Camel AS2 Server Endpoint");
+                apiProxy.handleMDNResponse(context, getEndpoint().getSubject(),
+                        ofNullable(getEndpoint().getFrom()).orElse(getEndpoint().getConfiguration().getServer()));
             }
-
-            ApplicationEDIEntity ediEntity
-                    = HttpMessageUtils.extractEdiPayload(request, as2ServerConnection.getDecryptingPrivateKey());
+            ApplicationEntity ediEntity
+                    = HttpMessageUtils.extractEdiPayload(request,
+                            new HttpMessageUtils.DecrpytingAndSigningInfo(
+                                    as2ServerConnection.getValidateSigningCertificateChain(),
+                                    as2ServerConnection.getDecryptingPrivateKey()));
 
             // Set AS2 Interchange property and EDI message into body of input message.
             Exchange exchange = createExchange(false);

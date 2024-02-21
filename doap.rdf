@@ -25,7 +25,7 @@
 <!--
   =======================================================================
 
-   Copyright (c) 2019 The Apache Software Foundation.
+   Copyright (c) 2022 The Apache Software Foundation.
    All rights reserved.
 
   =======================================================================
@@ -36,29 +36,22 @@
     <name>Apache Camel</name>
     <homepage rdf:resource="https://camel.apache.org/" />
     <asfext:pmc rdf:resource="https://camel.apache.org/" />
-    <shortdesc>Apache Camel is a powerful open source integration library.</shortdesc>
-    <description>Apache Camel is a powerful open source integration library based on Enterprise Integration Patterns.
-Rules for Camel's routing engine can be defined in either a Java based DSL or XML.</description>
+    <shortdesc>Apache Camel is an integration framework</shortdesc>
+    <description>Camel is an Open Source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/CAMEL" />
     <mailing-list rdf:resource="https://camel.apache.org/mailing-lists.html" />
     <download-page rdf:resource="https://camel.apache.org/download.html" />
 
     <programming-language>Java</programming-language>
-    <programming-language>XML</programming-language>
 
-    <category rdf:resource="http://projects.apache.org/category/osgi" />
-    <category rdf:resource="http://projects.apache.org/category/network-server" />
-    <category rdf:resource="http://projects.apache.org/category/network-client" />
     <category rdf:resource="http://projects.apache.org/category/integration" />
-    <category rdf:resource="http://projects.apache.org/category/big-data" />
     <category rdf:resource="http://projects.apache.org/category/cloud" />
-    <category rdf:resource="http://projects.apache.org/category/iot" />
     <category rdf:resource="http://projects.apache.org/category/java" />
     <category rdf:resource="http://projects.apache.org/category/library" />
     <maintainer>
       <foaf:Person>
-        <foaf:name>Christian Mueller</foaf:name>
-          <foaf:mbox rdf:resource="mailto:cmueller@apache.org"/>
+        <foaf:name>Andrea Cosentino</foaf:name>
+          <foaf:mbox rdf:resource="mailto:acosentino@apache.org"/>
       </foaf:Person>
     </maintainer>
   </Project>

@@ -19,24 +19,29 @@ public class JdbcEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("resetAutoCommit");
-        props.add("outputType");
-        props.add("transacted");
-        props.add("useHeadersAsParameters");
+        Set<String> props = new HashSet<>(15);
         props.add("allowNamedParameters");
-        props.add("dataSourceName");
-        props.add("useJDBC4ColumnNameAndLabelSemantics");
-        props.add("prepareStatementStrategy");
-        props.add("lazyStartProducer");
         props.add("beanRowMapper");
-        props.add("useGetBytesForBlob");
+        props.add("connectionStrategy");
+        props.add("dataSourceName");
+        props.add("lazyStartProducer");
         props.add("outputClass");
+        props.add("outputType");
         props.add("parameters");
+        props.add("prepareStatementStrategy");
         props.add("readSize");
+        props.add("resetAutoCommit");
+        props.add("transacted");
+        props.add("useGetBytesForBlob");
+        props.add("useHeadersAsParameters");
+        props.add("useJDBC4ColumnNameAndLabelSemantics");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("statement.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -64,6 +69,11 @@ public class JdbcEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

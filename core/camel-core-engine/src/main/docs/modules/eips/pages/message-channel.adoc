@@ -1,43 +1,46 @@
-[[MessageChannel-MessageChannel]]
 = Message Channel
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
 Channel] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns]. The Message Channel is an internal implementation detail of
-the `Endpoint` interface and all interactions with the Message Channel are via the
-Endpoint interfaces.
+patterns].
+
+The Message Channel is an internal implementation detail of
+the `Endpoint` interface, where all interactions of the channel is via the
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint].
 
 image::eip/MessageChannelSolution.gif[image]
 
-== Samples
+== Example
 
-In JMS, Message Channels are represented by topics and queues such as
-the following
+In xref:ROOT:jms-component.adoc[JMS], Message Channels are represented by topics and queues such as
+the following:
 
 [source,text]
 -------------
 jms:queue:foo
 -------------
 
-This message channel can be then used within the
-xref:components::jms-component.adoc[JMS] component
+The following shows a little route snippet:
 
-And the following shows a little Java route snippet:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:foo")
+from("file:foo")
     .to("jms:queue:foo")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
-  <from uri="direct:foo">
+  <from uri="file:foo"/>
   <to uri="jms:queue:foo"/>
 </route>
 ----
-
+====

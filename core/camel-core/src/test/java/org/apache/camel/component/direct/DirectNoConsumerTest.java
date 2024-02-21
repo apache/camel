@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DirectNoConsumerTest extends ContextTestSupport {
 
@@ -44,12 +44,11 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should throw an exception");
+
+        assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
     }
 
     public void testInOut() throws Exception {
@@ -64,12 +63,11 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        try {
-            template.requestBody("direct:start", "Hello World");
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello World"),
+                "Should throw an exception");
+
+        assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
     }
 
     @Test
@@ -129,12 +127,11 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
-        try {
-            template.sendBody("direct:foo", "Hello World");
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
-        }
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:foo", "Hello World"),
+                "Should have thrown an exception");
+        assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
     }
 
     @Test

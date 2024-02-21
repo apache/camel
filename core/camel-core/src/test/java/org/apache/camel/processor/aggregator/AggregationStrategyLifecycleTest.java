@@ -63,7 +63,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
         };
     }
 
-    private final class MyCompletionStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
+    private static final class MyCompletionStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
         private CamelContext camelContext;
         private String separator;

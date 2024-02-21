@@ -1,6 +1,6 @@
 package io.openapi.petstore;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -14,6 +14,7 @@ public final class OpenApiPetstore extends RouteBuilder {
      * Defines Apache Camel routes using REST DSL fluent API.
      */
     public void configure() {
+
         rest("/v2")
             .put("/pet")
                 .id("updatePet")
@@ -44,7 +45,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(false)
                     .description("Verbose data")
                 .endParam()
-                .to("direct:addPet")
+                .to("direct:addPet");
+
+        rest("/v2")
             .get("/pet/findByStatus")
                 .id("findPetsByStatus")
                 .description("Multiple status values can be provided with comma separated strings")
@@ -58,7 +61,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("Status values that need to be considered for filter")
                 .endParam()
-                .to("direct:findPetsByStatus")
+                .to("direct:findPetsByStatus");
+
+        rest("/v2")
             .get("/pet/findByTags")
                 .id("findPetsByTags")
                 .description("Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
@@ -72,7 +77,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("Tags to filter by")
                 .endParam()
-                .to("direct:findPetsByTags")
+                .to("direct:findPetsByTags");
+
+        rest("/v2")
             .get("/pet/{petId}")
                 .id("getPetById")
                 .description("Returns a single pet")
@@ -127,7 +134,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("Pet id to delete")
                 .endParam()
-                .to("direct:deletePet")
+                .to("direct:deletePet");
+
+        rest("/v2")
             .post("/pet/{petId}/uploadImage")
                 .id("uploadFile")
                 .consumes("multipart/form-data")
@@ -153,12 +162,16 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(false)
                     .description("file to upload")
                 .endParam()
-                .to("direct:uploadFile")
+                .to("direct:uploadFile");
+
+        rest("/v2")
             .get("/store/inventory")
                 .id("getInventory")
                 .description("Returns a map of status codes to quantities")
                 .produces("application/json")
-                .to("direct:getInventory")
+                .to("direct:getInventory");
+
+        rest("/v2")
             .post("/store/order")
                 .id("placeOrder")
                 .produces("application/xml,application/json")
@@ -168,7 +181,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("order placed for purchasing the pet")
                 .endParam()
-                .to("direct:placeOrder")
+                .to("direct:placeOrder");
+
+        rest("/v2")
             .get("/store/order/{orderId}")
                 .id("getOrderById")
                 .description("For valid response try integer IDs with value >= 1 and <= 10. Other values will generated exceptions")
@@ -192,7 +207,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("ID of the order that needs to be deleted")
                 .endParam()
-                .to("direct:deleteOrder")
+                .to("direct:deleteOrder");
+
+        rest("/v2")
             .post("/user")
                 .id("createUser")
                 .description("This can only be done by the logged in user.")
@@ -203,7 +220,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("Created user object")
                 .endParam()
-                .to("direct:createUser")
+                .to("direct:createUser");
+
+        rest("/v2")
             .post("/user/createWithArray")
                 .id("createUsersWithArrayInput")
                 .produces("application/xml,application/json")
@@ -213,7 +232,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("List of user object")
                 .endParam()
-                .to("direct:createUsersWithArrayInput")
+                .to("direct:createUsersWithArrayInput");
+
+        rest("/v2")
             .post("/user/createWithList")
                 .id("createUsersWithListInput")
                 .produces("application/xml,application/json")
@@ -223,7 +244,9 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("List of user object")
                 .endParam()
-                .to("direct:createUsersWithListInput")
+                .to("direct:createUsersWithListInput");
+
+        rest("/v2")
             .get("/user/login")
                 .id("loginUser")
                 .produces("application/xml,application/json")
@@ -241,11 +264,15 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .required(true)
                     .description("The password for login in clear text")
                 .endParam()
-                .to("direct:loginUser")
+                .to("direct:loginUser");
+
+        rest("/v2")
             .get("/user/logout")
                 .id("logoutUser")
                 .produces("application/xml,application/json")
-                .to("direct:logoutUser")
+                .to("direct:logoutUser");
+
+        rest("/v2")
             .get("/user/{username}")
                 .id("getUserByName")
                 .produces("application/xml,application/json")
@@ -287,5 +314,6 @@ public final class OpenApiPetstore extends RouteBuilder {
                     .description("The name that needs to be deleted")
                 .endParam()
                 .to("direct:deleteUser");
+
     }
 }

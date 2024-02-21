@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-as2</artifactId>
@@ -62,6 +62,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -117,6 +123,7 @@
                                         <nullableOption>signedReceiptMicAlgorithms</nullableOption>
                                         <nullableOption>encryptingAlgorithm</nullableOption>
                                         <nullableOption>encryptingCertificateChain</nullableOption>
+                                        <nullableOption>attachedFileName</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>
@@ -154,20 +161,6 @@
                         <classifier>sources</classifier>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-configurer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-configurer</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

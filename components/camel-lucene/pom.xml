@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-lucene</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel Lucene based search component</description>
 
     <properties>
-        <camel.osgi.import.additional>
-            org.apache.lucene.*;version="${lucene-version-range}"
-        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>
@@ -54,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-common</artifactId>
+            <artifactId>lucene-analysis-common</artifactId>
             <version>${lucene-version}</version>
         </dependency>
 
@@ -67,11 +64,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

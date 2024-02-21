@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "bearerToken",
+    "title": "Bearer Token",
+    "description": "Rest security bearer token authentication definition",
+    "deprecated": false,
+    "label": "rest,security,configuration",
+    "javaType": "org.apache.camel.model.rest.BearerTokenDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." },
+    "key": { "index": 1, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "format": { "index": 2, "kind": "attribute", "displayName": "Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A hint to the client to identify how the bearer token is formatted." }
+  }
+}

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.jpa;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
@@ -28,7 +28,7 @@ public class JpaRouteEndpointTest extends JpaRouteTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 JpaEndpoint jpa = new JpaEndpoint();
                 jpa.setComponent(new JpaComponent());
                 jpa.setCamelContext(context);

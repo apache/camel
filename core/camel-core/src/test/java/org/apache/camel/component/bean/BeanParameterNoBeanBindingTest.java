@@ -23,8 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -35,15 +35,14 @@ public class BeanParameterNoBeanBindingTest extends ContextTestSupport {
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:a", "World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().contains("echo(java.lang.String,int)"));
-            assertTrue(cause.getMessage().contains("[World, null]"));
-            assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:a", "World"),
+                "Should have thrown exception");
+
+        RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("echo(java.lang.String,int)"));
+        assertTrue(cause.getMessage().contains("[World, null]"));
+        assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
 
         assertMockEndpointsSatisfied();
     }

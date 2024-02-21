@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-engine",
+    "title": "Core Engine",
+    "description": "Just the Camel Core engine without any core components",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-engine",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

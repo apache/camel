@@ -23,8 +23,8 @@ public class SnakeYAMLDataFormatConfigurer extends PropertyConfigurerSupport imp
         case "dumperoptions":
         case "dumperOptions": dataformat.setDumperOptions(property(camelContext, java.util.function.Function.class, value)); return true;
         case "resolver": dataformat.setResolver(property(camelContext, java.util.function.Function.class, value)); return true;
-        case "unmarshaltypename":
-        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "unmarshaltype":
+        case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "useapplicationcontextclassloader":
         case "useApplicationContextClassLoader": dataformat.setUseApplicationContextClassLoader(property(camelContext, boolean.class, value)); return true;
         case "prettyflow":

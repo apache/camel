@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,14 +38,13 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
     @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" customId=\"true\" id=\"Gouda\">"));
-        assertTrue(xml.contains("<from uri=\"direct:start-{{cheese.type}}\"/>"));
-        assertTrue(xml.contains("<to customId=\"true\" id=\"log\" uri=\"direct:end-{{cheese.type}}\"/>"));
+        assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" id=\"Gouda\">"));
+        assertTrue(xml.contains("\"direct:start-{{cheese.type}}\""));
+        assertTrue(xml.contains("\"direct:end-{{cheese.type}}\""));
     }
 
 }

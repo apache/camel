@@ -16,124 +16,93 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.concurrent.Executors;
-
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Handler;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertNull;
+public class JmsPollingConsumerTest extends CamelBrokerClientTestSupport {
 
-public class JmsPollingConsumerTest extends CamelTestSupport {
+    @Produce("jms:JmsPollingConsumerTestStartConsumer")
+    protected ProducerTemplate startConsumer;
 
-    @Test
-    public void testJmsPollingConsumerWait() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
+    @Produce("direct:JmsPollingConsumerTestStartConsumer")
+    protected ProducerTemplate startDirectConsumer;
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", String.class);
-            template.sendBody("activemq:queue.foo", body + " Claus");
-        });
+    @Produce("jms:JmsPollingConsumerTestQueue")
+    protected ProducerTemplate queue;
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testJmsPollingConsumerNoWait() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
-
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
-            assertNull(body, "Should be null");
-
-            template.sendBody("activemq:queue.foo", "Hello Claus");
-        });
-
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testJmsPollingConsumerLowTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
-
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
-            assertNull(body, "Should be null");
-
-            template.sendBody("activemq:queue.foo", "Hello Claus");
-        });
-
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testJmsPollingConsumerHighTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
-
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
-            template.sendBody("activemq:queue.foo", body + " Claus");
-        });
-
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
-    }
+    @EndpointInject("mock:JmsPollingConsumerTestResult")
+    protected MockEndpoint result;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jms/JmsPollingConsumerTest.xml");
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("activemq:queue.start");
+    /**
+     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this test,
+     * consumer bean is invoked from an activemq: route.
+     */
+    @Test
+    void testConsumerFromJMSRoute() throws Exception {
+        result.expectedBodiesReceived("foobar");
 
-                from("activemq:queue.foo").to("mock:result");
+        queue.sendBody("foo");
+        queue.sendBody("bar");
+
+        startConsumer.sendBody("go");
+
+        result.assertIsSatisfied();
+    }
+
+    /**
+     * Succeeds: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this
+     * test, consumer bean is invoked from a direct: route.
+     */
+    @Test
+    void testConsumerFromDirectRoute() throws Exception {
+        result.expectedBodiesReceived("foobar");
+
+        queue.sendBody("foo");
+        queue.sendBody("bar");
+
+        startDirectConsumer.sendBody("go");
+
+        result.assertIsSatisfied();
+    }
+
+    public static class Consumer implements ApplicationContextAware {
+
+        private ApplicationContext applicationContext;
+
+        @Handler
+        public String consume() {
+            ConsumerTemplate consumer = applicationContext.getBean(ConsumerTemplate.class);
+            StringBuilder result = new StringBuilder();
+
+            Exchange exchange;
+            while ((exchange = consumer.receive("jms:JmsPollingConsumerTestQueue", 2000)) != null) {
+                result.append(exchange.getIn().getBody(String.class));
             }
-        };
+
+            return result.toString();
+
+        }
+
+        @Override
+        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+            this.applicationContext = applicationContext;
+        }
     }
 }

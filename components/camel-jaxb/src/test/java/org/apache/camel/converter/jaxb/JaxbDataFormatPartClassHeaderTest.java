@@ -47,7 +47,7 @@ public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
         address.setCity("Sulzbach");
         template.sendBody("direct:marshall", address);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
@@ -66,10 +66,10 @@ public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Address.class.getPackage().getName());
                 jaxbDataFormat.setPartNamespace(

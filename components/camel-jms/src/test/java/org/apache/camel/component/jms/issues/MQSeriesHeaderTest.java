@@ -19,29 +19,38 @@ package org.apache.camel.component.jms.issues;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
 
 /**
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
  * one destination to another
  */
-public class MQSeriesHeaderTest extends CamelTestSupport {
+public class MQSeriesHeaderTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(MQSeriesHeaderTest.class);
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testForwardingJmsMessageIgnoresHeadersMQDoesntLike() throws Exception {
@@ -51,7 +60,7 @@ public class MQSeriesHeaderTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("JMSXAppID", "ABC");
 
-        template.sendBodyAndHeaders("activemq:test.a", "Hello World!", headers);
+        template.sendBodyAndHeaders("activemq:MQSeriesHeaderTest.a", "Hello World!", headers);
 
         endpoint.assertIsSatisfied();
 
@@ -59,26 +68,33 @@ public class MQSeriesHeaderTest extends CamelTestSupport {
         Message in = exchange.getIn();
         assertMessageHeader(in, "JMSXAppID", null);
 
-        LOG.info("Received message: " + in);
+        LOG.info("Received message: {}", in);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b").to("mock:result");
+            public void configure() {
+                from("activemq:MQSeriesHeaderTest.a").to("activemq:MQSeriesHeaderTest.b");
+                from("activemq:MQSeriesHeaderTest.b").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

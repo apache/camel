@@ -1,11 +1,10 @@
-[[HowdoIretryprocessingamessagefromacertainpointbackoranentireroute-HowdoIretryprocessingamessagefromacertainpointbackoranentireroute]]
 = How do I retry processing a message from a certain point back or an entire route
 
 By default Apache Camel will perform any redelivery (retry) attempts
 from the point of failure. So if you want to retry from a point before
 this, you would need to split up your route.
 
-In the example above we have 2 routes (`direct:start`, `direct:sub`). In
+In the example below we have 2 routes (`direct:start`, `direct:sub`). In
 case of a failure anywhere in the `direct:sub` route, then the entire
 route is retried. This happens because we have instructed the `direct:sub`
 route to not use any error handler (eg the no error handler). Then we
@@ -34,7 +33,7 @@ from("direct:sub")
 
 The code above is based on an unit test, and as you can see the
 processor below is configured to fail the first 2 attempts.
-So that means the entire `direct:sub` route is redeliveried, meaning that
+So that means the entire `direct:sub` route is redelivered, meaning that
 the `mock:b` endpoint receives the incoming message again.
 
 [source,java]

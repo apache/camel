@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-braintree</artifactId>
@@ -41,7 +41,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
@@ -59,19 +58,6 @@
                     <artifactId>json</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <!-- testing - logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- testing -->
@@ -199,6 +185,28 @@
                                     </fromJavasource>
                                 </api>
                                 <api>
+                                    <apiName>oauth</apiName>
+                                    <proxyClass>com.braintreegateway.OAuthGateway</proxyClass>
+                                    <fromJavasource />
+                                    <substitutions>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.OAuthConnectUrlRequest</argType>
+                                            <replacement>connectRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.MerchantAccountCreateForCurrencyRequest
+                                            </argType>
+                                            <replacement>currencyRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
+                                    </substitutions>
+                                </api>
+                                <api>
                                     <apiName>plan</apiName>
                                     <proxyClass>com.braintreegateway.PlanGateway</proxyClass>
                                     <fromJavasource />
@@ -250,6 +258,11 @@
                                     </substitutions>
                                 </api>
                                 <api>
+                                    <apiName>usBankAccount</apiName>
+                                    <proxyClass>com.braintreegateway.UsBankAccountGateway</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
                                     <apiName>webhookNotification</apiName>
                                     <apiDescription>To retrieve notifications via webhooks</apiDescription>
                                     <proxyClass>com.braintreegateway.WebhookNotificationGateway</proxyClass>
@@ -275,21 +288,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-configurer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-configurer</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
 
         <pluginManagement>
@@ -306,65 +304,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
     </build>
-
-    <profiles>
-        <profile>
-            <id>braintree-test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <braintreeAuthenticationType>PUBLIC_PRIVATE_KEYS</braintreeAuthenticationType>
-                            </systemPropertyVariables>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>braintree-access-token-test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <braintreeAuthenticationType>ACCESS_TOKEN</braintreeAuthenticationType>
-                            </systemPropertyVariables>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

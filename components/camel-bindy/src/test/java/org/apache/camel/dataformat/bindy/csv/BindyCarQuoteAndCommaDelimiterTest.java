@@ -55,7 +55,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
         template.sendBody("direct:out", HEADER + "\n" + ROW);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Car rec1 = mock.getReceivedExchanges().get(0).getIn().getBody(Car.class);
 
@@ -78,17 +78,17 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
         template.sendBody("direct:in", car);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertEquals(ROW, body);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 Class<?> type = org.apache.camel.dataformat.bindy.model.car.Car.class;
                 BindyCsvDataFormat dataFormat = new BindyCsvDataFormat();

@@ -21,8 +21,11 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringRabbitMQComponent target = (SpringRabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "amqpadmin":
         case "amqpAdmin": target.setAmqpAdmin(property(camelContext, org.springframework.amqp.core.AmqpAdmin.class, value)); return true;
+        case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
         case "autodeclare":
         case "autoDeclare": target.setAutoDeclare(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
@@ -31,6 +34,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, org.springframework.amqp.rabbit.connection.ConnectionFactory.class, value)); return true;
         case "deadletterexchange":
@@ -51,12 +56,25 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listenercontainerfactory":
         case "listenerContainerFactory": target.setListenerContainerFactory(property(camelContext, org.apache.camel.component.springrabbit.ListenerContainerFactory.class, value)); return true;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": target.setMaxConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": target.setMaximumRetryAttempts(property(camelContext, int.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": target.setMessageListenerContainerType(property(camelContext, java.lang.String.class, value)); return true;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": target.setRejectAndDontRequeue(property(camelContext, boolean.class, value)); return true;
+        case "replytimeout":
+        case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "retry": target.setRetry(property(camelContext, org.springframework.retry.interceptor.RetryOperationsInterceptor.class, value)); return true;
+        case "retrydelay":
+        case "retryDelay": target.setRetryDelay(property(camelContext, int.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.setShutdownTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "testconnectiononstartup":
@@ -73,8 +91,11 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
         case "amqpadmin":
         case "amqpAdmin": return org.springframework.amqp.core.AmqpAdmin.class;
+        case "args": return java.util.Map.class;
         case "autodeclare":
         case "autoDeclare": return boolean.class;
         case "autostartup":
@@ -83,6 +104,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
         case "connectionfactory":
         case "connectionFactory": return org.springframework.amqp.rabbit.connection.ConnectionFactory.class;
         case "deadletterexchange":
@@ -103,12 +126,25 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "lazyStartProducer": return boolean.class;
         case "listenercontainerfactory":
         case "listenerContainerFactory": return org.apache.camel.component.springrabbit.ListenerContainerFactory.class;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": return java.lang.Integer.class;
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return int.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": return java.lang.String.class;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return boolean.class;
+        case "replytimeout":
+        case "replyTimeout": return long.class;
+        case "retry": return org.springframework.retry.interceptor.RetryOperationsInterceptor.class;
+        case "retrydelay":
+        case "retryDelay": return int.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return long.class;
         case "testconnectiononstartup":
@@ -121,8 +157,11 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringRabbitMQComponent target = (SpringRabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return target.isAllowNullBody();
         case "amqpadmin":
         case "amqpAdmin": return target.getAmqpAdmin();
+        case "args": return target.getArgs();
         case "autodeclare":
         case "autoDeclare": return target.isAutoDeclare();
         case "autostartup":
@@ -131,6 +170,8 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "concurrentconsumers":
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "deadletterexchange":
@@ -151,16 +192,37 @@ public class SpringRabbitMQComponentConfigurer extends PropertyConfigurerSupport
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "listenercontainerfactory":
         case "listenerContainerFactory": return target.getListenerContainerFactory();
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": return target.getMaxConcurrentConsumers();
+        case "maximumretryattempts":
+        case "maximumRetryAttempts": return target.getMaximumRetryAttempts();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
+        case "messagelistenercontainertype":
+        case "messageListenerContainerType": return target.getMessageListenerContainerType();
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
         case "prefetchcount":
         case "prefetchCount": return target.getPrefetchCount();
+        case "rejectanddontrequeue":
+        case "rejectAndDontRequeue": return target.isRejectAndDontRequeue();
+        case "replytimeout":
+        case "replyTimeout": return target.getReplyTimeout();
+        case "retry": return target.getRetry();
+        case "retrydelay":
+        case "retryDelay": return target.getRetryDelay();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getShutdownTimeout();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": return java.lang.Object.class;
         default: return null;
         }
     }

@@ -61,7 +61,7 @@ import org.apache.camel.util.StringHelper;
  * publicly accessible where a webhook would fail
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
-             category = { Category.FILE, Category.CLOUD, Category.API })
+             category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHubConstants.class)
 public class GitHubEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
@@ -69,6 +69,8 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
+    @UriParam(label = "consumer", defaultValue = "last")
+    private String startingSha = "last";
     @UriParam(label = "security", secret = true)
     private String oauthToken;
     @UriParam
@@ -113,7 +115,7 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
         Consumer consumer = null;
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);
-            consumer = new CommitConsumer(this, processor, branchName);
+            consumer = new CommitConsumer(this, processor, branchName, startingSha);
         } else if (type == GitHubType.PULLREQUEST) {
             consumer = new PullRequestConsumer(this, processor);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
@@ -152,6 +154,20 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
      */
     public void setBranchName(String branchName) {
         this.branchName = branchName;
+    }
+
+    public String getStartingSha() {
+        return startingSha;
+    }
+
+    /**
+     * The starting sha to use for polling commits with the commit consumer.
+     *
+     * The value can either be a sha for the sha to start from, or use <tt>beginning</tt> to start from the beginning,
+     * or <tt>last</tt> to start from the last commit.
+     */
+    public void setStartingSha(String startingSha) {
+        this.startingSha = startingSha;
     }
 
     public String getOauthToken() {

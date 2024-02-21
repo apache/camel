@@ -18,8 +18,9 @@ package org.apache.camel.converter.soap.name;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.converter.soap.name.testpackage.RequestWithDefaultNs;
@@ -56,8 +57,10 @@ public class XmlRootElementPreferringElementNameStrategyTest {
 
     @Test
     public void testFindExceptionForFaultName() throws Exception {
+        final QName faultName = new QName(LOCAL_NAME, CUSTOM_NS);
+
         assertThrows(UnsupportedOperationException.class,
-                () -> ens.findExceptionForFaultName(new QName(LOCAL_NAME, CUSTOM_NS)));
+                () -> ens.findExceptionForFaultName(faultName));
     }
 
     @XmlType(name = "", propOrder = { LOCAL_NAME })

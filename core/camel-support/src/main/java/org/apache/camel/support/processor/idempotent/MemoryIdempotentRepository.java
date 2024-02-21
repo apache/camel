@@ -36,7 +36,6 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     private Map<String, Object> cache;
     private int cacheSize;
 
-    @SuppressWarnings("unchecked")
     public MemoryIdempotentRepository() {
         this.cache = LRUCacheFactory.newLRUCache(1000);
     }
@@ -57,7 +56,6 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      *
      * @param cacheSize the cache size
      */
-    @SuppressWarnings("unchecked")
     public static IdempotentRepository memoryIdempotentRepository(int cacheSize) {
         return memoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
     }
@@ -130,7 +128,6 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         if (cacheSize > 0) {
             cache = LRUCacheFactory.newLRUCache(cacheSize);

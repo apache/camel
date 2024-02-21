@@ -17,6 +17,7 @@
 package org.apache.camel.catalog.lucene;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.camel.catalog.SuggestionStrategy;
@@ -34,10 +35,13 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     private int maxSuggestions = 3;
-    private SpellChecker checker;
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
+        return suggestEndpointOptions(names, unknownOption, maxSuggestions);
+    }
+
+    public static String[] suggestEndpointOptions(Collection<String> names, String unknownOption, int maxSuggestions) {
         // each option must be on a separate line in a String
         StringBuilder sb = new StringBuilder();
         for (String name : names) {
@@ -51,7 +55,7 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
             // use in-memory lucene spell checker to make the suggestions
             try (ByteBuffersDirectory dir = new ByteBuffersDirectory()) {
-                checker = new SpellChecker(dir);
+                SpellChecker checker = new SpellChecker(dir);
                 checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
 
                 return checker.suggestSimilar(unknownOption, maxSuggestions);

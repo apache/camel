@@ -42,7 +42,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
         // the first line contains the column names which we intend to skip
         template.sendBody("direct:start", "OrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
@@ -61,7 +61,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
         // the first and last line we intend to skip
         template.sendBody("direct:start", "OrderId|Item|Amount\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(0, body.size());
@@ -74,7 +74,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:explicitHeader", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
@@ -93,7 +93,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:replaceHeader", "a|b|c\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());

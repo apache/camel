@@ -22,7 +22,7 @@ package org.apache.camel.component.file;
 public interface GenericFileFilter<T> {
 
     /**
-     * Tests whether or not the specified generic file should be included
+     * Tests whether the specified generic file should be included
      *
      * @param  file the generic file to be tested
      * @return      <code>true</code> if and only if <code>file</code> should be included

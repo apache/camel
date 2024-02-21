@@ -1,49 +1,62 @@
-[[sticky-eip]]
 = Sticky EIP
-:docTitle: Sticky
-:description: Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
+:doctitle: Sticky
+:shortname: sticky
+:description: Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
+Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+A stick mode means that a correlation key (calculated as xref:manual::expression.adoc[Expression])
+is used to determine the destination. This allows to route all messages with the same key to the same destination.
 
 == Options
 
 // eip options: START
-The Sticky EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *correlationExpression* | *Required* The correlation expression to use to calculate the correlation key |  | ExpressionSubElementDefinition
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Examples
 
-In this case we are using the header test as correlation expression:
+In this case we are using the header myKey as correlation expression:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .sticky(header("test"))
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().sticky(header("myKey"))
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
-
+XML::
++
 [source,xml]
 ----
+<route>
 <from uri="direct:start"/>
     <loadBalance>
        <sticky>
            <correlationExpression>
-               <header>test</header>
+               <header>myKey</header>
            </correlationExpression>
        </sticky>
        <to uri="seda:x"/>      
        <to uri="seda:y"/>      
        <to uri="seda:z"/>       
     </loadBalance> 
+</route>
 ----
+====

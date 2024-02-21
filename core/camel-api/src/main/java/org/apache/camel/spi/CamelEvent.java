@@ -41,6 +41,9 @@ public interface CamelEvent {
         CamelContextStopping,
         CamelContextSuspended,
         CamelContextSuspending,
+        CamelContextReloading,
+        CamelContextReloaded,
+        CamelContextReloadFailure,
         ExchangeCompleted,
         ExchangeCreated,
         ExchangeFailed,
@@ -49,12 +52,14 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
+        ExchangeAsyncProcessingStarted,
         RoutesStarting,
         RoutesStarted,
         RoutesStopping,
         RoutesStopped,
         RouteAdded,
         RouteRemoved,
+        RouteReloaded,
         RouteStarting,
         RouteStarted,
         RouteStopping,
@@ -70,6 +75,14 @@ public interface CamelEvent {
     Type getType();
 
     Object getSource();
+
+    /**
+     * Timestamp for each event, when the event occurred. By default, the timestamp is not included and this method
+     * returns 0.
+     */
+    long getTimestamp();
+
+    void setTimestamp(long timestamp);
 
     /**
      * This interface is implemented by all events that contain an exception and is used to retrieve the exception in a
@@ -211,6 +224,27 @@ public interface CamelEvent {
         }
     }
 
+    interface CamelContextReloadingEvent extends CamelContextEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextReloading;
+        }
+    }
+
+    interface CamelContextReloadedEvent extends CamelContextEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextReloaded;
+        }
+    }
+
+    interface CamelContextReloadFailureEvent extends CamelContextEvent, FailureEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextReloadFailure;
+        }
+    }
+
     interface ExchangeEvent extends CamelEvent {
 
         Exchange getExchange();
@@ -347,6 +381,23 @@ public interface CamelEvent {
         }
     }
 
+    interface RouteReloadedEvent extends RouteEvent {
+        @Override
+        default Type getType() {
+            return Type.RouteReloaded;
+        }
+
+        /**
+         * The route index in this batch (starts from 1)
+         */
+        int getIndex();
+
+        /**
+         * Total number of routes being reloaded in this batch
+         */
+        int getTotal();
+    }
+
     interface RouteStartingEvent extends RouteEvent {
         @Override
         default Type getType() {
@@ -399,4 +450,13 @@ public interface CamelEvent {
         }
     }
 
+    /**
+     * Special event only in use for camel-tracing / camel-opentelemetry. This event is NOT (by default) in use.
+     */
+    interface ExchangeAsyncProcessingStartedEvent extends ExchangeEvent {
+        @Override
+        default Type getType() {
+            return Type.ExchangeAsyncProcessingStarted;
+        }
+    }
 }

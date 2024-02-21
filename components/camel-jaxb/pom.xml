@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jaxb</artifactId>
@@ -33,11 +33,7 @@
     <description>Camel JAXB support</description>
 
     <properties>
-        <camel.osgi.import>
-            com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)",
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -54,10 +50,12 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
+            <version>${jaxb-core-version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl-version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -88,13 +86,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -115,6 +109,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

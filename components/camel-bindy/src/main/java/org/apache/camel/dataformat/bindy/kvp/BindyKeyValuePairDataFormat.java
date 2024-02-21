@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
@@ -48,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
  */
-@Dataformat("bindy-kvp")
+@Dataformat("bindyKvp")
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
@@ -62,7 +61,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-kvp";
+        return "bindyKvp";
     }
 
     @Override
@@ -74,17 +73,19 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
         // the body may not be a prepared list of map that bindy expects so help
         // a bit here and create one if needed
+        if (body instanceof Map) {
+            // the body is already a map, and we do not want to iterate each element in the map,
+            // but keep the body as a map, so wrap as iterator
+            body = Collections.singleton(body).iterator();
+        }
         for (Object model : ObjectHelper.createIterable(body)) {
-
             Map<String, Object> row;
             if (model instanceof Map) {
                 row = (Map<String, Object>) model;
             } else {
                 row = Collections.singletonMap(model.getClass().getName(), model);
             }
-
             String result = factory.unbind(getCamelContext(), row);
-
             outputStream.write(converter.convertTo(byte[].class, exchange, result));
             outputStream.write(crlf);
         }
@@ -155,25 +156,23 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 // to be present when storing the actual data in the model.
                 List<String> result = Arrays.stream(line.split(separator))
                         .map(x -> x.replace("\u0085", ""))
-                        .collect(Collectors.toList());
+                        .toList();
 
-                if (result.size() == 0 || result.isEmpty()) {
+                if (result.isEmpty()) {
                     throw new IllegalArgumentException("No records have been defined in the KVP");
                 }
 
-                if (result.size() > 0) {
-                    // Bind data from message with model classes
-                    // Counter is used to detect line where error occurs
-                    factory.bind(getCamelContext(), result, model, count.get(), lists);
+                // Bind data from message with model classes
+                // Counter is used to detect line where error occurs
+                factory.bind(result, model, count.get(), lists);
 
-                    // Link objects together
-                    factory.link(model);
+                // Link objects together
+                factory.link(model);
 
-                    // Add objects graph to the list
-                    models.add(model);
+                // Add objects graph to the list
+                models.add(model);
 
-                    LOG.debug("Graph of objects created: {}", model);
-                }
+                LOG.debug("Graph of objects created: {}", model);
             }
         } catch (Exception e) {
             throw new WrappedException(e);

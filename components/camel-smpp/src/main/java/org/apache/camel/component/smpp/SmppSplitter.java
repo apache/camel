@@ -33,7 +33,7 @@ public class SmppSplitter {
      * The real length of the UDH header.
      * <p/>
      * The real length of the UDH header is {@link #UDHIE_HEADER_LENGTH} {@code + 1}.
-     * 
+     *
      * @see #UDHIE_HEADER_LENGTH
      */
     protected static final int UDHIE_HEADER_REAL_LENGTH = UDHIE_HEADER_LENGTH + 1;
@@ -90,7 +90,7 @@ public class SmppSplitter {
 
     /**
      * Returns reference number which length is {@link #UDHIE_SAR_REF_NUM_LENGTH}.
-     * 
+     *
      * @return the reference number of the multipart message
      */
     protected static synchronized byte getReferenceNumber() {
@@ -171,7 +171,7 @@ public class SmppSplitter {
 
     /**
      * Gets maximum message length.
-     * 
+     *
      * @return maximum message length
      */
     public int getMessageLength() {
@@ -180,7 +180,7 @@ public class SmppSplitter {
 
     /**
      * Gets maximum segment length.
-     * 
+     *
      * @return maximum segment length
      */
     public int getSegmentLength() {
@@ -189,7 +189,7 @@ public class SmppSplitter {
 
     /**
      * Gets length of the message to split.
-     * 
+     *
      * @return length of the message to split
      */
     public int getCurrentLength() {

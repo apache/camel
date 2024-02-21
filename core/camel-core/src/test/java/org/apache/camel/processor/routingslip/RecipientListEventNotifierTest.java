@@ -62,7 +62,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         };
     }
 
-    private final class MyEventNotifier extends EventNotifierSupport {
+    private static final class MyEventNotifier extends EventNotifierSupport {
 
         private int sending;
         private int sent;

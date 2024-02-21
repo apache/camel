@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jira.consumer;
 
 import java.lang.reflect.Method;
@@ -36,8 +35,10 @@ import org.slf4j.LoggerFactory;
 
 public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
-    HashMap<Long, Issue> watchedIssues;
+    private static final Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
+    private static final int SEARCH_MAX_PER_QUERY = 50;
+    private static final int SEARCH_START_AT = 0;
+    final HashMap<Long, Issue> watchedIssues = new HashMap<>();
     List<String> watchedFieldsList;
     String watchedIssuesKeys;
 
@@ -50,13 +51,13 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        initIssues();
+        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
+                getEndpoint().getMaxResults());
+        initIssues(issues);
     }
 
-    private void initIssues() {
-        watchedIssues = new HashMap<>();
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
+    private void initIssues(List<Issue> issues) {
+        watchedIssues.clear();
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
                 .map(Issue::getKey)
@@ -64,14 +65,15 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
-        List<Issue> issues = getIssues(((JiraEndpoint) getEndpoint()).getJql(), 0, 50,
-                ((JiraEndpoint) getEndpoint()).getMaxResults());
-        if (watchedIssues.values().size() != issues.size()) {
-            init();
-        }
+    protected int doPoll() throws Exception {
+        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
+                getEndpoint().getMaxResults());
         for (Issue issue : issues) {
             checkIfIssueChanged(issue);
+        }
+        if (watchedIssues.values().size() != issues.size()) {
+            // Rebuild the map of issues being watched
+            initIssues(issues);
         }
         return 0;
     }
@@ -97,7 +99,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
         Object changedField = get.invoke(changed);
 
         if (!Objects.equals(originalField, changedField)) {
-            if (!((JiraEndpoint) getEndpoint()).isSendOnlyUpdatedField()) {
+            if (!getEndpoint().isSendOnlyUpdatedField()) {
                 processExchange(changed, changed.getKey(), fieldName);
             } else {
                 processExchange(changedField, changed.getKey(), fieldName);

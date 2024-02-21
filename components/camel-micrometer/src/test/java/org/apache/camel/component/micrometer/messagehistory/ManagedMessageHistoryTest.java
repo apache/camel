@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-    public void addRegistry() throws Exception {
+    public void addRegistry() {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
@@ -74,8 +75,20 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return context;
     }
 
+    private void cleanMbeanServer() throws Exception {
+        //Deleting data from other tests
+        for (ObjectName it : timerNames()) {
+            getMBeanServer().unregisterMBean(it);
+        }
+    }
+
+    private Set<ObjectName> timerNames() throws Exception {
+        return getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:type=timers,name=*"), null);
+    }
+
     @Test
     public void testMessageHistory() throws Exception {
+        cleanMbeanServer();
         int count = 10;
 
         getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
@@ -90,14 +103,13 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
         assertEquals(3, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
-        Set<ObjectName> set
-                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelMessageHistory.*"), null);
+        Set<ObjectName> set = timerNames();
         assertEquals(3, set.size());
 
         ObjectName fooMBean = set.stream().filter(on -> on.getCanonicalName().contains("foo")).findFirst()

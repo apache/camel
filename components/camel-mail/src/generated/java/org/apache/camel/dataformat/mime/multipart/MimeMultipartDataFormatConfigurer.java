@@ -24,6 +24,8 @@ public class MimeMultipartDataFormatConfigurer extends PropertyConfigurerSupport
         case "multipartWithoutAttachment": dataformat.setMultipartWithoutAttachment(property(camelContext, boolean.class, value)); return true;
         case "headersinline":
         case "headersInline": dataformat.setHeadersInline(property(camelContext, boolean.class, value)); return true;
+        case "includeheaders":
+        case "includeHeaders": dataformat.setIncludeHeaders(property(camelContext, java.lang.String.class, value)); return true;
         case "binarycontent":
         case "binaryContent": dataformat.setBinaryContent(property(camelContext, boolean.class, value)); return true;
         default: return false;

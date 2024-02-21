@@ -31,12 +31,12 @@ public interface FileMoveExistingStrategy {
      *
      * @param  endpoint   the given endpoint of the component
      * @param  operations file operations API of the relevant component's API
-     * @return            result of the file opeartion can be returned note that for now, implemetion classes for file
-     *                    component and ftp components, always returned true. However,if such a need of direct usage of
-     *                    File API returning true|false, you can use that return value for implementation's return
-     *                    value.
+     * @return            result of the file operation can be returned note that for now, implementation classes for
+     *                    file component and ftp components, always returned true. However,if such a need of direct
+     *                    usage of File API returning true|false, you can use that return value for implementation's
+     *                    return value.
      */
-    boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+    boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException;
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xchange;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -28,43 +29,47 @@ import org.knowm.xchange.utils.Assert;
 @Component("xchange")
 public class XChangeComponent extends DefaultComponent {
 
-    private XChange xchange;
+    private final Map<String, XChange> xchanges = new HashMap<>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // Init the configuration
-        XChangeConfiguration configuration = new XChangeConfiguration(this);
-
-        // Set the required name of the exchange
+        XChangeConfiguration configuration = new XChangeConfiguration();
         configuration.setName(remaining);
 
         XChangeEndpoint endpoint = new XChangeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        // after configuring endpoint then create xchange
-        XChange xchange = createXChange(configuration);
+        // after configuring endpoint then get or create xchange instance
+        XChange xchange = getOrCreateXChange(remaining);
         endpoint.setXchange(xchange);
 
         return endpoint;
     }
 
-    public XChange getXChange() {
-        return xchange;
+    public XChange getXChange(String name) {
+        return xchanges.get(name);
     }
 
-    private synchronized XChange createXChange(XChangeConfiguration configuration) {
+    void putXChange(String name, XChange xchange) {
+        xchanges.put(name, xchange);
+    }
 
-        if (xchange == null) {
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        xchanges.clear();
+    }
 
-            // Get the XChange implementation
-            Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
-            Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
+    protected Exchange createExchange(Class<? extends Exchange> exchangeClass) {
+        return ExchangeFactory.INSTANCE.createExchange(exchangeClass);
+    }
 
-            // Create the XChange and associated Endpoint
-            xchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
-        }
-
-        return xchange;
+    private synchronized XChange getOrCreateXChange(String name) {
+        return xchanges.computeIfAbsent(name, xc -> {
+            Class<? extends Exchange> exchangeClass = XChangeHelper.loadXChangeClass(getCamelContext(), name);
+            Assert.notNull(exchangeClass, "XChange not supported: " + name);
+            return new XChange(createExchange(exchangeClass));
+        });
     }
 
 }

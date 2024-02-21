@@ -44,6 +44,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "findentity":
         case "findEntity": target.setFindEntity(property(camelContext, boolean.class, value)); return true;
+        case "firstresult":
+        case "firstResult": target.setFirstResult(property(camelContext, int.class, value)); return true;
         case "flushonsend":
         case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
@@ -54,7 +56,7 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lockmodetype":
-        case "lockModeType": target.setLockModeType(property(camelContext, javax.persistence.LockModeType.class, value)); return true;
+        case "lockModeType": target.setLockModeType(property(camelContext, jakarta.persistence.LockModeType.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "maximumresults":
@@ -63,6 +65,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "nativequery":
         case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputtarget":
+        case "outputTarget": target.setOutputTarget(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "persistenceunit":
         case "persistenceUnit": target.setPersistenceUnit(property(camelContext, java.lang.String.class, value)); return true;
@@ -87,6 +91,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sharedentitymanager":
         case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "singleresult":
+        case "singleResult": target.setSingleResult(property(camelContext, boolean.class, value)); return true;
         case "skiplockedentity":
         case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
@@ -132,6 +138,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "findentity":
         case "findEntity": return boolean.class;
+        case "firstresult":
+        case "firstResult": return int.class;
         case "flushonsend":
         case "flushOnSend": return boolean.class;
         case "greedy": return boolean.class;
@@ -142,7 +150,7 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "lockmodetype":
-        case "lockModeType": return javax.persistence.LockModeType.class;
+        case "lockModeType": return jakarta.persistence.LockModeType.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return int.class;
         case "maximumresults":
@@ -151,6 +159,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return java.lang.String.class;
         case "nativequery":
         case "nativeQuery": return java.lang.String.class;
+        case "outputtarget":
+        case "outputTarget": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "persistenceunit":
         case "persistenceUnit": return java.lang.String.class;
@@ -175,6 +185,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sharedentitymanager":
         case "sharedEntityManager": return boolean.class;
+        case "singleresult":
+        case "singleResult": return boolean.class;
         case "skiplockedentity":
         case "skipLockedEntity": return boolean.class;
         case "startscheduler":
@@ -221,6 +233,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return target.getExchangePattern();
         case "findentity":
         case "findEntity": return target.isFindEntity();
+        case "firstresult":
+        case "firstResult": return target.getFirstResult();
         case "flushonsend":
         case "flushOnSend": return target.isFlushOnSend();
         case "greedy": return target.isGreedy();
@@ -240,6 +254,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return target.getNamedQuery();
         case "nativequery":
         case "nativeQuery": return target.getNativeQuery();
+        case "outputtarget":
+        case "outputTarget": return target.getOutputTarget();
         case "parameters": return target.getParameters();
         case "persistenceunit":
         case "persistenceUnit": return target.getPersistenceUnit();
@@ -264,6 +280,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sharedentitymanager":
         case "sharedEntityManager": return target.isSharedEntityManager();
+        case "singleresult":
+        case "singleResult": return target.isSingleResult();
         case "skiplockedentity":
         case "skipLockedEntity": return target.isSkipLockedEntity();
         case "startscheduler":

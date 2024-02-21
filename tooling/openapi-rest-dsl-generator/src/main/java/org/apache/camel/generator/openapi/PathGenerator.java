@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import com.squareup.javapoet.JavaFile;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 
 final class PathGenerator extends RestDslSourceCodeGenerator<Path> {
 
-    PathGenerator(final OasDocument document) {
+    PathGenerator(final OpenApiDocument document) {
         super(document);
     }
 

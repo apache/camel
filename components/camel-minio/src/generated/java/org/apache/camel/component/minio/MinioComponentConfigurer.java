@@ -53,6 +53,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "destinationobjectname":
         case "destinationObjectName": getOrCreateConfiguration(target).setDestinationObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": getOrCreateConfiguration(target).setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -148,6 +152,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "destinationobjectname":
         case "destinationObjectName": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -239,6 +247,10 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "destinationobjectname":
         case "destinationObjectName": return getOrCreateConfiguration(target).getDestinationObjectName();
         case "endpoint": return getOrCreateConfiguration(target).getEndpoint();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includefolders":

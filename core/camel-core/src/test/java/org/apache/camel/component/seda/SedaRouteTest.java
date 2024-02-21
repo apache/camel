@@ -27,28 +27,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaRouteTest extends TestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // make SEDA testing faster
-        System.setProperty("CamelSedaPollTimeout", "10");
-        super.setUp();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        System.clearProperty("CamelSedaPollTimeout");
-        super.tearDown();
-    }
 
     @Test
     public void testSedaQueue() throws Exception {
@@ -56,13 +39,16 @@ public class SedaRouteTest extends TestSupport {
 
         CamelContext context = new DefaultCamelContext();
 
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
+
         // lets add some routes
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("seda:test.a").to("seda:test.b");
                 from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });
@@ -91,13 +77,16 @@ public class SedaRouteTest extends TestSupport {
 
         CamelContext context = new DefaultCamelContext();
 
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
+
         // lets add some routes
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("seda:test.a").to("seda:test.b");
                 from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });

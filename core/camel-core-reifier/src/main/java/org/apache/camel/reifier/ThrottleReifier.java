@@ -23,7 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.processor.Throttler;
+import org.apache.camel.model.ThrottlingMode;
+import org.apache.camel.processor.ConcurrentRequestsThrottler;
+import org.apache.camel.processor.TotalRequestsThrottler;
 
 public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
@@ -33,18 +35,10 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
+
         boolean async = parseBoolean(definition.getAsyncDelayed(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
-
-        // should be default 1000 millis
-        long period = definition.getTimePeriodMillis() != null ? parseDuration(definition.getTimePeriodMillis()) : 1000L;
-
-        // max requests per period is mandatory
-        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
-        if (maxRequestsExpression == null) {
-            throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
-        }
 
         Expression correlation = null;
         if (definition.getCorrelationExpression() != null) {
@@ -52,14 +46,34 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         }
 
         boolean reject = parseBoolean(definition.getRejectExecution(), false);
-        Throttler answer = new Throttler(
-                camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+        // max requests per period is mandatory
+        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
+        if (maxRequestsExpression == null) {
+            throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
+        }
 
-        answer.setAsyncDelayed(async);
-        // should be true by default
-        answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
+        if (ThrottlingMode.toMode(parseString(definition.getMode())) == ThrottlingMode.ConcurrentRequests) {
+            ConcurrentRequestsThrottler answer = new ConcurrentRequestsThrottler(
+                    camelContext, maxRequestsExpression, threadPool, shutdownThreadPool, reject, correlation);
 
-        return answer;
+            answer.setAsyncDelayed(async);
+            // should be true by default
+            answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
+
+            return answer;
+        } else {
+            long period = parseDuration(definition.getTimePeriodMillis(), 1000L);
+
+            TotalRequestsThrottler answer = new TotalRequestsThrottler(
+                    camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+
+            answer.setAsyncDelayed(async);
+            // should be true by default
+            answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
+
+            return answer;
+        }
+
     }
 
     private Expression createMaxRequestsPerPeriodExpression() {

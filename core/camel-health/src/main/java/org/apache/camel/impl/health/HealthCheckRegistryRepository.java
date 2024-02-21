@@ -16,27 +16,25 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * {@link HealthCheckRepository} that uses the Camel {@link org.apache.camel.spi.Registry}.
  *
  * Camel will use this by default, so there is no need to register this manually.
  */
-public class HealthCheckRegistryRepository implements CamelContextAware, HealthCheckRepository {
+public class HealthCheckRegistryRepository extends ServiceSupport
+        implements CamelContextAware, HealthCheckRepository, StaticService, NonManagedService {
     private CamelContext context;
-    private Map<String, HealthCheckConfiguration> configurations;
-    private HealthCheckConfiguration fallbackConfiguration;
     private boolean enabled = true;
 
     @Override
@@ -55,28 +53,6 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
     }
 
     @Override
-    public Map<String, HealthCheckConfiguration> getConfigurations() {
-        return configurations;
-    }
-
-    @Override
-    public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
-        this.configurations = configurations;
-    }
-
-    @Override
-    public void addConfiguration(String id, HealthCheckConfiguration configuration) {
-        if ("*".equals(id)) {
-            fallbackConfiguration = configuration;
-        } else {
-            if (configurations == null) {
-                configurations = new LinkedHashMap<>();
-            }
-            configurations.put(id, configuration);
-        }
-    }
-
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -90,29 +66,15 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
     public Stream<HealthCheck> stream() {
         if (context != null && enabled) {
             Set<HealthCheck> set = this.context.getRegistry().findByType(HealthCheck.class);
-            return set.stream().map(this::toHealthCheck);
+            return set.stream()
+                    .map(this::toHealthCheck);
         } else {
             return Stream.empty();
         }
     }
 
     private HealthCheck toHealthCheck(HealthCheck hc) {
-        if (configurations != null) {
-            HealthCheckConfiguration hcc = matchConfiguration(hc.getId());
-            if (hcc != null) {
-                hc.getConfiguration().setEnabled(hcc.isEnabled());
-                hc.getConfiguration().setInterval(hcc.getInterval());
-                hc.getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
-            }
-        }
         return hc;
     }
 
-    private HealthCheckConfiguration matchConfiguration(String id) {
-
-        return configurations.values().stream()
-                .filter(s -> PatternHelper.matchPattern(id, s.getParent()))
-                .findAny()
-                .orElse(fallbackConfiguration);
-    }
 }

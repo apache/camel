@@ -40,7 +40,7 @@ public class RobotFrameworkCamelConfigurationTest extends CamelTestSupport {
     @Test
     public void testOutputParamInRobotFrameworkCamelConfigurations() throws Exception {
         RobotFrameworkEndpoint robotFrameworkEndpoint = createEndpointWithOption("output=customOutput.log");
-        assertEquals("customOutput.log", robotFrameworkEndpoint.getConfiguration().getOutput().getName());
+        assertEquals("customOutput.log", robotFrameworkEndpoint.getConfiguration().getOutput());
     }
 
     private RobotFrameworkEndpoint createEndpointWithOption(String option) throws Exception {

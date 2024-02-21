@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.ExtendedCamelContext;
@@ -74,6 +75,11 @@ public class AbstractCamelContextFactoryBeanTest {
                 }
 
                 @Override
+                public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+                    return null;
+                }
+
+                @Override
                 public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                     return ObjectHelper.newInstance(type);
                 }
@@ -87,15 +93,16 @@ public class AbstractCamelContextFactoryBeanTest {
     // properties that should return value that can be converted to boolean
     Set<String> valuesThatReturnBoolean = new HashSet<>(
             asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
-                    "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
+                    "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}",
                     "{{getCaseInsensitiveHeaders}}",
-                    "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}",
+                    "{{getAutoStartup}}", "{{getDumpRoutes}}", "{{getUseMDCLogging}}", "{{getUseDataType}}",
+                    "{{getUseBreadcrumb}}",
                     "{{getBeanPostProcessorEnabled}}", "{{getAllowUseOriginalMessage}}",
                     "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}",
                     "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
-    Set<String> valuesThatReturnLong = new HashSet<>(asList("{{getDelayer}}"));
+    Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
 
     public AbstractCamelContextFactoryBeanTest() throws Exception {
         ((Service) typeConverter).start();
@@ -108,7 +115,9 @@ public class AbstractCamelContextFactoryBeanTest {
         final DefaultCamelContext context = mock(DefaultCamelContext.class,
                 withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
 
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
+        final ExtendedCamelContext extendedCamelContext = mock(ExtendedCamelContext.class);
+
+        when(context.getCamelContextExtension()).thenReturn(extendedCamelContext);
 
         // program the property resolution in context mock
         when(context.resolvePropertyPlaceholders(anyString())).thenAnswer(invocation -> {
@@ -133,7 +142,8 @@ public class AbstractCamelContextFactoryBeanTest {
         when(context.getManagementNameStrategy()).thenReturn(mock(ManagementNameStrategy.class));
         when(context.getExecutorServiceManager()).thenReturn(mock(ExecutorServiceManager.class));
         when(context.getInflightRepository()).thenReturn(mock(InflightRepository.class));
-        when(context.getBeanPostProcessor()).thenReturn(mock(CamelBeanPostProcessor.class));
+        when(context.getCamelContextExtension().getContextPlugin(CamelBeanPostProcessor.class))
+                .thenReturn(mock(CamelBeanPostProcessor.class));
 
         @SuppressWarnings("unchecked")
         final AbstractCamelContextFactoryBean<ModelCamelContext> factory = mock(AbstractCamelContextFactoryBean.class);

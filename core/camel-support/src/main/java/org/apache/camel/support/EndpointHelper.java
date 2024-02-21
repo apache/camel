@@ -19,10 +19,9 @@ package org.apache.camel.support;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
@@ -30,12 +29,12 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -54,6 +53,101 @@ public final class EndpointHelper {
 
     private EndpointHelper() {
         //Utility Class
+    }
+
+    /**
+     * Resolves the endpoint uri that may have property placeholders (supports optional property placeholders).
+     *
+     * @param  camelContext the camel context
+     * @param  uri          the endpoint uri
+     * @return              returns endpoint uri with property placeholders resolved
+     */
+    public static String resolveEndpointUriPropertyPlaceholders(CamelContext camelContext, String uri) {
+        // the uri may have optional property placeholders which is not possible to resolve
+        // so we keep the unresolved in the uri, which we then afterwards will remove
+        // which is a little complex depending on the placeholder is from context-path or query parameters
+        // in the uri string
+        try {
+            uri = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(uri, true);
+            if (uri == null || uri.isEmpty()) {
+                return uri;
+            }
+            String prefix = PropertiesComponent.PREFIX_OPTIONAL_TOKEN;
+            if (uri.contains(prefix)) {
+                String unresolved = uri;
+                uri = doResolveEndpointUriOptionalPropertyPlaceholders(unresolved);
+                LOG.trace("Unresolved optional placeholders removed from uri: {} -> {}", unresolved, uri);
+            }
+            LOG.trace("Resolved property placeholders with uri: {}", uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
+    }
+
+    private static String doResolveEndpointUriOptionalPropertyPlaceholders(String uri) throws URISyntaxException {
+        String prefix = PropertiesComponent.PREFIX_OPTIONAL_TOKEN;
+
+        // find query position which is the first question mark that is not part of the optional token prefix
+        int pos = 0;
+        for (int i = 0; i < uri.length(); i++) {
+            char ch = uri.charAt(i);
+            if (ch == '?') {
+                // ensure that its not part of property prefix
+                if (i > 2) {
+                    char ch1 = uri.charAt(i - 1);
+                    char ch2 = uri.charAt(i - 2);
+                    if (ch1 != '{' && ch2 != '{') {
+                        pos = i;
+                        break;
+                    }
+                } else {
+                    pos = i;
+                    break;
+                }
+            }
+        }
+        String base = pos > 0 ? uri.substring(0, pos) : uri;
+        String query = pos > 0 ? uri.substring(pos + 1) : null;
+
+        // the base (context path) should remove all unresolved property placeholders
+        // which is done by replacing all begin...end tokens with an empty string
+        String pattern = "\\{\\{?.*}}";
+        base = base.replaceAll(pattern, "");
+
+        // the query parameters needs to be rebuild by removing the unresolved key=value pairs
+        if (query != null && query.contains(prefix)) {
+            Map<String, Object> params = URISupport.parseQuery(query);
+            Map<String, Object> keep = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    continue;
+                }
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    String s = value.toString();
+                    if (s.startsWith(prefix)) {
+                        continue;
+                    }
+                    // okay the value may use a resource loader with a scheme prefix
+                    int dot = s.indexOf(':');
+                    if (dot > 0 && dot < s.length() - 1) {
+                        s = s.substring(dot + 1);
+                        if (s.startsWith(prefix)) {
+                            continue;
+                        }
+                    }
+                }
+                keep.put(key, value);
+            }
+            // rebuild query
+            query = URISupport.createQueryString(keep);
+        }
+
+        // assemble uri as answer
+        uri = query != null && !query.isEmpty() ? base + "?" + query : base;
+        return uri;
     }
 
     /**
@@ -112,7 +206,7 @@ public final class EndpointHelper {
      * Matches the endpoint with the given pattern.
      * <p/>
      * The endpoint will first resolve property placeholders using
-     * {@link CamelContext#resolvePropertyPlaceholders(String)}.
+     * {@link #resolveEndpointUriPropertyPlaceholders(CamelContext, String)}
      * <p/>
      * The match rules are applied in this order:
      * <ul>
@@ -126,12 +220,12 @@ public final class EndpointHelper {
      * @param  context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
      * @param  uri     the endpoint uri
      * @param  pattern a pattern to match
-     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @return         <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     public static boolean matchEndpoint(CamelContext context, String uri, String pattern) {
         if (context != null) {
             try {
-                uri = context.resolvePropertyPlaceholders(uri);
+                uri = resolveEndpointUriPropertyPlaceholders(context, uri);
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
             }
@@ -140,18 +234,31 @@ public final class EndpointHelper {
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        // we need to test with and without scheme separators (//)
-        boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);
-        match |= PatternHelper.matchPattern(uri, pattern);
-        if (!match && pattern != null && pattern.contains("?")) {
-            // try normalizing the pattern as a uri for exact matching, so parameters are ordered the same as in the endpoint uri
+        // do fast matching without regexp first
+        boolean match = doMatchEndpoint(uri, pattern, false);
+        if (!match) {
+            // this is slower as pattern is compiled as regexp
+            match = doMatchEndpoint(uri, pattern, true);
+        }
+        return match;
+    }
+
+    private static boolean doMatchEndpoint(String uri, String pattern, boolean regexp) {
+        String toggleUri = null;
+        boolean match = regexp ? PatternHelper.matchRegex(uri, pattern) : PatternHelper.matchPattern(uri, pattern);
+        if (!match) {
+            toggleUri = toggleUriSchemeSeparators(uri);
+            match = regexp ? PatternHelper.matchRegex(toggleUri, pattern) : PatternHelper.matchPattern(toggleUri, pattern);
+        }
+        if (!match && !regexp && pattern != null && pattern.contains("?")) {
+            // this is only need to be done once (in fast mode when regexp=false)
+            // try normalizing the pattern as an uri for exact matching, so parameters are ordered the same as in the endpoint uri
             try {
                 pattern = URISupport.normalizeUri(pattern);
                 // try both with and without scheme separators (//)
-                match = toggleUriSchemeSeparators(uri).equalsIgnoreCase(pattern);
-                return match || uri.equalsIgnoreCase(pattern);
+                return uri.equalsIgnoreCase(pattern) || toggleUri.equalsIgnoreCase(pattern);
             } catch (URISyntaxException e) {
-                //Can't normalize and original match failed
+                // cannot normalize and original match failed
                 return false;
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
@@ -163,7 +270,7 @@ public final class EndpointHelper {
     /**
      * Toggles // separators in the given uri. If the uri does not contain ://, the slashes are added, otherwise they
      * are removed.
-     * 
+     *
      * @param  normalizedUri The uri to add/remove separators in
      * @return               The uri with separators added or removed
      */
@@ -180,57 +287,10 @@ public final class EndpointHelper {
     }
 
     /**
-     * Sets the regular properties on the given bean
-     *
-     * @param      context    the camel context
-     * @param      bean       the bean
-     * @param      parameters parameters
-     * @throws     Exception  is thrown if setting property fails
-     * @deprecated            use PropertyBindingSupport
-     */
-    @Deprecated
-    public static void setProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
-        // use the property binding which can do more advanced configuration
-        PropertyBindingSupport.build().bind(context, bean, parameters);
-    }
-
-    /**
-     * Sets the reference properties on the given bean
-     * <p/>
-     * This is convention over configuration, setting all reference parameters (using
-     * {@link #isReferenceParameter(String)} by looking it up in registry and setting it on the bean if possible.
-     *
-     * @param      context    the camel context
-     * @param      bean       the bean
-     * @param      parameters parameters
-     * @throws     Exception  is thrown if setting property fails
-     * @deprecated            use PropertyBindingSupport
-     */
-    @Deprecated
-    public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters)
-            throws Exception {
-        Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = it.next();
-            String name = entry.getKey();
-            Object v = entry.getValue();
-            String value = v != null ? v.toString() : null;
-            if (isReferenceParameter(value)) {
-                boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context,
-                        context.getTypeConverter(), bean, name, null, value, true, false, false);
-                if (hit) {
-                    // must remove as its a valid option and we could configure it
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    /**
      * Is the given parameter a reference parameter (starting with a # char)
      *
      * @param  parameter the parameter
-     * @return           <tt>true</tt> if its a reference parameter
+     * @return           <tt>true</tt> if it's a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.trim().startsWith("#") && parameter.trim().length() > 1;
@@ -262,36 +322,97 @@ public final class EndpointHelper {
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        // it may refer to a type
-        if (value.startsWith("#type:")) {
+        Object answer = null;
+        if (value.startsWith("#class:")) {
             try {
-                Object answer = null;
-
-                String valueNoHash = value.substring(6);
-                Class<?> clazz = context.getClassResolver().resolveMandatoryClass(valueNoHash);
-                Set<T> set = context.getRegistry().findByType(type);
-                if (set.size() == 1) {
-                    answer = set.iterator().next();
-                } else if (set.size() > 1) {
-                    throw new NoSuchBeanException(
-                            value, "Found " + set.size() + " beans of type: " + clazz + ". Only 1 bean instance is supported.");
-                }
-                if (mandatory && answer == null) {
-                    throw new NoSuchBeanException(value);
-                }
-                return type.cast(answer);
+                answer = createBean(context, value, type);
+            } catch (Exception e) {
+                throw new NoSuchBeanException(value, e);
+            }
+        } else if (value.startsWith("#type:")) {
+            try {
+                value = value.substring(6);
+                Class<?> clazz = context.getClassResolver().resolveMandatoryClass(value);
+                answer = context.getRegistry().mandatoryFindSingleByType(clazz);
             } catch (ClassNotFoundException e) {
                 throw new NoSuchBeanException(value, e);
             }
         } else {
-            String valueNoHash = StringHelper.replaceAll(value, "#bean:", "");
-            valueNoHash = StringHelper.replaceAll(valueNoHash, "#", "");
-            if (mandatory) {
-                return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
-            } else {
-                return CamelContextHelper.lookupAndConvert(context, valueNoHash, type);
+            value = value.replace("#bean:", "");
+            value = value.replace("#", "");
+            // lookup first with type
+            answer = CamelContextHelper.lookup(context, value, type);
+            if (answer == null) {
+                // fallback to lookup by name
+                answer = CamelContextHelper.lookup(context, value);
             }
         }
+
+        if (mandatory && answer == null) {
+            if (type != null) {
+                throw new NoSuchBeanException(value, type.getTypeName());
+            } else {
+                throw new NoSuchBeanException(value);
+            }
+        }
+        if (answer != null) {
+            if (mandatory) {
+                answer = CamelContextHelper.convertTo(context, type, answer);
+            } else {
+                answer = CamelContextHelper.tryConvertTo(context, type, answer);
+            }
+        }
+        return (T) answer;
+    }
+
+    private static <T> T createBean(CamelContext camelContext, String name, Class<T> type) throws Exception {
+        Object answer;
+
+        // if there is a factory method then the class/bean should be created in a different way
+        String className;
+        String factoryMethod = null;
+        String parameters = null;
+        className = name.substring(7);
+        if (className.endsWith(")") && className.indexOf('(') != -1) {
+            parameters = StringHelper.after(className, "(");
+            parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+            className = StringHelper.before(className, "(");
+        }
+        if (className != null && className.indexOf('#') != -1) {
+            factoryMethod = StringHelper.after(className, "#");
+            className = StringHelper.before(className, "#");
+        }
+        Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+        Class<?> factoryClass = null;
+        if (factoryMethod != null) {
+            String typeOrRef = StringHelper.before(factoryMethod, ":");
+            if (typeOrRef != null) {
+                // use another class with factory method
+                factoryMethod = StringHelper.after(factoryMethod, ":");
+                // special to support factory method parameters
+                Object existing = camelContext.getRegistry().lookupByName(typeOrRef);
+                if (existing != null) {
+                    factoryClass = existing.getClass();
+                } else {
+                    factoryClass = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
+                }
+            }
+        }
+
+        if (factoryMethod != null && parameters != null) {
+            Class<?> target = factoryClass != null ? factoryClass : clazz;
+            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, target, factoryMethod, parameters);
+        } else if (factoryMethod != null) {
+            answer = camelContext.getInjector().newInstance(type, factoryClass, factoryMethod);
+        } else if (parameters != null) {
+            answer = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, parameters);
+        } else {
+            answer = camelContext.getInjector().newInstance(clazz);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Cannot create bean: " + name);
+        }
+        return type.cast(answer);
     }
 
     /**
@@ -426,8 +547,6 @@ public final class EndpointHelper {
             return ExchangePattern.InOnly;
         } else if (url.contains("exchangePattern=InOut")) {
             return ExchangePattern.InOut;
-        } else if (url.contains("exchangePattern=InOptionalOut")) {
-            return ExchangePattern.InOptionalOut;
         }
         return null;
     }

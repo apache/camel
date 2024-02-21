@@ -17,15 +17,19 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class AsyncEndpointJmsTXRollbackTest extends AbstractSpringJMSTestSupport {
 
     private static int invoked;
     private static String beforeThreadName;
@@ -46,17 +50,17 @@ public class AsyncEndpointJmsTXRollbackTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:inbox", "Hello Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // we are synchronous due to TX so the we are using same threads during the routing
         assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")

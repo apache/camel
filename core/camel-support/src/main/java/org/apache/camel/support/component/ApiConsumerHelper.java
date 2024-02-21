@@ -38,7 +38,7 @@ public final class ApiConsumerHelper {
 
     /**
      * Utility method to find matching API Method for supplied endpoint's configuration properties.
-     * 
+     *
      * @param  endpoint                 endpoint for configuration properties.
      * @param  propertyNamesInterceptor names interceptor for adapting property names, usually the consumer class
      *                                  itself.
@@ -78,7 +78,7 @@ public final class ApiConsumerHelper {
 
     /**
      * Utility method for Consumers to process API method invocation result.
-     * 
+     *
      * @param  consumer    Consumer that wants to process results.
      * @param  result      result of API method invocation.
      * @param  splitResult true if the Consumer wants to split result using

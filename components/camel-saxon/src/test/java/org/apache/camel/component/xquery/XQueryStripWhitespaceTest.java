@@ -34,7 +34,7 @@ public class XQueryStripWhitespaceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStripAll() throws Exception {
+    public void testStripAll() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/payload.xml"));
 
@@ -47,7 +47,7 @@ public class XQueryStripWhitespaceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStripIgnorable() throws Exception {
+    public void testStripIgnorable() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/payload.xml"));
 

@@ -68,6 +68,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodG
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -147,48 +148,48 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
-    void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline");
+    void testEncryption() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline"));
     }
 
     @Test
-    void testEncryption2() throws Exception {
-        doRoundTripEncryptionTests("direct:inline2");
+    void testEncryption2() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline2"));
     }
 
     @Test
-    void testEncryptionArmor() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-armor");
+    void testEncryptionArmor() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline-armor"));
     }
 
     @Test
-    void testEncryptionSigned() throws Exception {
-        doRoundTripEncryptionTests("direct:inline-sign");
+    void testEncryptionSigned() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline-sign"));
     }
 
     @Test
-    void testEncryptionKeyRingByteArray() throws Exception {
-        doRoundTripEncryptionTests("direct:key-ring-byte-array");
+    void testEncryptionKeyRingByteArray() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:key-ring-byte-array"));
     }
 
     @Test
-    void testEncryptionSignedKeyRingByteArray() throws Exception {
-        doRoundTripEncryptionTests("direct:sign-key-ring-byte-array");
+    void testEncryptionSignedKeyRingByteArray() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:sign-key-ring-byte-array"));
     }
 
     @Test
-    void testSeveralSignerKeys() throws Exception {
-        doRoundTripEncryptionTests("direct:several-signer-keys");
+    void testSeveralSignerKeys() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:several-signer-keys"));
     }
 
     @Test
-    void testOneUserIdWithServeralKeys() throws Exception {
-        doRoundTripEncryptionTests("direct:one-userid-several-keys");
+    void testOneUserIdWithSeveralKeys() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:one-userid-several-keys"));
     }
 
     @Test
-    void testKeyAccess() throws Exception {
-        doRoundTripEncryptionTests("direct:key_access");
+    void testKeyAccess() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:key_access"));
     }
 
     @Test
@@ -199,7 +200,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
         Map<String, Object> headers = getHeaders();
         template.sendBodyAndHeaders("direct:verify_exception_sig_userids", payload, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(exception, IllegalArgumentException.class, null, "No public key found for the key ID(s)");
 
@@ -216,7 +217,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         // the following entry is necessary for the dynamic test
         headers.put(PGPKeyAccessDataFormat.KEY_USERID, "second");
         template.sendBodyAndHeaders("direct:several-signer-keys", payload, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(exception, IllegalArgumentException.class, null,
                 "No passphrase specified for signature key user ID");
@@ -226,7 +227,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
      * You get three keys with the UserId "keyflag", a primary key and its two sub-keys. The sub-key with KeyFlag
      * {@link KeyFlags#SIGN_DATA} should be used for signing and the sub-key with KeyFlag {@link KeyFlags#ENCRYPT_COMMS}
      * or {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -234,7 +235,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockKeyFlag = getMockEndpoint("mock:encrypted_keyflag");
         mockKeyFlag.setExpectedMessageCount(1);
         template.sendBody("direct:keyflag", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mockKeyFlag.getExchanges();
         assertEquals(1, exchanges.size());
@@ -252,7 +253,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
      * or {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
      * <p>
      * Tests also the decryption and verifying part with the subkeys.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -262,7 +263,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
         mockSubkey.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -271,7 +272,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
         mockSubkey.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -280,7 +281,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
@@ -293,15 +294,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
 
     @Test
-    void testEncryptSignWithoutCompressedDataPacket() throws Exception {
-
-        doRoundTripEncryptionTests("direct:encrypt-sign-without-compressed-data-packet");
+    void testEncryptSignWithoutCompressedDataPacket() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:encrypt-sign-without-compressed-data-packet"));
         //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         //
         ////        createEncryptedNonCompressedData(bos, PUB_KEY_RING_SUBKEYS_FILE_NAME);
@@ -323,15 +323,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message is encrypted with a key which could not be found in the Secret Keyring");
     }
 
     void createEncryptedNonCompressedData(ByteArrayOutputStream bos, String keyringPath)
-            throws Exception, IOException, PGPException,
-            UnsupportedEncodingException {
+            throws Exception {
         PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
                 new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
                         .setSecureRandom(new SecureRandom()).setProvider(getProvider()));
@@ -451,7 +450,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
@@ -464,7 +463,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkey", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message contains a signature although a signature is not expected");
@@ -479,7 +478,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkey", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message does not contain any signatures although a signature is expected");
@@ -497,7 +496,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:unencrypted");
         mock.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

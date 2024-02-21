@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "gzipDeflater",
+    "title": "GZip Deflater",
+    "description": "Compress and decompress messages using java.util.zip.GZIPStream.",
+    "deprecated": false,
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.GzipDeflaterDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

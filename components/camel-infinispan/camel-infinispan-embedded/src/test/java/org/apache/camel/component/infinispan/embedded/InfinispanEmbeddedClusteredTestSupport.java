@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.spi.ComponentCustomizer;
@@ -50,7 +51,7 @@ public class InfinispanEmbeddedClusteredTestSupport extends CamelTestSupport {
         }
 
         @Override
-        public void createCacheManagers() throws Throwable {
+        public void createCacheManagers() {
             builderUsed = new ConfigurationBuilder();
             builderUsed.clustering().cacheMode(cacheMode);
             if (cacheMode.isDistributed()) {
@@ -67,12 +68,8 @@ public class InfinispanEmbeddedClusteredTestSupport extends CamelTestSupport {
     @Override
     public void setupResources() throws Exception {
         ClusteredCacheSupport cluster = new ClusteredCacheSupport(CacheMode.DIST_SYNC, 2);
-        try {
-            cluster.createCacheManagers();
-            clusteredCacheContainers = cluster.getCacheManagers();
-        } catch (Throwable ex) {
-            throw new Exception(ex);
-        }
+        cluster.createCacheManagers();
+        clusteredCacheContainers = Objects.requireNonNull(cluster.getCacheManagers());
 
         super.setupResources();
     }
@@ -81,9 +78,11 @@ public class InfinispanEmbeddedClusteredTestSupport extends CamelTestSupport {
     public void cleanupResources() throws Exception {
         super.cleanupResources();
 
-        // Has to be done later, maybe CamelTestSupport should
-        for (BasicCacheContainer container : clusteredCacheContainers) {
-            container.stop();
+        if (clusteredCacheContainers != null) {
+            // Has to be done later, maybe CamelTestSupport should
+            for (BasicCacheContainer container : clusteredCacheContainers) {
+                container.stop();
+            }
         }
     }
 

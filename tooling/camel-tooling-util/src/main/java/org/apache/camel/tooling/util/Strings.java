@@ -17,6 +17,7 @@
 package org.apache.camel.tooling.util;
 
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Some String helper methods
@@ -28,14 +29,14 @@ public final class Strings {
     }
 
     public static boolean isEmpty(String s) {
-        return s == null || s.trim().isEmpty();
+        return s == null || s.isBlank();
     }
 
     /**
      * Returns true if the given text is null or empty string or has <tt>null</tt> as the value
      */
     public static boolean isNullOrEmpty(String text) {
-        return text == null || text.length() == 0 || "null".equals(text);
+        return text == null || text.isEmpty() || "null".equals(text);
     }
 
     public static String safeNull(String text) {
@@ -128,7 +129,7 @@ public final class Strings {
         StringBuilder sb = new StringBuilder();
         for (char c : name.toCharArray()) {
             boolean upper = Character.isUpperCase(c);
-            boolean first = sb.length() == 0;
+            boolean first = sb.isEmpty();
             if (first) {
                 sb.append(Character.toUpperCase(c));
             } else if (upper) {
@@ -179,7 +180,7 @@ public final class Strings {
                 sb.append(Character.toUpperCase(c));
             } else {
                 // upper case first
-                if (sb.length() == 0) {
+                if (sb.isEmpty()) {
                     sb.append(Character.toUpperCase(c));
                 } else {
                     sb.append(c);
@@ -188,6 +189,71 @@ public final class Strings {
             dash = false;
         }
         return sb.toString();
+    }
+
+    /**
+     * Converts the string from camel case into dash format (helloGreatWorld -> hello-great-world)
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
+    public static String camelCaseToDash(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder answer = new StringBuilder();
+
+        Character prev = null;
+        Character next = null;
+        char[] arr = text.toCharArray();
+        for (int i = 0; i < arr.length; i++) {
+            char ch = arr[i];
+            if (i < arr.length - 1) {
+                next = arr[i + 1];
+            } else {
+                next = null;
+            }
+            if (ch == '-' || ch == '_') {
+                answer.append("-");
+            } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
+            } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
+            } else {
+                answer.append(ch);
+            }
+            prev = ch;
+        }
+
+        return answer.toString().toLowerCase(Locale.ENGLISH);
+    }
+
+    /**
+     * A simpler version of StringHelper#capitlize for usage in the tooling code
+     *
+     * @param  text the string
+     * @return      the string capitalized (upper case first character) or null if the input is null
+     */
+    public static String capitalize(final String text) {
+        if (text == null) {
+            return null;
+        }
+
+        int length = text.length();
+        final char[] chars = new char[length];
+        text.getChars(0, length, chars, 0);
+
+        // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
+        // for which it does not return the capitalized value should not be used here (this is
+        // mostly used to capitalize setters/getters)
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
     }
 
 }

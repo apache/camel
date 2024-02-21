@@ -24,6 +24,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EndpointHelperTest extends SpringTestSupport {
 
@@ -39,7 +40,7 @@ public class EndpointHelperTest extends SpringTestSupport {
 
         assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
-        assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
+        assertNull(EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
 }

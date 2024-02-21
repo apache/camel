@@ -36,7 +36,7 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    private void sendFile(String uri) throws Exception {
+    private void sendFile(String uri) {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
@@ -54,12 +54,12 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
     }
 
     @BindToRegistry("encoder")
-    public ChannelHandler getEncoder() throws Exception {
+    public ChannelHandler getEncoder() {
         return ChannelHandlerFactories.newByteArrayEncoder("tcp");
     }
 
     @BindToRegistry("decoder")
-    public ChannelHandler getDecoder() throws Exception {
+    public ChannelHandler getDecoder() {
         return ChannelHandlerFactories.newByteArrayDecoder("tcp");
     }
 
@@ -73,10 +73,10 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=false&decoders=#decoder")
                         .to("log:result")
                         .to("mock:result");

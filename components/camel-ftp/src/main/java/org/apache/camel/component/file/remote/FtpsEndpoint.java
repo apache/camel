@@ -27,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.Category;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -45,12 +46,12 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
              syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
-             label = "file")
+             category = { Category.FILE }, headersClass = FtpConstants.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy")
+                              + "renameUsingCopy,synchronous")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
@@ -85,9 +86,6 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         return getFtpsConfiguration().getProtocol();
     }
 
-    /**
-     * Create the FTPS client.
-     */
     @Override
     protected FTPClient createFtpClient() throws Exception {
         FTPSClient client;

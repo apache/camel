@@ -40,13 +40,13 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     private int port1;
 
     @BindToRegistry("string-decoder")
-    private StringDecoder stringDecoder = new StringDecoder();
+    private final StringDecoder stringDecoder = new StringDecoder();
 
     @BindToRegistry("string-encoder")
-    private StringEncoder stringEncoder = new StringEncoder();
+    private final StringEncoder stringEncoder = new StringEncoder();
 
     @BindToRegistry("encoders")
-    public List<ChannelHandler> addEncoders() throws Exception {
+    public List<ChannelHandler> addEncoders() {
 
         List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(stringEncoder);
@@ -55,7 +55,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
 
     @BindToRegistry("decoders")
-    public List<ChannelHandler> addDecoders() throws Exception {
+    public List<ChannelHandler> addDecoders() {
 
         List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(stringDecoder);
@@ -64,12 +64,12 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNettyHttpServer() throws Exception {
+    public void testNettyHttpServer() {
         invokeService(port1);
     }
 
     //@Test
-    public void testJettyHttpServer() throws Exception {
+    public void testJettyHttpServer() {
         invokeService(port1);
     }
 
@@ -77,7 +77,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         Exchange out = template.request("netty:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true",
                 new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().setBody(String.format(REQUEST_STRING, port));
                     }
                 });
@@ -90,10 +90,10 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 port1 = AvailablePortFinder.getNextAvailable();
 
                 // set up a netty http proxy

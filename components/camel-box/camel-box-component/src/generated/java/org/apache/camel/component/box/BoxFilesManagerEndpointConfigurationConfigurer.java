@@ -37,17 +37,12 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         map.put("FileId", java.lang.String.class);
         map.put("FileName", java.lang.String.class);
         map.put("FileSize", java.lang.Long.class);
-        map.put("FileType", com.box.sdk.BoxFile.ThumbnailFileType.class);
         map.put("HttpParams", java.util.Map.class);
         map.put("Info", com.box.sdk.BoxFile.Info.class);
         map.put("Listener", com.box.sdk.ProgressListener.class);
         map.put("MaxCacheEntries", int.class);
-        map.put("MaxHeight", java.lang.Integer.class);
-        map.put("MaxWidth", java.lang.Integer.class);
         map.put("Metadata", com.box.sdk.Metadata.class);
         map.put("MethodName", java.lang.String.class);
-        map.put("MinHeight", java.lang.Integer.class);
-        map.put("MinWidth", java.lang.Integer.class);
         map.put("Modified", java.util.Date.class);
         map.put("NewFileName", java.lang.String.class);
         map.put("NewName", java.lang.String.class);
@@ -108,8 +103,6 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "FileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filesize":
         case "FileSize": target.setFileSize(property(camelContext, java.lang.Long.class, value)); return true;
-        case "filetype":
-        case "FileType": target.setFileType(property(camelContext, com.box.sdk.BoxFile.ThumbnailFileType.class, value)); return true;
         case "httpparams":
         case "HttpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
         case "info":
@@ -118,18 +111,10 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "Listener": target.setListener(property(camelContext, com.box.sdk.ProgressListener.class, value)); return true;
         case "maxcacheentries":
         case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
-        case "maxheight":
-        case "MaxHeight": target.setMaxHeight(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxwidth":
-        case "MaxWidth": target.setMaxWidth(property(camelContext, java.lang.Integer.class, value)); return true;
         case "metadata":
         case "Metadata": target.setMetadata(property(camelContext, com.box.sdk.Metadata.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "minheight":
-        case "MinHeight": target.setMinHeight(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "minwidth":
-        case "MinWidth": target.setMinWidth(property(camelContext, java.lang.Integer.class, value)); return true;
         case "modified":
         case "Modified": target.setModified(property(camelContext, java.util.Date.class, value)); return true;
         case "newfilename":
@@ -214,8 +199,6 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "FileName": return java.lang.String.class;
         case "filesize":
         case "FileSize": return java.lang.Long.class;
-        case "filetype":
-        case "FileType": return com.box.sdk.BoxFile.ThumbnailFileType.class;
         case "httpparams":
         case "HttpParams": return java.util.Map.class;
         case "info":
@@ -224,18 +207,10 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "Listener": return com.box.sdk.ProgressListener.class;
         case "maxcacheentries":
         case "MaxCacheEntries": return int.class;
-        case "maxheight":
-        case "MaxHeight": return java.lang.Integer.class;
-        case "maxwidth":
-        case "MaxWidth": return java.lang.Integer.class;
         case "metadata":
         case "Metadata": return com.box.sdk.Metadata.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
-        case "minheight":
-        case "MinHeight": return java.lang.Integer.class;
-        case "minwidth":
-        case "MinWidth": return java.lang.Integer.class;
         case "modified":
         case "Modified": return java.util.Date.class;
         case "newfilename":
@@ -316,8 +291,6 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "FileName": return target.getFileName();
         case "filesize":
         case "FileSize": return target.getFileSize();
-        case "filetype":
-        case "FileType": return target.getFileType();
         case "httpparams":
         case "HttpParams": return target.getHttpParams();
         case "info":
@@ -326,18 +299,10 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "Listener": return target.getListener();
         case "maxcacheentries":
         case "MaxCacheEntries": return target.getMaxCacheEntries();
-        case "maxheight":
-        case "MaxHeight": return target.getMaxHeight();
-        case "maxwidth":
-        case "MaxWidth": return target.getMaxWidth();
         case "metadata":
         case "Metadata": return target.getMetadata();
         case "methodname":
         case "MethodName": return target.getMethodName();
-        case "minheight":
-        case "MinHeight": return target.getMinHeight();
-        case "minwidth":
-        case "MinWidth": return target.getMinWidth();
         case "modified":
         case "Modified": return target.getModified();
         case "newfilename":

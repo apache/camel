@@ -22,10 +22,10 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // jackson is default for json
                 from("direct:in").marshal().json();
                 from("direct:back").unmarshal().json().to("mock:reverse");
@@ -35,6 +35,8 @@ public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");
+
+                from("direct:nullBody").unmarshal().allowNullBody().json().to("mock:nullBody");
             }
         };
     }

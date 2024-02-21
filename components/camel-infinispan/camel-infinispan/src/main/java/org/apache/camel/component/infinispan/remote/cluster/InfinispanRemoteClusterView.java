@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.function.Predicates.negate;
 
 public class InfinispanRemoteClusterView extends InfinispanClusterView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanRemoteClusterService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanRemoteClusterView.class);
 
     private final InfinispanRemoteClusterConfiguration configuration;
     private final InfinispanRemoteManager manager;

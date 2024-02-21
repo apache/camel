@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
- * Default {@link UuidGenerator} optimized for Camel usage.
+ * Default {@link UuidGenerator} (32 chars) optimized for Camel usage.
  */
 public class DefaultUuidGenerator implements UuidGenerator {
 
@@ -38,8 +38,8 @@ public class DefaultUuidGenerator implements UuidGenerator {
     }
 
     private static String longToHex(char[] seed, long v) {
-        int l = seed.length;
-        char[] hexChars = new char[16 + seed.length];
+        final int l = seed.length;
+        final char[] hexChars = new char[16 + seed.length];
         System.arraycopy(seed, 0, hexChars, 0, l);
         for (int j = 15; j >= 0; j--) {
             hexChars[l + j] = HEX_ARRAY[(int) (v & 0x0F)];

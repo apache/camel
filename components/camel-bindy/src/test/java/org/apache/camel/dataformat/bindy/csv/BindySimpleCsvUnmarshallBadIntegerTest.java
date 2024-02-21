@@ -66,7 +66,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
 
         Object data = result.getReceivedExchanges().get(0).getIn().getBody();
 
-        LOG.info(">>> Model generated : " + data.getClass().getName());
+        LOG.info(">>> Model generated : {}", data.getClass().getName());
     }
 
     @Test

@@ -16,43 +16,50 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.SerializableRequestDto;
 import org.apache.camel.component.jms.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTestSupport {
+public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Test
     public void testTransferExchangeInOut() throws Exception {
-        assertEquals(0, context().getInflightRepository().size());
+        assertEquals(0, context.getInflightRepository().size());
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
         template.send("direct:start", exchange -> exchange.getIn().setBody(new SerializableRequestDto("Restless Camel")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals(0, context().getInflightRepository().size());
+        assertEquals(0, context.getInflightRepository().size());
     }
 
     @Override
@@ -60,10 +67,11 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
+                        .to(ExchangePattern.InOut,
+                                "activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true&requestTimeout=5000")
                         .to("mock:result");
 
-                from("activemq:responseGenerator?transferExchange=true")
+                from("activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true")
                         .process(exchange -> {
                             // there are 2 inflight (one for both routes)
                             assertEquals(2, exchange.getContext().getInflightRepository().size());
@@ -71,5 +79,17 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
                         });
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

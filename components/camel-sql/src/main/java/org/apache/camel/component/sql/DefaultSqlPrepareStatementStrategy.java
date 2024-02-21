@@ -71,7 +71,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                     String found = matcher.group(1);
                     Object parameter = lookupParameter(found, exchange, exchange.getIn().getBody());
                     if (parameter != null) {
-                        Iterator it = createInParameterIterator(parameter);
+                        Iterator<?> it = createInParameterIterator(parameter);
                         StringJoiner replaceBuilder = new StringJoiner(",");
                         while (it.hasNext()) {
                             it.next();
@@ -184,8 +184,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
             Object value = iterator.next();
 
             // special for SQL IN where we need to set dynamic number of values
-            if (value instanceof CompositeIterator) {
-                Iterator it = (Iterator) value;
+            if (value instanceof CompositeIterator<?> it) {
                 while (it.hasNext()) {
                     Object val = it.next();
                     LOG.trace("Setting parameter #{} with value: {}", argNumber, val);
@@ -297,8 +296,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     @SuppressWarnings("unchecked")
-    protected static CompositeIterator createInParameterIterator(Object value) {
-        Iterator it;
+    protected static CompositeIterator<?> createInParameterIterator(Object value) {
+        Iterator<?> it;
         // if the body is a String then honor quotes etc.
         if (value instanceof String) {
             String[] tokens = StringQuoteHelper.splitSafeQuote((String) value, ',', true);
@@ -307,7 +306,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         } else {
             it = ObjectHelper.createIterator(value, null);
         }
-        CompositeIterator ci = new CompositeIterator();
+        CompositeIterator ci = new CompositeIterator<>();
         ci.add(it);
         return ci;
     }

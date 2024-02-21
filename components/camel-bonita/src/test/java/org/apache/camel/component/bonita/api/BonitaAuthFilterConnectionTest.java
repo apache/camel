@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.bonita.api;
 
-import java.io.IOException;
 import java.util.HashMap;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -48,7 +47,7 @@ public class BonitaAuthFilterConnectionTest {
     private WireMockServer wireMockServer;
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         wireMockServer = new WireMockServer(WireMockConfiguration.options()/*.port(etc)*/);
         wireMockServer.start();
 

@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.workday.producer.WorkdayCommonAPIProducer;
+import org.apache.camel.component.workday.producer.WorkdayDefaultProducer;
 import org.apache.camel.component.workday.producer.WorkdayReportProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -30,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Detect and parse documents using Workday.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true,
-             category = { Category.CLOUD, Category.API, Category.HCM })
+             category = { Category.CLOUD, Category.API, Category.SAAS }, headersClass = WorkdayDefaultProducer.class)
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriParam

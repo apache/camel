@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.cache;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,14 @@ import java.util.function.Function;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
+import org.apache.camel.StatefulService;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +55,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     // keep track of all singleton endpoints with a pooled producer that are evicted
     // for multi pool then they have their own house-keeping for evictions (more complex)
     private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
-    private int capacity;
-    private Map<S, S> cache;
+    private final int capacity;
+    private final Map<S, S> cache;
+    // synchronizes access only to cache
+    private final Object cacheLock;
 
     private interface Pool<S> {
         S acquire() throws Exception;
@@ -71,12 +79,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
         this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
+        this.cacheLock = capacity > 0 ? new Object() : null;
     }
 
     /**
      * This callback is invoked by LRUCache from a separate background cleanup thread. Therefore we mark the entries to
      * be evicted from this thread only, and then let SinglePool and MultiPool handle the evictions (stop the
-     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we sop the producer/consumer
+     * producer/consumer safely) when they are acquiring/releases producers/consumers. If we stop the producer/consumer
      * from the LRUCache background thread we can have a race condition with a pooled producer may have been acquired at
      * the same time its being evicted.
      */
@@ -85,6 +94,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         Pool<S> p = pool.get(e);
         if (p != null) {
             p.evict(s);
+            if (capacity > 0 && pool.size() > capacity) {
+                // the pool is growing too large, so we need to stop (stop will remove itself from pool)
+                p.stop();
+            }
         } else {
             // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
             ServicePool.stop(s);
@@ -108,9 +121,35 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
         S s = getOrCreatePool(endpoint).acquire();
         if (s != null && cache != null) {
-            cache.putIfAbsent(s, s);
+            if (isStoppingOrStopped()) {
+                // during stopping then access to the cache is synchronized
+                synchronized (cacheLock) {
+                    cache.putIfAbsent(s, s);
+                }
+            } else {
+                // optimize for normal operation
+                cache.putIfAbsent(s, s);
+            }
         }
         return s;
+    }
+
+    private void waitForService(StatefulService service) {
+        BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
+                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                .withMaxDuration(Duration.ofMillis(30000))
+                .withInterval(Duration.ofMillis(5))
+                .build())
+                .build();
+
+        if (!task.run(service::isStarting)) {
+            LOG.warn("The producer: {} did not finish starting in {} ms", service, 30000);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", task.elapsed().toMillis(), service,
+                    service.getStatus());
+        }
     }
 
     /**
@@ -127,16 +166,17 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> getOrCreatePool(Endpoint endpoint) {
-        return pool.computeIfAbsent(endpoint, this::createPool);
-    }
-
-    private Pool<S> createPool(Endpoint endpoint) {
-        boolean singleton = endpoint.isSingletonProducer();
-        if (singleton) {
-            return new SinglePool(endpoint);
-        } else {
-            return new MultiplePool(endpoint);
+        // it is a pool, so we have a lot more hits, so use regular get, and then fallback to computeIfAbsent
+        Pool<S> answer = pool.get(endpoint);
+        if (answer == null) {
+            boolean singleton = endpoint.isSingletonProducer();
+            if (singleton) {
+                answer = pool.computeIfAbsent(endpoint, SinglePool::new);
+            } else {
+                answer = pool.computeIfAbsent(endpoint, MultiplePool::new);
+            }
         }
+        return answer;
     }
 
     /**
@@ -157,19 +197,16 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         cleanUp();
 
         pool.values().forEach(Pool::stop);
         pool.clear();
         if (cache != null) {
-            cache.values().forEach(ServicePool::stop);
-            cache.clear();
+            synchronized (cacheLock) {
+                cache.values().forEach(ServicePool::stop);
+                cache.clear();
+            }
         }
         singlePoolEvicted.values().forEach(Pool::stop);
         singlePoolEvicted.clear();
@@ -194,6 +231,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private volatile S s;
 
+        private SinglePool() {
+            // only used for eager classloading
+            this.endpoint = null;
+        }
+
         SinglePool(Endpoint endpoint) {
             this.endpoint = endpoint;
         }
@@ -209,6 +251,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                         S tempS = creator.apply(endpoint);
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
+
+                        if (s instanceof StatefulService ss) {
+                            if (ss.isStarting()) {
+                                LOG.trace("Waiting for producer to finish starting: {}", s);
+                                waitForService(ss);
+                            }
+                        }
                     }
                 }
             }
@@ -251,11 +300,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         private void cleanupEvicts() {
-            singlePoolEvicted.forEach((e, p) -> {
-                doStop(e);
-                p.stop();
-                singlePoolEvicted.remove(e);
-            });
+            if (!singlePoolEvicted.isEmpty()) {
+                for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
+                    Endpoint e = entry.getKey();
+                    Pool<S> p = entry.getValue();
+                    doStop(e);
+                    p.stop();
+                    singlePoolEvicted.remove(e);
+                }
+            }
         }
 
         void doStop(Service s) {
@@ -275,9 +328,17 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * thread at any given time.
      */
     private class MultiplePool implements Pool<S> {
+        private final Object lock = new Object();
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final List<S> evicts;
+
+        private MultiplePool() {
+            // only used for eager classloading
+            this.endpoint = null;
+            this.queue = null;
+            this.evicts = null;
+        }
 
         MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;
@@ -287,14 +348,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         private void cleanupEvicts() {
             if (!evicts.isEmpty()) {
-                synchronized (this) {
+                synchronized (lock) {
                     if (!evicts.isEmpty()) {
-                        evicts.forEach(this::doStop);
-                        evicts.forEach(queue::remove);
-                        evicts.clear();
-                        if (queue.isEmpty()) {
-                            pool.remove(endpoint);
+                        for (S evict : evicts) {
+                            doStop(evict);
+                            queue.remove(evict);
                         }
+                        evicts.clear();
                     }
                 }
             }
@@ -304,10 +364,20 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public S acquire() throws Exception {
             cleanupEvicts();
 
-            S s = queue.poll();
-            if (s == null) {
-                s = creator.apply(endpoint);
-                s.start();
+            S s;
+            synchronized (lock) {
+                s = queue.poll();
+                if (s == null) {
+                    s = creator.apply(endpoint);
+                    s.start();
+
+                    if (s instanceof StatefulService ss) {
+                        if (ss.isStarting()) {
+                            LOG.trace("Waiting for producer to finish starting: {}", s);
+                            waitForService(ss);
+                        }
+                    }
+                }
             }
             return s;
         }
@@ -316,9 +386,11 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public void release(S s) {
             cleanupEvicts();
 
-            if (!queue.offer(s)) {
-                // there is no room so lets just stop and discard this
-                doStop(s);
+            synchronized (lock) {
+                if (!queue.offer(s)) {
+                    // there is no room so lets just stop and discard this
+                    doStop(s);
+                }
             }
         }
 
@@ -329,15 +401,19 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void stop() {
-            queue.forEach(this::doStop);
-            queue.clear();
-            pool.remove(endpoint);
+            synchronized (lock) {
+                queue.forEach(this::doStop);
+                queue.clear();
+                pool.remove(endpoint);
+            }
         }
 
         @Override
         public void evict(S s) {
             // to be evicted
-            evicts.add(s);
+            synchronized (lock) {
+                evicts.add(s);
+            }
         }
 
         @Override
@@ -349,7 +425,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (s != null) {
                 ServicePool.stop(s);
                 try {
-                    endpoint.getCamelContext().removeService(s);
+                    if (endpoint != null) {
+                        endpoint.getCamelContext().removeService(s);
+                    }
                 } catch (Exception e) {
                     LOG.debug("Error removing service: {}. This exception is ignored.", s, e);
                 }

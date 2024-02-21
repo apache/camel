@@ -1,22 +1,23 @@
-[[stax-component]]
 = StAX Component
-:docTitle: StAX
-:artifactId: camel-stax
+:doctitle: StAX
+:shortname: stax
+:artifactid: camel-stax
 :description: Process XML payloads by a SAX ContentHandler.
 :since: 2.9
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/stax.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stax
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The StAX component allows messages to be process through a SAX
+The StAX component allows messages to be processed through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
-Another feature of this component is to allow to iterate over JAXB
-records using StAX, for example using the Splitter
-EIP.
+Another feature of this component is to allow iterating over JAXB
+records using StAX, for example, using the xref:eips:split-eip.adoc[Split EIP].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -33,71 +34,36 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------
 stax:content-handler-class
 --------------------------
 
 example:
 
-[source,java]
 -----------------------------------
 stax:org.superbiz.FooContentHandler
 -----------------------------------
 
-You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
+You can look up a `org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
-[source,java]
 ---------------
 stax:#myHandler
 ---------------
 
-== Options
 
+
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The StAX component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The StAX endpoint is configured using URI syntax:
 
-----
-stax:contentHandlerClass
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *contentHandlerClass* | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
-|===
-
-
-=== Query Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
 
 
@@ -106,7 +72,7 @@ with the following path and query parameters:
 
 The message body after the handling is the handler itself.
 
-Here an example:
+Here is an example:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------
@@ -124,9 +90,9 @@ from("file:target/in")
 
 == Iterate over a collection using JAXB and StAX
 
-First we suppose you have JAXB objects.
+First, we suppose you have JAXB objects.
 
-For instance a list of records in a wrapper object:
+For instance, a list of records in a wrapper object:
 
 [source,java]
 -------------------------------------------------
@@ -188,7 +154,7 @@ public class Record {
 }
 ---------------------------------------------------------
 
-Then you get a XML file to process:
+Then you get an XML file to process:
 
 [source,xml]
 -------------------------------------------------------
@@ -214,7 +180,7 @@ from("file:target/in")
 ------------------------------------------
 
 Where `stax` is a static method on
-`org.apache.camel.component.stax.StAXBuilder` which you can static
+`org.apache.camel.component.stax.StAXBuilder` which you can have static
 import in the Java code. The stax builder is by default namespace aware
 on the XMLReader it uses. You can turn this
 off by setting the boolean parameter to false, as shown below:
@@ -228,7 +194,32 @@ from("file:target/in")
 
 === The previous example with XML DSL
 
-The example above could be implemented as follows in XML DSL
+The example above could be implemented as follows in Spring XML
+
+[source,xml]
+----
+  <!-- use STaXBuilder to create the expression we want to use in the route below for splitting the XML file -->
+  <!-- notice we use the factory-method to define the stax method, and to pass in the parameter as a constructor-arg -->
+  <bean id="staxRecord" class="org.apache.camel.component.stax.StAXBuilder" factory-method="stax">
+    <!-- FQN class name of the POJO with the JAXB annotations -->
+    <constructor-arg index="0" value="org.apache.camel.component.stax.model.Record"/>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <!-- pickup XML files -->
+      <from uri="file:target/in"/>
+      <split streaming="true">
+        <!-- split the file using StAX (ref to bean above) -->
+        <!-- and use streaming mode in the splitter -->
+        <ref>staxRecord</ref>
+        <!-- and send each split to a mock endpoint, which will be a Record POJO instance -->
+        <to uri="mock:records"/>
+      </split>
+    </route>
+  </camelContext>
+----
 
 
-include::camel-spring-boot::page$stax-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

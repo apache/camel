@@ -24,41 +24,43 @@ import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.kubernetes.api.model.SecretListBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
 public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
-        return server.getClient();
+    public KubernetesClient getClient() {
+        return client;
     }
 
     @Test
-    public void listTest() throws Exception {
+    void listTest() {
         server.expect().withPath("/api/v1/secrets")
                 .andReturn(200, new SecretListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
-        List<Secret> result = template.requestBody("direct:list", "", List.class);
+        List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
+    void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/secrets?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
                 .andReturn(200, new SecretListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -69,13 +71,13 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, labels);
         });
 
-        List<Secret> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void getSecretTest() throws Exception {
+    void getSecretTest() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
@@ -90,7 +92,40 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteSecret() throws Exception {
+    void createSecret() {
+        Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+        server.expect().post().withPath("/api/v1/namespaces/test/secrets").andReturn(200, sc1).once();
+
+        Exchange ex = template.request("direct:create", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET, sc1);
+        });
+
+        Secret result = ex.getMessage().getBody(Secret.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("sc1", result.getMetadata().getName());
+    }
+
+    @Test
+    void updateSecret() {
+        Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+        server.expect().get().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
+        server.expect().put().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
+
+        Exchange ex = template.request("direct:update", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET, sc1);
+        });
+
+        Secret result = ex.getMessage().getBody(Secret.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("sc1", result.getMetadata().getName());
+    }
+
+    @Test
+    void deleteSecret() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
@@ -105,15 +140,16 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecrets");
                 from("direct:listByLabels")
                         .to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecretsByLabels");
                 from("direct:get").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=getSecret");
                 from("direct:create").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=createSecret");
+                from("direct:update").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=updateSecret");
                 from("direct:delete").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=deleteSecret");
             }
         };

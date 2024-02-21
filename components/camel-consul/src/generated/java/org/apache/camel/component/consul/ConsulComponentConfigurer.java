@@ -40,12 +40,10 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.consul.ConsulConfiguration.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": getOrCreateConfiguration(target).setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "consistencymode":
-        case "consistencyMode": getOrCreateConfiguration(target).setConsistencyMode(property(camelContext, com.orbitz.consul.option.ConsistencyMode.class, value)); return true;
+        case "consistencyMode": getOrCreateConfiguration(target).setConsistencyMode(property(camelContext, org.kiwiproject.consul.option.ConsistencyMode.class, value)); return true;
         case "consulclient":
-        case "consulClient": getOrCreateConfiguration(target).setConsulClient(property(camelContext, com.orbitz.consul.Consul.class, value)); return true;
+        case "consulClient": getOrCreateConfiguration(target).setConsulClient(property(camelContext, org.kiwiproject.consul.Consul.class, value)); return true;
         case "datacenter": getOrCreateConfiguration(target).setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "firstindex":
         case "firstIndex": getOrCreateConfiguration(target).setFirstIndex(property(camelContext, java.math.BigInteger.class, value)); return true;
@@ -61,8 +59,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": getOrCreateConfiguration(target).setPingInstance(property(camelContext, boolean.class, value)); return true;
         case "readtimeout":
         case "readTimeout": getOrCreateConfiguration(target).setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": getOrCreateConfiguration(target).setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "recursive": getOrCreateConfiguration(target).setRecursive(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
@@ -76,8 +72,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": getOrCreateConfiguration(target).setValueAsString(property(camelContext, boolean.class, value)); return true;
         case "writetimeout":
         case "writeTimeout": getOrCreateConfiguration(target).setWriteTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": getOrCreateConfiguration(target).setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }
@@ -97,12 +91,10 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return org.apache.camel.component.consul.ConsulConfiguration.class;
         case "connecttimeout":
         case "connectTimeout": return java.time.Duration.class;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return java.lang.Long.class;
         case "consistencymode":
-        case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
+        case "consistencyMode": return org.kiwiproject.consul.option.ConsistencyMode.class;
         case "consulclient":
-        case "consulClient": return com.orbitz.consul.Consul.class;
+        case "consulClient": return org.kiwiproject.consul.Consul.class;
         case "datacenter": return java.lang.String.class;
         case "firstindex":
         case "firstIndex": return java.math.BigInteger.class;
@@ -118,8 +110,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": return boolean.class;
         case "readtimeout":
         case "readTimeout": return java.time.Duration.class;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return java.lang.Long.class;
         case "recursive": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
@@ -133,8 +123,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": return boolean.class;
         case "writetimeout":
         case "writeTimeout": return java.time.Duration.class;
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": return java.lang.Long.class;
         default: return null;
         }
     }
@@ -155,8 +143,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return target.getConfiguration();
         case "connecttimeout":
         case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return getOrCreateConfiguration(target).getConnectTimeoutMillis();
         case "consistencymode":
         case "consistencyMode": return getOrCreateConfiguration(target).getConsistencyMode();
         case "consulclient":
@@ -176,8 +162,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": return getOrCreateConfiguration(target).isPingInstance();
         case "readtimeout":
         case "readTimeout": return getOrCreateConfiguration(target).getReadTimeout();
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return getOrCreateConfiguration(target).getReadTimeoutMillis();
         case "recursive": return getOrCreateConfiguration(target).isRecursive();
         case "sslcontextparameters":
         case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
@@ -191,8 +175,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": return getOrCreateConfiguration(target).isValueAsString();
         case "writetimeout":
         case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": return getOrCreateConfiguration(target).getWriteTimeoutMillis();
         default: return null;
         }
     }

@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.BiFunction;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
@@ -30,6 +31,7 @@ import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
@@ -44,45 +46,47 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         final Expression expression = createExpression(definition.getExpression());
 
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isSynchronous = parseBoolean(definition.getSynchronous(), false);
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
         boolean isIgnoreInvalidEndpoints = parseBoolean(definition.getIgnoreInvalidEndpoints(), false);
-        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
 
         RecipientList answer;
-        if (definition.getDelimiter() != null) {
-            answer = new RecipientList(camelContext, expression, parseString(definition.getDelimiter()));
+        String delimiter = parseString(definition.getDelimiter());
+        if (delimiter != null) {
+            answer = new RecipientList(camelContext, expression, delimiter);
         } else {
             answer = new RecipientList(camelContext, expression);
         }
         answer.setAggregationStrategy(createAggregationStrategy());
         answer.setParallelProcessing(isParallelProcessing);
         answer.setParallelAggregate(isParallelAggregate);
+        answer.setSynchronous(isSynchronous);
         answer.setStreaming(isStreaming);
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
-        answer.setStopOnAggregateException(isStopOnAggregateException);
-        if (definition.getCacheSize() != null) {
-            answer.setCacheSize(parseInt(definition.getCacheSize()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            answer.setCacheSize(num);
         }
-        if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(mandatoryLookup(definition.getOnPrepareRef(), Processor.class));
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
-        if (definition.getOnPrepare() != null) {
-            answer.setOnPrepare(definition.getOnPrepare());
-        }
-        if (definition.getTimeout() != null) {
-            answer.setTimeout(parseDuration(definition.getTimeout()));
+        answer.setOnPrepare(prepare);
+        Long dur = parseDuration(definition.getTimeout());
+        if (dur != null) {
+            answer.setTimeout(dur);
         }
 
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("RecipientList", definition, isParallelProcessing);
         answer.setExecutorService(threadPool);
         answer.setShutdownExecutorService(shutdownThreadPool);
-        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
+        long timeout = parseDuration(definition.getTimeout(), 0);
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
@@ -109,22 +113,32 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getStrategyRef()), Object.class);
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        String ref = parseString(definition.getAggregationStrategy());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookupByName(ref);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                        = new AggregationStrategyBeanAdapter(
+                                aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 
@@ -132,10 +146,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             // default to use latest aggregation strategy
             strategy = new UseLatestAggregationStrategy();
         }
-
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
 
         if (parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work

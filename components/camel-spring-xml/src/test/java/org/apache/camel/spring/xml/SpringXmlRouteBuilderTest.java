@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -89,14 +89,14 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     }
 
     @Override
-    @Test
-    public void testIdempotentConsumer() throws Exception {
+    @Disabled("This is tested elsewhere and not applicable in this scenario")
+    public void testIdempotentConsumer() {
         // is tested elsewhere
     }
 
     @Override
-    @Test
-    public void testRouteWithInterceptor() throws Exception {
+    @Disabled("This is tested elsewhere and not applicable in this scenario")
+    public void testRouteWithInterceptor() {
         // is tested elsewhere
     }
 

@@ -58,7 +58,7 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
             String key = headerName.evaluate(exchange, String.class);
             old.setHeader(key, newHeader);
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 
@@ -104,13 +104,4 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
         return expression;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        //noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

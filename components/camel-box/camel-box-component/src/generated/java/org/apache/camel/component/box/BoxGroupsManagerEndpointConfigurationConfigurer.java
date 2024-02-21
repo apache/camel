@@ -43,7 +43,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("PrivateKeyPassword", java.lang.String.class);
         map.put("Provenance", java.lang.String.class);
         map.put("PublicKeyId", java.lang.String.class);
-        map.put("Role", com.box.sdk.BoxGroupMembership.Role.class);
+        map.put("Role", com.box.sdk.BoxGroupMembership.GroupRole.class);
         map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         map.put("UserId", java.lang.String.class);
         map.put("UserName", java.lang.String.class);
@@ -102,7 +102,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         case "publickeyid":
         case "PublicKeyId": target.setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "role":
-        case "Role": target.setRole(property(camelContext, com.box.sdk.BoxGroupMembership.Role.class, value)); return true;
+        case "Role": target.setRole(property(camelContext, com.box.sdk.BoxGroupMembership.GroupRole.class, value)); return true;
         case "sslcontextparameters":
         case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "userid":
@@ -170,7 +170,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         case "publickeyid":
         case "PublicKeyId": return java.lang.String.class;
         case "role":
-        case "Role": return com.box.sdk.BoxGroupMembership.Role.class;
+        case "Role": return com.box.sdk.BoxGroupMembership.GroupRole.class;
         case "sslcontextparameters":
         case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "userid":

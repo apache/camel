@@ -19,16 +19,24 @@ package org.apache.camel.reifier;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.WireTapProcessor;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.StringHelper;
 
 public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
@@ -38,55 +46,69 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        // executor service is mandatory for wire tap
-        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
-        ExecutorService threadPool = getConfiguredExecutorService("WireTap", definition, true);
+        if (definition.getVariableReceive() != null) {
+            throw new IllegalArgumentException("WireTap does not support variableReceive");
+        }
 
         // must use InOnly for WireTap
         definition.setPattern(ExchangePattern.InOnly.name());
 
-        // create the send dynamic producer to send to the wire tapped endpoint
-        SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor();
+        // executor service is mandatory for wire tap
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
+        ExecutorService threadPool = getConfiguredExecutorService("WireTap", definition, true);
+
+        // optimize to only use dynamic processor if really needed
+        String uri;
+        if (definition.getEndpointProducerBuilder() != null) {
+            uri = definition.getEndpointProducerBuilder().getRawUri();
+        } else {
+            uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
+        }
+
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+
+        SendDynamicProcessor dynamicSendProcessor = null;
+        SendProcessor sendProcessor = null;
+        boolean simple = LanguageSupport.hasSimpleFunction(uri);
+        boolean dynamic = parseBoolean(definition.getDynamicUri(), true);
+        boolean invalid = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
+        if (dynamic && simple || invalid) {
+            // dynamic or ignore-invalid so we need the dynamic send processor
+            dynamicSendProcessor = (SendDynamicProcessor) super.createProcessor();
+        } else {
+            // static so we can use a plain send processor
+            Endpoint endpoint = CamelContextHelper.resolveEndpoint(camelContext, uri, null);
+            LineNumberAware.trySetLineNumberAware(endpoint, definition);
+            sendProcessor = new SendProcessor(endpoint);
+            sendProcessor.setVariableSend(parseString(definition.getVariableSend()));
+            sendProcessor.setVariableReceive(parseString(definition.getVariableReceive()));
+        }
 
         // create error handler we need to use for processing the wire tapped
-        Processor childProcessor = wrapInErrorHandler(dynamicTo);
+        Processor producer = dynamicSendProcessor != null ? dynamicSendProcessor : sendProcessor;
+        Processor childProcessor = wrapInErrorHandler(producer);
 
         // and wrap in unit of work
-        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         // is true by default
         boolean isCopy = parseBoolean(definition.getCopy(), true);
 
         WireTapProcessor answer = new WireTapProcessor(
-                dynamicTo, target,
-                parse(ExchangePattern.class, definition.getPattern()),
-                threadPool, shutdownThreadPool,
-                parseBoolean(definition.getDynamicUri(), true));
-        answer.setCopy(isCopy);
-        Processor newExchangeProcessor = definition.getNewExchangeProcessor();
-        if (definition.getNewExchangeProcessorRef() != null) {
-            newExchangeProcessor = mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
+                dynamicSendProcessor, target, uri,
+                parse(ExchangePattern.class, definition.getPattern()), isCopy,
+                threadPool, shutdownThreadPool, dynamic);
+
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
-        if (newExchangeProcessor != null) {
-            answer.addNewExchangeProcessor(newExchangeProcessor);
-        }
-        if (definition.getNewExchangeExpression() != null) {
-            answer.setNewExchangeExpression(createExpression(definition.getNewExchangeExpression()));
-        }
-        if (definition.getHeaders() != null && !definition.getHeaders().isEmpty()) {
-            for (SetHeaderDefinition header : definition.getHeaders()) {
-                Processor processor = createProcessor(header);
-                answer.addNewExchangeProcessor(processor);
-            }
-        }
-        Processor onPrepare = definition.getOnPrepare();
-        if (definition.getOnPrepareRef() != null) {
-            onPrepare = mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class);
-        }
-        if (onPrepare != null) {
-            answer.setOnPrepare(onPrepare);
-        }
+        answer.setOnPrepare(prepare);
 
         return answer;
     }

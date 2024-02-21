@@ -43,17 +43,17 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
-        assertEquals(workdayConfiguration.getEntity(), WorkdayConfiguration.Entity.commonAPI);
-        assertEquals(workdayConfiguration.getPath(), "/workers");
-        assertEquals(workdayConfiguration.getHost(), "impl.workday.com");
-        assertEquals(workdayConfiguration.getTenant(), "camel");
-        assertEquals(workdayConfiguration.getClientId(), "f7014d38-99d2-4969-b740-b5b62db6b46a");
-        assertEquals(workdayConfiguration.getClientSecret(), "7dbaf280-3cea-11ea-b77f-2e728ce88125");
-        assertEquals(workdayConfiguration.getTokenRefresh(), "88689ab63cda");
+        assertEquals(WorkdayConfiguration.Entity.commonAPI, workdayConfiguration.getEntity());
+        assertEquals("/workers", workdayConfiguration.getPath());
+        assertEquals("impl.workday.com", workdayConfiguration.getHost());
+        assertEquals("camel", workdayConfiguration.getTenant());
+        assertEquals("f7014d38-99d2-4969-b740-b5b62db6b46a", workdayConfiguration.getClientId());
+        assertEquals("7dbaf280-3cea-11ea-b77f-2e728ce88125", workdayConfiguration.getClientSecret());
+        assertEquals("88689ab63cda", workdayConfiguration.getTokenRefresh());
     }
 
     @Test
-    public void createProducerNoHostConfiguration() throws Exception {
+    public void createProducerNoHostConfiguration() {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         try {
@@ -66,7 +66,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
         } catch (Exception exception) {
 
             assertEquals(exception.getClass(), IllegalArgumentException.class);
-            assertEquals(exception.getMessage(), "Host must be specified");
+            assertEquals("Host must be specified", exception.getMessage());
             return;
         }
 
@@ -91,7 +91,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
         } catch (Exception exception) {
 
             assertEquals(exception.getClass(), MalformedURLException.class);
-            assertEquals(exception.getMessage(), "An invalid Workday Common endpoint: '/worker' was provided.");
+            assertEquals("An invalid Workday Common endpoint: '/worker' was provided.", exception.getMessage());
             return;
         }
 
@@ -112,7 +112,7 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals(workdayUri, "https://impl.workday.com/ccx/api/v1/camel/workers");
+        assertEquals("https://impl.workday.com/ccx/api/v1/camel/workers", workdayUri);
     }
 
     @Test
@@ -130,8 +130,9 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals(workdayUri,
-                "https://impl.workday.com/ccx/api/v1/camel/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343");
+        assertEquals(
+                "https://impl.workday.com/ccx/api/v1/camel/workers/4ab56f4b34c4b4a2be3e4f5a732c2343/paySlips/4ab56f4c39c4b4a2bf3e4f5a732c2343",
+                workdayUri);
     }
 
     @Test

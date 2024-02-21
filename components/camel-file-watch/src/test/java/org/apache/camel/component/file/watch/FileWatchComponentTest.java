@@ -22,10 +22,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,8 +94,13 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         createFile(b.toFile(), "inB.txt");
         createFile(b.toFile(), "inB.java");
 
-        all.expectedMessageCount(8); // 2 directories, 6 files
-        all.assertIsSatisfied();
+        /*
+        On systems with slow IO, the time of creation and the time of notification may not be the reliably aligned (i.e; the
+        notification may be sent while the creation is still in progress).
+        As such, we have to be lenient checking for the expected number of exchanges received.
+         */
+        all.expectedMinimumMessageCount(8); // 2 directories, 6 files
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> all.assertIsSatisfied());
 
         onlyTxtAnywhere.expectedMessageCount(3); // 3 txt files
         onlyTxtAnywhere.assertIsSatisfied();
@@ -122,45 +129,45 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
         mock.expectedMessageCount(10);
         mock.expectedMessagesMatches(exchange -> exchange.getIn()
-                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
+                .getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
-            createFile(testPath(), i + "");
+            createFile(testPath(), String.valueOf(i));
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file-watch://" + testPath())
+                fromF("file-watch://%s", testPath())
                         .routeId("watchAll")
                         .to("mock:watchAll");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=*.txt", testPath())
                         .routeId("onlyTxtInRoot")
                         .to("mock:onlyTxtInRoot");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=*/*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=*/*.txt", testPath())
                         .routeId("onlyTxtInSubdirectory")
                         .to("mock:onlyTxtInSubdirectory");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=**/*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=**/*.txt", testPath())
                         .routeId("onlyTxtAnywhere")
                         .to("mock:onlyTxtAnywhere");
 
-                from("file-watch://" + testPath() + "?events=CREATE")
+                fromF("file-watch://%s?events=CREATE", testPath())
                         .to("mock:watchCreate");
 
-                from("file-watch://" + testPath() + "?events=MODIFY")
+                fromF("file-watch://%s?events=MODIFY", testPath())
                         .to("mock:watchModify");
 
-                from("file-watch://" + testPath() + "?events=DELETE,CREATE")
+                fromF("file-watch://%s?events=DELETE,CREATE", testPath())
                         .to("mock:watchDeleteOrCreate");
 
-                from("file-watch://" + testPath() + "?events=DELETE,MODIFY")
+                fromF("file-watch://%s?events=DELETE,MODIFY", testPath())
                         .to("mock:watchDeleteOrModify");
             }
         };

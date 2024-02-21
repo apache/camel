@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.TimerListener;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * Also ensure when adding and remove listeners, that they are correctly removed to avoid leaking memory.
  *
  * @see TimerListener
- * @see org.apache.camel.management.ManagedLoadTimer
  */
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 
@@ -95,7 +96,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
             try {
                 LOG.trace("Invoking onTimer on {}", listener);
                 listener.onTimer();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
                 LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
                         listener, e);
@@ -108,10 +109,13 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
      * <p/>
      * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
      * we can remove the same listener again, when invoking remove.
-     * 
+     *
      * @param listener listener
      */
     public void addTimerListener(TimerListener listener) {
+        CamelContextAware.trySetCamelContext(listener, camelContext);
+        ServiceHelper.startService(listener);
+
         listeners.add(listener);
         LOG.debug("Added TimerListener: {}", listener);
     }
@@ -125,8 +129,16 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
      * @param listener listener.
      */
     public void removeTimerListener(TimerListener listener) {
+        ServiceHelper.stopAndShutdownService(listener);
         listeners.remove(listener);
         LOG.debug("Removed TimerListener: {}", listener);
+    }
+
+    /**
+     * A read-only set of the registered listeners
+     */
+    protected Set<TimerListener> getListeners() {
+        return Collections.unmodifiableSet(listeners);
     }
 
     @Override
@@ -154,6 +166,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
         // shutdown thread pool when we are shutting down
         camelContext.getExecutorServiceManager().shutdownNow(executorService);
         executorService = null;
+        ServiceHelper.stopAndShutdownServices(listeners);
         listeners.clear();
     }
 }

@@ -35,12 +35,16 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
     }
 
     @Test
-    public void testCacheCreationFailure() throws Exception {
+    public void testCacheCreationFailure() {
         JCacheConfiguration conf = new JCacheConfiguration();
         conf.setCacheName(randomString());
         conf.setCreateCacheIfNotExists(false);
 
+        final JCacheManager<Object, Object> objectObjectJCacheManager = new JCacheManager<>(conf);
+
         assertThrows(IllegalStateException.class,
-                () -> new JCacheManager<>(conf).getCache());
+                () -> {
+                    objectObjectJCacheManager.getCache();
+                });
     }
 }

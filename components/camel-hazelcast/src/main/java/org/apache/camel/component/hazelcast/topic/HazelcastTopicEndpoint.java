@@ -24,16 +24,20 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_TOPIC;
+
 /**
  * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic",
-             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.15.0", scheme = SCHEME_TOPIC, title = "Hazelcast Topic",
+             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.CLUSTERING },
+             headersClass = HazelcastConstants.class)
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam

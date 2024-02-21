@@ -38,7 +38,7 @@
             </filter>
         </route>
         <route>
-            <from uri="vm:test"/>
+            <from uri="seda:test"/>
             <to uri="lazyQuickfix:example"/>
         </route>
     </camelContext>

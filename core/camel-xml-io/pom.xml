@@ -23,16 +23,18 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-io</artifactId>
-
     <name>Camel :: XML IO</name>
     <description>Camel XML IO</description>
 
     <properties>
+        <firstVersion>3.1.0</firstVersion>
+        <label>dsl</label>
         <camel-generate-xml-parser>true</camel-generate-xml-parser>
+        <camel-generate-xml-writer>true</camel-generate-xml-writer>
     </properties>
 
     <dependencies>
@@ -41,6 +43,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-io-util</artifactId>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -48,9 +54,15 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- logging -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -66,6 +78,7 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-xml-parser</goal>
+                            <goal>generate-xml-writer</goal>
                         </goals>
                     </execution>
                 </executions>

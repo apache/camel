@@ -1,48 +1,45 @@
-[[ognl-language]]
 = OGNL Language
-:docTitle: OGNL
-:artifactId: camel-ognl
-:description: Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.
+:doctitle: OGNL
+:shortname: ognl
+:artifactid: camel-ognl
+:description: Evaluates an OGNL expression (Apache Commons OGNL).
 :since: 1.1
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ognl.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: ognl
 
 *Since Camel {since}*
 
-Camel allows http://commons.apache.org/proper/commons-ognl/[OGNL] to be
-used as an Expression or
-Predicate the DSL or
-Xml Configuration.
+Camel allows https://en.wikipedia.org/wiki/OGNL[OGNL],
+supported by http://commons.apache.org/proper/commons-ognl/[(Apache Commons OGNL)], to be
+used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
+in Camel routes.
 
-You could use OGNL to create an Predicate in a
-Message Filter or as an
-Expression for a
-Recipient List
+For example, you can use MVEL in a xref:manual::predicate.adoc[Predicate]
+with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
 You can use OGNL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamilyName` method then
 you can construct the syntax as follows:
 
+[source,text]
+----
+request.body.familyName
+----
+
+Or use similar syntax as in Java:
+
 [source,java]
-----------------------------------------
-"request.body.familyName"
-   // or 
-"getRequest().getBody().getFamilyName()"
-----------------------------------------
+----
+getRequest().getBody().getFamilyName()
+----
 
 == OGNL Options
 
 
 // language options: START
-The OGNL language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 
@@ -53,35 +50,37 @@ The OGNL language supports 1 options, which are listed below.
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-
 |*this* |Exchange |the Exchange is the root object
-
-|exchange |Exchange |the Exchange object
-
-|exception |Throwable |the Exchange exception (if any)
-
+|context |CamelContext |the CamelContext
+|exchange |Exchange |the Exchange
 |exchangeId |String |the exchange id
-
-|fault |Message |the Fault message (if any)
-
-|request |Message |the exchange.in message
-
-|response |Message |the exchange.out message (if any)
-
+|exception |Throwable |the Exchange exception (if any)
+|request |Message |the message
+|message |Message |the message
+|headers |Map |the message headers
+|header(name) |Object |the message header by the given name
+|header(name, type) |Type |the message header by the given name as the given type
 |properties |Map |the exchange properties
-
-|property(name) |Object |the property by the given name
-
-|property(name, type) |Type |the property by the given name as the given type
+|property(name) |Object |the exchange property by the given name
+|property(name, type) |Type |the exchange property by the given name as the given type
 |=======================================================================
 
-== Samples
+== Example
 
-For example you could use OGNL inside a xref:{eip-vc}:eips:filter-eip.adoc[Message
-Filter] in XML
+For example, you could use OGNL inside a xref:eips:filter-eip.adoc[Message
+Filter]
 
 [source,java]
----------------------------------------------
+----
+from("seda:foo")
+  .filter().ognl("request.headers.foo == 'bar'")
+    .to("seda:bar");
+----
+
+And in XML:
+
+[source,xml]
+----
 <route>
   <from uri="seda:foo"/>
   <filter>
@@ -89,39 +88,30 @@ Filter] in XML
     <to uri="seda:bar"/>
   </filter>
 </route>
----------------------------------------------
+----
 
-And the sample using Java DSL:
-
-[source,java]
----------------------------------------------------------------------------------
-from("seda:foo").filter().ognl("request.headers.foo == 'bar'").to("seda:bar");
----------------------------------------------------------------------------------
 
 == Loading script from external resource
 
-*Since Camel 2.11*
-
-You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+You can externalize the script and have Apache Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
-------------------------------------------------------------
+----
 .setHeader("myHeader").ognl("resource:classpath:myognl.txt")
-------------------------------------------------------------
+----
 
 == Dependencies
 
-To use OGNL in your camel routes you need to add the a dependency on
-*camel-ognl* which implements the OGNL language.
+To use OGNL in your camel routes, you need to add the dependency on
+*camel-ognl*, which implements the OGNL language.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
-[source,java]
+[source,xml]
 -------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
@@ -130,7 +120,5 @@ the download page for the latest versions).
 </dependency>
 -------------------------------------
 
-Otherwise, you'll also need
-https://repo1.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.ognl/2.7.3_4/org.apache.servicemix.bundles.ognl-2.7.3_4.jar[OGNL]
 
-include::camel-spring-boot::page$ognl-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

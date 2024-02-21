@@ -19,8 +19,8 @@ package org.apache.camel.main;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
@@ -42,18 +42,38 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected volatile ProducerTemplate camelTemplate;
 
+    private String appName = "Apache Camel (Main)";
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
     private long durationMaxSeconds;
     private int durationHitExitCode;
+    private String durationMaxAction = "shutdown";
 
-    protected MainSupport(Class<?>... configurationClasses) {
+    @SafeVarargs
+    protected MainSupport(Class<? extends CamelConfiguration>... configurationClasses) {
         this();
-        configure().addConfigurationClass(configurationClasses);
+        for (Class<? extends CamelConfiguration> clazz : configurationClasses) {
+            configure().addConfiguration(clazz);
+        }
     }
 
     protected MainSupport() {
         this.shutdownStrategy = new DefaultMainShutdownStrategy(this);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        // we want this logging to be as early as possible
+        LOG.info("{} {} is starting", appName, helper.getVersion());
+        super.doInit();
+    }
+
+    @Override
+    protected void autoconfigure(CamelContext camelContext) throws Exception {
+        super.autoconfigure(camelContext);
+
+        // additional main configuration after auto-configuration
+        shutdownStrategy.setExtraShutdownTimeout(configure().getExtraShutdownTimeout());
     }
 
     /**
@@ -74,9 +94,10 @@ public abstract class MainSupport extends BaseMainSupport {
                 stop();
                 afterStop();
             } catch (Exception e) {
-                // however while running then just log errors
+                // while running then just log errors
                 LOG.error("Failed: {}", e, e);
             }
+            LOG.info("{} {} shutdown", appName, helper.getVersion());
         }
     }
 
@@ -102,18 +123,19 @@ public abstract class MainSupport extends BaseMainSupport {
         }
     }
 
-    private void internalBeforeStart() {
+    /**
+     * Tasks to run before start() is called.
+     */
+    protected void internalBeforeStart() {
         // used while waiting to be done
         durationMaxIdleSeconds = mainConfigurationProperties.getDurationMaxIdleSeconds();
         durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
         durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
         durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
+        durationMaxAction = mainConfigurationProperties.getDurationMaxAction();
 
         // register main as bootstrap
-        CamelContext context = getCamelContext();
-        if (context != null) {
-            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
-        }
+        registerMainBootstrap();
     }
 
     /**
@@ -145,7 +167,7 @@ public abstract class MainSupport extends BaseMainSupport {
                 camelTemplate = null;
             }
         } catch (Exception e) {
-            LOG.debug("Error stopping camelTemplate due " + e.getMessage() + ". This exception is ignored.", e);
+            LOG.debug("Error stopping camelTemplate due {}. This exception is ignored.", e.getMessage(), e);
         }
     }
 
@@ -164,68 +186,14 @@ public abstract class MainSupport extends BaseMainSupport {
         return this::completed;
     }
 
-    @Deprecated
-    public int getDuration() {
-        return mainConfigurationProperties.getDurationMaxSeconds();
-    }
-
     /**
-     * Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <=
-     * 0 will run forever.
-     *
-     * @deprecated use {@link #configure()}
+     * Registers {@link MainBootstrapCloseable} with the CamelContext.
      */
-    @Deprecated
-    public void setDuration(int duration) {
-        mainConfigurationProperties.setDurationMaxSeconds(duration);
-    }
-
-    @Deprecated
-    public int getDurationIdle() {
-        return mainConfigurationProperties.getDurationMaxIdleSeconds();
-    }
-
-    /**
-     * Sets the maximum idle duration (in seconds) when running the application, and if there has been no message
-     * processed after being idle for more than this duration then the application should be terminated. Defaults to -1.
-     * Any value <= 0 will run forever.
-     *
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setDurationIdle(int durationIdle) {
-        mainConfigurationProperties.setDurationMaxIdleSeconds(durationIdle);
-    }
-
-    @Deprecated
-    public int getDurationMaxMessages() {
-        return mainConfigurationProperties.getDurationMaxMessages();
-    }
-
-    /**
-     * Sets the duration to run the application to process at most max messages until it should be terminated. Defaults
-     * to -1. Any value <= 0 will run forever.
-     *
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setDurationMaxMessages(int durationMaxMessages) {
-        mainConfigurationProperties.setDurationMaxMessages(durationMaxMessages);
-    }
-
-    /**
-     * Sets the exit code for the application if duration was hit
-     *
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setDurationHitExitCode(int durationHitExitCode) {
-        mainConfigurationProperties.setDurationHitExitCode(durationHitExitCode);
-    }
-
-    @Deprecated
-    public int getDurationHitExitCode() {
-        return mainConfigurationProperties.getDurationHitExitCode();
+    protected void registerMainBootstrap() {
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            context.getCamelContextExtension().addBootstrap(new MainBootstrapCloseable());
+        }
     }
 
     public int getExitCode() {
@@ -238,6 +206,10 @@ public abstract class MainSupport extends BaseMainSupport {
 
     public void enableTrace() {
         mainConfigurationProperties.setTracing(true);
+    }
+
+    public void enableTraceStandby() {
+        mainConfigurationProperties.setTracingStandby(true);
     }
 
     public MainShutdownStrategy getShutdownStrategy() {
@@ -254,6 +226,17 @@ public abstract class MainSupport extends BaseMainSupport {
         this.shutdownStrategy = shutdownStrategy;
     }
 
+    public String getAppName() {
+        return appName;
+    }
+
+    /**
+     * Application name (used for logging start and stop)
+     */
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
     @Override
     protected void doStop() throws Exception {
         // call completed to properly stop as we count down the waiting latch
@@ -266,22 +249,27 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0
+        if (mainConfigurationProperties.getDurationMaxSeconds() > 0
+                && mainConfigurationProperties.isRoutesReloadRestartDuration()
+                || mainConfigurationProperties.getDurationMaxMessages() > 0
                 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            // register lifecycle, so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            // (we must use the event notifier also for max seconds only to support restarting duration if routes are reloaded)
             EventNotifier notifier = new MainDurationEventNotifier(
                     camelContext,
                     mainConfigurationProperties.getDurationMaxMessages(),
                     mainConfigurationProperties.getDurationMaxIdleSeconds(),
                     shutdownStrategy,
-                    true);
+                    true,
+                    mainConfigurationProperties.isRoutesReloadRestartDuration(),
+                    mainConfigurationProperties.getDurationMaxAction());
 
             // register our event notifier
             ServiceHelper.startService(notifier);
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
+        // register lifecycle, so we are notified in Camel is stopped from JMX or somewhere else
         camelContext.addLifecycleStrategy(new MainLifecycleStrategy(shutdownStrategy));
     }
 
@@ -293,17 +281,30 @@ public abstract class MainSupport extends BaseMainSupport {
                 long sec = durationMaxSeconds;
                 int exit = durationHitExitCode;
                 if (sec > 0) {
-                    LOG.info("Waiting for: {} seconds", sec);
-                    shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    LOG.info("Waiting until complete: Duration max {} seconds", sec);
+                    boolean zero = shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    if (!zero) {
+                        if ("stop".equalsIgnoreCase(durationMaxAction)) {
+                            LOG.info("Duration max seconds triggering stopping all routes");
+                            try {
+                                camelContext.getRouteController().stopAllRoutes();
+                            } catch (Exception e) {
+                                LOG.warn("Error during stopping all routes. This exception is ignored.", e);
+                            }
+                            // we are just stopping routes (not terminating JVM) so continue
+                            continue;
+                        }
+                    }
+                    LOG.info("Duration max seconds triggering shutdown of the JVM");
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
-                        LOG.info("Waiting to be idle for: {} seconds or until: {} messages has been processed", idle, max);
+                        LOG.info("Waiting until complete: Duration idle {} seconds or max {} messages processed", idle, max);
                     } else if (idle > 0) {
-                        LOG.info("Waiting to be idle for: {} seconds", idle);
+                        LOG.info("Waiting until complete: Duration idle {} seconds", idle);
                     } else {
-                        LOG.info("Waiting until: {} messages has been processed", max);
+                        LOG.info("Waiting until complete: Duration max {} messages processed", max);
                     }
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.await();

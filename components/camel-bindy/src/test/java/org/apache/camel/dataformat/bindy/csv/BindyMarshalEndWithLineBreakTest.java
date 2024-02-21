@@ -46,7 +46,7 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
 
         template.sendBody("direct:withlb", csvRecord);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -64,14 +64,14 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
 
         template.sendBody("direct:withoutlb", csvRecord2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:withoutlb")
                         .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
                         .to("log:after.unmarshal")

@@ -35,7 +35,7 @@ public interface CookieHandler {
 
     /**
      * Store cookies for a HTTP response in the cookie handler
-     * 
+     *
      * @param  exchange    the exchange
      * @param  uri         the URI of the called HTTP service
      * @param  headerMap   a map containing the HTTP headers returned by the server
@@ -45,7 +45,7 @@ public interface CookieHandler {
 
     /**
      * Create cookie headers from the stored cookies appropriate for a given URI.
-     * 
+     *
      * @param  exchange    the exchange
      * @param  uri         the URI of the called HTTP service
      * @return             a map containing the cookie headers that can be set to the HTTP request. Only cookies that
@@ -64,7 +64,7 @@ public interface CookieHandler {
 
     /**
      * Define a CookiePolicy for cookies stored by this CookieHandler
-     * 
+     *
      * @param cookiePolicy the CookiePolicy
      */
     void setCookiePolicy(CookiePolicy cookiePolicy);

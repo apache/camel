@@ -18,17 +18,13 @@ package org.apache.camel.component.salesforce.internal.dto;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 
 /**
  * DTO for Salesforce REST errors
  */
-@XStreamAlias("Errors")
 public class RestErrors {
 
-    @XStreamImplicit(itemFieldName = "Error")
     private List<RestError> errors;
 
     public List<RestError> getErrors() {

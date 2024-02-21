@@ -1,0 +1,35 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "dummy",
+    "title": "Dummy",
+    "description": "Camel Dummy Component",
+    "deprecated": false,
+    "firstVersion": "2.19.0",
+    "label": "testing",
+    "javaType": "org.apache.camel.component.dummy.DummyComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "dummy-component",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "dummy",
+    "extendsScheme": "",
+    "syntax": "dummy:drink",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "drink": { "index": 0, "kind": "path", "displayName": "Drink", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.dummy.Drinks", "enum": [ "Beer", "GinTonic", "Wine" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "What drink to order" },
+    "amount": { "index": 1, "kind": "parameter", "displayName": "Amount", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1, "description": "Number of drinks in the order" },
+    "celebrity": { "index": 2, "kind": "parameter", "displayName": "Celebrity", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Is this a famous person ordering" },
+    "lazyStartProducer": { "index": 3, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

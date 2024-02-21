@@ -22,6 +22,7 @@ import java.util.List;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
@@ -42,7 +43,8 @@ public class JsonPathExpression extends ExpressionAdapter {
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
-    private String headerName;
+    private boolean unpackArray;
+    private Expression source;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -116,15 +118,23 @@ public class JsonPathExpression extends ExpressionAdapter {
         this.writeAsString = writeAsString;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public boolean isUnpackArray() {
+        return unpackArray;
     }
 
     /**
-     * Name of header to use as input, instead of the message body
+     * Whether to unpack a single element json-array into an object.
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setUnpackArray(boolean unpackArray) {
+        this.unpackArray = unpackArray;
+    }
+
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     public Option[] getOptions() {
@@ -143,13 +153,16 @@ public class JsonPathExpression extends ExpressionAdapter {
         try {
             Object result = evaluateJsonPath(exchange, engine);
             if (resultType != null) {
-                // in some cases we get a single element that is wrapped in a List, so unwrap that
-                // if we for example want to grab the single entity and convert that to a int/boolean/String etc
-                boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
-                boolean singleElement = result instanceof List && ((List) result).size() == 1;
-                if (singleElement && !resultIsCollection) {
-                    result = ((List) result).get(0);
-                    LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result, resultType);
+                if (unpackArray) {
+                    // in some cases we get a single element that is wrapped in a List, so unwrap that
+                    // if we for example want to grab the single entity and convert that to a int/boolean/String etc
+                    boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
+                    boolean singleElement = result instanceof List && ((List<?>) result).size() == 1;
+                    if (singleElement && !resultIsCollection) {
+                        result = ((List<?>) result).get(0);
+                        LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
+                                resultType);
+                    }
                 }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
             } else {
@@ -175,7 +188,8 @@ public class JsonPathExpression extends ExpressionAdapter {
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options);
+            engine = new JsonPathEngine(
+                    exp, source, writeAsString, suppressExceptions, allowSimple, options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

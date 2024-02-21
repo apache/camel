@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.spi.InvokeOnHeaderStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -53,49 +52,24 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, headerSupplier, () -> null, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, boolean caseSensitive) {
-        this(endpoint, headerSupplier, () -> null, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header) {
         this(endpoint, () -> header, () -> null, null);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, String header, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> null, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
         this(endpoint, () -> header, () -> null, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Object target, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> null, target, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target) {
         this(endpoint, headerSupplier, () -> null, target);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
-        this(endpoint, headerSupplier, () -> null, target, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
         this(endpoint, () -> header, () -> defaultHeaderValue, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> defaultHeaderValue, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier,
-                                  boolean caseSensitive) {
-        this(endpoint, () -> header, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
@@ -103,27 +77,12 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
-        this(endpoint, headerSupplier, defaultHeaderValueSupplier, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target,
-                                  boolean caseSensitive) {
-        this(endpoint, () -> header, () -> defaultHeaderValue, target, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
                                   Supplier<String> defaultHeaderValueSupplier, Object target) {
-        this(endpoint, headerSupplier, defaultHeaderValueSupplier, target, true);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
@@ -147,7 +106,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
         String key = this.getClass().getName();
         String fqn = RESOURCE_PATH + key;
-        strategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+        strategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
                 .newInstance(key, InvokeOnHeaderStrategy.class)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
 
@@ -157,7 +116,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             // some components may have a common base class they extend from (such as camel-infinispan)
             // so try to discover that (optional so return null if not present)
             String key2 = this.getClass().getSuperclass().getName();
-            parentStrategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+            parentStrategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
                     .newInstance(key2, InvokeOnHeaderStrategy.class)
                     .orElse(null);
         }

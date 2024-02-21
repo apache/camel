@@ -44,9 +44,9 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
     }
 
     @Override
-    public void processExchange(Exchange exchange) {
+    public void processExchange(Exchange exchange, String type) {
         if (counter != null) {
-            counter.processExchange(exchange);
+            counter.processExchange(exchange, type);
         }
     }
 

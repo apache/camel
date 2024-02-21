@@ -20,17 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
-//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject Document
  */
-@XStreamAlias("Document")
 public class Document extends AbstractDescribedSObjectBase {
 
     public Document() {
@@ -124,7 +121,6 @@ public class Document extends AbstractDescribedSObjectBase {
     }
 
     // blob field url, use getBlobField to get the content
-    @XStreamAlias("Body")
     private String BodyUrl;
 
     @JsonProperty("Body")
@@ -286,4 +282,3 @@ public class Document extends AbstractDescribedSObjectBase {
     }
 }
 
-//CHECKSTYLE:ON

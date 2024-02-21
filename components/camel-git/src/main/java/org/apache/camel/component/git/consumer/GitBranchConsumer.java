@@ -28,7 +28,7 @@ import org.eclipse.jgit.lib.Ref;
 
 public class GitBranchConsumer extends AbstractGitConsumer {
 
-    private List branchesConsumed = new ArrayList();
+    private final List<String> branchesConsumed = new ArrayList<>();
 
     public GitBranchConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

@@ -39,6 +39,13 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
         assertEquals("OK", myBean.response, "bean response:  " + myBean);
         assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
         assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
+
+        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails",
+                "<invoice><person><name>Jack</name><date>27/08/2012</date></person></invoice>");
+
+        assertEquals("OK", myBean.response, "bean response:  " + myBean);
+        assertEquals("Jack", myBean.userName, "bean userName: " + myBean);
+        assertEquals("27/08/2012", myBean.date, "bean date:  " + myBean);
     }
 
     @Override
@@ -56,8 +63,9 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
         @Handler
         public void handler(
                 @XPath("//response/text()") String response,
-                @XPath(headerName = "invoiceDetails", value = "//invoice/person/name/text()") String userName,
-                @XPath(headerName = "invoiceDetails", value = "//invoice/person/date", resultType = String.class) String date) {
+                @XPath(source = "header:invoiceDetails", value = "//invoice/person/name/text()") String userName,
+                @XPath(source = "header:invoiceDetails", value = "//invoice/person/date",
+                       resultType = String.class) String date) {
             this.response = response;
             this.userName = userName;
             this.date = date;

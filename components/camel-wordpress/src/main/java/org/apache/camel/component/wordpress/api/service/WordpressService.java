@@ -25,7 +25,7 @@ public interface WordpressService {
 
     /**
      * Sets the Wordpress Authentication Model
-     * 
+     *
      * @param authentication
      */
     void setWordpressAuthentication(WordpressAuthentication authentication);

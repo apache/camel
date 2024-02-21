@@ -35,14 +35,14 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
         splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt",
                 "directoryOne/another_hi.txt");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 ZipFileDataFormat zipFile = new ZipFileDataFormat();
                 zipFile.setUsingIterator(true);

@@ -24,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.address.Address;
 import org.apache.camel.converter.jaxb.person.Person;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +57,13 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         person.setAge(Integer.valueOf(36));
         person.setAddress(address);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < testCount; i++) {
             template.sendBody("seda:marshall", person);
         }
 
-        assertMockEndpointsSatisfied();
-        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        MockEndpoint.assertIsSatisfied(context);
+        LOG.info("Validation of {} messages took {} ms", testCount, watch.taken());
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
@@ -94,13 +95,13 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
                 .append("</person>")
                 .toString();
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < testCount; i++) {
             template.sendBody("seda:unmarshall", xml);
         }
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        LOG.info("Validation of {} messages took {} ms", testCount, watch.taken());
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 
@@ -110,12 +111,13 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
+                jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 
                 from("seda:marshall?concurrentConsumers=" + concurrencyLevel)
                         .marshal(jaxbDataFormat)

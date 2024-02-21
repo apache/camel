@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-rabbitmq</artifactId>
@@ -41,24 +41,10 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-        <!-- TODO: avoid custom pool -->
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-            <version>${commons-pool-version}</version>
+            <version>${spring-rabbitmq-version}</version>
         </dependency>
 
         <!-- test infra -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-rabbitmq</artifactId>
@@ -75,7 +61,8 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -103,13 +90,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -118,75 +101,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>rabbitmq-skip-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the docker socket file is accessible -->
-        <profile>
-            <id>rabbitmq-tests-docker-file</id>
-            <activation>
-                <file>
-                    <exists>/var/run/docker.sock</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*QpidTest</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the DOCKER_HOST env var is set -->
-        <profile>
-            <id>rabbitmq-tests-docker-env</id>
-            <activation>
-                <property>
-                    <name>env.DOCKER_HOST</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*QpidTest</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

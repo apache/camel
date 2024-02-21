@@ -41,9 +41,9 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  */
 public class ComponentsDslMetadataRegistry {
 
-    private Map<String, ComponentModel> componentsCache;
-    private Set<String> componentsDslFactories;
-    private File metadataFile;
+    private final Map<String, ComponentModel> componentsCache;
+    private final Set<String> componentsDslFactories;
+    private final File metadataFile;
 
     public ComponentsDslMetadataRegistry(final File componentDslDir, final File metadataFile) {
         // First: Load the content of the metadata file into memory
@@ -99,7 +99,7 @@ public class ComponentsDslMetadataRegistry {
             }
         });
 
-        componentsNamesToRemoveFromCache.forEach(componentFactoryName -> componentsCache.remove(componentFactoryName));
+        componentsNamesToRemoveFromCache.forEach(componentsCache::remove);
     }
 
     private boolean writeCacheIntoMetadataFile() {

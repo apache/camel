@@ -25,14 +25,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- In Memory Database -->
-  <jdbc:embedded-database id="myDataSource" type="DERBY">
+  <jdbc:embedded-database id="{{testClassSimpleName}}" type="H2">
     <jdbc:script location="classpath:/sql/createAndPopulateDatabase.sql"/>
   </jdbc:embedded-database>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <to uri="sql:select * from projects where license like 'A%25'?dataSource=#myDataSource"/>
+      <to uri="sql:select * from projects where license like 'A%25'?dataSource=#{{testClassSimpleName}}"/>
       <split>
         <simple>${body}</simple>
         <to uri="mock:result"/>

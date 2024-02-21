@@ -21,21 +21,23 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledOnOs(OS.AIX)
 public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
 
     @Test
     public void testManagedThreadPool() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myThreads(threads)\"");
+        ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "myThreads(threads)");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(15, corePoolSize.intValue());
@@ -52,7 +54,7 @@ public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
         String route = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", route);
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myOtherThreads(threads)\"");
+        on = getCamelObjectName(TYPE_THREAD_POOL, "myOtherThreads(threads)");
 
         corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(1, corePoolSize.intValue());

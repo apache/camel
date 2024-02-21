@@ -22,7 +22,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for URI validation when creating an endpoint
@@ -36,33 +36,22 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
     }
 
     @Test
-    public void testUnknownParameter() throws Exception {
-        try {
-            context.getEndpoint("timer://foo?delay=250&unknown=1&period=500");
-            fail("Should have thrown ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testUnknownParameter() {
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("timer://foo?delay=250&unknown=1&period=500"),
+                "Should have thrown ResolveEndpointFailedException");
     }
 
     @Test
-    public void testDoubleAmpersand() throws Exception {
-        try {
-            context.getEndpoint("timer://foo?delay=250&&period=500");
-            fail("Should have thrown ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testDoubleAmpersand() {
+        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&&period=500"),
+                "Should have thrown ResolveEndpointFailedException");
     }
 
     @Test
-    public void testTrailingAmpersand() throws Exception {
-        try {
-            context.getEndpoint("timer://foo?delay=250&period=500&");
-            fail("Should have thrown ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testTrailingAmpersand() {
+        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&period=500&"),
+                "Should have thrown ResolveEndpointFailedException");
     }
 
     @Test

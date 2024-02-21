@@ -22,11 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class JacksonObjectMapperTest extends JacksonMarshalTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ObjectMapper mapper = new ObjectMapper();
                 JacksonDataFormat format = new JacksonDataFormat();
                 format.setObjectMapper(mapper);
@@ -44,6 +44,9 @@ public class JacksonObjectMapperTest extends JacksonMarshalTest {
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
+
+                JacksonDataFormat allowNullBodyDataFormat = new JacksonDataFormat();
+                from("direct:nullBody").unmarshal(allowNullBodyDataFormat, true).to("mock:nullBody");
             }
         };
     }

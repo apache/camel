@@ -81,7 +81,7 @@ public class SpringWebserviceConfiguration {
     private EndpointMappingType endpointMappingType;
     @UriPath(label = "consumer", name = "lookupKey")
     private String endpointMappingLookupKey;
-    @UriPath(label = "consumer")
+    @UriParam(label = "consumer")
     private String expression;
     private transient XPathExpression xPathExpression;
     @UriParam(label = "consumer")
@@ -106,8 +106,7 @@ public class SpringWebserviceConfiguration {
     }
 
     /**
-     * Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service
-     * messages instead of SAAJ.
+     * Option to provide a custom WebServiceMessageFactory.
      */
     public void setMessageFactory(WebServiceMessageFactory messageFactory) {
         this.messageFactory = messageFactory;

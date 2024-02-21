@@ -1,13 +1,14 @@
-[[saga-component]]
 = Saga Component
-:docTitle: Saga
-:artifactId: camel-saga
+:doctitle: Saga
+:shortname: saga
+:artifactid: camel-saga
 :description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-:core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/saga.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: saga
 
 *Since Camel {since}*
 
@@ -22,55 +23,24 @@ Refer to the Saga EIP documentation for help on using sagas in common scenarios.
 
 == URI format
 
-[source]
 ----
 saga:action
 ----
 
-== Options
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Saga component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
 // endpoint options: START
-The Saga endpoint is configured using URI syntax:
 
-----
-saga:action
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *action* | *Required* Action to execute (complete or compensate). There are 2 enums and the value can be one of: COMPLETE, COMPENSATE |  | SagaEndpointAction
-|===
-
-
-=== Query Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-
-include::camel-spring-boot::page$saga-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

@@ -1,9 +1,12 @@
-[[Component-DSL]]
 = Component DSL
 
-Component-DSL is a new API that allows using type safe construction of Camel components and inject them directly to Camel Context instead of initializing through a constructor.
+Component-DSL is a builder API that allows using type-safe construction of Camel xref:component.adoc[Components] and injecting them directly to the xref:camelcontext.adoc[Camel Context] instead of initializing through a constructor.
 
-The following is an example of Kafka component that is constructed using the typical constructor initialization:
+The Component DSL is exclusively available as part of the Java DSL.
+
+== Using Component DSL
+
+The following is an example of a Kafka component that is constructed using the typical constructor initialization:
 
 [source,java]
 ----
@@ -28,32 +31,13 @@ In order to explain it better, we can break down the above Java statement into 3
 . `.brokers("{{kafka.host}}:{{kafka.port}}")`: This is the equivalent setter of `kafka.setBrokers("localhost:9090")` using DSL fluent builder.
 . `.register(camelContext, "kafka")`: Here we register directly the component under name `kafka` into Camel context, of course you can use any component name you like, just like `addComponent` API. 
 
-== The fluent DSL now provides type safety for parameters
-Similar to the Endpoint DSL, uses the meta model, which is extracted from the source using an annotation processor and
+=== Type Safety
+
+Similar to the xref:Endpoint-dsl.adoc[Endpoint DSL], uses the meta-model, which is extracted from the source and
 written in various JSON files, to generate a fluent DSL for each component. This fluent DSL provides type safety for parameters.
-It further allows leveraging the Java editor code completion to access the list of available parameters for the each component.
 
-== Build component without registering into Camel context
 
-In the above Java statement, we registered the component directly into Camel context. However, the Component DSL also allows you to just build the component and return the object instance, for example:
-
-[source,java]
-----
-KafkaComponent kafka = ComponentsBuilderFactory.kafka()
-                        .brokers("{{kafka.host}}:{{kafka.port}}")
-                        .build(camelContext);
-----
-
-In the above Java statement, the context was passed into the `build` API in order to resolve any placeholders that are assigned in the context, e.g: `{{kafka.host}}:{{kafka.port}}`. However, if you don't have any placeholders or don't need to have the component closely connected to the Camel context, this can be done as follows:
-
-[source,java]
-----
-KafkaComponent kafka = ComponentsBuilderFactory.kafka()
-                        .brokers("{{kafka.host}}:{{kafka.port}}")
-                        .build();
-----
-
-== How to use
+== Dependency
 
 In order to use this feature, Maven users will need to add the following dependency to their `pom.xml` for this component:
 

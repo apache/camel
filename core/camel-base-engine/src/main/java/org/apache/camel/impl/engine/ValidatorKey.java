@@ -25,7 +25,7 @@ import org.apache.camel.spi.DataType;
  */
 public final class ValidatorKey extends ValueHolder<String> {
 
-    private DataType type;
+    private final DataType type;
 
     public ValidatorKey(DataType type) {
         super(type.toString());

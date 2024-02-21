@@ -24,7 +24,6 @@ import java.util.Set;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.InvalidOperation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 
 /**
@@ -34,17 +33,17 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void ping(AsyncMethodCallback resultHandler) throws TException {
+    public void ping(AsyncMethodCallback resultHandler) {
         resultHandler.onComplete(new Object());
     }
 
     @Override
-    public void add(int num1, int num2, AsyncMethodCallback<Integer> resultHandler) throws TException {
+    public void add(int num1, int num2, AsyncMethodCallback<Integer> resultHandler) {
         resultHandler.onComplete(Integer.valueOf(num1 + num2));
     }
 
     @Override
-    public void calculate(int logid, Work work, AsyncMethodCallback<Integer> resultHandler) throws TException {
+    public void calculate(int logid, Work work, AsyncMethodCallback<Integer> resultHandler) {
         int val = 0;
         switch (work.op) {
             case ADD:
@@ -76,12 +75,12 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void zip(AsyncMethodCallback resultHandler) throws TException {
+    public void zip(AsyncMethodCallback resultHandler) {
         resultHandler.onComplete(new Object());
     }
 
     @Override
-    public void echo(Work w, AsyncMethodCallback<Work> resultHandler) throws TException {
+    public void echo(Work w, AsyncMethodCallback<Work> resultHandler) {
         resultHandler.onComplete(w.deepCopy());
     }
 
@@ -89,8 +88,7 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
     public void alltypes(
             boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10,
             Set<String> v11, Map<String, Long> v12,
-            AsyncMethodCallback<Integer> resultHandler)
-            throws TException {
+            AsyncMethodCallback<Integer> resultHandler) {
         resultHandler.onComplete(Integer.valueOf(1));
     }
 }

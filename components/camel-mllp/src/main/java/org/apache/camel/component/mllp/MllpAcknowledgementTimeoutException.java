@@ -22,37 +22,39 @@ package org.apache.camel.component.mllp;
 public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementException {
     static final String EXCEPTION_MESSAGE = "Timeout receiving HL7 Acknowledgement";
 
-    public MllpAcknowledgementTimeoutException(byte[] hl7Message) {
-        super(EXCEPTION_MESSAGE, hl7Message);
+    public MllpAcknowledgementTimeoutException(byte[] hl7Message, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(byte[] hl7Message, byte[] partialHl7Acknowledgement) {
-        super(EXCEPTION_MESSAGE, hl7Message, partialHl7Acknowledgement);
+    public MllpAcknowledgementTimeoutException(byte[] hl7Message, byte[] partialHl7Acknowledgement, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, partialHl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(byte[] hl7Message, Throwable cause) {
-        super(EXCEPTION_MESSAGE, hl7Message, cause);
+    public MllpAcknowledgementTimeoutException(byte[] hl7Message, Throwable cause, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause) {
-        super(EXCEPTION_MESSAGE, hl7Message, partialHl7Acknowledgement, cause);
+    public MllpAcknowledgementTimeoutException(byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause,
+                                               boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, partialHl7Acknowledgement, cause, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message) {
-        super(message, hl7Message);
-    }
-
-    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement) {
-        super(message, hl7Message, partialHl7Acknowledgement);
-    }
-
-    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, hl7Message, cause);
+    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, boolean logPhi) {
+        super(message, hl7Message, logPhi);
     }
 
     public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement,
-                                               Throwable cause) {
-        super(message, hl7Message, partialHl7Acknowledgement, cause);
+                                               boolean logPhi) {
+        super(message, hl7Message, partialHl7Acknowledgement, logPhi);
+    }
+
+    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
+        super(message, hl7Message, cause, logPhi);
+    }
+
+    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement,
+                                               Throwable cause, boolean logPhi) {
+        super(message, hl7Message, partialHl7Acknowledgement, cause, logPhi);
     }
 
     /**

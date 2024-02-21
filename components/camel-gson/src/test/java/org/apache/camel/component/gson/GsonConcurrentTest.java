@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class GsonConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     TestPojo pojo = new TestPojo();
                     pojo.setName("Hi " + index);
 
@@ -57,7 +58,7 @@ public class GsonConcurrentTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

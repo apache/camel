@@ -1,0 +1,18 @@
+{
+  "id" : "38c152b0-ebd7-48e9-b3a9-5866f0f5ef86",
+  "name" : "domains_with_options.json",
+  "request" : {
+    "url" : "/v3/domains",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"domains\":[{\"description\":\"The default domain\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/domains\/default\"},\"tags\":[],\"enabled\":true,\"options\":{},\"id\":\"default\",\"name\":\"Default\"}],\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/domains?limit=500\",\"previous\":null,\"next\":null}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "38c152b0-ebd7-48e9-b3a9-5866f0f5ef86",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

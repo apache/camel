@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
 
     @Test
-    public void testJettyProducerOk() throws Exception {
+    public void testJettyProducerOk() {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Test
-    public void testJettyProducerFail() throws Exception {
+    public void testJettyProducerFail() {
         Exchange out = fluentTemplate.withHeader("id", "666").to("direct:start").request(Exchange.class);
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not have thrown exception");
@@ -43,10 +43,10 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         .endpointProperty("throwExceptionOnFailure", "false");
@@ -54,8 +54,10 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
                 from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                rest("/users/").get("{id}/basic").to("direct:basic");
+
+                from("direct:basic").to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         if ("666".equals(id)) {
                             throw new IllegalArgumentException("Bad id number");

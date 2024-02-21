@@ -20,24 +20,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "combinedServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
+@Deprecated
 public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElements({
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class) })
@@ -61,7 +63,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     /**
      * List of ServiceDiscovery configuration to use
-     * 
+     *
      * @param serviceDiscoveryConfigurations
      */
     public void setServiceDiscoveryConfigurations(
@@ -122,13 +124,6 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     public DnsServiceCallServiceDiscoveryConfiguration dnsServiceDiscovery() {
         DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
-        addServiceDiscoveryConfigurations(conf);
-
-        return conf;
-    }
-
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

@@ -26,9 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
 
     @Override
@@ -41,11 +44,6 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
 
     @Test
     public void testManageStatisticsLevelDisabled() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 

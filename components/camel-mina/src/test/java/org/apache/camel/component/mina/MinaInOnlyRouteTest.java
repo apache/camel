@@ -32,22 +32,22 @@ public class MinaInOnlyRouteTest extends BaseMinaTest {
         mock.expectedBodiesReceived("Bye Chad");
         mock.setResultWaitTime(5000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true", getPort()).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);
                 });
 
                 from("timer://start?period=10000&delay=2000")
                         .setBody(constant("Chad"))
-                        .to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort()))
+                        .toF("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())
                         .to("mock:result");
             }
         };

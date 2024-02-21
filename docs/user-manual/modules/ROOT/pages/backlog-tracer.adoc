@@ -1,49 +1,35 @@
-[[BacklogTracer-BacklogTracerInterceptor]]
-= BacklogTracer Interceptor
-
-*Since Camel 2.11*
+= BacklogTracer
 
 Camel supports a backlog tracer interceptor that is used for capturing a
-trace message of each message as they are routed in Camel. +
- The trace message is stored in a backlog queue, which contains the last
+trace message of each message as they are routed in Camel.
+The trace message is stored in a backlog queue, which contains the last
 N messages for each node in the routes (by default 10).
 
-The BacklogTracer is an InterceptStrategy which can be applied to a
-DefaultCamelContext or SpringCamelContext to ensure that there is a
-TracerInterceptor created for every node in the DSL.
-
-You can enable or disable the BacklogTracer's logging dynamically, by
-calling the backlogTracer's `setEnabled` method.
-
-[[BacklogTracer-BacklogTracerDifference]]
 == What is the difference between BacklogTracer and Tracer
 
 Camel also provides a xref:tracer.adoc[Tracer] which has similar
 capabilities as this backlog tracer. The difference is that the backlog
-tracer is storing +
- a capture of the message in an internal backlog queue. Where as the
-xref:tracer.adoc[Tracer] is event based and logs the messages as they
-happen (or route to another Camel destination). Also the
-xref:tracer.adoc[Tracer] has more fine grained events where it dives
-into xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s such as the
-xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] and traces the
-when/otherwise(s). Though the xref:tracer.adoc[Tracer] has much more
-complicated logic to handle this (there is some edge-cases where this
-may not work). The BacklogTracer allows you to pull the messages from
-the backlog queues on demand. The BacklogTracer works better with JMX
-capable tooling as it is simpler and allow to bulk dump all its traced
-messages in either a POJO or XML format. And there is a Karaf command
-for the BacklogTracer which allows you to control the tracing from a
-Karaf shell.
+tracer is storing a capture of the message in an internal backlog queue.
 
-[[BacklogTracer-Options]]
+The xref:tracer.adoc[Tracer] is event based and logs the messages as they
+happen (or route to another Camel destination).
+
+Use the xref:tracer.adoc[Tracer] when all you need is to log the traced messages
+as they happen.
+
+The backlog tracer allows you to pull the messages from
+the backlog queues on demand. The backlog tracer works better with JMX
+capable tooling as it is simpler, allowing to bulk dump all its traced
+messages in either a POJO or XML format.
+
 == Options
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,10%,80%",options="header",]
 |===
 
 |Option |Default |Description
 
+|standby | `false` |Whether the tracer is standby. If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via JMX or calling the enabled method.
 |enabled |`false` |Flag to enable or disable this tracer
 
 |backlogSize |`1000` |Maximum number of total traced messages to keep in the backlog (FIFO
@@ -61,6 +47,12 @@ messages with a given header, use `${header.foo} != null`. To use
 xref:components:languages:groovy-language.adoc[Groovy] then prefix the value with "groovy:". And
 similar for the other languages.
 
+|traceRests |`false` | Whether tracing should trace inner details from Rest DSL.
+Turning this on increases the verbosity of tracing by including events from internal routes by Rest DSL.
+
+|traceTemplates |`false` | Whether tracing should trace inner details from route templates (or kamelets).
+Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets.
+
 |removeOnDump |`true` |Whether to remove the traced messages that was returned when invoking
 the dump methods.
 
@@ -73,33 +65,85 @@ xref:stream-caching.adoc[Stream Caching].
 
 |bodyIncludeFiles |`true` |Whether to include the message body of file based messages. The overhead
 is that the file content has to be read from the file.
+
+|includeExchangeProperties |`true` |Trace messages to include exchange properties.
+
+|includeExchangeVariables |`true` |Trace messages to include exchange variables.
+
+|includeException |`true` |Trace messages to include exception if the message failed.
+
 |===
 
 [[BacklogTracer-Operations]]
 == Operations
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,20%,70%",options="header",]
 |===
 
 |Option |Default |Description
 
 |getTraceCounter |`long` |Gets the total number of traced messages.
 
+|getQueueSize |`long` |Number of traced messages in the backlog.
+
 |resetTraceCounter |`void` |To reset the trace counter.
 
 |dumpTracedMessages(nodeOrRouteId) |`List<BacklogTracerEventMessage>` |To dump the traced messages from the give node or route id.
 
-|dumpTracedMessagesAsXml(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in XML
-format.
+|dumpTracedMessagesAsXml(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in XML format.
+
+|dumpTracedMessagesAsJSon(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in JSon format.
 
 |dumpAllTracedMessages |`List<BacklogTracerEventMessage>` |To dump all the traced messages
 
 |dumpAllTracedMessagesAsXml |`String` |To dump all the traced messages in XML format.
 
+|dumpAllTracedMessagesAsJSon |`String` |To dump all the traced messages in JSon format.
+
 |===
 
-[[BacklogTracer-Enabling]]
 == Enabling
 
-You would need to enable this using the JMX API.
+You can turn off backlog tracing on `CamelContext`
+
+[source,java]
+----
+camelContext.setBacklogTracing(true);
+----
+
+And in Spring XML
+
+[source,xml]
+----
+<camelContext backlogTrace="true">
+  ...
+</camelContext>
+----
+
+And in Camel Main you can enable this  in the `application.properties` file:
+
+[source,properties]
+----
+camel.main.backlog-tracing = true
+----
+
+And in Spring Boot you can enable this in the `application.properties` file:
+
+[source,properties]
+----
+camel.springboot.backlog-tracing = true
+----
+
+=== Tracing payloads of InputStream types
+
+Beware that when enabling backlog tracing, and the message payloads is streaming types (such as `java.io.InputStream`),
+then the backlog tracer will read the payload and make a copy as a _trace_ that are stored in the backlog tracer.
+Then monitoring tooling is able to view these _traced_ events.
+
+When working with `InputStream` types then Camel has xref:stream-caching.adoc[] that is able to automatic
+make such types _safe_ to use as they are cached and able to be _re-read_. See more details at xref:stream-caching.adoc[].
+
+However, Camel's stream caching is **ONLY** for message body. Having message headers of type `InputStream` is discouraged
+and not common use. If you add custom message headers, then its recommended to **NOT** use streaming types, but
+convert these headers into `String` or `byte[]` or other standard Java types that are in-memory and _safe_ to re-read.
 

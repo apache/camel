@@ -25,12 +25,18 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "MaxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline":
         case "Multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
+        case "plain":
+        case "Plain": target.setPlain(property(camelContext, boolean.class, value)); return true;
         case "showall":
         case "ShowAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
+        case "showallproperties":
+        case "ShowAllProperties": target.setShowAllProperties(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "ShowBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
         case "ShowBodyType": target.setShowBodyType(property(camelContext, boolean.class, value)); return true;
+        case "showcachedstreams":
+        case "ShowCachedStreams": target.setShowCachedStreams(property(camelContext, boolean.class, value)); return true;
         case "showcaughtexception":
         case "ShowCaughtException": target.setShowCaughtException(property(camelContext, boolean.class, value)); return true;
         case "showexception":
@@ -47,10 +53,16 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": target.setShowHeaders(property(camelContext, boolean.class, value)); return true;
         case "showproperties":
         case "ShowProperties": target.setShowProperties(property(camelContext, boolean.class, value)); return true;
+        case "showroutegroup":
+        case "ShowRouteGroup": target.setShowRouteGroup(property(camelContext, boolean.class, value)); return true;
+        case "showrouteid":
+        case "ShowRouteId": target.setShowRouteId(property(camelContext, boolean.class, value)); return true;
         case "showstacktrace":
         case "ShowStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
         case "showstreams":
         case "ShowStreams": target.setShowStreams(property(camelContext, boolean.class, value)); return true;
+        case "showvariables":
+        case "ShowVariables": target.setShowVariables(property(camelContext, boolean.class, value)); return true;
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
         case "style":
@@ -66,12 +78,18 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "MaxChars": return int.class;
         case "multiline":
         case "Multiline": return boolean.class;
+        case "plain":
+        case "Plain": return boolean.class;
         case "showall":
         case "ShowAll": return boolean.class;
+        case "showallproperties":
+        case "ShowAllProperties": return boolean.class;
         case "showbody":
         case "ShowBody": return boolean.class;
         case "showbodytype":
         case "ShowBodyType": return boolean.class;
+        case "showcachedstreams":
+        case "ShowCachedStreams": return boolean.class;
         case "showcaughtexception":
         case "ShowCaughtException": return boolean.class;
         case "showexception":
@@ -88,10 +106,16 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": return boolean.class;
         case "showproperties":
         case "ShowProperties": return boolean.class;
+        case "showroutegroup":
+        case "ShowRouteGroup": return boolean.class;
+        case "showrouteid":
+        case "ShowRouteId": return boolean.class;
         case "showstacktrace":
         case "ShowStackTrace": return boolean.class;
         case "showstreams":
         case "ShowStreams": return boolean.class;
+        case "showvariables":
+        case "ShowVariables": return boolean.class;
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": return boolean.class;
         case "style":
@@ -108,12 +132,18 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "MaxChars": return target.getMaxChars();
         case "multiline":
         case "Multiline": return target.isMultiline();
+        case "plain":
+        case "Plain": return target.isPlain();
         case "showall":
         case "ShowAll": return target.isShowAll();
+        case "showallproperties":
+        case "ShowAllProperties": return target.isShowAllProperties();
         case "showbody":
         case "ShowBody": return target.isShowBody();
         case "showbodytype":
         case "ShowBodyType": return target.isShowBodyType();
+        case "showcachedstreams":
+        case "ShowCachedStreams": return target.isShowCachedStreams();
         case "showcaughtexception":
         case "ShowCaughtException": return target.isShowCaughtException();
         case "showexception":
@@ -130,10 +160,16 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowHeaders": return target.isShowHeaders();
         case "showproperties":
         case "ShowProperties": return target.isShowProperties();
+        case "showroutegroup":
+        case "ShowRouteGroup": return target.isShowRouteGroup();
+        case "showrouteid":
+        case "ShowRouteId": return target.isShowRouteId();
         case "showstacktrace":
         case "ShowStackTrace": return target.isShowStackTrace();
         case "showstreams":
         case "ShowStreams": return target.isShowStreams();
+        case "showvariables":
+        case "ShowVariables": return target.isShowVariables();
         case "skipbodylineseparator":
         case "SkipBodyLineSeparator": return target.isSkipBodyLineSeparator();
         case "style":

@@ -32,16 +32,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.catalog.common.CatalogHelper;
 import org.apache.camel.language.csimple.CSimpleCodeGenerator;
 import org.apache.camel.language.csimple.CSimpleGeneratedCode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -53,6 +52,9 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
 
 /**
  * Parses the source code and generates source code for the csimple language.
@@ -91,13 +93,13 @@ public class GenerateMojo extends AbstractExecMojo {
     protected File resourceDir;
 
     /**
-     * Whether to include Java files to be validated for invalid Camel endpoints
+     * Whether to include Java files
      */
     @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
 
     /**
-     * Whether to include XML files to be validated for invalid Camel endpoints
+     * Whether to include XML files
      */
     @Parameter(property = "camel.includeXml", defaultValue = "true")
     private boolean includeXml;
@@ -125,7 +127,6 @@ public class GenerateMojo extends AbstractExecMojo {
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
 
-    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         loadConfiguration();
@@ -137,79 +138,23 @@ public class GenerateMojo extends AbstractExecMojo {
         doExecuteRoutes(generator);
     }
 
-    protected void doExecuteRoutes(CSimpleCodeGenerator generator) throws MojoExecutionException, MojoFailureException {
+    protected void doExecuteRoutes(CSimpleCodeGenerator generator) {
         List<CamelCSimpleExpressionDetails> csimpleExpressions = new ArrayList<>();
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
-        if (includeJava) {
-            List list = project.getCompileSourceRoots();
-            for (Object obj : list) {
-                String dir = (String) obj;
-                findJavaFiles(new File(dir), javaFiles);
-            }
-            if (includeTest) {
-                list = project.getTestCompileSourceRoots();
-                for (Object obj : list) {
-                    String dir = (String) obj;
-                    findJavaFiles(new File(dir), javaFiles);
-                }
-            }
-        }
+        findJavaRouteBuilderClasses(javaFiles, includeJava, includeTest, project);
+
         // find all xml routes
-        if (includeXml) {
-            List list = project.getResources();
-            for (Object obj : list) {
-                Resource dir = (Resource) obj;
-                findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-            }
-            if (includeTest) {
-                list = project.getTestResources();
-                for (Object obj : list) {
-                    Resource dir = (Resource) obj;
-                    findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-                }
-            }
-        }
+        findXmlRouters(xmlFiles, includeXml, includeTest, project);
 
         for (File file : javaFiles) {
-            if (matchRouteFile(file)) {
-                try {
-                    List<CamelCSimpleExpressionDetails> fileCSimpleExpressions = new ArrayList<>();
-
-                    // parse the java source code and find Camel RouteBuilder classes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    JavaType out = Roaster.parse(file);
-                    // we should only parse java classes (not interfaces and enums etc)
-                    if (out instanceof JavaClassSource) {
-                        JavaClassSource clazz = (JavaClassSource) out;
-                        RouteBuilderParser.parseRouteBuilderCSimpleExpressions(clazz, baseDir, fqn, fileCSimpleExpressions);
-                        csimpleExpressions.addAll(fileCSimpleExpressions);
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addJavaFiles(file, csimpleExpressions);
         }
         for (File file : xmlFiles) {
-            if (matchRouteFile(file)) {
-                try {
-                    List<CamelCSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
-                    // parse the xml source code and find Camel routes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    InputStream is = new FileInputStream(file);
-                    XmlRouteParser.parseXmlRouteCSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
-                    is.close();
-                    csimpleExpressions.addAll(fileSimpleExpressions);
-                } catch (Exception e) {
-                    getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
-                }
-            }
+            addXmlFiles(file, csimpleExpressions);
         }
-
 
         if (!csimpleExpressions.isEmpty()) {
             getLog().info("Discovered " + csimpleExpressions.size() + " csimple expressions");
@@ -217,67 +162,100 @@ public class GenerateMojo extends AbstractExecMojo {
             final List<CSimpleGeneratedCode> classes = new ArrayList<>();
 
             for (CamelCSimpleExpressionDetails cs : csimpleExpressions) {
-                String script = cs.getCsimple();
-                String fqn = cs.getClassName();
-                if (script != null && fqn == null) {
-                    // its from XML file so use a pseduo fqn name instead
-                    fqn = "org.apache.camel.language.csimple.XmlRouteBuilder";
-                }
-                if (script != null) {
-                    CSimpleGeneratedCode code;
-                    if (cs.isPredicate()) {
-                        code = generator.generatePredicate(fqn, script);
-                    } else {
-                        code = generator.generateExpression(fqn, script);
-                    }
-                    classes.add(code);
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Generated source code:\n\n\n" + code.getCode() + "\n\n\n");
-                    }
-                    String fileName = code.getFqn().replace('.', '/') + ".java";
-                    outputDir.mkdirs();
-                    boolean saved = updateResource(outputDir.toPath().resolve(fileName), code.getCode());
-                    if (saved) {
-                        getLog().info("Generated csimple source code file: " + fileName);
-                    }
-                }
+                doGenerate(generator, cs, classes);
             }
             if (!classes.isEmpty()) {
                 // generate .properties file
-                StringWriter w = new StringWriter();
-                w.append("# " + GENERATED_MSG + "\n");
-                classes.forEach(c -> w.write(c.getFqn() + "\n"));
-                String fileName = RESOURCE_FILE;
-                outputResourceDir.mkdirs();
-                boolean saved = updateResource(outputResourceDir.toPath().resolve(RESOURCE_FILE), w.toString());
-                if (saved) {
-                    getLog().info("Generated csimple resource file: " + fileName);
-                }
+                generatePropertiesFile(classes);
             }
         }
 
     }
 
+    private void generatePropertiesFile(List<CSimpleGeneratedCode> classes) {
+        StringWriter w = new StringWriter();
+        w.append("# " + GENERATED_MSG + "\n");
+        classes.forEach(c -> w.write(c.getFqn() + "\n"));
+        String fileName = RESOURCE_FILE;
+        outputResourceDir.mkdirs();
+        boolean saved = updateResource(outputResourceDir.toPath().resolve(fileName), w.toString());
+        if (saved) {
+            getLog().info("Generated csimple resource file: " + fileName);
+        }
+    }
+
+    private void doGenerate(
+            CSimpleCodeGenerator generator, CamelCSimpleExpressionDetails cs, List<CSimpleGeneratedCode> classes) {
+        String script = cs.getCsimple();
+        String fqn = cs.getClassName();
+        if (script != null && fqn == null) {
+            // its from XML file so use a pseduo fqn name instead
+            fqn = "org.apache.camel.language.csimple.XmlRouteBuilder";
+        }
+        if (script != null) {
+            CSimpleGeneratedCode code;
+            if (cs.isPredicate()) {
+                code = generator.generatePredicate(fqn, script);
+            } else {
+                code = generator.generateExpression(fqn, script);
+            }
+            classes.add(code);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Generated source code:\n\n\n" + code.getCode() + "\n\n\n");
+            }
+            String fileName = code.getFqn().replace('.', '/') + ".java";
+            outputDir.mkdirs();
+            boolean saved = updateResource(outputDir.toPath().resolve(fileName), code.getCode());
+            if (saved) {
+                getLog().info("Generated csimple source code file: " + fileName);
+            }
+        }
+    }
+
+    private void addXmlFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
+        if (matchRouteFile(file)) {
+            try {
+                List<CamelCSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
+                // parse the xml source code and find Camel routes
+                String fqn = file.getPath();
+                String baseDir = ".";
+                InputStream is = new FileInputStream(file);
+                XmlRouteParser.parseXmlRouteCSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
+                is.close();
+                csimpleExpressions.addAll(fileSimpleExpressions);
+            } catch (Exception e) {
+                getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void addJavaFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
+        if (matchRouteFile(file)) {
+            try {
+                List<CamelCSimpleExpressionDetails> fileCSimpleExpressions = new ArrayList<>();
+
+                // parse the java source code and find Camel RouteBuilder classes
+                String fqn = file.getPath();
+                String baseDir = ".";
+                JavaType<?> out = Roaster.parse(file);
+                // we should only parse java classes (not interfaces and enums etc)
+                if (out instanceof JavaClassSource clazz) {
+                    RouteBuilderParser.parseRouteBuilderCSimpleExpressions(clazz, baseDir, fqn, fileCSimpleExpressions);
+                    csimpleExpressions.addAll(fileCSimpleExpressions);
+                }
+            } catch (Exception e) {
+                getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
+            }
+        }
+    }
+
     private void loadConfiguration() {
         String configFile = resourceDir.getPath() + "/camel-csimple.properties";
 
-        String loaded;
-        InputStream is = null;
-        try {
-            // load from file system
-            File file = new File(configFile);
-            if (file.exists()) {
-                is = new FileInputStream(file);
-            }
-            if (is == null) {
-                return;
-            }
-            loaded = IOHelper.loadText(is);
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Cannot load " + configFile);
-
+        final String loaded = load(configFile);
+        if (loaded == null) {
+            return;
         }
-        IOHelper.close(is);
 
         int counter1 = 0;
         int counter2 = 0;
@@ -309,126 +287,34 @@ public class GenerateMojo extends AbstractExecMojo {
             }
         }
         if (counter1 > 0 || counter2 > 0) {
-            getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: " + configFile);
+            getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: "
+                          + configFile);
         }
     }
 
-    // CHECKSTYLE:ON
-
-    private void findJavaFiles(File dir, Set<File> javaFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".java")) {
-                    javaFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findJavaFiles(file, javaFiles);
-                }
+    private static String load(String configFile) {
+        String loaded;
+        InputStream is = null;
+        try {
+            // load from file system
+            File file = new File(configFile);
+            if (file.exists()) {
+                is = new FileInputStream(file);
             }
-        }
-    }
-
-    private void findXmlFiles(File dir, Set<File> xmlFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".xml")) {
-                    xmlFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findXmlFiles(file, xmlFiles);
-                }
+            if (is == null) {
+                return null;
             }
+            loaded = IOHelper.loadText(is);
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Cannot load " + configFile);
+
         }
+        IOHelper.close(is);
+        return loaded;
     }
 
     private boolean matchRouteFile(File file) {
-        if (excludes == null && includes == null) {
-            return true;
-        }
-
-        // exclude take precedence
-        if (excludes != null) {
-            for (String exclude : excludes.split(",")) {
-                exclude = exclude.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
-                if (match) {
-                    return false;
-                }
-            }
-        }
-
-        // include
-        if (includes != null) {
-            for (String include : includes.split(",")) {
-                include = include.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
-                if (match) {
-                    return true;
-                }
-            }
-            // did not match any includes
-            return false;
-        }
-
-        // was not excluded nor failed include so its accepted
-        return true;
-    }
-
-    private String asRelativeFile(String name) {
-        String answer = name;
-
-        String base = project.getBasedir().getAbsolutePath();
-        if (name.startsWith(base)) {
-            answer = name.substring(base.length());
-            // skip leading slash for relative path
-            if (answer.startsWith(File.separator)) {
-                answer = answer.substring(1);
-            }
-        }
-        return answer;
-    }
-
-    private String stripRootPath(String name) {
-        // strip out any leading source / resource directory
-
-        List list = project.getCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        list = project.getTestCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        List resources = project.getResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        resources = project.getTestResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-
-        return name;
+        return CatalogHelper.matchRouteFile(file, excludes, includes, project);
     }
 
     public static boolean updateResource(Path out, String data) {

@@ -27,6 +27,7 @@
   <bean id="jms" class="org.apache.camel.spring.impl.SpringSupervisingRouteControllerTest.MyJmsComponent"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <routeController id="myController"
                      supervising="true" initialDelay="100" threadPoolSize="2" backOffDelay="25" backOffMaxAttempts="3"/>
     <route id="foo">

@@ -1,29 +1,57 @@
-[[process-eip]]
 = Process EIP
-:docTitle: Process
+:doctitle: Process
+:shortname: process
 :description: Calls a Camel processor
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
+The http://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Processor.html[Processor]
+is used for processing message xref:manual::exchange.adoc[Exchanges].
 
-== Options
+The processor is a core Camel concept that represents a node capable of using, creating,
+or modifying an incoming exchange. During routing, exchanges flow from one processor
+to another; as such, you can think of a route as a graph having specialized processors
+as the nodes, and lines that connect the output of one processor to the input of another.
+Processors could be implementations of EIPs, producers for specific components, or
+your own custom creation. The figure below shows the flow between processors.
 
-// eip options: START
-The Process EIP supports 1 options which are listed below:
+image::eip/message_flow_in_route.png[image]
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ref* | *Required* Reference to the Processor to lookup in the registry to use. |  | String
-|===
-// eip options: END
+A route first starts with a consumer (think `from` in the DSL) that populates the initial
+exchange. At each processor step, the out message from the previous step is the in
+message of the next. In many cases, processors don’t set an out message, so in this case
+the in message is reused. At the end of a route, the xref:manual::exchange-pattern.adoc[Messageg Exchange Pattern] (MEP)
+of the exchange determines whether a reply needs to be sent back to the caller of the route. If the MEP is `InOnly`,
+no reply will be sent back. If it’s `InOut`, Camel will take the out message from the last
+step and return it.
 
-== Samples
+== Processor API
+
+The `Processor` interface is a central API in Camel.
+Its API is purposely designed to be both simple and flexible in the form of a single functional method:
+
+[source,java]
+----
+@FunctionalInterface
+public interface Processor {
+
+    /**
+     * Processes the message exchange
+     *
+     * @param  exchange  the message exchange
+     * @throws Exception if an internal processing error has occurred.
+     */
+    void process(Exchange exchange) throws Exception;
+}
+----
+
+The `Processor` is used heavily internally in Camel, such as the base for all implementations of
+the xref:enterprise-integration-patterns.adoc[EIP patterns].
 
 === Using a processor in a route
 
-Once you have written a class which implements processor like this...
+Once you have written a class which implements `Processor` like this:
 
 [source,java]
 ----
@@ -34,43 +62,54 @@ public class MyProcessor implements Processor {
 }
 ----
 
-You can then easily use this inside a route by declaring the bean in
-Spring, say via the XML (or registering it in JNDI if that is your
-xref:latest@manual:ROOT:registry.adoc[Registry])
+Then in Camel you can call this processor:
+
+[source,java]
+----
+from("activemq:myQueue")
+  .process(new MyProcessor());
+----
+
+You can also call a processor by its bean id, if the processor
+has been enlisted in the xref:manual::registry.adoc[Registry], such as with the id `myProcessor`:
+
+[source,java]
+----
+from("activemq:myQueue")
+  .process("myProcessor");
+----
+
+And in XML you can refer to the fully qualified class name via `#class:` syntax:
 
 [source,xml]
---------------------------------------------------------
-<bean id="myProcessor" class="com.acme.MyProcessor"/>
---------------------------------------------------------
-
-Then in Camel you can do
-
-[source,java]
 ----
-from("activemq:myQueue").to("myProcessor");
+<route>
+  <from uri="activemq:myQueue"/>
+  <process ref="#class:com.foo.MyProcessor"/>
+</route>
 ----
 
-=== Using the process DSL
+Or if you use Spring XML you can create the processor via `<bean>`:
 
-In your route you can also use the `process` DSL syntax for invoking a
-processor.
-
-[source,java]
+[source,xml]
 ----
-Processor myProcessor = new MyProcessor();
-...
-from("activemq:myQueue").process(myProcessor);
+<beans>
+
+    <bean id="myProcessor" class="com.foo.MyProcessor"/>
+
+    <camelContext>
+        <routes>
+            <route>
+              <from uri="activemq:myQueue"/>
+              <process ref="myProcessor"/>
+            </route>
+        </routes>
+    </camelContext>
+
+</beans>
 ----
 
-If you need to lookup the processor in the xref:latest@manual:ROOT:registry.adoc[Registry]
-then you should use the *processRef* DSL:
-
-[source,java]
-----
-from("activemq:myQueue").processRef("myProcessor");
-----
-
-== Why use process when you can use to instead?
+=== Why use process when you can use to instead?
 
 The process can be used in routes as an anonymous inner class such:
 
@@ -78,9 +117,9 @@ The process can be used in routes as an anonymous inner class such:
 ----
     from("activemq:myQueue").process(new Processor() {
         public void process(Exchange exchange) throws Exception {
-            String payload = exchange.getIn().getBody(String.class);
+            String payload = exchange.getMessage().getBody(String.class);
             // do something with the payload and/or exchange here
-           exchange.getIn().setBody("Changed body");
+           exchange.getMessage().setBody("Changed body");
        }
     }).to("activemq:myOtherQueue");
 ----
@@ -88,16 +127,3 @@ The process can be used in routes as an anonymous inner class such:
 This is usable for quickly whirling up some code. If the code in the
 inner class gets a bit more complicated it is of course advised to
 refactor it into a separate class.
-
-== Turning your processor into a full Component
-
-There is a base class called
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
-which supports the full xref:latest@manual:ROOT:endpoint.adoc[Endpoint] semantics given a
-Processor instance.
-
-So you just need to create a https://github.com/apache/camel/tree/master/components[Component] class by
-deriving from
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
-which returns instances of ProcessorEndpoint. For more details see
-xref:latest@manual:ROOT:writing-components.adoc[Writing Components]

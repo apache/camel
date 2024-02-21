@@ -38,16 +38,16 @@ public class JdbcDefaultDataSourceTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:start", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(1, list.size());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:dataSource?readSize=1").to("mock:result");
             }
         };

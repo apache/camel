@@ -16,15 +16,18 @@
  */
 package org.apache.camel.model.cloud;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "healthyServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
+@Deprecated
 public class HealthyServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     public HealthyServiceCallServiceFilterConfiguration() {
         this(null);

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,16 +26,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * JMS with XPath
  */
-public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
+public class SpringJmsXPathHeaderTest extends AbstractSpringJMSTestSupport {
 
     @Test
     public void testTrue() throws Exception {
         getMockEndpoint("mock:true").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("activemq:queue:in", "<hello>World</hello>", "foo", "true");
+        template.sendBodyAndHeader("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "true");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,9 +44,9 @@ public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:true").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("activemq:queue:in", "<hello>World</hello>", "foo", "false");
+        template.sendBodyAndHeader("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "false");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,9 +54,9 @@ public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:true").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:in", "<hello>World</hello>");
+        template.sendBody("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

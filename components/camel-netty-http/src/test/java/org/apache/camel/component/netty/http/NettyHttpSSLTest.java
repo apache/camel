@@ -17,11 +17,13 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +38,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
 
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
 
-    protected Properties originalValues = new Properties();
+    protected final Properties originalValues = new Properties();
 
     @Override
     @BeforeEach
@@ -63,8 +65,9 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     }
 
     protected void restoreSystemProperties() {
-        for (Object key : originalValues.keySet()) {
-            Object value = originalValues.get(key);
+        for (Map.Entry<Object, Object> entry : originalValues.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.clearProperty((String) key);
             } else {
@@ -103,7 +106,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
         String out = template.requestBody("https://localhost:{{port}}", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

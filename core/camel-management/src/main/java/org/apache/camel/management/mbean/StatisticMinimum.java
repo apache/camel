@@ -46,7 +46,7 @@ public class StatisticMinimum extends Statistic {
 
     @Override
     public String toString() {
-        return "" + value.get();
+        return Long.toString(value.get());
     }
 
     @Override

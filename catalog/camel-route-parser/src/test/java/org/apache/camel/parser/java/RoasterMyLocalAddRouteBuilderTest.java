@@ -48,12 +48,12 @@ public class RoasterMyLocalAddRouteBuilderTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
         }
     }
 

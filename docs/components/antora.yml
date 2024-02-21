@@ -15,17 +15,24 @@
 # limitations under the License.
 #
 
+# other parts of this distributed  component are in:
+# core/camel-core-engine/src/main/docs
+# camel-spring-boot docs/components
+
 name: components
 title: Camel Components
-version: latest
+version: next
+prerelease: true
+display-version: Next (Pre-release)
+
 nav:
   - modules/ROOT/nav.adoc
   - modules/dataformats/nav.adoc
   - modules/languages/nav.adoc
   - modules/others/nav.adoc
   - modules/eips/nav.adoc
+
 asciidoc:
   attributes:
     index-table-format: width="100%",cols="4,3,3,3,6",options="header"
 #  | Data Format | Artifact | Support Level | Since | Description
-    cq-version: latest

@@ -24,8 +24,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -57,38 +55,21 @@ public class StaxConverter {
     private static final BlockingQueue<XMLInputFactory> INPUT_FACTORY_POOL;
     private static final BlockingQueue<XMLOutputFactory> OUTPUT_FACTORY_POOL;
     static {
-        int i = 20;
-        try {
-            String s = AccessController.doPrivileged(new PrivilegedAction<String>() {
-                @Override
-                public String run() {
-                    return System.getProperty("org.apache.cxf.staxutils.pool-size", "-1");
-                }
-            });
-            i = Integer.parseInt(s);
-        } catch (Throwable t) {
-            //ignore 
-            i = 20;
-        }
+        int poolSize = 20;
         try {
             // if we have more cores than 20, then use that
             int cores = Runtime.getRuntime().availableProcessors();
-            if (cores > i) {
-                i = cores;
+            if (cores > poolSize) {
+                poolSize = cores;
             }
-        } catch (Throwable t) {
+        } catch (Exception ignored) {
             // ignore
-            i = 20;
         }
 
-        if (i <= 0) {
-            i = 20;
-        }
+        LOG.debug("StaxConverter pool size: {}", poolSize);
 
-        LOG.debug("StaxConverter pool size: {}", i);
-
-        INPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
-        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
+        INPUT_FACTORY_POOL = new LinkedBlockingQueue<>(poolSize);
+        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<>(poolSize);
     }
 
     private XMLInputFactory inputFactory;
@@ -302,7 +283,10 @@ public class StaxConverter {
 
     private void returnXMLInputFactory(XMLInputFactory factory) {
         if (factory != inputFactory) {
-            INPUT_FACTORY_POOL.offer(factory);
+            boolean resultOfOffer = INPUT_FACTORY_POOL.offer(factory);
+            if (!resultOfOffer) {
+                LOG.debug("Ignore returning XMLInputFactory: {} as the pool is full", factory);
+            }
         }
     }
 
@@ -316,7 +300,10 @@ public class StaxConverter {
 
     private void returnXMLOutputFactory(XMLOutputFactory factory) {
         if (factory != outputFactory) {
-            OUTPUT_FACTORY_POOL.offer(factory);
+            boolean resultOfOffer = OUTPUT_FACTORY_POOL.offer(factory);
+            if (!resultOfOffer) {
+                LOG.debug("Ignore returning XMLOutputFactory: {} as the pool is full", factory);
+            }
         }
     }
 
@@ -349,7 +336,7 @@ public class StaxConverter {
     private static void setProperty(XMLInputFactory f, String p, Object o) {
         try {
             f.setProperty(p, o);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             //ignore
         }
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
@@ -45,47 +46,37 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     private String id;
     private String routeId;
-    private final List<FilterProcessor> filters;
+    // optimize to use an array
+    private final FilterProcessor[] filters;
+    private final int len;
     private final AsyncProcessor otherwise;
     private transient long notFiltered;
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
-        this.filters = filters;
+        this.filters = filters.toArray(new FilterProcessor[0]);
+        this.len = filters.size();
         this.otherwise = otherwise != null ? AsyncProcessorConverterHelper.convert(otherwise) : null;
     }
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // callback to restore existing FILTER_MATCHED property on the Exchange
-        final Object existing = exchange.getProperty(Exchange.FILTER_MATCHED);
-        final AsyncCallback choiceCallback = new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                if (existing != null) {
-                    exchange.setProperty(Exchange.FILTER_MATCHED, existing);
-                } else {
-                    exchange.removeProperty(Exchange.FILTER_MATCHED);
-                }
-                callback.done(doneSync);
-            }
-        };
-
         // find the first matching filter and process the exchange using it
-        for (FilterProcessor filter : filters) {
+        for (int i = 0; i < len; i++) {
+            FilterProcessor filter = filters[i];
             // evaluate the predicate on filter predicate early to be faster
             // and avoid issues when having nested choices
             // as we should only pick one processor
             boolean matches = false;
             try {
                 matches = filter.matches(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
 
             // check for error if so we should break out
             if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
                 // okay there was an error in the predicate so we should exit
-                choiceCallback.done(true);
+                callback.done(true);
                 return true;
             }
 
@@ -95,16 +86,16 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
             }
 
             // okay we found a filter then process it directly via its processor as we have already done the matching
-            return filter.getProcessor().process(exchange, choiceCallback);
+            return filter.getProcessor().process(exchange, callback);
         }
 
         if (otherwise != null) {
             // no filter matched then use otherwise
             notFiltered++;
-            return otherwise.process(exchange, choiceCallback);
+            return otherwise.process(exchange, callback);
         } else {
             // when no filter matches and there is no otherwise, then just continue
-            choiceCallback.done(true);
+            callback.done(true);
             return true;
         }
     }
@@ -120,7 +111,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
     }
 
     public List<FilterProcessor> getFilters() {
-        return filters;
+        return Arrays.asList(filters);
     }
 
     public Processor getOtherwise() {
@@ -138,8 +129,8 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
      * Reset counters.
      */
     public void reset() {
-        for (FilterProcessor filter : filters) {
-            filter.reset();
+        for (int i = 0; i < len; i++) {
+            filters[i].reset();
         }
         notFiltered = 0;
     }
@@ -150,8 +141,8 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
             return null;
         }
         List<Processor> answer = new ArrayList<>();
-        if (!filters.isEmpty()) {
-            answer.addAll(filters);
+        if (len > 0) {
+            answer.addAll(Arrays.asList(filters));
         }
         if (otherwise != null) {
             answer.add(otherwise);
@@ -161,7 +152,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     @Override
     public boolean hasNext() {
-        return otherwise != null || !filters.isEmpty();
+        return otherwise != null || len > 0;
     }
 
     @Override
@@ -186,21 +177,22 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(filters, otherwise);
+        ServiceHelper.initService(Arrays.asList(filters), otherwise);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(filters, otherwise);
+        ServiceHelper.startService(Arrays.asList(filters), otherwise);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(otherwise, filters);
+        ServiceHelper.stopService(otherwise, Arrays.asList(filters));
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(otherwise, filters);
+        ServiceHelper.stopAndShutdownServices(otherwise, Arrays.asList(filters));
     }
+
 }

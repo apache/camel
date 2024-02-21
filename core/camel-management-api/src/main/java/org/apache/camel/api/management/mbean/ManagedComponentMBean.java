@@ -35,6 +35,15 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
 
+    @ManagedAttribute(description = "Whether this component provides component specific health checks")
+    boolean isHealthCheckSupported();
+
+    @ManagedAttribute(description = "Whether consumer based health checks from this component is enabled (default enabled)")
+    boolean isHealthCheckConsumerEnabled();
+
+    @ManagedAttribute(description = "Whether producer based health checks from this component is enabled (default disabled)")
+    boolean isHealthCheckProducerEnabled();
+
     @ManagedAttribute(description = "Whether this component support verification (parameters or connectivity)")
     boolean isVerifySupported();
 

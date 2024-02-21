@@ -21,7 +21,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanEndpoint target = (BeanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "cache": target.setCache(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "method": target.setMethod(property(camelContext, java.lang.String.class, value)); return true;
@@ -34,7 +33,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "cache": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "method": return java.lang.String.class;
@@ -48,7 +46,6 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanEndpoint target = (BeanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "cache": return target.getCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "method": return target.getMethod();

@@ -16,28 +16,45 @@
  */
 package org.apache.camel.test.infra.pulsar.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class PulsarServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(PulsarServiceFactory.class);
-
     private PulsarServiceFactory() {
 
     }
 
+    public static class SingletonPulsarService extends SingletonService<PulsarService> implements PulsarService {
+
+        public SingletonPulsarService(PulsarService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getPulsarAdminUrl() {
+            return getService().getPulsarAdminUrl();
+        }
+
+        @Override
+        public String getPulsarBrokerUrl() {
+            return getService().getPulsarBrokerUrl();
+        }
+    }
+
+    public static SimpleTestServiceBuilder<PulsarService> builder() {
+        return new SimpleTestServiceBuilder<>("pulsar");
+    }
+
     public static PulsarService createService() {
-        String instanceType = System.getProperty("pulsar.instance.type");
+        return builder()
+                .addLocalMapping(PulsarLocalContainerService::new)
+                .addRemoteMapping(PulsarRemoteService::new)
+                .build();
+    }
 
-        if (instanceType == null || instanceType.equals("local-pulsar-container")) {
-            return new PulsarLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new PulsarRemoteService();
-        }
-
-        LOG.error("Pulsar instance must be one of 'local-pulsar-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Pulsar instance type");
+    public static PulsarService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new SingletonPulsarService(new PulsarLocalContainerService(), "pulsar"))
+                .build();
     }
 }

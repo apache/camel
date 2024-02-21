@@ -16,26 +16,21 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate Camel's built-in Simple language expression against the Camel Exchange.
+ * Evaluates a Camel simple expression.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SimpleExpression extends ExpressionDefinition {
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
+public class SimpleExpression extends TypedExpressionDefinition {
 
     public SimpleExpression() {
     }
@@ -48,31 +43,24 @@ public class SimpleExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private SimpleExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "simple";
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
     /**
-     * Sets the class of the result type (type from output)
+     * {@code Builder} is a specific builder for {@link SimpleExpression}.
      */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, SimpleExpression> {
 
-    public String getResultTypeName() {
-        return resultTypeName;
+        @Override
+        public SimpleExpression end() {
+            return new SimpleExpression(this);
+        }
     }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
 }

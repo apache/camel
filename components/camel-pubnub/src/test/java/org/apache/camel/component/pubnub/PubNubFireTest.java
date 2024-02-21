@@ -41,11 +41,11 @@ public class PubNubFireTest extends PubNubTestBase {
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 
         template.sendBody("direct:publish", "Hi");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish").to(endpoint).to("mock:result");

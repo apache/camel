@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -63,12 +64,14 @@ public final class JsonMapper {
             return generateLanguageModel(obj);
         } else if (obj.containsKey("dataformat")) {
             return generateDataFormatModel(obj);
+        } else if (obj.containsKey("transformer")) {
+            return generateTransformerModel(obj);
         } else if (obj.containsKey("other")) {
             return generateOtherModel(obj);
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
         } else {
-            throw new IllegalArgumentException("Unsupported JSON");
+            return null;
         }
     }
 
@@ -88,6 +91,16 @@ public final class JsonMapper {
                 ComponentOptionModel option = new ComponentOptionModel();
                 parseOption(mp, option, entry.getKey());
                 model.addComponentOption(option);
+            }
+        }
+        JsonObject headers = (JsonObject) obj.get("headers");
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EndpointHeaderModel header = new EndpointHeaderModel();
+                parseOption(mp, header, entry.getKey());
+                header.setConstantName(mp.getString("constantName"));
+                model.addEndpointHeader(header);
             }
         }
         JsonObject mprp = (JsonObject) obj.get("properties");
@@ -177,6 +190,7 @@ public final class JsonMapper {
         model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
         model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
+        model.setRemote(mobj.getBooleanOrDefault("remote", false));
         parseArtifact(mobj, model);
     }
 
@@ -208,11 +222,16 @@ public final class JsonMapper {
         obj.put("consumerOnly", model.isConsumerOnly());
         obj.put("producerOnly", model.isProducerOnly());
         obj.put("lenientProperties", model.isLenientProperties());
+        obj.put("remote", model.isRemote());
         obj.put("verifiers", model.getVerifiers());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("component", obj);
         wrapper.put("componentProperties", asJsonObject(model.getComponentOptions()));
+        final List<EndpointHeaderModel> headers = model.getEndpointHeaders();
+        if (!headers.isEmpty()) {
+            wrapper.put("headers", asJsonObject(headers));
+        }
         wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
         if (!model.getApiOptions().isEmpty()) {
             wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));
@@ -271,14 +290,26 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("model");
         EipModel model = new EipModel();
         parseModel(mobj, model);
+        model.setAbstractModel(mobj.getBooleanOrDefault("abstract", false));
         model.setInput(mobj.getBooleanOrDefault("input", false));
         model.setOutput(mobj.getBooleanOrDefault("output", false));
         JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            EipOptionModel option = new EipOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addOption(option);
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EipOptionModel option = new EipOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addOption(option);
+            }
+        }
+        mprp = (JsonObject) obj.get("exchangeProperties");
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EipOptionModel option = new EipOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addExchangeProperty(option);
+            }
         }
         return model;
     }
@@ -291,12 +322,16 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(EipModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        obj.put("abstract", model.isAbstractModel());
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
+        if (!model.getExchangeProperties().isEmpty()) {
+            wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
+        }
         return wrapper;
     }
 
@@ -338,6 +373,21 @@ public final class JsonMapper {
         wrapper.put("language", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
+    }
+
+    public static TransformerModel generateTransformerModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateTransformerModel(obj);
+    }
+
+    public static TransformerModel generateTransformerModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("transformer");
+        TransformerModel model = new TransformerModel();
+        parseModel(mobj, model);
+        model.setFrom(mobj.getString("from"));
+        model.setTo(mobj.getString("to"));
+        parseArtifact(mobj, model);
+        return model;
     }
 
     public static OtherModel generateOtherModel(String json) {
@@ -385,6 +435,9 @@ public final class JsonMapper {
         if (model.isNativeSupported()) {
             obj.put("nativeSupported", model.isNativeSupported());
         }
+        if (!model.getMetadata().isEmpty()) {
+            obj.put("metadata", model.getMetadata());
+        }
     }
 
     private static void artifactToJson(ArtifactModel<?> model, JsonObject obj) {
@@ -405,10 +458,15 @@ public final class JsonMapper {
         model.setJavaType(mobj.getString("javaType"));
         model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
         model.setNativeSupported(mobj.getBooleanOrDefault("nativeSupported", false));
+        model.setMetadata(mobj.getMapOrDefault("metadata", new JsonObject()));
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
         option.setName(name);
+        Integer idx = mp.getInteger("index");
+        if (idx != null) {
+            option.setIndex(idx);
+        }
         option.setKind(mp.getString("kind"));
         option.setDisplayName(mp.getString("displayName"));
         option.setGroup(mp.getString("group"));
@@ -432,6 +490,9 @@ public final class JsonMapper {
         option.setDescription(mp.getString("description"));
         option.setGetterMethod(mp.getString("getterMethod"));
         option.setSetterMethod(mp.getString("setterMethod"));
+        option.setSupportFileReference(mp.getBooleanOrDefault("supportFileReference", false));
+        option.setLargeInput(mp.getBooleanOrDefault("largeInput", false));
+        option.setInputLanguage(mp.getString("inputLanguage"));
     }
 
     private static void parseGroup(JsonObject mp, MainGroupModel option) {
@@ -442,7 +503,11 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
         JsonObject json = new JsonObject();
-        options.forEach(option -> json.put(option.getName(), asJsonObject(option)));
+        for (int i = 0; i < options.size(); i++) {
+            var o = options.get(i);
+            o.setIndex(i);
+            json.put(o.getName(), asJsonObject(o));
+        }
         return json;
     }
 
@@ -486,6 +551,7 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(BaseOptionModel option) {
         JsonObject prop = new JsonObject();
+        prop.put("index", option.getIndex());
         prop.put("kind", option.getKind());
         prop.put("displayName", option.getDisplayName());
         prop.put("group", option.getGroup());
@@ -503,6 +569,18 @@ public final class JsonMapper {
         prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
         prop.put("defaultValue", option.getDefaultValue());
+        if (option.isSupportFileReference()) {
+            // only include if supported to not regen all files
+            prop.put("supportFileReference", option.isSupportFileReference());
+        }
+        if (option.isLargeInput()) {
+            // only include if supported to not regen all files
+            prop.put("largeInput", option.isLargeInput());
+        }
+        if (!Strings.isNullOrEmpty(option.getInputLanguage())) {
+            // only include if supported to not regen all files
+            prop.put("inputLanguage", option.getInputLanguage());
+        }
         prop.put("asPredicate", option.isAsPredicate());
         prop.put("configurationClass", option.getConfigurationClass());
         prop.put("configurationField", option.getConfigurationField());
@@ -511,6 +589,8 @@ public final class JsonMapper {
         prop.put("setterMethod", option.getSetterMethod());
         if (option instanceof ComponentModel.ApiOptionModel) {
             prop.put("optional", ((ComponentModel.ApiOptionModel) option).isOptional());
+        } else if (option instanceof ComponentModel.EndpointHeaderModel) {
+            prop.put("constantName", ((ComponentModel.EndpointHeaderModel) option).getConstantName());
         }
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
@@ -581,6 +661,32 @@ public final class JsonMapper {
         }
         json.put("properties", props);
         return json;
+    }
+
+    public static JsonObject asJsonObject(ReleaseModel model) {
+        JsonObject json = new JsonObject();
+        json.put("version", model.getVersion());
+        json.put("date", model.getDate());
+        if (model.getEol() != null) {
+            json.put("eol", model.getEol());
+        }
+        if (model.getKind() != null) {
+            json.put("kind", model.getKind());
+        }
+        if (model.getJdk() != null) {
+            json.put("jdk", model.getJdk());
+        }
+        return json;
+    }
+
+    public static ReleaseModel generateReleaseModel(JsonObject obj) {
+        ReleaseModel model = new ReleaseModel();
+        model.setVersion(obj.getString("version"));
+        model.setDate(obj.getString("date"));
+        model.setEol(obj.getString("eol"));
+        model.setKind(obj.getString("kind"));
+        model.setJdk(obj.getString("jdk"));
+        return model;
     }
 
     public static String createJsonSchema(MainModel model) {

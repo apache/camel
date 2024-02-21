@@ -26,10 +26,11 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
       <resequence>
-        <batch-config batchTimeout="100"/>
+        <batchConfig batchTimeout="100"/>
         <simple>${body}</simple>
         <to uri="mock:result"/>
       </resequence>

@@ -29,6 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport {
 
@@ -45,9 +46,9 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("low");
         assertEquals(1, profile.getPoolSize().intValue());
         assertEquals(5, profile.getMaxPoolSize().intValue());
-        assertEquals(null, profile.getKeepAliveTime());
-        assertEquals(null, profile.getMaxQueueSize());
-        assertEquals(null, profile.getRejectedPolicy());
+        assertNull(profile.getKeepAliveTime());
+        assertNull(profile.getMaxQueueSize());
+        assertNull(profile.getRejectedPolicy());
 
         // create a thread pool from low
         ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyLow", "low");
@@ -66,9 +67,9 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("big");
         assertEquals(50, profile.getPoolSize().intValue());
         assertEquals(100, profile.getMaxPoolSize().intValue());
-        assertEquals(ThreadPoolRejectedPolicy.DiscardOldest, profile.getRejectedPolicy());
-        assertEquals(null, profile.getKeepAliveTime());
-        assertEquals(null, profile.getMaxQueueSize());
+        assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
+        assertNull(profile.getKeepAliveTime());
+        assertNull(profile.getMaxQueueSize());
 
         // create a thread pool from big
         ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyBig", "big");
@@ -77,7 +78,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(100, tp.getMaximumPoolSize());
         // should inherit default options
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("DiscardOldest", tp.getRejectedExecutionHandler().toString());
+        assertEquals("Abort", tp.getRejectedExecutionHandler().toString());
     }
 
 }

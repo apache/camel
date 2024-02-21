@@ -57,15 +57,23 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": getOrCreateConfiguration(target).setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "initialreconnectdelay":
         case "initialReconnectDelay": getOrCreateConfiguration(target).setInitialReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "interfaceversion":
+        case "interfaceVersion": getOrCreateConfiguration(target).setInterfaceVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "lazysessioncreation":
         case "lazySessionCreation": getOrCreateConfiguration(target).setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxreconnect":
         case "maxReconnect": getOrCreateConfiguration(target).setMaxReconnect(property(camelContext, int.class, value)); return true;
+        case "messagereceiverrouteid":
+        case "messageReceiverRouteId": getOrCreateConfiguration(target).setMessageReceiverRouteId(property(camelContext, java.lang.String.class, value)); return true;
         case "numberingplanindicator":
         case "numberingPlanIndicator": getOrCreateConfiguration(target).setNumberingPlanIndicator(property(camelContext, byte.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": getOrCreateConfiguration(target).setPduProcessorDegree(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": getOrCreateConfiguration(target).setPduProcessorQueueCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
         case "priorityflag":
         case "priorityFlag": getOrCreateConfiguration(target).setPriorityFlag(property(camelContext, byte.class, value)); return true;
         case "protocolid":
@@ -82,6 +90,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": getOrCreateConfiguration(target).setServiceType(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionstatelistener":
         case "sessionStateListener": getOrCreateConfiguration(target).setSessionStateListener(property(camelContext, org.jsmpp.session.SessionStateListener.class, value)); return true;
+        case "singledlr":
+        case "singleDLR": getOrCreateConfiguration(target).setSingleDLR(property(camelContext, boolean.class, value)); return true;
         case "sourceaddr":
         case "sourceAddr": getOrCreateConfiguration(target).setSourceAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceaddrnpi":
@@ -136,15 +146,23 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": return java.lang.String.class;
         case "initialreconnectdelay":
         case "initialReconnectDelay": return long.class;
+        case "interfaceversion":
+        case "interfaceVersion": return java.lang.String.class;
         case "lazysessioncreation":
         case "lazySessionCreation": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxreconnect":
         case "maxReconnect": return int.class;
+        case "messagereceiverrouteid":
+        case "messageReceiverRouteId": return java.lang.String.class;
         case "numberingplanindicator":
         case "numberingPlanIndicator": return byte.class;
         case "password": return java.lang.String.class;
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return java.lang.Integer.class;
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return java.lang.Integer.class;
         case "priorityflag":
         case "priorityFlag": return byte.class;
         case "protocolid":
@@ -161,6 +179,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": return java.lang.String.class;
         case "sessionstatelistener":
         case "sessionStateListener": return org.jsmpp.session.SessionStateListener.class;
+        case "singledlr":
+        case "singleDLR": return boolean.class;
         case "sourceaddr":
         case "sourceAddr": return java.lang.String.class;
         case "sourceaddrnpi":
@@ -216,15 +236,23 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpProxyUsername": return getOrCreateConfiguration(target).getHttpProxyUsername();
         case "initialreconnectdelay":
         case "initialReconnectDelay": return getOrCreateConfiguration(target).getInitialReconnectDelay();
+        case "interfaceversion":
+        case "interfaceVersion": return getOrCreateConfiguration(target).getInterfaceVersion();
         case "lazysessioncreation":
         case "lazySessionCreation": return getOrCreateConfiguration(target).isLazySessionCreation();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxreconnect":
         case "maxReconnect": return getOrCreateConfiguration(target).getMaxReconnect();
+        case "messagereceiverrouteid":
+        case "messageReceiverRouteId": return getOrCreateConfiguration(target).getMessageReceiverRouteId();
         case "numberingplanindicator":
         case "numberingPlanIndicator": return getOrCreateConfiguration(target).getNumberingPlanIndicator();
         case "password": return getOrCreateConfiguration(target).getPassword();
+        case "pduprocessordegree":
+        case "pduProcessorDegree": return getOrCreateConfiguration(target).getPduProcessorDegree();
+        case "pduprocessorqueuecapacity":
+        case "pduProcessorQueueCapacity": return getOrCreateConfiguration(target).getPduProcessorQueueCapacity();
         case "priorityflag":
         case "priorityFlag": return getOrCreateConfiguration(target).getPriorityFlag();
         case "protocolid":
@@ -241,6 +269,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "serviceType": return getOrCreateConfiguration(target).getServiceType();
         case "sessionstatelistener":
         case "sessionStateListener": return getOrCreateConfiguration(target).getSessionStateListener();
+        case "singledlr":
+        case "singleDLR": return getOrCreateConfiguration(target).isSingleDLR();
         case "sourceaddr":
         case "sourceAddr": return getOrCreateConfiguration(target).getSourceAddr();
         case "sourceaddrnpi":

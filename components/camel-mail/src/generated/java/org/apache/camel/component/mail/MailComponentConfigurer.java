@@ -58,15 +58,25 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": getOrCreateConfiguration(target).setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delete": getOrCreateConfiguration(target).setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": getOrCreateConfiguration(target).setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": getOrCreateConfiguration(target).setFailOnDuplicateFileAttachment(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
         case "fetchSize": getOrCreateConfiguration(target).setFetchSize(property(camelContext, int.class, value)); return true;
         case "foldername":
         case "folderName": getOrCreateConfiguration(target).setFolderName(property(camelContext, java.lang.String.class, value)); return true;
         case "from": getOrCreateConfiguration(target).setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": getOrCreateConfiguration(target).setGenerateMissingAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": getOrCreateConfiguration(target).setHandleDuplicateAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "handlefailedmessage":
         case "handleFailedMessage": getOrCreateConfiguration(target).setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": getOrCreateConfiguration(target).setIgnoreUnsupportedCharset(property(camelContext, boolean.class, value)); return true;
         case "ignoreurischeme":
@@ -87,7 +97,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "peek": getOrCreateConfiguration(target).setPeek(property(camelContext, boolean.class, value)); return true;
         case "replyto":
         case "replyTo": getOrCreateConfiguration(target).setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "session": getOrCreateConfiguration(target).setSession(property(camelContext, javax.mail.Session.class, value)); return true;
+        case "session": getOrCreateConfiguration(target).setSession(property(camelContext, jakarta.mail.Session.class, value)); return true;
         case "skipfailedmessage":
         case "skipFailedMessage": getOrCreateConfiguration(target).setSkipFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -137,15 +147,25 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": return boolean.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return boolean.class;
         case "fetchsize":
         case "fetchSize": return int.class;
         case "foldername":
         case "folderName": return java.lang.String.class;
         case "from": return java.lang.String.class;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return java.lang.String.class;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return java.lang.String.class;
         case "handlefailedmessage":
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": return boolean.class;
         case "ignoreurischeme":
@@ -166,7 +186,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "peek": return boolean.class;
         case "replyto":
         case "replyTo": return java.lang.String.class;
-        case "session": return javax.mail.Session.class;
+        case "session": return jakarta.mail.Session.class;
         case "skipfailedmessage":
         case "skipFailedMessage": return boolean.class;
         case "sslcontextparameters":
@@ -217,15 +237,25 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": return getOrCreateConfiguration(target).isDecodeFilename();
         case "delete": return getOrCreateConfiguration(target).isDelete();
         case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return getOrCreateConfiguration(target).isFailOnDuplicateFileAttachment();
         case "fetchsize":
         case "fetchSize": return getOrCreateConfiguration(target).getFetchSize();
         case "foldername":
         case "folderName": return getOrCreateConfiguration(target).getFolderName();
         case "from": return getOrCreateConfiguration(target).getFrom();
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return getOrCreateConfiguration(target).getGenerateMissingAttachmentNames();
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return getOrCreateConfiguration(target).getHandleDuplicateAttachmentNames();
         case "handlefailedmessage":
         case "handleFailedMessage": return getOrCreateConfiguration(target).isHandleFailedMessage();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": return getOrCreateConfiguration(target).isIgnoreUnsupportedCharset();
         case "ignoreurischeme":

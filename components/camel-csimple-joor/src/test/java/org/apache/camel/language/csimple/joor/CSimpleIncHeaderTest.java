@@ -32,14 +32,14 @@ public class CSimpleIncHeaderTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "myCounter", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("myCounter", csimple("${header.myCounter}++")).to("mock:result");
             }
         };

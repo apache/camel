@@ -39,7 +39,7 @@ public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSuppor
 
         template.sendBody("direct:start", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(3, received.size());
@@ -54,9 +54,9 @@ public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:testdb?outputType=SelectList").to("mock:result");
             }
         };

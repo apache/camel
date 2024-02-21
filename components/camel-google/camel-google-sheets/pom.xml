@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-parent</artifactId>
+        <version>4.5.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-google-sheets</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Google :: Sheets</name>
+    <description>Camel Component for Google Sheets</description>
+
+    <properties>
+        <schemeName>google-sheets</schemeName>
+        <componentName>GoogleSheets</componentName>
+        <componentPackage>org.apache.camel.component.google.sheets</componentPackage>
+        <outPackage>org.apache.camel.component.google.sheets.internal</outPackage>
+
+        <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>${google-cloud-http-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>${google-cloud-http-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-gson</artifactId>
+            <version>${google-cloud-http-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-apache-v2</artifactId>
+            <version>${google-cloud-http-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>${google-api-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.oauth-client</groupId>
+                    <artifactId>google-oauth-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google-oauth-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-sheets</artifactId>
+            <version>${google-api-services-sheets-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.api-client</groupId>
+                    <artifactId>google-api-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- provided -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+
+            <!-- generate Component source and test source -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-api-component-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-test-component-classes</id>
+                        <goals>
+                            <goal>fromApis</goal>
+                        </goals>
+                        <configuration>
+                            <apis>
+                                <api>
+                                    <apiName>spreadsheets</apiName>
+                                    <proxyClass>com.google.api.services.sheets.v4.Sheets$Spreadsheets</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
+                                    <apiName>data</apiName>
+                                    <proxyClass>com.google.api.services.sheets.v4.Sheets$Spreadsheets$Values
+                                    </proxyClass>
+                                    <fromJavasource />
+                                </api>
+                            </apis>
+                            <substitutions>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.ValueRange</argType>
+                                    <replacement>values</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+                                    </argType>
+                                    <replacement>batchUpdateSpreadsheetRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest
+                                    </argType>
+                                    <replacement>getSpreadsheetByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.ClearValuesRequest</argType>
+                                    <replacement>clearValuesRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchClearValuesRequest</argType>
+                                    <replacement>batchClearValuesRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>
+                                        com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest
+                                    </argType>
+                                    <replacement>batchUpdateValuesByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest
+                                    </argType>
+                                    <replacement>batchGetValuesByDataFilterRequest</replacement>
+                                </substitution>
+                                <substitution>
+                                    <method>^.+$</method>
+                                    <argName>content</argName>
+                                    <argType>com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest</argType>
+                                    <replacement>batchUpdateValuesRequest</replacement>
+                                </substitution>
+                            </substitutions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!-- Component to read API signatures -->
+                    <dependency>
+                        <groupId>com.google.apis</groupId>
+                        <artifactId>google-api-services-sheets</artifactId>
+                        <version>${google-api-services-sheets-version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-api-component-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <scheme>${schemeName}</scheme>
+                        <componentName>${componentName}</componentName>
+                        <componentPackage>${componentPackage}</componentPackage>
+                        <outPackage>${outPackage}</outPackage>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+</project>

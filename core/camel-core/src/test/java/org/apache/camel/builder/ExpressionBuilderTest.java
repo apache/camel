@@ -44,7 +44,7 @@ public class ExpressionBuilderTest extends TestSupport {
     @Test
     public void testRegexTokenize() throws Exception {
         Expression expression = regexTokenizeExpression(headerExpression("location"), ",");
-        List<String> expected = new ArrayList<>(Arrays.asList(new String[] { "Islington", "London", "UK" }));
+        List<String> expected = new ArrayList<>(Arrays.asList("Islington", "London", "UK"));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate
@@ -68,7 +68,7 @@ public class ExpressionBuilderTest extends TestSupport {
     public void testTokenize() throws Exception {
         Expression expression = tokenizeExpression(headerExpression("location"), ",");
 
-        List<String> expected = new ArrayList<>(Arrays.asList(new String[] { "Islington", "London", "UK" }));
+        List<String> expected = new ArrayList<>(Arrays.asList("Islington", "London", "UK"));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate = contains(tokenizeExpression(headerExpression("location"), ","), constantExpression("London"));
@@ -83,7 +83,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = regexTokenizeExpression(bodyExpression(), "[\r|\n]");
         exchange.getIn().setBody("Hello World\nBye World\rSee you again");
 
-        List<String> expected = new ArrayList<>(Arrays.asList(new String[] { "Hello World", "Bye World", "See you again" }));
+        List<String> expected = new ArrayList<>(Arrays.asList("Hello World", "Bye World", "See you again"));
         assertExpression(expression, exchange, expected);
     }
 
@@ -92,7 +92,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = sortExpression(body().tokenize(",").getExpression(), new SortByName());
         exchange.getIn().setBody("Jonathan,Claus,James,Hadrian");
 
-        List<String> expected = new ArrayList<>(Arrays.asList(new String[] { "Claus", "Hadrian", "James", "Jonathan" }));
+        List<String> expected = new ArrayList<>(Arrays.asList("Claus", "Hadrian", "James", "Jonathan"));
         assertExpression(expression, exchange, expected);
     }
 
@@ -105,7 +105,7 @@ public class ExpressionBuilderTest extends TestSupport {
         expression = camelContextPropertiesExpression();
         expression.init(camelContext);
         Map<?, ?> properties = expression.evaluate(exchange, Map.class);
-        assertEquals(properties.size(), 1, "Get a wrong properties size");
+        assertEquals(1, properties.size(), "Get a wrong properties size");
     }
 
     @Test
@@ -132,6 +132,13 @@ public class ExpressionBuilderTest extends TestSupport {
     @Test
     public void testHeaderExpression() throws Exception {
         assertExpression(headerExpression("name", String.class), exchange, "James");
+    }
+
+    @Test
+    public void testConstantsOnly() throws Exception {
+        Expression expression = concatExpression(
+                List.of(constantExpression("Hello"), constantExpression(" big "), constantExpression("World")));
+        assertExpression(expression, exchange, "Hello big World");
     }
 
     @Override

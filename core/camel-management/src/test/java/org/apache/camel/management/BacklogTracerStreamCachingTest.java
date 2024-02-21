@@ -24,26 +24,25 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testBacklogTracerEventMessageStreamCaching() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on
+                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
@@ -78,8 +77,9 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("bar", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
-                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\">Bye World</body>\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" position=\"0\">Bye World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
     }
@@ -90,7 +90,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
-                context.setBacklogTracing(true);
+                context.setBacklogTracingStandby(true);
 
                 from("direct:start").streamCaching()
                         .process(exchange -> {

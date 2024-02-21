@@ -21,11 +21,11 @@ import org.junit.jupiter.api.Test;
 
 public class UndertowNoAutoStartupTest extends BaseUndertowTest {
     @Test
-    public void testUndertow() throws Exception {
+    public void testUndertow() {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp")

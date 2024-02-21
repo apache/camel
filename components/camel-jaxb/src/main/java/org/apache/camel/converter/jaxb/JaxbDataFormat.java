@@ -21,25 +21,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.MarshalException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.ValidationEvent;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -53,13 +51,14 @@ import org.xml.sax.SAXException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -76,8 +75,6 @@ public class JaxbDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
-
-    private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();
 
     private SchemaFactory schemaFactory;
     private CamelContext camelContext;
@@ -107,6 +104,7 @@ public class JaxbDataFormat extends ServiceSupport
     private Schema cachedSchema;
     private Map<String, Object> jaxbProviderProperties;
     private boolean contentTypeHeader = true;
+    private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {
     }
@@ -134,12 +132,12 @@ public class JaxbDataFormat extends ServiceSupport
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
             // exchange take precedence over encoding option
-            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            String charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             if (charset == null) {
                 charset = encoding;
                 //Propagate the encoding of the exchange
                 if (charset != null) {
-                    exchange.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
                 }
             }
             if (charset != null) {
@@ -173,11 +171,7 @@ public class JaxbDataFormat extends ServiceSupport
             doMarshal(exchange, graph, stream, marshaller, charset);
 
             if (contentTypeHeader) {
-                if (exchange.hasOut()) {
-                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                } else {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                }
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/xml");
             }
         } catch (Exception e) {
             throw new IOException(e);
@@ -273,20 +267,30 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     private boolean asXmlStreamWriter(Exchange exchange) {
-        return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
+        return needFiltering(exchange) || xmlStreamWriterWrapper != null;
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         try {
             Object answer;
 
-            final XMLStreamReader xmlReader;
+            XMLStreamReader xmlReader;
             if (needFiltering(exchange)) {
                 xmlReader
-                        = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
+                        = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, body));
             } else {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
+                xmlReader = typeConverter.tryConvertTo(XMLStreamReader.class, exchange, body);
+                if (xmlReader == null) {
+                    // fallback to input stream
+                    InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                    xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, is);
+                }
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
             if (partClass != null || partClassFromHeader != null) {
@@ -312,9 +316,15 @@ public class JaxbDataFormat extends ServiceSupport
         }
     }
 
-    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream)
-            throws UnsupportedEncodingException {
-        return new NonXmlFilterReader(new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange)));
+    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, Object body)
+            throws NoTypeConversionAvailableException {
+        Reader reader = getCamelContext().getTypeConverter().tryConvertTo(Reader.class, exchange, body);
+        if (reader == null) {
+            // fallback to input stream
+            InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            reader = new InputStreamReader(is);
+        }
+        return new NonXmlFilterReader(reader);
     }
 
     protected boolean needFiltering(Exchange exchange) {
@@ -365,10 +375,7 @@ public class JaxbDataFormat extends ServiceSupport
         this.contextPathIsClassName = contextPathIsClassName;
     }
 
-    public SchemaFactory getSchemaFactory() {
-        if (schemaFactory == null) {
-            return getOrCreateSchemaFactory();
-        }
+    public SchemaFactory getSchemaFactory() throws SAXException {
         return schemaFactory;
     }
 
@@ -483,7 +490,7 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     public String getNoNamespaceSchemaLocation() {
-        return schemaLocation;
+        return noNamespaceSchemaLocation;
     }
 
     public void setNoNamespaceSchemaLocation(String schemaLocation) {
@@ -507,6 +514,14 @@ public class JaxbDataFormat extends ServiceSupport
      */
     public void setContentTypeHeader(boolean contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
+    }
+
+    public String getAccessExternalSchemaProtocols() {
+        return accessExternalSchemaProtocols;
+    }
+
+    public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
+        this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
     }
 
     @Override
@@ -574,11 +589,9 @@ public class JaxbDataFormat extends ServiceSupport
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
             unmarshaller.setSchema(cachedSchema);
-            unmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // continue if the severity is lower than the configured level
-                    return event.getSeverity() < getSchemaSeverityLevel();
-                }
+            unmarshaller.setEventHandler((ValidationEvent event) -> {
+                // continue if the severity is lower than the configured level
+                return event.getSeverity() < getSchemaSeverityLevel();
             });
         }
 
@@ -589,11 +602,9 @@ public class JaxbDataFormat extends ServiceSupport
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
             marshaller.setSchema(cachedSchema);
-            marshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // continue if the severity is lower than the configured level
-                    return event.getSeverity() < getSchemaSeverityLevel();
-                }
+            marshaller.setEventHandler((ValidationEvent event) -> {
+                // continue if the severity is lower than the configured level
+                return event.getSeverity() < getSchemaSeverityLevel();
             });
         }
 
@@ -601,16 +612,12 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     private Schema createSchema(Source[] sources) throws SAXException {
-        SchemaFactory factory = getOrCreateSchemaFactory();
-        try {
-            return factory.newSchema(sources);
-        } finally {
-            returnSchemaFactory(factory);
-        }
+        SchemaFactory factory = createSchemaFactory(accessExternalSchemaProtocols);
+        return factory.newSchema(sources);
     }
 
     private Source[] getSources() throws FileNotFoundException, MalformedURLException {
-        // we support multiple schema by delimiting they by ','
+        // we support multiple schema by delimiting by comma
         String[] schemas = schema.split(",");
         Source[] sources = new Source[schemas.length];
         for (int i = 0; i < schemas.length; i++) {
@@ -620,22 +627,19 @@ public class JaxbDataFormat extends ServiceSupport
         return sources;
     }
 
-    private SchemaFactory getOrCreateSchemaFactory() {
-        SchemaFactory factory = SCHEMA_FACTORY_POOL.poll();
-        if (factory == null) {
-            factory = createSchemaFactory();
+    private static SchemaFactory createSchemaFactory(String protocols) throws SAXException {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        if (protocols == null || "false".equals(protocols) || "none".equals(protocols)) {
+            protocols = "";
+            LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
+        } else {
+            LOG.debug("Configuring SchemaFactory to allow access to external DTD/Schema using protocols: {}", protocols);
         }
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, protocols);
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, protocols);
         return factory;
-    }
-
-    public static SchemaFactory createSchemaFactory() {
-        return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    }
-
-    private void returnSchemaFactory(SchemaFactory factory) {
-        if (factory != schemaFactory) {
-            SCHEMA_FACTORY_POOL.offer(factory);
-        }
     }
 
 }

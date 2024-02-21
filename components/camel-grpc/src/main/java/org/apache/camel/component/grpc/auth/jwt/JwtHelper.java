@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -32,17 +30,14 @@ public final class JwtHelper {
     public static String createJwtToken(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
         try {
             Algorithm algorithm = selectAlgorithm(algorithmName, secret);
-            String token = JWT.create().withIssuer(issuer).withSubject(subject).sign(algorithm);
-            return token;
+            return JWT.create().withIssuer(issuer).withSubject(subject).sign(algorithm);
         } catch (JWTCreationException e) {
             throw new IllegalArgumentException("Unable to create JWT token", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("UTF-8 encoding not supported during JWT token creation", e);
         }
     }
 
     public static Algorithm selectAlgorithm(JwtAlgorithm algorithmName, String secret)
-            throws IllegalArgumentException, UnsupportedEncodingException {
+            throws IllegalArgumentException {
         switch (algorithmName) {
             case HMAC256:
                 return Algorithm.HMAC256(secret);

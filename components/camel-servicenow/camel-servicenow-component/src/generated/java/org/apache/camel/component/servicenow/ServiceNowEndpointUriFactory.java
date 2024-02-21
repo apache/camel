@@ -19,61 +19,67 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(45);
-        props.add("favorites");
-        props.add("suppressPaginationHeader");
-        props.add("oauthClientId");
-        props.add("instanceName");
-        props.add("requestModels");
-        props.add("dateFormat");
-        props.add("httpClientPolicy");
-        props.add("release");
-        props.add("sslContextParameters");
-        props.add("mapper");
-        props.add("retrieveTargetRecordOnImport");
-        props.add("proxyPort");
-        props.add("password");
-        props.add("apiVersion");
-        props.add("dateTimeFormat");
         props.add("apiUrl");
-        props.add("proxyUserName");
+        props.add("apiVersion");
+        props.add("dateFormat");
+        props.add("dateTimeFormat");
+        props.add("display");
+        props.add("displayValue");
         props.add("excludeReferenceLink");
-        props.add("includeAvailableBreakdowns");
+        props.add("favorites");
+        props.add("httpClientPolicy");
         props.add("includeAggregates");
+        props.add("includeAvailableAggregates");
+        props.add("includeAvailableBreakdowns");
         props.add("includeScoreNotes");
+        props.add("includeScores");
+        props.add("inputDisplayValue");
+        props.add("instanceName");
+        props.add("key");
+        props.add("lazyStartProducer");
+        props.add("mapper");
+        props.add("models");
+        props.add("oauthClientId");
+        props.add("oauthClientSecret");
+        props.add("oauthTokenUrl");
+        props.add("password");
+        props.add("perPage");
+        props.add("proxyAuthorizationPolicy");
+        props.add("proxyHost");
+        props.add("proxyPassword");
+        props.add("proxyPort");
+        props.add("proxyUserName");
+        props.add("release");
+        props.add("requestModels");
+        props.add("resource");
+        props.add("responseModels");
+        props.add("retrieveTargetRecordOnImport");
         props.add("sortBy");
         props.add("sortDir");
-        props.add("key");
-        props.add("table");
-        props.add("models");
-        props.add("oauthTokenUrl");
-        props.add("resource");
-        props.add("display");
-        props.add("inputDisplayValue");
-        props.add("proxyPassword");
-        props.add("oauthClientSecret");
-        props.add("userName");
-        props.add("proxyHost");
-        props.add("target");
-        props.add("displayValue");
-        props.add("includeAvailableAggregates");
-        props.add("proxyAuthorizationPolicy");
-        props.add("lazyStartProducer");
-        props.add("includeScores");
-        props.add("perPage");
-        props.add("responseModels");
-        props.add("timeFormat");
+        props.add("sslContextParameters");
         props.add("suppressAutoSysField");
+        props.add("suppressPaginationHeader");
+        props.add("table");
+        props.add("target");
+        props.add("timeFormat");
         props.add("topLevelOnly");
+        props.add("userName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("password");
         secretProps.add("oauthClientId");
-        secretProps.add("oauthTokenUrl");
         secretProps.add("oauthClientSecret");
+        secretProps.add("oauthTokenUrl");
+        secretProps.add("password");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(3);
+        prefixes.add("model.");
+        prefixes.add("request-model.");
+        prefixes.add("response-model.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -101,6 +107,11 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

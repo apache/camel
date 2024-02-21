@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -45,7 +45,7 @@ public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
     }
 
     @BindToRegistry("hl7encoder")
-    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addEncoder() {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
@@ -53,12 +53,12 @@ public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
                                 MDM_T02 input = (MDM_T02) exchange.getIn().getBody(Message.class);
                                 assertEquals("2.5", input.getVersion());

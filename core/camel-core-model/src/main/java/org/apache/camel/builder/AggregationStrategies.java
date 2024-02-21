@@ -36,7 +36,7 @@ public final class AggregationStrategies {
     /**
      * Creates a {@link FlexibleAggregationStrategy} pivoting around a particular type, e.g. it casts all
      * <tt>pick expression</tt> results to the desired type.
-     * 
+     *
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
     public static <T> FlexibleAggregationStrategy<T> flexible(Class<T> type) {
@@ -72,7 +72,7 @@ public final class AggregationStrategies {
     /**
      * Use the original exchange.
      *
-     * @param propagateException whether to propgate exception if errors was thrown during processing splitted messages.
+     * @param propagateException whether to propgate exception if errors was thrown during processing split messages.
      * @see                      org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
      */
     public static AggregationStrategy useOriginal(boolean propagateException) {
@@ -150,7 +150,7 @@ public final class AggregationStrategies {
 
     /**
      * Creates a {@link StringAggregationStrategy} with delimiter.
-     * 
+     *
      * @param delimiter The delimiter to join with.
      */
     public static StringAggregationStrategy string(String delimiter) {

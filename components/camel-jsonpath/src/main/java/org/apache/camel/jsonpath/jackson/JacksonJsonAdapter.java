@@ -35,7 +35,6 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
     private static final String JACKSON_JAXB_MODULE = "com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule";
 
     private final ObjectMapper defaultMapper;
-    private CamelContext camelContext;
 
     public JacksonJsonAdapter() {
         defaultMapper = new ObjectMapper();
@@ -43,7 +42,6 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
 
     @Override
     public void init(CamelContext camelContext) {
-        this.camelContext = camelContext;
 
         // Attempt to enables JAXB processing so we can easily convert JAXB annotated pojos also
         Class<?> clazz = camelContext.getClassResolver().resolveClass(JACKSON_JAXB_MODULE);
@@ -61,7 +59,7 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
         try {
             return mapper.convertValue(body, Map.class);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore because we are attempting to convert
         }
 
@@ -73,7 +71,7 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
         try {
             return mapper.writeValueAsString(value);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore because we are attempting to convert
         }
 

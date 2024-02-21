@@ -29,7 +29,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,7 +44,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
  * Transform messages using Chunk templating engine.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             remote = false, category = { Category.TRANSFORMATION }, headersClass = ChunkConstants.class)
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -123,9 +122,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             writer.flush();
 
             // Fill out message
-            Message out = exchange.getOut();
-            out.setBody(newChunk.toString());
-            out.setHeaders(exchange.getIn().getHeaders());
+            ExchangeHelper.setInOutBodyPatternAware(exchange, newChunk.toString());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
             ChunkEndpoint newEndpoint
@@ -171,7 +168,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
         return chunk;
     }
 
-    private Theme getOrCreateTheme() throws IOException {
+    private Theme getOrCreateTheme() {
         if (theme == null) {
             if (themeFolder == null && themeSubfolder == null) {
                 theme = new Theme();
@@ -204,7 +201,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
         }
     }
 
-    private String getResourceUriExtended() throws IOException {
+    private String getResourceUriExtended() {
         return themeLayer == null
                 ? getResourceUri()
                 : getResourceUri() + CHUNK_LAYER_SEPARATOR + themeLayer;
@@ -271,12 +268,5 @@ public class ChunkEndpoint extends ResourceEndpoint {
         if (theme == null) {
             theme = getOrCreateTheme();
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // noop
     }
 }

@@ -19,35 +19,39 @@ public class JooqEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(25);
-        props.add("backoffMultiplier");
-        props.add("databaseConfiguration");
-        props.add("initialDelay");
-        props.add("scheduler");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("entityType");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("query");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
         props.add("backoffIdleThreshold");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
         props.add("consumeDelete");
+        props.add("databaseConfiguration");
+        props.add("delay");
+        props.add("entityType");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("pollStrategy");
+        props.add("query");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -75,6 +79,11 @@ public class JooqEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

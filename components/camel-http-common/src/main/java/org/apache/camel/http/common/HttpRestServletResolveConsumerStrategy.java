@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 
@@ -37,7 +37,7 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
         if (path == null) {
             return null;
         }
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer>> paths = new ArrayList<>();
         for (final Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
             paths.add(new HttpRestConsumerPath(entry.getValue()));
         }

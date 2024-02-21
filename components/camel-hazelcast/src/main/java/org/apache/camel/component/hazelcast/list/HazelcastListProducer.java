@@ -92,6 +92,10 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
                 this.retainAll(exchange);
                 break;
 
+            case GET_ALL:
+                this.getAll(exchange);
+                break;
+
             default:
                 throw new IllegalArgumentException(
                         String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation,
@@ -159,5 +163,9 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     private void retainAll(Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         list.retainAll((Collection<?>) body);
+    }
+
+    private void getAll(Exchange exchange) {
+        exchange.getMessage().setBody(list);
     }
 }

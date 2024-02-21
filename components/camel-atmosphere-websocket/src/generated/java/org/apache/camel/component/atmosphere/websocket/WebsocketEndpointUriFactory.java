@@ -19,37 +19,46 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(27);
-        props.add("sendToAll");
-        props.add("attachmentMultipartBinding");
-        props.add("mapHttpMessageBody");
-        props.add("servletName");
-        props.add("useStreaming");
-        props.add("bridgeErrorHandler");
-        props.add("headerFilterStrategy");
-        props.add("transferException");
-        props.add("bridgeEndpoint");
-        props.add("muteException");
-        props.add("httpMethodRestrict");
-        props.add("eagerCheckContentAvailable");
-        props.add("httpBinding");
-        props.add("matchOnUriPrefix");
-        props.add("exchangePattern");
-        props.add("chunked");
-        props.add("mapHttpMessageFormUrlEncodedBody");
-        props.add("fileNameExtWhitelist");
+        Set<String> props = new HashSet<>(31);
         props.add("async");
-        props.add("responseBufferSize");
-        props.add("lazyStartProducer");
+        props.add("attachmentMultipartBinding");
+        props.add("bridgeEndpoint");
+        props.add("bridgeErrorHandler");
+        props.add("chunked");
         props.add("disableStreamCache");
-        props.add("servicePath");
-        props.add("mapHttpMessageHeaders");
-        props.add("optionsEnabled");
-        props.add("traceEnabled");
+        props.add("eagerCheckContentAvailable");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fileNameExtWhitelist");
+        props.add("headerFilterStrategy");
+        props.add("httpBinding");
+        props.add("httpMethodRestrict");
+        props.add("lazyStartProducer");
+        props.add("logException");
+        props.add("mapHttpMessageBody");
+        props.add("mapHttpMessageFormUrlEncodedBody");
+        props.add("mapHttpMessageHeaders");
+        props.add("matchOnUriPrefix");
+        props.add("muteException");
+        props.add("oauth2ClientId");
+        props.add("oauth2ClientSecret");
+        props.add("oauth2TokenEndpoint");
+        props.add("optionsEnabled");
+        props.add("responseBufferSize");
+        props.add("sendToAll");
+        props.add("servicePath");
+        props.add("servletName");
+        props.add("traceEnabled");
+        props.add("transferException");
+        props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("oauth2ClientId");
+        secretProps.add("oauth2ClientSecret");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -77,6 +86,11 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

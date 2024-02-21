@@ -42,7 +42,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz, ".",
+        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
@@ -78,7 +78,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz, ".",
+        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestServiceDetails details = list.get(0);
@@ -94,15 +94,15 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals("json", details.getProduces());
         assertEquals(2, details.getVerbs().size());
         assertEquals("get", details.getVerbs().get(0).getMethod());
-        assertEquals("{id}", details.getVerbs().get(0).getUri());
+        assertEquals("{id}", details.getVerbs().get(0).getPath());
         assertEquals("get by id", details.getVerbs().get(0).getDescription());
         assertEquals("log:id", details.getVerbs().get(0).getTo());
         assertEquals("false", details.getVerbs().get(0).getApiDocs());
         assertEquals("post", details.getVerbs().get(1).getMethod());
         assertEquals("post something", details.getVerbs().get(1).getDescription());
         assertEquals("xml", details.getVerbs().get(1).getBindingMode());
-        assertEquals("log:post", details.getVerbs().get(1).getToD());
-        assertNull(details.getVerbs().get(1).getUri());
+        assertEquals("log:post", details.getVerbs().get(1).getTo());
+        assertNull(details.getVerbs().get(1).getPath());
     }
 
 }

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.activemq;
 
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ActiveMQMessage;
@@ -33,15 +33,14 @@ import org.slf4j.LoggerFactory;
  */
 public class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(OriginalDestinationPropagateStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OriginalDestinationPropagateStrategy.class);
 
     @Override
     public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
         if (exchange.getIn() instanceof JmsMessage) {
             JmsMessage msg = exchange.getIn(JmsMessage.class);
             Message jms = msg.getJmsMessage();
-            if (jms != null && jms instanceof ActiveMQMessage && message instanceof ActiveMQMessage) {
-                ActiveMQMessage amq = (ActiveMQMessage) jms;
+            if (jms instanceof ActiveMQMessage amq && message instanceof ActiveMQMessage) {
                 if (amq.getOriginalDestination() == null) {
                     ActiveMQDestination from = amq.getDestination();
                     if (from != null) {

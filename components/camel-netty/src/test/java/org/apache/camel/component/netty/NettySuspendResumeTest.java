@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,14 +46,14 @@ public class NettySuspendResumeTest extends BaseNettyTest {
         out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Again", String.class);
         assertEquals("Bye Again", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
                         .to("log:result")
                         .to("mock:result")

@@ -1,0 +1,159 @@
+= Huawei Object Storage Service (OBS) Component
+:doctitle: Huawei Object Storage Service (OBS)
+:shortname: hwcloud-obs
+:artifactid: camel-huaweicloud-obs
+:description: To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
+:since: 3.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-obs
+
+*Since Camel {since}*
+
+*{component-header}*
+
+Huawei Cloud Object Storage Service (OBS) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/obs.html[OBS] provided by Huawei Cloud.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-huaweicloud-obs</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+----
+hwcloud-obs:operation[?options]
+----
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== Usage
+
+=== Message properties evaluated by the OBS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudObsOperation` |`String` | Name of operation to invoke
+
+|`CamelHwCloudObsBucketName` |`String` | Bucket name to invoke operation on
+
+|`CamelHwCloudObsBucketLocation` |`String` | Bucket location when creating a new bucket
+
+|`CamelHwCloudObsObjectName` |`String` | Name of the object to be used in operation. You can also configure the name of the object using this property while performing putObject operation
+
+|=======================================================================
+
+If any of the above properties are set, they will override their corresponding query parameter.
+
+=== Message properties set by the OBS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudObsBucketExists` |`boolean` | Return value when invoking the `checkBucketExists` operation
+
+|=======================================================================
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== List of Supported OBS Operations
+
+- listBuckets
+- createBucket - `bucketName` parameter is *required*, `bucketLocation` parameter is optional
+- deleteBucket - `bucketName` parameter is *required*
+- checkBucketExists - `bucketName` parameter is *required*
+- getBucketMetadata - `bucketName` parameter is *required*
+- listObjects - `bucketName` parameter is *required*
+- getObject - `bucketName` and `objectName` parameters are *required*
+- putObject - `bucketName` parameter is *required*. If exchange body contains File, then file name is used as default object name unless over-ridden via exchange property CamelHwCloudObsObjectName
+
+=== Passing Options Through Exchange Body
+There are many options that can be submitted to the `createBucket` and `listObjects` operations, so they can be passed through the exchange body.
+
+If you would like to configure all the https://support.huaweicloud.com/intl/en-us/api-obs/obs_04_0021.html[parameters] when creating a bucket, you can pass a https://obssdk-intl.obs.ap-southeast-1.myhuaweicloud.com/apidoc/en/java/com/obs/services/model/CreateBucketRequest.html[CreateBucketRequest] object or a Json string into the exchange body. If the exchange body is empty, a new bucket will be created using the bucketName and bucketLocation (if provided) passed through the endpoint uri.
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new CreateBucketRequest("Bucket name", "Bucket location"))
+ .to("hwcloud-obs:createBucket?region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"bucketName\":\"Bucket name\",\"location\":\"Bucket location\"}")
+ .to("hwcloud-obs:createBucket?region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+If you would like to configure all the https://support.huaweicloud.com/intl/en-us/api-obs/obs_04_0022.html[parameters] when listing objects, you can pass a https://obssdk-intl.obs.ap-southeast-1.myhuaweicloud.com/apidoc/en/java/com/obs/services/model/ListObjectsRequest.html[ListObjectsRequest] object or a Json string into the exchange body. If the exchange body is empty, objects will be listed based on the bucketName passed through the endpoint uri.
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new ListObjectsRequest("Bucket name", 1000))
+ .to("hwcloud-obs:listObjects?region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"bucketName\":\"Bucket name\",\"maxKeys\":1000"}")
+ .to("hwcloud-obs:listObjects?region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+
+== Using ServiceKey Configuration Bean
+
+Access key and secret keys are required to authenticate against the OBS cloud. You can avoid having them being exposed
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.obs.models.ServiceKeys`.
+Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
+
+Check the following code snippets:
+
+[source,xml]
+----
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.obs.models.ServiceKeys">
+   <property name="accessKey" value="your_access_key" />
+   <property name="secretKey" value="your_secret_key" />
+</bean>
+----
+[source,java]
+----
+from("direct:triggerRoute")
+ .setProperty(OBSPropeties.OPERATION, constant("createBucket"))
+ .setProperty(OBSPropeties.BUCKET_NAME ,constant("your_bucket_name"))
+ .setProperty(OBSPropeties.BUCKET_LOCATION, constant("your_bucket_location"))
+ .to("hwcloud-obs:createBucket?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
+----
+
+
+include::spring-boot:partial$starter.adoc[]

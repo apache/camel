@@ -1,0 +1,80 @@
+= Google Mail Component
+:doctitle: Google Mail
+:shortname: google-mail
+:artifactid: camel-google-mail
+:description: Manage messages in Google Mail.
+:since: 2.15
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-mail
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Mail component provides access
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+Web APIs].
+
+Google Mail uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/gmail/api/auth/web-server[create an
+account and generate OAuth credentials]. Credentials consist of a
+`clientId`, `clientSecret`, and a `refreshToken`. A handy resource for
+generating a long-lived `refreshToken` is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+In the case of a https://developers.google.com/identity/protocols/oauth2#serviceaccount[service account],
+credentials consist of a JSON-file (serviceAccountKey). You can also use
+https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority[delegation domain-wide authority]
+(delegate) and one, several, or all possible
+https://developers.google.com/gmail/api/auth/scopes[GMail API Auth Scopes].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-mail</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+== URI Format
+
+The GoogleMail Component uses the following URI format:
+
+----
+google-mail://endpoint-prefix/endpoint?[options]
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== More Information
+
+For more information on the endpoints and options see API documentation
+at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
+
+
+
+include::spring-boot:partial$starter.adoc[]

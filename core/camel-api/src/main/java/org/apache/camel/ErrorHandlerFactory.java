@@ -21,4 +21,19 @@ package org.apache.camel;
  */
 public interface ErrorHandlerFactory {
 
+    /**
+     * Whether this error handler supports transacted exchanges.
+     */
+    boolean supportTransacted();
+
+    /**
+     * Clones this factory so each route has its private builder to use, to avoid changes from one route to influence
+     * the others.
+     * <p/>
+     * This is needed by the current Camel route architecture
+     *
+     * @return a clone of this factory
+     */
+    ErrorHandlerFactory cloneBuilder();
+
 }

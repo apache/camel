@@ -16,30 +16,44 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOnlyIssueTest extends CamelTestSupport {
+public class JmsInOnlyIssueTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testInOnlyWithSendBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -47,12 +61,13 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        // need a little sleep to let task exectuor be ready
-        Thread.sleep(1000);
+        // need a little sleep to let task executor be ready
 
-        template.asyncSendBody("activemq:queue:in", "Hello World");
+        final CompletableFuture<Object> future = template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
+
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -60,10 +75,10 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly,
+        Exchange out = template.send("activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly,
                 exchange -> exchange.getIn().setBody("Hello World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         /*
           The getMessage returns the In message if the Out one is not present. Therefore, we check if
           the body of the returned message equals to the In one and infer that the out one was null.
@@ -76,32 +91,42 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        // need a little sleep to let task exectuor be ready
-        Thread.sleep(1000);
+        // need a little sleep to let task executor be ready
 
-        template.asyncSend("activemq:queue:in", exchange -> {
+        final CompletableFuture<Exchange> future = template.asyncSend("activemq:queue:JmsInOnlyIssueTest.in", exchange -> {
             exchange.setPattern(ExchangePattern.InOnly);
             exchange.getIn().setBody("Hello World");
         });
 
-        assertMockEndpointsSatisfied();
+        assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
+
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
+            public void configure() {
+                from("activemq:queue:JmsInOnlyIssueTest.in").process(exchange -> exchange.getIn().setBody("Bye World"))
+                        .to("mock:result");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

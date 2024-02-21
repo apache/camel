@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceResolverSupport;
+import org.apache.camel.support.ResourceSupport;
 
 public class Handler extends ResourceResolverSupport {
     public Handler() {
@@ -30,13 +31,8 @@ public class Handler extends ResourceResolverSupport {
     }
 
     @Override
-    protected Resource createResource(String location) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
+    protected Resource createResource(String location, String remaining) {
+        return new ResourceSupport("mem", location) {
             @Override
             public boolean exists() {
                 return true;
@@ -44,7 +40,7 @@ public class Handler extends ResourceResolverSupport {
 
             @Override
             public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(getRemaining(location).getBytes(StandardCharsets.UTF_8));
+                return new ByteArrayInputStream(remaining.getBytes(StandardCharsets.UTF_8));
             }
         };
     }

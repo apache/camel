@@ -1,21 +1,13 @@
-[[Validator-Validator]]
 = Validator
 
-*Since Camel 2.19*
-
 Validator performs declarative validation of the message according to the declared
-`Input Type` and/or `Output Type` on a route definition which declares the expected
-message type. Note that the validation is performed only if `validate` attribute on the
- type declaration is true.
-If `validate` attribute is true on a `Input Type` and/or `Output Type` declaration,
-camel internal processor looks for a corresponding Validator from the registry and apply.
+_Input Type_ and/or _Output Type_ on a route definition which declares the expected
+message type.
 
 
-
-[[Validator-DataTypeFormat]]
 == Data type format
 
-[source]
+[source,text]
 ----
 scheme:name
 ----
@@ -23,45 +15,40 @@ scheme:name
 where *scheme* is the type of data model like `java`, `xml` or `json`, and *name* is the individual
 data type name.
 
-[[Validator-SupportedValidators]]
 == Supported Validators
 
+[width="100%",cols="25%,75%",options="header",]
 |===
 | Validator | Description
-
 | Predicate Validator | Validate with using Expression or Predicate
-
 | Endpoint Validator | Validate by forwarding to the Endpoint to be used with validation component such as Validation Component or Bean Validation Component.
-
 | Custom Validator | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
 
 
-
-[[Validator-CommonOptions]]
 == Common Options
 All validators have following common options to specify which data type is supported by the validator.
 `type` must be specified.
+
+[width="100%",cols="25%,75%",options="header",]
 |===
 | Name | Description
-
-| type | xref:validator.adoc#Validator-DataTypeFormat[Data type] to validate.
+| type | Data type to validate
 |===
 
 
-
-[[Validator-Predicate]]
 == Predicate Validator Options
 
+[width="100%",cols="25%,75%",options="header",]
 |===
 | Name | Description
-
 | expression | Expression or Predicate to be used for validation
 |===
 
 Here is an example to specify a validation predicate:
 
 Java DSL:
+
 [source,java]
 ----
 validator()
@@ -70,6 +57,7 @@ validator()
 ----
 
 XML DSL:
+
 [source,xml]
 ----
 <predicateValidator Type="csv:CSVOrder">
@@ -77,19 +65,17 @@ XML DSL:
 </predicateValidator>
 ----
 
-
-[[Validator-Endpoint]]
 == Endpoint Validator Options
 
+[width="100%",cols="25%,75%",options="header",]
 |===
 | Name | Description
-
 | ref | Reference to the Endpoint ID
-
 | uri | Endpoint URI
 |===
 
 Here is an example to specify endpoint URI in Java DSL:
+
 [source,java]
 ----
 validator()
@@ -98,6 +84,7 @@ validator()
 ----
 
 And here is an example to specify endpoint ref in XML DSL:
+
 [source,xml]
 ----
 <endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
@@ -108,20 +95,21 @@ camel forwards the message to the `validator:` endpoint, which actually is a
 xref:components::validator-component.adoc[Validation Component]. You can also use any other validation component like
 Bean Validation Component.
 
-[[Validator-Custom]]
 == Custom Validator Options
 
-Note that Validator must be a subclass of `org.apache.camel.spi.Validator`
+The validator must be an implementation of `org.apache.camel.spi.Validator`
+
+[width="100%",cols="25%,75%",options="header",]
 |===
 | Name | Description
-
 | ref | Reference to the custom Validator bean ID
-
 | className | Fully qualified class name of the custom Validator class
 |===
 
 Here is an example to specify custom Validator class:
+
 Java DSL:
+
 [source,java]
 ----
 validator()
@@ -130,20 +118,19 @@ validator()
 ----
 
 XML DSL:
+
 [source,xml]
 ----
 <customTransformer className="com.example.MyCustomValidator" type="json"/>
 ----
 
-
-
-[[Validator-Examples]]
 == Examples
 
 For example to declare the Endpoint Validator which uses
 validator component to validate `xml:ABCOrder`, we can do as follows:
 
 Java DSL:
+
 [source,java]
 ----
 validator()
@@ -151,7 +138,8 @@ validator()
     .withUri("validator:xsd/schema.xsd");
 ----
 
-XML DSL:
+And in XML DSL:
+
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -166,6 +154,7 @@ receives the message. Note that `inputTypeWithValidate` is used instead of `inpu
 and the `validate` attribute on the inputType declaration is set to `true` in XML DSL:
 
 Java DSL:
+
 [source,java]
 ----
 from("direct:abc")
@@ -174,6 +163,7 @@ from("direct:abc")
 ----
 
 XML DSL:
+
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -184,3 +174,7 @@ XML DSL:
     </route>
 </camelContext>
 ----
+
+== See Also
+
+The xref:transformer.adoc[Transformer] is a related functionality.

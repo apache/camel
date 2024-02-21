@@ -33,7 +33,7 @@ public class JpaCronSchedulerTest extends AbstractJpaTest {
 
         template.sendBody("direct:start", new SendEmail("dummy"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // @PreConsumed should change the dummy address
         SendEmail email = mock.getReceivedExchanges().get(0).getIn().getBody(SendEmail.class);

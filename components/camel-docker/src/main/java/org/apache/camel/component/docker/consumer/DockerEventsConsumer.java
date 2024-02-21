@@ -40,7 +40,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
     private DockerComponent component;
     private EventsCmd eventsCmd;
 
-    public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
+    public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.component = (DockerComponent) endpoint.getComponent();
@@ -92,15 +92,9 @@ public class DockerEventsConsumer extends DefaultConsumer {
             Message message = exchange.getIn();
             message.setBody(event);
 
-            LOG.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                    }
-                }
-            });
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            getAsyncProcessor().process(exchange, cb);
         }
     }
 }

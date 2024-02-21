@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerQueryParamTest extends BaseJettyTest {
 
-    private String url = "http://127.0.0.1:" + getPort() + "/cheese";
+    private final String url = "http://127.0.0.1:" + getPort() + "/cheese";
 
     @Test
-    public void testQueryParameters() throws Exception {
+    public void testQueryParameters() {
         Exchange exchange = template.request(url + "?quote=Camel%20rocks", null);
         assertNotNull(exchange);
 
@@ -43,9 +43,9 @@ public class HttpProducerQueryParamTest extends BaseJettyTest {
     }
 
     @Test
-    public void testQueryParametersWithHeader() throws Exception {
+    public void testQueryParametersWithHeader() {
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks");
             }
         });
@@ -59,12 +59,12 @@ public class HttpProducerQueryParamTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + url).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String quote = exchange.getIn().getHeader("quote", String.class);
                         assertEquals("Camel rocks", quote);
 

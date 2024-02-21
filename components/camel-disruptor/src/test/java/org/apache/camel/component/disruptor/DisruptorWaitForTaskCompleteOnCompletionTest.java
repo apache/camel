@@ -18,9 +18,9 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ public class DisruptorWaitForTaskCompleteOnCompletionTest extends CamelTestSuppo
             assertEquals("Forced", e.getCause().getMessage());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // 3 + 1 C and A should be last
         assertEquals("CCCCA", done);
@@ -61,7 +61,7 @@ public class DisruptorWaitForTaskCompleteOnCompletionTest extends CamelTestSuppo
                 from("direct:start").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) {
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(final Exchange exchange) {
                                 done += "A";

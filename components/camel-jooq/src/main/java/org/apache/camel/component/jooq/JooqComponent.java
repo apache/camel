@@ -22,10 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("jooq")
-public class JooqComponent extends DefaultComponent {
+public class JooqComponent extends HealthCheckComponent {
 
     @Metadata(description = "Component configuration (database connection, database entity type, etc.)")
     private JooqConfiguration configuration;
@@ -34,7 +34,7 @@ public class JooqComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JooqConfiguration conf = configuration != null ? configuration.copy() : new JooqConfiguration();
 
-        JooqEndpoint endpoint = new JooqEndpoint(uri, remaining, this, conf);
+        JooqEndpoint endpoint = new JooqEndpoint(uri, this, conf);
         setProperties(endpoint, parameters);
         initConfiguration(getCamelContext(), conf, remaining);
         return endpoint;

@@ -27,8 +27,8 @@ import java.util.function.Predicate;
  */
 public class FilterIterator<T> implements Iterator<T>, Closeable {
 
-    private Iterator<T> it;
-    private Predicate<T> filter;
+    private final Iterator<T> it;
+    private final Predicate<T> filter;
     private T next;
     private boolean closed;
 

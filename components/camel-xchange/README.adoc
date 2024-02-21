@@ -1,0 +1,16 @@
+== Camel Xchange integration tests
+
+Connection to `https://api.binance.com` has to be enabled by providing system property `enable.xchange.itests` with value `true`. If not provided mocked test (using Wiremock is used).
+
+Several tests require real credentials (to access acount/wallet/..)
+Please provide system properties:
+
+```
+... -Dxchange.api.key=#your_api_key -Dxchange.secret.key=#your_secret_key
+```
+
+or environmental properties:
+
+```
+export XCHANGE_API_KEY=#your_api_key
+export XCHANGE_SECRET_KEY=#your_secret_key

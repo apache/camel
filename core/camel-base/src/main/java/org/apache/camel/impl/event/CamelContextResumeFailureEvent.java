@@ -22,7 +22,7 @@ import org.apache.camel.spi.CamelEvent;
 public class CamelContextResumeFailureEvent extends AbstractContextEvent implements CamelEvent.CamelContextResumeFailureEvent {
     private static final long serialVersionUID = -4271899927507894566L;
 
-    private Throwable cause;
+    private final Throwable cause;
 
     public CamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
         super(context);
@@ -36,6 +36,6 @@ public class CamelContextResumeFailureEvent extends AbstractContextEvent impleme
 
     @Override
     public String toString() {
-        return "Failed to resume Camel: " + getContext().getName() + " due to " + cause.getMessage();
+        return "Failed to resume CamelContext: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

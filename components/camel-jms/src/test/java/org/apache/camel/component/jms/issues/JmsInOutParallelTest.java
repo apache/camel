@@ -16,20 +16,30 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOutParallelTest extends CamelTestSupport {
+public class JmsInOutParallelTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testInOutParallel() throws Exception {
@@ -42,32 +52,29 @@ public class JmsInOutParallelTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:test")
                         .setBody(constant("1,2,3,4,5"))
-                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=2000")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.1?requestTimeout=2000")
                         .split().tokenize(",").parallelProcessing()
-                        .to(ExchangePattern.InOut, "activemq:queue:test2?requestTimeout=2000")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.2?requestTimeout=2000")
                         .to("mock:received")
                         .end()
                         .setBody(constant("Fully done"))
                         .log("Finished");
 
-                from("activemq:queue:test1")
+                from("activemq:queue:JmsInOutParallelTest.1")
                         .log("Received on queue test1");
 
-                from("activemq:queue:test2")
+                from("activemq:queue:JmsInOutParallelTest.2")
                         .log("Received on queue test2")
                         .setBody(constant("Some reply"))
                         .delay(constant(100));
@@ -76,4 +83,15 @@ public class JmsInOutParallelTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

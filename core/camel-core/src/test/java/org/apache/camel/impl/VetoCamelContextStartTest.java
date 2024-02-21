@@ -25,6 +25,8 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -36,8 +38,8 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
     @Test
     public void testVetoCamelContextStart() throws Exception {
         // context is veto'ed but appears as started
-        assertEquals(false, context.getStatus().isStarted());
-        assertEquals(true, context.getStatus().isStopped());
+        assertFalse(context.getStatus().isStarted());
+        assertTrue(context.getStatus().isStopped());
         assertEquals(0, context.getRoutes().size());
     }
 
@@ -58,10 +60,10 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
         return context;
     }
 
-    private class MyVeto extends LifecycleStrategySupport {
+    private static class MyVeto extends LifecycleStrategySupport {
 
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             // we just want camel context to not startup, but do not rethrow
             // exception
             throw new VetoCamelContextStartException("Forced", context, false);

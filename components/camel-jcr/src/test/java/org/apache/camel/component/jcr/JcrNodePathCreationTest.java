@@ -91,10 +91,10 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
                         .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");

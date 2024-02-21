@@ -22,9 +22,11 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.LoadTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build a
@@ -35,16 +37,32 @@ import org.apache.camel.spi.Transformer;
 public class TransformerBuilder {
 
     private String scheme;
+    private String name;
     private String from;
     private String to;
     private String uri;
     private DataFormatDefinition dataFormat;
     private Class<? extends Transformer> clazz;
     private String beanRef;
+    private boolean defaults;
+    private String packageScan;
+
+    /**
+     * Set the transformer name under which the transformer gets referenced when specifying the input/output data type
+     * on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be
+     * picked up for all of 'csv:*' from/to Java transformation. Note that the scheme matching is performed only when no
+     * exactly matched transformer exists.
+     *
+     * @param name transformer name
+     */
+    public TransformerBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
 
     /**
      * Set the scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all
-     * of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
+     * of 'csv:*' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
      * transformer exists.
      *
      * @param scheme scheme name
@@ -136,17 +154,39 @@ public class TransformerBuilder {
         return this;
     }
 
+    /**
+     * Enables default transformers on the registry.
+     */
+    public TransformerBuilder withDefaults() {
+        resetType();
+        this.defaults = true;
+        return this;
+    }
+
+    /**
+     * Set the classpath location to scan for {@code Transformer} implementations. Usually these transformer
+     * implementations use {@code DataTypeTransformer} annotations to expose a transformer name and supported from/to
+     * data types.
+     */
+    public TransformerBuilder scan(String location) {
+        resetType();
+        this.packageScan = location;
+        return this;
+    }
+
     private void resetType() {
         this.uri = null;
         this.dataFormat = null;
         this.clazz = null;
         this.beanRef = null;
+        this.defaults = false;
+        this.packageScan = null;
     }
 
     /**
      * Configure a Transformer according to the configurations built on this builder and register it into given
      * {@code CamelContext}.
-     * 
+     *
      * @param camelContext {@code CamelContext}
      */
     public void configure(CamelContext camelContext) {
@@ -167,12 +207,23 @@ public class TransformerBuilder {
             CustomTransformerDefinition ctd = new CustomTransformerDefinition();
             ctd.setRef(beanRef);
             transformer = ctd;
+        } else if (defaults) {
+            LoadTransformerDefinition ltd = new LoadTransformerDefinition();
+            ltd.setDefaults("true");
+            transformer = ltd;
+        } else if (packageScan != null) {
+            LoadTransformerDefinition ltd = new LoadTransformerDefinition();
+            ltd.setPackageScan(packageScan);
+            transformer = ltd;
         } else {
             throw new IllegalArgumentException("No Transformer type was specified");
         }
 
-        if (scheme != null) {
+        if (ObjectHelper.isNotEmpty(scheme)) {
             transformer.setScheme(scheme);
+            transformer.setName(name);
+        } else if (ObjectHelper.isNotEmpty(name)) {
+            transformer.setName(name);
         } else {
             transformer.setFromType(from);
             transformer.setToType(to);
@@ -181,6 +232,6 @@ public class TransformerBuilder {
         // force init of transformer registry
         camelContext.getTransformerRegistry();
 
-        camelContext.adapt(ModelCamelContext.class).registerTransformer(transformer);
+        ((ModelCamelContext) camelContext).registerTransformer(transformer);
     }
 }

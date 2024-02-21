@@ -19,45 +19,34 @@ package org.apache.camel.component.mina;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MinaSendToProcessorTest extends BaseMinaTest {
 
-    @Test
-    public void testConnectionOnStartupTest() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    private RouteBuilder getRouteBuilder(String uri) {
+        return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
+                        .toF(uri, getPort());
             }
-        });
+        };
+    }
 
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+    @Test
+    public void testConnectionOnStartupTest() throws Exception {
+        context.addRoutes(getRouteBuilder("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false"));
+
+        assertThrows(Exception.class, () -> context.start(), "Should have thrown an exception");
     }
 
     @Test
     public void testConnectionOnSendMessage() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+        context.addRoutes(getRouteBuilder("mina:tcp://localhost:%1$s?sync=false"));
 
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=false", getPort()));
-            }
-        });
-
-        try {
-            context.start();
-        } catch (Exception e) {
-            fail("Should not have thrown an exception");
-        }
-
+        assertDoesNotThrow(() -> context.start(), "Should not have thrown an exception");
     }
 
     @Override

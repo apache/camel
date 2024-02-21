@@ -39,6 +39,8 @@ public class XsltSaxonComponent extends XsltComponent {
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @Metadata(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean secureProcessing = true;
 
     public List<Object> getSaxonExtensionFunctions() {
         return saxonExtensionFunctions;
@@ -46,7 +48,8 @@ public class XsltSaxonComponent extends XsltComponent {
 
     /**
      * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
-     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * classpath. The function is looked up in the registry, where you can use commas to separate multiple values to
+     * lookup.
      */
     public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
         this.saxonExtensionFunctions = extensionFunctions;
@@ -54,13 +57,26 @@ public class XsltSaxonComponent extends XsltComponent {
 
     /**
      * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
-     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * classpath. The function is looked up in the registry, where you can use commas to separate multiple values to
+     * lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
         this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
                 getCamelContext(),
                 extensionFunctions,
                 Object.class);
+    }
+
+    public boolean isSecureProcessing() {
+        return secureProcessing;
+    }
+
+    /**
+     * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
+     */
+    public void setSecureProcessing(boolean secureProcessing) {
+        this.secureProcessing = secureProcessing;
     }
 
     public Configuration getSaxonConfiguration() {
@@ -85,6 +101,7 @@ public class XsltSaxonComponent extends XsltComponent {
         this.saxonConfigurationProperties = configurationProperties;
     }
 
+    @Override
     protected XsltSaxonEndpoint createXsltEndpoint(String uri) {
         return new XsltSaxonEndpoint(uri, this);
     }
@@ -97,6 +114,7 @@ public class XsltSaxonComponent extends XsltComponent {
         saxon.setSaxonConfiguration(saxonConfiguration);
         saxon.setSaxonConfigurationProperties(saxonConfigurationProperties);
         saxon.setSaxonExtensionFunctions(saxonExtensionFunctions);
+        saxon.setSecureProcessing(secureProcessing);
 
         super.configureEndpoint(endpoint, remaining, parameters);
     }

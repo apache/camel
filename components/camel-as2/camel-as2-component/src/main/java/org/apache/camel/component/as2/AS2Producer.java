@@ -43,9 +43,9 @@ public class AS2Producer extends AbstractApiProducer<AS2ApiName, AS2Configuratio
         HttpResponse response = context.getResponse();
         HttpEntity entity = response.getEntity();
         if (entity instanceof DispositionNotificationMultipartReportEntity || entity instanceof MultipartSignedEntity) {
-            resultExchange.getOut().setBody(entity);
+            resultExchange.getMessage().setBody(entity);
         } else {
-            resultExchange.getOut().setBody(null);
+            resultExchange.getMessage().setBody(null);
         }
     }
 }

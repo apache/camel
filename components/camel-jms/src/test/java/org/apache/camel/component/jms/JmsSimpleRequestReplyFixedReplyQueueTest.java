@@ -16,23 +16,33 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A simple request / reply test
  */
-public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
+public class JmsSimpleRequestReplyFixedReplyQueueTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testWithInOnly() throws Exception {
@@ -41,7 +51,7 @@ public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
         // send an InOnly
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -52,30 +62,38 @@ public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
         String out = template.requestBody("direct:start", "World", String.class);
         assertEquals("Hello World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=queue:bar")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsSimpleRequestReplyFixedReplyQueueTest?replyTo=queue:JmsSimpleRequestReplyFixedReplyQueueTest.reply")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsSimpleRequestReplyFixedReplyQueueTest")
                         .transform(body().prepend("Hello "));
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

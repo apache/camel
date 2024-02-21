@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.common;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -35,7 +36,7 @@ public final class TestUtils {
 
     /**
      * Wait for a given condition to be true or the retry amount (30) to expire
-     * 
+     *
      * @param resourceCheck
      * @param payload
      * @param <T>
@@ -65,7 +66,7 @@ public final class TestUtils {
 
     /**
      * Wait for a given condition to be true or the retry amount (30) to expire
-     * 
+     *
      * @param resourceCheck
      */
     public static boolean waitFor(BooleanSupplier resourceCheck) {
@@ -92,15 +93,13 @@ public final class TestUtils {
 
     /**
      * Gets a random number within range
-     * 
+     *
      * @param  min
      * @param  max
      * @return
      */
     public static int randomWithRange(int min, int max) {
-        int range = (max - min) + 1;
-
-        return (int) (Math.random() * range) + min;
+        return ThreadLocalRandom.current().nextInt(min, max);
     }
 
     /**

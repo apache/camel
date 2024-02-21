@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "setVariable",
+    "title": "Set Variable",
+    "description": "Sets the value of a variable",
+    "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.SetVariableDefinition",
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "index": 1, "kind": "element", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "name": { "index": 3, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used." },
+    "expression": { "index": 4, "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "Expression to return the value of the variable" }
+  }
+}

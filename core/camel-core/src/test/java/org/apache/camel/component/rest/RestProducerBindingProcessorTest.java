@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rest;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.AsyncCallback;
@@ -70,7 +69,7 @@ public class RestProducerBindingProcessorTest {
         exchange.setIn(input);
 
         final ResponsePojo response = new ResponsePojo();
-        when(outJsonDataFormat.unmarshal(same(exchange), any(InputStream.class))).thenReturn(response);
+        when(outJsonDataFormat.unmarshal(same(exchange), any(Object.class))).thenReturn(response);
 
         final ArgumentCaptor<AsyncCallback> bindingCallback = ArgumentCaptor.forClass(AsyncCallback.class);
 
@@ -105,7 +104,7 @@ public class RestProducerBindingProcessorTest {
         exchange.setIn(input);
 
         final ResponsePojo response = new ResponsePojo();
-        when(outXmlDataFormat.unmarshal(same(exchange), any(InputStream.class))).thenReturn(response);
+        when(outXmlDataFormat.unmarshal(same(exchange), any(Object.class))).thenReturn(response);
 
         final ArgumentCaptor<AsyncCallback> bindingCallback = ArgumentCaptor.forClass(AsyncCallback.class);
 

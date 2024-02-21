@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hl7</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel HL7 support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.apache.mina.*;version="[2,3)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
@@ -48,7 +45,7 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>${hapi-version}</version>
+            <version>${hapi-base-version}</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
@@ -103,6 +100,7 @@
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
+            <version>${mina-version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -128,8 +126,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

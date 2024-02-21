@@ -16,11 +16,11 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
@@ -33,10 +33,12 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
-    @XmlAttribute(required = true)
-    private String ref;
+
     @XmlTransient
     private Processor processor;
+
+    @XmlAttribute(required = true)
+    private String ref;
 
     public ProcessDefinition() {
     }
@@ -85,7 +87,13 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     }
 
     /**
-     * Reference to the {@link Processor} to lookup in the registry to use.
+     * Reference to the Processor to lookup in the registry to use.
+     *
+     * Can also be used for creating new beans by their class name by prefixing with #class, eg
+     * #class:com.foo.MyClassType.
+     *
+     * And it is also possible to refer to singleton beans by their type in the registry by prefixing with #type:
+     * syntax, eg #type:com.foo.MyClassType
      */
     public void setRef(String ref) {
         this.ref = ref;

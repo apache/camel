@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -28,7 +30,7 @@ import org.apache.camel.spi.Metadata;
  * Marshal Camel messages with attachments into MIME-Multipart messages and back.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "MIME Multipart")
-@XmlRootElement(name = "mime-multipart")
+@XmlRootElement(name = "mimeMultipart")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MimeMultipartDataFormat extends DataFormatDefinition {
 
@@ -48,7 +50,16 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     private String binaryContent;
 
     public MimeMultipartDataFormat() {
-        super("mime-multipart");
+        super("mimeMultipart");
+    }
+
+    private MimeMultipartDataFormat(Builder builder) {
+        this();
+        this.multipartSubType = builder.multipartSubType;
+        this.multipartWithoutAttachment = builder.multipartWithoutAttachment;
+        this.headersInline = builder.headersInline;
+        this.includeHeaders = builder.includeHeaders;
+        this.binaryContent = builder.binaryContent;
     }
 
     public String getMultipartSubType() {
@@ -58,7 +69,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     /**
      * Specify the subtype of the MIME Multipart.
      * <p>
-     * Default is "mixed".
+     * Default is mixed.
      */
     public void setMultipartSubType(String multipartSubType) {
         this.multipartSubType = multipartSubType;
@@ -71,7 +82,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     /**
      * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part).
      * <p>
-     * Default is "false".
+     * Default is false.
      */
     public void setMultipartWithoutAttachment(String multipartWithoutAttachment) {
         this.multipartWithoutAttachment = multipartWithoutAttachment;
@@ -85,7 +96,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
      * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
      * (false).
      * <p>
-     * Default is "false".
+     * Default is false.
      */
     public void setHeadersInline(String headersInline) {
         this.headersInline = headersInline;
@@ -112,9 +123,112 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     /**
      * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false)
      * <p>
-     * Default is "false".
+     * Default is false.
      */
     public void setBinaryContent(String binaryContent) {
         this.binaryContent = binaryContent;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link MimeMultipartDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<MimeMultipartDataFormat> {
+
+        private String multipartSubType = "mixed";
+        private String multipartWithoutAttachment;
+        private String headersInline;
+        private String includeHeaders;
+        private String binaryContent;
+
+        /**
+         * Specify the subtype of the MIME Multipart.
+         * <p>
+         * Default is mixed.
+         */
+        public Builder multipartSubType(String multipartSubType) {
+            this.multipartSubType = multipartSubType;
+            return this;
+        }
+
+        /**
+         * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body
+         * part).
+         * <p>
+         * Default is false.
+         */
+        public Builder multipartWithoutAttachment(String multipartWithoutAttachment) {
+            this.multipartWithoutAttachment = multipartWithoutAttachment;
+            return this;
+        }
+
+        /**
+         * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body
+         * part).
+         * <p>
+         * Default is false.
+         */
+        public Builder multipartWithoutAttachment(boolean multipartWithoutAttachment) {
+            this.multipartWithoutAttachment = Boolean.toString(multipartWithoutAttachment);
+            return this;
+        }
+
+        /**
+         * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
+         * (false).
+         * <p>
+         * Default is false.
+         */
+        public Builder headersInline(String headersInline) {
+            this.headersInline = headersInline;
+            return this;
+        }
+
+        /**
+         * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
+         * (false).
+         * <p>
+         * Default is false.
+         */
+        public Builder headersInline(boolean headersInline) {
+            this.headersInline = Boolean.toString(headersInline);
+            return this;
+        }
+
+        /**
+         * A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will
+         * only work if headersInline is set to true.
+         * <p>
+         * Default is to include no headers
+         */
+        public Builder includeHeaders(String includeHeaders) {
+            this.includeHeaders = includeHeaders;
+            return this;
+        }
+
+        /**
+         * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false)
+         * <p>
+         * Default is false.
+         */
+        public Builder binaryContent(String binaryContent) {
+            this.binaryContent = binaryContent;
+            return this;
+        }
+
+        /**
+         * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false)
+         * <p>
+         * Default is false.
+         */
+        public Builder binaryContent(boolean binaryContent) {
+            this.binaryContent = Boolean.toString(binaryContent);
+            return this;
+        }
+
+        @Override
+        public MimeMultipartDataFormat end() {
+            return new MimeMultipartDataFormat(this);
+        }
     }
 }

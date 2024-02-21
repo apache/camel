@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jacksonxml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,15 +30,19 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -50,9 +56,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from XML.
+ * <a href="https://github.com/FasterXML/jackson">Jackson</a> to marshal to and from XML.
  */
-@Dataformat("jacksonxml")
+@Dataformat("jacksonXml")
 public class JacksonXMLDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -102,7 +108,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      *
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
     public JacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
         this(unmarshalType, jsonView, true);
@@ -113,7 +119,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      *
      * @param unmarshalType              the custom unmarshal type
      * @param jsonView                   marker class to specify properties to be included during marshalling. See also
-     *                                   http://wiki.fasterxml.com/JacksonJsonViews
+     *                                   https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      * @param enableJaxbAnnotationModule if it is true, will enable the JaxbAnnotationModule.
      */
     public JacksonXMLDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
@@ -138,7 +144,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
-     *                      http://wiki.fasterxml.com/JacksonJsonViews
+     *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
     public JacksonXMLDataFormat(XmlMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         this.xmlMapper = mapper;
@@ -148,7 +154,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     @Override
     public String getDataFormatName() {
-        return "xml-jackson";
+        return "jacksonXml";
     }
 
     @Override
@@ -172,7 +178,11 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
 
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         // is there a header with the unmarshal type?
         Class<?> clazz = unmarshalType;
         String type = null;
@@ -185,12 +195,37 @@ public class JacksonXMLDataFormat extends ServiceSupport
         if (type != null) {
             clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }
+
+        ObjectReader reader;
         if (collectionType != null) {
             CollectionType collType = xmlMapper.getTypeFactory().constructCollectionType(collectionType, clazz);
-            return this.xmlMapper.readValue(stream, collType);
+            reader = this.xmlMapper.readerFor(collType);
         } else {
-            return this.xmlMapper.readValue(stream, clazz);
+            reader = this.xmlMapper.reader().forType(clazz);
         }
+
+        // unwrap file (such as from camel-file)
+        if (body instanceof WrappedFile<?>) {
+            body = ((WrappedFile<?>) body).getBody();
+        }
+        Object answer;
+        if (body instanceof String b) {
+            answer = reader.readValue(b);
+        } else if (body instanceof byte[] arr) {
+            answer = reader.readValue(arr);
+        } else if (body instanceof Reader r) {
+            answer = reader.readValue(r);
+        } else if (body instanceof File f) {
+            answer = reader.readValue(f);
+        } else if (body instanceof JsonNode n) {
+            answer = reader.readValue(n);
+        } else {
+            // fallback to input stream
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            answer = reader.readValue(is);
+        }
+
+        return answer;
     }
 
     // Properties
@@ -456,6 +491,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
         }
     }
 
+    public void enableFeature(FromXmlParser.Feature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
     public void disableFeature(SerializationFeature feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
@@ -473,6 +516,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
     }
 
     public void disableFeature(MapperFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(FromXmlParser.Feature feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
@@ -502,7 +553,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
-            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            JakartaXmlBindAnnotationModule module = new JakartaXmlBindAnnotationModule();
             LOG.info("Registering module: {}", module);
             xmlMapper.registerModule(module);
         }
@@ -540,9 +591,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.enable(mf);
                     continue;
                 }
+                FromXmlParser.Feature pf
+                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, enable);
+                if (pf != null) {
+                    xmlMapper.enable(pf);
+                    continue;
+                }
                 throw new IllegalArgumentException(
                         "Enable feature: " + enable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
         if (disableFeatures != null) {
@@ -567,9 +624,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.disable(mf);
                     continue;
                 }
+                FromXmlParser.Feature pf
+                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, disable);
+                if (pf != null) {
+                    xmlMapper.disable(pf);
+                    continue;
+                }
                 throw new IllegalArgumentException(
                         "Disable feature: " + disable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
 

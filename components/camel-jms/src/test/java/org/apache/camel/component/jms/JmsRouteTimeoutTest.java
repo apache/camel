@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,13 +37,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
-public class JmsRouteTimeoutTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsRouteTimeoutTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
-    public void testTimeout() throws Exception {
+    public void testTimeout() {
         try {
-            // send a in-out with a timeout for 1 sec 
-            template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
+            // send a in-out with a timeout for 1 sec
+            template.requestBody("activemq:queue:JmsRouteTimeoutTest?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
@@ -47,30 +59,37 @@ public class JmsRouteTimeoutTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoTimeout() throws Exception {
+    public void testNoTimeout() {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec
-        Object out = template.requestBody("activemq:queue:slow?requestTimeout=5000", "Hello World");
+        Object out = template.requestBody("activemq:queue:JmsRouteTimeoutTest?requestTimeout=5000", "Hello World");
         // END SNIPPET: e1
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:slow").delay(3000).transform(constant("Bye World"));
+            public void configure() {
+                from("activemq:queue:JmsRouteTimeoutTest").delay(3000).transform(constant("Bye World"));
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

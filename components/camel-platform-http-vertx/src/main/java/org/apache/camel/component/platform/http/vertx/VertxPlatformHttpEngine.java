@@ -22,25 +22,39 @@ import java.util.List;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
-import org.apache.camel.Experimental;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Implementation of the {@link PlatformHttpEngine} based on Vert.x Web.
  */
-@Experimental
 @JdkService(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY)
-public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine {
+public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine, CamelContextAware {
+
+    private CamelContext camelContext;
     private List<Handler<RoutingContext>> handlers;
+    private int port;
 
     public VertxPlatformHttpEngine() {
         this.handlers = Collections.emptyList();
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public List<Handler<RoutingContext>> getHandlers() {
@@ -69,5 +83,29 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
                 endpoint,
                 processor,
                 handlers);
+    }
+
+    @Override
+    public int getServerPort() {
+        if (port == 0) {
+            VertxPlatformHttpServer server = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServer.class);
+            if (server != null && server.getServer() != null) {
+                port = server.getServer().actualPort();
+            }
+            if (port == 0) {
+                VertxPlatformHttpServerConfiguration config
+                        = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServerConfiguration.class);
+                if (config != null) {
+                    port = config.getBindPort();
+                }
+            }
+            if (port == 0) {
+                VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(camelContext);
+                if (router != null && router.getServer() != null && router.getServer().getServer() != null) {
+                    port = router.getServer().getServer().actualPort();
+                }
+            }
+        }
+        return port;
     }
 }

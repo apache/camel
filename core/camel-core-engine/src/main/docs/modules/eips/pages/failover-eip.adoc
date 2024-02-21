@@ -1,50 +1,170 @@
-[[failover-eip]]
 = Failover EIP
-:docTitle: Failover
-:description: Failover load balancer The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing. You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.
+:doctitle: Failover
+:shortname: failover
+:description: In case of failures the exchange will be tried on the next endpoint.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Failover Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
+This EIP allows using fail-over (in case of failures the exchange will be tried on the next endpoint)
+with the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
 == Options
 
 // eip options: START
-The Failover EIP supports 4 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *exception* | A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored |  | List
-| *roundRobin* | Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting). |  | String
-| *sticky* | Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting). |  | String
-| *maximumFailoverAttempts* | A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. his option can be used whether or not roundRobin is enabled or not. | -1 | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Exchange properties
 
-In this case we are using the header test as correlation expression:
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+In the example below calling the three http services is done with the load balancer.
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .failover(MyException.class)
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().failover()
+        .to("http:service1")
+        .to("http:service2")
+        .to("http:service3")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
-<from uri="direct:start"/>
+<route>
+    <from uri="direct:start"/>
     <loadBalance>
-       <failover>
-           <exception>com.example.camel.MyException</exception>
-       </failover>
-       <to uri="seda:x"/>      
-       <to uri="seda:y"/>      
-       <to uri="seda:z"/>       
-    </loadBalance> 
+        <failover/>
+        <to uri="http:service1"/>
+        <to uri="http:service2"/>
+        <to uri="http:service3"/>
+    </loadBalance>
+</route>
+----
+
+In the default mode the fail-over load balancer will always start with the first processor (i.e. "http:service1").
+And in case this fails, then try the next, until either it succeeded or all of them failed.
+If all failed then Camel will throw the caused exception which means the Exchange is failed.
+
+=== Using round-robin mode
+
+You can use the `roundRobin` mode to start again from the beginning, which then will keep
+trying until one succeed. To prevent endless retries, then it's recommended to
+set a maximum fail-over value.
+
+Setting this in Java DSL is not _pretty_ as there are three parameters:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance().failover(10, false, true)
+        .to("http:service1")
+        .to("http:service2")
+        .to("http:service3")
+    .end();
+----
+
+[source,java]
+----
+.failover(10, false, true)
+----
+
+Where `10` is the maximum failover attempts, And `false` is a special feature
+related to inheriting error handler. The last parameter `true` is to use round robin mode.
+
+In XML it is straightforward as shown:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <loadBalance>
+        <failover roundRobin="true" maximumFailoverAttempts="10"/>
+        <to uri="http:service1"/>
+        <to uri="http:service2"/>
+        <to uri="http:service3"/>
+    </loadBalance>
+</route>
+----
+
+=== Using sticky mode
+
+The sticky mode is used for remember the last known good endpoint, so the next exchange
+will start from there, instead from the beginning.
+
+For example support that http:service1 is down, and that service2 is up.
+With sticky mode enabled, then Camel will keep starting from service2 until it
+fails, and then try service3.
+
+If sticky mode is not enabled (default) then Camel will always start from the beginning, which
+means calling service1.
+
+Setting sticky mode in Java DSL is not _pretty_ as there are four parameters:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance().failover(10, false, true, true)
+        .to("http:service1")
+        .to("http:service2")
+        .to("http:service3")
+    .end();
+----
+
+The last `true` is to enable sticky mode.
+
+In XML it is straightforward as shown:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <loadBalance>
+        <failover roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
+        <to uri="http:service1"/>
+        <to uri="http:service2"/>
+        <to uri="http:service3"/>
+    </loadBalance>
+</route>
+----
+
+=== Fail-over on specific exceptions
+
+The fail-over load balancer can be configured to only apply for a specific set of exceptions.
+Suppose you only want to fail-over in case of `java.io.Exception` or `HttpOperationFailedException` then you can do:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance().failover(IOException.class, HttpOperationFailedException.class)
+        .to("http:service1")
+        .to("http:service2")
+        .to("http:service3")
+    .end();
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <loadBalance>
+        <failover>
+            <exception>java.io.IOException</exception>
+            <exception>org.apache.camel.http.base.HttpOperationFailedException</exception>
+        </failover>
+        <to uri="http:service1"/>
+        <to uri="http:service2"/>
+        <to uri="http:service3"/>
+    </loadBalance>
+</route>
 ----

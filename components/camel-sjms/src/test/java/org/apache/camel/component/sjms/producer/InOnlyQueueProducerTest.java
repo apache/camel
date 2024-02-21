@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InOnlyQueueProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test.InOnlyQueueProducerTest";
 
     public InOnlyQueueProducerTest() {
     }
@@ -93,11 +93,11 @@ public class InOnlyQueueProducerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("sjms:queue:" + TEST_DESTINATION_NAME);
+                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?deliveryMode=1");
 
                 from("direct:finish")
                         .to("log:test.log.1?showBody=true", "mock:result");

@@ -1,0 +1,43 @@
+= Advanced Camel Core Guides
+
+In these page you can find guides and documents that can help you to discover how to observe, scale and debug integrations. You can Learn about more advanced features of Camel Core and how you can build upon those for creating highly customized integrations for all projects and products.
+
+* xref:manual::camel-component-maven-plugin.adoc[Camel Maven Component]
+* xref:manual::batch-consumer.adoc[Batch Consumer]
+* xref:manual::graceful-shutdown.adoc[Graceful Shutdown]
+* xref:manual::backlog-debugger.adoc[Backlog Debugger]
+* xref:manual::backlog-tracer.adoc[Backlog Tracer]
+* xref:manual::clustering.adoc[Clustering]
+* xref:manual::injector.adoc[Injector]
+* xref:manual::jmx.adoc[JMX]
+* xref:manual::route-controller.adoc[Route Controller]
+* xref:manual::route-policy.adoc[Route Policy]
+* xref:manual::cronscheduledroutepolicy.adoc[Cron Scheduled Route Policy]
+* xref:manual::scheduledroutepolicy.adoc[Scheduled Route Policy]
+* xref:manual::simplescheduledroutepolicy.adoc[Simple Scheduled Route Policy]
+* xref:manual::threading-model.adoc[Threading Model]
+* xref:manual::context-reload.adoc[Context Reload]
+* xref:manual::route-reload.adoc[Route Reload]
+* xref:manual::pluggable-class-resolvers.adoc[Pluggable Class Resolvers]
+* xref:manual::transformer.adoc[Transformer]
+* xref:manual::tracer.adoc[Tracer]
+* xref:manual::type-converter.adoc[Type Converter]
+* xref:manual::uuidgenerator.adoc[UUID Generator]
+* xref:manual::debugger.adoc[Debugger]
+* xref:manual::health-check.adoc[Health Check]
+* xref:manual::writing-components.adoc[Writing Custom Camel Components]
+* xref:manual::endpoint-annotations.adoc[Endpoint Annotations]
+* xref:manual::http-session-handling.adoc[HTTP Session Handling]
+* xref:manual::browsable-endpoint.adoc[Browsable Endpoint]
+* xref:manual::camel-configuration-utilities.adoc[Configuration Utilities]
+
+If you are looking at contributing to Apache Camel, these guides may also help:
+
+* xref:manual::test-infra.adoc[Test Infra]
+* xref:manual::notify-builder.adoc[Notify builder]
+* xref:manual::building.adoc[Building Camel From Source]
+* xref:manual::improving-the-documentation.adoc[Improving the documentation]
+* xref:manual::release-guide.adoc[Release Guide]
+* xref:manual::release-guide-website.adoc[Release Guide for the Website]
+
+You can find additional documentation in the xref:manual::architecture.adoc[architecture documentation] in the old user manual.

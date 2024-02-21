@@ -59,6 +59,11 @@ public class ManagedTracer implements ManagedTracerMBean {
     }
 
     @Override
+    public boolean isStandby() {
+        return tracer.isStandby();
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         tracer.setEnabled(enabled);
     }
@@ -76,6 +81,16 @@ public class ManagedTracer implements ManagedTracerMBean {
     @Override
     public String getTracePattern() {
         return tracer.getTracePattern();
+    }
+
+    @Override
+    public boolean isTraceRests() {
+        return tracer.isTraceRests();
+    }
+
+    @Override
+    public boolean isTraceTemplates() {
+        return tracer.isTraceTemplates();
     }
 
     @Override

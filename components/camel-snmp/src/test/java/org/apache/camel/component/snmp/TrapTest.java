@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.snmp;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.apache.camel.test.AvailablePortFinder;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.PDU;
+import org.snmp4j.PDUv1;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
@@ -38,84 +41,88 @@ import org.snmp4j.smi.TimeTicks;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * This test covers both producing and consuming snmp traps
- */
-public class TrapTest extends CamelTestSupport {
+public class TrapTest extends SnmpTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TrapTest.class);
 
-    @Test
-    public void testStartRoute() throws Exception {
-        // do nothing here , just make sure the camel route can started.
-    }
-
-    @Test
-    public void testSendReceiveTraps() throws Exception {
-        // Create a trap PDU
-        PDU trap = new PDU();
-        trap.setType(PDU.TRAP);
-
-        OID oid = new OID("1.2.3.4.5");
-        trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
-        trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000))); // put your uptime here
-        trap.add(new VariableBinding(SnmpConstants.sysDescr, new OctetString("System Description")));
-
-        //Add Payload
-        Variable var = new OctetString("some string");
-        trap.add(new VariableBinding(oid, var));
+    @ParameterizedTest
+    @MethodSource("supportedVersions")
+    public void testSendReceiveTraps(int version) throws Exception {
+        PDU trap = createTrap(version);
 
         // Send it
-        LOG.info("Sending pdu " + trap);
-        Endpoint endpoint = context.getEndpoint("direct:snmptrap");
+        LOG.info("Sending pdu {}", trap);
+        Endpoint endpoint = context.getEndpoint("direct:snmptrapV" + version);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(trap);
         Producer producer = endpoint.createProducer();
         producer.process(exchange);
 
-        synchronized (this) {
-            Thread.sleep(1000);
-        }
-
         // If all goes right it should come here
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:resultV" + version);
         mock.expectedMessageCount(1);
-        mock.assertIsSatisfied();
 
-        List<Exchange> exchanges = mock.getExchanges();
-        SnmpMessage msg = (SnmpMessage) exchanges.get(0).getIn();
-        PDU receivedTrap = msg.getSnmpMessage();
-        assertEquals(trap, receivedTrap);
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Received SNMP TRAP:");
-            Vector<? extends VariableBinding> variableBindings = receivedTrap.getVariableBindings();
-            for (VariableBinding vb : variableBindings) {
-                LOG.info("  " + vb.toString());
-            }
-        }
+        // wait a bit
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> mock.assertIsSatisfied());
+
+        Message in = mock.getReceivedExchanges().get(0).getIn();
+        Assertions.assertTrue(in instanceof SnmpMessage, "Expected received object 'SnmpMessage.class'. Got: " + in.getClass());
+        String msg = in.getBody(String.class);
+        String expected = "<oid>1.2.3.4.5</oid><value>some string</value>";
+        Assertions.assertTrue(msg.contains(expected), "Expected string containing '" + expected + "'. Got: " + msg);
     }
 
-    /**
-     * RouteBuilders for the SNMP TRAP producer and consumer
-     */
+    private PDU createTrap(int version) {
+        PDU trap = SnmpHelper.createPDU(version);
+
+        OID oid = new OID("1.2.3.4.5");
+        trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
+        trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000))); // put your uptime here
+        trap.add(new VariableBinding(SnmpConstants.sysDescr, new OctetString("System Description")));
+        if (version == 0) {
+            ((PDUv1) trap).setEnterprise(oid); //?
+        }
+
+        //Add Payload
+        Variable var = new OctetString("some string");
+        trap.add(new VariableBinding(oid, var));
+        return trap;
+    }
+
     @Override
-    protected RoutesBuilder[] createRouteBuilders() {
-        return new RoutesBuilder[] {
-                new RouteBuilder() {
-                    public void configure() {
-                        from("direct:snmptrap")
-                                .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
-                                .to("snmp:127.0.0.1:1662?protocol=udp&type=TRAP&snmpVersion=" + SnmpConstants.version2c);
-                    }
-                },
-                new RouteBuilder() {
-                    public void configure() {
-                        from("snmp:0.0.0.0:1662?protocol=udp&type=TRAP&snmpVersion=" + SnmpConstants.version2c)
-                                .id("SnmpTrapConsumer")
-                                .to("mock:result");
-                    }
-                }
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                //genrate ports for trap consumers/producers
+                int portV0 = AvailablePortFinder.getNextAvailable();
+                int portV1 = AvailablePortFinder.getNextAvailable();
+                int portV3 = AvailablePortFinder.getNextAvailable();
+
+                from("direct:snmptrapV0")
+                        .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
+                        .to("snmp:127.0.0.1:" + portV0 + "?protocol=udp&type=TRAP&snmpVersion=0");
+
+                from("snmp:0.0.0.0:" + portV0 + "?protocol=udp&type=TRAP&snmpVersion=0")
+                        .to("mock:resultV0");
+
+                from("direct:snmptrapV1")
+                        .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
+                        .to("snmp:127.0.0.1:" + portV1 + "?protocol=udp&type=TRAP&snmpVersion=1");
+
+                from("snmp:0.0.0.0:" + portV1 + "?protocol=udp&type=TRAP&snmpVersion=1")
+                        .to("mock:resultV1");
+
+                from("direct:snmptrapV3")
+                        .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
+                        .to("snmp:127.0.0.1:" + portV3
+                            + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3");
+
+                from("snmp:0.0.0.0:" + portV3 + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3")
+                        .to("mock:resultV3");
+            }
         };
     }
+
 }

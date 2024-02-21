@@ -18,12 +18,12 @@ package org.apache.camel.component.sjms.producer;
 
 import java.util.UUID;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerTest";
 
     public InOutQueueProducerTest() {
     }
@@ -101,13 +101,13 @@ public class InOutQueueProducerTest extends JmsTestSupport {
 
     /*
      * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     * 
+     *
      * @return
-     * 
+     *
      * @throws Exception
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

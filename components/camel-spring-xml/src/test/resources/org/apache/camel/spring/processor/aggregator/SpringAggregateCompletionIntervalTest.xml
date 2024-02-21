@@ -26,10 +26,11 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="seda:start"/>
             <!-- trigger completion of all current aggregated exchanges every 5th second -->
-            <aggregate strategyRef="aggregatorStrategy" completionInterval="5000">
+            <aggregate aggregationStrategy="aggregatorStrategy" completionInterval="5000">
                 <correlationExpression>
                     <simple>header.id</simple>
                 </correlationExpression>

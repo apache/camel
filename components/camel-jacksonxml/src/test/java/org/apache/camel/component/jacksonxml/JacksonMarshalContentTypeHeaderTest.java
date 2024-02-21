@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
-    public void testYes() throws Exception {
+    public void testYes() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:yes", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(in);
             }
         });
@@ -50,13 +50,13 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testYes2() throws Exception {
+    public void testYes2() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:yes2", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(in);
             }
         });
@@ -67,13 +67,13 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNo() throws Exception {
+    public void testNo() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
         Exchange out = template.request("direct:no", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(in);
             }
         });
@@ -84,15 +84,15 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
                 from("direct:yes").marshal(format);
 
-                from("direct:yes2").marshal().jacksonxml();
+                from("direct:yes2").marshal().jacksonXml();
 
                 JacksonXMLDataFormat formatNoHeader = new JacksonXMLDataFormat();
                 formatNoHeader.setContentTypeHeader(false);

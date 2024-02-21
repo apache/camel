@@ -23,8 +23,6 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="JdbcSpringDataSource.xml" />
-
     <!-- aggregate the messages using this strategy -->
     <bean id="myAggregatorStrategy" class="org.apache.camel.processor.aggregate.jdbc.AbstractJdbcAggregationTestSupport$MyAggregationStrategy"/>
 
@@ -32,7 +30,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- aggregate using our strategy and jdbc repo, and complete when we have 5 messages aggregated -->
-            <aggregate strategyRef="myAggregatorStrategy" aggregationRepositoryRef="repo3" completionSize="5">
+            <aggregate aggregationStrategy="myAggregatorStrategy" aggregationRepository="repo3" completionSize="5">
                 <!-- correlate by header with the key id -->
                 <correlationExpression><header>id</header></correlationExpression>
                 <!-- send aggregated messages to the mock endpoint -->

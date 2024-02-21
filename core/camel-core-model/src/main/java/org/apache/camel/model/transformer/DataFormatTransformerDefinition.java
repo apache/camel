@@ -16,16 +16,14 @@
  */
 package org.apache.camel.model.transformer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -39,7 +37,7 @@ import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
@@ -49,19 +47,20 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
+import org.apache.camel.model.dataformat.SoapDataFormat;
+import org.apache.camel.model.dataformat.SwiftMtDataFormat;
+import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -78,64 +77,48 @@ import org.apache.camel.spi.Metadata;
 public class DataFormatTransformerDefinition extends TransformerDefinition {
 
     @XmlElements({
-            @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
-            @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
-            @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
-            @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
-            @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
-            @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
-            @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
-            @XmlElement(required = false, name = "cbor", type = CBORDataFormat.class),
-            @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
-            @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
-            @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
-            @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
-            @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
-            @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
-            @XmlElement(required = false, name = "grok", type = GrokDataFormat.class),
-            @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
-            @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
-            @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
-            @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
-            @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
-            @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
-            @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
-            @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
-            @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
-            @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
-            @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
-            @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
-            @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
-            @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
-            @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
-            @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
-            @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
-            @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
-            @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
-            @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
-            @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
-            @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
-            @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
-            @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
-            @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
-            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class) })
+            @XmlElement(name = "asn1", type = ASN1DataFormat.class),
+            @XmlElement(name = "avro", type = AvroDataFormat.class),
+            @XmlElement(name = "barcode", type = BarcodeDataFormat.class),
+            @XmlElement(name = "base64", type = Base64DataFormat.class),
+            @XmlElement(name = "beanio", type = BeanioDataFormat.class),
+            @XmlElement(name = "bindy", type = BindyDataFormat.class),
+            @XmlElement(name = "cbor", type = CBORDataFormat.class),
+            @XmlElement(name = "crypto", type = CryptoDataFormat.class),
+            @XmlElement(name = "csv", type = CsvDataFormat.class),
+            @XmlElement(name = "custom", type = CustomDataFormat.class),
+            @XmlElement(name = "fhirJson", type = FhirJsonDataFormat.class),
+            @XmlElement(name = "fhirXml", type = FhirXmlDataFormat.class),
+            @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
+            @XmlElement(name = "grok", type = GrokDataFormat.class),
+            @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
+            @XmlElement(name = "hl7", type = HL7DataFormat.class),
+            @XmlElement(name = "ical", type = IcalDataFormat.class),
+            @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
+            @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
+            @XmlElement(name = "json", type = JsonDataFormat.class),
+            @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),
+            @XmlElement(name = "lzf", type = LZFDataFormat.class),
+            @XmlElement(name = "mimeMultipart", type = MimeMultipartDataFormat.class),
+            @XmlElement(name = "parquetAvro", type = ParquetAvroDataFormat.class),
+            @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
+            @XmlElement(name = "rss", type = RssDataFormat.class),
+            @XmlElement(name = "soap", type = SoapDataFormat.class),
+            @XmlElement(name = "swiftMt", type = SwiftMtDataFormat.class),
+            @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
+            @XmlElement(name = "syslog", type = SyslogDataFormat.class),
+            @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
+            @XmlElement(name = "thrift", type = ThriftDataFormat.class),
+            @XmlElement(name = "tidyMarkup", type = TidyMarkupDataFormat.class),
+            @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
+            @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
+            @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),
+            @XmlElement(name = "xmlSecurity", type = XMLSecurityDataFormat.class),
+            @XmlElement(name = "pgp", type = PGPDataFormat.class),
+            @XmlElement(name = "yaml", type = YAMLDataFormat.class),
+            @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
+            @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
-
-    @XmlAttribute
-    private String ref;
-
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * Set the reference of the DataFormat.
-     *
-     * @param ref reference of the DataFormat
-     */
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
 
     public DataFormatDefinition getDataFormatType() {
         return dataFormatType;

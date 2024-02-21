@@ -1,0 +1,7 @@
+{
+    "safe": $headers.safe,
+    "unsafe": $headers.unsafe,
+    "array": $headers.array,
+    "map": $headers.map,
+    * : .
+}

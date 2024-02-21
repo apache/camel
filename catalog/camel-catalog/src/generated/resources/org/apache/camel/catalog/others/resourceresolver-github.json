@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "resourceresolver-github",
+    "title": "Resourceresolver Github",
+    "description": "Resource resolver to load files from GitHub",
+    "deprecated": false,
+    "firstVersion": "3.11.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-resourceresolver-github",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

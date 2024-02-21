@@ -63,7 +63,7 @@ public class NoSplitRowsTest {
         int counter = 0;
         for (Map<String, String> row : data.subList(1, 5)) {
             assertEquals(expectedFirstName[counter], row.get("FIRSTNAME"), "FIRSTNAME");
-            LOG.info("Result: " + counter + " = " + row);
+            LOG.info("Result: {} = {}", counter, row);
             counter++;
         }
 

@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "platform-http-main",
+    "title": "Platform Http Main",
+    "description": "Platform HTTP for standalone Camel Main applications",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "label": "http",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-platform-http-main",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

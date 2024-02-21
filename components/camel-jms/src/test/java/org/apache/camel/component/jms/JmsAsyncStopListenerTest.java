@@ -16,52 +16,77 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Testing with async stop listener
  */
-public class JmsAsyncStopListenerTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(60)
+public class JmsAsyncStopListenerTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testAsyncStopListener() throws Exception {
-        MockEndpoint result = getMockEndpoint("mock:result");
+        MockEndpoint result = getMockEndpoint("mock:JmsAsyncStopListenerTest");
         result.expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:hello2", "Hello World");
-        template.sendBody("activemq:queue:hello2", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Hello World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Goodbye World");
 
         result.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.getConfiguration().setAsyncStopListener(true);
-        camelContext.addComponent(componentName, jms);
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        JmsComponent jms = super.setupComponent(camelContext, service, componentName);
+        jms.getConfiguration().setAsyncStopListener(true);
+        return jms;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:hello2").to("mock:result");
+            public void configure() {
+                from("activemq:queue:JmsAsyncStopListenerTest").to("mock:JmsAsyncStopListenerTest");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

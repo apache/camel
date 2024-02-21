@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "properties",
+    "title": "Properties",
+    "description": "Bean properties",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.BeanPropertiesDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "property": { "index": 0, "kind": "element", "displayName": "Property", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.BeanPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Bean properties" }
+  }
+}

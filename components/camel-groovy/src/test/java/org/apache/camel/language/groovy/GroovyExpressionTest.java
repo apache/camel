@@ -36,14 +36,14 @@ public class GroovyExpressionTest {
     protected Exchange exchange;
 
     @Test
-    public void testExpressionReturnsTheCorrectValue() throws Exception {
+    public void testExpressionReturnsTheCorrectValue() {
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['foo.bar']"), exchange, "cheese");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers.name"), exchange, "James");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['doesNotExist']"), exchange, null);
     }
 
     @Test
-    public void testPredicateEvaluation() throws Exception {
+    public void testPredicateEvaluation() {
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'James'"), exchange, true);
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
 
@@ -51,26 +51,26 @@ public class GroovyExpressionTest {
     }
 
     @Test
-    public void testProcessorMutatesTheExchange() throws Exception {
+    public void testProcessorMutatesTheExchange() {
         GroovyLanguage.groovy("request.headers.myNewHeader = 'ABC'").evaluate(exchange);
 
         assertInMessageHeader(exchange, "myNewHeader", "ABC");
     }
 
     @Test
-    public void testInvalidExpressionFailsWithMeaningfulException() throws Exception {
+    public void testInvalidExpressionFailsWithMeaningfulException() {
         try {
             GroovyLanguage.groovy("exchange.doesNotExist").evaluate(exchange);
             fail("This test case should have thrown an exception!");
         } catch (Exception e) {
-            LOG.debug("Caught expected exception: " + e, e);
+            LOG.debug("Caught expected exception: {}", e.getMessage(), e);
             String message = e.getMessage();
             assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
         }
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setHeader("foo.bar", "cheese");
         exchange.getIn().setHeader("name", "James");

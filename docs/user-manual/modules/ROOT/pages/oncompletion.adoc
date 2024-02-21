@@ -1,27 +1,24 @@
-[[OnCompletion-OnCompletion]]
 = OnCompletion
 
-Camel has this concept of a Unit of Work that encompass the
+Camel has this concept of a _Unit of Work_ that encompass the
 Exchange. The unit of work among others supports
 synchronization callbacks that are invoked when the
 Exchange is complete. The callback API is defined in
-`org.apache.camel.spi.Synchronization`. and the extended synchronization
+`org.apache.camel.spi.Synchronization` and the extended synchronization
 `org.apache.camel.spi.SynchronizationRouteAware` that have callbacks for
 route events.
 
-*Getting the UnitOfWork*
+== UnitOfWork API
 
 You can get hold of the `org.apache.camel.spi.UnitOfWork` from
 `org.apache.camel.Exchange` with the method `getUnitOfWork()`.
 
-*OnCompletion DSL*
+== OnCompletion DSL
 
-The *onCompletion* EIP supports the following features:
+The OnCompletion EIP supports the following features:
 
-* scope: global and/or per route (route scope override all global scope)
-* multiple global scope
-* triggered either always, only if completed with success, or only if
-failed
+* level: context or route (route level override global level)
+* triggered either always, only if completed with success, or only if failed
 * `onWhen` predicate to only trigger if matched
 * `mode` to define whether to run either before or after
 route consumer writes response back to callee (if its InOut) (default AfterConsumer)
@@ -35,22 +32,21 @@ allows to modify the exchange before the consumer writes back any
 response to the callee. You can use this to for example add customer
 headers, or send to a log to log the response message, etc.
 
-[[OnCompletion-onCompletionwithroutescope]]
-== onCompletion with route scope
+=== onCompletion with route scope
 
-The *onCompletion* DSL allows you to add custom routes/processors when
-the original Exchange is complete. Camel spin-off a
+The OnCompletion EIP allows you to add custom routes/processors when
+the original Exchange is complete. Camel spins off a
 copy of the Exchange and routes it in a separate
-thread, kinda like a Wire Tap. This allows the
-original thread to continue while the *onCompletion* route is running
-concurrently. We decided for this model as we did not want the
-*onCompletion* route to interfere with the original route.
+thread, similar to a Wire Tap. This allows the
+original thread to continue while the onCompletion route is running
+concurrently. We chose this model as we did not want the
+onCompletion route to interfere with the original route.
 
-*Only 1 onCompletion supported by route scope*
+=== Multiple onCompletions
 
-You can only have 1 onCompletion in a route. Only at context scoped
-level you can have multiple. And notice that when you use a route scoped
-onCompletion then any context scoped are disabled for that given route.
+You may define multiple onCompletions at both context and route level.
+
+When you define route level onCompletions then any context levels are disabled for that given route.
 
 [source,java]
 -----------------------------------------------------------
@@ -62,12 +58,12 @@ from("direct:start")
         .to("mock:sync")
     // must use end to denote the end of the onCompletion route
     .end()
-    // here the original route contiues
+    // here the original route contiunes
     .process(new MyProcessor())
     .to("mock:result");
 -----------------------------------------------------------
 
-By default the *onCompletion* will be triggered when the
+By default the OnCompletion EIP will be triggered when the
 Exchange is complete and regardless if the
 Exchange completed with success or with a failure
 (such as an Exception was thrown). You can limit the trigger to only
@@ -79,8 +75,12 @@ from("direct:start")
     // here we qualify onCompletion to only invoke when the exchange failed (exception or FAULT body)
     .onCompletion().onFailureOnly()
         .to("log:sync")
-        .to("mock:sync")
+        .to("mock:syncFail")
     // must use end to denote the end of the onCompletion route
+    .end()    
+    .onCompletion().onCompleteOnly()
+        .to("log:sync")
+        .to("mock:syncOK")
     .end()
     // here the original route continues
     .process(new MyProcessor())
@@ -88,11 +88,9 @@ from("direct:start")
 -----------------------------------------------------------
 
 You can identify if the Exchange is an
-*onCompletion* Exchange as Camel will add the
-property `Exchange.ON_COMPLETION` with a boolean value of `true` when it
-spin-off the *onCompletion* Exchange.
+OnCompletion Exchange as Camel will add the
+property `Exchange.ON_COMPLETION` with a boolean value of `true`.
 
-[[OnCompletion-UsingonCompletionfromSpringDSL]]
 === Using onCompletion from XML DSL
 
 The onCompletion is defined like this with XML DSL:
@@ -114,14 +112,14 @@ The onCompletion is defined like this with XML DSL:
 ----
 
 And the `onCompleteOnly` and `onFailureOnly` is defined as a boolean
-attribute on the <onCompletion> tag so the failure example would be:
+attribute on the `<onCompletion>` tag, so the failure example would be:
 
 [source,xml]
 ----
 <route>
     <from uri="direct:start"/>
     <!-- this onCompletion block will only be executed when the exchange is done being routed -->
-    <!-- this callback is only triggered when the exchange failed, as we have onFailure=true -->
+    <!-- this callback is only triggered when the exchange failed, as we have onFailureOnly=true -->
     <onCompletion onFailureOnly="true">
         <to uri="log:sync"/>
         <to uri="mock:sync"/>
@@ -131,15 +129,14 @@ attribute on the <onCompletion> tag so the failure example would be:
 </route>
 ----
 
-[[OnCompletion-onCompletionwithglobalscope]]
-== onCompletion with global scope
+=== onCompletion with global level
 
-This works just like the route scope except from the fact that they are
+This works just like the route level except from the fact that they are
 defined globally. An example below:
 
 [source,java]
 ----
-// define a global on completion that is invoked when the exchange is complete
+// define a global on completion that is invoked when the exchange is done being routed
 onCompletion().to("log:global").to("mock:sync");
  
 from("direct:start")
@@ -147,15 +144,11 @@ from("direct:start")
     .to("mock:result");
 ----
 
-[[OnCompletion-UsingonCompletionfromSpringDSL.1]]
-=== Using onCompletion from Spring DSL
-
-This works just like the route scope except from the fact that they are
-defined globally. An example below:
+And in XML:
 
 [source,xml]
 ----
-<!-- this is a global onCompletion route that is invoke when any exchange is complete
+<!-- this is a global onCompletion route that is invoked when any exchange is done being routed
      as a kind of after callback -->
 <onCompletion>
     <to uri="log:global"/>
@@ -169,39 +162,35 @@ defined globally. An example below:
 </route>
 ----
 
-
-*Route scope override Global scope*
-If an *onCompletion* is defined in a route, it overrides *all* global
-scoped and thus it is only the route scoped that are used. The globally
+IMPORTANT: If an `onCompletion` is defined in a route, it overrides *all* global
+scoped, and thus it is only the route scoped that is used. The globally
 scoped are not in use.
 
-[[OnCompletion-UsingonCompletionwithonWhenpredicate]]
-== Using onCompletion with onWhen predicate
+=== Using onCompletion with onWhen predicate
 
 As other DSL in Camel you can attach a predicate to
-the *onCompletion* so it only triggers in certain conditions, when the
+the `onCompletion`, so it only triggers in certain conditions, when the
 predicate matches. For example to only trigger if the message body contains the word
-`Hello` we can do like:
+_Hello_ we can do like:
 
 [source,java]
 ----
 from("direct:start")
     .onCompletion().onWhen(body().contains("Hello"))
-        // this route is only invoked when the original route is complete as a kind
-        // of completion callback. And also only if the onWhen predicate is true
+        // this route is only invoked when the original route is done being routed
+        // and the onWhen predicate is true
         .to("log:sync")
         .to("mock:sync")
     // must use end to denote the end of the onCompletion route
     .end()
-    // here the original route contiues
+    // here the original route continues
     .to("log:original")
     .to("mock:result");
 ----
 
-[[OnCompletion-UsingonCompletionwithorwithoutthreadpool]]
 == Using onCompletion with or without thread pool
 
-To use thread pool then either set a `executorService` or set
+To use a thread pool then either set a `executorService` or set
 `parallelProcessing` to true.
 
 For example in Java DSL do
@@ -214,34 +203,32 @@ onCompletion().parallelProcessing()
     .setBody(simple("OnComplete:${body}"));
 ----
 
-And in XML DSL
+And in XML DSL:
 
 [source,xml]
 ----
 <onCompletion parallelProcessing="true">
-  <to uri="before"/>
+  <to uri="mock:before"/>
   <delay><constant>1000</constant></delay>
   <setBody><simple>OnComplete:${body}</simple></setBody>
 </onCompletion>
 ----
 
 You can also refer to a specific thread pool
-to be used, using the executorServiceRef option
+to be used, using the `executorServiceRef` option
 
 [source,xml]
 ----
 <onCompletion executorServiceRef="myThreadPool">
-  <to uri="before"/>
+  <to uri="mock:before"/>
   <delay><constant>1000</constant></delay>
   <setBody><simple>OnComplete:${body}</simple></setBody>
 </onCompletion>
 ----
 
+=== OnCompletion consumer modes
 
-[[OnCompletion-UsingonCompletiontorunbeforerouteconsumersendsbackresponsetocallee]]
-== Using onCompletion to run before route consumer sends back response to callee
-
-OnCompletion supports two modes
+OnCompletion supports two modes that affect the route consumer:
 
 * AfterConsumer - Default mode which runs after the consumer is done
 * BeforeConsumer - Runs before the consumer is done, and before the
@@ -250,9 +237,9 @@ consumer writes back response to the callee
 The AfterConsumer mode is the default mode which is the same behavior as
 in older Camel releases.
 
-The new BeforeConsumer mode is used to run onCompletion before the
+The new BeforeConsumer mode is used to run `onCompletion` before the
 consumer writes its response back to the callee (if in InOut mode). This
-allows the onCompletion to modify the Exchange, such as adding special
+allows the `onCompletion` to modify the Exchange, such as adding special
 headers, or to log the Exchange as a response logger etc.
 
 For example to always add a "created by" header you

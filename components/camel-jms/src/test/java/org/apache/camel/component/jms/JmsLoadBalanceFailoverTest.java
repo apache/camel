@@ -16,12 +16,19 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,37 +36,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
+@Timeout(10)
 public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
 
-    @Test
-    public void testFailover() throws Exception {
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    @BeforeEach
+    void configureTest() {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+    }
 
+    @Test
+    public void testFailover() throws Exception {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .loadBalance().failover()
-                        .to("jms:queue:foo?transferException=true")
-                        .to("jms:queue:bar?transferException=true")
+                        .to("jms:queue:fooJmsLoadBalanceFailoverTest?transferException=true")
+                        .to("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .end()
                         .to("mock:result");
 
-                from("jms:queue:foo?transferException=true")
+                from("jms:queue:fooJmsLoadBalanceFailoverTest?transferException=true")
                         .to("mock:foo")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("jms:queue:bar?transferException=true")
+                from("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .to("mock:bar")
                         .transform().simple("Bye World");
             }
@@ -70,7 +84,7 @@ public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

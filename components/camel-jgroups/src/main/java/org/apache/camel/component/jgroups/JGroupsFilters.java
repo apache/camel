@@ -23,7 +23,7 @@ import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * JGroups-specific filters factory.
@@ -49,22 +49,19 @@ public final class JGroupsFilters {
      * @return predicate filtering out non-coordinator view messages.
      */
     public static Predicate dropNonCoordinatorViews() {
-        return new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                Object body = exchange.getIn().getBody();
-                LOG.debug("Filtering message {}.", body);
-                if (body instanceof View) {
-                    View view = (View) body;
-                    Address coordinatorNodeAddress = view.getMembers().get(COORDINATOR_NODE_INDEX);
-                    Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
-                    LOG.debug("Comparing endpoint channel address {} against the coordinator node address {}.",
-                            channelAddress, coordinatorNodeAddress);
-                    return channelAddress.equals(coordinatorNodeAddress);
-                }
-                LOG.debug("Body {} is not an instance of org.jgroups.View . Skipping filter.", body);
-                return false;
+        return (Exchange exchange) -> {
+            Object body = exchange.getIn().getBody();
+            LOG.debug("Filtering message {}.", body);
+            if (body instanceof View) {
+                View view = (View) body;
+                Address coordinatorNodeAddress = view.getMembers().get(COORDINATOR_NODE_INDEX);
+                Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
+                LOG.debug("Comparing endpoint channel address {} against the coordinator node address {}.",
+                        channelAddress, coordinatorNodeAddress);
+                return channelAddress.equals(coordinatorNodeAddress);
             }
+            LOG.debug("Body {} is not an instance of org.jgroups.View . Skipping filter.", body);
+            return false;
         };
     }
 

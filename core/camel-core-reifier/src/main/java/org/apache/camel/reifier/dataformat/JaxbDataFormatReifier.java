@@ -48,6 +48,7 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("schemaLocation", definition.getSchemaLocation());
         properties.put("noNamespaceSchemaLocation", definition.getNoNamespaceSchemaLocation());
         properties.put("jaxbProviderProperties", definition.getJaxbProviderProperties());
+        properties.put("accessExternalSchemaProtocols", definition.getAccessExternalSchemaProtocols());
     }
 
 }

@@ -26,7 +26,7 @@ public class QNameStrategy implements ElementNameStrategy {
 
     /**
      * Initialize with one QName
-     * 
+     *
      * @param elmentName QName to be used for all finds
      */
     public QNameStrategy(QName elmentName) {
@@ -43,6 +43,11 @@ public class QNameStrategy implements ElementNameStrategy {
 
     @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
+        throw new UnsupportedOperationException("Exception lookup is not supported for QNameStrategy");
+    }
+
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
         throw new UnsupportedOperationException("Exception lookup is not supported for QNameStrategy");
     }
 

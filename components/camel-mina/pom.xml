@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mina</artifactId>
@@ -32,7 +32,7 @@
     <description>Camel MINA support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>org.apache.mina.*;version="[2.0,3.0)"</camel.osgi.import.before.defaults>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -41,10 +41,15 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
+            <version>${mina-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -65,40 +70,51 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                    <excludes>
-                        <!-- This test just show the shutdown error -->
-                        <exclude>**/MinaProducerShutdownTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <!-- This test just show the shutdown error -->
+                                <exclude>**/MinaProducerShutdownTest.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
 
-            <plugin>
-                <!-- allows the special unittest to be ran via 'mvn compile exec:java' -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>org.apache.camel.component.mina.MinaProducerShutdownTest</mainClass>
-                    <includePluginDependencies>false</includePluginDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+                    <plugin>
+                        <!-- allows the special unittest to be ran via 'mvn compile exec:java' -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>org.apache.camel.component.mina.MinaProducerShutdownManualIT</mainClass>
+                            <includePluginDependencies>false</includePluginDependencies>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

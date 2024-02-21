@@ -18,8 +18,8 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -90,8 +90,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      *
      * @return the created error handler
      */
-    public TransactionErrorHandlerBuilder transactionErrorHandler() {
-        return new TransactionErrorHandlerBuilder();
+    public LegacyTransactionErrorHandlerBuilder transactionErrorHandler() {
+        return new LegacyTransactionErrorHandlerBuilder();
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @param  policy using this transaction policy (eg: required, supports, ...)
      * @return        the created error handler
      */
-    public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
+    public LegacyTransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
         return transactionErrorHandler(policy.getTransactionTemplate());
     }
 
@@ -110,8 +110,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @param  template the spring transaction template
      * @return          the created error handler
      */
-    public TransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
-        TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
+    public LegacyTransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
+        LegacyTransactionErrorHandlerBuilder answer = new LegacyTransactionErrorHandlerBuilder();
         answer.setTransactionTemplate(template);
         return answer;
     }
@@ -122,7 +122,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @param  transactionManager the spring transaction manager
      * @return                    the created error handler
      */
-    public TransactionErrorHandlerBuilder transactionErrorHandler(PlatformTransactionManager transactionManager) {
+    public LegacyTransactionErrorHandlerBuilder transactionErrorHandler(PlatformTransactionManager transactionManager) {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
         return transactionErrorHandler(template);
     }

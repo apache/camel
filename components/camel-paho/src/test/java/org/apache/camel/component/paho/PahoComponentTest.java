@@ -18,70 +18,55 @@ package org.apache.camel.component.paho;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PahoComponentTest extends CamelTestSupport {
+public class PahoComponentTest extends PahoTestSupport {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
     @EndpointInject("mock:testCustomizedPaho")
     MockEndpoint testCustomizedPahoMock;
 
-    BrokerService broker;
-
-    int mqttPort = AvailablePortFinder.getNextAvailable();
-
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("mqtt://localhost:" + mqttPort);
-        broker.start();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 PahoComponent customizedPaho = new PahoComponent();
-                context.addComponent("customizedPaho", customizedPaho);
+                getContext().addComponent("customizedPaho", customizedPaho);
 
-                from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
+                from("direct:test").to("paho:queue?brokerUrl=" + service.serviceAddress());
+                from("paho:queue?brokerUrl=" + service.serviceAddress()).to("mock:test");
 
-                from("direct:test2").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
+                from("direct:test2").to("paho:queue?brokerUrl=" + service.serviceAddress());
 
-                from("paho:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort).to("mock:persistenceTest");
+                from("paho:persistenceTest?persistence=FILE&brokerUrl=" + service.serviceAddress())
+                        .to("mock:persistenceTest");
 
-                from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
+                from("direct:testCustomizedPaho")
+                        .to("customizedPaho:testCustomizedPaho?brokerUrl=" + service.serviceAddress());
+                from("paho:testCustomizedPaho?brokerUrl=" + service.serviceAddress()).to("mock:testCustomizedPaho");
             }
         };
     }
@@ -90,7 +75,8 @@ public class PahoComponentTest extends CamelTestSupport {
 
     @Test
     public void checkOptions() {
-        String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2"
+        String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=" + service.serviceAddress()
+                     + "&qos=2"
                      + "&persistence=file";
 
         PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
@@ -98,7 +84,7 @@ public class PahoComponentTest extends CamelTestSupport {
         // Then
         assertEquals("/test/topic", endpoint.getTopic());
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
-        assertEquals("tcp://localhost:" + mqttPort, endpoint.getConfiguration().getBrokerUrl());
+        assertEquals(service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
         assertEquals(PahoPersistence.FILE, endpoint.getConfiguration().getPersistence());
     }
@@ -122,7 +108,7 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort, "msg");
+        template.sendBody("paho:someRandomQueue?brokerUrl=" + service.serviceAddress(), "msg");
 
         // Then
         mock.assertIsSatisfied();
@@ -184,10 +170,22 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test", "msg");
+        template.sendBody(
+                "paho:someRandomQueue?brokerUrl=" + service.serviceAddress() + "&userName=test&password=test",
+                "msg");
 
         // Then
         mock.assertIsSatisfied();
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        template = getCamelContextExtension().getProducerTemplate();
+        consumer = getCamelContextExtension().getConsumerTemplate();
+    }
 }

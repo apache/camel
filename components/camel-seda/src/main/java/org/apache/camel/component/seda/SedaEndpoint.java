@@ -30,7 +30,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -45,6 +44,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name",
-             category = { Category.CORE, Category.ENDPOINT })
+             remote = false, category = { Category.CORE, Category.MESSAGING })
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
@@ -70,7 +70,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
-    private BlockingQueue queue;
+    private BlockingQueue<Exchange> queue;
     @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
     private int size = SedaConstants.QUEUE_SIZE;
 
@@ -101,6 +101,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private boolean discardIfNoConsumers;
 
     private BlockingQueueFactory<Exchange> queueFactory;
+    private volatile QueueReference ref;
 
     public SedaEndpoint() {
         queueFactory = new LinkedBlockingQueueFactory<>();
@@ -209,17 +210,29 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Get's the {@link QueueReference} for the this endpoint.
+     * Gets the {@link QueueReference} for this endpoint.
      *
      * @return the reference, or <tt>null</tt> if no queue reference exists.
      */
-    public synchronized QueueReference getQueueReference() {
-        String key = getComponent().getQueueKey(getEndpointUri());
-        QueueReference ref = getComponent().getQueueReference(key);
+    public QueueReference getQueueReference() {
+        if (ref == null || ref.getCount() == 0) {
+            ref = tryQueueRefInit();
+        }
+
         return ref;
     }
 
-    protected synchronized AsyncProcessor getConsumerMulticastProcessor() throws Exception {
+    private QueueReference tryQueueRefInit() {
+        final SedaComponent component = getComponent();
+        if (component != null) {
+            final String key = component.getQueueKey(getEndpointUri());
+            return component.getQueueReference(key);
+        }
+
+        return null;
+    }
+
+    protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
         if (!multicastStarted && consumerMulticastProcessor != null) {
             // only start it on-demand to avoid starting it during stopping
             ServiceHelper.startService(consumerMulticastProcessor);
@@ -255,10 +268,19 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             // create multicast processor
             multicastStarted = false;
 
-            consumerMulticastProcessor = (AsyncProcessor) getCamelContext().adapt(ExtendedCamelContext.class)
-                    .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor",
+            consumerMulticastProcessor = (AsyncProcessor) PluginHelper.getProcessorFactory(getCamelContext())
+                    .createProcessor(getCamelContext(), "MulticastProcessor",
                             new Object[] { processors, multicastExecutor, false });
         }
+    }
+
+    void setName(String name) {
+        this.name = name;
+    }
+
+    @ManagedAttribute(description = "Queue name")
+    public String getName() {
+        return name;
     }
 
     /**
@@ -375,7 +397,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
+     * Offer timeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
      * using 0 or a negative value.
      */
     public void setOfferTimeout(long offerTimeout) {
@@ -433,8 +455,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue
-     * running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     * The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is
+     * allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
      */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -525,11 +547,6 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                     "Cannot enable both discardWhenFull=true and blockWhenFull=true."
                                                + " You can only either discard or block when full.");
         }
-
-        // special for unit testing where we can set a system property to make seda poll faster
-        // and therefore also react faster upon shutdown, which makes overall testing faster of the Camel project
-        String override = System.getProperty("CamelSedaPollTimeout", "" + getPollTimeout());
-        setPollTimeout(Integer.parseInt(override));
     }
 
     @Override
@@ -540,6 +557,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (queue == null) {
             queue = getQueue();
         }
+
+        ref = tryQueueRefInit();
     }
 
     @Override
@@ -549,6 +568,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         } else {
             LOG.debug("There is still active consumers.");
         }
+
+        ref = null;
     }
 
     @Override
@@ -580,6 +601,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
+        ref = null;
     }
 
 }

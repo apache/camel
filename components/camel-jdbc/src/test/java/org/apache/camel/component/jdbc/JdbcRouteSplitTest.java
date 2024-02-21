@@ -32,14 +32,14 @@ public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:hello", "select * from customer order by ID");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:hello")
                         // here we split the data from the testdb into new messages one by one

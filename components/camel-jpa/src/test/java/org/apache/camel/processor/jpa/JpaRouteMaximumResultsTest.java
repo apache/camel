@@ -35,7 +35,7 @@ public class JpaRouteMaximumResultsTest extends AbstractJpaTest {
         template.sendBody("direct:start", new SendEmail("two@somewhere.org"));
         template.sendBody("direct:start", new SendEmail("three@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(3);
 
         // should not consume 3 at once

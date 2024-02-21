@@ -24,10 +24,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jgroups.raft.StateMachine;
 
 /**
  * Component providing support for JGroups-raft leader election and shared state machine implementation
@@ -35,8 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 @Component("jgroups-raft")
 public class JGroupsRaftComponent extends DefaultComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftComponent.class);
-
     @UriParam
     @Metadata(defaultValue = "null")
     private RaftHandle raftHandle;
@@ -53,7 +49,7 @@ public class JGroupsRaftComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
         return new JGroupsRaftEndpoint(
-                uri, remaining, this, remaining, parameters, raftId, channelProperties, stateMachine, raftHandle);
+                uri, remaining, this, raftId, channelProperties, stateMachine, raftHandle);
     }
 
     public RaftHandle getRaftHandle() {

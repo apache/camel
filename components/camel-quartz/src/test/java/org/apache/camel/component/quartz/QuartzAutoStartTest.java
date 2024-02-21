@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,9 +35,10 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
         assertFalse(quartz.getScheduler().isStarted(), "Should not have started scheduler");
 
-        Thread.sleep(2000);
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMinimumMessageCount(1);
@@ -43,14 +47,14 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
 
         quartz.getScheduler().start();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?&autoStartScheduler=false").to("mock:one");
             }
         };

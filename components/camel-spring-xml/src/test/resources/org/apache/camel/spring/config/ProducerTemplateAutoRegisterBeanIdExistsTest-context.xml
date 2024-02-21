@@ -28,6 +28,7 @@
     <bean id="template" class="org.apache.camel.spring.example.DummyBean"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     </camelContext>
 
 </beans>

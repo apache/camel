@@ -34,11 +34,10 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
-        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+    public void testConstructorOne() {
+        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -49,11 +48,10 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
-        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+    public void testConstructorTwo() {
+        instance = new MllpInvalidMessageException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());

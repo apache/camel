@@ -17,14 +17,11 @@
 package org.apache.camel.test.infra.postgres.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for Postgres
  */
-public interface PostgresService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface PostgresService extends TestService {
 
     String host();
 
@@ -35,14 +32,4 @@ public interface PostgresService extends BeforeAllCallback, AfterAllCallback, Te
     String password();
 
     String getServiceAddress();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-    }
 }

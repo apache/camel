@@ -45,8 +45,8 @@ public class NettySSLPassphaseBeanTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });

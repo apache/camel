@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.cloud.ServiceCallConstants;
@@ -34,6 +33,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -131,7 +131,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     @Override
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "camel context");
-        processorFactory = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory();
+        processorFactory = PluginHelper.getProcessorFactory(camelContext);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         message.setHeader(ServiceCallConstants.SERVICE_NAME, serviceName);
 
         try {
-            return loadBalancer.process(serviceName, server -> execute(server, exchange, callback));
+            return loadBalancer.process(exchange, serviceName, server -> execute(server, exchange, callback));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -192,7 +192,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
         }
     }
 
-    private boolean execute(ServiceDefinition service, Exchange exchange, AsyncCallback callback) throws Exception {
+    private boolean execute(ServiceDefinition service, Exchange exchange, AsyncCallback callback) {
         final Message message = exchange.getIn();
         final String host = service.getHost();
         final int port = service.getPort();

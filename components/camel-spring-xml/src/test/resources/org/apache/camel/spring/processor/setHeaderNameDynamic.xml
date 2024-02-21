@@ -26,6 +26,7 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
       <setHeader name="$simple{type:org.apache.camel.spring.processor.SpringSetPropertyNameDynamicTest$TestConstans.EXCHANGE_PROP_TX_FAILED}">

@@ -16,21 +16,21 @@
  */
 package org.apache.camel.foo.bar;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * <p>
  * Java class for PersonType complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PersonType">
  *   &lt;complexContent>
@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  */
 @XmlRootElement(name = "Person")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,9 +57,9 @@ public class PersonType {
 
     /**
      * Gets the value of the firstName property.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getFirstName() {
         return firstName;
@@ -67,9 +67,9 @@ public class PersonType {
 
     /**
      * Sets the value of the firstName property.
-     * 
+     *
      * @param value allowed object is {@link String }
-     * 
+     *
      */
     public void setFirstName(String value) {
         this.firstName = value;
@@ -77,9 +77,9 @@ public class PersonType {
 
     /**
      * Gets the value of the lastName property.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getLastName() {
         return lastName;
@@ -87,9 +87,9 @@ public class PersonType {
 
     /**
      * Sets the value of the lastName property.
-     * 
+     *
      * @param value allowed object is {@link String }
-     * 
+     *
      */
     public void setLastName(String value) {
         this.lastName = value;

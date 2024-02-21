@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ExchangeHelper;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
@@ -28,11 +29,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Producer endpoint that adds one of two types of comments on a GitHub pull request:
- * 
+ *
  * 1.) Response to an in-line comment made on a pull request commit review. To use, include the "GitHubInResponseTo"
  * header, identifying the comment ID (integer) that you're responding to. 2.) General comment on the pull request issue
  * itself.
- * 
+ *
  * Both endpoints require the "GitHubPullRequest" header, identifying the pull request number (integer).
  */
 public class PullRequestCommentProducer extends AbstractGitHubProducer {
@@ -78,11 +79,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         }
 
         // support InOut
-        if (exchange.getPattern().isOutCapable()) {
-            // copy the header of in message to the out message
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(response);
-        }
+        ExchangeHelper.setOutBodyPatternAware(exchange, response);
     }
 
 }

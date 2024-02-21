@@ -18,29 +18,27 @@ package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
+import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @CamelSpringTest
-@ContextConfiguration(
-                      classes = { MetricComponentSpringTest.TestConfig.class })
-@MockEndpoints
-public class MetricComponentSpringTest {
+public class MetricComponentSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:out")
     private MockEndpoint endpoint;
@@ -48,36 +46,44 @@ public class MetricComponentSpringTest {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Configuration
-    public static class TestConfig extends SingleRouteCamelConfiguration {
+    private MetricRegistry mockRegistry;
 
-        @Bean
-        @Override
-        public RouteBuilder route() {
-            return new RouteBuilder() {
+    private InOrder inOrder;
 
-                @Override
-                public void configure() throws Exception {
-                    from("direct:in")
-                            .to("metrics:counter:A?increment=512")
-                            .to("mock:out");
-                }
-            };
-        }
+    private Counter mockCounter;
 
-        @Bean(name = MetricsComponent.METRIC_REGISTRY_NAME)
-        public MetricRegistry getMetricRegistry() {
-            return Mockito.mock(MetricRegistry.class);
-        }
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        mockRegistry = Mockito.mock(MetricRegistry.class);
+        context.getRegistry().bind(METRIC_REGISTRY_NAME, mockRegistry);
+
+        mockCounter = Mockito.mock(Counter.class);
+        inOrder = Mockito.inOrder(mockRegistry, mockCounter);
+
+        return context;
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:in")
+                        .to("metrics:counter:A?increment=512")
+                        .to("mock:out");
+            }
+        };
     }
 
     @Test
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
-        // TODO - 12.05.2014, Lauri - is there any better way to set this up?
-        MetricRegistry mockRegistry = endpoint.getCamelContext().getRegistry()
-                .lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
-        Counter mockCounter = Mockito.mock(Counter.class);
-        InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
         when(mockRegistry.counter("A")).thenReturn(mockCounter);
 
         endpoint.expectedMessageCount(1);

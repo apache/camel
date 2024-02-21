@@ -1,4 +1,3 @@
-[[TypeConverter-TypeConverter]]
 = Type Converter
 
 Converting body payloads from one type to another is common when routing messages between endpoints.
@@ -9,56 +8,75 @@ Conversions regularly occur between the following types:
 * `byte[]` and `ByteBuffer`
 * `InputStream` and `OutputStream`
 * `Reader` and `Writer`
-* `Document` and `Source`
+* XML payloads such as `Document` and `Source`
 
-To convert the body of a message to another type:
+For example to convert the message body to XML `Document` type
+then this can be done as follows in Java:
 
 [source,java]
 ----
-Message message = exchange.getIn();
-Document document = message.getBody(Document.class); // <1>
+Message message = exchange.getMessage();
+Document document = message.getBody(Document.class);
 ----
-<1> where https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html#getBody-java.lang.Class-[`Message#getBody(Class)`] performs the conversion.
 
-[[TypeConverter-HowTypeConversionworks]]
+Notice that the code only tells Camel what you *want* as the result type (`Document`)
+and not what the input type is, or how Camel should do this.
+
 == How Type Conversion works
 
 The type conversion strategy is defined by the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/TypeConverter.html[TypeConverter]
-interface that can be customized on a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext].
-
-Camel provides a default type converter registry.
-From Camel 3 onwards, the type converter registry implementation generates source code using the Camel Maven
-Package Plugin, allowing Camel, at runtime, to load and invoke these type converters via
-quick Java method invocations. In Camel 2, type converters are registered using annotation based discovery, invoking the type converters via the https://docs.oracle.com/javase/tutorial/reflect/[Java Reflection API].
-
-
-[[TypeConverter-TypeConverterRegistry]]
-== TypeConverterRegistry
-
-Add a `TypeConverter` to the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/TypeConverterRegistry.html[`TypeConverterRegistry`]
-at runtime using the xref:camelcontext.adoc[CamelContext]:
+interface. The interface has several methods, however the most important and common API is:
 
 [source,java]
 ----
-CamelContext context = ...;
-context.getTypeConverterRegistry();
+<T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException;
 ----
 
-NOTE: This is useful on platforms where the automatic type converters discovery fails due to classloading issues.
+This API is used by Camel when it converts an object from one type to another. However if
+you pay attention then this API only has the result type in the contract. The input type
+is inferred from the _value_ parameter.
 
-[[TypeConverter-TypeConverterRegistryutilizationstatistics]]
-=== TypeConverterRegistry utilization statistics
+There are many type converters in Camel, some comes out of the box from camel-core, and others
+are additional converters that are shipped in various Camel components.
+
+=== Type converter registry
+
+To keep track of all those converters, then Camel has a registry for type converters
+(`org.apache.camel.spi.TypeConverterRegistry`).
+
+This registry keeps track of all possible type converter combinations, such as which converters
+that can convert to an `InputStream` and so forth.
+
+So the example from before, what Camel would do is to lookup in the `TypeConverterRegistry`
+to find a suitable converter that can convert the given input value to the `Document` type.
+
+The `TypeConverterRegistry` can be accessed via Java:
+
+[source,java]
+----
+TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
+TypeConverter tc = tcr.lookup(Document.class, InputStream.class);
+----
+
+However often you would not work directly with the `TypeConverterRegistry` or `TypeConverter` APIs in Camel;
+as type conversion are often implicit in use where you would just declare the result type; and Camel takes care of this.
+
+[NOTE]
+====
+In Camel, all the official Camel components, come with source code generated `TypeConverter`
+(via `camel-component-maven-plugin`) that allows Camel to load these converters very quickly,
+and invoke these type converters at runtime via quick Java method invocations (no reflection overhead).
+====
+
+=== Type converter registry utilization statistics
 
 Camel can gather utilization statistics of the runtime usage of type
-converters. These statistics are available in JMX as well as
+converters. These statistics are available in xref:jmx.adoc[JMX] as well as
 from https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/spi/TypeConverterRegistry.html#getStatistics--[`TypeConverterRegistry#getStatistics()`].
 
 These statistics are turned off by
-default as there is some performance overhead under very high concurrent
-load.
+default as there is some performance overhead under very high concurrent load.
 
 Enabling statistics in Java:
 
@@ -72,104 +90,21 @@ Enabling statistics in XML DSL:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring" typeConverterStatisticsEnabled="true">
+<camelContext typeConverterStatisticsEnabled="true">
     ...
 </camelContext>
 ----
 
-[[TypeConverter-Addtypeconverterclassesatruntime]]
-=== Add type converter classes at runtime
+== TypeConverter using @Converter annotation
 
-Classes implementing https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/TypeConverters.html[`TypeConverters`] are added to the type converter registry
-at runtime. Use https://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Converter.html[`@Converter`] to mark each type converter.
+All the type converters that come out of the box are coded as Java methods on _converter_ classes.
 
-[source,java]
-----
-private class MyOrderTypeConverters implements TypeConverters {
-    @Converter
-    public MyOrder toMyOrder(String orderId) {
-        MyOrder order = new MyOrder();
-        order.setId(Integer.parseInt(orderId));
-        return order;
-    }
-}
-----
-
-Then, add these converters to the registry:
-
-[source,xml]
-----
-MyOrderTypeConverters myClass = ...;
-context.getTypeConverterRegistry().addTypeConverters(myClass);
-----
-
-If you are using Spring or Blueprint, then you can just declare a `<bean>`
-then `CamelContext` will automatic discover and add the converters.
-
-[source,xml]
-----
-<bean id="myOrderTypeConverters" class="..."/>
-    <camelContext ...>
-        ...
-    </camelContext>
-----
-
-You can declare multiple `<bean>`s if you have more classes.
-
-[[TypeConverter-DiscoveringTypeConverters]]
-== Discovering Type Converters
-
-Camel automatically discovers and loads the type converters from all JARs on the classpath at startup.
-
-Camel searches the classpath for a file called
-`META-INF/services/org/apache/camel/TypeConverterLoader` which lists
-all type converter loader classes. These are automatically generated by the Camel Maven Package Plugin.
-These _loader_ classes will load the type converters into the Camel type converter registry
-and invoke them in a _fast way_ using standard Java method calls.
-
-=== Discovering Camel 2.x based type converters (not loader)
-
-Camel will not perform additional package scanning for type converters which have no source code generated for loader classes.
-
-To enable additional package scanning in Java:
+This means a class has been annotated with `@Converter` and the methods in the class
+annotated with `@Converter` become a type converter _pair_ like in the following example:
 
 [source,java]
 ----
-camelContext.setLoadTypeConverters(true);
-----
-
-In XML DSL:
-
-[source,xml]
-----
-<camelContext loadTypeConverters="true">
-...
-</camelContext>
-----
-
-In Spring Boot `application.properties`:
-
-[source,properties]
-----
-camel.springboot.load-type-converters=true
-----
-
-Camel will discover Camel 2.x compatible type converters by
-searching the classpath for a file called `META-INF/services/org/apache/camel/TypeConverter`
-which lists all type converter classes. These classes are automatically registered in the type converter
-registry. However, invoking these type converters does **not** happen in a _fast way_ and uses the Java Reflection API.
-It is therefore recommended to upgrade any type converters to use the faster way. See below for more details.
-
-TIP: You can turn off the fallback of discovering Camel 2.x compatible type converters by
-setting `CamelContext.setLoadTypeConverters(false)`.
-
-`@Converter` must appear at the class and method level for each type converter.
-
-.Register a type converter from `File` to `InputStream`
-
-[source,java]
-----
-@Converter
+@Converter(generateLoader = true)
 public class IOConverter {
     @Converter
     public static InputStream toInputStream(File file) throws FileNotFoundException {
@@ -178,7 +113,23 @@ public class IOConverter {
 }
 ----
 
-=== Discovering Type Converters in the fast way
+This is from camel-core where the `IOConverter` class has a number of converters (only 1 shown).
+The method `toInputStream` is annotated with `@Converter` which then becomes a type converter
+that can convert from `File` to `InputStream`.
+
+All these _converter_ classes are discovered and loaded by Camel.
+
+== Discovering Type Converters
+
+Camel automatically discovers and loads the type converters from all JARs on the classpath at startup.
+
+Camel searches the classpath for a file called
+`META-INF/services/org/apache/camel/TypeConverterLoader` which lists
+all type converter loader classes. These are automatically generated by the Camel Component Package Plugin.
+These _loader_ classes will load the type converters into the Camel type converter registry
+and invoke them in a _fast way_ using standard Java method calls.
+
+=== Discovering Type Converters (fast way)
 
 To enable the fast type converter way, you should enable `generateLoader = true`
 on the class level annotation as shown:
@@ -194,77 +145,9 @@ public class IOConverter {
 }
 ----
 
-And then you should have the Camel Maven Package Plugin in as build plugin when compiling the project.
-Also add the build helper plugin which ensures the generated source code in `src/generated` will be included in the source path.
-
-When using Maven you add:
-
-[source,xml]
-----
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${camel-version}</version>
-        <executions>
-          <execution>
-            <id>generate</id>
-            <goals>
-              <goal>generate-component</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>add-source</goal>
-              <goal>add-resource</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/generated/java</source>
-              </sources>
-              <resources>
-                <resource>
-                  <directory>src/generated/resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-----
-
-[[TypeConverter-Returningnullvalues]]
-=== Returning null values
-
-By default when using a method in a POJO annotation with @Converter
-returning null is not a valid response. If null is returned, then Camel
-will regard that type converter as a _miss_, and prevent from using it
-in the future. If null should be allowed as a valid response, then from
-*Camel 2.11.2/2.12* onwards you can specify this in the annotation as
-shown:
-
-[source,java]
-----
-@Converter(allowNull = true)
-public static InputStream toInputStream(File file) throws IOException {
-    if (file.exist()) {
-        return new BufferedInputStream(new FileInputStream(file));
-    } else {
-        return null;
-    }
-}
-----
+And then you should have the xref:camel-component-maven-plugin.adoc[Camel Component Package Plugin] in as build plugin when compiling the project.
 
 === Discovering Type Converters in the fastest way
-
-*Available in Camel 3.7*
 
 In Camel 3.7 we optimized the type converter system for optimal performance when using the built-in converters.
 This was done by bulking together all the converters in the same Maven module into a single class. The class has a single
@@ -284,11 +167,11 @@ public class IOConverter {
 }
 ----
 
-There is a few limitations:
+There are few limitations:
 
-- fallback converters is not supported
+- fallback converters are not supported
 - the order of the `@Converter` methods matters. If you have multiple `@Converter` methods that accept as _from_ type
-  types which are from the same class hierachy then put the methods first that are the most concrete.
+types which are from the same class hierarchy then put the methods first that are the most concrete.
 
 For example in `camel-xml-jaxp` we have in the `XmlConverter` multiple `@Converter` methods which can convert to `DomSource`.
 We had to put the method that takes `org.w3c.dom.Document` before the method that takes `org.w3c.dom.Node` as `Document` extends `Node`.
@@ -306,10 +189,27 @@ The following code shows snippet of the source code generated bulk class. As you
             }
 ----
 
-[[TypeConverter-DiscoveringFallbackTypeConverters]]
-== Discovering Fallback Type Converters
+=== Returning null values
 
-*Available in Camel 2.0*
+By default, when using a method in a POJO annotation with `@Converter`
+returning `null` is not a valid response. If null is returned, then Camel
+will regard that type converter as a _miss_, and prevent from using it
+in the future. If `null` should be allowed as a valid response, then
+you must specify this in the annotation (via `allowNull`) as shown:
+
+[source,java]
+----
+@Converter(allowNull = true)
+public static InputStream toInputStream(File file) throws IOException {
+    if (file.exist()) {
+        return new BufferedInputStream(new FileInputStream(file));
+    } else {
+        return null;
+    }
+}
+----
+
+== Fallback Type Converters
 
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/impl/converter/AnnotationTypeConverterLoader.html[AnnotationTypeConverterLoader]
@@ -318,9 +218,9 @@ has been enhanced to also look for methods defined with a
 converter.
 
 Fallback type converters are used as a last resort for converting a
-given value to another type. Its used when the regular type converters
+given value to another type. It is used when the regular type converters
 give up.
-The fallback converters is also meant for a broader scope, so its method
+The fallback converters are also meant for a broader scope, so its method
 signature is a bit different:
 
 [source,java]
@@ -329,7 +229,7 @@ signature is a bit different:
 public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry)
 ----
 
-Or you can use the non generic signature.
+Or you can use the non-generic signature.
 
 [source,java]
 ----
@@ -339,17 +239,17 @@ public static Object convertTo(Class type, Exchange exchange, Object value, Type
 
 And the method name can be anything (`convertTo` is not required as a
 name), so it can be named `convertMySpecialTypes` if you like. +
-The `Exchange` parameter is optional, just as its with the regular
+The `Exchange` parameter is optional, just like the regular
 `@Converter` methods.
 
 The purpose with this broad scope method signature is allowing you to
 control if you can convert the given type or not. The `type` parameter
-holds the type we want the `value` converted to. Its used internally in
-Camel for wrapper objects so we can delegate the type convertions to the
+holds the type we want the `value` converted to. It is used internally in
+Camel for wrapper objects, so we can delegate the type conversion to the
 body that is wrapped.
 
 For instance in the method below we will handle all type conversions
-that is based on the wrapper class `GenericFile` and we let Camel do the
+that are based on the wrapper class `GenericFile` and we let Camel do the
 type conversions on its body instead.
 
 [source,java]
@@ -371,12 +271,11 @@ public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, Ty
 }
 ----
 
-[[TypeConverter-WritingyourownTypeConverters]]
 == Writing your own Type Converters
 
 You are welcome to write your own converters. Remember to use the
 `@Converter` annotations on the classes and methods you wish to use.
-And on the top-level class add `Converter(loader = true)` to support the _fast way_
+And on the top-level class add `Converter(generateLoader = true)` to support the _fast way_
 of using type converters.
 
 * static methods are encouraged to reduce caching, but instance methods
@@ -384,13 +283,12 @@ are fine, particularly if you want to allow optional dependency
 injection to customize the converter
 * converter methods should be thread safe and reentrant
 
-[[TypeConverter-Exchangeparameter]]
-== Exchange parameter
+=== Exchange parameter
 
 The type converter accepts the `Exchange` as an optional 2nd parameter.
 This is usable if the type converter for instance needs information from
 the current exchange. For instance combined with the encoding support
-its possible for type converters to convert with the configured
+it is possible for type converters to convert with the configured
 encoding. An example from camel-core for the `byte[]` -> `String`
 converter:
 
@@ -405,7 +303,7 @@ public static String toString(byte[] data, Exchange exchange) {
         } catch (UnsupportedEncodingException e) {
             // ignore
         }
-        return new String(data);
     }
+    return new String(data);
 }
 ----

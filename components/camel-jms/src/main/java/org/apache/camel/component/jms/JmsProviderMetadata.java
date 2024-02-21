@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.TemporaryQueue;
-import javax.jms.TemporaryTopic;
+import jakarta.jms.TemporaryQueue;
+import jakarta.jms.TemporaryTopic;
 
 import org.springframework.jms.core.JmsOperations;
 

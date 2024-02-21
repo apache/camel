@@ -18,7 +18,7 @@ package org.apache.camel.component.rest.openapi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestOpenApiDelegateHttpsTest extends HttpsTest {
@@ -28,7 +28,7 @@ public class RestOpenApiDelegateHttpsTest extends HttpsTest {
         final CamelContext camelContext = super.createCamelContext();
 
         // since camel context is not started, then we need to manually initialize the delegate
-        final Component delegate = ((DefaultCamelContext) camelContext).getComponentResolver()
+        final Component delegate = PluginHelper.getComponentResolver(camelContext)
                 .resolveComponent(componentName, camelContext);
         delegate.setCamelContext(camelContext);
         delegate.init();

@@ -16,34 +16,35 @@
  */
 package org.apache.camel.model.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
  * Configures batch-processing resequence eip.
  */
-@Metadata(label = "eip,routing,resequence")
-@XmlRootElement(name = "batch-config")
+@Metadata(label = "configuration,eip")
+@XmlRootElement(name = "batchConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BatchResequencerConfig extends ResequencerConfig {
+
     @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String batchSize;
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String batchTimeout;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowDuplicates;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String reverse;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidExchanges;
 
     /**

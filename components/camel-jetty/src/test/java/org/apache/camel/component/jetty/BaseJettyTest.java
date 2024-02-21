@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -25,21 +25,30 @@ import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
 
-    private static volatile int port;
+    public static final String SSL_SYSPROPS = "SslSystemProperties";
 
-    private static volatile int port2;
+    static final CopyOnWriteArrayList<String> runningTests = new CopyOnWriteArrayList<>();
 
-    private final AtomicInteger counter = new AtomicInteger(1);
+    @RegisterExtension
+    protected AvailablePortFinder.Port port1 = AvailablePortFinder.find();
 
-    @BeforeAll
-    public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-        // find another ports for proxy route test
-        port2 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
+    @BeforeEach
+    void addRunningTest() {
+        runningTests.add(getClass().getName());
+    }
+
+    @AfterEach
+    void remRunningTest() {
+        runningTests.remove(getClass().getName());
     }
 
     @Override
@@ -50,49 +59,27 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadProp() throws Exception {
-
+    public Properties loadProp() {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         prop.setProperty("port2", "" + getPort2());
         return prop;
     }
 
-    protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable();
-    }
-
     public void setSSLProps(JettyHttpComponent jetty, String path, String keyStorePasswd, String keyPasswd) {
-        if (jettyVersion() == 9) {
-            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
-            jetty.addSslSocketConnectorProperty("keyStorePassword", keyStorePasswd);
-            jetty.addSslSocketConnectorProperty("keyManagerPassword", keyPasswd);
-            jetty.addSslSocketConnectorProperty("keyStorePath", path);
-            jetty.addSslSocketConnectorProperty("trustStoreType", "JKS");
-        } else {
-            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
-            jetty.addSslSocketConnectorProperty("password", keyStorePasswd);
-            jetty.addSslSocketConnectorProperty("keyPassword", keyPasswd);
-            jetty.addSslSocketConnectorProperty("keystore", path);
-            jetty.addSslSocketConnectorProperty("truststoreType", "JKS");
-        }
+        jetty.addSslSocketConnectorProperty("protocol", "TLSv1.3");
+        jetty.addSslSocketConnectorProperty("keyStorePassword", keyStorePasswd);
+        jetty.addSslSocketConnectorProperty("keyManagerPassword", keyPasswd);
+        jetty.addSslSocketConnectorProperty("keyStorePath", path);
+        jetty.addSslSocketConnectorProperty("trustStoreType", "JKS");
     }
 
-    protected static int getPort() {
-        return port;
+    protected int getPort() {
+        return port1.getPort();
     }
 
-    protected static int getPort2() {
-        return port2;
-    }
-
-    public int jettyVersion() {
-        try {
-            this.getClass().getClassLoader().loadClass("org.eclipse.jetty.server.ssl.SslSelectChannelConnector");
-            return 8;
-        } catch (ClassNotFoundException e) {
-            return 9;
-        }
+    protected int getPort2() {
+        return port2.getPort();
     }
 
     protected void allowNullHeaders() {

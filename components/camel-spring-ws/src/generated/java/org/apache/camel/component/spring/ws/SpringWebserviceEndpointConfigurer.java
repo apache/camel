@@ -35,6 +35,7 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "expression": target.getConfiguration().setExpression(property(camelContext, java.lang.String.class, value)); return true;
         case "faultaction":
         case "faultAction": target.getConfiguration().setFaultAction(property(camelContext, java.net.URI.class, value)); return true;
         case "faultto":
@@ -83,6 +84,7 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expression": return java.lang.String.class;
         case "faultaction":
         case "faultAction": return java.net.URI.class;
         case "faultto":
@@ -132,6 +134,7 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "expression": return target.getConfiguration().getExpression();
         case "faultaction":
         case "faultAction": return target.getConfiguration().getFaultAction();
         case "faultto":

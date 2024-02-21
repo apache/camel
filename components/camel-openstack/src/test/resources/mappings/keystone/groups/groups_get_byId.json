@@ -1,0 +1,18 @@
+{
+  "id" : "4e5d9c78-a7c2-41d4-ae93-bfeb3991c272",
+  "name" : "groups_get_byId.json",
+  "request" : {
+    "url" : "/v3/groups/c0d675eac29945ad9dfd08aa1bb75751",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"group\":{\"domain_id\":\"default\",\"description\":\"Group used for CRUD tests\",\"id\":\"c0d675eac29945ad9dfd08aa1bb75751\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/groups\/c0d675eac29945ad9dfd08aa1bb75751\"},\"name\":\"GROUP_CRUD\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "4e5d9c78-a7c2-41d4-ae93-bfeb3991c272",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

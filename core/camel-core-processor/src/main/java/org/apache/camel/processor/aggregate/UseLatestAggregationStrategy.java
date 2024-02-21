@@ -18,7 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 
 /**
  * An {@link AggregationStrategy} which just uses the latest exchange which is useful for status messages where old
@@ -60,7 +60,8 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         // propagate exception from old exchange if there isn't already an exception
         if (newExchange.getException() == null) {
             newExchange.setException(oldExchange.getException());
-            newExchange.setProperty(Exchange.FAILURE_ENDPOINT, oldExchange.getProperty(Exchange.FAILURE_ENDPOINT));
+            newExchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                    oldExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT));
         }
     }
 
@@ -70,9 +71,9 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         }
 
         // propagate exception from old exchange if there isn't already an exception
-        ExtendedExchange oee = (ExtendedExchange) oldExchange;
-        if (oee.isFailed() || oee.isRollbackOnly() || oee.isRollbackOnlyLast()
-                || (oee.isErrorHandlerHandledSet() && oee.isErrorHandlerHandled())) {
+        if (oldExchange.isFailed() || oldExchange.isRollbackOnly() || oldExchange.isRollbackOnlyLast()
+                || oldExchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && oldExchange.getExchangeExtension().isErrorHandlerHandled()) {
             // propagate failure by using old exchange as the answer
             return oldExchange;
         }

@@ -146,15 +146,9 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     public void testFlexibleAggregationStrategyFailWithInvalidCast() throws Exception {
         getMockEndpoint("mock:result5").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start5", "AGGREGATE1");
-        } catch (Exception exception) {
-            assertMockEndpointsSatisfied();
-            return;
-        }
-
-        fail("Type Conversion exception expected, as we are not ignoring invalid casts");
-
+        Exception ex = assertThrows(Exception.class, () -> template.sendBody("direct:start5", "AGGREGATE1"),
+                "Type Conversion exception expected, as we are not ignoring invalid casts");
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -167,13 +161,13 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
         template.sendBody("direct:start6", "AGGREGATE2");
         template.sendBody("direct:start6", "AGGREGATE3");
 
+        assertMockEndpointsSatisfied();
+
         ArrayList list = getMockEndpoint("mock:result6").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(3, list.size());
         for (Object object : list) {
             assertNull(object);
         }
-
-        assertMockEndpointsSatisfied();
     }
 
     @Test

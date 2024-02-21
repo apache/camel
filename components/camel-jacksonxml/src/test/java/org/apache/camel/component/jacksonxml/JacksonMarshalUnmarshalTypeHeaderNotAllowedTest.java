@@ -31,15 +31,15 @@ public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSu
         String json = "<pojo name=\"Camel\"/>";
         template.sendBodyAndHeader("direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");

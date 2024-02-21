@@ -41,7 +41,8 @@ public class CoAPRestContextPathTest extends CoAPTestSupport {
             public void configure() {
                 restConfiguration().host("localhost").port(PORT).contextPath("/rest/services");
 
-                rest("/test").get("/a").route().setBody(constant("GET: /test/a"));
+                rest("/test").get("/a").to("direct:a");
+                from("direct:a").setBody(constant("GET: /test/a"));
             }
         };
     }

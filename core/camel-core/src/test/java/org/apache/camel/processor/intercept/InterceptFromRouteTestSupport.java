@@ -18,25 +18,29 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class InterceptFromRouteTestSupport extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         prepareMatchingTest();
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNonMatchingMessage() throws Exception {
         prepareNonMatchingTest();
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUpMocks() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");

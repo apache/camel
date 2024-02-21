@@ -29,8 +29,8 @@ public interface CamelSagaCoordinator extends HasId {
 
     CompletableFuture<Void> beginStep(Exchange exchange, CamelSagaStep step);
 
-    CompletableFuture<Void> compensate();
+    CompletableFuture<Void> compensate(Exchange exchange);
 
-    CompletableFuture<Void> complete();
+    CompletableFuture<Void> complete(Exchange exchange);
 
 }

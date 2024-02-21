@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -33,15 +33,17 @@
     <description>Camel Archetypes</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
+
     <modules>
         <module>camel-archetype-api-component</module>
-        <module>camel-archetype-cdi</module>
         <module>camel-archetype-component</module>
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
         <module>camel-archetype-main</module>
         <module>camel-archetype-spring</module>
-        <module>camel-archetype-endpointdsl</module>
     </modules>
 
     <dependencies>
@@ -52,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -67,6 +69,24 @@
                 <archetype.test.skip>true</archetype.test.skip>
             </properties>
         </profile>
+        <profile>
+            <id>archetypes-skip-tests-fastinstall</id>
+            <activation>
+                <property><name>fastinstall</name></property>
+            </activation>
+            <properties>
+                <archetype.test.skip>true</archetype.test.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>archetypes-skip-tests-release</id>
+            <activation>
+                <property><name>release</name></property>
+            </activation>
+            <properties>
+                <archetype.test.skip>true</archetype.test.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
@@ -76,7 +96,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
@@ -106,28 +125,5 @@
             </plugin>
 
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <configuration>
-                        <buildcommands>
-                            <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
-                        </buildcommands>
-                        <projectnatures>
-                            <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
-                        </projectnatures>
-                        <additionalConfig>
-                            <file>
-                                <name>.checkstyle</name>
-                                <location>/camel-eclipse-checkstyle</location>
-                            </file>
-                        </additionalConfig>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>

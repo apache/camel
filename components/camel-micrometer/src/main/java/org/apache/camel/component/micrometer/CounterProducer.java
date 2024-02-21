@@ -34,8 +34,8 @@ public class CounterProducer extends AbstractMicrometerProducer<Counter> {
     }
 
     @Override
-    protected Function<MeterRegistry, Counter> registrar(String name, Iterable<Tag> tags) {
-        return meterRegistry -> meterRegistry.counter(name, tags);
+    protected Function<MeterRegistry, Counter> registrar(String name, String description, Iterable<Tag> tags) {
+        return meterRegistry -> Counter.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override

@@ -42,6 +42,6 @@ public class SpringJsonPathSplitWriteAsStringTest extends CamelSpringTestSupport
 
         template.sendBody("direct:start", new File("src/test/resources/content.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

@@ -27,18 +27,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
 
     @Test
-    public void testCloseSessionWhenComplete() throws Exception {
+    public void testCloseSessionWhenComplete() {
         Object out
                 = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
         assertEquals("Bye Chad", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(exchange -> {
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);
                     exchange.getMessage().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);

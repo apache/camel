@@ -52,8 +52,8 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         for (Exchange exchange : result.getExchanges()) {
             String message = exchange.getIn().getBody(String.class);
-            log.debug("The message is " + message);
-            assertEquals(0, message.indexOf("<other"), "The splitted message should start with <other");
+            log.debug("The message is {}", message);
+            assertEquals(0, message.indexOf("<other"), "The split message should start with <other");
         }
 
     }

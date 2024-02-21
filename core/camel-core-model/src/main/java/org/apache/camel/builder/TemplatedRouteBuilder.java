@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
 
@@ -32,13 +34,16 @@ public final class TemplatedRouteBuilder {
 
     private final CamelContext camelContext;
     private final String routeTemplateId;
+    private final RouteTemplateContext routeTemplateContext;
     private String routeId;
-    private final Map<String, Object> parameters = new HashMap<>();
+    private String prefixId;
     private Consumer<RouteTemplateDefinition> handler;
+    private Consumer<RouteTemplateContext> configurer;
 
     private TemplatedRouteBuilder(CamelContext camelContext, String routeTemplateId) {
         this.camelContext = camelContext;
         this.routeTemplateId = routeTemplateId;
+        this.routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
     }
 
     /**
@@ -64,13 +69,23 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
+     * Sets a prefix to use for all node ids (not route id).
+     *
+     * @param prefixId the prefix id
+     */
+    public TemplatedRouteBuilder prefixId(String prefixId) {
+        this.prefixId = prefixId;
+        return this;
+    }
+
+    /**
      * Adds a parameter the route template will use when creating the route.
      *
      * @param name  parameter name
      * @param value parameter value
      */
     public TemplatedRouteBuilder parameter(String name, Object value) {
-        parameters.put(name, value);
+        routeTemplateContext.setParameter(name, value);
         return this;
     }
 
@@ -80,7 +95,42 @@ public final class TemplatedRouteBuilder {
      * @param parameters the template parameters to add
      */
     public TemplatedRouteBuilder parameters(Map<String, Object> parameters) {
-        this.parameters.putAll(parameters);
+        parameters.forEach(routeTemplateContext::setParameter);
+        return this;
+    }
+
+    /**
+     * Binds the bean to the template local repository (takes precedence over global beans)
+     *
+     * @param id   the id of the bean
+     * @param bean the bean
+     */
+    public TemplatedRouteBuilder bean(String id, Object bean) {
+        routeTemplateContext.bind(id, bean);
+        return this;
+    }
+
+    /**
+     * Binds the bean to the template local repository (takes precedence over global beans)
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     */
+    public TemplatedRouteBuilder bean(String id, Class<?> type, Object bean) {
+        routeTemplateContext.bind(id, type, bean);
+        return this;
+    }
+
+    /**
+     * Binds the bean (via a supplier) to the template local repository (takes precedence over global beans)
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     */
+    public TemplatedRouteBuilder bean(String id, Class<?> type, Supplier<Object> bean) {
+        routeTemplateContext.bind(id, type, bean);
         return this;
     }
 
@@ -97,6 +147,17 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
+     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
+     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     *
+     * @param configurer the configurer with callback to invoke with the given route template context
+     */
+    public TemplatedRouteBuilder configure(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
+        return this;
+    }
+
+    /**
      * Adds the route to the {@link CamelContext} which is built from the configured route template.
      *
      * @return the route id of the route that was added.
@@ -105,13 +166,17 @@ public final class TemplatedRouteBuilder {
         try {
             if (handler != null) {
                 RouteTemplateDefinition def
-                        = camelContext.adapt(ModelCamelContext.class).getRouteTemplateDefinition(routeTemplateId);
+                        = ((ModelCamelContext) camelContext).getRouteTemplateDefinition(routeTemplateId);
                 if (def == null) {
                     throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
                 }
                 handler.accept(def);
             }
-            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, parameters);
+            // configurer is executed later controlled by the route template context
+            if (configurer != null) {
+                routeTemplateContext.setConfigurer(configurer);
+            }
+            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, prefixId, routeTemplateContext);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

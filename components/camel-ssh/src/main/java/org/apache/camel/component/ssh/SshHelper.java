@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -196,11 +196,11 @@ public final class SshHelper {
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
-            throws UnsupportedEncodingException, InterruptedException {
+            throws InterruptedException {
 
         while (!channel.isClosed()) {
 
-            String response = output.toString("UTF-8");
+            String response = output.toString(StandardCharsets.UTF_8);
             if (response.trim().endsWith(endpoint.getShellPrompt())) {
                 output.reset();
                 return SshShellOutputStringHelper.betweenBeforeLast(response, System.lineSeparator(), System.lineSeparator());

@@ -49,14 +49,14 @@ public class RssEntrySortTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("myBean", new MyBean());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=false&delay=50").to("mock:unsorted");
             }

@@ -89,10 +89,10 @@ public class ThriftMarshalAndUnmarshalJsonTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThriftDataFormat format = new ThriftDataFormat(new Work(), ThriftDataFormat.CONTENT_TYPE_FORMAT_JSON);
 
                 from("direct:in").unmarshal(format).to("mock:reverse");

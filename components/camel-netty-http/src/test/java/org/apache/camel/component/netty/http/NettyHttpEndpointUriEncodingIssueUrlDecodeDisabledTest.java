@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpEndpointUriEncodingIssueUrlDecodeDisabledTest extends BaseNettyTest {
 
     @Test
-    public void testEndpointUriWithDanishCharEncodingIssue() throws Exception {
+    public void testEndpointUriWithDanishCharEncodingIssue() {
         String uri = "netty-http:http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
         String out = template.requestBody(uri, null, String.class);
 
@@ -32,10 +32,10 @@ public class NettyHttpEndpointUriEncodingIssueUrlDecodeDisabledTest extends Base
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=false").process(exchange -> {
                     String columns = exchange.getIn().getHeader("columns", String.class);
                     exchange.getMessage().setBody("We got " + columns + " columns");

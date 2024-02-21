@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,26 +33,19 @@ public class FileSplitInSplitTest extends ContextTestSupport {
     private final int size = 3;
     private final String comma = ",";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/split");
-        super.setUp();
-    }
-
     @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            sb.append("Block1 Line " + i + LS);
+            sb.append("Block1 Line ").append(i).append(LS);
         }
         sb.append(comma);
         for (int i = 10; i < size + 10; i++) {
-            sb.append("Block2 Line " + i + LS);
+            sb.append("Block2 Line ").append(i).append(LS);
         }
 
-        template.sendBodyAndHeader("file:target/data/split", sb.toString(), Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader(fileUri(), sb.toString(), Exchange.FILE_NAME, "input.txt");
 
         // start route
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -65,13 +57,14 @@ public class FileSplitInSplitTest extends ContextTestSupport {
 
         // check one file has expected number of lines +1 saying split is
         // complete.
-        String txt = context.getTypeConverter().convertTo(String.class, new File("target/data/split/outbox/result0.txt"));
+        assertFileExists(testFile("outbox/result0.txt"));
+        String txt = new String(Files.readAllBytes(testFile("outbox/result0.txt")));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
         assertEquals(size + 1, lines.length, "Should be " + (size + 1) + " lines");
 
-        txt = context.getTypeConverter().convertTo(String.class, new File("target/data/split/outbox/result1.txt"));
+        txt = new String(Files.readAllBytes(testFile("outbox/result1.txt")));
         assertNotNull(txt);
 
         lines = txt.split(LS);
@@ -84,14 +77,14 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .split(body().tokenize(comma)).parallelProcessing().streaming()
                         .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
                         .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
-                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")).end()
                         .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
-                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")).end()
                         .to("mock:result");
 
             }

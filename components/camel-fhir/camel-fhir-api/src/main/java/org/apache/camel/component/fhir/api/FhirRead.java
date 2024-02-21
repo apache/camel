@@ -39,6 +39,17 @@ public class FhirRead {
         this.client = client;
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resource         The resource to read (e.g. Patient)
+     * @param id               the {@link IIdType} referencing the resource
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             Class<IBaseResource> resource, IIdType id, String ifVersionMatches,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -48,6 +59,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resourceClass    the resource to read (e.g. Patient.class)
+     * @param id               the {@link IIdType} referencing the resource
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             String resourceClass, IIdType id, String ifVersionMatches, Boolean returnNull,
             IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
@@ -56,6 +78,18 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resource         The resource to read (e.g. Patient)
+     * @param stringId         The resource ID
+     * @param version          the resource version
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             Class<IBaseResource> resource, String stringId, String version, String ifVersionMatches,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -66,6 +100,18 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resourceClass    the resource to read (e.g. Patient.class)
+     * @param stringId         The resource ID
+     * @param version          the resource version
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             String resourceClass, String stringId, String ifVersionMatches, String version,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -76,6 +122,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resource         The resource to read (e.g. Patient)
+     * @param longId           The resource ID
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             Class<IBaseResource> resource, Long longId, String ifVersionMatches,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -85,6 +142,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by id
+     *
+     * @param resourceClass    the resource to read (e.g. Patient)
+     * @param longId           The resource ID
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceById(
             String resourceClass, Long longId, String ifVersionMatches, Boolean returnNull,
             IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
@@ -93,6 +161,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by url
+     *
+     * @param resource         The resource to read (e.g. Patient)
+     * @param iUrl             the {@link IIdType} referencing the resource by absolute url
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceByUrl(
             Class<IBaseResource> resource, IIdType iUrl, String ifVersionMatches,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -102,6 +181,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by url
+     *
+     * @param resourceClass    the resource to read (e.g. Patient.class)
+     * @param iUrl             the {@link IIdType} referencing the resource by absolute url
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceByUrl(
             String resourceClass, IIdType iUrl, String ifVersionMatches, Boolean returnNull,
             IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {
@@ -110,6 +200,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by url
+     *
+     * @param resource         The resource to read (e.g. Patient)
+     * @param url              referencing the resource by absolute url
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceByUrl(
             Class<IBaseResource> resource, String url, String ifVersionMatches,
             Boolean returnNull, IBaseResource returnResource, Boolean throwError,
@@ -119,6 +220,17 @@ public class FhirRead {
         return processOptionalParams(ifVersionMatches, returnNull, returnResource, throwError, readExecutable);
     }
 
+    /**
+     * Reads a {@link IBaseResource} on the server by url
+     *
+     * @param resourceClass    the resource to read (e.g. Patient.class)
+     * @param url              referencing the resource by absolute url
+     * @param ifVersionMatches a version to match against the newest version on the server.
+     * @param returnNull       return null if version matches
+     * @param returnResource   return the resource if version matches
+     * @param throwError       throw error if the version matches
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public IBaseResource resourceByUrl(
             String resourceClass, String url, String ifVersionMatches, Boolean returnNull,
             IBaseResource returnResource, Boolean throwError, Map<ExtraParameters, Object> extraParameters) {

@@ -49,12 +49,17 @@ public class MicrometerComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
             metricsRegistry
                     = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String metricsName = getMetricsName(remaining);
         Meter.Type metricsType = getMetricsType(remaining);
         Iterable<Tag> tags = getMetricsTag(parameters);

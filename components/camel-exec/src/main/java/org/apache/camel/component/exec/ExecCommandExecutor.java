@@ -25,7 +25,7 @@ public interface ExecCommandExecutor {
 
     /**
      * Executes the <code>command</code> and returns a not-<code>null</code> {@link ExecResult} instance.
-     * 
+     *
      * @param  execCommand   The command object, that describes the executable application
      * @return               the result
      * @throws ExecException if the execution failed

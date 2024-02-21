@@ -1,0 +1,118 @@
+= Google BigQuery Standard SQL Component
+:doctitle: Google BigQuery Standard SQL
+:shortname: google-bigquery-sql
+:artifactid: camel-google-bigquery
+:description: Access Google Cloud BigQuery service using SQL queries.
+:since: 2.23
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-bigquery
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google BigQuery SQL component provides access
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+the https://developers.google.com/apis-explorer/#p/bigquery/v2/bigquery.jobs.query[Google Client Services API].
+
+The current implementation supports only standard SQL
+https://cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax[DML queries].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-bigquery</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+
+------------------------------------------------------
+
+[[GoogleBigQuery-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+
+Google security credentials can be set explicitly by providing the path to the GCP credentials file location.
+
+Or they are set implicitly, where the connection factory falls back on
+https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+
+When you have the **service account key** you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=/home/user/Downloads/my-key.json";
+--------------------------------------------------------
+
+You can also use the base64 encoded content of the authentication credentials file if you don't want to set a file system path.
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=base64:<base64 encoded>";
+--------------------------------------------------------
+
+Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+
+--------------------------------------------------------
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+--------------------------------------------------------
+
+== URI Format
+
+--------------------------------------------------------
+google-bigquery-sql://project-id:query?[options]
+--------------------------------------------------------
+
+Examples:
+--------------------------------------------------------
+google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
+
+google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
+--------------------------------------------------------
+where
+
+ * parameters in form $\{name} are extracted from message headers and formed the translated query.
+ * parameters in form @name are extracted from body or message headers and sent to Google Bigquery. The `com.google.cloud.bigquery.StandardSQLTypeName` of the parameter is detected from the type of the parameter using `<T> QueryParameterValue<T>.of(T value, Class<T> type)`
+
+You can externalize your SQL queries to files in the classpath or file system as shown:
+
+--------------------------------------------------------
+google-bigquery-sql://project-17248459::classpath:delete.sql
+--------------------------------------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Producer Endpoints
+
+Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
+
+
+include::spring-boot:partial$starter.adoc[]

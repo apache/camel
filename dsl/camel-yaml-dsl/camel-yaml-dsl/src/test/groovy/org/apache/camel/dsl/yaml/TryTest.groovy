@@ -20,20 +20,21 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.TryDefinition
 import org.apache.camel.model.language.SimpleExpression
+import org.junit.jupiter.api.Assertions
 
 class TryTest extends YamlTestSupport {
 
-    def "do-try"() {
+    def "doTry"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
-                      - do-try:                              
+                      - doTry:                              
                          steps:
                            - to: "log:when-a"
                            - to: "log:when-b"
-                         do-catch:
+                         doCatch:
                            - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
@@ -55,21 +56,21 @@ class TryTest extends YamlTestSupport {
             }
     }
 
-    def "do-try with on-when"() {
+    def "doTry with onWhen"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
-                      - do-try:
+                      - doTry:
                          steps:
                            - to: "log:when-a"
                            - to: "log:when-b"
-                         do-catch:
+                         doCatch:
                            - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
-                             on-when:
+                             onWhen:
                                simple: "${body.size()} == 1"
                              steps:
                                - to: "log:io-error"
@@ -93,25 +94,25 @@ class TryTest extends YamlTestSupport {
             }
     }
 
-    def "do-try with do-when and do-finally"() {
+    def "doTry with doWhen and doFinally"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
-                      - do-try:
+                      - doTry:
                          steps:
                            - to: "log:when-a"
                            - to: "log:when-b"
-                         do-catch:
+                         doCatch:
                            - exception: 
                                - "java.io.FileNotFoundException"
                                - "java.io.IOException"
-                             on-when:
+                             onWhen:
                                simple: "${body.size()} == 1"
                              steps:
                                - to: "log:io-error"
-                         do-finally:
+                         doFinally:
                            steps:
                              - to: "log:finally"
             '''
@@ -139,17 +140,17 @@ class TryTest extends YamlTestSupport {
             }
     }
 
-    def "do-try with do-finally"() {
+    def "doTry with doFinally"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
-                      - do-try:
+                      - doTry:
                          steps:
                            - to: "log:when-a"
                            - to: "log:when-b"
-                         do-finally:
+                         doFinally:
                            steps:
                              - to: "log:finally"
             '''
@@ -163,4 +164,86 @@ class TryTest extends YamlTestSupport {
             }
     }
 
+    def "Error: kebab-case: do-try"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - do-try:
+                         steps:
+                           - to: "log:when-a"
+                           - to: "log:when-b"
+                         doCatch:
+                           - exception: 
+                               - "java.io.FileNotFoundException"
+                               - "java.io.IOException"
+                             steps:
+                               - to: "log:io-error"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: do-catch"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - doTry:
+                         steps:
+                           - to: "log:when-a"
+                           - to: "log:when-b"
+                         do-catch:
+                           - exception: 
+                               - "java.io.FileNotFoundException"
+                               - "java.io.IOException"
+                             steps:
+                               - to: "log:io-error"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: do-catch2"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - doTry:
+                         steps:
+                           - to: "log:when-a"
+                           - to: "log:when-b"
+                         doCatch:
+                           - exception: 
+                               - "java.io.FileNotFoundException"
+                               - "java.io.IOException"
+                             on-when:
+                               simple: "${body.size()} == 1"
+                             steps:
+                               - to: "log:io-error"
+                         doFinally:
+                           steps:
+                             - to: "log:finally"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 }

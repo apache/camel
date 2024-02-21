@@ -26,13 +26,14 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define cool endpoint -->
         <endpoint id="cool" uri="direct:resource"/>
 
         <route>
             <from uri="direct:start"/>
-            <enrich strategyRef="sampleAggregator">
+            <enrich aggregationStrategy="sampleAggregator">
               <simple>ref:cool</simple>
             </enrich>
             <to uri="mock:result"/>

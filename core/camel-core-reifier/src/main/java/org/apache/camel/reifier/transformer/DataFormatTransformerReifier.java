@@ -33,8 +33,9 @@ public class DataFormatTransformerReifier extends TransformerReifier<DataFormatT
     @Override
     protected Transformer doCreateTransformer() {
         DataFormat dataFormat
-                = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), definition.getRef());
-        return new DataFormatTransformer(camelContext).setDataFormat(dataFormat).setModel(definition.getScheme())
+                = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
+        return new DataFormatTransformer(camelContext).setDataFormat(dataFormat)
+                .setName(definition.getScheme(), definition.getName())
                 .setFrom(definition.getFromType()).setTo(definition.getToType());
     }
 

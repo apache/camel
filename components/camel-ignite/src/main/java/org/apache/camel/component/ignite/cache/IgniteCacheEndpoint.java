@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
+import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,11 +37,13 @@ import org.apache.ignite.cache.CachePeekMode;
 import org.apache.ignite.cache.query.ContinuousQuery;
 import org.apache.ignite.cache.query.Query;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_CACHE;
+
 /**
  * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName",
-             category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CACHE, title = "Ignite Cache", syntax = "ignite-cache:cacheName",
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = IgniteConstants.class)
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

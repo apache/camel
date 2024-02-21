@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,24 +27,17 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/multidir");
-        super.setUp();
-    }
+    public static final String FILE_QUERY = "?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
     @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
 
-        mock.expectedFileExists("target/data/multidir/.done/bye.txt.old");
-        mock.expectedFileExists("target/data/multidir/.done/sub/hello.txt.old");
-        mock.expectedFileExists("target/data/multidir/.done/sub/sub2/goodday.txt.old");
-
+        mock.expectedFileExists(testFile(".done/bye.txt.old"));
+        mock.expectedFileExists(testFile(".done/sub/hello.txt.old"));
+        mock.expectedFileExists(testFile(".done/sub/sub2/goodday.txt.old"));
+        String fileUrl = fileUri(FILE_QUERY);
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
         template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
@@ -59,7 +51,7 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY)).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.printer;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.print.DocFlavor;
@@ -70,7 +69,7 @@ public class PrinterConfiguration {
     public PrinterConfiguration() {
     }
 
-    public PrinterConfiguration(URI uri) throws URISyntaxException {
+    public PrinterConfiguration(URI uri) {
         this.uri = uri;
     }
 
@@ -108,7 +107,7 @@ public class PrinterConfiguration {
         setInternalSides(assignSides(sides));
         setInternalOrientation(assignOrientation(orientation));
         if (printSettings.containsKey("sendToPrinter")) {
-            if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
+            if (!(Boolean.parseBoolean((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
             }
         }
@@ -118,7 +117,7 @@ public class PrinterConfiguration {
         }
     }
 
-    private DocFlavor assignDocFlavor(String flavor, String mimeType) throws Exception {
+    private DocFlavor assignDocFlavor(String flavor, String mimeType) {
         // defaults
         if (mimeType == null) {
             mimeType = "AUTOSENSE";
@@ -170,11 +169,11 @@ public class PrinterConfiguration {
         } else if (mimeType.equalsIgnoreCase("TEXT_PLAIN")) {
             d = docFlavorAssigner.forMimeTypeBasic(flavor, mimeType);
         } else if (mimeType.equalsIgnoreCase("PAGEABLE")) {
-            d = docFlavorAssigner.forMimeTypePAGEABLE(flavor);
+            d = docFlavorAssigner.forMimeTypePAGEABLE();
         } else if (mimeType.equalsIgnoreCase("PRINTABLE")) {
-            d = docFlavorAssigner.forMimeTypePRINTABLE(flavor);
+            d = docFlavorAssigner.forMimeTypePRINTABLE();
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
-            d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE(flavor);
+            d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE();
         }
 
         return d;

@@ -16,28 +16,36 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
  */
-public class JmsBeanMethodHeaderTest extends CamelTestSupport {
+public class JmsBeanMethodHeaderTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     @BindToRegistry("approveService")
-    private ApproveService service = new ApproveService();
+    private final ApproveService service = new ApproveService();
 
     @Test
     public void testPlainHeader() throws Exception {
@@ -76,7 +84,8 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+        template.sendBodyAndHeader("activemq:JmsBeanMethodHeaderTest.approve", ExchangePattern.InOut, "James",
+                Exchange.BEAN_METHOD_NAME,
                 "approveLoan");
 
         mock.assertIsSatisfied();
@@ -89,36 +98,44 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("No");
 
-        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+        template.sendBodyAndHeader("activemq:JmsBeanMethodHeaderTest.queue", ExchangePattern.InOut, "James",
+                Exchange.BEAN_METHOD_NAME,
                 "approveSuperLoan");
 
         mock.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:in").to("activemq:test.a");
-                from("activemq:test.a").to("mock:result");
+            public void configure() {
+                from("direct:in").to("activemq:JmsBeanMethodHeaderTest.a");
+                from("activemq:JmsBeanMethodHeaderTest.a").to("mock:result");
 
-                from("activemq:queue").to("activemq:approve");
+                from("activemq:JmsBeanMethodHeaderTest.queue").to("activemq:JmsBeanMethodHeaderTest.approve");
 
-                from("activemq:approve").to("direct:approve");
+                from("activemq:JmsBeanMethodHeaderTest.approve").to("direct:approve");
 
                 from("direct:approve").to("bean:approveService").to("mock:approve");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public static class ApproveService {

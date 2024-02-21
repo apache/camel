@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -29,16 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/transacted");
-        super.setUp();
-    }
-
     @Test
     public void testTransactionSuccess() throws Exception {
-        template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
+        template.sendBodyAndHeader(fileUri("okay"), "Hello World", Exchange.FILE_NAME, "okay.txt");
 
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // wait for route to complete
@@ -49,7 +41,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
 
     @Test
     public void testTransactionRollback() throws Exception {
-        template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
+        template.sendBodyAndHeader(fileUri("fail"), "Hello World", Exchange.FILE_NAME, "fail.txt");
 
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // should not be able to process the file so we still got 1 book as we did from the start
@@ -62,12 +54,12 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/transacted/okay?initialDelay=0&delay=10")
+                from(fileUri("okay?initialDelay=0&delay=10"))
                         .transacted()
                         .setBody(constant("Tiger in Action")).bean("bookService")
                         .setBody(constant("Elephant in Action")).bean("bookService");
 
-                from("file://target/transacted/fail?initialDelay=0&delay=10")
+                from(fileUri("fail?initialDelay=0&delay=10"))
                         .transacted()
                         .setBody(constant("Tiger in Action")).bean("bookService")
                         .setBody(constant("Donkey in Action")).bean("bookService");

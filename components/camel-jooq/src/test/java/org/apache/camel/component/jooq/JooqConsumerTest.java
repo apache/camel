@@ -51,7 +51,7 @@ public class JooqConsumerTest extends BaseJooqTest {
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
         producerTemplate.sendBody(context.getEndpoint("direct:insertBookStoreRecord"), ExchangePattern.InOut, bookStoreRecord);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
         assertEquals(1, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
@@ -69,7 +69,7 @@ public class JooqConsumerTest extends BaseJooqTest {
         AuthorRecord authorRecord = new AuthorRecord(1, null, "test", null, null, null);
         producerTemplate.sendBody(context.getEndpoint("direct:insertAuthorRecord"), ExchangePattern.InOut, authorRecord);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
         assertEquals(0, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }

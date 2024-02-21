@@ -1,0 +1,50 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "thymeleaf",
+    "title": "Thymeleaf",
+    "description": "Transform messages using a Thymeleaf template.",
+    "deprecated": false,
+    "firstVersion": "4.1.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.thymeleaf.ThymeleafComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-thymeleaf",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "thymeleaf",
+    "extendsScheme": "",
+    "syntax": "thymeleaf:resourceUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelThymeleafResourceUri": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the Thymeleaf template.", "constantName": "org.apache.camel.component.thymeleaf.ThymeleafConstants#THYMELEAF_RESOURCE_URI" },
+    "CamelThymeleafTemplate": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The content of the Thymeleaf template.", "constantName": "org.apache.camel.component.thymeleaf.ThymeleafConstants#THYMELEAF_TEMPLATE" },
+    "CamelThymeleafVariableMap": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The value of this header should be a Map with key\/values that will be override any existing key with the same name. This can be used to preconfigure common key\/values you want to reuse in your Thymeleaf endpoints.", "constantName": "org.apache.camel.component.thymeleaf.ThymeleafConstants#THYMELEAF_VARIABLE_MAP" },
+    "CamelThymeleafServletContext": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "jakarta.servlet.ServletContext", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ServletContext for a web application.", "constantName": "org.apache.camel.component.thymeleaf.ThymeleafConstants#THYMELEAF_SERVLET_CONTEXT" }
+  },
+  "properties": {
+    "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },
+    "allowContextMapAll": { "index": 1, "kind": "parameter", "displayName": "Allow Context Map All", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API." },
+    "cacheable": { "index": 2, "kind": "parameter", "displayName": "Cacheable", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether templates have to be considered cacheable or not." },
+    "cacheTimeToLive": { "index": 3, "kind": "parameter", "displayName": "Cache Time To Live", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "The cache Time To Live for templates, expressed in milliseconds." },
+    "checkExistence": { "index": 4, "kind": "parameter", "displayName": "Check Existence", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether a template resources will be checked for existence before being returned." },
+    "contentCache": { "index": 5, "kind": "parameter", "displayName": "Content Cache", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether to use resource content cache or not" },
+    "templateMode": { "index": 6, "kind": "parameter", "displayName": "Template Mode", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "enum": [ "HTML", "XML", "TEXT", "JAVASCRIPT", "CSS", "RAW" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "HTML", "description": "The template mode to be applied to templates." },
+    "lazyStartProducer": { "index": 7, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "encoding": { "index": 8, "kind": "parameter", "displayName": "Encoding", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The character encoding to be used for reading template resources." },
+    "order": { "index": 9, "kind": "parameter", "displayName": "Order", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "The order in which this template will be resolved as part of the resolver chain." },
+    "prefix": { "index": 10, "kind": "parameter", "displayName": "Prefix", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "An optional prefix added to template names to convert them into resource names." },
+    "resolver": { "index": 11, "kind": "parameter", "displayName": "Resolver", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.thymeleaf.ThymeleafResolverType", "enum": [ "CLASS_LOADER", "DEFAULT", "FILE", "STRING", "URL", "WEB_APP" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "CLASS_LOADER", "description": "The type of resolver to be used by the template engine." },
+    "suffix": { "index": 12, "kind": "parameter", "displayName": "Suffix", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "An optional suffix added to template names to convert them into resource names." }
+  }
+}

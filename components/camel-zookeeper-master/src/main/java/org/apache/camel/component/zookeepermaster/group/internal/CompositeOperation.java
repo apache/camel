@@ -27,7 +27,7 @@ public class CompositeOperation implements Operation {
 
     public static final Logger LOG = LoggerFactory.getLogger(CompositeOperation.class);
 
-    private Operation[] operations;
+    private final Operation[] operations;
 
     public CompositeOperation(Operation... operations) {
         this.operations = operations;

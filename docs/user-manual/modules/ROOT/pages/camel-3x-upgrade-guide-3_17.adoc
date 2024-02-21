@@ -1,0 +1,271 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.16 to 3.17
+
+=== camel-core
+
+==== Stream Caching
+
+We have enabled xref:stream-caching.adoc[Stream Caching] by default on `CamelContext`. The reason is that Camel users
+may often hit this problem without knowing what is causing this, and blaming it on Apache Camel.
+
+This means that Camel would automatically cache message bodies that are based on `java.util.InputStream`
+such as often seen with HTTP components. This makes it safe to log the message body, and elsewhere.
+
+The cost is a tiny overhead in the routing engine as Camel will automatic type convert
+to `StreamCache` if needed. Users can turn this off:
+
+[source,java]
+----
+CamelContext context = ...
+context.setStreamCaching(false);
+----
+
+Or via Camel Main / Camel K / Quarkus:
+
+[source,properties]
+----
+camel.main.streamCachingEnabled=false
+----
+
+Or in Spring Boot
+
+[source,properties]
+----
+camel.springboot.streamCachingEnabled=false
+----
+
+And in legacy Spring XML or OSGi Blueprint:
+
+[source,xml]
+----
+<streamCaching enabled="true" .../>
+----
+
+We also changed the default settings for stream caching to not spool to disk, meaning that the cache
+is an in-memory on cache.
+
+To enable spool to disk, you can configure this as follows:
+
+[source,java]
+----
+CamelContext context = ...
+context.getStreamCachingStrategy().setSpoolEnabled(true);
+----
+
+Or via Camel Main / Camel K / Quarkus:
+
+[source,properties]
+----
+camel.main.streamCachingSpoolEnabled=true
+----
+
+Or in Spring Boot
+
+[source,properties]
+----
+camel.springboot.streamCachingSpoolEnabled=true
+----
+
+And in legacy Spring XML or OSGi Blueprint:
+
+[source,xml]
+----
+<streamCaching spoolEnabled="true" .../>
+----
+
+=== camel-health
+
+Camel now reports DOWN when Camel is being stopped, during the graceful shutdown process.
+This ensures that Camel reports that it's not ready to accept new traffic.
+
+=== camel-main
+
+Added method `findRouteResourcesFromDirectory` to `org.apache.camel.main.RoutesCollector`.
+
+=== camel-yaml-dsl
+
+Removed deprecated `spec/flows` and `spec/flow` from the kamelet yaml loader.
+Must use `spec/template` as key for the kamelet template.
+
+Removed _endpoint-dsl_ notation which was not well known,
+causing problems for tools, and yaml-validation against the json-schema standard.
+
+For example the following notation:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          kafka:
+            topic: cheese
+            brokers: mykafka:1234
+----
+
+Should be change to:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka:cheese?brokers=mykafka:1234"
+----
+
+Or
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka"
+          parameters:
+            topic: "cheese"
+            brokers: "mykafka:1234"
+----
+
+=== camel-spring-xml / camel-blueprint
+
+The error handling has been made universal and exposed generally in the `camel-core-model`
+with intent to align error handling across DSLs.
+
+However, the XML DSL for Spring `<beans>` and OSGi blueprint is legacy, and they
+have their own special XML parsing and error handling.
+
+This means the model classes has been renamed, which only affect Camel end users whom
+has defined error handling as `<bean>` in Spring or Blueprint XML files:
+
+- `org.apache.camel.builder.DeadLetterChannelBuilder` to `org.apache.camel.builder.LegacyDeadLetterChannelBuilder`
+- `org.apache.camel.builder.DefaultErrorHandlerBuilder` to `org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder`
+- `org.apache.camel.builder.NoErrorHandlerBuilder` to `org.apache.camel.builder.LegacyNoErrorHandlerBuilder`
+- `org.apache.camel.spring.spi.TransactionErrorHandlerBuilder` to `org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder`
+
+Users who has been configured error handling using `<errorHandler>` in Spring or Blueprint XML files should not be affected.
+
+=== camel-cdi / camel-cdi-jta
+
+The class `org.apache.camel.cdi.CdiRouteBuilder` has been removed as you can use `jtaTransactionErrorHandler` builder
+methods from `camel-core` instead.
+
+The class `org.apache.canel.jta.JtaTransactionErrorHandlerBuilder` has been removed, as the JTA error handler builder
+can be used with the `jtaTransactionErrorHandler` from `camel-core-model`.
+
+=== camel-kafka
+
+The option `autoCommitOnStop` was removed from the Camel Kafka component. When using `autoCommitEnable` (which is enabled by default) the Kafka consumer will automatically commit on close.
+
+When the `autoCommitEnable` is turned off, the component issues a call to the respective commit manager during shutdown.
+
+Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOnStop` are now determined by automatically by the value of the `kafkaManualCommitFactory` option:
+
+* NO-OP is the default behavior if no `kafkaManualCommitFactory` is provided
+* Async can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory`
+* Sync can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory`
+
+The deprecated constructors for the kafkaManualCommitFactory have been removed. The constructor should now receive the following parameters:
+
+[source,java]
+----
+CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager
+----
+
+=== camel-platform-http-vertx
+
+The configuration for body handler file uploads has changed from `true` to `false`.
+The configuration can be enabled via the `VertxPlatformHttpServerConfiguration` class.
+
+=== camel-opentracing / camel-opentelemetry
+
+We aligned the MDC keys with OpenTelemetry, so they are changed from:
+
+- `traceId` -> `trace_id`
+- `spanId` -> `span_id`
+
+=== camel-atom
+
+This component was refactored to support the Resume API v2. As such, the options `filter` and `lastUpdate` where removed.
+
+[source,java]
+----
+from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
+    .resumable().resumeStrategy(new UpdatedDateFilter(new Date()))
+    .to("mock:result");
+----
+
+More complex filters can be implemented by extending the `UpdatedDateFilter` or by implementing a new `EntryFilter` resume strategy.
+
+=== camel-cdi
+
+The support for the Camel XML configuration import, that had been marked as deprecated in previous releases, was removed.
+
+=== camel-cxf-blueprint
+
+When using OSGi Blueprint with CXF endpoints defined in their own namespace as below,
+then you must use `depends-on` to refer to the ID of the `<camelContext>`.
+
+Notice how we must use `depends-on="VerySimple-context"` in the `cxf:cxfEndpoint` to refer to the `CamelContext`.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<osgi:blueprint xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:camel="http://camel.apache.org/schema/blueprint"
+                xmlns:osgi="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+                xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf">
+
+	<camel:camelContext id="VerySimple-context">
+		<camel:route id="VerySimple-route">
+			<camel:from uri="VerySimple"/>
+			<camel:to uri="log:proxy.VerySimple"/>
+		</camel:route>
+	</camel:camelContext>
+
+	<cxf:cxfEndpoint id="VerySimple" depends-on="VerySimple-context" address="http://localhost:8088/VerySimple" serviceName="tns:VerySimple" endpointName="tns:VerySimplePort" wsdlURL="file:deploy/VerySimple.wsdl" xmlns:tns="http://www.talend.org/service/">
+		<cxf:properties>
+			<osgi:entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+
+</osgi:blueprint>
+----
+
+=== camel-sftp
+
+The underlying JSch library has been updated (https://issues.apache.org/jira/browse/CAMEL-17835[CAMEL-17835]) to a
+more secure and actively maintained fork which has removed key types and algorithms that rely on SHA1. For
+information on how these can be restored, consult the xref:components::sftp-component.adoc[SFTP component] documentation.
+
+=== camel-rabbitmq
+
+When using `skipQueueDeclare=true` you now must also set `skipQueueBind=true` to skip both declaring and binding the queue.
+
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-atomix
+* camel-beanstalk
+* camel-beanio
+* camel-etcd
+* camel-elsql
+* camel-ganglia
+* camel-nsq
+* camel-hystrix
+* camel-jing
+* camel-leveldb-legacy
+* camel-msv
+* camel-nagios
+* camel-ribbon
+* camel-sip
+* camel-soroush
+* camel-tagsoup
+* camel-yammer

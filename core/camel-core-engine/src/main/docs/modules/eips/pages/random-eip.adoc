@@ -1,11 +1,58 @@
-[[random-eip]]
 = Random EIP
-:docTitle: Random
-:description: Random load balancer The random load balancer selects a random endpoint for each exchange.
+:doctitle: Random
+:shortname: random
+:description: The destination endpoints are selected by random.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
+Random mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+The destination endpoints are selected by random.
+This is a well known and classic policy, which spreads the load randomly.
 
 // eip options: START
-The Random EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+We want to load balance between three endpoints in random mode.
+
+This is done as follows:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .loadBalance().ramdom()
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <loadBalance>
+       <ramdom/>
+       <to uri="seda:x"/>
+       <to uri="seda:y"/>
+       <to uri="seda:z"/>
+    </loadBalance>
+</route>
+----
+====

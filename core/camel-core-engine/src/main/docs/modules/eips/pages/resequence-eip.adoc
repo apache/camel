@@ -1,45 +1,69 @@
-[[resequence-eip]]
 = Resequence EIP
-:docTitle: Resequence
+:doctitle: Resequence
+:shortname: resequence
 :description: Resequences (re-order) messages based on an expression
-:since:
-:supportLevel: Stable
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
 
-The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the xref:components:eips:enterprise-integration-patterns.adoc[EIP patterns] allows you to reorganise messages based on some comparator. +
-By default in Camel we use an Expression to create the comparator; so that you can compare by a message header or the body or a piece of a message etc.
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can we get a stream of related but out-of-sequence messages back into the correct order?
 
 image::eip/Resequencer.gif[image]
+
+Use a stateful filter, a Resequencer, to collect and re-order messages so that they can be published to the output channel in a specified order.
+
+The Resequencer implementation in Camel uses an xref:manual::expression.adoc[Expression]
+as the `Comparator` to re-order the messages. By using the expression then the messages
+can easily be re-ordered by a message header or another piece of the message.
+
+Camel supports two re-sequencing algorithms:
+
+* xref:batchConfig-eip.adoc[Batch Resequencing] - *Default mode*: collects messages into a batch, sorts the messages and sends them to their output.
+* xref:streamConfig-eip.adoc[Stream Resequencing] - re-orders (continuous) message streams based on the detection of gaps between messages.
+
+By default, the Resequencer does not support duplicate messages and will only keep the last message, in case a message arrives with the same message expression.
+However, in the batch mode you can enable it to allow duplicates.
 
 == Options
 
 // eip options: START
-The Resequence EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resequencerConfig* | To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration. |  | ResequencerConfig
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-Camel supports two resequencing algorithms:
+== Exchange properties
 
-* *Batch resequencing* collects messages into a batch, sorts the messages and sends them to their output.
-* *Stream resequencing* re-orders (continuous) message streams based on the detection of gaps between messages.
-
-By default the Resequencer does not support duplicate messages and will only keep the last message, in case a message arrives with the same message expression. However in the batch mode you can enable it to allow duplicates.
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Batch Resequencing
-The following example shows how to use the batch-processing resequencer so that messages are sorted in order of the *body()* expression. That is messages are collected into a batch (either by a maximum number of messages per batch or using a timeout) then they are sorted in order and then sent out to their output.
 
+The following example shows how to use the Resequencer in xref:batchConfig-eip.adoc[batch mode] (default),
+so that messages are sorted in order of the message body.
+
+That is messages are collected into a batch (either by a maximum number of messages per batch or using a timeout)
+then they are sorted, and sent out, to continue being routed.
+
+In the example below we re-order the message based on content of the message body.
+The default batch modes will collect up till 100 messages per batch, or timeout every second.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .resequence().body()
     .to("mock:result");
 ----
-
-This is equivalent to
++
+This is equivalent to:
++
 [source,java]
 ----
 from("direct:start")
@@ -47,7 +71,26 @@ from("direct:start")
     .to("mock:result");
 ----
 
-The batch-processing resequencer can be further configured via the `size()` and `timeout()` methods.
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
+
+The batch resequencer can be further configured via the `size()` and `timeout()` methods:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -55,53 +98,161 @@ from("direct:start")
     .to("mock:result")
 ----
 
-This sets the batch size to 300 and the batch timeout to 4000 ms (by default, the batch size is 100 and the timeout is 1000 ms). Alternatively, you can provide a configuration object.
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <batchConfig batchSize="300" batchTimeout="4000"/>
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
 
+This sets the batch size to 300 and the batch timeout to 4000 ms (by default, the batch size is 100 and the timeout is 1000 ms).
+
+So the above example will reorder messages  in order of their bodies.
+Typically, you'd use a header rather than the body to order things; or maybe a part of the body.
+So you could replace this expression with:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .resequence(body()).batch(new BatchResequencerConfig(300, 4000L))
+    .resequence(header("mySeqNo"))
     .to("mock:result")
 ----
 
-So the above example will reorder messages from endpoint *direct:a* in order of their bodies, to the endpoint *mock:result*. +
-Typically you'd use a header rather than the body to order things; or maybe a part of the body. So you could replace this expression with
-
-[source,java]
-----
-resequence(header("mySeqNo"))
-----
-
-for example to reorder messages using a custom sequence number in the header `mySeqNo`. +
-You can of course use many different Expression languages such as XPath, XQuery, SQL or various Scripting Languages.
-
-And an example in XML
-
+XML::
++
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start" />
+<route>
+    <from uri="direct:start"/>
     <resequence>
-      <simple>body</simple>
-      <to uri="mock:result" />
-      <!--
-        batch-config can be ommitted for default (batch) resequencer settings
-      -->
-      <batch-config batchSize="300" batchTimeout="4000" />
+        <header>mySeqNo</header>
+        <to uri="mock:result"/>
     </resequence>
-  </route>
-</camelContext>
+</route>
+----
+====
+
+This reorders messages using a custom sequence number with the header name mySeqNo.
+
+=== Allow Duplicates
+
+When allowing duplicates then the resequencer retain duplicate message instead
+of keeping only last duplicated message.
+
+In batch mode, you can turn on duplicates as follows:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .resequence(header("mySeqNo")).allowDuplicates()
+    .to("mock:result")
 ----
 
-== Allow Duplicates
-In the `batch` mode, you can now allow duplicates. In Java DSL there is a `allowDuplicates()` method and in Spring XML there is an `allowDuplicates=true` attribute on the `<batch-config/>` you can use to enable it.
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <batchConfig allowDuplicates="true"/>
+        <header>mySeqNo</header>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
 
-== Reverse
-In the `batch` mode, you can now reverse the expression ordering. By default the order is based on 0..9,A..Z, which would let messages with low numbers be ordered first, and thus also outgoing first. In some cases you want to reverse order, which is now possible. +
-In Java DSL there is a `reverse()` method and in Spring XML there is an `reverse=true` attribute on the `<batch-config/>` you can use to enable it.
+=== Reverse Ordering
 
-== Resequence JMS messages based on JMSPriority
+You can reverse the expression ordering.
+By default, the order is based on 0..9,A..Z, which would let messages with low numbers be ordered first, and thus also outgoing first.
+In some cases you want to reverse the ordering.
+
+In batch mode, you can turn on reverse as follows:
+
+[tabs]
+====
++
+[source,java]
+----
+from("direct:start")
+    .resequence(header("mySeqNo")).reverse()
+    .to("mock:result")
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <batchConfig reverse="true"/>
+        <header>mySeqNo</header>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
+
+=== Ignoring invalid messages
+
+The Resequencer throws a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer
+such as, the expression cannot be evaluated due to a missing header.
+
+You can ignore these kinds of errors, and let the Resequencer skip the invalid Exchange.
+
+To do this you do as follows in Java DSL:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .resequence(header("seqno")).batch()
+        // ignore invalid exchanges (they are discarded)
+        .ignoreInvalidExchanges()
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <batchConfig ignoreInvalidExchanges="true"/>
+        <header>seqno</header>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
+
+This option is available for both batch and stream mode.
+
+=== Resequence JMS messages based on JMSPriority
+
 It's now much easier to use the Resequencer to resequence messages from JMS queues based on JMSPriority. For that to work you need to use the two new options `allowDuplicates` and `reverse`.
 
 [source,java]
@@ -116,68 +267,95 @@ from("jms:queue:foo")
 
 Notice this is *only* possible in the `batch` mode of the Resequencer.
 
-== Ignore invalid exchanges
-
-The Resequencer EIP throws a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer - ie. the expression cannot be evaluated, such as a missing header.
-You can use the option `ignoreInvalidExchanges` to ignore these exceptions which means the Resequencer will then skip the invalid Exchange.
-
-[source,java]
-----
-from("direct:start")
-    .resequence(header("seqno")).batch().timeout(1000)
-        // ignore invalid exchanges (they are discarded)
-        .ignoreInvalidExchanges()
-    .to("mock:result");
-----
-
-This option is available for both batch and stream resequencer.
-
-== Reject Old Exchanges
-
-This option can be used to prevent out of order messages from being sent regardless of the event that delivered messages downstream (capacity, timeout, etc). If enabled using `rejectOld()`, the Resequencer will throw a `MessageRejectedException` when an incoming Exchange is "older" (based on the Comparator) than the last delivered message. This provides an extra level of control with regards to delayed message ordering.
-
-[source,java]
-----
-from("direct:start")
-    .onException(MessageRejectedException.class).handled(true).to("mock:error").end()
-    .resequence(header("seqno")).stream().timeout(1000).rejectOld()
-    .to("mock:result");
-----
-
-This option is available for the stream resequencer only.
 
 == Stream Resequencing
-The next example shows how to use the stream-processing resequencer. Messages are re-ordered based on their sequence numbers given by a seqnum header using gap detection and timeouts on the level of individual messages.
 
-[source,java]
-----
-from("direct:start").resequence(header("seqnum")).stream().to("mock:result");
-----
+In streaming mode then the Resequencer will send out messages as soon as possible when
+a message with the next expected sequence number arrived.
 
-The stream-processing resequencer can be further configured via the `capacity()` and `timeout()` methods.
+The streaming mode requires the messages to be re-ordered based on integer numeric values
+that are ordered 1,2,3...N.
 
-[source,java]
-----
-from("direct:start")
-    .resequence(header("seqnum")).stream().capacity(5000).timeout(4000L)
-    .to("mock:result")
-----
+The following example uses the header seqnum for the ordering:
 
-This sets the resequencer's capacity to 5000 and the timeout to 4000 ms (by default, the capacity is 1000 and the timeout is 1000 ms). Alternatively, you can provide a configuration object.
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .resequence(header("seqnum")).stream(new StreamResequencerConfig(5000, 4000L))
+  .resequence(header("seqnum")).stream()
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <streamConfig/>
+        <header>seqno</header>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
+
+The Resequencer keeps a backlog of pending messages in a backlog.
+The default capacity is 1000 elements, which can be configured:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .resequence(header("seqnum")).stream().capacity(5000).timeout(4000)
     .to("mock:result")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <resequence>
+        <streamConfig capacity="5000" timeout="4000"/>
+        <header>seqno</header>
+        <to uri="mock:result"/>
+    </resequence>
+</route>
+----
+====
+
+This uses a capacity of 5000 elements. And the timeout has been set to 4 seconds.
+In case of a timeout, then the resequencer disreards the current exepected sequence number,
+and moves to the next expected number.
+
+=== How streaming mode works
 
 The stream-processing resequencer algorithm is based on the detection of gaps in a message stream rather than on a fixed batch size.
-Gap detection in combination with timeouts removes the constraint of having to know the number of messages of a sequence (i.e. the batch size) in advance. Messages must contain a unique sequence number for which a predecessor and a successor is known. For example a message with the sequence number 3 has a predecessor message with the sequence number 2 and a successor message with the sequence number 4. The message sequence 2,3,5 has a gap because the successor of 3 is missing. The resequencer therefore has to retain message 5 until message 4 arrives (or a timeout occurs).
+Gap detection in combination with timeouts removes the constraint of having to know the number of messages of a sequence (i.e. the batch size) in advance.
+Messages must contain a unique sequence number for which a predecessor and a successor is known.
 
-If the maximum time difference between messages (with successor/predecessor relationship with respect to the sequence number) in a message stream is known, then the resequencer's timeout parameter should be set to this value. In this case it is guaranteed that all messages of a stream are delivered in correct order to the next processor. The lower the timeout value is compared to the out-of-sequence time difference the higher is the probability for out-of-sequence messages delivered by this resequencer. Large timeout values should be supported by sufficiently high capacity values. The capacity parameter is used to prevent the resequencer from running out of memory.
+For example a message with the sequence number 3 has a predecessor message with the sequence number 2 and a successor message with the sequence number 4.
+The message sequence 2,3,5 has a gap because the successor of 3 is missing. The resequencer therefore has to retain message 5 until message 4 arrives (or a timeout occurs).
 
-By default, the stream resequencer expects long sequence numbers but other sequence numbers types can be supported as well by providing a custom expression.
+If the maximum time difference between messages (with successor/predecessor relationship with respect to the sequence number)
+in a message stream is known, then the Resequencer timeout parameter should be set to this value.
+
+In this case it is guaranteed that all messages of a stream are delivered in correct order to the next processor.
+The lower the timeout value is compared to the out-of-sequence time difference the higher is the probability for out-of-sequence messages delivered by this Resequencer.
+Large timeout values should be supported by sufficiently high capacity values. The capacity parameter is used to prevent the Resequencer from running out of memory.
+
+=== Using custom streaming mode sequence expression
+
+By default, the stream Resequencer expects long sequence numbers but other sequence numbers types can be supported as well by providing a custom expression.
 
 [source,java]
 ----
@@ -199,47 +377,54 @@ public class MyFileNameExpression implements Expression {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
-
 }
-
-from("direct:start")
-    .resequence(new MyFileNameExpression()).stream().timeout(100).to("mock:result");
 ----
 
-or custom comparator via the `comparator()` method
+And then you can use this expression in a Camel route:
 
 [source,java]
 ----
-ExpressionResultComparator<Exchange> comparator = new MyComparator();
 from("direct:start")
-    .resequence(header("seqnum")).stream().comparator(comparator)
+    .resequence(new MyFileNameExpression()).stream().timeout(2000)
     .to("mock:result");
 ----
 
-or via a `StreamResequencerConfig` object.
+=== Rejecting old messages
 
+Rejecting old messages is used to prevent out of order messages from being sent,
+regardless of the event that delivered messages downstream (capacity, timeout, etc).
+
+If enabled, the Resequencer will throw a `MessageRejectedException`
+when an incoming Exchange is _older_ (based on the `Comparator`) than the last delivered message.
+
+This provides an extra level of control in regard to delayed message ordering.
+
+In the example below old messages are rejected:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-ExpressionResultComparator<Exchange> comparator = new MyComparator();
-StreamResequencerConfig config = new StreamResequencerConfig(100, 1000L, comparator);
-
 from("direct:start")
-    .resequence(header("seqnum")).stream(config)
+    .resequence(header("seqno")).stream().timeout(1000).rejectOld()
     .to("mock:result");
 ----
 
-And an example in XML
-
+XML::
++
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
+<route>
     <from uri="direct:start"/>
     <resequence>
-      <simple>in.header.seqnum</simple>
-      <to uri="mock:result" />
-      <stream-config capacity="5000" timeout="4000"/>
+        <streamConfig rejectOld="true" timeout="1000"/>
+        <header>seqno</header>
+        <to uri="mock:result"/>
     </resequence>
-  </route>
-</camelContext>
+</route>
 ----
+====
+
+If an old message is detected then Camel throws `MessageRejectedException`.

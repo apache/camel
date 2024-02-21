@@ -50,7 +50,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:hello?transferException=true")
+                from("servlet:hello?muteException=false&transferException=true")
                         .throwException(new IllegalArgumentException("Damn"));
             }
         };

@@ -26,9 +26,10 @@
 
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <recipientList strategyRef="agg">
+            <recipientList aggregationStrategy="agg">
                 <header>foo</header>
             </recipientList>
             <to uri="mock:result"/>

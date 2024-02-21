@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultMessage;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
@@ -38,12 +39,12 @@ import org.slf4j.LoggerFactory;
 public class CometdBinding {
 
     public static final String HEADERS_FIELD = "CamelHeaders";
+    @Metadata(description = "The clientId of the session", javaType = "String")
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
+    @Metadata(description = "The subscription", javaType = "String")
     public static final String COMETD_SUBSCRIPTION_HEADER_NAME = "subscription";
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
 
-    private static final String IMPROPER_SESSTION_ATTRIBUTE_TYPE_MESSAGE
-            = "Sesstion attribute %s has a value of %s which cannot be included as at header because it is not an int, string, or long.";
     private static final Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
 
     private final BayeuxServerImpl bayeux;
@@ -78,7 +79,7 @@ public class CometdBinding {
 
         Message message = new DefaultMessage(camelContext);
         message.setBody(data);
-        Map headers = getHeadersFromMessage(cometdMessage);
+        Map<String, Object> headers = getHeadersFromMessage(cometdMessage);
         if (headers != null) {
             message.setHeaders(headers);
         }
@@ -105,7 +106,9 @@ public class CometdBinding {
                 message.setHeader(attributeName, attribute);
             } else {
                 // Do we need to support other type of session objects ?
-                LOG.info(String.format(IMPROPER_SESSTION_ATTRIBUTE_TYPE_MESSAGE, attributeName, attribute));
+                LOG.info(
+                        "Session attribute {} has a value of {} which cannot be included as at header because it is not an int, string, or long.",
+                        attributeName, attribute);
             }
 
         }

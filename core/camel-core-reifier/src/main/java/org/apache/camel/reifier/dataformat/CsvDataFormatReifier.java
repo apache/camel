@@ -17,6 +17,7 @@
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -38,7 +39,17 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
         properties.put("escapeDisabled", definition.getEscapeDisabled());
         properties.put("escape", definition.getEscape());
         properties.put("headerDisabled", definition.getHeaderDisabled());
-        properties.put("header", definition.getHeader());
+        // in the model header is a List<String> however it should ideally have
+        // just been a comma separated String so its configurable in uris
+        // so we join the List into a String in the reifier so the configurer can
+        // use the value as-is
+        if (definition.getHeader() != null && !definition.getHeader().isEmpty()) {
+            StringJoiner sj = new StringJoiner(",");
+            for (String s : definition.getHeader()) {
+                sj.add(s);
+            }
+            properties.put("header", sj.toString());
+        }
         properties.put("allowMissingColumnNames", definition.getAllowMissingColumnNames());
         properties.put("ignoreEmptyLines", definition.getIgnoreEmptyLines());
         properties.put("ignoreSurroundingSpaces", definition.getIgnoreSurroundingSpaces());
@@ -56,6 +67,7 @@ public class CsvDataFormatReifier extends DataFormatReifier<CsvDataFormat> {
         properties.put("lazyLoad", definition.getLazyLoad());
         properties.put("useMaps", definition.getUseMaps());
         properties.put("useOrderedMaps", definition.getUseOrderedMaps());
+        properties.put("captureHeaderRecord", definition.getCaptureHeaderRecord());
         properties.put("recordConverter", asRef(definition.getRecordConverterRef()));
         properties.put("marshallerFactory", asRef(definition.getMarshallerFactoryRef()));
     }

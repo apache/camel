@@ -22,20 +22,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.jgroups.Message;
-import org.jgroups.ReceiverAdapter;
+import org.jgroups.Receiver;
 import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * Implementation of JGroups message receiver ({@code org.jgroups.Receiver}) wrapping incoming messages into Camel
  * exchanges. Used by {@link JGroupsConsumer}.
  */
-public class CamelJGroupsReceiver extends ReceiverAdapter {
+public class CamelJGroupsReceiver implements Receiver {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJGroupsReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelJGroupsReceiver.class);
 
     private final JGroupsConsumer consumer;
     private final JGroupsEndpoint endpoint;

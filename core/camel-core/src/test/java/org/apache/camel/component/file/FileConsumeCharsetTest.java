@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -35,9 +35,8 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri("?charset=UTF-8"), "Hello World \u4f60\u597d", Exchange.FILE_NAME,
                 "report.txt");
     }
 
@@ -51,14 +50,14 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse(new File("target/data/files/report.txt").exists(), "File should been deleted");
+        assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true&charset=UTF-8")
+                from(fileUri("?initialDelay=0&delay=10&fileName=report.txt&delete=true&charset=UTF-8"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

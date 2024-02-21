@@ -19,27 +19,21 @@ package org.apache.camel.converter.jaxb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.converter.jaxb.mapper.DefaultNamespacePrefixMapper;
 
 /**
- * Factory for creating {@link JaxbNamespacePrefixMapper} which supports various JAXB-RI implementations.
+ * Factory for creating {@link JaxbNamespacePrefixMapper}.
  */
 public final class NamespacePrefixMapperFactory {
-
-    private static final String SUN_JAXB_21_MAPPER = "org.apache.camel.converter.jaxb.mapper.SunJaxb21NamespacePrefixMapper";
 
     private NamespacePrefixMapperFactory() {
     }
 
     static JaxbNamespacePrefixMapper newNamespacePrefixMapper(CamelContext camelContext, Map<String, String> namespaces) {
-
-        // try to load the Sun JAXB 2.1 based
-        Class<?> clazz = camelContext.getClassResolver().resolveClass(SUN_JAXB_21_MAPPER);
-        if (clazz != null) {
-            JaxbNamespacePrefixMapper mapper = (JaxbNamespacePrefixMapper) camelContext.getInjector().newInstance(clazz);
-            mapper.setNamespaces(namespaces);
-            return mapper;
-        }
-
-        throw new IllegalStateException("Cannot load CamelNamespacePrefixMapper class");
+        DefaultNamespacePrefixMapper mapper = new DefaultNamespacePrefixMapper();
+        CamelContextAware.trySetCamelContext(mapper, camelContext);
+        mapper.setNamespaces(namespaces);
+        return mapper;
     }
 }

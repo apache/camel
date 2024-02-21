@@ -19,12 +19,13 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Unit test for Mail using camel headers to set recipient subject.
  */
 public class MailUsingHeadersTest extends CamelTestSupport {
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
 
     @Test
     public void testMailUsingHeaders() throws Exception {
@@ -40,19 +42,19 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
-        map.put("To", "davsclaus@apache.org");
+        map.put("To", "davsclaus@localhost");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
         map.put("CamelFileName", "fileOne");
         map.put("org.apache.camel.test", "value");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
+        template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp), body, map);
         // END SNIPPET: e1
 
-        Mailbox box = Mailbox.get("davsclaus@apache.org");
+        Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals("davsclaus@localhost", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
 
@@ -69,20 +71,21 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders(
-                "smtp://davsclaus@apache.org?from=James Strachan <jstrachan@apache.org>&to=davsclaus@apache.org", body, map);
+                davsclaus.uriPrefix(Protocol.smtp) + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost", body,
+                map);
 
-        Mailbox box = Mailbox.get("davsclaus@apache.org");
+        Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals("davsclaus@localhost", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // no routes
             }
         };

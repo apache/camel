@@ -19,26 +19,30 @@ package org.apache.camel.component.jms;
 import java.io.File;
 import java.util.Map;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.support.MessageHelper.copyBody;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
  */
 public class JmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
+
     private Message jmsMessage;
     private Session jmsSession;
     private JmsBinding binding;
@@ -50,9 +54,19 @@ public class JmsMessage extends DefaultMessage {
         setBinding(binding);
     }
 
+    public void init(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        setExchange(exchange);
+        setJmsMessage(jmsMessage);
+        setJmsSession(jmsSession);
+        setBinding(binding);
+        // need to populate initial headers when we use pooled exchanges
+        populateInitialHeaders(getHeaders());
+    }
+
     @Override
     public void reset() {
         super.reset();
+        setExchange(null);
         jmsMessage = null;
         jmsSession = null;
         binding = null;
@@ -101,7 +115,7 @@ public class JmsMessage extends DefaultMessage {
         }
 
         // copy body and fault flag
-        setBody(that.getBody());
+        copyBody(that, this);
 
         // we have already cleared the headers
         if (that.hasHeaders()) {
@@ -136,6 +150,7 @@ public class JmsMessage extends DefaultMessage {
             }
         }
         this.jmsMessage = jmsMessage;
+        setPayloadForTrait(MessageTrait.REDELIVERY, JmsMessageHelper.evalRedeliveryMessageTrait(jmsMessage));
     }
 
     /**
@@ -230,13 +245,18 @@ public class JmsMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null && map != null) {
             map.putAll(getBinding().extractHeadersFromJms(jmsMessage, getExchange()));
+            try {
+                map.put(Exchange.MESSAGE_TIMESTAMP, jmsMessage.getJMSTimestamp());
+            } catch (JMSException e) {
+                // ignore
+            }
         }
     }
 
     @Override
     protected String createMessageId() {
         if (jmsMessage == null) {
-            LOG.trace("No javax.jms.Message set so generating a new message id");
+            LOG.trace("No jakarta.jms.Message set so generating a new message id");
             return super.createMessageId();
         }
         try {
@@ -249,15 +269,6 @@ public class JmsMessage extends DefaultMessage {
             return getSanitizedString(id);
         } catch (JMSException e) {
             throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
-        }
-    }
-
-    @Override
-    protected Boolean isTransactedRedelivered() {
-        if (jmsMessage != null) {
-            return JmsMessageHelper.getJMSRedelivered(jmsMessage);
-        } else {
-            return null;
         }
     }
 
@@ -276,5 +287,4 @@ public class JmsMessage extends DefaultMessage {
     private String getSanitizedString(Object value) {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
-
 }

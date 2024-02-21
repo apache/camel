@@ -25,9 +25,10 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="aggregatorStrategy" completionSize="10" aggregateControllerRef="myController">
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="10" aggregateController="myController">
                 <correlationExpression>
                     <simple>header.id</simple>
                 </correlationExpression>

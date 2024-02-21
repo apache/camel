@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class JmsAutoStartupTest extends CamelTestSupport {
+@Timeout(60)
+public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
     private JmsEndpoint endpoint;
 
@@ -37,17 +37,16 @@ public class JmsAutoStartupTest extends CamelTestSupport {
         Service service = context.getRoutes().get(0).getServices().get(0);
         JmsConsumer consumer = (JmsConsumer) service;
 
-        assertEquals(false, consumer.getListenerContainer().isRunning());
+        assertFalse(consumer.getListenerContainer().isRunning());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // should be stopped by default
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsAutoStartupTest", "Hello World");
 
-        Thread.sleep(2000);
-
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         mock.reset();
         mock.expectedBodiesReceived("Hello World");
@@ -55,30 +54,19 @@ public class JmsAutoStartupTest extends CamelTestSupport {
         // then start the listener so we can consume the persistent message
         consumer.startListenerContainer();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                endpoint = context.getEndpoint("activemq:queue:foo?autoStartup=false", JmsEndpoint.class);
+            public void configure() {
+                endpoint = context.getEndpoint("activemq:queue:JmsAutoStartupTest?autoStartup=false", JmsEndpoint.class);
 
                 from(endpoint).to("mock:result");
             }
         };
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must use persistent so the message is not lost
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
 }

@@ -48,14 +48,12 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         invoke(GenerateEndpointUriFactoryMojo.class);
         // generate invoke-on-header
         invoke(GenerateInvokeOnHeaderMojo.class);
+        // generate data-type-transformer
+        invoke(GenerateDataTypeTransformerMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class);
         // validate-components
         invoke(ValidateComponentMojo.class);
-        // generate-endpoint-dsl
-        invoke(EndpointDslMojo.class);
-        // generate-component-dsl
-        invoke(ComponentDslMojo.class);
     }
 
 }

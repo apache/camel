@@ -18,12 +18,15 @@
 package org.apache.camel.test.infra.infinispan.common;
 
 public final class InfinispanProperties {
+    public static final String INFINISPAN_CONTAINER = "infinispan.container";
     public static final String SERVICE_ADDRESS = "infinispan.service.address";
     public static final String SERVICE_HOST = "infinispan.service.host";
     public static final String SERVICE_PORT = "infinispan.service.port";
     public static final String SERVICE_USERNAME = "infinispan.service.username";
     public static final String SERVICE_PASSWORD = "infinispan.service.password";
     public static final int DEFAULT_SERVICE_PORT = 11222;
+    public static final String INFINISPAN_CONTAINER_NETWORK_MODE_HOST = "infinispan.service.network.mode.host";
+    public static final boolean INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT = false;
 
     private InfinispanProperties() {
 

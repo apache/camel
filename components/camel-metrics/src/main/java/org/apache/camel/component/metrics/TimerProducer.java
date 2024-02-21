@@ -42,7 +42,7 @@ public class TimerProducer extends AbstractMetricsProducer {
         if (finalAction == MetricsTimerAction.start) {
             handleStart(exchange, registry, metricsName);
         } else if (finalAction == MetricsTimerAction.stop) {
-            handleStop(exchange, registry, metricsName);
+            handleStop(exchange, metricsName);
         } else {
             LOG.warn("No action provided for timer \"{}\"", metricsName);
         }
@@ -60,7 +60,7 @@ public class TimerProducer extends AbstractMetricsProducer {
         }
     }
 
-    void handleStop(Exchange exchange, MetricRegistry registry, String metricsName) {
+    void handleStop(Exchange exchange, String metricsName) {
         String propertyName = getPropertyName(metricsName);
         Timer.Context context = getTimerContextFromExchange(exchange, propertyName);
         if (context != null) {

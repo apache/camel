@@ -1,0 +1,139 @@
+= Huawei Identity and Access Management (IAM) Component
+:doctitle: Huawei Identity and Access Management (IAM)
+:shortname: hwcloud-iam
+:artifactid: camel-huaweicloud-iam
+:description: To securely manage users on Huawei Cloud
+:since: 3.11
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-iam
+
+*Since Camel {since}*
+
+*{component-header}*
+
+Huawei Cloud Identity and Access Management (IAM) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/iam.html[IAM] provided by Huawei Cloud.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-huaweicloud-iam</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+----
+hwcloud-iam:operation[?options]
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== Usage
+
+=== Message properties evaluated by the IAM producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudIamOperation` |`String` | Name of operation to invoke
+
+|`CamelHwCloudIamUserId` |`String` | User ID to invoke operation on
+
+|`CamelHwCloudIamGroupId` |`String` | Group ID to invoke operation on
+
+|=======================================================================
+
+If any of the above properties are set, they will override their corresponding query parameter.
+
+== List of Supported IAM Operations
+
+- listUsers
+- getUser - `userId` parameter is *required*
+- updateUser - `userId` parameter is *required*
+- listGroups
+- getGroupUsers - `groupId` is *required*
+- updateGroup - `groupId` is *required*
+
+=== Passing Options Through Exchange Body
+There are many options that can be submitted to https://support.huaweicloud.com/en-us/api-iam/iam_08_0011.html[update a user] (Table 4) or to https://support.huaweicloud.com/en-us/api-iam/iam_09_0004.html[update a group] (Table 4). Since there are multiple user/group options, they must be passed through the exchange body.
+
+For the `updateUser` operation, you can pass the user options as an UpdateUserOption object or a Json string:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new UpdateUserOption().withName("user").withDescription("employee").withEmail("user@email.com"))
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"user\",\"description\":\"employee\",\"email\":\"user@email.com\"}")
+ .to("hwcloud-iam:updateUser?userId=********&region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+For the `updateGroup` operation, you can pass the group options as a KeystoneUpdateGroupOption object or a Json string:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new KeystoneUpdateGroupOption().withName("group").withDescription("employees").withDomainId("1234"))
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"group\",\"description\":\"employees\",\"domain_id\":\"1234\"}")
+ .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
+----
+
+== Using ServiceKey Configuration Bean
+
+Access key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.iam.models.ServiceKeys`.
+Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
+
+Check the following code snippets:
+
+[source,xml]
+----
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.iam.models.ServiceKeys">
+   <property name="accessKey" value="your_access_key" />
+   <property name="secretKey" value="your_secret_key" />
+</bean>
+----
+[source,java]
+----
+from("direct:triggerRoute")
+ .setProperty(IAMPropeties.OPERATION, constant("listUsers"))
+ .setProperty(IAMPropeties.USER_ID ,constant("your_user_id"))
+ .setProperty(IAMPropeties.GROUP_ID, constant("your_group_id))
+ .to("hwcloud-iam:listUsers?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
+----
+
+
+include::spring-boot:partial$starter.adoc[]

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * MicroProfile Fault Tolerance Circuit Breaker EIP configuration
  */
-@Metadata(label = "eip,routing,circuitbreaker")
+@Metadata(label = "configuration,eip")
 @XmlRootElement(name = "faultToleranceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
@@ -50,8 +50,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
      */
-    public FaultToleranceConfigurationDefinition circuitBreakerRef(String circuitBreakerRef) {
-        setCircuitBreakerRef(circuitBreakerRef);
+    public FaultToleranceConfigurationDefinition circuitBreaker(String circuitBreaker) {
+        setCircuitBreaker(circuitBreaker);
         return this;
     }
 
@@ -133,8 +133,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public FaultToleranceConfigurationDefinition timeoutScheduledExecutorServiceRef(String executorServiceRef) {
-        setTimeoutScheduledExecutorServiceRef(executorServiceRef);
+    public FaultToleranceConfigurationDefinition timeoutScheduledExecutorService(String executorService) {
+        setTimeoutScheduledExecutorService(executorService);
         return this;
     }
 
@@ -165,8 +165,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     /**
      * References to a custom thread pool to use when bulkhead is enabled
      */
-    public FaultToleranceConfigurationDefinition bulkheadExecutorServiceRef(String executorServiceRef) {
-        setBulkheadExecutorServiceRef(executorServiceRef);
+    public FaultToleranceConfigurationDefinition bulkheadExecutorService(String executorService) {
+        setBulkheadExecutorService(executorService);
         return this;
     }
 

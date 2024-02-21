@@ -37,7 +37,7 @@ public class RestUndertowHttpPostXmlJaxbPojoTest extends BaseUndertowTest {
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBodyAndHeader("undertow:http://localhost:{{port}}/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -54,7 +54,7 @@ public class RestUndertowHttpPostXmlJaxbPojoTest extends BaseUndertowTest {
         String body = "<user name=\"Donald Duck\" id=\"456\"></user>";
         template.sendBody("undertow:http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -63,10 +63,10 @@ public class RestUndertowHttpPostXmlJaxbPojoTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);

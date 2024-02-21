@@ -21,6 +21,7 @@ public final class ConsulProperties {
     public static final String CONSUL_URL = "consul.url";
     public static final String CONSUL_HOST = "consul.host";
     public static final String CONSUL_PORT = "consul.port";
+    public static final String CONSUL_CONTAINER = "consul.container";
 
     private ConsulProperties() {
 

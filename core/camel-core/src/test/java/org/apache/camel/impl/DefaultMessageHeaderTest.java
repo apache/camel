@@ -138,9 +138,9 @@ public class DefaultMessageHeaderTest {
 
         msg.removeHeader("FOO");
 
-        assertEquals(null, msg.getHeader("foo"));
-        assertEquals(null, msg.getHeader("Foo"));
-        assertEquals(null, msg.getHeader("FOO"));
+        assertNull(msg.getHeader("foo"));
+        assertNull(msg.getHeader("Foo"));
+        assertNull(msg.getHeader("FOO"));
 
         assertTrue(msg.getHeaders().isEmpty());
     }
@@ -226,7 +226,7 @@ public class DefaultMessageHeaderTest {
 
         // new message headers
         assertEquals("bla", msg.getHeader("tick"));
-        assertEquals(null, msg.getHeader("tack"));
+        assertNull(msg.getHeader("tack"));
         assertEquals("blaaa", msg.getHeader("tock"));
     }
 
@@ -295,7 +295,7 @@ public class DefaultMessageHeaderTest {
         assertEquals("cheese", msg.getHeader("foo", "foo"));
         assertEquals("cheese", msg.getHeader("foo", "foo", String.class));
 
-        assertEquals(null, msg.getHeader("beer"));
+        assertNull(msg.getHeader("beer"));
         assertEquals("foo", msg.getHeader("beer", "foo"));
         assertEquals(Integer.valueOf(123), msg.getHeader("beer", "123", Integer.class));
     }

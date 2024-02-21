@@ -22,10 +22,14 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedSanitizeTest extends ManagementTestSupport {
 
     @Override
@@ -39,11 +43,10 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
     public void testSanitize() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance(
-                "org.apache.camel:context=camel-1,type=endpoints,name=\"stub://foo\\?password=xxxxxx&username=foo\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "stub://foo\\?password=xxxxxx&username=xxxxxx");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("stub://foo?password=xxxxxx&username=foo", uri);
+        assertEquals("stub://foo?password=xxxxxx&username=xxxxxx", uri);
     }
 
     @Override

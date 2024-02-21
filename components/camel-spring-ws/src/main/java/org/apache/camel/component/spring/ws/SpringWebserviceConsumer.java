@@ -19,16 +19,15 @@ package org.apache.camel.component.spring.ws;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPMessage;
+
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
@@ -63,7 +62,6 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     public void invoke(MessageContext messageContext) throws Exception {
         Exchange exchange = createExchange(false);
         try {
-            exchange.setPattern(ExchangePattern.InOptionalOut);
             populateExchangeFromMessageContext(messageContext, exchange);
 
             // populate camel exchange with breadcrumb from transport header
@@ -106,13 +104,13 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             if (soapMessageRequest != null) {
                 MimeHeaders mimeHeaders = soapMessageRequest.getMimeHeaders();
                 if (mimeHeaders != null) {
-                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
+                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
                     // expected to get one token
-                    // if more than one token expected, 
-                    // presumably breadcrumb generation strategy 
+                    // if more than one token expected,
+                    // presumably breadcrumb generation strategy
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
-                        exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+                        exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
                     }
                 }
             }
@@ -122,9 +120,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     private void populateExchangeWithBreadcrumbFromMessageContext(Exchange exchange, MessageContext messageContext) {
         if (messageContext != null) {
             HttpServletRequest obj = (HttpServletRequest) messageContext.getProperty("transport.http.servletRequest");
-            String breadcrumbId = obj.getHeader(Exchange.BREADCRUMB_ID);
+            String breadcrumbId = obj.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
             if (breadcrumbId != null) {
-                exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
+                exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbId);
             }
         }
     }
@@ -135,7 +133,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
 
-        SpringWebserviceMessage swm = exchange.adapt(ExtendedExchange.class).getInOrNull(SpringWebserviceMessage.class);
+        SpringWebserviceMessage swm = exchange.getExchangeExtension().getInOrNull(SpringWebserviceMessage.class);
         if (swm == null) {
             swm = new SpringWebserviceMessage(exchange.getContext(), request);
             exchange.setIn(swm);
@@ -189,7 +187,6 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                     SoapHeaderElement element = elementIter.next();
                     QName name = element.getName();
                     headers.put(name.getLocalPart(), element);
-
                 }
             }
         }

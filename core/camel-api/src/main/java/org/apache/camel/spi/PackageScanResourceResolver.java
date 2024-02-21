@@ -16,13 +16,8 @@
  */
 package org.apache.camel.spi;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.camel.StaticService;
 
@@ -74,59 +69,5 @@ public interface PackageScanResourceResolver extends StaticService {
      * @throws Exception can be thrown during scanning for resources.
      */
     Collection<Resource> findResources(String location) throws Exception;
-
-    /**
-     * Finds the resource names from the given location.
-     *
-     * The location can be prefixed with either file: or classpath: to look in either file system or classpath. By
-     * default classpath is assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * @param      location  the location (support ANT style patterns, eg routes/camel-*.xml)
-     * @return               the found resource names, or an empty collection if no resources found
-     * @throws     Exception can be thrown during scanning for resources.
-     * @deprecated           use {@link #findResources(String)}
-     */
-    @Deprecated
-    default Collection<String> findResourceNames(String location) throws Exception {
-        return findResources(location)
-                .stream()
-                .map(Resource::getLocation)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    /**
-     * Finds the resources from the given location.
-     *
-     * The location can be prefixed with either file: or classpath: to look in either file system or classpath. By
-     * default classpath is assumed if no prefix is specified.
-     *
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
-     * specific the exact name for each XML file is faster as no classpath scanning is needed.
-     *
-     * <b>Important:</b> Make sure to close the returned input streams after use.
-     *
-     * @param      location  the location (support ANT style patterns, eg routes/camel-*.xml)
-     * @return               the found resources, or an empty collection if no resources found
-     * @throws     Exception can be thrown during scanning for resources.
-     * @deprecated           use {@link #findResources(String)}
-     */
-    @Deprecated
-    default Collection<InputStream> findResourceStreams(String location) throws Exception {
-        final Collection<Resource> values = findResources(location);
-        final List<InputStream> answer = new ArrayList<>(values.size());
-
-        for (Resource resource : values) {
-            answer.add(resource.getInputStream());
-        }
-
-        return answer;
-    }
 
 }

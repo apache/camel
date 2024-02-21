@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
 import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +66,8 @@ public class JGroupsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body != null) {
-            Address destinationAddress = exchange.getIn().getHeader(JGroupsEndpoint.HEADER_JGROUPS_DEST, Address.class);
-            Address sourceAddress = exchange.getIn().getHeader(JGroupsEndpoint.HEADER_JGROUPS_SRC, Address.class);
+            Address destinationAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_DEST, Address.class);
+            Address sourceAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_SRC, Address.class);
 
             LOG.debug("Posting: {} to cluster: {}", body, clusterName);
             if (destinationAddress != null) {
@@ -75,7 +76,7 @@ public class JGroupsProducer extends DefaultProducer {
             if (sourceAddress != null) {
                 LOG.debug("Posting from custom source address: {}", sourceAddress);
             }
-            Message message = new Message(destinationAddress, body);
+            Message message = new ObjectMessage(destinationAddress, body);
             message.setSrc(sourceAddress);
             endpoint.getResolvedChannel().send(message);
         } else {

@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "huaweicloud-common",
+    "title": "Huaweicloud Common",
+    "description": "Common package for HuaweiCloud components",
+    "deprecated": false,
+    "firstVersion": "3.12.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-huaweicloud-common",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

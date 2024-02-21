@@ -19,7 +19,6 @@ package org.apache.camel.coap;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,7 +31,7 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +44,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAP() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client;
         CoapResponse rsp;
 
@@ -72,7 +71,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAPMethodNotAllowedResponse() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestResource/Ducky");
         decorateClient(client);
         client.setTimeout(1000000L);
@@ -82,7 +81,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
     @Test
     void testCoAPNotFoundResponse() throws Exception {
-        NetworkConfig.createStandardWithoutFile();
+        Configuration.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/foo/bar/cheese");
         decorateClient(client);
         client.setTimeout(1000000L);
@@ -97,7 +96,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello some-id: xyz");
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBodyAndHeader("xyz", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -107,7 +106,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello some-id");
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody(null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected abstract String getProtocol();
@@ -140,9 +139,9 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
                 from("direct:post1").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
-                    String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                    String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
                     exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
-                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
+                    exchange.getMessage().setHeader(CoAPConstants.CONTENT_TYPE, ct);
                 });
 
                 from("direct:start").toF(getClientURI(), coapport).to("mock:result");

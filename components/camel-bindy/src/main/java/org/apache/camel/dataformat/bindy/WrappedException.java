@@ -25,7 +25,7 @@ public class WrappedException extends RuntimeException {
 
     /**
      * Mandatory constructor.
-     * 
+     *
      * @param wrappedException the checked exception being passed in
      */
     public WrappedException(Exception wrappedException) {

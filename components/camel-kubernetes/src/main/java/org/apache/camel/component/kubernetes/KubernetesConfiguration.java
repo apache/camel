@@ -78,7 +78,7 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private Boolean trustCerts;
 
-    @UriParam(label = "consumer")
+    @UriParam
     private String namespace;
 
     @UriParam(label = "consumer")
@@ -121,7 +121,13 @@ public class KubernetesConfiguration implements Cloneable {
     private String crdPlural;
 
     /**
-     * Kubernetes Master url
+     * URL to a remote Kubernetes API server.
+     *
+     * This should only be used when your Camel application is connecting from outside Kubernetes. If you run your Camel
+     * application inside Kubernetes, then you can use local or client as the URL to tell Camel to run in local mode.
+     *
+     * If you connect remotely to Kubernetes, then you may also need some of the many other configuration options for
+     * secured connection with certificates, etc.
      */
     public String getMasterUrl() {
         return masterUrl;

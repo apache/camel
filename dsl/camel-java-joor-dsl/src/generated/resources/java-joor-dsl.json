@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "java-joor-dsl",
+    "title": "Java DSL (runtime compiled)",
+    "description": "Camel Java DSL with jOOR",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "dsl",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-java-joor-dsl",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id" : "9cb75fc6-cce4-429c-874c-844e1a909b22",
+  "name" : "api_v3_exchangeinfo",
+  "request" : {
+    "url" : "/api/v3/exchangeInfo",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"timezone\":\"UTC\",\"serverTime\":1662462069763,\"rateLimits\":[{\"rateLimitType\":\"REQUEST_WEIGHT\",\"interval\":\"MINUTE\",\"intervalNum\":1,\"limit\":1200},{\"rateLimitType\":\"ORDERS\",\"interval\":\"SECOND\",\"intervalNum\":10,\"limit\":50},{\"rateLimitType\":\"ORDERS\",\"interval\":\"DAY\",\"intervalNum\":1,\"limit\":160000},{\"rateLimitType\":\"RAW_REQUESTS\",\"interval\":\"MINUTE\",\"intervalNum\":5,\"limit\":6100}],\"exchangeFilters\":[],\"symbols\":[{\"symbol\":\"EOSETH\",\"status\":\"TRADING\",\"baseAsset\":\"EOS\",\"baseAssetPrecision\":8,\"quoteAsset\":\"ETH\",\"quotePrecision\":8,\"quoteAssetPrecision\":8,\"baseCommissionPrecision\":8,\"quoteCommissionPrecision\":8,\"orderTypes\":[\"LIMIT\",\"LIMIT_MAKER\",\"MARKET\",\"STOP_LOSS_LIMIT\",\"TAKE_PROFIT_LIMIT\"],\"icebergAllowed\":true,\"ocoAllowed\":true,\"quoteOrderQtyMarketAllowed\":true,\"allowTrailingStop\":true,\"cancelReplaceAllowed\":true,\"isSpotTradingAllowed\":true,\"isMarginTradingAllowed\":true,\"filters\":[{\"filterType\":\"PRICE_FILTER\",\"minPrice\":\"0.00000100\",\"maxPrice\":\"1000.00000000\",\"tickSize\":\"0.00000100\"},{\"filterType\":\"PERCENT_PRICE\",\"multiplierUp\":\"5\",\"multiplierDown\":\"0.2\",\"avgPriceMins\":5},{\"filterType\":\"LOT_SIZE\",\"minQty\":\"0.10000000\",\"maxQty\":\"92141578.00000000\",\"stepSize\":\"0.10000000\"},{\"filterType\":\"MIN_NOTIONAL\",\"minNotional\":\"0.00500000\",\"applyToMarket\":true,\"avgPriceMins\":5},{\"filterType\":\"ICEBERG_PARTS\",\"limit\":10},{\"filterType\":\"MARKET_LOT_SIZE\",\"minQty\":\"0.00000000\",\"maxQty\":\"18165.07595552\",\"stepSize\":\"0.00000000\"},{\"filterType\":\"TRAILING_DELTA\",\"minTrailingAboveDelta\":10,\"maxTrailingAboveDelta\":2000,\"minTrailingBelowDelta\":10,\"maxTrailingBelowDelta\":2000},{\"filterType\":\"MAX_NUM_ORDERS\",\"maxNumOrders\":200},{\"filterType\":\"MAX_NUM_ALGO_ORDERS\",\"maxNumAlgoOrders\":5}],\"permissions\":[\"SPOT\",\"MARGIN\",\"TRD_GRP_005\"]}]}",
+    "headers" : {
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Date" : "Tue, 06 Sep 2022 11:01:09 GMT",
+      "Server" : "nginx",
+      "Vary" : "Accept-Encoding",
+      "x-mbx-uuid" : "2f494656-9539-4cf6-ae6d-2e78ca2586f5",
+      "x-mbx-used-weight" : "10",
+      "x-mbx-used-weight-1m" : "10",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains",
+      "X-Frame-Options" : "SAMEORIGIN",
+      "X-Xss-Protection" : "1; mode=block",
+      "X-Content-Type-Options" : "nosniff",
+      "Content-Security-Policy" : "default-src 'self'",
+      "X-Content-Security-Policy" : "default-src 'self'",
+      "X-WebKit-CSP" : "default-src 'self'",
+      "Cache-Control" : "no-cache, no-store, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "Access-Control-Allow-Origin" : "*",
+      "Access-Control-Allow-Methods" : "GET, HEAD, OPTIONS",
+      "X-Cache" : "Miss from cloudfront",
+      "Via" : "1.1 444dde5644fa29b8d8dfac109693e2a2.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Pop" : "VIE50-C2",
+      "X-Amz-Cf-Id" : "DuI71hQObZum2O31Zr8oLQiw022FKnioP4-l-bS6VomqoIILr9AZ4Q=="
+    }
+  },
+  "uuid" : "9cb75fc6-cce4-429c-874c-844e1a909b22",
+  "persistent" : true,
+  "insertionIndex" : 22
+}

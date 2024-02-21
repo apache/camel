@@ -18,9 +18,12 @@ package org.apache.camel.spring.management;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.LoggingEventNotifierTest;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
+@DisabledOnOs(OS.AIX)
 public class SpringDualLoggingEventNotifierTest extends LoggingEventNotifierTest {
 
     @Override

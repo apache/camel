@@ -33,32 +33,35 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
     private boolean blueprint;
 
-    RestDslXmlGenerator(final OasDocument document) {
+    RestDslXmlGenerator(final OpenApiDocument document) {
         super(document);
     }
 
     public String generate(final CamelContext context) throws Exception {
-        final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
-        final String basePath = RestDslGenerator.determineBasePathFrom(document);
+        final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
+        final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
                 basePath, emitter, filter,
                 destinationGenerator());
 
-        document.paths.getPathItems().forEach(restDslStatement::visit);
+        for (String name : document.getPaths().getItemNames()) {
+            OpenApiPathItem item = document.getPaths().getItem(name);
+            restDslStatement.visit(name, item);
+        }
 
         final RestsDefinition rests = emitter.result();
-        final ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        final String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, rests);
+        final String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -82,23 +85,36 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
             element.removeAttribute("customId");
         }
 
-        if (restComponent != null) {
+        boolean restConfig = restComponent != null || restContextPath != null || clientRequestValidation;
+        if (restConfig) {
             final Element configuration = document.createElement("restConfiguration");
-            configuration.setAttribute("component", restComponent);
-
-            if (restContextPath != null) {
+            if (ObjectHelper.isNotEmpty(restComponent)) {
+                configuration.setAttribute("component", restComponent);
+            }
+            if (ObjectHelper.isNotEmpty(restContextPath)) {
                 configuration.setAttribute("contextPath", restContextPath);
             }
-
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
                 configuration.setAttribute("apiContextPath", apiContextPath);
             }
-
+            if (clientRequestValidation) {
+                configuration.setAttribute("clientRequestValidation", "true");
+            }
             root.insertBefore(configuration, root.getFirstChild());
         }
 
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
         final Transformer transformer = transformerFactory.newTransformer();
 
         final StringWriter writer = new StringWriter();

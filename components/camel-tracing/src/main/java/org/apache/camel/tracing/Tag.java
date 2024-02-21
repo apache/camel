@@ -16,14 +16,41 @@
  */
 package org.apache.camel.tracing;
 
+@Deprecated
 public enum Tag {
-    COMPONENT,
-    HTTP_STATUS,
-    HTTP_METHOD,
-    HTTP_URL,
-    MESSAGE_BUS_DESTINATION,
-    DB_TYPE,
-    DB_INSTANCE,
-    DB_STATEMENT,
-    ERROR
+    COMPONENT(TagConstants.COMPONENT),
+    ERROR(TagConstants.ERROR),
+
+    // General Tags
+    SERVER_ADDRESS(TagConstants.SERVER_ADDRESS),
+
+    // HTTP tags
+    HTTP_STATUS(TagConstants.HTTP_STATUS),
+    HTTP_METHOD(TagConstants.HTTP_METHOD),
+    HTTP_URL(TagConstants.HTTP_URL),
+    URL_SCHEME(TagConstants.URL_SCHEME),
+    URL_PATH(TagConstants.URL_PATH),
+    URL_QUERY(TagConstants.URL_QUERY),
+
+    // Messaging tags
+    MESSAGE_BUS_DESTINATION(TagConstants.MESSAGE_BUS_DESTINATION),
+    MESSAGE_ID(TagConstants.MESSAGE_ID),
+
+    // Database tags
+    DB_TYPE(TagConstants.DB_SYSTEM),
+    DB_INSTANCE(TagConstants.DB_NAME),
+    DB_STATEMENT(TagConstants.DB_STATEMENT),
+
+    // Exception tags
+    EXCEPTION_MESSAGE(TagConstants.EXCEPTION_MESSAGE);
+
+    Tag(String attribute) {
+        this.attribute = attribute;
+    }
+
+    private final String attribute;
+
+    public String getAttribute() {
+        return attribute;
+    }
 }

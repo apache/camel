@@ -18,7 +18,6 @@ package org.apache.camel.component.dataset;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -29,22 +28,15 @@ public class DataSetTestFileSplitTest extends ContextTestSupport {
         return false;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/testme");
-        super.setUp();
-    }
-
     @Disabled
     @Test
     public void testFile() throws Exception {
-        template.sendBody("file:target/data/testme", "Hello World\nBye World\nHi World");
+        template.sendBody(fileUri(), "Hello World\nBye World\nHi World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("dataset-test:file:target/data/testme?noop=true&split=true&timeout=1000");
+                from("direct:start").to("dataset-test:" + fileUri() + "?noop=true&split=true&timeout=1000");
             }
         });
         context.start();

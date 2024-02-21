@@ -38,7 +38,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
     public void testSimulateInOnlyUsingWireTap() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty://http://localhost:{{port}}/myserver")
                         // turn the route to in only as we do not want jetty to wait
@@ -49,7 +49,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                         .transform(constant("OK"));
 
                 from("direct:continue").delay(1500).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         route += "B";
                     }
                 }).to("mock:result");
@@ -68,7 +68,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
         route += "A";
         assertEquals("OK", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("AB", route);
     }
@@ -77,7 +77,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
     public void testSimulateInOnly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/myserver")
                         // turn the route to in only as we do not want jetty to wait
                         // for the response
@@ -89,7 +89,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                         .transform(constant("OK"));
 
                 from("seda:continue").delay(1000).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         route += "B";
                     }
                 }).to("mock:result");
@@ -107,7 +107,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
         route += "A";
         assertEquals("OK", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("AB", route);
     }

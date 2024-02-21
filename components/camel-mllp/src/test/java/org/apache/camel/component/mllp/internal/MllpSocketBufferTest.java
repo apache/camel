@@ -33,10 +33,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorWithNullEndpoing() throws Exception {
+    public void testConstructorWithNullEndpoing() {
         try {
             new MllpSocketBuffer(null);
             fail("Constructor should have thrown an exception with a null Endpoint argument");
@@ -289,10 +288,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGetStartOfBlockIndex() throws Exception {
+    public void testGetStartOfBlockIndex() {
         int expected = -1;
         assertEquals(expected, instance.getStartOfBlockIndex(), "Unexpected initial value");
 
@@ -308,10 +306,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void tesGgetEndOfBlockIndex() throws Exception {
+    public void tesGgetEndOfBlockIndex() {
         int expected = -1;
         assertEquals(expected, instance.getEndOfBlockIndex(), "Unexpected initial value");
 
@@ -327,10 +324,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testHasCompleteEnvelopeWithRequiredEndOfData() throws Exception {
+    public void testHasCompleteEnvelopeWithRequiredEndOfData() {
         endpoint.setRequireEndOfData(true);
         assertFalse(instance.hasCompleteEnvelope(), "Unexpected initial value");
 
@@ -353,10 +349,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testHasCompleteEnvelopeWithOptionalEndOfData() throws Exception {
+    public void testHasCompleteEnvelopeWithOptionalEndOfData() {
         endpoint.setRequireEndOfData(false);
         assertFalse(instance.hasCompleteEnvelope(), "Unexpected initial value");
 
@@ -379,10 +374,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testHasStartOfBlock() throws Exception {
+    public void testHasStartOfBlock() {
         assertFalse(instance.hasStartOfBlock(), "Unexpected initial value");
 
         instance.write(MllpProtocolConstants.START_OF_BLOCK);
@@ -404,10 +398,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testHasEndOfBlock() throws Exception {
+    public void testHasEndOfBlock() {
         assertFalse(instance.hasEndOfBlock(), "Unexpected initial value");
 
         instance.write(MllpProtocolConstants.END_OF_BLOCK);
@@ -447,10 +440,9 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testHasEndOfData() throws Exception {
+    public void testHasEndOfData() {
         assertFalse(instance.hasEndOfData(), "Unexpected initial value");
 
         // Test just the END_OF_DATA

@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ public class StartupStepLoggingTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(false);
-        context.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(true);
+        context.getCamelContextExtension().getStartupStepRecorder().setEnabled(true);
         // you can restrict the sub steps to a max depth level
         // context.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setMaxDepth(1);
         context.setLoadTypeConverters(true);

@@ -58,7 +58,7 @@ public class JdbcAggregateConcurrentSameGroupTest extends AbstractJdbcAggregatio
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

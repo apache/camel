@@ -20,12 +20,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.Message;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
@@ -68,7 +66,7 @@ import org.springframework.util.ErrorHandler;
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = JmsConstants.class)
 @Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
@@ -153,8 +151,13 @@ public class JmsEndpoint extends DefaultEndpoint
         return createConsumer(processor, listenerContainer);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer() {
         return configuration.createMessageListenerContainer(this);
+    }
+
+    public AbstractMessageListenerContainer createReplyToMessageListenerContainer() {
+        // only choose as the reply manager will configure the listener
+        return configuration.chooseMessageListenerContainerImplementation(this, configuration.getReplyToConsumerType());
     }
 
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
@@ -414,11 +417,11 @@ public class JmsEndpoint extends DefaultEndpoint
         return getComponent().getAsyncStartStopExecutorService();
     }
 
-    public void onListenerContainerStarting(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStarting() {
         runningMessageListeners.incrementAndGet();
     }
 
-    public void onListenerContainerStopped(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStopped() {
         runningMessageListeners.decrementAndGet();
     }
 

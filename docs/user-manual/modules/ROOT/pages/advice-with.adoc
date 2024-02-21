@@ -1,0 +1,430 @@
+= AdviceWith
+
+AdviceWith is used for testing Camel routes where you can _advice_ an existing route before its being tested.
+
+What `adviceWith` allows is to change some factors on the route before the test is being run, such as:
+
+* Intercept sending to endpoints
+* Replace incoming endpoint with another
+* Take out or replace node(s) of the route
+* Insert new node(s) into the route
+* Mock endpoints
+
+All these features are available from `AdviceWithRouteBuilder`, which is a specialized
+`RouteBuilder`.
+
+== AdviceWithRouteBuilder API
+
+The `AdviceWithRouteBuilder` extends the regular `RouteBuilder` adding specialized methods for _advicing_ routes. The table below lists
+the most commonly used methods:
+
+[width="100%",cols="1m,4",options="header",]
+|=======================================================================
+|Method |Description
+| mockEndpoints | Mocks all endpoints in the route.
+| mockEndpoints(patterns) | Mocks all endpoints in the route that matches the patterns. You can use wildcards and regular expressions in the given pattern to match multiple endpoints.
+| mockEndpointsAndSkip(patterns) | Mocks all endpoints and skip sending to the endpoint in the route that matches the patterns. You can use wildcards and regular expressions in the given pattern to match multiple endpoints.
+| replaceFromWith(uri) | To replace the route input with a new endpoint.
+| weaveByUri(pattern) | Manipulates the route at the nodes sending to endpoints matching the pattern.
+| weaveById(pattern) | Manipulates the route at the node IDs that matches the pattern.
+| weaveByToString(pattern) | Manipulates the route at the node string representation(output from toString method) that matches the pattern.
+| weaveByType(Class) | Manipulates the route at the node type (class name) that matches the pattern.
+| weaveAddFirst | Easily weaves in new nodes at the beginning of the route.
+| weaveAddLast | Easily weaves in new nodes at the end of the route.
+|=======================================================================
+
+=== Pattern matching
+
+The pattern option is used for matching. It uses the same rules as xref:components:eips:intercept.adoc[Intercept], which is applied in the following order:
+
+* match exact
+* match by wildcard (`*`)
+* match by regular expression
+
+For example to match exact you can use `weaveById("foo")` which will match only the id in the route which has the value foo.
+The wildcard is when the pattern ends with a `\*` character, such as: `weaveById("foo*")` which will match any id's starting with foo, such as: foo, foobar, foobie and so forth.
+The regular expression is more advanced and allows you to match multiple ids, such as `weaveById("(foo|bar)")` which will match both foo and bar.
+
+If you try to match a pattern on an exact endpoint URI, then mind that URI options ordering may influence, and hence it's best to match by wildcard.
+
+For example using `mockEndpointsAndSkip("activemq:queue:foo?*")` To match the foo queue and disregard any options.
+
+== Using AdviceWith
+
+To _advice_ you need to use the `AdviceWithRouteBuilder` for manipulating the route.
+But first you need to select which route to manipulate which you can do by the route ID or the route index.
+
+[source,java]
+----
+AdviceWith.adviceWith(context, "myRoute", new AdviceWithRouteBuilder() {
+        @Override
+        public void configure() throws Exception {
+            weaveAddLast().to("mock:result");
+        }
+});
+----
+
+We introduce a more modern API for _advicing_ routes using Java lambda style.
+
+Below we are _advicing_ the route with ID myRoute:
+
+[source,java]
+----
+AdviceWith.adviceWith(context, "myRoute", a ->
+     a.weaveAddLast().to("mock:result")
+);
+----
+
+The variable `a` is a lambda style of the `AdviceWithRouteBuilder` which can be used as shorthand
+for inlining the route manipulation.
+
+IMPORTANT: Before using `adviceWith` then it is best to tell Camel that advice is in use, which is covered in the following section.
+
+=== Enabling advice during testing
+
+When `adviceWith` is being used, then Camel will restart the adviced routes. This happens
+because the route is manipulated, and Camel needs to:
+
+1. Stop the existing route
+2. Remove the existing route
+3. Add the new advised route
+4. Start the new route
+
+This happens for every _adviced_ route during startup of your unit tests. It happens
+quickly: a route is started and then is immediately stopped and removed. This is
+an undesired behavior; you want to avoid restarts of the _adviced_ routes.
+This is solved by following the following steps:
+
+1. Tell Camel that routes are being _adviced_, which will prevent Camel from automatic starting routes.
+2. Advice the routes in your unit test methods
+3. Start Camel after you have _adviced_ the routes
+
+When using xref:components:others:test-junit5.adoc[camel-test-junit5] for unit testing then you can tell Camel that advice is in use by either
+overriding the `isUsedAdviceWith` method from `CamelTestSupport` as shown:
+
+[source,java]
+----
+public class MyAdviceWithTest extends CamelTestSupport {
+    @Override
+    public boolean isUseAdviceWith() {
+        return true; // turn on advice with
+    }
+}
+----
+
+Or when using xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] for unit testing you can use the `@UseAdviceWith` annotation as shown:
+
+[source,java]
+----
+@UseAdviceWith
+public class MyAdviceWithTest extends CamelSpringTestSupport {
+}
+----
+
+Then you advise the routes followed by starting Camel:
+
+[source,java]
+----
+@Test
+public void testMockEndpoints() throws Exception {
+    AdviceWith.adviceWith(context, "myRoute", a ->
+         a.mockEndpoints();
+    );
+
+    context.start();
+----
+
+In the unit test method above, we first advice the route by ID, where we auto mock all the endpoints.
+After that we start Camel.
+
+=== Logging before and after advicing routes
+
+When using `adviceWith` then Camel will automatically log, the before and after, of each adviced route, in XML format.
+
+However, this requires to have `camel-xml-jaxb` as dependency, which you can add as test scoped if using Maven:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xml-jaxb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+It is possible to turn of logging as XML, by setting the logging to `false` as shown:
+
+[source,java]
+----
+AdviceWith.adviceWith(context, "myRoute", false, a ->
+     a.mockEndpoints();
+);
+----
+
+=== Replacing route endpoints
+
+You may have built Camel routes that start from endpoints that consume from databases,
+message brokers, cloud systems, or other external systems.
+
+To make unit testing these kinds of routes easier, you can replace the
+route input endpoints with internal endpoints such as xref:components::direct-component.adoc[direct],
+xref:components::seda-component.adoc[seda], xref:components::stub-component.adoc[stub].
+
+The following illustrates how to do this:
+
+[source,java]
+----
+@Test
+public void testReplaceFrom() throws Exception {
+    AdviceWith.adviceWith(context, "myRoute", a ->
+        a.replaceFromWith("direct:start");
+    );
+
+    context.start();
+----
+
+This replaces the input endpoint (from) in the route with ID myRoute, with a direct endpoint, which makes it
+easy to send message to the route when unit testing.
+
+=== Mocking endpoints
+
+When using the `mockEndpoints` methods when _advicing_ routes, then Camel will log during startup
+which endpoints has been _adviced_ and their corresponding mock uri, such as:
+
+[source,log]
+----
+INFO  ceptSendToMockEndpointStrategy - Adviced endpoint [seda://camel] with mock endpoint [mock:seda:camel]
+INFO  ceptSendToMockEndpointStrategy - Adviced endpoint [seda://other] with mock endpoint [mock:seda:other]
+----
+
+Here Camel have _adviced_ two endpoints:
+
+- seda:camel --> mock:seda:camel
+- seda:other --> mock:seda:other
+
+This allows to use the mock endpoints in your unit tests for testing, such as:
+
+[source,java]
+----
+public void testMockEndpoints() throws Exception {
+    // advice the route goes here
+    // start camel after advice
+
+    // use the auto mocked uris during testing
+    getMockEndpoint("mock:seda:camel").expectedMessageCount(3);
+    getMockEndpoint("mock:seda:other").expectedMessageCount(1);
+
+    // send messages
+
+    MockEndpoint.assertIsSatisfied(context);
+}
+----
+
+Replacing the input endpoints, or mocking endpoints in Camel routes by using `adviceWith` is just the beginning
+of the route manipulation capabilities available. The following section covers how to go even deeper.
+
+=== Using weave to amend routes
+
+When testing your Camel routes, you can use `adviceWith` to _weave_ the routes before testing.
+
+The following methods are available for the `weave` methods:
+
+[width="100%",cols="1m,4",options="header",]
+|=======================================================================
+|Method |Description
+| remove| Removes the selected node(s).
+| replace | Replaces the selected node(s) with the following nodes.
+| before | Before the selected node(s), the following nodes is added.
+| after | After the selected node(s), the following nodes is added.
+|=======================================================================
+
+For example given the following route:
+
+[source,java]
+----
+from("direct:start")
+  .to("mock:foo")
+  .to("mock:bar").id("bar")
+  .to("mock:result");
+----
+
+Then let's go over the four methods to see how you can use them in unit tests
+
+==== Replace
+
+[source,java]
+----
+AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        // weave the node in the route which has id = bar
+        // and replace it with the following route path
+        weaveById("bar").replace().multicast().to("mock:a").to("mock:b");
+    }
+});
+----
+
+In this example we replace the `.to("mock:bar").id("bar")` with the `.multicast().to("mock:a").to("mock:b")`.
+That means instead of sending the message to a mock:bar endpoint, we do a Multicast to mock:a and mock:b endpoints instead.
+
+==== Remove
+
+In the example below, we simply just remove the `.to("mock:bar").id("bar")` from the route:
+
+[source,java]
+----
+AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        // weave the node in the route which has id = bar and remove it
+        weaveById("bar").remove();
+    }
+});
+----
+
+==== Before
+
+In the example below, we add the following nodes `to("mock:a").transform(constant("Bye World"))` before the node with the id bar.
+
+[source,java]
+----
+AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        // weave the node in the route which has id = bar
+        // and insert the following route path before the adviced node
+        weaveById("bar").before().to("mock:a").transform(constant("Bye World"));
+    }
+});
+----
+
+That means the message being sent before to mock:bar would have been transformed to a constant message Bye World
+
+==== After
+
+In the example below, we add the following nodes `to("mock:a").transform(constant("Bye World"))` after the node with the id bar.
+
+[source,java]
+----
+AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        // weave the node in the route which has id = bar
+        // and insert the following route path after the advice node
+        weaveById("bar").after().to("mock:a").transform(constant("Bye World"));
+    }
+});
+----
+
+That means the message being sent after mock:bar would have been transformed to a constant message Bye World
+
+=== weave without using IDs
+
+When weaving a route, you need to use one of the `weaveBy` methods
+as criteria to select one or more nodes in the route graph.
+
+Suppose you use the xref:components:eips:split-eip.adoc[Split] EIP in a route; then you can use `weaveByType` to select this EIP.
+Given the following route:
+
+[source,java]
+----
+from("file:inbox").routeId("inbox")
+    .split(body())
+    .transform(simple("${body.toLowerCase()}"))
+        .to("mock:line")
+    .end()
+    .to("mock:combined");
+----
+
+Due to that route has only one xref:components:eips:split-eip.adoc[Split] EIP, you can use `weaveByType` to find this single
+splitter in the route. Using `weaveByType` requires you to pass in the model type of
+the EIP. The name of the model type is using the pattern _name_Definition.
+
+[source,java]
+----
+weaveByType(SplitDefinition.class)
+    .before()
+        .transform(simple("${body},Camel is awesome"));
+----
+
+Here we weave and select the xref:components:eips:split-eip.adoc[Split] EIP and weave in a message transformation, that
+is processed before calling the splitter. This means the message body is appended with _Camel is awesome_.
+
+=== weaveByToUri
+
+The `weaveByToUri` is a handy method that makes it easy to _weave_ a Camel route that
+send messages to a given endpoint URI or pattern.
+
+Given the following route having two branches in the xref:components:eips:choice-eip.adoc[Content Based Router] EIP:
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo")).to("direct:branch-1")
+    .otherwise()
+        .to("direct:branch-2");
+----
+
+Then we want to easily unit test this route, that messages are sent branch-1 or branch-2.
+This can be done with the `weaveByToUri` as shown:
+
+[source,java]
+----
+weaveByToUri("direct:branch*").replace().to("mock:cheese");
+----
+
+Notice the `weaveByToUri` method is using a wildcard (`*`) to match the two branches.
+
+TIP: You can also use `mockEndpoints` to auto mock instead of `weaveByToUri` in the example above.
+The `weave` methods have a lot more power to manipulate the route, such as message transformation, routing the message or much more.
+
+=== weaveAddFirst and weaveAddLast
+
+The `weaveAddFirst` and `weaveAddLast` is a shorthand to easily add nodes to the route.
+These methods can only add to an existing route. If you want to manipulate the route, then use the other `weave` methods as already covered.
+
+The `weaveAddFirst` method adds in the beginning of the route, and `weaveAddLast` at the end.
+Using them works the same as the other `weaveBy` methods, so see above for examples.
+
+=== weave using node selection
+
+The `weaveBy` methods, select all matching nodes, which can be anything
+from none, one, two, or more nodes. In those situations, you may want to narrow
+the selection to a specific node. This can be done by using the select methods:
+
+- `selectFirst` Selects only the first node.
+- `selectLast` Selects only the last node.
+- `selectIndex(index)` Selects only the nth node. The index is zero based.
+- `selectRange(from, to)` Selects the nodes within the given range. The index is zero based.
+- `maxDeep(level)` Limits the selection to at most N levels deep in the Camel route tree. The first level is number 1. So number 2 is the children of the first-level nodes.
+
+Given the following route which has multiple xref:components:eips:filter-eip.adoc[Filter] EIP,
+then we want to only advice the 2nd filter.
+
+[source,java]
+----
+from("file:inbox").routeId("inbox")
+    .filter(header("foo"))
+        .to("mock:foo")
+    .end()
+    .to("mock:a")
+    .filter(header("bar"))
+        .to("mock:bar")
+    .end()
+    .to("mock:b")
+    .filter(header("cheese"))
+        .to("mock:cheese")
+    .end()
+    .to("mock:c")
+----
+
+You can then use `weaveByType` to match the Filter EIPs and selectIndex to match the 2nd found:
+
+[source,java]
+----
+weaveByType(FilterDefinition.class).selectIndex(1).replace().to("mock:changed");
+----
+

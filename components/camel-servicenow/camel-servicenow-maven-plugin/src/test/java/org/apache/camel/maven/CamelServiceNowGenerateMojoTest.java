@@ -17,8 +17,8 @@
 package org.apache.camel.maven;
 
 import java.util.Arrays;
+import java.util.Collections;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

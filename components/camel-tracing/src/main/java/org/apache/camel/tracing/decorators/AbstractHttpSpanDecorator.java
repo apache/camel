@@ -71,7 +71,7 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         if (httpUrl != null) {
             span.setTag(Tag.HTTP_URL, httpUrl);
         }
-        span.setTag(Tag.HTTP_METHOD, getHttpMethod(exchange, endpoint));
+        span.setLowCardinalityTag(Tag.HTTP_METHOD, getHttpMethod(exchange, endpoint));
     }
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
@@ -101,7 +101,7 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         if (message != null) {
             Integer responseCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
             if (responseCode != null) {
-                span.setTag(Tag.HTTP_STATUS, responseCode);
+                span.setLowCardinalityTag(Tag.HTTP_STATUS, responseCode);
             }
         }
     }

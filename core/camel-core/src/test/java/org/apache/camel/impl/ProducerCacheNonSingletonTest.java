@@ -63,7 +63,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         assertTrue(producer.getStatus().isStopped(), "Should be stopped");
     }
 
-    public class MyDummyComponent extends DefaultComponent {
+    public static class MyDummyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -71,7 +71,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         }
     }
 
-    public class MyDummyEndpoint extends DefaultEndpoint {
+    public static class MyDummyEndpoint extends DefaultEndpoint {
 
         @Override
         public Producer createProducer() throws Exception {
@@ -94,7 +94,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         }
     }
 
-    private class MyDummyProducer extends DefaultAsyncProducer {
+    private static class MyDummyProducer extends DefaultAsyncProducer {
 
         public MyDummyProducer(Endpoint endpoint) {
             super(endpoint);

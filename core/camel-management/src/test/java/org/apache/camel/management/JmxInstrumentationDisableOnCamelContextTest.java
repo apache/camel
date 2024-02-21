@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.lang.management.ManagementFactory;
 import java.util.Set;
 
 import javax.management.MBeanServerConnection;
@@ -24,17 +25,25 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test which verifies disabling of JMX instrumentation.
  */
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
     protected boolean useJmx() {
         return false;
+    }
+
+    @Override
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        return ManagementFactory.getPlatformMBeanServer();
     }
 
     @Override
@@ -47,11 +56,6 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
     @Override
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);

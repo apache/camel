@@ -22,14 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICE_ACCOUNTS;
 
 /**
  * Perform operations on Kubernetes Service Accounts.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICE_ACCOUNTS, title = "Kubernetes Service Account",
              syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,

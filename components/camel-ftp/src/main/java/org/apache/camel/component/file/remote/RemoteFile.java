@@ -39,7 +39,7 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
             // in other file based components, false may be passed
             // as the second argument.
             super.populateHeaders(message, false);
-            message.setHeader("CamelFileHost", getHostname());
+            message.setHeader(FtpConstants.FILE_HOST, getHostname());
         }
     }
 

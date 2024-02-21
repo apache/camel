@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.consumer.common.NamespaceEvent;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -68,15 +68,11 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes Namespace Consumer");
         if (executor != null) {
+            KubernetesHelper.close(nsWatcher, nsWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (nsWatcher != null) {
-                    nsWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (nsWatcher != null) {
-                    nsWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }
@@ -91,17 +87,16 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
         public void run() {
             NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>> w
                     = getEndpoint().getKubernetesClient().namespaces();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-                w.withName(getEndpoint().getKubernetesConfiguration().getNamespace());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::withName);
+
             watch = w.watch(new Watcher<Namespace>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Namespace resource) {
-                    NamespaceEvent ne = new NamespaceEvent(action, resource);
                     Exchange exchange = createExchange(false);
-                    exchange.getIn().setBody(ne.getNamespace());
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
+                    exchange.getIn().setBody(resource);
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpXMLXPathTest extends BaseNettyTest {
 
     @Test
-    public void testHttpXML() throws Exception {
+    public void testHttpXML() {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>",
                 String.class);
         assertEquals("<quote>Camel rocks</quote>", out);
@@ -39,10 +39,10 @@ public class NettyHttpXMLXPathTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .choice()
                         .when().xpath("/person/name = 'Claus'")

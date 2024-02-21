@@ -20,7 +20,7 @@ public enum AS2DispositionType {
     PROCESSED("processed"),
     FAILED("failed");
 
-    private String type;
+    private final String type;
 
     private AS2DispositionType(String type) {
         this.type = type;

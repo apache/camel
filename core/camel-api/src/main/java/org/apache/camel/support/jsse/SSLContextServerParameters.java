@@ -93,7 +93,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             final ClientAuthentication clientAuthValue
                     = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
-            Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
+            Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
                 @Override
                 public SSLEngine configure(SSLEngine engine) {
                     LOG.trace("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
@@ -132,7 +132,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             final ClientAuthentication clientAuthValue
                     = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
-            Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
+            Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
                 @Override
                 public SSLServerSocket configure(SSLServerSocket socket) {
                     LOG.trace("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);

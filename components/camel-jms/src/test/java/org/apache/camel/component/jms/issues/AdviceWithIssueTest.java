@@ -54,7 +54,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
 
         template.sendBody("direct:start", Collections.singletonMap("foo", "bar"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -66,10 +66,10 @@ public class AdviceWithIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("starter")
                         .to(pub).to("mock:result");
             }

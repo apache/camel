@@ -18,7 +18,6 @@ package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.CamelContextHelper;
@@ -54,8 +53,8 @@ public final class ErrorHandlerHelper {
             // see if there has been configured a error handler builder on the route
             source = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
-            if (source instanceof ErrorHandlerRefProperties) {
-                ErrorHandlerRefProperties other = (ErrorHandlerRefProperties) source;
+            if (source instanceof RefErrorHandlerDefinition) {
+                RefErrorHandlerDefinition other = (RefErrorHandlerDefinition) source;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerFactoryConfigured(otherRef)) {
                     // the other has also no explicit error handler configured
@@ -68,7 +67,7 @@ public final class ErrorHandlerHelper {
                     // then fallback to the default error handler
                     // otherwise we could recursive loop forever (triggered by
                     // createErrorHandler method)
-                    answer = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createDefaultErrorHandler();
+                    answer = ((ModelCamelContext) camelContext).getModelReifierFactory().createDefaultErrorHandler();
                 }
                 // inherit the error handlers from the other as they are to be
                 // shared
@@ -89,9 +88,9 @@ public final class ErrorHandlerHelper {
     }
 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
-        ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
-        if (answer instanceof ErrorHandlerRefProperties) {
-            ErrorHandlerRefProperties other = (ErrorHandlerRefProperties) answer;
+        ErrorHandlerFactory answer = camelContext.getCamelContextExtension().getErrorHandlerFactory();
+        if (answer instanceof RefErrorHandlerDefinition) {
+            RefErrorHandlerDefinition other = (RefErrorHandlerDefinition) answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerFactory.class);
@@ -112,7 +111,7 @@ public final class ErrorHandlerHelper {
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
-        return !ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+        return !RefErrorHandlerDefinition.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
 }

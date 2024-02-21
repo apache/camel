@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-core</artifactId>
@@ -31,6 +31,13 @@
 
     <name>Camel :: Core</name>
     <description>The Core Camel Framework</description>
+
+    <properties>
+        <firstVersion>1.0.0</firstVersion>
+        <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
+        <camel.surefire.parallel.strategy>custom</camel.surefire.parallel.strategy>
+        <camel.surefire.fork.additional-vmargs>-Xmx2G</camel.surefire.fork.additional-vmargs>
+    </properties>
 
     <dependencies>
 
@@ -71,10 +78,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-direct</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-directvm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -130,15 +133,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-vm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-xpath</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xslt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -148,6 +151,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-jaxp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-io</artifactId>
+        </dependency>
 
         <!-- required logging api dependency by camel-core -->
         <dependency>
@@ -156,10 +163,18 @@
         </dependency>
 
         <!-- testing -->
+        <!-- woodstox is needed by the StaxConverter test-->
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
             <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml.stream</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -169,28 +184,37 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- logging for testing -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -203,6 +227,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Used for the exception tests -->
+        <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${jakarta-xml-soap-api-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -258,47 +290,38 @@
                     </excludes>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- skip file stress tests as they are intended to run manually -->
-                    <excludes>
-                        <exclude>org/apache/camel/component/file/stress/**.java</exclude>
-                        <exclude>**/DistributedCompletionIntervalTest.java</exclude>
-                        <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
-                        <exclude>${platform.skip.tests}</exclude>
-                    </excludes>
-                    <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-                    <!-- needed for testing the properties component -->
-                    <environmentVariables>
-                        <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
-                        <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
-                    </environmentVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <_plugin>
-                            org.apache.felix.bundleplugin.BlueprintPlugin,
-                            aQute.lib.spring.SpringXMLType,
-                            org.apache.felix.bundleplugin.JpaPlugin,
-                            org.apache.camel.maven.bundle.CamelPlugin
-                        </_plugin>
-                    </instructions>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-bundle-plugin</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- skip file stress tests as they are intended to run manually -->
+                            <excludes>
+                                <exclude>org/apache/camel/component/file/stress/**.java</exclude>
+                                <exclude>**/DistributedCompletionIntervalTest.java</exclude>
+                                <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
+                                <exclude>${platform.skip.tests}</exclude>
+                            </excludes>
+                            <!-- needed for testing the properties component -->
+                            <environmentVariables>
+                                <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
+                                <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
+                            </environmentVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

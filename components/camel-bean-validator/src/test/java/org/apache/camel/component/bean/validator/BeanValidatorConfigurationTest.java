@@ -19,12 +19,12 @@ package org.apache.camel.component.bean.validator;
 import java.lang.annotation.ElementType;
 import java.util.Locale;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.Path;
-import javax.validation.Path.Node;
-import javax.validation.TraversableResolver;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.Path;
+import jakarta.validation.Path.Node;
+import jakarta.validation.TraversableResolver;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
+@DisabledOnOs(AIX)
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     @BindToRegistry("myMessageInterpolator")
@@ -56,14 +57,12 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureWithDefaults() {
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x", BeanValidatorEndpoint.class);
         assertNull(endpoint.getGroup());
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureBeanValidator() {
         BeanValidatorEndpoint endpoint = context

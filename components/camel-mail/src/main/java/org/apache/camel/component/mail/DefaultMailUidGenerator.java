@@ -19,9 +19,9 @@ package org.apache.camel.component.mail;
 import java.util.Enumeration;
 import java.util.UUID;
 
-import javax.mail.Header;
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Header;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class DefaultMailUidGenerator implements MailUidGenerator {
 
         // there should be a Message-ID header with the UID
         try {
-            String values[] = message.getHeader("Message-ID");
+            String[] values = message.getHeader("Message-ID");
             if (values != null && values.length > 0) {
                 String uid = values[0];
                 LOG.trace("Message-ID header found: {}", uid);

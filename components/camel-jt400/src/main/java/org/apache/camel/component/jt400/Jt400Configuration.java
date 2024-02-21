@@ -78,7 +78,7 @@ public class Jt400Configuration {
          */
         SAME(MessageQueue.SAME);
 
-        private String jt400Value;
+        private final String jt400Value;
 
         private MessageAction(final String jt400Value) {
             this.jt400Value = jt400Value;
@@ -162,12 +162,15 @@ public class Jt400Configuration {
     @UriParam(label = "consumer", defaultValue = "OLD")
     private MessageAction messageAction = MessageAction.OLD;
 
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean sendingReply = true;
+
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
 
         URI uri = new URI(endpointUri);
-        String[] credentials = uri.getUserInfo().split(":");
+        String[] credentials = uri.getUserInfo().split(":", 2);
         systemName = uri.getHost();
         userID = credentials[0];
         password = credentials[1];
@@ -381,6 +384,19 @@ public class Jt400Configuration {
         this.messageAction = messageAction;
     }
 
+    public boolean isSendingReply() {
+        return this.sendingReply;
+    }
+
+    /**
+     * If true, the consumer endpoint will set the Jt400Constants.MESSAGE_REPLYTO_KEY header of the camel message for
+     * any IBM i inquiry messages received. If that message is then routed to a producer endpoint, the action will not
+     * be processed as sending a message to the queue, but rather a reply to the specific inquiry message.
+     */
+    public void setSendingReply(boolean sendingReply) {
+        this.sendingReply = sendingReply;
+    }
+
     public void setOutputFieldsIdx(String outputFieldsIdx) {
         if (outputFieldsIdx != null) {
             String[] outputArray = outputFieldsIdx.split(",");
@@ -408,14 +424,14 @@ public class Jt400Configuration {
     /**
      * Obtains an {@code AS400} object that connects to this endpoint. Since these objects represent limited resources,
      * clients have the responsibility of {@link #releaseConnection(AS400) releasing them} when done.
-     * 
+     *
      * @return an {@code AS400} object that connects to this endpoint
      */
     public AS400 getConnection() {
         AS400 system = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting an AS400 object for '{}' from {}.", systemName + '/' + userID, connectionPool);
+                LOG.debug("Getting an AS400 object for '{}/{}' from {}.", systemName, userID, connectionPool);
             }
 
             if (isSecured()) {
@@ -446,7 +462,7 @@ public class Jt400Configuration {
 
     /**
      * Releases a previously obtained {@code AS400} object from use.
-     * 
+     *
      * @param connection a previously obtained {@code AS400} object to release
      */
     public void releaseConnection(AS400 connection) {

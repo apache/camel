@@ -27,8 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.changestream.FullDocument;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -57,7 +59,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  * Perform operations on MongoDB documents and collections.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
-             category = { Category.DATABASE, Category.NOSQL })
+             category = { Category.DATABASE }, headersClass = MongoDbConstants.class)
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
@@ -65,9 +67,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database.")
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
     @Metadata(required = true)
     private String connectionBean;
+
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
+    @UriParam
+    private String hosts;
+    //Authentication configuration
+    @UriParam(label = "security")
+    private String authSource;
     @UriParam
     private String database;
     @UriParam
@@ -80,38 +92,103 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean createCollection = true;
     @UriParam(label = "advanced")
     private boolean dynamicity;
-    @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
-              enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
-    private String writeConcern = "ACKNOWLEDGED";
-    @UriParam(label = "advanced",
-              defaultValue = "PRIMARY",
-              enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
-    private String readPreference = "PRIMARY";
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
     @UriParam(label = "consumer")
     private String consumerType;
     @UriParam(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private long cursorRegenerationDelay = 1000L;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackIncreasingField;
-
-    @UriParam(label = "changeStream")
+    @UriParam(label = "consumer,changeStream")
     private String streamFilter;
-
+    @UriParam(label = "consumer,changeStream", enums = "default,updateLookup,required,whenAvailable", defaultValue = "default")
+    private FullDocument fullDocument = FullDocument.DEFAULT;
     // persistent tail tracking
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private boolean persistentTailTracking;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String persistentId;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackDb;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackCollection;
-    @UriParam(label = "tail")
+    @UriParam(label = "consumer,tail")
     private String tailTrackField;
     @UriParam(label = "common")
     private MongoDbOutputType outputType;
+    //Server Selection Configuration
+    @UriParam(label = "advanced", defaultValue = "30000")
+    private Integer serverSelectionTimeoutMS = 30000;
+    @UriParam(label = "advanced", defaultValue = "15")
+    private Integer localThresholdMS = 15;
+    //Server Monitoring Configuration
+    @UriParam(label = "advanced")
+    private Integer heartbeatFrequencyMS;
+    //Replica set configuration
+    @UriParam(label = "advanced")
+    private String replicaSet;
+    //Connection Configuration
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean tls = false;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean tlsAllowInvalidHostnames = false;
+    @UriParam(label = "advanced", defaultValue = "10000")
+    private Integer connectTimeoutMS = 10000;
+    @UriParam(label = "advanced", defaultValue = "0")
+    private Integer socketTimeoutMS = 0;
+    @UriParam(label = "advanced", defaultValue = "0")
+    private Integer maxIdleTimeMS = 0;
+    @UriParam(label = "advanced", defaultValue = "0")
+    private Integer maxLifeTimeMS = 0;
+    //Connection Pool Configuration
+    @UriParam(label = "advanced", defaultValue = "0")
+    private Integer minPoolSize = 0;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private Integer maxPoolSize = 100;
+    @UriParam(label = "advanced", defaultValue = "2")
+    private Integer maxConnecting = 2;
+    @UriParam(label = "advanced", defaultValue = "120000")
+    private Integer waitQueueTimeoutMS = 120000;
+    //Write concern
+    @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
+              enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
+    private String writeConcern = "ACKNOWLEDGED";
+    //Read Preference
+    @UriParam(label = "advanced",
+              defaultValue = "PRIMARY",
+              enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
+    private String readPreference = "PRIMARY";
+    @UriParam(label = "advanced")
+    private String readPreferenceTags;
+    @UriParam(label = "advanced", defaultValue = "-1")
+    private Integer maxStalenessSeconds = -1;
+    //Server Handshake configuration
+    @UriParam(label = "advanced")
+    private String appName;
+    //Compressor configuration
+    @UriParam(label = "advanced")
+    private String compressors;
+    @UriParam(label = "advanced")
+    private Integer zlibCompressionLevel;
+    //SRV configuration
+    @UriParam(label = "advanced", defaultValue = "mongodb")
+    private String srvServiceName;
+    @UriParam(label = "advanced")
+    private Integer srvMaxHosts;
+    //General Configuration
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean retryWrites = true;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean retryReads = true;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean directConnection = false;
+    @UriParam(label = "advanced")
+    private boolean loadBalanced;
+    //additional properties
+    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
+              label = "additional", defaultValue = "null")
+    private String connectionUriString;
 
     // tailable cursor consumer by default
     private MongoDbConsumerType dbConsumerType;
@@ -227,7 +304,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void initializeConnection() throws CamelMongoDbException {
         LOG.info("Initialising MongoDb endpoint: {}", this);
-        if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
+        if (database == null || collection == null && !(getDbStats.equals(operation) || command.equals(operation))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
 
@@ -254,7 +331,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
             LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
                       + "Cluster description: {}, Db: {}, Collection: {}",
-                    new Object[] { mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection });
+                    mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection);
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {
@@ -327,9 +404,27 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     private MongoClient resolveMongoConnection() {
-        MongoClient mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
-                mongoConnection);
+        MongoClient mongoClient;
+        if (this.hosts != null) {
+            String credentials = username == null ? "" : username;
+
+            if (!credentials.isEmpty()) {
+                credentials += this.password == null ? "@" : ":" + password + "@";
+            }
+
+            String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;
+
+            if (connectionUriString != null) {
+                mongoClient = MongoClients.create(connectionUriString);
+            } else {
+                mongoClient = MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
+            }
+            LOG.debug("Connection created using provided credentials");
+        } else {
+            mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+            LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                    mongoConnection);
+        }
 
         return mongoClient;
     }
@@ -436,10 +531,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * otherwise static endpoint URI. It is disabled by default to boost performance. Enabling it will take a minimal
      * performance hit.
      *
-     * @see              MongoDbConstants#DATABASE
-     * @see              MongoDbConstants#COLLECTION
      * @param dynamicity true or false indicated whether target database and collection should be calculated dynamically
      *                   based on Exchange properties.
+     * @see              MongoDbConstants#DATABASE
+     * @see              MongoDbConstants#COLLECTION
      */
     public void setDynamicity(boolean dynamicity) {
         this.dynamicity = dynamicity;
@@ -614,7 +709,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or
      * MongoIterable applies to findAll and aggregate. Document applies to all other operations.
-     * 
+     *
      * @param outputType
      */
     public void setOutputType(MongoDbOutputType outputType) {
@@ -638,6 +733,18 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void setStreamFilter(String streamFilter) {
         this.streamFilter = streamFilter;
+    }
+
+    public FullDocument getFullDocument() {
+        return fullDocument;
+    }
+
+    /**
+     * Specifies whether changeStream consumer include a copy of the full document when modified by update operations.
+     * Possible values are default, updateLookup, required and whenAvailable.
+     */
+    public void setFullDocument(FullDocument fullDocument) {
+        this.fullDocument = fullDocument;
     }
 
     /**
@@ -680,6 +787,429 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public ReadPreference getReadPreferenceBean() {
         // will throw an IllegalArgumentException if the input is incorrect
         return ReadPreference.valueOf(getReadPreference());
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Username for mongodb connection
+     *
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * User password for mongodb connection
+     *
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHosts() {
+        return hosts;
+    }
+
+    /**
+     * Host address of mongodb server in `[host]:[port]` format. It's possible also use more than one address, as comma
+     * separated list of hosts: `[host1]:[port1],[host2]:[port2]`. If the hosts parameter is specified, the provided
+     * connectionBean is ignored.
+     *
+     * @param hosts
+     */
+    public void setHosts(String hosts) {
+        this.hosts = hosts;
+    }
+
+    public String getAuthSource() {
+        return authSource;
+    }
+
+    /**
+     * The database name associated with the user's credentials.
+     *
+     * @param authSource
+     */
+    public void setAuthSource(String authSource) {
+        this.authSource = authSource;
+    }
+
+    /**
+     * Specifies how long (in milliseconds) to block for server selection before throwing an exception. Default: 30,000
+     * milliseconds.
+     *
+     * @param serverSelectionTimeoutMS
+     */
+    public void setServerSelectionTimeoutMS(Integer serverSelectionTimeoutMS) {
+        this.serverSelectionTimeoutMS = serverSelectionTimeoutMS;
+    }
+
+    public Integer getServerSelectionTimeoutMS() {
+        return serverSelectionTimeoutMS;
+    }
+
+    /**
+     * The size (in milliseconds) of the latency window for selecting among multiple suitable MongoDB instances.
+     * Default: 15 milliseconds.
+     *
+     * @param localThresholdMS
+     */
+    public void setLocalThresholdMS(Integer localThresholdMS) {
+        this.localThresholdMS = localThresholdMS;
+    }
+
+    public Integer getLocalThresholdMS() {
+        return localThresholdMS;
+    }
+
+    /**
+     * heartbeatFrequencyMS controls when the driver checks the state of the MongoDB deployment. Specify the interval
+     * (in milliseconds) between checks, counted from the end of the previous check until the beginning of the next one.
+     * Default: Single-threaded drivers: 60 seconds. Multi-threaded drivers: 10 seconds.
+     *
+     * @param heartbeatFrequencyMS
+     */
+    public void setHeartbeatFrequencyMS(Integer heartbeatFrequencyMS) {
+        this.heartbeatFrequencyMS = heartbeatFrequencyMS;
+    }
+
+    public Integer getHeartbeatFrequencyMS() {
+        return heartbeatFrequencyMS;
+    }
+
+    /**
+     * Specifies that the connection string provided includes multiple hosts. When specified, the driver attempts to
+     * find all members of that set.
+     *
+     * @param replicaSet
+     */
+    public void setReplicaSet(String replicaSet) {
+        this.replicaSet = replicaSet;
+    }
+
+    public String getReplicaSet() {
+        return replicaSet;
+    }
+
+    /**
+     * Specifies that all communication with MongoDB instances should use TLS. Supersedes the ssl option. Default: false
+     *
+     * @param tls
+     */
+    public void setTls(boolean tls) {
+        this.tls = tls;
+    }
+
+    public boolean isTls() {
+        return tls;
+    }
+
+    /**
+     * Specifies that the driver should allow invalid hostnames in the certificate for TLS connections. Supersedes
+     * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by setting tlsAllowInvalidHostnames to true.
+     * Default: false
+     *
+     * @param tlsAllowInvalidHostnames
+     */
+    public void setTlsAllowInvalidHostnames(boolean tlsAllowInvalidHostnames) {
+        this.tlsAllowInvalidHostnames = tlsAllowInvalidHostnames;
+    }
+
+    public boolean isTlsAllowInvalidHostnames() {
+        return tlsAllowInvalidHostnames;
+    }
+
+    /**
+     * Specifies the maximum amount of time, in milliseconds, the Java driver waits for a connection to open before
+     * timing out. A value of 0 instructs the driver to never time out while waiting for a connection to open. Default:
+     * 10000 (10 seconds)
+     *
+     * @param connectTimeoutMS
+     */
+    public void setConnectTimeoutMS(Integer connectTimeoutMS) {
+        this.connectTimeoutMS = connectTimeoutMS;
+    }
+
+    public Integer getConnectTimeoutMS() {
+        return connectTimeoutMS;
+    }
+
+    /**
+     * Specifies the maximum amount of time, in milliseconds, the Java driver will wait to send or receive a request
+     * before timing out. A value of 0 instructs the driver to never time out while waiting to send or receive a
+     * request. Default: 0
+     *
+     * @param socketTimeoutMS
+     */
+    public void setSocketTimeoutMS(Integer socketTimeoutMS) {
+        this.socketTimeoutMS = socketTimeoutMS;
+    }
+
+    public Integer getSocketTimeoutMS() {
+        return socketTimeoutMS;
+    }
+
+    /**
+     * Specifies the maximum amount of time, in milliseconds, the Java driver will allow a pooled connection to idle
+     * before closing the connection. A value of 0 indicates that there is no upper bound on how long the driver can
+     * allow a pooled collection to be idle. Default: 0
+     *
+     * @param maxIdleTimeMS
+     */
+    public void setMaxIdleTimeMS(Integer maxIdleTimeMS) {
+        this.maxIdleTimeMS = maxIdleTimeMS;
+    }
+
+    public Integer getMaxIdleTimeMS() {
+        return maxIdleTimeMS;
+    }
+
+    /**
+     * Specifies the maximum amount of time, in milliseconds, the Java driver will continue to use a pooled connection
+     * before closing the connection. A value of 0 indicates that there is no upper bound on how long the driver can
+     * keep a pooled connection open. Default: 0
+     *
+     * @param maxLifeTimeMS
+     */
+    public void setMaxLifeTimeMS(Integer maxLifeTimeMS) {
+        this.maxLifeTimeMS = maxLifeTimeMS;
+    }
+
+    public Integer getMaxLifeTimeMS() {
+        return maxLifeTimeMS;
+    }
+
+    /**
+     * Specifies the minimum number of connections that must exist at any moment in a single connection pool. Default: 0
+     *
+     * @param minPoolSize
+     */
+    public void setMinPoolSize(Integer minPoolSize) {
+        this.minPoolSize = minPoolSize;
+    }
+
+    public Integer getMinPoolSize() {
+        return minPoolSize;
+    }
+
+    /**
+     * The maximum number of connections in the connection pool. The default value is 100.
+     *
+     * @param maxPoolSize
+     */
+    public void setMaxPoolSize(Integer maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+
+    public Integer getMaxPoolSize() {
+        return maxPoolSize;
+    }
+
+    /**
+     * Specifies the maximum number of connections a pool may be establishing concurrently. Default: 2
+     *
+     * @param maxConnecting
+     */
+    public void setMaxConnecting(Integer maxConnecting) {
+        this.maxConnecting = maxConnecting;
+    }
+
+    public Integer getMaxConnecting() {
+        return maxConnecting;
+    }
+
+    /**
+     * Specifies the maximum amount of time, in milliseconds that a thread may wait for a connection to become
+     * available. Default: 120000 (120 seconds)
+     *
+     * @param waitQueueTimeoutMS
+     */
+    public void setWaitQueueTimeoutMS(Integer waitQueueTimeoutMS) {
+        this.waitQueueTimeoutMS = waitQueueTimeoutMS;
+    }
+
+    public Integer getWaitQueueTimeoutMS() {
+        return waitQueueTimeoutMS;
+    }
+
+    /**
+     * A representation of a tag set as a comma-separated list of colon-separated key-value pairs, e.g. "dc:ny,rack:1".
+     * Spaces are stripped from beginning and end of all keys and values. To specify a list of tag sets, using multiple
+     * readPreferenceTags, e.g. readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the
+     * empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple
+     * readPreferenceTags.
+     *
+     * @param readPreferenceTags
+     */
+    public void setReadPreferenceTags(String readPreferenceTags) {
+        this.readPreferenceTags = readPreferenceTags;
+    }
+
+    public String getReadPreferenceTags() {
+        return readPreferenceTags;
+    }
+
+    /**
+     * Specifies, in seconds, how stale a secondary can be before the driver stops communicating with that secondary.
+     * The minimum value is either 90 seconds or the heartbeat frequency plus 10 seconds, whichever is greater. For more
+     * information, see the server documentation for the maxStalenessSeconds option. Not providing a parameter or
+     * explicitly specifying -1 indicates that there should be no staleness check for secondaries. Default: -1
+     *
+     * @param maxStalenessSeconds
+     */
+    public void setMaxStalenessSeconds(Integer maxStalenessSeconds) {
+        this.maxStalenessSeconds = maxStalenessSeconds;
+    }
+
+    public Integer getMaxStalenessSeconds() {
+        return maxStalenessSeconds;
+    }
+
+    /**
+     * Sets the logical name of the application. The application name may be used by the client to identify the
+     * application to the server, for use in server logs, slow query logs, and profile collection. Default: null
+     *
+     * @param appName
+     */
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    /**
+     * Specifies one or more compression algorithms that the driver will attempt to use to compress requests sent to the
+     * connected MongoDB instance. Possible values include: zlib, snappy, and zstd. Default: null
+     *
+     * @param compressors
+     */
+    public void setCompressors(String compressors) {
+        this.compressors = compressors;
+    }
+
+    public String getCompressors() {
+        return compressors;
+    }
+
+    /**
+     * Specifies the degree of compression that Zlib should use to decrease the size of requests to the connected
+     * MongoDB instance. The level can range from -1 to 9, with lower values compressing faster (but resulting in larger
+     * requests) and larger values compressing slower (but resulting in smaller requests). Default: null
+     *
+     * @param zlibCompressionLevel
+     */
+    public void setZlibCompressionLevel(Integer zlibCompressionLevel) {
+        this.zlibCompressionLevel = zlibCompressionLevel;
+    }
+
+    public Integer getZlibCompressionLevel() {
+        return zlibCompressionLevel;
+    }
+
+    /**
+     * Specifies the service name of the SRV resource recordsthe driver retrieves to construct your seed list. You must
+     * use the DNS Seed List Connection Format in your connection URI to use this option. Default: mongodb
+     *
+     * @param srvServiceName
+     */
+    public void setSrvServiceName(String srvServiceName) {
+        this.srvServiceName = srvServiceName;
+    }
+
+    public String getSrvServiceName() {
+        return srvServiceName;
+    }
+
+    /**
+     * The maximum number of hosts from the SRV record to connect to.
+     *
+     * @param srvMaxHosts
+     */
+    public void setSrvMaxHosts(Integer srvMaxHosts) {
+        this.srvMaxHosts = srvMaxHosts;
+    }
+
+    public Integer getSrvMaxHosts() {
+        return srvMaxHosts;
+    }
+
+    /**
+     * Specifies that the driver must retry supported write operations if they fail due to a network error. Default:
+     * true
+     *
+     * @param retryWrites
+     */
+    public void setRetryWrites(boolean retryWrites) {
+        this.retryWrites = retryWrites;
+    }
+
+    public boolean isRetryWrites() {
+        return retryWrites;
+    }
+
+    /**
+     * Specifies that the driver must retry supported read operations if they fail due to a network error. Default: true
+     *
+     * @param retryReads
+     */
+    public void setRetryReads(boolean retryReads) {
+        this.retryReads = retryReads;
+    }
+
+    public boolean isRetryReads() {
+        return retryReads;
+    }
+
+    /**
+     * Specifies that the driver must connect to the host directly. Default: false
+     *
+     * @param directConnection
+     */
+    public void setDirectConnection(boolean directConnection) {
+        this.directConnection = directConnection;
+    }
+
+    public boolean isDirectConnection() {
+        return directConnection;
+    }
+
+    /**
+     * If true the driver will assume that it's connecting to MongoDB through a load balancer.
+     *
+     * @param loadBalanced
+     */
+    public void setLoadBalanced(boolean loadBalanced) {
+        this.loadBalanced = loadBalanced;
+    }
+
+    public boolean isLoadBalanced() {
+        return loadBalanced;
+    }
+
+    /**
+     * Set the whole Connection String/Uri for mongodb endpoint. To be flexible and future proof about supporting all
+     * the mongodb client options
+     * https://www.mongodb.com/docs/drivers/java/sync/current/fundamentals/connection/connect/#connection-uri
+     *
+     * @param connectionUriString
+     */
+    public void setConnectionUriString(String connectionUriString) {
+        this.connectionUriString = connectionUriString;
+    }
+
+    public String getConnectionUriString() {
+        return connectionUriString;
     }
 
 }

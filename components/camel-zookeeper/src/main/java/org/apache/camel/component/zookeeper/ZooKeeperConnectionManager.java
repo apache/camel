@@ -43,7 +43,7 @@ public class ZooKeeperConnectionManager {
         void shutdown();
     }
 
-    private class DefaultZookeeperConnectionStrategy implements ZookeeperConnectionStrategy {
+    private static class DefaultZookeeperConnectionStrategy implements ZookeeperConnectionStrategy {
         private ConnectionHolder holder;
         private ZooKeeperConfiguration configuration;
 

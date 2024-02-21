@@ -70,12 +70,12 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
             Collection<AsyncProcessorAwaitManager.AwaitThread> threads = manager.browse();
             for (AsyncProcessorAwaitManager.AwaitThread entry : threads) {
                 CompositeType ct = CamelOpenMBeanTypes.listAwaitThreadsCompositeType();
-                String id = "" + entry.getBlockedThread().getId();
+                String id = Long.toString(entry.getBlockedThread().getId());
                 String name = entry.getBlockedThread().getName();
                 String exchangeId = entry.getExchange().getExchangeId();
                 String routeId = entry.getRouteId();
                 String nodeId = entry.getNodeId();
-                String duration = "" + entry.getWaitDuration();
+                String duration = Long.toString(entry.getWaitDuration());
 
                 CompositeData data = new CompositeDataSupport(
                         ct,

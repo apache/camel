@@ -50,7 +50,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS), "Should count down");
 
         long delta = time.get();
-        log.info("ExchangeEventSent took ms: " + delta);
+        log.info("ExchangeEventSent took ms: {}", delta);
         assertTrue(delta > 200, "Should take about 250 millis sec, was: " + delta);
     }
 

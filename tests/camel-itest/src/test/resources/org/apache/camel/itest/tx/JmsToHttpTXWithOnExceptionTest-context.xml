@@ -24,13 +24,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- ActiveMQ connection factory -->
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <!-- Spring JMX TX manager -->
@@ -52,7 +52,7 @@
     </bean>
 
     <!-- ActiveMQ component to be used in Camel -->
-    <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="configuration" ref="jmsConfig"/>
     </bean>

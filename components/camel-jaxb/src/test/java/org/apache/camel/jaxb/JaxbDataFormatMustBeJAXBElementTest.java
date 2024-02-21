@@ -16,9 +16,9 @@
  */
 package org.apache.camel.jaxb;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.InvalidPayloadException;
@@ -43,7 +43,7 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<foo><bar>Hello Bar</bar></foo>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -59,11 +59,11 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
             assertEquals(JAXBElement.class, ipe.getType());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

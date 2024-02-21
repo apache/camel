@@ -16,10 +16,9 @@
  */
 package org.apache.camel.itest.jms;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
@@ -48,7 +47,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
         assertEquals("OK", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -75,16 +74,13 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myservice")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                String body = exchange.getIn().getBody(String.class);
-                                assertEquals("name=Hello World", body);
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            assertEquals("name=Hello World", body);
 
-                                exchange.getMessage().setBody("OK");
-                                exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
-                                exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
-                            }
+                            exchange.getMessage().setBody("OK");
+                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
                         });
             }
         };

@@ -17,73 +17,108 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
-
-import javax.jms.ConnectionFactory;
+import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsStreamMessageTypeTest extends CamelTestSupport {
+/**
+ * This test cannot run in parallel: it reuses the same path for different test iterations
+ */
+@ResourceLock("src/test/data")
+public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
-    @Override
-    @BeforeEach
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
+    @AfterEach
     public void setUp() throws Exception {
-        deleteDirectory("target/stream");
-        super.setUp();
+        deleteDirectory("target/stream/JmsStreamMessageTypeTest");
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
-        camelContext.addComponent("jms", jms);
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
-    @Test
-    public void testStreamType() throws Exception {
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
+        component.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
+        return component;
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "message1.xml", "message1.txt" })
+    @DisplayName("Tests stream type with both a small (message1.xml) and a large file (message1.txt)")
+    public void testStreamType(String filename) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.xml"), new File("target/stream/in/message1.xml"));
+        final File baseFile = new File("src/test/data", filename);
+        final File sourceFile = new File("target/stream/JmsStreamMessageTypeTest/in/", filename);
 
-        assertMockEndpointsSatisfied();
+        // copy the file
+        FileUtil.copyFile(baseFile, sourceFile);
+
+        MockEndpoint.assertIsSatisfied(context);
 
         Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
-        StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
-
-        // no more bytes should be available on the inputstream
-        assertEquals(0, is.available());
+        InputStream is = assertIsInstanceOf(InputStream.class, body);
 
         // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
+        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/", filename));
         String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
+                = context.getTypeConverter().mandatoryConvertTo(String.class,
+                        new File("target/stream/JmsStreamMessageTypeTest/out/", filename));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("file:target/stream/in").to("jms:queue:foo");
+            public void configure() {
+                from("file:target/stream/JmsStreamMessageTypeTest/in").to("jms:queue:JmsStreamMessageTypeTest");
 
-                from("jms:queue:foo").to("file:target/stream/out").to("mock:result");
+                from("jms:queue:JmsStreamMessageTypeTest").to("file:target/stream/JmsStreamMessageTypeTest/out")
+                        .to("mock:result");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

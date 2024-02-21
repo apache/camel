@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-management-api</artifactId>
@@ -32,8 +32,17 @@
     <name>Camel :: Management API</name>
     <description>The Camel Management API</description>
 
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <label>core,management</label>
+    </properties>
+
     <dependencies>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
@@ -44,6 +53,19 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
+            <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml.stream</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
+        </dependency>
     </dependencies>
 
     <reporting>
@@ -206,30 +228,7 @@
                 </plugins>
             </build>
         </profile>
-
-        <!-- skip management tests on AIX as it hangs CI servers -->
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <name>aix</name>
-                </os>
-            </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
-            </properties>
-        </profile>
-        <profile>
-            <id>xalan</id>
-            <dependencies>
-                <!-- enable the Xalan processor -->
-                <dependency>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                    <version>${xalan-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
+        
         <profile>
             <id>xerces</id>
             <dependencies>
@@ -251,46 +250,16 @@
                 <dependency>
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>woodstox-core-asl</artifactId>
+                    <version>${woodstox-version}</version>
                     <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>javax.xml.stream</groupId>
+                            <artifactId>stax-api</artifactId>
+                        </exclusion>
+                    </exclusions>
                 </dependency>
             </dependencies>
-        </profile>
-
-        <profile>
-            <id>jdk9s-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <!-- skip file stress tests as they are intended to run manually -->
-                            <excludes>
-                                <exclude>org/apache/camel/component/file/stress/**.java</exclude>
-                                <exclude>**/DistributedCompletionIntervalTest.java</exclude>
-                                <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
-                                <exclude>${platform.skip.tests}</exclude>
-                            </excludes>
-                            <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-                            <!-- needed for testing the properties component -->
-                            <environmentVariables>
-                                <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
-                                <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
-                            </environmentVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

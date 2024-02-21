@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -31,11 +31,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 @Component("mybatis")
-public class MyBatisComponent extends DefaultComponent {
+public class MyBatisComponent extends HealthCheckComponent {
 
-    @Metadata(label = "advanced")
-    private SqlSessionFactory sqlSessionFactory;
-    @Metadata(defaultValue = "SqlMapConfig.xml")
+    @Metadata(label = "advanced", autowired = true)
+    private volatile SqlSessionFactory sqlSessionFactory;
+    @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true)
     private String configurationUri = "SqlMapConfig.xml";
 
     @Override
@@ -45,14 +45,17 @@ public class MyBatisComponent extends DefaultComponent {
         return answer;
     }
 
-    protected SqlSessionFactory createSqlSessionFactory() throws IOException {
-        ObjectHelper.notNull(configurationUri, "configurationUri", this);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
-        try {
-            return new SqlSessionFactoryBuilder().build(is);
-        } finally {
-            IOHelper.close(is);
+    protected synchronized SqlSessionFactory createSqlSessionFactory() throws IOException {
+        if (sqlSessionFactory == null) {
+            ObjectHelper.notNull(configurationUri, "configurationUri", this);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
+            try {
+                sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
+            } finally {
+                IOHelper.close(is);
+            }
         }
+        return sqlSessionFactory;
     }
 
     public SqlSessionFactory getSqlSessionFactory() {
@@ -79,17 +82,4 @@ public class MyBatisComponent extends DefaultComponent {
         this.configurationUri = configurationUri;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (sqlSessionFactory == null) {
-            sqlSessionFactory = createSqlSessionFactory();
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
 }

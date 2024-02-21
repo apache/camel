@@ -96,8 +96,8 @@ public class MasterConsumer extends DefaultConsumer {
         this.groupListener.setMaximumConnectionTimeout(endpoint.getComponent().getMaximumConnectionTimeout());
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: " + endpoint + " in " + endpoint.getCamelContext()
-                 + " with singletonID: " + endpoint.getGroupName());
+        LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", endpoint,
+                endpoint.getCamelContext(), endpoint.getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }
@@ -119,7 +119,7 @@ public class MasterConsumer extends DefaultConsumer {
         return state;
     }
 
-    private void stopConsumer() throws Exception {
+    private void stopConsumer() {
         ServiceHelper.stopAndShutdownServices(delegate);
         ServiceHelper.stopAndShutdownServices(endpoint.getConsumerEndpoint());
         delegate = null;

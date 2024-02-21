@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.consul;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.kiwiproject.consul.Consul;
 
 @UriParams
 public class ConsulConfiguration extends ConsulClientConfiguration {
@@ -73,7 +73,7 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     }
 
     /**
-     * Reference to a `com.orbitz.consul.Consul` in the registry.
+     * Reference to a `org.kiwiproject.consul.Consul` in the registry.
      */
     public void setConsulClient(Consul consulClient) {
         this.consulClient = consulClient;

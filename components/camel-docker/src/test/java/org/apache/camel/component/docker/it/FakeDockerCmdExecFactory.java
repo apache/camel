@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.docker.it;
 
-import java.io.IOException;
-
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
@@ -27,6 +25,7 @@ import com.github.dockerjava.api.command.ContainerDiffCmd;
 import com.github.dockerjava.api.command.CopyArchiveFromContainerCmd;
 import com.github.dockerjava.api.command.CopyArchiveToContainerCmd;
 import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
+import com.github.dockerjava.api.command.CreateConfigCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.CreateNetworkCmd;
@@ -40,6 +39,7 @@ import com.github.dockerjava.api.command.ExecCreateCmd;
 import com.github.dockerjava.api.command.ExecStartCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InitializeSwarmCmd;
+import com.github.dockerjava.api.command.InspectConfigCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
 import com.github.dockerjava.api.command.InspectExecCmd;
 import com.github.dockerjava.api.command.InspectImageCmd;
@@ -51,6 +51,7 @@ import com.github.dockerjava.api.command.InspectVolumeCmd;
 import com.github.dockerjava.api.command.JoinSwarmCmd;
 import com.github.dockerjava.api.command.KillContainerCmd;
 import com.github.dockerjava.api.command.LeaveSwarmCmd;
+import com.github.dockerjava.api.command.ListConfigsCmd;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import com.github.dockerjava.api.command.ListImagesCmd;
 import com.github.dockerjava.api.command.ListNetworksCmd;
@@ -59,6 +60,7 @@ import com.github.dockerjava.api.command.ListServicesCmd;
 import com.github.dockerjava.api.command.ListSwarmNodesCmd;
 import com.github.dockerjava.api.command.ListTasksCmd;
 import com.github.dockerjava.api.command.ListVolumesCmd;
+import com.github.dockerjava.api.command.LoadImageAsyncCmd;
 import com.github.dockerjava.api.command.LoadImageCmd;
 import com.github.dockerjava.api.command.LogContainerCmd;
 import com.github.dockerjava.api.command.LogSwarmObjectCmd;
@@ -67,6 +69,7 @@ import com.github.dockerjava.api.command.PingCmd;
 import com.github.dockerjava.api.command.PruneCmd.Exec;
 import com.github.dockerjava.api.command.PullImageCmd;
 import com.github.dockerjava.api.command.PushImageCmd;
+import com.github.dockerjava.api.command.RemoveConfigCmd;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.command.RemoveImageCmd;
 import com.github.dockerjava.api.command.RemoveNetworkCmd;
@@ -159,6 +162,11 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     @Override
     public LoadImageCmd.Exec createLoadImageCmdExec() {
+        return null;
+    }
+
+    @Override
+    public LoadImageAsyncCmd.Exec createLoadImageAsyncCmdExec() {
         return null;
     }
 
@@ -448,7 +456,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         // Noop
     }
 
@@ -474,6 +482,26 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     @Override
     public RemoveSecretCmd.Exec createRemoveSecretCmdExec() {
+        return null;
+    }
+
+    @Override
+    public ListConfigsCmd.Exec createListConfigsCmdExec() {
+        return null;
+    }
+
+    @Override
+    public InspectConfigCmd.Exec createInspectConfigCmdExec() {
+        return null;
+    }
+
+    @Override
+    public CreateConfigCmd.Exec createCreateConfigCmdExec() {
+        return null;
+    }
+
+    @Override
+    public RemoveConfigCmd.Exec createRemoveConfigCmdExec() {
         return null;
     }
 

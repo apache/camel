@@ -28,9 +28,10 @@
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <rest path="/users">
-      <get uri="{id}">
+      <get path="{id}">
         <to uri="log:foo"/>
       </get>
       <post>
@@ -39,7 +40,7 @@
       <get>
         <to uri="log:foo"/>
       </get>
-      <get uri="{id}">
+      <get path="{id}">
         <to uri="log:foo"/>
       </get>
     </rest>

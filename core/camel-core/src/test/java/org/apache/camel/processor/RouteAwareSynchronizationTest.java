@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyRouteAware());
+                exchange.getExchangeExtension().addOnCompletion(new MyRouteAware());
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -73,18 +73,7 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         };
     }
 
-    private static final class MyRouteAware implements SynchronizationRouteAware {
-
-        @Override
-        public void onBeforeRoute(Route route, Exchange exchange) {
-            EVENTS.add("onBeforeRoute-" + route.getId());
-        }
-
-        @Override
-        public void onAfterRoute(Route route, Exchange exchange) {
-            EVENTS.add("onAfterRoute-" + route.getId());
-        }
-
+    private static final class MyRouteAware implements Synchronization {
         @Override
         public void onComplete(Exchange exchange) {
             EVENTS.add("onComplete");
@@ -93,6 +82,21 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         @Override
         public void onFailure(Exchange exchange) {
             EVENTS.add("onFailure");
+        }
+
+        @Override
+        public SynchronizationRouteAware getRouteSynchronization() {
+            return new SynchronizationRouteAware() {
+                @Override
+                public void onBeforeRoute(Route route, Exchange exchange) {
+                    EVENTS.add("onBeforeRoute-" + route.getId());
+                }
+
+                @Override
+                public void onAfterRoute(Route route, Exchange exchange) {
+                    EVENTS.add("onAfterRoute-" + route.getId());
+                }
+            };
         }
     }
 }

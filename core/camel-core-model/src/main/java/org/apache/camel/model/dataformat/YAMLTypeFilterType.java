@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 @XmlEnum
 public enum YAMLTypeFilterType {

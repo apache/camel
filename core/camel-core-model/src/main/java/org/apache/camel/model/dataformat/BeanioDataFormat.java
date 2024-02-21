@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -46,6 +48,7 @@ public class BeanioDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidRecords;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -56,6 +59,18 @@ public class BeanioDataFormat extends DataFormatDefinition {
 
     public BeanioDataFormat() {
         super("beanio");
+    }
+
+    private BeanioDataFormat(BeanioDataFormat.Builder builder) {
+        this();
+        this.mapping = builder.mapping;
+        this.streamName = builder.streamName;
+        this.ignoreUnidentifiedRecords = builder.ignoreUnidentifiedRecords;
+        this.ignoreUnexpectedRecords = builder.ignoreUnexpectedRecords;
+        this.ignoreInvalidRecords = builder.ignoreInvalidRecords;
+        this.encoding = builder.encoding;
+        this.beanReaderErrorHandlerType = builder.beanReaderErrorHandlerType;
+        this.unmarshalSingleObject = builder.unmarshalSingleObject;
     }
 
     public String getMapping() {
@@ -152,4 +167,131 @@ public class BeanioDataFormat extends DataFormatDefinition {
     public void setUnmarshalSingleObject(String unmarshalSingleObject) {
         this.unmarshalSingleObject = unmarshalSingleObject;
     }
+
+    /**
+     * {@code Builder} is a specific builder for {@link BeanioDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<BeanioDataFormat> {
+
+        private String mapping;
+        private String streamName;
+        private String ignoreUnidentifiedRecords;
+        private String ignoreUnexpectedRecords;
+        private String ignoreInvalidRecords;
+        private String encoding;
+        private String beanReaderErrorHandlerType;
+        private String unmarshalSingleObject;
+
+        /**
+         * The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or
+         * classpath: to denote from where to load the mapping file.
+         */
+        public BeanioDataFormat.Builder mapping(String mapping) {
+            this.mapping = mapping;
+            return this;
+        }
+
+        /**
+         * The name of the stream to use.
+         */
+        public BeanioDataFormat.Builder streamName(String streamName) {
+            this.streamName = streamName;
+            return this;
+        }
+
+        /**
+         * Whether to ignore unidentified records.
+         */
+        public BeanioDataFormat.Builder ignoreUnidentifiedRecords(String ignoreUnidentifiedRecords) {
+            this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
+            return this;
+        }
+
+        /**
+         * Whether to ignore unidentified records.
+         */
+        public BeanioDataFormat.Builder ignoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
+            this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords ? "true" : "false";
+            return this;
+        }
+
+        /**
+         * Whether to ignore unexpected records.
+         */
+        public BeanioDataFormat.Builder ignoreUnexpectedRecords(String ignoreUnexpectedRecords) {
+            this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
+            return this;
+        }
+
+        /**
+         * Whether to ignore unexpected records.
+         */
+        public BeanioDataFormat.Builder ignoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
+            this.ignoreUnexpectedRecords = ignoreUnexpectedRecords ? "true" : "false";
+            return this;
+        }
+
+        /**
+         * Whether to ignore invalid records.
+         */
+        public BeanioDataFormat.Builder ignoreInvalidRecords(String ignoreInvalidRecords) {
+            this.ignoreInvalidRecords = ignoreInvalidRecords;
+            return this;
+        }
+
+        /**
+         * Whether to ignore invalid records.
+         */
+        public BeanioDataFormat.Builder ignoreInvalidRecords(boolean ignoreInvalidRecords) {
+            this.ignoreInvalidRecords = ignoreInvalidRecords ? "true" : "false";
+            return this;
+        }
+
+        /**
+         * The charset to use.
+         * <p/>
+         * Is by default the JVM platform default charset.
+         */
+        public BeanioDataFormat.Builder encoding(String encoding) {
+            this.encoding = encoding;
+            return this;
+        }
+
+        /**
+         * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing.
+         * Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords,
+         * ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler.
+         */
+        public BeanioDataFormat.Builder beanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+            this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+            return this;
+        }
+
+        /**
+         * This options controls whether to unmarshal as a list of objects or as a single object only. The former is the
+         * default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a
+         * single POJO bean.
+         */
+        public BeanioDataFormat.Builder unmarshalSingleObject(String unmarshalSingleObject) {
+            this.unmarshalSingleObject = unmarshalSingleObject;
+            return this;
+        }
+
+        /**
+         * This options controls whether to unmarshal as a list of objects or as a single object only. The former is the
+         * default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a
+         * single POJO bean.
+         */
+        public BeanioDataFormat.Builder unmarshalSingleObject(boolean unmarshalSingleObject) {
+            this.unmarshalSingleObject = unmarshalSingleObject ? "true" : "false";
+            return this;
+        }
+
+        @Override
+        public BeanioDataFormat end() {
+            return new BeanioDataFormat(this);
+        }
+    }
+
 }

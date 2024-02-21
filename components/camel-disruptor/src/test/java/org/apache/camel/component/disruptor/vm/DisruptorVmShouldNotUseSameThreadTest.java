@@ -40,7 +40,7 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
 
         template2.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

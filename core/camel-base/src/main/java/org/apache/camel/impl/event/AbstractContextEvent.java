@@ -26,7 +26,8 @@ import org.apache.camel.spi.CamelEvent.CamelContextEvent;
  */
 public abstract class AbstractContextEvent extends EventObject implements CamelContextEvent {
     private static final long serialVersionUID = 1L;
-    private CamelContext context;
+    private final CamelContext context;
+    private long timestamp;
 
     public AbstractContextEvent(CamelContext source) {
         super(source);
@@ -36,5 +37,15 @@ public abstract class AbstractContextEvent extends EventObject implements CamelC
     @Override
     public CamelContext getContext() {
         return context;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

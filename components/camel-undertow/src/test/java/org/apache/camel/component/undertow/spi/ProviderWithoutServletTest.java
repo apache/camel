@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.spi;
 
 import io.undertow.servlet.handlers.ServletRequestContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,7 @@ public class ProviderWithoutServletTest extends AbstractProviderServletTest {
 
         assertEquals("user", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
@@ -60,7 +59,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         }
 
         if (wait == WaitForTaskToComplete.Always
-                || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+                || wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange)) {
 
             // do not handover the completion as we wait for the copy to complete, and copy its result back when it done
             Exchange copy = prepareCopy(exchange, false);
@@ -69,7 +68,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            copy.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange response) {
                     // check for timeout, which then already would have invoked the latch
@@ -123,7 +122,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                 try {
                     done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
                 if (!done) {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
@@ -140,7 +139,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
             }
         } else {
@@ -162,14 +161,9 @@ public class SedaProducer extends DefaultAsyncProducer {
 
     protected Exchange prepareCopy(Exchange exchange, boolean handover) {
         // use a new copy of the exchange to route async (and use same message id)
-
         // if handover we need to do special handover to avoid handing over
         // RestBindingMarshalOnCompletion as it should not be handed over with SEDA
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
-                synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
-        // set a new from endpoint to be the seda queue
-        copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
-        return copy;
+        return ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
     }
 
     @Override
@@ -189,7 +183,7 @@ public class SedaProducer extends DefaultAsyncProducer {
      * <p>
      * Will perform a blocking "put" if blockWhenFull is true, otherwise it will simply add which will throw exception
      * if the queue is full
-     * 
+     *
      * @param exchange the exchange to add to the queue
      * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */
@@ -228,15 +222,15 @@ public class SedaProducer extends DefaultAsyncProducer {
                     LOG.trace("Discarding Exchange as queue is full: {}", target);
                 }
             } catch (InterruptedException e) {
-                // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else if (blockWhenFull && offerTimeout == 0) {
             try {
                 queue.put(target);
             } catch (InterruptedException e) {
-                // ignore
                 LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
@@ -249,6 +243,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
             }
         } else {
             queue.add(target);

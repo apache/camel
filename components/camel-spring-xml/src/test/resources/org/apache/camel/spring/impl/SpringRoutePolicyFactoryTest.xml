@@ -29,6 +29,7 @@
   <bean id="myRoutePolicyFactory" class="org.apache.camel.impl.RoutePolicyFactoryTest$MyRoutePolicyFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route id="foo-route">
       <from uri="direct:foo"/>
       <to uri="mock:foo"/>

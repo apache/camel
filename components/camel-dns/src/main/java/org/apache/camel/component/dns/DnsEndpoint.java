@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform DNS queries using DNSJava.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true,
-             category = { Category.NETWORKING })
+             category = { Category.NETWORKING }, headersClass = DnsConstants.class)
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath

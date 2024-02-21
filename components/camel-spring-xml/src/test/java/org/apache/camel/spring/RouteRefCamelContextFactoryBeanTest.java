@@ -16,30 +16,20 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RouteRefCamelContextFactoryBeanTest extends RoutingUsingCamelContextFactoryTest {
 
-    public static class MyRoutes implements RoutesBuilder {
-        private RouteBuilder myRouteBuilder;
-
-        public MyRoutes() {
-            myRouteBuilder = new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("seda:start").to("mock:result");
-                }
-            };
-        }
+    public static class MyRoutes extends RouteBuilder {
 
         @Override
-        public void addRoutesToCamelContext(CamelContext camelContext) throws Exception {
-            camelContext.addRoutes(myRouteBuilder);
+        public void configure() throws Exception {
+            from("seda:start").to("mock:result");
+
         }
+
     }
 
     @Override

@@ -54,7 +54,13 @@
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>${log4j2-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
       <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
@@ -62,7 +68,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
+      <artifactId>camel-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -77,8 +83,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>17</release>
         </configuration>
       </plugin>
 
@@ -132,6 +137,14 @@
       </plugin>
 
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
 </project>

@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public class SizedScheduledExecutorService implements ScheduledExecutorService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SizedScheduledExecutorService.class);
+    public static final String QUEUE_SIZE_LIMIT_REACHED = "Task rejected due queue size limit reached";
     private final ScheduledThreadPoolExecutor delegate;
     private final long queueSize;
 
@@ -71,7 +72,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.schedule(task, delay, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -80,7 +81,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.schedule(task, delay, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -89,7 +90,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.scheduleAtFixedRate(task, initialDelay, period, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -98,7 +99,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.scheduleWithFixedDelay(task, initialDelay, period, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -152,7 +153,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.invokeAll(tasks);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -162,7 +163,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.invokeAll(tasks, timeout, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -171,7 +172,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.invokeAny(tasks);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -181,7 +182,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.invokeAny(tasks, timeout, timeUnit);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -246,7 +247,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.submit(task);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -255,7 +256,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.submit(task);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -264,7 +265,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             return delegate.submit(task, result);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 
@@ -273,7 +274,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         if (canScheduleOrExecute()) {
             delegate.execute(task);
         } else {
-            throw new RejectedExecutionException("Task rejected due queue size limit reached");
+            throw new RejectedExecutionException(QUEUE_SIZE_LIMIT_REACHED);
         }
     }
 

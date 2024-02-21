@@ -57,10 +57,10 @@ public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ProtobufDataFormat format
                         = new ProtobufDataFormat(Person.getDefaultInstance(), ProtobufDataFormat.CONTENT_TYPE_FORMAT_JSON);
 

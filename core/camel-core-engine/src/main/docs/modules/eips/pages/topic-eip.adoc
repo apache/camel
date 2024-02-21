@@ -1,34 +1,46 @@
-[[topic-eip]]
 = Topic EIP
-:docTitle: Topic
-:description: Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
+:doctitle: Topic
+:shortname: topic
+:description: Topic which sends to all destinations.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
+Topic mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+With this policy then all destination is selected.
 
 == Options
 
 // eip options: START
-The Topic EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
 
 == Examples
 
-In this case we are using the header test as correlation expression:
+In this example we send the message to all three endpoints:
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .topic()
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().topic()
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
+<route>
 <from uri="direct:start"/>
     <loadBalance>
        <topic/>
@@ -36,4 +48,5 @@ In XML you'll have a route like this
        <to uri="seda:y"/>      
        <to uri="seda:z"/>       
     </loadBalance> 
+</route>
 ----

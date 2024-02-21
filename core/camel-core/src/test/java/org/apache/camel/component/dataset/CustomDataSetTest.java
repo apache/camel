@@ -38,7 +38,7 @@ public class CustomDataSetTest extends ContextTestSupport {
                 throws Exception {
             // lets compare the XPath result
             Predicate predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
-            log.debug("evaluating predicate: " + predicate);
+            log.debug("evaluating predicate: {}", predicate);
             PredicateAssertHelper.assertMatches(predicate, "Actual: " + actual, actual);
         }
 

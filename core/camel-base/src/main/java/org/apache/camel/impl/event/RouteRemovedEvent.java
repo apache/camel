@@ -29,6 +29,6 @@ public class RouteRemovedEvent extends AbstractRouteEvent implements CamelEvent.
 
     @Override
     public String toString() {
-        return "Removed route: " + getRoute().getId();
+        return "Route removed: " + getRoute().getId();
     }
 }

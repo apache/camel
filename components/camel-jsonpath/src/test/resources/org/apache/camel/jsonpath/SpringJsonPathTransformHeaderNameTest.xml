@@ -27,7 +27,7 @@
     <route>
       <from uri="direct:start"/>
       <transform>
-        <jsonpath headerName="myHeader">$.store.book[*].author</jsonpath>
+        <jsonpath source="header:myHeader">$.store.book[*].author</jsonpath>
       </transform>
       <to uri="mock:authors"/>
     </route>

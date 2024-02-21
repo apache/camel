@@ -35,7 +35,7 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
         mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
         assertEquals("A" + LS + "B" + LS + "C" + LS + "D" + LS, result, "Get a wrong result.");
@@ -46,10 +46,10 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("stream:file?fileName=target/stream/streamfile.txt&groupLines=4&groupStrategy=#myGroupStrategy")
                         .to("mock:result");
             }

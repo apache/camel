@@ -106,7 +106,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
         };
     }
 
-    private class MyAggregationStrategy implements AggregationStrategy {
+    private static class MyAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

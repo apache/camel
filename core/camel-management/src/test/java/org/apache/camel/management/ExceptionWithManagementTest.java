@@ -21,10 +21,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * A testcase for exception handler when management is enabled (by default).
  */
+@DisabledOnOs(OS.AIX)
 public class ExceptionWithManagementTest extends ContextTestSupport {
 
     @Override

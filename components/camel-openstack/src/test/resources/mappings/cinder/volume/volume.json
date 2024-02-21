@@ -1,0 +1,18 @@
+{
+  "id" : "cae93cbc-a4a5-4fd8-b1a8-e66fbee24b0c",
+  "name" : "volume.json",
+  "request" : {
+    "url" : "/v2/123ac695d4db400a9001b91bb3b8aa46/volumes/8a9287b7-4f4d-4213-8d75-63470f19f27c",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"volume\":{\"status\":\"in-use\",\"user_id\":\"92ac3530a6cb4d47aa406f1c2c90fca4\",\"attachments\":[{\"host_name\":\"myhost\",\"device\":\"\/dev\/vdd\",\"server_id\":\"eaa6a54d-35c1-40ce-831d-bb61f991e1a9\",\"id\":\"8a9287b7-4f4d-4213-8d75-63470f19f27c\",\"volume_id\":\"8a9287b7-4f4d-4213-8d75-63470f19f27c\"}],\"links\":[{\"href\":\"http:\/\/example.com.com:8776\/v2\/b0b5ed7ae06049688349fe43737796d4\/volumes\/8a9287b7-4f4d-4213-8d75-63470f19f27c\",\"rel\":\"self\"},{\"href\":\"http:\/\/example.com:8776\/b0b5ed7ae06049688349fe43737796d4\/volumes\/8a9287b7-4f4d-4213-8d75-63470f19f27c\",\"rel\":\"bookmark\"}],\"availability_zone\":\"nova\",\"bootable\":\"false\",\"encrypted\":false,\"created_at\":\"2015-05-25T15:03:43.104260\",\"description\":\"a description\",\"os-vol-tenant-attr:tenant_id\":\"b0b5ed7ae06049688349fe43737796d4\",\"os-volume-replication:driver_data\":null,\"volume_type\":\"Gold\",\"name\":\"test-volume\",\"replication_status\":\"disabled\",\"consistencygroup_id\":null,\"source_volid\":\"11111111-1111-1111-1111-111111111111\",\"snapshot_id\":\"22222222-2222-2222-2222-222222222222\",\"os-volume-replication:extended_status\":null,\"metadata\":{\"readonly\":\"False\",\"attached_mode\":\"rw\"},\"id\":\"8a9287b7-4f4d-4213-8d75-63470f19f27c\",\"size\":100}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "cae93cbc-a4a5-4fd8-b1a8-e66fbee24b0c",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

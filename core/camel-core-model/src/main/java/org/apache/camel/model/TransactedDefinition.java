@@ -18,12 +18,12 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
@@ -42,13 +42,13 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     // if we extend PolicyDefinition so we must make a copy of the class
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
-
     @XmlTransient
-    protected Class<? extends Policy> type = TransactedPolicy.class;
-    @XmlAttribute
-    protected String ref;
+    private Class<? extends Policy> type = TransactedPolicy.class;
     @XmlTransient
     private Policy policy;
+
+    @XmlAttribute
+    private String ref;
 
     public TransactedDefinition() {
     }

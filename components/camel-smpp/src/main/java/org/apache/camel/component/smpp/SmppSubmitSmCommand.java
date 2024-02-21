@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
@@ -31,9 +32,11 @@ import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SubmitSmResult;
 
 public class SmppSubmitSmCommand extends SmppSmCommand {
 
@@ -46,15 +49,16 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         SubmitSm[] submitSms = createSubmitSm(exchange);
         List<String> messageIDs = new ArrayList<>(submitSms.length);
 
+        String messageID = null;
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
-            String messageID;
+            messageID = null;
             if (log.isDebugEnabled()) {
                 log.debug("Sending short message {} for exchange id '{}'...", i, exchange.getExchangeId());
             }
 
             try {
-                messageID = session.submitShortMessage(
+                SubmitSmResult result = session.submitShortMessage(
                         submitSm.getServiceType(),
                         TypeOfNumber.valueOf(submitSm.getSourceAddrTon()),
                         NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()),
@@ -73,11 +77,16 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
                         (byte) 0,
                         submitSm.getShortMessage(),
                         submitSm.getOptionalParameters());
+                if (result != null) {
+                    messageID = result.getMessageId();
+                }
             } catch (Exception e) {
                 throw new SmppException(e);
             }
 
-            messageIDs.add(messageID);
+            if (messageID != null) {
+                messageIDs.add(messageID);
+            }
         }
 
         if (log.isDebugEnabled()) {
@@ -85,21 +94,22 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
                     exchange.getExchangeId(), messageIDs);
         }
 
-        Message message = getResponseMessage(exchange);
+        Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, messageIDs);
         message.setHeader(SmppConstants.SENT_MESSAGE_COUNT, messageIDs.size());
     }
 
     protected SubmitSm[] createSubmitSm(Exchange exchange) throws SmppException {
-
+        Message message = exchange.getIn();
         SubmitSm template = createSubmitSmTemplate(exchange);
-        byte[][] segments = splitBody(exchange.getIn());
+        byte[][] segments = splitBody(message);
 
-        ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
-        if (null != esmClass) {
+        // FIXME: undocumented header
+        ESMClass esmClass = message.getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (esmClass != null) {
             template.setEsmClass(esmClass.value());
-            // multipart message
         } else if (segments.length > 1) {
+            // multipart message
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
@@ -109,8 +119,24 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             submitSm.setShortMessage(segments[i]);
             submitSms[i] = submitSm;
         }
-
+        setRegisterDeliveryReceiptFlag(submitSms, message);
         return submitSms;
+    }
+
+    protected void setRegisterDeliveryReceiptFlag(SubmitSm[] submitSms, Message message) {
+        byte specifiedDeliveryFlag = getRegisterDeliveryFlag(message);
+        byte flag;
+        if (getRequestsSingleDLR(message)) {
+            // Disable DLRs
+            flag = SMSCDeliveryReceipt.DEFAULT.value();
+        } else {
+            flag = specifiedDeliveryFlag;
+        }
+
+        for (int i = 0; i < submitSms.length - 1; i++) {
+            submitSms[i].setRegisteredDelivery(flag);
+        }
+        submitSms[submitSms.length - 1].setRegisteredDelivery(specifiedDeliveryFlag);
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -168,12 +194,6 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
             submitSm.setServiceType(config.getServiceType());
         }
 
-        if (in.getHeaders().containsKey(SmppConstants.REGISTERED_DELIVERY)) {
-            submitSm.setRegisteredDelivery(in.getHeader(SmppConstants.REGISTERED_DELIVERY, Byte.class));
-        } else {
-            submitSm.setRegisteredDelivery(config.getRegisteredDelivery());
-        }
-
         if (in.getHeaders().containsKey(SmppConstants.PROTOCOL_ID)) {
             submitSm.setProtocolId(in.getHeader(SmppConstants.PROTOCOL_ID, Byte.class));
         } else {
@@ -211,12 +231,12 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         if (optinalParamater != null) {
             List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
-            submitSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+            submitSm.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
         } else {
             Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
             if (optinalParamaters != null) {
                 List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
-                submitSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+                submitSm.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
             } else {
                 submitSm.setOptionalParameters();
             }

@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * Interact with <a href="http://www.servicenow.com/">ServiceNow</a> via its REST API.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName",
-             producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT })
+             producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT },
+             headersClass = ServiceNowConstants.class)
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
@@ -44,7 +45,7 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     private final ServiceNowConfiguration configuration;
 
     public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration,
-                              String instanceName) throws Exception {
+                              String instanceName) {
         super(uri, component);
 
         this.configuration = configuration;

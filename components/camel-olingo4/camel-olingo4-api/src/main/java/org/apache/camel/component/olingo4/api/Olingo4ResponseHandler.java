@@ -25,7 +25,7 @@ public interface Olingo4ResponseHandler<T> {
 
     /**
      * Handle response data on successful completion of Olingo4 request.
-     * 
+     *
      * @param response        response data from Olingo4, may be NULL for Olingo4 operations with no response data.
      * @param responseHeaders the response HTTP headers received from the endpoint.
      */
@@ -33,7 +33,7 @@ public interface Olingo4ResponseHandler<T> {
 
     /**
      * Handle exception raised from Olingo4 request.
-     * 
+     *
      * @param ex exception from Olingo4 request. May be an instance of
      *           {@link org.apache.olingo.commons.api.ex.ODataException} or some other exception, such as
      *           {@link java.io.IOException}

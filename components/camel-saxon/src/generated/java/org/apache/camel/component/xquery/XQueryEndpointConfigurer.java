@@ -40,8 +40,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "headername":
-        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -69,6 +67,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "source": target.setSource(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "staticquerycontext":
@@ -105,8 +104,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
-        case "headername":
-        case "headerName": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "lazystartproducer":
@@ -134,6 +131,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": return java.util.Map.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "source": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "staticquerycontext":
@@ -171,8 +169,6 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
-        case "headername":
-        case "headerName": return target.getHeaderName();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
@@ -200,6 +196,7 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "source": return target.getSource();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "staticquerycontext":

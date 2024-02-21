@@ -16,17 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.concurrent.atomic.LongAdder;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.PooledObjectFactorySupport;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +30,11 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link ExchangeFactory} that creates a new {@link Exchange} instance.
  */
-public class PrototypeExchangeFactory extends ServiceSupport implements ExchangeFactory {
+public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchange> implements ExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PrototypeExchangeFactory.class);
 
-    final UtilizationStatistics statistics = new UtilizationStatistics();
     final Consumer consumer;
-    CamelContext camelContext;
     ExchangeFactoryManager exchangeFactoryManager;
     String routeId;
 
@@ -54,7 +48,15 @@ public class PrototypeExchangeFactory extends ServiceSupport implements Exchange
 
     @Override
     protected void doBuild() throws Exception {
-        this.exchangeFactoryManager = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
+        super.doBuild();
+        this.exchangeFactoryManager = camelContext.getCamelContextExtension().getExchangeFactoryManager();
+        // force creating and load the class during build time so the JVM does not
+        // load the class on first exchange to be created
+        DefaultExchange dummy = new DefaultExchange(camelContext);
+        // force message init to load classes
+        dummy.getIn();
+        dummy.getIn().getHeaders();
+        LOG.trace("Warming up PrototypeExchangeFactory loaded class: {}", dummy.getClass().getName());
     }
 
     @Override
@@ -73,27 +75,22 @@ public class PrototypeExchangeFactory extends ServiceSupport implements Exchange
     }
 
     @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    @Override
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
         PrototypeExchangeFactory answer = new PrototypeExchangeFactory(consumer);
-        answer.setStatisticsEnabled(statistics.isStatisticsEnabled());
-        answer.setCapacity(getCapacity());
+        answer.setStatisticsEnabled(statisticsEnabled);
+        answer.setCapacity(capacity);
         answer.setCamelContext(camelContext);
         return answer;
     }
 
     @Override
+    public Exchange acquire() {
+        throw new UnsupportedOperationException("Not in use");
+    }
+
+    @Override
     public Exchange create(boolean autoRelease) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.created.increment();
         }
         return new DefaultExchange(camelContext);
@@ -101,62 +98,28 @@ public class PrototypeExchangeFactory extends ServiceSupport implements Exchange
 
     @Override
     public Exchange create(Endpoint fromEndpoint, boolean autoRelease) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.created.increment();
         }
-        return new DefaultExchange(fromEndpoint);
+        return DefaultExchange.newFromEndpoint(fromEndpoint);
     }
 
     @Override
     public boolean release(Exchange exchange) {
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             statistics.released.increment();
         }
         return true;
     }
 
     @Override
-    public boolean isStatisticsEnabled() {
-        return statistics.isStatisticsEnabled();
-    }
-
-    @Override
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        statistics.setStatisticsEnabled(statisticsEnabled);
-    }
-
-    @Override
-    public int getCapacity() {
-        return 0;
-    }
-
-    @Override
-    public int getSize() {
-        return 0;
-    }
-
-    @Override
-    public void setCapacity(int capacity) {
-        // not in use
-    }
-
-    @Override
-    public void resetStatistics() {
-        statistics.reset();
-    }
-
-    @Override
-    public void purge() {
-        // not in use
-    }
-
-    @Override
-    public Statistics getStatistics() {
-        return statistics;
+    public boolean isPooled() {
+        return false;
     }
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         if (exchangeFactoryManager != null) {
             exchangeFactoryManager.addExchangeFactory(this);
         }
@@ -164,15 +127,15 @@ public class PrototypeExchangeFactory extends ServiceSupport implements Exchange
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         if (exchangeFactoryManager != null) {
             exchangeFactoryManager.removeExchangeFactory(this);
         }
         logUsageSummary(LOG, "PrototypeExchangeFactory", 0);
-        statistics.reset();
     }
 
     void logUsageSummary(Logger log, String name, int pooled) {
-        if (statistics.isStatisticsEnabled() && consumer != null) {
+        if (statisticsEnabled && consumer != null) {
             // only log if there is any usage
             long created = statistics.getCreatedCounter();
             long acquired = statistics.getAcquiredCounter();
@@ -181,62 +144,26 @@ public class PrototypeExchangeFactory extends ServiceSupport implements Exchange
             boolean shouldLog = pooled > 0 || created > 0 || acquired > 0 || released > 0 || discarded > 0;
             if (shouldLog) {
                 String id = getRouteId();
+                if (id == null) {
+                    id = "";
+                } else {
+                    id = " " + id;
+                }
                 String uri = consumer.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
 
-                log.info("{} {} ({}) usage [pooled: {}, created: {}, acquired: {} released: {}, discarded: {}]",
-                        name, id, uri, pooled, created, acquired, released, discarded);
+                // are there any leaks?
+                boolean leak = created + acquired > released + discarded;
+                if (leak) {
+                    long leaks = (created + acquired) - (released + discarded);
+                    log.warn(
+                            "{}{} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {}, released: {}, discarded: {}]",
+                            name, id, uri, leaks, pooled, created, acquired, released, discarded);
+                } else {
+                    log.info("{}{} ({}) usage [pooled: {}, created: {}, acquired: {}, released: {}, discarded: {}]",
+                            name, id, uri, pooled, created, acquired, released, discarded);
+                }
             }
-        }
-    }
-
-    /**
-     * Represents utilization statistics
-     */
-    final class UtilizationStatistics implements ExchangeFactory.Statistics {
-
-        boolean statisticsEnabled;
-        final LongAdder created = new LongAdder();
-        final LongAdder acquired = new LongAdder();
-        final LongAdder released = new LongAdder();
-        final LongAdder discarded = new LongAdder();
-
-        @Override
-        public void reset() {
-            created.reset();
-            acquired.reset();
-            released.reset();
-            discarded.reset();
-        }
-
-        @Override
-        public long getCreatedCounter() {
-            return created.longValue();
-        }
-
-        @Override
-        public long getAcquiredCounter() {
-            return acquired.longValue();
-        }
-
-        @Override
-        public long getReleasedCounter() {
-            return released.longValue();
-        }
-
-        @Override
-        public long getDiscardedCounter() {
-            return discarded.longValue();
-        }
-
-        @Override
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        @Override
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            this.statisticsEnabled = statisticsEnabled;
         }
     }
 

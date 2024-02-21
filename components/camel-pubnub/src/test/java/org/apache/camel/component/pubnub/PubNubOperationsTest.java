@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PubNubOperationsTest extends PubNubTestBase {
 
     @Test
-    public void testWhereNow() throws Exception {
+    public void testWhereNow() {
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/uuid/myUUID"))
                 .willReturn(aResponse().withBody(
                         "{\"status\": 200, \"message\": \"OK\", \"payload\": {\"channels\": [\"channel-a\",\"channel-b\"]}, \"service\": \"Presence\"}")));
@@ -55,7 +55,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
     }
 
     @Test
-    public void testHereNow() throws Exception {
+    public void testHereNow() {
         stubFor(get(urlPathEqualTo("/v2/presence/sub_key/mySubscribeKey/channel/myChannel")).willReturn(aResponse()
                 .withBody(
                         "{\"status\" : 200, \"message\" : \"OK\", \"service\" : \"Presence\", \"uuids\" : [{\"uuid\" : \"myUUID0\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, "
@@ -106,7 +106,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
     }
 
     @Test
-    public void testGetState() throws Exception {
+    public void testGetState() {
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid")).willReturn(aResponse()
                 .withBody("{ \"status\": 200, \"message\": \"OK\", \"payload\": "
                           + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
@@ -118,7 +118,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
     }
 
     @Test
-    public void testSetState() throws Exception {
+    public void testSetState() {
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid/data"))
                 .willReturn(aResponse().withBody(
                         "{ \"status\": 200, \"message\": \"OK\", \"payload\": { \"age\" : 20, \"status\" : \"online\" }, \"service\": \"Presence\"}")));
@@ -133,7 +133,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish").to("pubnub://myChannel?uuid=myuuid&pubnub=#pubnub")

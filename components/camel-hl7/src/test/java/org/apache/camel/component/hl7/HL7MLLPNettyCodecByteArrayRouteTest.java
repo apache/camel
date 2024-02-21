@@ -46,7 +46,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
     private MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setProduceString(false);
@@ -75,7 +75,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("PID|||123||Döe^John", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -119,13 +119,13 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder",
                 in.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)

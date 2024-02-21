@@ -28,18 +28,17 @@ import org.junit.jupiter.api.Test;
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
     @Test
-    public void testExludePreAndPostfixes() throws Exception {
-        deleteDirectory("target/data/exclude");
-        prepareFiles();
-
+    public void testExcludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Reports1", "Reports2", "Reports3");
-        mock.expectedMessageCount(3);
-        mock.assertIsSatisfied();
+
+        prepareFiles();
+
+        assertMockEndpointsSatisfied();
     }
 
     private void prepareFiles() throws Exception {
-        String url = "file://target/data/exclude";
+        String url = fileUri();
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "Reports1", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
@@ -52,7 +51,8 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$").convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&exclude=^secret.*|.*xml$"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

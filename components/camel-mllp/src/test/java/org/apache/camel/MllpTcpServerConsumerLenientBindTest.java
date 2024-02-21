@@ -59,16 +59,16 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         RouteBuilder builder = new RouteBuilder() {
             String routeId = "mllp-receiver-with-lenient-bind";
 
             public void configure() {
                 fromF("mllp://%s:%d?bindTimeout=15000&bindRetryInterval=500&receiveTimeout=%d&readTimeout=%d&reuseAddress=false&lenientBind=true",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                        .to(result);
             }
         };
 

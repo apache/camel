@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ public class SpringASN1DataFormatRouteTest extends CamelSpringTestSupport {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

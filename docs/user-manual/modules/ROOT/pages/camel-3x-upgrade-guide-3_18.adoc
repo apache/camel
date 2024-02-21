@@ -1,0 +1,99 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.17 to 3.18
+
+=== camel-core
+
+Camel will now mask all known secret values when logging endpoint URIs to avoid leaking sensitive details
+such as from stacktraces. Previously only a sub set of known _secret_ keys was masked.
+
+The type converter from `InputStream` to `byte[]` will now close the input stream after the conversion.
+
+The `TimeUtils.printDuration` method outputs now in a more compact format (especially for long durations).
+Before `4d12h57m49s` and now `4d12h`. Use `precise=true` to include all details.
+
+=== camel-console
+
+The `AbstractDevConsole` has changed the method `doCall` into two separate methods `doCallText` and `doCallJson`
+to better separate output between text and json based.
+
+=== camel-cxf
+
+The `camel-cxf` JAR has been split up into SOAP vs REST and Spring and non Spring JARs.
+
+Users should therefore choose `camel-cxf` to migrate among the following JARs:
+
+- `camel-cxf-soap`
+- `camel-cxf-spring-soap`
+- `camel-cxf-rest`
+- `camel-cxf-spring-rest`
+- `camel-cxf-transport`
+- `camel-cxf-spring-transport`
+
+For example if you were using CXF for SOAP and with Spring XML, then you would need to migrate
+from using `camel-cxf` to `camel-cxf-spring-soap` and `camel-cxf-spring-transport`.
+
+When using Spring Boot then you need to migrate from `camel-cxf-starter` to use SOAP or REST:
+
+- `camel-cxf-soap-starter`
+- `camel-cxf-rest-starter`
+
+The `camel-cxf` XML XSD schemas has also changed namespaces:
+
+|===
+|Old Namespace | New Namespace
+
+| `http://camel.apache.org/schema/cxf`
+| `http://camel.apache.org/schema/cxf/jaxws`
+
+| `http://camel.apache.org/schema/cxf/camel-cxf.xsd`
+| `http://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd`
+
+| `http://camel.apache.org/schema/cxf`
+| `http://camel.apache.org/schema/cxf/jaxrs`
+
+| `http://camel.apache.org/schema/cxf/camel-cxf.xsd`
+| `http://camel.apache.org/schema/cxf/jaxrs/camel-cxf.xsd`
+
+|===
+
+IMPORTANT: The namespace for Apache Camel Karaf (`camel-cxf-blueprint`) has *not* changed.
+This module has not been split-up and comes with both SOAP and REST combined as before.
+
+And the `camel-cxf` SOAP component is moved to a new `jaxws` sub-package,
+i.e. `org.apache.camel.component.cxf` is now `org.apache.camel.component.cxf.jaws`.
+
+This means, for example, the `CxfComponent` class is now located
+in `org.apache.camel.component.cxf.jaxws`.
+
+=== camel-endpointdsl
+
+The options for `lazyStartProducer` and `bridgeErrorHandler` has moved into the _advanced_ group.
+
+=== camel-google-calendar
+
+The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource`
+to Google Calendar component, you should update it to  `serviceAccountKey`.
+
+=== camel-google-drive
+
+The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource` 
+to Google Drive component, you should update it to  `serviceAccountKey`.
+
+=== camel-jsonpath
+
+There is a new option `unpackArray` in *Camel 3.18.3* that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions).
+There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
+
+=== camel-yaml-dsl
+
+The YAML DSL schema files `camel-yaml-dsl.json` and `camelYamlDsl.json` has been moved from root to `schema` sub folder in the JAR.
+
+=== camel-karaf
+
+The `camel-milo` feature has been removed.
+

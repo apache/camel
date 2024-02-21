@@ -31,6 +31,7 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureSt
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsNoActiveSubscriptionsException;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
@@ -81,7 +82,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
 
         DispatchCallback<Exchange> originalCallback = ReactiveStreamsHelper.getCallback(data);
         DispatchCallback<Exchange> callback = originalCallback;
-        if (originalCallback != null && subs.size() > 0) {
+        if (originalCallback != null && !subs.isEmpty()) {
             // When multiple subscribers have an active subscription,
             // we acknowledge the exchange once it has been delivered to every
             // subscriber (or their subscription is cancelled)
@@ -97,7 +98,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
             });
         }
 
-        if (subs.size() > 0) {
+        if (!subs.isEmpty()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data);
             }
@@ -107,7 +108,8 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
                 sub.publish(data);
             }
         } else if (callback != null) {
-            callback.processed(data, new IllegalStateException("The stream has no active subscriptions"));
+            callback.processed(data,
+                    new ReactiveStreamsNoActiveSubscriptionsException("The stream has no active subscriptions", name));
         }
     }
 

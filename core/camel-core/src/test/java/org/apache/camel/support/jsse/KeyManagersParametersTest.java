@@ -25,6 +25,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +34,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(new DefaultCamelContext());
 
         ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
@@ -43,6 +45,8 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
     protected KeyManagersParameters createMinimalKeyManagersParameters() {
         KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setCamelContext(new DefaultCamelContext());
+
         kmp.setKeyStore(this.createMinimalKeyStoreParameters());
         kmp.setKeyPassword("changeit");
 
@@ -51,7 +55,6 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testPropertyPlaceholders() throws Exception {
-
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
 
         KeyStoreParameters ksp = new KeyStoreParameters();

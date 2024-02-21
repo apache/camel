@@ -25,7 +25,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- In Memory Database -->
-  <jdbc:embedded-database id="myDataSource" type="DERBY">
+  <jdbc:embedded-database id="{{testClassSimpleName}}" type="H2">
     <jdbc:script location="classpath:/sql/createAndPopulateDatabase.sql"/>
   </jdbc:embedded-database>
 
@@ -34,7 +34,7 @@
       <from uri="direct:start"/>
       <!-- need to use %20 on each line when we break up the SQL into new lines -->
       <to uri="sql:select * from projects
-               %20where license like 'A%25'?dataSource=#myDataSource"/>
+               %20where license like 'A%25'?dataSource=#{{testClassSimpleName}}"/>
       <split>
         <simple>${body}</simple>
         <to uri="mock:result"/>

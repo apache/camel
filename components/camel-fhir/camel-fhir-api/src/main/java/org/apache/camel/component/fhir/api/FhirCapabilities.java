@@ -35,7 +35,7 @@ public class FhirCapabilities {
 
     /**
      * Retrieve the conformance statement using the given model type
-     * 
+     *
      * @param  type            the model type
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @param  <T>             extends {@link IBaseConformance}

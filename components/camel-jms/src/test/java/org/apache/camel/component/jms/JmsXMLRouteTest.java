@@ -18,31 +18,44 @@ package org.apache.camel.component.jms;
 
 import java.io.FileInputStream;
 
-import javax.jms.ConnectionFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * For unit testing with XML streams that can be troublesome with the StreamCache
  */
-public class JmsXMLRouteTest extends CamelTestSupport {
+public class JmsXMLRouteTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     private static final String TEST_LONDON = "src/test/data/message1.xml";
     private static final String TEST_TAMPA = "src/test/data/message2.xml";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
-    @Test
-    public void testLondonWithFileStreamAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testLondonWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
@@ -50,41 +63,14 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
+        template.sendBody(endpointUri, source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testLondonWithFileStreamAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testLondonWithFileStreamAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTampaWithFileStreamAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testTampaWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("Hiram");
@@ -92,41 +78,14 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
+        template.sendBody(endpointUri, source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testTampaWithFileStreamAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:tampa");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("Hiram");
-
-        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testTampaWithFileStreamAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:tampa");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("Hiram");
-
-        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testLondonWithStringSourceAsObject(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
@@ -140,95 +99,53 @@ public class JmsXMLRouteTest extends CamelTestSupport {
                                          + "</person>");
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
+        template.sendBody(endpointUri, source);
 
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
-
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    @ContextFixture
+    public void configureStreamCaching(CamelContext context) {
+        // enable stream caching
+        context.setStreamCaching(true);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                // enable stream caching
-                context.setStreamCaching(true);
-
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:object").to("activemq:queue:object?jmsMessageType=Object");
+                from("direct:object").to("activemq:queue:JmsXMLRouteTest.object?jmsMessageType=Object");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:bytes").to("activemq:queue:bytes?jmsMessageType=Bytes");
+                from("direct:bytes").to("activemq:queue:JmsXMLRouteTest.bytes?jmsMessageType=Bytes");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:default").to("activemq:queue:default");
+                from("direct:default").to("activemq:queue:JmsXMLRouteTest.default");
 
-                from("activemq:queue:object")
+                from("activemq:queue:JmsXMLRouteTest.object")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should preserve the object as Source
                             assertIsInstanceOf(Source.class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:bytes")
+                from("activemq:queue:JmsXMLRouteTest.bytes")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should be a byte array by default
                             assertIsInstanceOf(byte[].class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:default")
+                from("activemq:queue:JmsXMLRouteTest.default")
                         .to("seda:choice");
 
                 from("seda:choice")
@@ -241,4 +158,15 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

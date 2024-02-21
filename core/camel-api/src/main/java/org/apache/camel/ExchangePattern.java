@@ -16,8 +16,8 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Represents the kind of message exchange pattern
@@ -26,8 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ExchangePattern {
     InOnly,
-    InOut,
-    InOptionalOut;
+    InOut;
 
     /**
      * Return true if there can be an IN message

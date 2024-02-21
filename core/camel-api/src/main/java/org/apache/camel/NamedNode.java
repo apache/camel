@@ -19,12 +19,17 @@ package org.apache.camel;
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
  */
-public interface NamedNode {
+public interface NamedNode extends LineNumberAware {
 
     /**
      * Gets the value of the id property.
      */
     String getId();
+
+    /**
+     * Gets the node prefix id.
+     */
+    String getNodePrefixId();
 
     /**
      * Returns a short name for this node which can be useful for ID generation or referring to related resources like

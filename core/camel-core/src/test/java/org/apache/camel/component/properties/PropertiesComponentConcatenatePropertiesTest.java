@@ -22,13 +22,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent()
                 .setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
+        context.getPropertiesComponent().setNestedPlaceholder(true);
         return context;
     }
 

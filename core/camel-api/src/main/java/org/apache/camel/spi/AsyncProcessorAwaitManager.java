@@ -33,7 +33,7 @@ import org.apache.camel.StaticService;
 public interface AsyncProcessorAwaitManager extends StaticService {
 
     /**
-     * Utilization statistics of the this manager.
+     * Utilization statistics of this manager.
      */
     interface Statistics {
 
@@ -122,7 +122,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
     }
 
     /**
-     * Process the given exchange sychronously.
+     * Process the given exchange synchronously.
      *
      * @param processor the async processor to call
      * @param exchange  the exchange to process

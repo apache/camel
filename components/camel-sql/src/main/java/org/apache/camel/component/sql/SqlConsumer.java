@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
@@ -177,14 +178,16 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     }
                 }
 
+                // okay we have some response from SQL so lets mark the consumer as ready
+                forceConsumerAsReady();
+
                 // process all the exchanges in this batch
                 try {
                     if (answer.isEmpty()) {
                         // no data
                         return 0;
                     } else {
-                        int rows = processBatch(CastUtils.cast(answer));
-                        return rows;
+                        return processBatch(CastUtils.cast(answer));
                     }
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -256,9 +259,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             Object data = holder.data;
 
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;

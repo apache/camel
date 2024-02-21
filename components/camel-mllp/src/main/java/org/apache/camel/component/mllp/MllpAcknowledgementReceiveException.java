@@ -22,35 +22,36 @@ package org.apache.camel.component.mllp;
 public class MllpAcknowledgementReceiveException extends MllpAcknowledgementException {
     static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Receipt Failed";
 
-    public MllpAcknowledgementReceiveException(byte[] hl7Message) {
-        super(EXCEPTION_MESSAGE, hl7Message);
+    public MllpAcknowledgementReceiveException(byte[] hl7Message, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement);
+    public MllpAcknowledgementReceiveException(byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(byte[] hl7Message, Throwable cause) {
-        super(EXCEPTION_MESSAGE, hl7Message, cause);
+    public MllpAcknowledgementReceiveException(byte[] hl7Message, Throwable cause, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
+    public MllpAcknowledgementReceiveException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
+        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message) {
-        super(message, hl7Message);
+    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, boolean logPhi) {
+        super(message, hl7Message, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(message, hl7Message, hl7Acknowledgement);
+    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, hl7Message, cause);
+    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
+        super(message, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(message, hl7Message, hl7Acknowledgement, cause);
+    public MllpAcknowledgementReceiveException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
+                                               boolean logPhi) {
+        super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 }

@@ -34,41 +34,44 @@ import java.lang.annotation.RetentionPolicy;
 public @interface KeyValuePairField {
 
     /**
-     * tag identifying the field in the message (mandatory)
-     * 
+     * tag identifying the field in the message (mandatory) - must be unique
+     *
      * @return int
      */
     int tag();
 
     /**
      * name of the field (optional)
-     * 
+     *
      * @return String
      */
     String name() default "";
 
     /**
      * pattern that the formater will use to transform the data (optional)
-     * 
+     *
      * @return String
      */
     String pattern() default "";
 
     /**
+     * Timezone to be used.
+     *
      * @return String timezone ID
      */
     String timezone() default "";
 
     /**
-     * Position of the field in the message generated
-     * 
+     * Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
+     * must be different
+     *
      * @return int
      */
     int position() default 0;
 
     /**
      * precision of the BigDecimal number to be created
-     * 
+     *
      * @return int
      */
     int precision() default 0;
@@ -79,7 +82,7 @@ public @interface KeyValuePairField {
     boolean required() default false;
 
     /**
-     * Indicates if there is a decimal point implied at a specified location
+     * <b>Camel 2.11:</b> Indicates if there is a decimal point implied at a specified location
      */
     boolean impliedDecimalSeparator() default false;
 }

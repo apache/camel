@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -30,22 +29,20 @@ public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>,
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
 
-    private final CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
 
     private final String endpointUri;
 
     public CamelItemReader(ConsumerTemplate consumerTemplate, String endpointUri) {
         this.consumerTemplate = consumerTemplate;
-        this.camelContext = consumerTemplate.getCamelContext();
         this.endpointUri = endpointUri;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
+        ObjectHelper.notNull(consumerTemplate.getCamelContext(), "CamelContext", this);
         // register this as service so we get lifecycle callback when Camel is starting/stopping
-        camelContext.addService(this);
+        consumerTemplate.getCamelContext().addService(this);
     }
 
     @Override
@@ -66,4 +63,13 @@ public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>,
     protected void doStop() throws Exception {
         ServiceHelper.stopService(consumerTemplate);
     }
+
+    public ConsumerTemplate getConsumerTemplate() {
+        return consumerTemplate;
+    }
+
+    public String getEndpointUri() {
+        return endpointUri;
+    }
+
 }

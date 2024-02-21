@@ -1,34 +1,39 @@
-[[CamelCatalog]]
 = Camel Catalog
-
-*Since Camel 2.17*
 
 Each release includes a catalog with all sorts of information about what’s included in the release.
 
-The catalog is shipped in an independent standalone camel-catalog JAR containing the following information:
+== About Camel Catalog
 
-- List of all components, data formats, languages, EIPs, and everything else in the
-release
-- Curated lists for Spring Boot and Apache Karaf runtime
+The catalog is shipped in an independent standalone `camel-catalog` JAR containing the following information:
+
+- List of all components, data formats, languages, EIPs, and everything else in the release
+- Curated lists for Camel Quarkus, Camel Spring Boot, and Camel Karaf runtimes
 - JSON schema with extensive details for every option
 - Human-readable documentation for every option
 - Categorization of options (for example, find all database components)
 - XML schema for the XML DSLs
 - Maven Archetype Catalog of all the Camel archetypes
-- Component documentation as ascii doc
-- Validator for Camel endpoint and Simple language
-- API to create Camel endpoint URLs
-- Java API
+
+There is also a Java API for tooling:
+
+- validating Camel endpoints and the Simple language
+- creating Camel endpoint URLs
 
 The catalog provides a wealth of information that tooling can tap into and use.
 
-For example, Camel tooling for IDEA, Eclipse and VSCode uses the catalog in the editor
-to know all details about every EIP and component Camel supports.
+=== Tooling using Camel Catalog
 
-The Camel Maven validation plugin uses the catalog during validation of all the
+The following tools uses the catalog in their editor:
+
+- https://plugins.jetbrains.com/plugin/9371-apache-camel-idea-plugin[Camel tooling for IDEA]
+- https://marketplace.eclipse.org/content/language-support-apache-camel[Camel tooling for Eclipse]
+- https://marketplace.visualstudio.com/items?itemName=redhat.vscode-apache-camel[Camel tooling for VS Code]
+- https://marketplace.visualstudio.com/items?itemName=camel-karavan.karavan[Camel Karavan for VS Code]
+
+The xref:camel-report-maven-plugin.adoc[Camel Maven validation] plugin uses the catalog during validation of all the
 Camel endpoints found while scanning the source code.
 
-== Layout of camel-catalog
+=== Layout of camel-catalog
 
 JAR includes the information using the following directory layout:
 
@@ -41,7 +46,6 @@ org
       ├── archetypes (Maven archetype catalog)
       ├── components (JSON schema)
       ├── dataformats (JSON schema)
-      ├── docs (Ascii docs)
       ├── languages (JSON schema)
       ├── main (JSON schema)
       ├── models (JSON schema)

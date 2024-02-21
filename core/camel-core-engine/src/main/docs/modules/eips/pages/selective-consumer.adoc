@@ -1,46 +1,76 @@
-[[Selective-Consumer]]
 = Selective Consumer
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageSelector.html[Selective Consumer]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
-The Selective Consumer from the EIP patterns can be implemented in two ways
+How can a message consumer select which messages it wishes to receive?
 
 image::eip/MessageSelectorSolution.gif[image]
 
-== Selective Consumer using Components
+Make the consumer a Selective Consumer, one that filteres the messages delivered by its channel so that it only receives the ones that match its criteria.
+
+== Using Selecting Consumer
+
+In Camel the Selective Consumer EIP is implemented in two ways:
+
+- Using xref:components::index.adoc[Components] which supports message selecting.
+- Using the xref:filter-eip.adoc[Filter] EIP as message selecting.
+
+=== Selective Consumer using Components
 
 The first solution is to provide a Message Selector to the underlying URIs when creating your consumer.
-For example when using JMS you can specify a selector parameter so that the message broker will only deliver messages matching your criteria.
+For example when using xref:components::jms-component.adoc[JMS] you can specify a
+JMS selector parameter so that the message broker will only deliver messages matching your criteria.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:queue:hello?selector=color='red'")
+from("jms:queue:hello?selector=color='red'")
   .to("bean:red");
 ----
 
-== Selective Consumer using Filter pattern
-
-The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
-then if the filter matches the message your consumer is invoked as shown in the following example.
-
-[source,java]
-----
-from("seda:a")
-    .filter(header("foo").isEqualTo("bar"))
-        .process(myProcessor);
-----
-
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="seda:a"/>
+  <from uri="jms:queue:hello?selector=color='red'"/>
+  <to uri="bean:red"/>
+</route>
+----
+====
+
+=== Selective Consumer using Filter EIP
+
+The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
+if the filter matches the message your "consumer" is invoked as shown in the following example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:colors")
+    .filter(header("color").isEqualTo("red"))
+        .to("bean:red")
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="seda:colors"/>
     <filter>
-        <simple>${header.foo} == 'bar'</xpath>
-        <process ref="myProcessor"/>
+        <simple>${header.color} == 'red'</xpath>
+        <to uri="bean:red"/>
     </filter>
 </route>
 ----
+====

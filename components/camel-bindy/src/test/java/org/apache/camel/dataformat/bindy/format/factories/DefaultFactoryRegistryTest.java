@@ -26,13 +26,14 @@ public class DefaultFactoryRegistryTest {
 
     @Test
     public void unregisterFormatFactory() {
+        FactoryRegistry reg = new DefaultFactoryRegistry();
+        FormattingOptions formattingOptions = new FormattingOptions().forClazz(String.class);
+
+        assertNotNull(reg.findForFormattingOptions(formattingOptions));
+
+        reg.unregister(StringFormatFactory.class);
+
         assertThrows(IllegalArgumentException.class, () -> {
-            FactoryRegistry reg = new DefaultFactoryRegistry();
-            FormattingOptions formattingOptions = new FormattingOptions().forClazz(String.class);
-
-            assertNotNull(reg.findForFormattingOptions(formattingOptions));
-
-            reg.unregister(StringFormatFactory.class);
             reg.findForFormattingOptions(formattingOptions);
         });
     }

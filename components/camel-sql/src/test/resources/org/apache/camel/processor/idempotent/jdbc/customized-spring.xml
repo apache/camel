@@ -26,7 +26,7 @@
            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <jdbc:embedded-database id="dataSource" type="DERBY" />
+    <jdbc:embedded-database id="dataSource" type="H2" />
     
     <!-- START SNIPPET: e1 -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
@@ -47,7 +47,7 @@
     	
     	<camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
     		<camel:from uri="direct:start" />
-    		<camel:idempotentConsumer messageIdRepositoryRef="messageIdRepository">
+    		<camel:idempotentConsumer idempotentRepository="messageIdRepository">
     			<camel:header>messageId</camel:header>
     			<camel:to uri="mock:result" />
     		</camel:idempotentConsumer>

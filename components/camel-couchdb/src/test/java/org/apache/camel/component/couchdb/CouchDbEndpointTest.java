@@ -34,8 +34,10 @@ public class CouchDbEndpointTest {
 
     @Test
     void testDbRequired() {
+        final CouchDbComponent component = new CouchDbComponent();
+
         assertThrows(IllegalArgumentException.class, () -> {
-            new CouchDbEndpoint("couchdb:http://localhost:80", "http://localhost:80", new CouchDbComponent());
+            new CouchDbEndpoint("couchdb:http://localhost:80", "http://localhost:80", component);
         });
     }
 
@@ -49,15 +51,19 @@ public class CouchDbEndpointTest {
 
     @Test
     void testHostnameRequired() {
+        final CouchDbComponent component = new CouchDbComponent();
+
         assertThrows(IllegalArgumentException.class, () -> {
-            new CouchDbEndpoint("couchdb:http://:80/db", "http://:80/db", new CouchDbComponent());
+            new CouchDbEndpoint("couchdb:http://:80/db", "http://:80/db", component);
         });
     }
 
     @Test
     void testSchemeRequired() {
+        final CouchDbComponent component = new CouchDbComponent();
+
         assertThrows(IllegalArgumentException.class, () -> {
-            new CouchDbEndpoint("couchdb:localhost:80/db", "localhost:80/db", new CouchDbComponent());
+            new CouchDbEndpoint("couchdb:localhost:80/db", "localhost:80/db", component);
         });
     }
 }

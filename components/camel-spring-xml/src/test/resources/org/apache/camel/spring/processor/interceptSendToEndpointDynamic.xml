@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- intercept sending to any file component -->
         <interceptSendToEndpoint uri="file:*" skipSendToOriginalEndpoint="true">
@@ -35,7 +36,7 @@
 
         <route>
             <from uri="direct:first"/>
-            <to uri="file://target/foo"/>
+            <to uri="file://target/data/SpringInterceptSendToEndpointSkipTest"/>
             <to uri="mock:result"/>
         </route>
 

@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,16 +73,16 @@ import org.slf4j.LoggerFactory;
  * <li>The node of the DOMStructure is serialized to a byte array and added as body to the message.
  * </ul>
  * This does mean that the enveloping XML signature must have either the structure
- * 
+ *
  * <pre>
  *     {@code
  *     <Signature>
  *         <SignedInfo>
- *            <Reference URI="#object"/>       
+ *            <Reference URI="#object"/>
  *            <!-- further references possible but they must not point to an Object or Manifest containing an object reference -->
  *            ...
  *         </SignedInfo>
- *     
+ *
  *         <Object Id="object">
  *              <!-- contains the DOM node which should be extracted to the message body -->
  *         <Object>
@@ -93,18 +92,18 @@ import org.slf4j.LoggerFactory;
  *     </Signature>
  *     }
  * </pre>
- * 
+ *
  * or the structure
- * 
+ *
  * <pre>
  *     {@code
  *     <Signature>
  *         <SignedInfo>
- *            <Reference URI="#manifest"/>       
+ *            <Reference URI="#manifest"/>
  *            <!-- further references  are possible but they must not point to an Object or other manifest containing an object reference -->
  *            ...
  *         </SignedInfo>
- *     
+ *
  *         <Object >
  *            <Manifest Id="manifest">
  *               <Reference URI=#object/>
@@ -119,27 +118,27 @@ import org.slf4j.LoggerFactory;
  *     </Signature>
  *     }
  * </pre>
- * 
+ *
  * </ul>
  */
 public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     /**
      * Search type 'Default' for determining the output node.
-     * 
+     *
      */
     public static final String OUTPUT_NODE_SEARCH_TYPE_DEFAULT = "Default";
 
     /**
      * Search type 'ElementName' for determining the output element.
-     * 
+     *
      */
     public static final String OUTPUT_NODE_SEARCH_TYPE_ELEMENT_NAME = "ElementName";
 
     /**
      * Search type 'XPath' for determining the output node. Search value must be of type
      * {@link XPathFilterParameterSpec}.
-     * 
+     *
      */
     public static final String OUTPUT_NODE_SEARCH_TYPE_XPATH = "XPath";
 
@@ -189,7 +188,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
         output.setBody(os.toByteArray());
         if (input.getOutputXmlEncoding() != null) {
-            output.setHeader(Exchange.CHARSET_NAME, input.getOutputXmlEncoding());
+            output.setHeader(XmlSignatureConstants.CHARSET_NAME, input.getOutputXmlEncoding());
         }
     }
 
@@ -336,13 +335,13 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     /**
      * Checks whether the XML document has as root element the signature element.
-     * 
+     *
      * @param  input     XML signature input
      * @return           <code>true</code> if the root element of the xml signature document is the signature element;
      *                   otherwise <code>false</code>
      * @throws Exception
      */
-    protected boolean isEnveloping(Input input) throws Exception {
+    protected boolean isEnveloping(Input input) {
         Element el = input.getMessageBodyDocument().getDocumentElement();
         if ("Signature".equals(el.getLocalName()) && XMLSignature.XMLNS.equals(el.getNamespaceURI())) {
             return true;
@@ -364,8 +363,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     /**
      * Returns the references whose referenced objects are taken into account for the message body. This message you can
      * use to filter the relevant references from the references provided by the input parameter.
-     * 
-     * 
+     *
+     *
      * @param  input     references and objects
      * @return           relevant references for the mapping to the camel message
      * @throws Exception if an error occurs
@@ -376,7 +375,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     /**
      * Returns the objects which must be taken into account for the mapping to the camel message.
-     * 
+     *
      * @param  input     references and objects
      * @return           relevant objects for the mapping to camel message
      * @throws Exception if an error occurs
@@ -387,7 +386,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     /**
      * Returns the DOM structure which is transformed to a byte array and set to the camel message body.
-     * 
+     *
      * @param  relevantReferences input from method {@link #getReferencesForMessageMapping(ReferencesAndObjects)}
      * @param  relevantObjects    input from method {@link #getObjectsForMessageMapping(ReferencesAndObjects)}
      * @return                    dom structure
@@ -461,7 +460,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         if (manifest == null) {
             return;
         }
-        for (Reference manifestRef : (List<Reference>) manifest.getReferences()) {
+        for (Reference manifestRef : manifest.getReferences()) {
             String manifestRefUri = getSameDocumentReferenceUri(manifestRef);
             if (manifestRefUri == null) {
                 continue;

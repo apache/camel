@@ -30,17 +30,20 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
-import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStarted;
 import org.apache.camel.spi.OnCamelContextStarting;
-import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.spi.OnCamelContextStopped;
 import org.apache.camel.spi.OnCamelContextStopping;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for {@link LifecycleStrategy} implementations.
  */
 public abstract class LifecycleStrategySupport implements LifecycleStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(LifecycleStrategySupport.class);
 
     // *******************************
     //
@@ -65,13 +68,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             }
 
             @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                if (handler instanceof OnCamelContextStart) {
-                    ((OnCamelContextStart) handler).onContextStart(context);
-                }
-            }
-
-            @Override
             public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
                 if (handler instanceof OnCamelContextStarting) {
                     ((OnCamelContextStarting) handler).onContextStarting(context);
@@ -82,13 +78,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             public void onContextStarted(CamelContext context) {
                 if (handler instanceof OnCamelContextStarted) {
                     ((OnCamelContextStarted) handler).onContextStarted(context);
-                }
-            }
-
-            @Override
-            public void onContextStop(CamelContext context) {
-                if (handler instanceof OnCamelContextStop) {
-                    ((OnCamelContextStop) handler).onContextStop(context);
                 }
             }
 
@@ -126,16 +115,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         };
     }
 
-    @Deprecated
-    public static LifecycleStrategy adapt(OnCamelContextStart handler) {
-        return new LifecycleStrategySupport() {
-            @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                handler.onContextStart(context);
-            }
-        };
-    }
-
     public static LifecycleStrategy adapt(OnCamelContextStarting handler) {
         return new LifecycleStrategySupport() {
             @Override
@@ -150,16 +129,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             @Override
             public void onContextStarted(CamelContext context) {
                 handler.onContextStarted(context);
-            }
-        };
-    }
-
-    @Deprecated
-    public static LifecycleStrategy adapt(OnCamelContextStop handler) {
-        return new LifecycleStrategySupport() {
-            @Override
-            public void onContextStop(CamelContext context) {
-                handler.onContextStop(context);
             }
         };
     }
@@ -196,21 +165,11 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         return consumer::accept;
     }
 
-    @Deprecated
-    public static OnCamelContextStart onCamelContextStart(Consumer<CamelContext> consumer) {
-        return consumer::accept;
-    }
-
     public static OnCamelContextStarting onCamelContextStarting(Consumer<CamelContext> consumer) {
         return consumer::accept;
     }
 
     public static OnCamelContextStarted onCamelContextStarted(Consumer<CamelContext> consumer) {
-        return consumer::accept;
-    }
-
-    @Deprecated
-    public static OnCamelContextStop onCamelContextStop(Consumer<CamelContext> consumer) {
         return consumer::accept;
     }
 
@@ -227,24 +186,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     // Helpers
     //
     // ********************************
-
-    /**
-     * @deprecated see {@link LifecycleStrategy#onContextStart(CamelContext)}
-     */
-    @Deprecated
-    @Override
-    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        // noop
-    }
-
-    /**
-     * @deprecated see {@link LifecycleStrategy#onContextStop(CamelContext)}
-     */
-    @Deprecated
-    @Override
-    public void onContextStop(CamelContext context) {
-        // noop
-    }
 
     @Override
     public void onComponentAdd(String name, Component component) {
@@ -301,5 +242,34 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     @Override
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         // noop
+    }
+
+    protected static void doAutoWire(String name, String kind, Object target, CamelContext camelContext) {
+        PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
+                .resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        if (pc instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
+            String[] names = getter.getAutowiredNames();
+            if (names != null) {
+                for (String option : names) {
+                    // is there already a configured value?
+                    Object value = getter.getOptionValue(target, option, true);
+                    if (value == null) {
+                        Class<?> type = getter.getOptionType(option, true);
+                        if (type != null) {
+                            value = camelContext.getRegistry().findSingleByType(type);
+                        }
+                        if (value != null) {
+                            boolean hit = pc.configure(camelContext, target, option, value, true);
+                            if (hit) {
+                                LOG.info(
+                                        "Autowired property: {} on {}: {} as exactly one instance of type: {} ({}) found in the registry",
+                                        option, kind, name, type.getName(), value.getClass().getName());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

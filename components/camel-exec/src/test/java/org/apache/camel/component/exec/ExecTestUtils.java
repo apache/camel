@@ -33,7 +33,7 @@ public final class ExecTestUtils {
 
     /**
      * Where on the file system is located the <code>classpathResource</code>?
-     * 
+     *
      * @param  classpathResource a resource in the classpath
      * @return                   null if the resource does not exist in the classpath. If the file is not null the
      *                           resource is guaranteed to exist on the file system
@@ -47,7 +47,7 @@ public final class ExecTestUtils {
             File resourceFile = resource.getFile();
             return resourceFile;
         } catch (IOException ioe) {
-            LOG.warn("The resource  " + classpathResource + " does not exist!", ioe);
+            LOG.warn("The resource  {} does not exist!", classpathResource, ioe);
             return null;
         }
     }

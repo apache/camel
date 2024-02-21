@@ -1,0 +1,20 @@
+:image-name: fedora
+:config-class: src/test/java/org/apache/camel/test/infra/cli/common/CliProperties.java
+
+= Camel JBang CLI container
+
+== Overview
+
+This module is used to build a container based on {image-name} image and Camel JBang.
+
+== Configuration
+
+System variables are defined in link:{config-class}[CliProperties]
+
+ - `cli.service.version` : name of the branch of the repo `https://github.com/apache/camel/` used to install Camel JBang, default `main`
+ - `cli.service.data.folder` : mandatory - path to local folder to bind as volume in the container
+ - `cli.service.ssh.password` : ssh password set to access to the container via ssh, default `jbang`
+ - `cli.service.execute.version` : version set just after container start, default is empty so the version is the one in the branch defined in `cli.service.version`
+ - `cli.service.mvn.repos` : comma separated list of custom Maven repositories, default empty
+ - `cli.service.extra.hosts` : comma separated host=ip pairs to add in the hosts file
+ - `cli.service.trusted.paths` : commas separated paths, relative to the host, of the files containing PEM trusted certificates

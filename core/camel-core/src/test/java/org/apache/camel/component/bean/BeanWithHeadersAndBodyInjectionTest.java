@@ -87,7 +87,7 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
         public void myMethod(@Headers Map<String, Object> headers, Object body) {
             this.headers = headers;
             this.body = body;
-            LOG.info("myMethod() method called on " + this);
+            LOG.info("myMethod() method called on {}", this);
         }
 
         public void anotherMethod(@Headers Map<String, Object> headers, Object body) {

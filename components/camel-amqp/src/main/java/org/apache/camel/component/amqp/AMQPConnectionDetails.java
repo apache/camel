@@ -17,6 +17,7 @@
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesComponent;
 
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
@@ -72,7 +73,7 @@ public class AMQPConnectionDetails {
 
             return new AMQPConnectionDetails("amqp://" + host + ":" + port, username, password, setTopicPrefix);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -100,7 +101,7 @@ public class AMQPConnectionDetails {
         } catch (IllegalArgumentException e) {
             return defaultValue;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

@@ -92,36 +92,17 @@ public @interface UriEndpoint {
     String alternativeSyntax() default "";
 
     /**
-     * Represents the consumer class which is injected and created by consumers
-     */
-    @Deprecated
-    Class<?> consumerClass() default Object.class;
-
-    /**
      * The configuration parameter name prefix used on parameter names to separate the endpoint properties from the
      * consumer properties
      */
     String consumerPrefix() default "";
 
     /**
-     * A human readable title of this entity, such as the component name of the this endpoint.
+     * A human-readable title of this entity, such as the component name of the this endpoint.
      * <p/>
      * For example: JMS, MQTT, Netty HTTP, SAP NetWeaver
      */
     String title();
-
-    /**
-     * To associate this endpoint with label(s).
-     * <p/>
-     * Multiple labels can be defined as a comma separated value.
-     * <p/>
-     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>,
-     * <tt>database</tt>, etc.
-     * <p/>
-     * Deprecated: Use the category field instead
-     */
-    @Deprecated
-    String label() default "";
 
     /**
      * To associate this endpoint with category(ies).
@@ -136,14 +117,14 @@ public @interface UriEndpoint {
     /**
      * Whether this endpoint can only be used as a producer.
      * <p/>
-     * By default its assumed the endpoint can be used as both consumer and producer.
+     * By default, its assumed the endpoint can be used as both consumer and producer.
      */
     boolean producerOnly() default false;
 
     /**
      * Whether this endpoint can only be used as a consumer.
      * <p/>
-     * By default its assumed the endpoint can be used as both consumer and producer.
+     * By default, its assumed the endpoint can be used as both consumer and producer.
      */
     boolean consumerOnly() default false;
 
@@ -175,4 +156,50 @@ public @interface UriEndpoint {
      */
     String apiSyntax() default "";
 
+    /**
+     * The class that contains all the name of headers that are supported by the consumer and/or producer. The name of
+     * the headers are defined as {@code String} constants in the headers class.
+     * <p/>
+     * The class to provide can be any class but by convention, we would expect a class whose name is of type
+     * <i>xxxConstants</i> where <i>xxx</i> is the name of the corresponding component like for example
+     * <i>FtpConstants</i> for the component <i>camel-ftp</i>.
+     * <p/>
+     * The metadata of a given header are retrieved directly from the annotation {@code @Metadata} added to the
+     * {@code String} constant representing its name and defined in the headers class.
+     */
+    Class<?> headersClass() default void.class;
+
+    /**
+     * The name of the field to get or the name of the method without parameters to invoke to get the name of the
+     * headers defined in an enum.
+     * <p/>
+     * Only took into account if and only if the class defined as {@code headersClass} is an enum.
+     * <p/>
+     * For example, assuming that {@code SomeEnum} has been configured as the {@code headersClass} of a given component,
+     * since the name of the header is actually the value of the field {@code headerName}, the element
+     * {@code headersNameProvider} should be set to {@code "headerName"} to get the expected header names.
+     *
+     * <pre>
+     * <code>
+     *
+     * public enum SomeEnum {
+     *    {@literal @}Metadata
+     *     FOO("fooKey");
+     *
+     *     public final String headerName;
+     *
+     *     SomeEnum(final String str) {
+     *         this.headerName = str;
+     *     }
+     * }
+     * </code>
+     * </pre>
+     */
+    String headersNameProvider() default "";
+
+    /**
+     * Whether the component does remote communication such as connecting to an external system over the network. Set
+     * this to false for internal components such as log, message transformations and other kinds.
+     */
+    boolean remote() default true;
 }

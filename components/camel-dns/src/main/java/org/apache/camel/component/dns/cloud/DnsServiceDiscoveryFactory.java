@@ -20,9 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.dns.DnsConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("dns-service-discovery")
+@Configurer
 public class DnsServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final DnsConfiguration configuration;
 

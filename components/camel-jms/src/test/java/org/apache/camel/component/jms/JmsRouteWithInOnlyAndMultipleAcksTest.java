@@ -16,31 +16,48 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
+@Timeout(10)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
 
-    protected String componentName = "amq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "amq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @BindToRegistry("orderService")
-    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
+    private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @BindToRegistry("orderServiceNotificationWithAck-1")
-    private MyOrderServiceNotificationWithAckBean orderNotificationAckBean = new MyOrderServiceNotificationWithAckBean("1");
+    private final MyOrderServiceNotificationWithAckBean orderNotificationAckBean
+            = new MyOrderServiceNotificationWithAckBean("1");
 
     @BindToRegistry("orderServiceNotificationWithAck-2")
-    private MyOrderServiceNotificationWithAckBean orderNotificationAckBean2 = new MyOrderServiceNotificationWithAckBean("2");
+    private final MyOrderServiceNotificationWithAckBean orderNotificationAckBean2
+            = new MyOrderServiceNotificationWithAckBean("2");
 
     @Test
     public void testSendOrderWithMultipleAcks() throws Exception {
@@ -53,35 +70,32 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
         notifCollector.expectedHeaderReceived("JMSCorrelationID", orderId);
         notifCollector.setResultWaitTime(10000);
 
-        Object out = template.requestBodyAndHeader("amq:queue:inbox", "Camel in Action", "JMSCorrelationID", orderId);
+        Object out = template.requestBodyAndHeader("amq:queue:JmsRouteWithInOnlyAndMultipleAcksTest", "Camel in Action",
+                "JMSCorrelationID", orderId);
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // this route picks up an order request
                 // send out a one way notification to multiple
                 // topic subscribers, lets a bean handle
                 // the order and then delivers a reply back to
                 // the original order request initiator
-                from("amq:queue:inbox").to("mock:inbox").to(ExchangePattern.InOnly, "amq:topic:orderServiceNotification").bean(
-                        "orderService",
-                        "handleOrder");
+                from("amq:queue:JmsRouteWithInOnlyAndMultipleAcksTest").to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "amq:topic:orderServiceNotification").bean(
+                                "orderService",
+                                "handleOrder");
 
                 // this route collects an order request notification
                 // and sends back an acknowledgment back to a queue
@@ -101,6 +115,18 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
+
     public static class MyOrderServiceBean {
         public String handleOrder(String body) {
             return "OK: " + body;
@@ -108,7 +134,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
     }
 
     public static class MyOrderServiceNotificationWithAckBean {
-        private String id;
+        private final String id;
 
         public MyOrderServiceNotificationWithAckBean(String id) {
             this.id = id;

@@ -19,29 +19,31 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(19);
-        props.add("method");
+        props.add("apiDoc");
+        props.add("bindingMode");
+        props.add("bridgeErrorHandler");
         props.add("consumerComponentName");
-        props.add("uriTemplate");
-        props.add("exchangePattern");
+        props.add("consumes");
         props.add("description");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("host");
+        props.add("inType");
+        props.add("lazyStartProducer");
+        props.add("method");
         props.add("outType");
         props.add("path");
-        props.add("lazyStartProducer");
-        props.add("routeId");
-        props.add("bridgeErrorHandler");
-        props.add("bindingMode");
-        props.add("queryParameters");
-        props.add("produces");
-        props.add("host");
         props.add("producerComponentName");
-        props.add("inType");
-        props.add("exceptionHandler");
-        props.add("consumes");
-        props.add("apiDoc");
+        props.add("produces");
+        props.add("queryParameters");
+        props.add("routeId");
+        props.add("uriTemplate");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +73,11 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

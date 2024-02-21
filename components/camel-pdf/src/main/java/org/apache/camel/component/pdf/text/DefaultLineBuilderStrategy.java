@@ -23,6 +23,8 @@ import java.util.LinkedList;
 
 import org.apache.camel.component.pdf.PdfConfiguration;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import static org.apache.camel.component.pdf.PdfConstants.MIN_CONTENT_WIDTH;
 
@@ -88,7 +90,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
                 end = middle;
                 middle = currentSplitIndex + (word.substring(currentSplitIndex, middle).length() >> 1);
             }
-        } while ((currentSplitIndex == -1) || !isSplitIndexFound(word, allowedLineWidth, currentSplitIndex));
+        } while (currentSplitIndex == -1 || !isSplitIndexFound(word, allowedLineWidth, currentSplitIndex));
 
         return currentSplitIndex;
     }
@@ -106,7 +108,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
     private boolean isLineFitInLineWidth(String currentLine, float allowedLineWidth) throws IOException {
         float fontWidth = PdfUtils.getFontWidth(
                 currentLine,
-                pdfConfiguration.getFont(),
+                new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
                 pdfConfiguration.getFontSize());
 
         return fontWidth <= allowedLineWidth;
@@ -144,9 +146,9 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         }
 
         public String buildLine() {
-            String line = this.line.toString();
+            String savedLine = this.line.toString();
             reset();
-            return line;
+            return savedLine;
         }
 
         public int getWordsCount() {

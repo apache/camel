@@ -44,4 +44,14 @@ public class ManagedMarshal extends ManagedProcessor implements ManagedMarshalMB
         }
         return name;
     }
+
+    @Override
+    public String getVariableSend() {
+        return processor.getVariableSend();
+    }
+
+    @Override
+    public String getVariableReceive() {
+        return processor.getVariableReceive();
+    }
 }

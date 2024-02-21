@@ -22,7 +22,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -32,6 +31,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,7 +126,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
                 public void process(Exchange exchange) throws Exception {
                     final AsyncProcessorAwaitManager awaitManager
-                            = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+                            = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
                     awaitManager.process(this, exchange);
                 }
 

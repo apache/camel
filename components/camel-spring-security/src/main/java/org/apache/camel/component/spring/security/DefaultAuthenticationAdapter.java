@@ -31,7 +31,7 @@ public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
         }
         Set<Authentication> authentications = subject.getPrincipals(Authentication.class);
         if (!authentications.isEmpty()) {
-            // just return the first one 
+            // just return the first one
             return authentications.iterator().next();
         } else {
             return convertToAuthentication(subject);
@@ -40,8 +40,10 @@ public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
 
     /**
      * You can add the customer convert code here
+     *
+     * @param subject the subject
      */
-    protected Authentication convertToAuthentication(Subject subject) {
+    protected Authentication convertToAuthentication(@SuppressWarnings("unused") Subject subject) {
         return null;
     }
 

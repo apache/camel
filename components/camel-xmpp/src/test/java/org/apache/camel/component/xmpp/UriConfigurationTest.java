@@ -28,7 +28,7 @@ public class UriConfigurationTest {
     protected CamelContext context = new DefaultCamelContext();
 
     @Test
-    public void testPrivateChatConfiguration() throws Exception {
+    public void testPrivateChatConfiguration() {
         Endpoint endpoint = context
                 .getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
@@ -43,7 +43,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testGroupChatConfiguration() throws Exception {
+    public void testGroupChatConfiguration() {
         Endpoint endpoint
                 = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
@@ -61,7 +61,7 @@ public class UriConfigurationTest {
     // clients program assuming the default "Camel" resource name
     // so it is better to avoid changing it.
     @Test
-    public void testDefaultResource() throws Exception {
+    public void testDefaultResource() {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com?password=secret");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
@@ -70,7 +70,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testPubSubConfiguration() throws Exception {
+    public void testPubSubConfiguration() {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123?password=secret&pubsub=true");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;

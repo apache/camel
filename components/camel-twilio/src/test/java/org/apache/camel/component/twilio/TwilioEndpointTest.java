@@ -17,8 +17,9 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,23 +28,30 @@ public class TwilioEndpointTest extends AbstractTwilioTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        ecc.getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        PluginHelper.getBeanIntrospection(context).setLoggingLevel(LoggingLevel.INFO);
         return context;
     }
 
     @Test
-    public void testTwilioEndpoint() throws Exception {
+    public void testTwilioEndpoint() {
         // should not use reflection when creating and configuring endpoint
-
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        long before = ecc.getBeanIntrospection().getInvokedCounter();
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(context);
+        long before = beanIntrospection.getInvokedCounter();
 
         TwilioEndpoint te = context.getEndpoint("twilio:account/fetcher?pathSid=123", TwilioEndpoint.class);
         AccountEndpointConfiguration aec = (AccountEndpointConfiguration) te.getConfiguration();
         Assertions.assertEquals("123", aec.getPathSid());
 
-        long after = ecc.getBeanIntrospection().getInvokedCounter();
+        te = context.getEndpoint(
+                "twilio://call/create?from=RAW(+15005550006)&to=RAW(+14108675310)&url=http://demo.twilio.com/docs/voice.xml",
+                TwilioEndpoint.class);
+
+        Assertions.assertTrue(te.getConfiguration() instanceof CallEndpointConfiguration);
+        CallEndpointConfiguration cee = (CallEndpointConfiguration) te.getConfiguration();
+        Assertions.assertEquals("+15005550006", cee.getFrom().getEndpoint());
+        Assertions.assertEquals("+14108675310", cee.getTo().getEndpoint());
+
+        long after = beanIntrospection.getInvokedCounter();
         Assertions.assertEquals(before, after);
     }
 }

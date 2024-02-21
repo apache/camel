@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- enable JMX -->
         <jmxAgent id="jmx"/>
@@ -34,7 +35,7 @@
 
         <route>
             <from uri="direct:start"/>
-            <threads executorServiceRef="myPool"/>
+            <threads executorService="myPool"/>
             <to uri="mock:result"/>
         </route>
         

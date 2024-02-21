@@ -33,8 +33,8 @@ public final class CamelXmlTreeParserHelper {
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public List<CamelNodeDetails> parseCamelRouteTree(
-            Node xmlNode, String routeId, CamelNodeDetails route,
-            String baseDir, String fullyQualifiedFileName) {
+            Node xmlNode, CamelNodeDetails route,
+            String fullyQualifiedFileName) {
 
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
         List<CamelNodeDetails> answer = new ArrayList<>();
@@ -49,8 +49,7 @@ public final class CamelXmlTreeParserHelper {
             CamelNodeDetails parent = outputs.get(0);
 
             // we dont want the route element and only start with from
-            for (int i = 0; i < outputs.size(); i++) {
-                CamelNodeDetails node = outputs.get(i);
+            for (CamelNodeDetails node : outputs) {
                 String name = node.getName();
 
                 if ("from".equals(name)) {

@@ -18,27 +18,37 @@ package org.apache.camel.opentelemetry;
 
 import java.util.concurrent.TimeUnit;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
+@Tags({ @Tag("not-parallel") })
+class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo"),
+            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo").setOperation("foo")
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar").setOperation("bar")
+                    .setParentId(2)
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo")
+                    .setParentId(0),
             new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
-                    .setParentId(0)
+                    .setParentId(1),
     };
 
-    public RouteConcurrentTest() {
+    RouteConcurrentTest() {
         super(testdata);
     }
 
     @Test
-    public void testSingleInvocationsOfRoute() throws Exception {
+    void testSingleInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBody("seda:foo", "Hello World");
@@ -49,7 +59,7 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testConcurrentInvocationsOfRoute() throws Exception {
+    void testConcurrentInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
 
         for (int i = 0; i < 5; i++) {
@@ -62,10 +72,10 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))

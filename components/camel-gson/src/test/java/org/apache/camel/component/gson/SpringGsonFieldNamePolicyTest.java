@@ -23,6 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringGsonFieldNamePolicyTest extends CamelSpringTestSupport {
 
@@ -49,8 +50,9 @@ public class SpringGsonFieldNamePolicyTest extends CamelSpringTestSupport {
         pojo.setFirstName("Donald");
         pojo.setLastName("Duck");
 
-        String expected = "{\"id\":123,\"first_name\":\"Donald\",\"last_name\":\"Duck\"}";
         String json = template.requestBody("direct:inPojo", pojo, String.class);
-        assertEquals(expected, json);
+        assertTrue(json.contains("\"id\":123"));
+        assertTrue(json.contains("\"first_name\":\"Donald\""));
+        assertTrue(json.contains("\"last_name\":\"Duck\""));
     }
 }

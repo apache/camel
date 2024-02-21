@@ -24,6 +24,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
+import org.apache.sshd.client.ClientBuilder;
+import org.apache.sshd.client.SshClient;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
@@ -62,6 +64,19 @@ public class SshConfiguration implements Cloneable {
     private String shellPrompt;
     @UriParam(label = "advanced", defaultValue = "100")
     private long sleepForShellPrompt;
+    @UriParam(label = "security")
+    private String kex;
+    @UriParam(label = "security")
+    private String ciphers;
+    @UriParam(label = "security")
+    private String macs;
+    @UriParam(label = "security")
+    private String signatures;
+    @UriParam(label = "advanced")
+    private String compressions;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private ClientBuilder clientBuilder;
 
     public SshConfiguration() {
     }
@@ -313,5 +328,84 @@ public class SshConfiguration implements Cloneable {
      */
     public void setSleepForShellPrompt(long sleepForShellPrompt) {
         this.sleepForShellPrompt = sleepForShellPrompt;
+    }
+
+    public String getKex() {
+        return kex;
+    }
+
+    /**
+     * Comma-separated list of allowed/supported key exchange algorithms in their **order** of preference.
+     *
+     * @param kex
+     */
+    public void setKex(String kex) {
+        this.kex = kex;
+    }
+
+    public String getCiphers() {
+        return ciphers;
+    }
+
+    /**
+     * Comma-separated list of allowed/supported ciphers in their order of preference.
+     *
+     * @param ciphers
+     */
+    public void setCiphers(String ciphers) {
+        this.ciphers = ciphers;
+    }
+
+    public String getMacs() {
+        return macs;
+    }
+
+    /**
+     * Comma-separated list of allowed/supported message authentication code algorithms in their **order** of
+     * preference. The MAC algorithm is used for data integrity protection.
+     *
+     * @param macs
+     */
+    public void setMacs(String macs) {
+        this.macs = macs;
+    }
+
+    public String getSignatures() {
+        return signatures;
+    }
+
+    /**
+     * Comma-separated list of allowed/supported signature algorithms in their order of preference.
+     *
+     * @param signatures
+     */
+    public void setSignatures(String signatures) {
+        this.signatures = signatures;
+    }
+
+    public String getCompressions() {
+        return compressions;
+    }
+
+    /**
+     * Whether to use compression, and if so which.
+     *
+     * @param compressions
+     */
+    public void setCompressions(String compressions) {
+        this.compressions = compressions;
+    }
+
+    public ClientBuilder getClientBuilder() {
+        return clientBuilder;
+    }
+
+    /**
+     * Instance of {@link ClientBuilder} used by the producer or consumer to create a new {@link SshClient}
+     *
+     * @param clientBuilder the {@link ClientBuilder} instance
+     */
+    public void setClientBuilder(ClientBuilder clientBuilder) {
+        this.clientBuilder = clientBuilder;
     }
 }

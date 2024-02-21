@@ -23,6 +23,8 @@ import org.apache.camel.component.pdf.PdfConfiguration;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 /**
  * Writes given lines to PDF document. If document already contains some text then new text will be appended to new
@@ -42,8 +44,9 @@ public class DefaultWriteStrategy implements WriteStrategy {
         document.addPage(page);
         float x = pdfConfiguration.getMarginLeft();
         float y = page.getMediaBox().getHeight() - pdfConfiguration.getMarginTop();
-        float averageFontHeight = PdfUtils.getAverageFontHeight(pdfConfiguration.getFont(),
-                pdfConfiguration.getFontSize());
+        float averageFontHeight
+                = PdfUtils.getAverageFontHeight(new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
+                        pdfConfiguration.getFontSize());
         float lineSpacing = averageFontHeight * 2;
 
         PDPageContentStream contentStream = initializeContentStream(document, page);
@@ -75,7 +78,8 @@ public class DefaultWriteStrategy implements WriteStrategy {
 
     private PDPageContentStream initializeContentStream(PDDocument document, PDPage page) throws IOException {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(pdfConfiguration.getFont(), pdfConfiguration.getFontSize());
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
+                pdfConfiguration.getFontSize());
         return contentStream;
     }
 }

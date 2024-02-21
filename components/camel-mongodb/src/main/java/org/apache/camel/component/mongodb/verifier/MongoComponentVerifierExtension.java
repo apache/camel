@@ -104,7 +104,7 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
             }
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
                     code,
-                    String.format(description));
+                    description);
             builder.error(errorBuilder.build());
         }
     }

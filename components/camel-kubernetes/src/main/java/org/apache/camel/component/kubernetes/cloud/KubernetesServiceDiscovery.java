@@ -25,7 +25,7 @@ import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
 public abstract class KubernetesServiceDiscovery extends DefaultServiceDiscovery {
     private final KubernetesConfiguration configuration;
 
-    public KubernetesServiceDiscovery(KubernetesConfiguration configuration) {
+    protected KubernetesServiceDiscovery(KubernetesConfiguration configuration) {
         this.configuration = configuration;
     }
 

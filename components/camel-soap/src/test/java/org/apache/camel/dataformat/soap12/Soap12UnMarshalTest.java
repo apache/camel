@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.soap12;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import com.example.customerservice.GetCustomersByName;
 import org.apache.camel.EndpointInject;
@@ -77,7 +77,7 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").unmarshal().soapjaxb12(SERVICE_PACKAGE)
+                from("direct:start").unmarshal().soap12(SERVICE_PACKAGE)
                         .to("mock:result");
             }
         };

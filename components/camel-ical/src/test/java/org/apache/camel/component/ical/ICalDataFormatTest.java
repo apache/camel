@@ -98,12 +98,12 @@ public class ICalDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshal")
-                        .unmarshal("ical")
+                        .unmarshal().ical(true)
                         .to("mock:result");
                 from("direct:marshal")
                         .marshal("ical")
@@ -114,7 +114,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
 
     /**
      * Creates test calendar instance.
-     * 
+     *
      * @return ICal calendar object.
      */
     protected Calendar createTestCalendar() throws ParseException {

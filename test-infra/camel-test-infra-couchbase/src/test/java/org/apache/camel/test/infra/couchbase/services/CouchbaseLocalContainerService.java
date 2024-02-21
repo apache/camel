@@ -17,14 +17,15 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
+    // Please check CAMEL-19228 before upgrading
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
@@ -33,8 +34,8 @@ public class CouchbaseLocalContainerService implements CouchbaseService, Contain
      * force the default KV port to be used.
      */
     private class CustomCouchbaseContainer extends CouchbaseContainer {
-        public CustomCouchbaseContainer() {
-            super("couchbase/server:6.5.1");
+        public CustomCouchbaseContainer(String imageName) {
+            super(imageName);
 
             final int kvPort = 11210;
             addFixedExposedPort(kvPort, kvPort);
@@ -54,17 +55,24 @@ public class CouchbaseLocalContainerService implements CouchbaseService, Contain
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseLocalContainerService.class);
-    private CouchbaseContainer container;
+    private final CouchbaseContainer container;
 
     public CouchbaseLocalContainerService() {
-        container = new CustomCouchbaseContainer();
+        this(LocalPropertyResolver.getProperty(
+                CouchbaseLocalContainerService.class,
+                CouchbaseProperties.COUCHBASE_CONTAINER));
     }
 
-    public CouchbaseLocalContainerService(String bucketName) {
-        BucketDefinition bucketDefinition = new BucketDefinition(bucketName);
+    public CouchbaseLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
 
-        container = new CustomCouchbaseContainer()
-                .withBucket(bucketDefinition);
+    public CouchbaseLocalContainerService(CouchbaseContainer container) {
+        this.container = container;
+    }
+
+    protected CouchbaseContainer initContainer(String imageName) {
+        return new CustomCouchbaseContainer(imageName);
     }
 
     @Override

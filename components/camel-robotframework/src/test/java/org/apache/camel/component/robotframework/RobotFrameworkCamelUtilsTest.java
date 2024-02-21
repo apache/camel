@@ -122,7 +122,7 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -130,7 +130,7 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:setVariableCamelExchange")

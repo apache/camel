@@ -57,7 +57,7 @@ public class SoapClientTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
-                SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
+                SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
                 final InputStream in = this.getClass().getResourceAsStream("response.xml");
                 from("direct:start").marshal(soapDataFormat).process(new FileReplyProcessor(in))
                         .unmarshal(soapDataFormat);

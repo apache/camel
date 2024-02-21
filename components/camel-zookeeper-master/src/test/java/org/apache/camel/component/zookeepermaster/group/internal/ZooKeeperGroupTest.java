@@ -44,12 +44,12 @@ public class ZooKeeperGroupTest {
     private CuratorFramework curator;
     private ZooKeeperGroup<NodeState> group;
 
-    private int findFreePort() throws Exception {
-        return AvailablePortFinder.getNextAvailable();
+    private int findFreePort() {
+        return AvailablePortFinder.getNextRandomAvailable();
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         int port = findFreePort();
         curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)

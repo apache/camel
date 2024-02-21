@@ -25,10 +25,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,15 +46,15 @@ public class HttpConcurrentTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/", (request, response, context) -> {
+                .setSslContext(getSSLContext())
+                .register("/", (request, response, context) -> {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         // ignore
                     }
-                    response.setStatusCode(HttpStatus.SC_OK);
-                    response.setEntity(new StringEntity("" + counter.incrementAndGet()));
+                    response.setCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity(Integer.toString(counter.incrementAndGet())));
                 }).create();
         localServer.start();
 
@@ -88,7 +88,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             Future<String> out = executor.submit(() -> template.requestBody(
-                    "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null,
+                    "http://localhost:" + localServer.getLocalPort(), null,
                     String.class));
             responses.put(i, out);
         }

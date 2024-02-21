@@ -1,0 +1,273 @@
+= AWS Simple Queue Service (SQS) Component
+:doctitle: AWS Simple Queue Service (SQS)
+:shortname: aws2-sqs
+:artifactid: camel-aws2-sqs
+:description: Send and receive messages to/from AWS SQS.
+:since: 3.1
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-sqs
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 SQS component supports sending and receiving messages to
+https://aws.amazon.com/sqs[Amazon's SQS] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon SQS. More information is available at
+https://aws.amazon.com/sqs[Amazon SQS].
+
+== URI Format
+
+------------------------------
+aws2-sqs://queueNameOrArn[?options]
+------------------------------
+
+The queue will be created if they don't already exist.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+Required SQS component options
+
+You have to provide the amazonSQSClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/sqs[Amazon's SQS].
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
+aggregate this number of messages.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+ 
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Advanced AmazonSQS configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the SqsClient instance configuration, you can
+create your own instance, and configure Camel to use your instance by the bean id.
+
+In the example below, we use _myClient_ as the bean id:
+
+[source,java]
+---------------------------------------------------------------------------------
+// crate my own instance of SqsClient
+SqsClient sqs = ...
+
+// register the client into Camel registry
+camelContext.getRegistry().bind("myClient", sqs);
+
+// refer to the custom client via myClient as the bean id
+from("aws2-sqs://MyQueue?amazonSQSClient=#m4yClient&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+---------------------------------------------------------------------------------
+
+=== DelayQueue VS Delay for Single message
+
+When the option delayQueue is set to true, the SQS Queue will be a DelayQueue with the
+DelaySeconds option as delay. For more information about DelayQueue you can read the https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html[AWS SQS documentation].
+One important information to take into account is the following:
+
+- For standard queues, the per-queue delay setting is not retroactively—changing the setting doesn't affect the delay of messages already in the queue.
+- For FIFO queues, the per-queue delay setting is retroactively—changing the setting affects the delay of messages already in the queue.
+
+as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
+to true if you need to add a fixed delay to all messages enqueued.
+
+=== Server Side Encryption
+
+There is a set of Server Side Encryption attributes for a queue. The related option are: `serverSideEncryptionEnabled`, `keyMasterKeyId` and `kmsDataKeyReusePeriod`.
+The SSE is disabled by default. You need to explicitly set the option to true and set the related parameters as queue attributes.
+
+== JMS-style Selectors
+
+SQS does not allow selectors, but you can effectively achieve this by
+using the Camel Filter EIP and setting an
+appropriate `visibilityTimeout`. When SQS dispatches a message, it will
+wait up to the visibility timeout before it tries to dispatch the
+message to a different consumer unless a DeleteMessage is received. By
+default, Camel will always send the DeleteMessage at the end of the
+route, unless the route ended in failure. To achieve appropriate
+filtering and not send the DeleteMessage even on successful completion
+of the route, use a Filter:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("aws2-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false&deleteAfterRead=false")
+.filter("${header.login} == true")
+  .setProperty(Sqs2Constants.SQS_DELETE_FILTERED, constant(true))
+  .to("mock:filter");
+------------------------------------------------------------------------------------------------------
+
+In the above code, if an exchange doesn't have an appropriate header, it
+will not make it through the filter AND also not be deleted from the SQS
+queue. After 5000 milliseconds, the message will become visible to other
+consumers.
+
+Note we must set the property `Sqs2Constants.SQS_DELETE_FILTERED` to `true` to
+instruct Camel to send the DeleteMessage, if being filtered.
+
+== Available Producer Operations
+- single message (default)
+- sendBatchMessage
+- deleteMessage
+- listQueues
+
+== Send Message
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant("Camel rocks!"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
+== Send Batch Message
+
+You can set a `SendMessageBatchRequest` or an `Iterable`
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
+  .process(new Processor() {
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          List c = new ArrayList();
+          c.add("team1");
+          c.add("team2");
+          c.add("team3");
+          c.add("team4");
+          exchange.getIn().setBody(c);					
+      }
+  })
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
+As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
+The id set on each message of the batch will be a Random UUID.
+
+== Delete single Message
+
+Use deleteMessage operation to delete a single message. You'll need to set a receipt handle header for the message you want to delete.
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
+  .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
+As result, you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
+
+== List Queues
+
+Use listQueues operation to list queues.
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
+As result, you'll get an exchange containing a `ListQueuesResponse` instance, that you can examine to check the actual queues.
+
+== Purge Queue
+
+Use purgeQueue operation to purge queue.
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue"))
+  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `PurgeQueueResponse` instance.
+
+== Queue Auto-creation
+
+With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `false`.
+If set to _false_, any operation on a non-existent queue in AWS won't be successful and an error will be returned.
+
+== Send Batch Message and Message Deduplication Strategy
+
+In case you're using a SendBatchMessage Operation, you can set two different kinds of Message Deduplication Strategy:
+- useExchangeId
+- useContentBasedDeduplication
+
+The first one will use a ExchangeIdMessageDeduplicationIdStrategy, that will use the Exchange ID as parameter
+The other one will use a NullMessageDeduplicationIdStrategy, that will use the body as a deduplication element.
+
+In case of send batch message operation, you'll need to use the `useContentBasedDeduplication` and on the Queue you're pointing you'll need to enable the `content based deduplication` option.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-sqs</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

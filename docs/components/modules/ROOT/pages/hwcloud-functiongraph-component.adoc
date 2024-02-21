@@ -1,0 +1,1 @@
+../../../../../components/camel-huawei/camel-huaweicloud-functiongraph/src/main/docs/hwcloud-functiongraph-component.adoc

@@ -29,7 +29,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.params.Parameter;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 @Parameterized
 public abstract class LevelDBTestSupport extends CamelTestSupport {
 

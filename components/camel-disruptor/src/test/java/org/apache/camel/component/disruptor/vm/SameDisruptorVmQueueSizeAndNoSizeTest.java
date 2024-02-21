@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
 
     @Test
-    void testSameQueue() throws Exception {
+    void testSameQueue() {
         for (int i = 0; i < 128; i++) {
             template.sendBody("disruptor-vm:foo?blockWhenFull=false", "" + i);
         }
@@ -47,7 +47,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     }
 
     @Test
-    void testSameQueueDifferentSize() throws Exception {
+    void testSameQueueDifferentSize() {
         try {
             template.sendBody("disruptor-vm:foo?size=256", "Should fail");
             fail("Should fail");
@@ -60,7 +60,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     }
 
     @Test
-    void testSameQueueDifferentSizeBar() throws Exception {
+    void testSameQueueDifferentSizeBar() {
         try {
             template.sendBody("disruptor-vm:bar?size=256", "Should fail");
             fail("Should fail");

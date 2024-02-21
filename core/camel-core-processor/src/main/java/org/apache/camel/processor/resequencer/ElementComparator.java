@@ -29,7 +29,7 @@ class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
 
     /**
      * Creates a new element comparator instance.
-     * 
+     *
      * @param comparator a sequence element comparator this comparator delegates to.
      */
     ElementComparator(SequenceElementComparator<E> comparator) {

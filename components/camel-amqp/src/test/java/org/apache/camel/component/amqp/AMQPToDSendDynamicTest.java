@@ -16,47 +16,31 @@
  */
 package org.apache.camel.component.amqp;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AMQPToDSendDynamicTest extends CamelTestSupport {
-
-    static int amqpPort = AvailablePortFinder.getNextAvailable();
-
-    static BrokerService broker;
-
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("amqp://0.0.0.0:" + amqpPort);
-        broker.start();
-
-        System.setProperty(AMQP_PORT, amqpPort + "");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        broker.stop();
-    }
+public class AMQPToDSendDynamicTest extends AMQPTestSupport {
+    private ProducerTemplate template;
+    private ConsumerTemplate consumer;
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one amqp endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("amqp:")).count();
+        long count = contextExtension.getContext().getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("amqp:"))
+                .count();
         assertEquals(1, count, "There should only be 1 amqp endpoint");
 
         // and the messages should be in the queues
@@ -66,15 +50,30 @@ public class AMQPToDSendDynamicTest extends CamelTestSupport {
         assertEquals("Hello beer", out);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        return camelContext;
+    @BeforeAll
+    static void startContext() {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
+    @BeforeEach
+    void setupTemplate() {
+        template = contextExtension.getProducerTemplate();
+        consumer = contextExtension.getConsumerTemplate();
+    }
+
+    @ContextFixture
+    public void configureContext(CamelContext camelContext) {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
+
+        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
+    }
+
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    private RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // route message dynamic using toD
@@ -82,5 +81,4 @@ public class AMQPToDSendDynamicTest extends CamelTestSupport {
             }
         };
     }
-
 }

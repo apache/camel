@@ -188,10 +188,10 @@ public class BindyConverterTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .classType(DataModel.class)
                         .type(BindyType.Fixed);
@@ -229,12 +229,12 @@ public class BindyConverterTest extends CamelTestSupport {
 
     public static class CustomConverter implements Format<String> {
         @Override
-        public String format(String object) throws Exception {
+        public String format(String object) {
             return (new StringBuilder(object)).reverse().toString();
         }
 
         @Override
-        public String parse(String string) throws Exception {
+        public String parse(String string) {
             return (new StringBuilder(string)).reverse().toString();
         }
     }

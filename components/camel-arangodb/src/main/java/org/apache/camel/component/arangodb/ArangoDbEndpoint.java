@@ -32,16 +32,16 @@ import org.apache.camel.util.ObjectHelper;
  * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
-             category = { Category.DATABASE, Category.NOSQL }, producerOnly = true)
+             category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
 public class ArangoDbEndpoint extends DefaultEndpoint {
-    private ArangoDB arango;
 
     @UriPath(description = "database name")
     @Metadata(required = true)
     private String database;
-
     @UriParam
     private ArangoDbConfiguration configuration;
+    @UriParam(label = "advanced")
+    private ArangoDB arangoDB;
 
     public ArangoDbEndpoint() {
     }
@@ -59,12 +59,15 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot receive messages at this endpoint: " + getEndpointUri());
     }
 
-    public ArangoDB getArango() {
-        return arango;
+    public ArangoDB getArangoDB() {
+        return arangoDB;
     }
 
-    public void setArango(ArangoDB arango) {
-        this.arango = arango;
+    /**
+     * To use an existing ArangDB client.
+     */
+    public void setArangoDB(ArangoDB arangoDB) {
+        this.arangoDB = arangoDB;
     }
 
     public ArangoDbConfiguration getConfiguration() {
@@ -79,7 +82,7 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (arango == null) {
+        if (arangoDB == null) {
 
             final ArangoDB.Builder builder = new ArangoDB.Builder();
 
@@ -91,7 +94,7 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
                 builder.user(configuration.getUser()).password(configuration.getPassword());
             }
 
-            arango = builder.build();
+            arangoDB = builder.build();
         }
 
     }
@@ -99,8 +102,8 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        if (arango != null) {
-            arango.shutdown();
+        if (arangoDB != null) {
+            arangoDB.shutdown();
         }
     }
 

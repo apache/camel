@@ -18,6 +18,7 @@ package org.apache.camel.jsonpath;
 
 import java.io.File;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,7 +39,7 @@ public class SpringJsonPathCBRTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/cheap.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +50,7 @@ public class SpringJsonPathCBRTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/average.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,6 +61,6 @@ public class SpringJsonPathCBRTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/expensive.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

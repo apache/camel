@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyQueueConsumerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sjms:queue:in.only.queue.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "sjms:queue:in.only.queue.consumer.test.InOnlyQueueConsumerTest";
 
     @Override
     protected boolean useJmx() {
@@ -45,13 +45,12 @@ public class InOnlyQueueConsumerTest extends JmsTestSupport {
     }
 
     /**
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see    org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
-     * @throws Exception
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

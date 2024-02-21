@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
 
     @Test
-    public void testToD() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
+    public void testToD() {
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin.SjmsToDSendDynamicTwoDisabledTest");
 
-        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer");
-        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey");
+        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey.SjmsToDSendDynamicTwoDisabledTest");
 
         // there should be 4 sjms endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms:")).count();
@@ -39,10 +39,10 @@ public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD but turn off send dynamic aware
                 from("direct:start").toD().allowOptimisedComponents(false).uri("sjms:queue:${header.where}");
                 from("direct:start2").toD().allowOptimisedComponents(false).uri("sjms:queue:${header.where2}");

@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpFilterCamelHeadersTest extends BaseJettyTest {
 
@@ -34,9 +34,9 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
     private MyFooBean bean = new MyFooBean();
 
     @Test
-    public void testFilterCamelHeaders() throws Exception {
+    public void testFilterCamelHeaders() {
         Exchange out = template.send("http://localhost:{{port}}/test/filter", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Claus");
                 exchange.getIn().setHeader("bar", 123);
             }
@@ -52,7 +52,7 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
             boolean valid
                     = key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) || key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT);
             if (!valid) {
-                assertTrue(!key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
+                assertFalse(key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
             } else {
                 assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));
             }
@@ -60,10 +60,10 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };

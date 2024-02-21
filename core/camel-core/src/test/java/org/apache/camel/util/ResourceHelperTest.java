@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
@@ -67,11 +68,11 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        createDirectory("target/data/my space");
-        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
+        testDirectory("my space", true);
+        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), testFile("my space/log4j2.properties").toFile());
 
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context,
-                "file:target/data/my%20space/log4j2.properties");
+                fileUri("my%20space/log4j2.properties"));
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -279,6 +280,7 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
         assertEquals("http:", ResourceHelper.getScheme("http:www.foo.com"));
+        assertEquals("ref:", ResourceHelper.getScheme("ref:myBean"));
         assertNull(ResourceHelper.getScheme("www.foo.com"));
         assertNull(ResourceHelper.getScheme("myfile.txt"));
     }
@@ -293,6 +295,16 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals("http://localhost:8080/data?foo=123&bar=yes",
                 ResourceHelper.appendParameters("http://localhost:8080/data", params));
         assertEquals(0, params.size());
+    }
+
+    @Test
+    public void testBase64() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        Resource res = ResourceHelper.resolveResource(context, "base64:SGVsbG8=");
+        assertTrue(res.exists());
+        assertEquals("Hello", context.getTypeConverter().convertTo(String.class, res.getInputStream()));
     }
 
 }

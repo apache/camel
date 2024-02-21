@@ -26,8 +26,8 @@ import org.apache.camel.util.ObjectHelper;
  * Package scan filter for testing if a given class is annotated with any of the annotations.
  */
 public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
-    private Set<Class<? extends Annotation>> annotations;
-    private boolean checkMetaAnnotations;
+    private final Set<Class<? extends Annotation>> annotations;
+    private final boolean checkMetaAnnotations;
 
     public AnnotatedWithAnyPackageScanFilter(Set<Class<? extends Annotation>> annotations) {
         this(annotations, false);

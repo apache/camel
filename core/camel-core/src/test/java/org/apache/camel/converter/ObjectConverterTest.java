@@ -17,13 +17,19 @@
 package org.apache.camel.converter;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectConverterTest {
 
@@ -32,7 +38,7 @@ public class ObjectConverterTest {
         Iterator<?> it = ObjectConverter.iterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @Test
@@ -41,7 +47,7 @@ public class ObjectConverterTest {
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
         assertEquals("Andrea", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @SuppressWarnings("unchecked")
@@ -59,63 +65,71 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToByte() {
+    public void testToByte() throws Exception {
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Byte.valueOf("4")));
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Integer.valueOf("4")));
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte("4"));
+        assertEquals(Byte.valueOf("4"), ObjectConverter.toByte("4".getBytes(StandardCharsets.UTF_8), null));
     }
 
     @Test
     public void testToClass() {
         assertEquals(String.class, ObjectConverter.toClass("java.lang.String", null));
-        assertEquals(null, ObjectConverter.toClass("foo.Bar", null));
+        assertNull(ObjectConverter.toClass("foo.Bar", null));
     }
 
     @Test
-    public void testToShort() {
+    public void testToShort() throws Exception {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Integer.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4"));
-        assertEquals(null, ObjectConverter.toShort(Double.NaN));
-        assertEquals(null, ObjectConverter.toShort(Float.NaN));
+        assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4".getBytes(StandardCharsets.UTF_8), null));
+        assertNull(ObjectConverter.toShort(Double.NaN));
+        assertNull(ObjectConverter.toShort(Float.NaN));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
     }
 
     @Test
-    public void testToInteger() {
+    public void testToInteger() throws Exception {
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Long.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4"));
-        assertEquals(null, ObjectConverter.toInteger(Double.NaN));
-        assertEquals(null, ObjectConverter.toInteger(Float.NaN));
+        assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4".getBytes(StandardCharsets.UTF_8), null));
+        assertNull(ObjectConverter.toInteger(Double.NaN));
+        assertNull(ObjectConverter.toInteger(Float.NaN));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
+        assertEquals(Integer.valueOf("1234"), ObjectConverter.toInteger(new byte[] { 49, 50, 51, 52 }, null));
     }
 
     @Test
-    public void testToLong() {
+    public void testToLong() throws Exception {
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Integer.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4"));
-        assertEquals(null, ObjectConverter.toLong(Double.NaN));
-        assertEquals(null, ObjectConverter.toLong(Float.NaN));
+        assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4".getBytes(StandardCharsets.UTF_8), null));
+        assertNull(ObjectConverter.toLong(Double.NaN));
+        assertNull(ObjectConverter.toLong(Float.NaN));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
+        assertEquals(Long.valueOf("1234"), ObjectConverter.toLong(new byte[] { 49, 50, 51, 52 }, null));
     }
 
     @Test
-    public void testToFloat() {
+    public void testToFloat() throws Exception {
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Integer.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4"));
+        assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4".getBytes(StandardCharsets.UTF_8), null));
         assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Double.NaN));
         assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Float.NaN));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
     }
 
     @Test
-    public void testToDouble() {
+    public void testToDouble() throws Exception {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
+        assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4".getBytes(StandardCharsets.UTF_8), null));
         assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Double.NaN));
         assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Float.NaN));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
@@ -127,9 +141,9 @@ public class ObjectConverterTest {
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Integer.valueOf("4")));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger("4"));
         assertEquals(BigInteger.valueOf(123456789L), ObjectConverter.toBigInteger("123456789"));
-        assertEquals(null, ObjectConverter.toBigInteger(new Date()));
-        assertEquals(null, ObjectConverter.toBigInteger(Double.NaN));
-        assertEquals(null, ObjectConverter.toBigInteger(Float.NaN));
+        assertNull(ObjectConverter.toBigInteger(new Date()));
+        assertNull(ObjectConverter.toBigInteger(Double.NaN));
+        assertNull(ObjectConverter.toBigInteger(Float.NaN));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
         assertEquals(new BigInteger("14350442579497085228"), ObjectConverter.toBigInteger("14350442579497085228"));
     }
@@ -145,7 +159,9 @@ public class ObjectConverterTest {
     @Test
     public void testToChar() {
         assertEquals('A', ObjectConverter.toChar("A"));
+        assertEquals('A', ObjectConverter.toChar("A".getBytes(StandardCharsets.UTF_8)));
         assertEquals(Character.valueOf('A'), ObjectConverter.toCharacter("A"));
+        assertEquals(Character.valueOf('A'), ObjectConverter.toCharacter("A".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -157,8 +173,9 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToBoolean() throws Exception {
+    public void testToBoolean() {
         assertTrue(ObjectConverter.toBoolean("true"));
+        assertTrue(ObjectConverter.toBoolean("true".getBytes(StandardCharsets.UTF_8)));
         assertTrue(ObjectConverter.toBoolean("TRUE"));
         assertFalse(ObjectConverter.toBoolean("false"));
         assertFalse(ObjectConverter.toBoolean("FALSE"));
@@ -167,28 +184,15 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toBoolean("yes"));
 
         assertTrue(ObjectConverter.toBool("true"));
+        assertTrue(ObjectConverter.toBool("true".getBytes(StandardCharsets.UTF_8)));
         assertTrue(ObjectConverter.toBool("TRUE"));
         assertFalse(ObjectConverter.toBool("false"));
         assertFalse(ObjectConverter.toBool("FALSE"));
-        // primitive boolean is more strict
-        try {
-            ObjectConverter.toBool("1");
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            ObjectConverter.toBool("");
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            ObjectConverter.toBool("yes");
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+
+        // primitive boolean is stricter
+        assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool("1"), "Should throw exception");
+        assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool(""), "Should throw exception");
+        assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool("yes"), "Should throw exception");
     }
 
 }

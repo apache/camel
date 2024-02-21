@@ -32,6 +32,15 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Whether stream caching is enabled")
     boolean isEnabled();
 
+    @ManagedAttribute(description = "To filter stream caching of a given set of allowed/denied classes.")
+    String[] getAllowClasses();
+
+    @ManagedAttribute(description = "To filter stream caching of a given set of allowed/denied classes.")
+    String[] getDenyClasses();
+
+    @ManagedAttribute(description = "Whether spooling to disk enabled")
+    boolean isSpoolEnabled();
+
     @ManagedAttribute(description = "Directory used when overflow and spooling to disk")
     String getSpoolDirectory();
 

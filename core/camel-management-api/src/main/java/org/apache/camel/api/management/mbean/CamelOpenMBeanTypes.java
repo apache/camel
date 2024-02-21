@@ -41,15 +41,14 @@ public final class CamelOpenMBeanTypes {
                 "rests", "Rest Services",
                 new String[] {
                         "url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType",
-                        "state", "routeId", "description" },
+                        "state", "description" },
                 new String[] {
                         "Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes", "Produces", "Input Type",
-                        "Output Type", "State", "Route Id", "Description" },
+                        "Output Type", "State", "Description" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                         SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING });
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
     }
 
     public static TabularType listEndpointsTabularType() throws OpenDataException {
@@ -176,6 +175,19 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
     }
 
+    public static TabularType doTryTabularType() throws OpenDataException {
+        CompositeType ct = doTryCompositeType();
+        return new TabularType("doTry", "doTry statistics", ct, new String[] { "exception" });
+    }
+
+    public static CompositeType doTryCompositeType() throws OpenDataException {
+        return new CompositeType(
+                "exceptions", "Exception types",
+                new String[] { "exception", "predicate", "language", "matches" },
+                new String[] { "Exception", "Predicate", "Language", "Matches" },
+                new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
+    }
+
     public static TabularType loadbalancerExceptionsTabularType() throws OpenDataException {
         CompositeType ct = loadbalancerExceptionsCompositeType();
         return new TabularType("exception", "Exception statistics", ct, new String[] { "exception" });
@@ -205,14 +217,14 @@ public final class CamelOpenMBeanTypes {
     public static TabularType listTransformersTabularType() throws OpenDataException {
         CompositeType ct = listTransformersCompositeType();
         return new TabularType(
-                "listTransformers", "Lists all the transformers in the registry", ct, new String[] { "scheme", "from", "to" });
+                "listTransformers", "Lists all the transformers in the registry", ct, new String[] { "name", "from", "to" });
     }
 
     public static CompositeType listTransformersCompositeType() throws OpenDataException {
         return new CompositeType(
                 "transformers", "Transformers",
-                new String[] { "scheme", "from", "to", "static", "dynamic", "description" },
-                new String[] { "Scheme", "From", "To", "Static", "Dynamic", "Description" },
+                new String[] { "name", "from", "to", "static", "dynamic", "description" },
+                new String[] { "Name", "From", "To", "Static", "Dynamic", "Description" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                         SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.STRING });
@@ -234,11 +246,15 @@ public final class CamelOpenMBeanTypes {
     public static CompositeType camelHealthDetailsCompositeType() throws OpenDataException {
         return new CompositeType(
                 "healthDetails", "Health Details",
-                new String[] { "id", "group", "state", "enabled", "readiness", "liveness", "interval", "failureThreshold" },
-                new String[] { "ID", "Group", "State", "Enabled", "Readiness", "Liveness", "Interval", "Failure Threshold" },
+                new String[] {
+                        "id", "group", "state", "enabled", "message", "failureUri", "failureCount", "failureStackTrace",
+                        "readiness", "liveness" },
+                new String[] {
+                        "ID", "Group", "State", "Enabled", "Message", "Failure Uri", "Failure Count", "Failure StackTrace",
+                        "Readiness", "Liveness" },
                 new OpenType[] {
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN,
-                        SimpleType.BOOLEAN, SimpleType.LONG, SimpleType.INTEGER });
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.STRING,
+                        SimpleType.STRING, SimpleType.INTEGER, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
     }
 
     public static TabularType camelHealthDetailsTabularType() throws OpenDataException {
@@ -277,6 +293,19 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[] {
                         SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG,
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
+    }
+
+    public static CompositeType camelVariablesCompositeType() throws OpenDataException {
+        return new CompositeType(
+                "variables", "Variables",
+                new String[] { "id", "key", "className", "value" },
+                new String[] { "Id", "Key", "className", "Value" },
+                new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
+    }
+
+    public static TabularType camelVariablesTabularType() throws OpenDataException {
+        CompositeType ct = camelVariablesCompositeType();
+        return new TabularType("variables", "Variables", ct, new String[] { "id", "key" });
     }
 
 }

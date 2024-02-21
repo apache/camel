@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,6 +32,8 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchQueryRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -44,7 +45,6 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,13 +81,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(context);
+        beanIntrospection.setLoggingLevel(LoggingLevel.INFO);
+        beanIntrospection.setExtendedStatistics(true);
         return context;
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void testRead() {
         final Map<String, Object> headers = new HashMap<>();
 
         // Read metadata ($metadata) object
@@ -144,7 +145,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         assertNotNull(unbFuncReturn);
 
         // should be reflection free
-        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        long counter = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
         assertEquals(0, counter);
     }
 
@@ -158,7 +159,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testCreateUpdateDelete() throws Exception {
+    public void testCreateUpdateDelete() {
         final ClientEntity clientEntity = createEntity();
 
         ClientEntity entity = requestBody("direct:create-entity", clientEntity);
@@ -191,7 +192,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testCreateUpdateDeleteFromJson() throws Exception {
+    public void testCreateUpdateDeleteFromJson() {
         ClientEntity entity = requestBody("direct:create-entity", TEST_CREATE_JSON);
         assertNotNull(entity);
         assertEquals("Lewis", entity.getProperty("FirstName").getValue().toString());
@@ -234,7 +235,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testBatch() throws Exception {
+    public void testBatch() {
         final List<Olingo4BatchRequest> batchParts = new ArrayList<>();
 
         // 1. Edm query
@@ -313,14 +314,13 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testUnboundActionRequest() throws Exception {
+    public void testUnboundActionRequest() {
         final HttpStatusCode status = requestBody("direct:unbound-action-ResetDataSource", null);
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
     }
 
     @Test
-    @Disabled
-    public void testBoundActionRequest() throws Exception {
+    public void testBoundActionRequest() {
         final ClientEntity clientEntity = objFactory.newEntity(null);
         clientEntity.getProperties().add(
                 objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
@@ -433,7 +433,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
@@ -488,7 +488,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
                 from("direct:unbound-action-ResetDataSource").to("olingo4://action/ResetDataSource");
 
                 from("direct:bound-action-people").to(
-                        "olingo4://action/" + TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip");
+                        "olingo4://action/" + TEST_PEOPLE + "/Trippin.ShareTrip");
             }
         };
     }

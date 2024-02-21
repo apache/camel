@@ -66,9 +66,9 @@ public class SoapServerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
-                SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
+                SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
                 CustomerServiceImpl serverBean = new CustomerServiceImpl();
-                from("direct:start").onException(Exception.class) // 
+                from("direct:start").onException(Exception.class) //
                         .handled(true) //
                         .marshal(soapDataFormat) //
                         .end() //

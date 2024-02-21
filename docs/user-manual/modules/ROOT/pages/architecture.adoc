@@ -1,40 +1,39 @@
-[[Architecture-Architecture]]
 = Architecture
 
-Camel uses a Java based xref:dsl.adoc[Routing Domain Specific Language (DSL)] 
-or an XML Configuration to configure
-routing and mediation rules which are added to a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
-to implement the various
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
+The following diagram shows a high-level view of the main concepts that make up Camel's architecture.
 
-At a high level Camel consists of a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
-which contains a collection of Component instances.
-A Component is essentially a factory of
-Endpoint instances. You can explicitly configure
-Component instances in Java code or an IoC
-container like Spring, or they can be auto-discovered using
-URIs.
+image::images/camel-architecture.png[image]
 
-An Endpoint acts rather like a URI or URL in a web
-application or a Destination in a JMS system; you can communicate with
-an endpoint; either sending messages to it or consuming messages from
-it. You can then create a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
-or
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
-on an Endpoint to exchange messages with it.
+At the center of the diagram you have the _heart_ of Apache Camel; the xref:camelcontext.adoc[CamelContext].
+The `CamelContext` is "Camel" ... the runtime Camel, that contains and holds everything together.
 
-The DSL makes heavy use of pluggable
-Languages to create an
-Expression or Predicate to
-make a truly powerful DSL which is extensible to the most suitable
-language depending on your needs. Many of the Languages 
-are also supported as
-xref:parameter-binding-annotations.adoc[Annotation Based Expression Language].
+xref:routes.adoc[Routes] are defined using one of Camel’s xref:dsl.adoc[DSLs].
+xref:processor.adoc[Processors] are used to transform and
+manipulate messages during routing as well as to implement all the
+xref:components:eips:enterprise-integration-patterns.adoc[EIP]s, which have
+corresponding names in the DSLs. xref:component.adoc[Components] are the extension points in Camel
+for adding connectivity to other systems. To expose these systems to the rest of Camel,
+components provide an xref:endpoint.adoc[endpoint] interface.
 
-[[Architecture-Diagram]]
-== Diagram
+== Routes 101
 
-image::camel-components.png[image]
+You use Camel for integration, and a key concept in Camel is xref:routes.adoc[routes] which
+tells Camel how messages should be routed between systems.
+
+A route has exactly one input xref:endpoint.adoc[endpoint],
+and 0, 1 or more output xref:endpoint.adoc[endpoints].
+
+You use Camel xref:dsl.adoc[DSL] to _code_ the xref:routes.adoc[routes].
+For example the route below is coded in xref:java-dsl.adoc[Java DSL]:
+
+[source,java]
+----
+public class MyRoute extends RouteBuilder {
+
+    public void configure() throws Exception {
+        from("ftp:myserver/folder")
+            .to("activemq:queue:cheese");
+    }
+}
+----
+

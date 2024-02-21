@@ -17,11 +17,10 @@
     limitations under the License.
 
 -->
-<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             version="2.1"
-             xsi:schemaLocation="
-             http://xmlns.jcp.org/xml/ns/persistence persistence_2_1.xsd">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence persistence_3_1.xsd"
+          version="3.0">
 
   <persistence-unit name="camel" transaction-type="RESOURCE_LOCAL">
     <!--
@@ -57,6 +56,23 @@
     <properties>
       <property name="openjpa.ConnectionURL" value="jdbc:derby:target/custom;create=true"/>
       <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
+      <property name="openjpa.Multithreaded" value="true"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="pooling" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.examples.SendEmail</class>
+
+    <properties>
+      <property name="openjpa.ConnectionProperties"
+                value="DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,
+                   Url=jdbc:derby:target/custom;create=true,
+                   MaxTotal=1,
+                   MaxWaitMillis=1000,
+                   TestOnBorrow=true"/>
+      <property name="openjpa.ConnectionDriverName" value="org.apache.commons.dbcp2.BasicDataSource"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
       <property name="openjpa.Multithreaded" value="true"/>

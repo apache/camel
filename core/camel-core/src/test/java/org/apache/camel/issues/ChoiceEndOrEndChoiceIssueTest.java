@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
 
@@ -31,26 +31,24 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEndChoiceInvalid() throws Exception {
-        try {
+    public void testEndChoiceInvalid() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .choice()
-                                .when(header("number").isEqualTo("one")).to("mock:one")
-                                .when(header("number").isEqualTo("two")).to("mock:two")
-                                .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
+                            .when(header("number").isEqualTo("one")).to("mock:one")
+                            .when(header("number").isEqualTo("two")).to("mock:two")
+                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
                             .to("mock:finally");
                 }
             });
-            context.start();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("A new choice clause should start with a when() or otherwise()."
-                         + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
-                    e.getMessage());
-        }
+        }, "Should have thrown exception");
+
+        assertEquals("A new choice clause should start with a when() or otherwise()."
+                     + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
+                e.getMessage());
     }
 
     @Test

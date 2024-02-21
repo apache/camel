@@ -44,7 +44,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testMailEndpointTlsConfig(String protocol) throws Exception {
+    public void testMailEndpointTlsConfig(String protocol) {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -58,14 +58,14 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
         assertTrue(cfg.isStartTlsEnabled());
 
-        Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
+        Properties javaMailProperties = cfg.createJavaMailSender(context).getJavaMailProperties();
         assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
         assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testMailEndpointNoTlsConfig(String protocol) throws Exception {
+    public void testMailEndpointNoTlsConfig(String protocol) {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
         cfg.configureProtocol(protocol);
@@ -74,7 +74,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         cfg.setPassword("secret");
         cfg.setSslContextParameters(MailTestHelper.createSslContextParameters());
 
-        Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
+        Properties javaMailProperties = cfg.createJavaMailSender(context).getJavaMailProperties();
 
         assertFalse(cfg.isStartTlsEnabled());
 
@@ -93,7 +93,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testMailEndpointTlsSslContextParametersConfig(String protocol) throws Exception {
+    public void testMailEndpointTlsSslContextParametersConfig(String protocol) {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -108,7 +108,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
         assertTrue(cfg.isStartTlsEnabled());
 
-        Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
+        Properties javaMailProperties = cfg.createJavaMailSender(context).getJavaMailProperties();
         assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
         assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }

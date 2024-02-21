@@ -29,7 +29,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testJoorExpressions() throws Exception {
+    public void testJoorExpressions() {
         assertExpression("return \"Hello World 1\";", "Hello World 1");
         assertExpression("return \"Hello World 2\"", "Hello World 2");
         assertExpression("\"Hello World 3\"", "Hello World 3");
@@ -40,7 +40,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchange() throws Exception {
+    public void testExchange() {
         exchange.getIn().setBody("World");
 
         assertExpression("return \"Hello \" + exchange.getIn().getBody();", "Hello World");
@@ -53,7 +53,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeHeader() throws Exception {
+    public void testExchangeHeader() {
         exchange.getIn().setHeader("foo", 22);
 
         assertExpression("return 2 * exchange.getIn().getHeader(\"foo\", int.class);", "44");
@@ -66,7 +66,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeBody() throws Exception {
+    public void testExchangeBody() {
         exchange.getIn().setBody("Hello big world how are you");
 
         assertExpression("message.getBody(String.class).toUpperCase()", "HELLO BIG WORLD HOW ARE YOU");
@@ -74,7 +74,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testMultiStatements() throws Exception {
+    public void testMultiStatements() {
         assertExpression("exchange.getIn().setHeader(\"tiger\", \"Tony\"); return null;", null);
         assertExpression("exchange.getIn().setHeader('tiger', 'Tony'); return null;", null);
         assertEquals("Tony", exchange.getIn().getHeader("tiger"));
@@ -90,7 +90,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testOptionalBody() throws Exception {
+    public void testOptionalBody() {
         exchange.getIn().setBody("22");
         assertExpression("optionalBody.isPresent()", true);
         assertExpression("optionalBody.get()", "22");
@@ -100,7 +100,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeBodyAs() throws Exception {
+    public void testExchangeBodyAs() {
         exchange.getIn().setBody("22");
 
         assertExpression("2 * bodyAs(int.class)", "44");
@@ -113,7 +113,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeOptionalBodyAs() throws Exception {
+    public void testExchangeOptionalBodyAs() {
         exchange.getIn().setBody("22");
 
         assertExpression("2 * optionalBodyAs(int.class).get()", "44");
@@ -126,7 +126,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeHeaderAs() throws Exception {
+    public void testExchangeHeaderAs() {
         exchange.getIn().setHeader("foo", 22);
 
         assertExpression("2 * headerAs('foo', int.class)", "44");
@@ -147,7 +147,19 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangeOptionalHeaderAs() throws Exception {
+    public void testExchangeHeaderAsDefaultValue() {
+        exchange.getIn().setHeader("foo", 22);
+
+        assertExpression("2 * headerAs('dog', 33, int.class)", "66");
+        assertExpression("3 * headerAs('dog', 33, Integer.class)", "99");
+        assertExpression("2 * headerAs('dog', 33, int)", "66");
+        assertExpression("3 * headerAs('dog', 33, Integer)", "99");
+
+        assertExpression("'Hello ' + headerAs('dog', 'World', String)", "Hello World");
+    }
+
+    @Test
+    public void testExchangeOptionalHeaderAs() {
         exchange.getIn().setHeader("foo", 22);
 
         assertExpression("2 * optionalHeaderAs('foo', int.class).get()", "44");
@@ -168,7 +180,7 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testExchangePropertyAs() throws Exception {
+    public void testExchangePropertyAs() {
         exchange.setProperty("bar", 22);
 
         assertExpression("2 * exchangePropertyAs('bar', int.class)", "44");
@@ -189,7 +201,19 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testOptionalExchangePropertyAs() throws Exception {
+    public void testExchangePropertyDefaultValueAs() {
+        exchange.setProperty("bar", 22);
+
+        assertExpression("2 * exchangePropertyAs('dog', 33, int.class)", "66");
+        assertExpression("3 * exchangePropertyAs('dog', 33, Integer.class)", "99");
+        assertExpression("2 * exchangePropertyAs('dog', 33, int)", "66");
+        assertExpression("3 * exchangePropertyAs('dog', 33, Integer)", "99");
+
+        assertExpression("'Hello ' + exchangePropertyAs('dog', 'World', String)", "Hello World");
+    }
+
+    @Test
+    public void testOptionalExchangePropertyAs() {
         exchange.setProperty("bar", 22);
 
         assertExpression("2 * optionalExchangePropertyAs('bar', int.class).get()", "44");

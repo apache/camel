@@ -16,30 +16,37 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Act as a message source as input to a route
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
-    @XmlAttribute
-    @Metadata(required = true)
-    private String uri;
+
+    @XmlTransient
+    private RouteDefinition parent;
     @XmlTransient
     private Endpoint endpoint;
     @XmlTransient
     private EndpointConsumerBuilder endpointConsumerBuilder;
+
+    @XmlAttribute
+    @Metadata(required = true)
+    private String uri;
+    @XmlAttribute
+    private String variableReceive;
 
     public FromDefinition() {
     }
@@ -88,6 +95,15 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         }
     }
 
+    @Override
+    public NamedNode getParent() {
+        return parent;
+    }
+
+    public void setParent(RouteDefinition parent) {
+        this.parent = parent;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -103,6 +119,18 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
     public void setUri(String uri) {
         clear();
         this.uri = uri;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    /**
+     * To use a variable to store a copy of the received message body (only body, not headers). This is handy for easy
+     * access to the received message body via variables.
+     */
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
     }
 
     /**

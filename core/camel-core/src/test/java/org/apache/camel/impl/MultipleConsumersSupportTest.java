@@ -26,8 +26,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MultipleConsumersSupportTest extends ContextTestSupport {
 
@@ -52,12 +52,9 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
                 from(my).to("mock:b");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: my:endpoint"));
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
+        assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: my:endpoint"));
     }
 
     @Test

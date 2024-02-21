@@ -54,7 +54,7 @@ public class StAXProcessor implements Processor {
             StaxStreamXMLReader reader = new StaxStreamXMLReader(stream);
             ContentHandler handler;
             if (this.contentHandlerClass != null) {
-                handler = this.contentHandlerClass.newInstance();
+                handler = this.contentHandlerClass.getDeclaredConstructor().newInstance();
             } else {
                 handler = this.contentHandler;
             }

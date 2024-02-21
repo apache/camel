@@ -24,18 +24,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SEDA;
+
 /**
  * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by
  * Hazelcast {@link BlockingQueue}.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
-             category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SEDA, title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;

@@ -1,0 +1,325 @@
+= Azure Storage Queue Service Component
+:doctitle: Azure Storage Queue Service
+:shortname: azure-storage-queue
+:artifactid: camel-azure-storage-queue
+:description: Stores and retrieves messages to/from Azure Storage Queue.
+:since: 3.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Azure
+:camel-spring-boot-name: azure-storage-queue
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Azure Storage Queue component supports storing and retrieving the messages to/from
+https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service using *Azure APIs v12*. However, in the case of versions above v12,
+we will see if this component can adopt these changes depending on how much breaking changes can result.
+
+Prerequisites
+
+You must have a valid Windows Azure Storage account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure-storage-queue</artifactId>
+    <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+[source,text]
+------------------------------
+azure-storage-queue://accountName[/queueName][?options]
+------------------------------
+
+In the case of consumer, `accountName` and `queueName` are required.
+
+In the case of producer, it depends on the operation that being requested, for example, if operation is on a service level, e.b: `listQueues`, only `accountName` is required, but in the case
+of operation being requested on the queue level, e.g.: `createQueue, `sendMessage`, etc., both `accountName` and `queueName` are required.
+
+The queue will be created if it does not already exist.
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+*Required information options:*
+
+*Required information options:*
+
+To use this component, you have multiple options to provide the required Azure authentication information:
+
+- By providing your own QueueServiceClient instance which can be injected into `serviceClient`.
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal. Note that this is the default authentication strategy.
+- Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
+
+
+== Usage
+
+For example, to get a message content from the queue `messageQueue`
+in the `storageAccount` storage account and, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
+to("file://queuedirectory");
+--------------------------------------------------------------------------------
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Advanced Azure Storage Queue configuration
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `QueueServiceClient` instance configuration, you can
+create your own instance:
+
+[source,java]
+-----------------------------------------------------------------------
+StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
+String uri = String.format("https://%s.queue.core.windows.net", "yourAccountName");
+
+QueueServiceClient client = new QueueServiceClientBuilder()
+                          .endpoint(uri)
+                          .credential(credential)
+                          .buildClient();
+// This is camel context
+context.getRegistry().bind("client", client);
+-----------------------------------------------------------------------
+
+Then refer to this instance in your Camel `azure-storage-queue` component configuration:
+
+[source,java]
+-----------------------------------------------------------------------
+from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
+.to("file://outputFolder?fileName=output.txt&fileExist=Append");
+-----------------------------------------------------------------------
+
+=== Automatic detection of QueueServiceClient client in registry
+
+The component is capable of detecting the presence of an QueueServiceClient bean into the registry.
+If it's the only instance of that type, it will be used as the client, and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+=== Azure Storage Queue Producer operations
+
+Camel Azure Storage Queue component provides a wide range of operations on the producer side:
+
+*Operations on the service level*
+
+For these operations, `accountName` is *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`listQueues`  |Lists the queues in the storage account that pass the filter starting at the specified marker.
+|===
+
+
+*Operations on the queue level*
+
+For these operations, `accountName` and `queueName` are *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`createQueue` | Creates a new queue.
+|`deleteQueue` | Permanently deletes the queue.
+|`clearQueue`| Deletes all messages in the queue..
+|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and timeout period where the message is invisible in the queue. The message text is evaluated from the exchange message body.
+                By default, if the queue doesn't exist, it will create an empty queue first. If you want to disable this, set the config `createQueue` or header `CamelAzureStorageQueueCreateQueue` to `false`.
+|`deleteMessage`| Deletes the specified message in the queue.
+|`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However, it will not dequeue the message from the queue due to reliability reasons.
+|`peekMessages`| Peek messages from the front of the queue up to the maximum number of messages.
+|`updateMessage`| Updates the specific message in the queue with a new message and resets the visibility timeout. The message text is evaluated from the exchange message body.
+|===
+
+Refer to the example section in this page to learn how to use these operations into your camel application.
+
+=== Consumer Examples
+To consume a queue into a file component with maximum five messages in one batch, this can be done like this:
+
+[source,java]
+-----------------------------------------------------------------------
+from("azure-storage-queue://cameldev/queue1?serviceClient=#client&maxMessages=5")
+.to("file://outputFolder?fileName=output.txt&fileExist=Append");
+-----------------------------------------------------------------------
+
+=== Producer Operations Examples
+- `listQueues`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g., to only returns a list of queues with 'awesome' prefix:
+      exchange.getIn().setHeader(QueueConstants.QUEUES_SEGMENT_OPTIONS, new QueuesSegmentOptions().setPrefix("awesome"));
+     })
+    .to("azure-storage-queue://cameldev?serviceClient=#client&operation=listQueues")
+    .log("${body}")
+    .to("mock:result");
+-----------------------------------------------------------------------
+
+
+- `createQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g.:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=createQueue");
+-----------------------------------------------------------------------
+
+- `deleteQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g.:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteQueue");
+-----------------------------------------------------------------------
+
+- `clearQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g.:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=clearQueue");
+-----------------------------------------------------------------------
+
+- `sendMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g.:
+      exchange.getIn().setBody("message to send");
+      // we set a visibility of 1min
+      exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client");
+-----------------------------------------------------------------------
+
+- `deleteMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g.:
+      // Mandatory header:
+      exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
+      // Mandatory header:
+      exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteMessage");
+-----------------------------------------------------------------------
+
+- `receiveMessages`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=receiveMessages")
+    .process(exchange -> {
+        final List<QueueMessageItem> messageItems = exchange.getMessage().getBody(List.class);
+        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
+    })
+   .to("mock:result");
+-----------------------------------------------------------------------
+
+- `peekMessages`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=peekMessages")
+    .process(exchange -> {
+        final List<PeekedMessageItem> messageItems = exchange.getMessage().getBody(List.class);
+        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
+    })
+   .to("mock:result");
+-----------------------------------------------------------------------
+
+- `updateMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+   .process(exchange -> {
+       // set the header you want the producer to evaluate, refer to the previous
+       // section to learn about the headers that can be set
+       // e.g.:
+       exchange.getIn().setBody("new message text");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
+    })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=updateMessage");
+-----------------------------------------------------------------------
+
+
+=== Development Notes (Important)
+
+When developing on this component, you will need to obtain your Azure `accessKey` to run the integration tests. In addition to the mocked unit tests,
+you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
+----
+mvn verify -DaccountName=myacc -DaccessKey=mykey
+----
+
+Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
+
+
+
+include::spring-boot:partial$starter.adoc[]

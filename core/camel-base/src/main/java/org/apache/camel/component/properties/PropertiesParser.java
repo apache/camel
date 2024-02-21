@@ -27,10 +27,17 @@ public interface PropertiesParser {
      * @param  text                     the text to be parsed
      * @param  properties               the properties resolved which values should be looked up
      * @param  fallback                 whether to support using fallback values if a property cannot be found
+     * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
+     * @param  nestedPlaceholder        whether to support nested property placeholders. A nested placeholder, means
+     *                                  that a placeholder, has also a placeholder, that should be resolved
+     *                                  (recursively).
      * @return                          the parsed text with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
-    String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException;
+    String parseUri(
+            String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional,
+            boolean nestedPlaceholder)
+            throws IllegalArgumentException;
 
     /**
      * While parsing the uri using parseUri method each parsed property found invokes this callback.
@@ -43,4 +50,15 @@ public interface PropertiesParser {
      * @return            the value to use
      */
     String parseProperty(String key, String value, PropertiesLookup properties);
+
+    /**
+     * Allow custom providers to attempt to lookup the property
+     *
+     * @param  key the key
+     * @return     the value if found or <tt>null</tt> if none found
+     */
+    default String customLookup(String key) {
+        return null;
+    }
+
 }

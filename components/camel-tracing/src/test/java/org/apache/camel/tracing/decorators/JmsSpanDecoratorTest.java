@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tracing.decorators;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,40 @@ public class JmsSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID)).thenReturn(messageId);
+        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID, String.class)).thenReturn(messageId);
 
-        JmsSpanDecorator decorator = new JmsSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
 
         assertEquals(messageId, decorator.getMessageId(exchange));
+    }
+
+    @Test
+    public void testGetDestination() {
+        Exchange exchange = Mockito.mock(Exchange.class);
+        Message message = Mockito.mock(Message.class);
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(exchange.getIn()).thenReturn(message);
+        Mockito.when(exchange.getMessage()).thenReturn(message);
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("jms:cheese?clientId=123");
+
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
+        assertEquals("cheese", decorator.getDestination(exchange, endpoint));
+    }
+
+    @Test
+    public void testGetDestinationDynamic() {
+        Exchange exchange = Mockito.mock(Exchange.class);
+        Message message = Mockito.mock(Message.class);
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(exchange.getIn()).thenReturn(message);
+        Mockito.when(exchange.getMessage()).thenReturn(message);
+        Mockito.when(exchange.getMessage().getHeader("CamelJmsDestinationName", String.class)).thenReturn("gauda");
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("jms:${header.foo}?clientId=123");
+
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
+        assertEquals("gauda", decorator.getDestination(exchange, endpoint));
     }
 
 }

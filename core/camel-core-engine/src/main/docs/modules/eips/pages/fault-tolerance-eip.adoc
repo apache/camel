@@ -1,28 +1,11 @@
-[[faulttolerance-eip]]
 = Fault Tolerance EIP
+:tabs-sync-option:
 
-This component supports the Circuit Breaker EIP with the MicroProfile Fault Tolerance library.
+This component supports the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP with the
+xref:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] library.
 
-[NOTE]
-====
-Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.
-MicroProfile Fault Tolerance is one such implementation.
-====
+== Options
 
-Maven users will need to add the following dependency to their pom.xml to use this EIP:
-
-[source]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-microprofile-fault-tolerance</artifactId>
-    <version>x.x.x</version><!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-== Configuration options
-
-// eip options: START
 The Fault Tolerance EIP supports 2 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -31,13 +14,19 @@ The Fault Tolerance EIP supports 2 options which are listed below:
 | *faultToleranceConfiguration* | Configures the Fault Tolerance EIP Use end when configuration is complete, to return back to the Fault Tolerance EIP. |  | FaultToleranceConfigurationDefinition
 | *faultToleranceConfigurationRef* | Refers to a Fault Tolerance configuration to use for configuring the Fault Tolerance EIP. |  | String
 |===
-// eip options: END
 
-See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options on Fault Tolerance Circuit Breaker.
+See xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] for all the configuration options
+on the Fault Tolerance xref:circuitBreaker-eip.adoc[Circuit Breaker].
 
-== Samples
+== Using Fault Tolerance EIP
 
-Below is an example route showing a Fault Tolerance endpoint that protects against a downstream HTTP operation by falling back to the in-lined fallback route.
+Below is an example route showing a Fault Tolerance EIP circuit breaker
+that protects against a downstream HTTP operation with fallback.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -49,31 +38,42 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML DSL:
+XML::
++
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
+<route>
     <from uri="direct:start"/>
     <circuitBreaker>
-      <to uri="http://fooservice.com/faulty"/>
-      <onFallback>
-        <transform>
-          <constant>Fallback message</constant>
-        </transform>
-      </onFallback>
+        <to uri="http://fooservice.com/faulty"/>
+        <onFallback>
+            <transform>
+                <constant>Fallback message</constant>
+            </transform>
+        </onFallback>
     </circuitBreaker>
     <to uri="mock:result"/>
-  </route>
-</camelContext>
+</route>
 ----
+====
 
-== Configuring Fault Tolerance
+In case the calling the downstream HTTP service is failing, and an exception is thrown
+then the circuit breaker will react and execute the fallback route instead.
 
-You can fine-tune Fault Tolerance by the many xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] options.
+If there was no fallback, then the circuit breaker will throw an exception.
 
-For example to use a 2 second execution timeout, you can do as follows:
+TIP: For more information about fallback see xref:onFallback-eip.adoc[onFallback].
 
+=== Configuring Fault Tolerance
+
+You can fine-tune the Fault Tolerance EIP by the many xref:faultToleranceConfiguration-eip.adoc[Fault Tolerance Configuration] options.
+
+For example to use 2 second execution timeout, you can do as follows:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -81,14 +81,14 @@ from("direct:start")
         // use 2 second timeout
         .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
         .log("Fault Tolerance processing start: ${threadName}")
-        .toD("direct:${body}")
+        .to("http://fooservice.com/faulty")
         .log("Fault Tolerance processing end: ${threadName}")
     .end()
     .log("After Fault Tolerance ${body}");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -96,26 +96,25 @@ And in XML:
   <circuitBreaker>
     <faultToleranceConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
     <log message="Fault Tolerance processing start: ${threadName}"/>
-    <toD uri="direct:${body}"/>
+    <to uri="http://fooservice.com/faulty"/>
     <log message="Fault Tolerance processing end: ${threadName}"/>
   </circuitBreaker>
   <log message="After Fault Tolerance: ${body}"/>
 </route>
 ----
+====
 
-== Fallback
-
-See xref:onFallback-eip.adoc[onFallback].
-
-== Using Fault Tolerance with Spring Boot
-
-This component does not support Spring Boot. Instead its support in standalone and with Camel Quarkus.
+In this example if calling the downstream service does not return a response within 2 seconds,
+a timeout is triggered, and the exchange will fail with a TimeoutException.
 
 == Camel's Error Handler and Circuit Breaker EIP
 
-By default the Circuit Breaker EIP handles errors by itself. This means if the circuit breaker is open and
-the message fails, then Camel's error handler is not reacting also.
-However, you can enable Camels error handler with circuit breaker by enabling the `inheritErrorHandler` option, as shown:
+By default, the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP handles errors by itself.
+This means if the circuit breaker is open, and the message fails, then Camel's error handler
+is not reacting also.
+
+However, you can enable Camels error handler with circuit breaker by enabling
+the `inheritErrorHandler` option, as shown:
 
 [source,java]
 ----
@@ -133,7 +132,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-This example is from an unit test, where you can see the Circuit Breaker EIP block has been hardcoded
+This example is from a test, where you can see the Circuit Breaker EIP block has been hardcoded
 to always fail by throwing an exception. Because the `inheritErrorHandler` has been enabled,
 then Camel's error handler will attempt to call the Circuit Breaker EIP block again.
 
@@ -142,4 +141,29 @@ That means the `mock:a` endpoint will receive the message again, and a total of 
 
 If we turn off the `inheritErrorHandler` option (default) then the Circuit Breaker EIP will only be
 executed once because it handled the error itself.
+
+== Dependencies
+
+[NOTE]
+====
+Camel provides the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP in the route model,
+which allows to plugin different implementations.
+MicroProfile Fault Tolerance is one such implementation.
+====
+
+Maven users will need to add the following dependency to their pom.xml to use this EIP:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-microprofile-fault-tolerance</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+=== Using Fault Tolerance with Spring Boot
+
+This component does not support Spring Boot.
+Instead, it is supported in Standalone and with Camel Quarkus.
 

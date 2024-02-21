@@ -25,28 +25,27 @@
      http://camel.apache.org/schema/spring
      http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-<!-- START SNIPPET: e1 -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <!-- setup beanio data format -->
-    <dataFormats>
-      <beanio id="myBeanio" mapping="org/apache/camel/dataformat/beanio/mappings.xml" streamName="employeeFile" encoding="UTF-8"/>
-    </dataFormats>
+    <!-- START SNIPPET: e1 -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:unmarshal"/>
+            <unmarshal>
+                <beanio mapping="org/apache/camel/dataformat/beanio/mappings.xml" streamName="employeeFile"/>
+            </unmarshal>
+            <split>
+                <simple>${body}</simple>
+                <to uri="mock:beanio-unmarshal"/>
+            </split>
+        </route>
 
-    <route>
-      <from uri="direct:unmarshal"/>
-      <unmarshal><custom ref="myBeanio"/></unmarshal>
-      <split>
-        <simple>${body}</simple>
-        <to uri="mock:beanio-unmarshal"/>
-      </split>
-    </route>
-    
-    <route>
-      <from uri="direct:marshal"/>
-      <marshal><custom ref="myBeanio"/></marshal>
-      <to uri="mock:beanio-marshal"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: e1 -->
+        <route>
+            <from uri="direct:marshal"/>
+            <marshal>
+                <beanio mapping="org/apache/camel/dataformat/beanio/mappings.xml" streamName="employeeFile"/>
+            </marshal>
+            <to uri="mock:beanio-marshal"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
 
 </beans>

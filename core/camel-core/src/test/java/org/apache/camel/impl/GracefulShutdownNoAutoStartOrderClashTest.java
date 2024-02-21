@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSupport {
 
@@ -39,15 +39,13 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
                 from("direct:bar").routeId("bar").startupOrder(5).noAutoStartup().to("mock:bar");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertEquals(
-                    "Failed to start route bar because of startupOrder clash. Route foo already has startupOrder 5 configured"
-                         + " which this route have as well. Please correct startupOrder to be unique among all your routes.",
-                    e.getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown an exception");
+
+        assertEquals(
+                "Failed to start route bar because of startupOrder clash. Route foo already has startupOrder 5 configured"
+                     + " which this route have as well. Please correct startupOrder to be unique among all your routes.",
+                e.getMessage());
     }
 
 }

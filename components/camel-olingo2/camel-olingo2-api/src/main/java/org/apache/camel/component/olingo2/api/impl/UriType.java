@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Copied from Olingo2 core package.
@@ -117,12 +118,10 @@ public enum UriType {
      */
     URI50B(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top);
 
-    private ArrayList<SystemQueryOption> whiteList = new ArrayList<>();
+    private final ArrayList<SystemQueryOption> whiteList = new ArrayList<>();
 
     UriType(final SystemQueryOption... compatibleQueryOptions) {
-        for (SystemQueryOption queryOption : compatibleQueryOptions) {
-            whiteList.add(queryOption);
-        }
+        whiteList.addAll(Arrays.asList(compatibleQueryOptions));
     }
 
     public boolean isCompatible(final SystemQueryOption queryOption) {

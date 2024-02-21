@@ -21,8 +21,10 @@ import java.util.Collections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class RouteHealthCheckTest {
@@ -46,6 +48,30 @@ public class RouteHealthCheckTest {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(healthCheck);
 
         healthCheck.doCall(builder, Collections.emptyMap());
+
+        context.stop();
+    }
+
+    @Test
+    public void testHealthCheckIsUpWhenRouteIsNotAutoStartup() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:input").id(TEST_ROUTE_ID).autoStartup(false).log("Message");
+            }
+        });
+        context.start();
+
+        Route route = context.getRoute(TEST_ROUTE_ID);
+
+        RouteHealthCheck healthCheck = new RouteHealthCheck(route);
+        final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(healthCheck);
+
+        healthCheck.doCall(builder, Collections.emptyMap());
+        HealthCheck.Result result = builder.build();
+
+        Assertions.assertEquals(HealthCheck.State.UP, result.getState());
 
         context.stop();
     }

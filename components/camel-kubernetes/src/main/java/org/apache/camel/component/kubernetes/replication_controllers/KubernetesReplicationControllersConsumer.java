@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.consumer.common.ReplicationControllerEvent;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -68,15 +68,11 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes Replication Controllers Consumer");
         if (executor != null) {
+            KubernetesHelper.close(rcWatcher, rcWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (rcWatcher != null) {
-                    rcWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (rcWatcher != null) {
-                    rcWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }
@@ -92,25 +88,23 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
             MixedOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> w
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-                w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
-            }
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::inNamespace);
+
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                     && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
+
             watch = w.watch(new Watcher<ReplicationController>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, ReplicationController resource) {
-                    ReplicationControllerEvent rce = new ReplicationControllerEvent(action, resource);
                     Exchange exchange = createExchange(false);
-                    exchange.getIn().setBody(rce.getReplicationController());
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, rce.getAction());
+                    exchange.getIn().setBody(resource);
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);

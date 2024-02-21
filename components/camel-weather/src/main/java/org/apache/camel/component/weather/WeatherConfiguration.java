@@ -28,8 +28,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -100,13 +100,13 @@ public class WeatherConfiguration {
     public void setPeriod(String period) {
         notNull(period, "period");
         int result = 0;
-        try {
-            result = new Scanner(period).useDelimiter("\\D+").nextInt();
+        try (Scanner scanner = new Scanner(period)) {
+            result = scanner.useDelimiter("\\D+").nextInt();
         } catch (Exception e) {
             // ignore and fallback the period to be an empty string
         }
         if (result != 0) {
-            this.period = "" + result;
+            this.period = Integer.toString(result);
         }
     }
 
@@ -340,7 +340,7 @@ public class WeatherConfiguration {
 
     /**
      * A custum geolocation provider to determine the longitude and latitude to use when no location information is set.
-     * 
+     *
      * The default implementaion uses the ipstack API and requires geolocationAccessKey and geolocationRequestHostIP
      */
     public void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {

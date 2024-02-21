@@ -55,7 +55,7 @@ public class UnicodeHelper implements Serializable {
 
     /**
      * Create instance.
-     * 
+     *
      * @param input  String, that is to be wrapped.
      * @param method Method, that is used to determin "chars" of string.
      */
@@ -171,8 +171,8 @@ public class UnicodeHelper implements Serializable {
     private void splitGrapheme() {
         final List<Integer> result = new ArrayList<>();
 
-        // 
-        // Caution: The BreakIterator of ICU lib (com.ibm.icu.text.BreakIterator; siehe Dependencies) ist used here, 
+        //
+        // Caution: The BreakIterator of ICU lib (com.ibm.icu.text.BreakIterator; siehe Dependencies) ist used here,
         //          since the Java builtin one cannot handle modern unicode (Emojis with sex, skin colour, etc.) correctly.
         //
         final BreakIterator bit = BreakIterator.getCharacterInstance();

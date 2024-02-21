@@ -21,14 +21,13 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BasicSubscriberTest extends CamelTestSupport {
+public class BasicSubscriberTest extends BaseReactiveTest {
 
     @Test
     public void testWorking() throws Exception {
@@ -55,7 +54,7 @@ public class BasicSubscriberTest extends CamelTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
 
         Subscriber<Integer> sub = CamelReactiveStreams.get(context()).streamSubscriber("sub", Integer.class);
         Subscriber<Integer> sub2 = CamelReactiveStreams.get(context()).streamSubscriber("sub2", Integer.class);
@@ -66,7 +65,7 @@ public class BasicSubscriberTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

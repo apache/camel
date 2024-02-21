@@ -1,66 +1,124 @@
-[[GettingStarted-GettingStarted]]
 = Getting Started
 
-First you need to Download the Camel distribution;
-or you could grab the Source and try
-Building it yourself.
+You can get started with Apache Camel in a variety of ways, such as:
 
-Then come back here and you might want to read the following
-documentation before continuing:
+- Using online Project generators
+- Using the Camel CLI (command line)
+- Using Camel Karavan (visual UI Camel designer)
 
-* Longer xref:book-getting-started.adoc[Getting Started Guide]
-* Find out about xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-  and how to implement them with Camel
-* Review the xref:architecture.adoc[Architecture guide] to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
-  or xref:xml-configuration.adoc[XML DSL]
+And some more alternative methods:
 
-[[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
-== Working with CamelContexts and RouteBuilders
+- Adding Camel to an existing project
+- Using IDE tooling wizards
+- Using Maven Archetypes
+- Cloning an existing example to modify
 
-To get started with Camel:
 
-1.  Create a xref:camelcontext.adoc[CamelContext].
-2.  Optionally, xref:configuring-camel.adoc[configure components or endpoints].
-3.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
-4.  Start the Camel context.
+== Using online Project generators
 
-When your application is closing you may wish to stop the context
+You can use https://kameleon.dev/#/standalone[Camel Kameleon] which is Camel's own
+online project generator. This generator is Camel focused only, which is recommended
+for most Camel users.
 
-When you are ready, why not xref:walk-through-an-example.adoc[Walk through an Example]?
-And then continue the walk xref:walk-through-another-example.adoc[Walk through another example].
+You can also use https://start.spring.io/[Spring Boot Initializer] which is the Spring Boot
+generator that also has Camel support. However, this generator does not allow users to have fine-grained control over which components, data formats, kamelets etc. they can use.
 
-[[GettingStarted-WorkingwithSpring]]
-== Working with Spring
+And there is https://code.quarkus.io/[Code with Quarkus], the Quarkus
+generator, which has great support with Camel.
 
-If you use Spring as a Dependency Injection container then please refer
-to the Camel Spring documentation.
 
-[[GettingStarted-OtherResources]]
-== Other Resources
+== Getting Started from command line (CLI)
 
-We strongly suggest that you brew a cup of coffee or tea and take the 30
-minutes to read one or more of the following resources:
+Camel uses https://www.jbang.dev/[JBang] for the Camel CLI.
+You can easily get up and running in a few steps.
 
-* http://manning.com/ibsen/chapter1sample.pdf[Camel in Action, Chapter 1
-(direct link)] free chapter 1 of the http://www.manning.com/ibsen[Camel
-in Action] book. Highly recommended to read to learn what Camel is and
-the basic Camel concepts. This is a free chapter you can download
-directly as a pdf (about 20 pages) and introduces you to Camel. We have
-been told by experience Camel end users they wished this chapter was
-available to them when they started learning Camel.
+*Step 1*
 
-* https://dzone.com/articles/open-source-integration-apache[Open
-Source Integration with Apache Camel and How Fuse IDE Can Help] by
-Jonathan Anstey. Updated article of the
-http://architects.dzone.com/articles/apache-camel-integration[Apache
-Camel: Integration Nirvana]. Great article to learn what Camel is and
-has a good use case example.
+Open your favorite terminal and use JBang to install the Camel CLI.
+You do not need to have Java installed first.
 
-* Several of the vendors on the
-Commercial Camel Offerings page
-also offer various tutorials, webinars, examples, etc.... that may be
-useful.
+For Linux, macOS, and Windows (using WSL or bash compatible shell like Cygwin or MinGW)
 
-* Articles is a link collection with articles,
-blogs, podcasts, presentations and the likes about Camel done by people
-from the community.
+[source,bash]
+----
+curl -Ls https://sh.jbang.dev | bash -s - trust add https://github.com/apache/
+curl -Ls https://sh.jbang.dev | bash -s - app install --fresh --force camel@apache/camel
+----
+
+For Windows using Powershell
+
+[source,shell script]
+----
+iex "& { $(iwr https://ps.jbang.dev) } trust add https://github.com/apache/"
+iex "& { $(iwr https://ps.jbang.dev) } app install --fresh --force camel@apache/camel"
+----
+
+If it's your first time to install, you'll need to restart your shell.
+
+*Step 2*
+
+Create your first Camel integration
+
+[source,bash]
+----
+camel init hello.java
+----
+
+*Step 3*
+
+Run the Camel integration
+
+[source,bash]
+----
+camel run hello.java
+----
+
+Bang the Camel integration is now running.
+You can use `ctrl` + `c` to stop the integration.
+
+*Step 4*
+
+Camel makes it easy to change your code on the fly.
+You can run in live coding mode, as shown:
+
+[source,bash]
+----
+camel run hello.java --dev
+----
+
+While in live coding mode, whenever you save changes to `hello.java`, Camel will automatically load the updated version.
+
+*Step 5*
+
+Make sure to check out the xref:camel-jbang.adoc[Camel JBang] documentation, for more details on the powers
+of the Camel CLI. You will also find information how you can _export_ what you have built
+with the Camel CLI into a vanilla Camel Spring Boot or Camel Quarkus project.
+
+== Getting started with Camel using Karavan
+
+The https://github.com/apache/camel-karavan[Camel Karavan] is a toolkit for visually
+designing Camel integrations, it is fully integrated with xref:camel-jbang.adoc[Camel JBang]
+which allows users to easily try Camel while using the designer.
+
+== Alternative ways of getting started with Camel
+
+=== Adding Camel to an existing project
+
+You can add Camel to any Java project, such as adding the necessary Camel dependencies
+to the project build files (Maven or Gradle).
+
+=== Using IDE tooling wizards
+
+Some IDEs have wizards for creating new projects, of which, some have support for
+Apache Camel via Spring Boot Initializer or Code with Quarkus.
+
+=== Using Maven Archetypes
+
+Apache Camel comes with a set of xref:camel-maven-archetypes.adoc[Camel Maven Archetypes],
+you can use to create a new Camel project.
+
+=== Cloning an existing example to modify
+
+There are tons of Camel examples hosted on Github that you can clone and modify,
+such as https://github.com/apache/camel-spring-boot-examples[Camel Spring Boot examples].
+

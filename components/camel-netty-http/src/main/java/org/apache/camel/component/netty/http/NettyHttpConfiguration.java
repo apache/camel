@@ -17,11 +17,10 @@
 package org.apache.camel.component.netty.http;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import io.netty.channel.ChannelHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -31,6 +30,7 @@ import org.apache.camel.spi.UriPath;
  * Extended configuration for using HTTP with Netty.
  */
 @UriParams
+@Configurer
 public class NettyHttpConfiguration extends NettyConfiguration {
 
     @UriPath(enums = "http,https")
@@ -69,6 +69,10 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private int chunkedMaxContentLength = 1024 * 1024;
     @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+    @UriParam(label = "consumer,advanced", defaultValue = "4096")
+    private int maxInitialLineLength = 4096;
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
+    private int maxChunkSize = 8192;
     @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -91,10 +95,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
             // clone as NettyHttpConfiguration
             NettyHttpConfiguration answer = (NettyHttpConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<>(getEncoders());
-            answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<>(getDecoders());
-            answer.setDecoders(decodersCopy);
+            answer.setEncodersAsList(new ArrayList<>(getEncodersAsList()));
+            answer.setDecodersAsList(new ArrayList<>(getDecodersAsList()));
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -255,10 +257,11 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * If the option is true, the producer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for
-     * request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response
-     * back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding
-     * the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
+     * If the option is true, the producer will ignore the NettyHttpConstants.HTTP_URI header, and use the endpoint's
+     * URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault
+     * response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding
+     * (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed
+     * exchange).
      */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
@@ -320,6 +323,35 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public int getMaxHeaderSize() {
         return maxHeaderSize;
+    }
+
+    /**
+     * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or {@code "HTTP/1.0 200 OK"}) If the length
+     * of the initial line exceeds this value, a {@link TooLongFrameException} will be raised.
+     *
+     * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
+     */
+    public void setMaxInitialLineLength(int maxInitialLineLength) {
+        this.maxInitialLineLength = maxInitialLineLength;
+    }
+
+    public int getMaxInitialLineLength() {
+        return maxInitialLineLength;
+    }
+
+    /**
+     * The maximum length of the content or each chunk. If the content length (or the length of each chunk) exceeds this
+     * value, the content or chunk will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s whose
+     * length is {@code maxChunkSize} at maximum.
+     *
+     * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
+     */
+    public void setMaxChunkSize(int maxChunkSize) {
+        this.maxChunkSize = maxChunkSize;
+    }
+
+    public int getMaxChunkSize() {
+        return maxChunkSize;
     }
 
     /**

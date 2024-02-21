@@ -1,0 +1,1 @@
+../../../../../core/camel-core-languages/src/main/docs/modules/languages/pages/variable-language.adoc

@@ -23,6 +23,8 @@ public class JdbcComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "connectionstrategy":
+        case "connectionStrategy": target.setConnectionStrategy(property(camelContext, org.apache.camel.component.jdbc.ConnectionStrategy.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "lazystartproducer":
@@ -36,6 +38,8 @@ public class JdbcComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "connectionstrategy":
+        case "connectionStrategy": return org.apache.camel.component.jdbc.ConnectionStrategy.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
         case "lazystartproducer":
@@ -50,6 +54,8 @@ public class JdbcComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "connectionstrategy":
+        case "connectionStrategy": return target.getConnectionStrategy();
         case "datasource":
         case "dataSource": return target.getDataSource();
         case "lazystartproducer":

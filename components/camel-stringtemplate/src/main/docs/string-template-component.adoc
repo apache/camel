@@ -1,12 +1,14 @@
-[[string-template-component]]
 = String Template Component
-:docTitle: String Template
-:artifactId: camel-stringtemplate
+:doctitle: String Template
+:shortname: string-template
+:artifactid: camel-stringtemplate
 :description: Transform messages using StringTemplate engine.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/string-template.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: stringtemplate
 
 *Since Camel {since}*
 
@@ -32,7 +34,6 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------------------
 string-template:templateName[?options]
 --------------------------------------
@@ -40,69 +41,55 @@ string-template:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template.
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== Options
 
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The String Template component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The String Template endpoint is configured using URI syntax:
 
-----
-string-template:resourceUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
-|===
-
-
-=== Query Parameters (6 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *delimiterStart* (producer) | The variable start delimiter | < | char
-| *delimiterStop* (producer) | The variable end delimiter | > | char
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Headers
 
 Camel will store a reference to the resource in the message header with
 key, `org.apache.camel.stringtemplate.resource`. The Resource is an
 `org.springframework.core.io.Resource` object.
+
+== String Template Context
+
+Camel will provide exchange information in the String Template context (just a
+`Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
 
 == Hot reloading
 
@@ -115,18 +102,8 @@ This scenario can be used in production when the resource never changes.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|CamelStringTemplateResourceUri |String |A URI for the template resource to use instead of the
-endpoint configured.
-
-|CamelStringTemplateTemplate |String |The template to use instead of the endpoint configured.
-|=======================================================================
 
 == StringTemplate Attributes
 
@@ -147,7 +124,7 @@ exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
 
 == Samples
 
-For example you could use a string template as follows in order to
+For example, you could use a string template as follows in order to
 formulate a response to a message:
 
 [source,java]
@@ -158,11 +135,10 @@ from("activemq:My.Queue").
 
 == The Email Sample
 
-In this sample we want to use a string template to send an order
+In this sample, we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
 as:
 
-[source,java]
 --------------------------------------------
 Dear <headers.lastName>, <headers.firstName>
 
@@ -174,5 +150,4 @@ Regards Camel Riders Bookstore
 
 And the java code is as follows:
 
-
-include::camel-spring-boot::page$stringtemplate-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

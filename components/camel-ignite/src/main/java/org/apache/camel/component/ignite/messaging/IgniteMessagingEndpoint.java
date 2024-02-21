@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
+import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,13 +32,15 @@ import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_MESSAGING;
+
 /**
  * Send and receive messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
  *
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging",
-             syntax = "ignite-messaging:topic", category = { Category.MESSAGING })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_MESSAGING, title = "Ignite Messaging",
+             syntax = "ignite-messaging:topic", category = { Category.MESSAGING }, headersClass = IgniteConstants.class)
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -92,9 +95,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     private IgniteMessaging createIgniteMessaging() {
         Ignite ignite = ignite();
-        IgniteMessaging messaging = clusterGroupExpression == null
+        return clusterGroupExpression == null
                 ? ignite.message() : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
-        return messaging;
     }
 
     /**

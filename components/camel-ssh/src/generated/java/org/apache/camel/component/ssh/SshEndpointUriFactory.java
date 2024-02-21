@@ -19,49 +19,59 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
-        props.add("failOnUnknownHost");
+        Set<String> props = new HashSet<>(41);
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
-        props.add("shellPrompt");
+        props.add("bridgeErrorHandler");
+        props.add("certResource");
         props.add("certResourcePassword");
         props.add("channelType");
-        props.add("initialDelay");
-        props.add("keyPairProvider");
-        props.add("timeout");
-        props.add("scheduler");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("host");
+        props.add("ciphers");
+        props.add("clientBuilder");
+        props.add("compressions");
+        props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("failOnUnknownHost");
         props.add("greedy");
-        props.add("scheduledExecutorService");
+        props.add("host");
+        props.add("initialDelay");
+        props.add("kex");
+        props.add("keyPairProvider");
         props.add("keyType");
         props.add("knownHostsResource");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("sleepForShellPrompt");
-        props.add("pollCommand");
-        props.add("backoffIdleThreshold");
         props.add("lazyStartProducer");
-        props.add("delay");
+        props.add("macs");
+        props.add("password");
+        props.add("pollCommand");
         props.add("pollStrategy");
         props.add("port");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("shellPrompt");
+        props.add("signatures");
+        props.add("sleepForShellPrompt");
         props.add("startScheduler");
-        props.add("certResource");
-        props.add("exceptionHandler");
+        props.add("timeUnit");
+        props.add("timeout");
+        props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("password");
         secretProps.add("certResourcePassword");
+        secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -90,6 +100,11 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

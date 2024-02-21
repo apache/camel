@@ -1,0 +1,258 @@
+= Google Storage Component
+:doctitle: Google Storage
+:shortname: google-storage
+:artifactid: camel-google-storage
+:description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
+:since: 3.9
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-storage
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Storage component provides access to https://cloud.google.com/storage/[Google Cloud Storage] via
+the https://github.com/googleapis/java-storage[Google java storage library].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-storage</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+------------------------------------------------------
+
+[[GoogleStorage-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google Storage component authentication is targeted for use with the GCP Service Accounts.
+For more information, please refer to https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication[Google Storage Auth Guide].
+
+When you have the **service account key**, you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json";
+--------------------------------------------------------
+
+Or by providing the path to the GCP credentials file location:
+
+Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+
+--------------------------------------------------------
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+--------------------------------------------------------
+
+
+== URI Format
+
+--------------------------------------------------------
+google-storage://bucketNameOrArn?[options]
+--------------------------------------------------------
+
+By default, the bucket will be created if it doesn't already exist.
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
+
+For example, to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&objectName=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== Usage
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Google Storage Producer operations
+
+Google Storage component provides the following operations on the producer side:
+
+- `copyObject`
+- `listObjects`
+- `deleteObject`
+- `deleteBucket`
+- `listBuckets`
+- `getObject`
+- `createDownloadLink`
+
+If you don't specify an operation explicitly, the producer will a file upload.
+
+=== Advanced component configuration
+
+If you need to have more control over the `storageClient` instance configuration, you can create your own instance and refer to it in your Camel google-storage component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-storage://myCamelBucket?storageClient=#client")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Google Storage Producer Operation examples
+
+- File Upload: This operation will upload a file to the Google Storage based on the body content
+
+[source,java]
+--------------------------------------------------------------------------------
+//upload a file
+byte[] payload = "Camel rocks!".getBytes();
+ByteArrayInputStream bais = new ByteArrayInputStream(payload);
+from("direct:start")
+.process( exchange -> {
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
+    exchange.getIn().setBody(bais);    
+})
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+.log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
+--------------------------------------------------------------------------------
+
+This operation will upload the file `camel.txt` with the content `"Camel rocks!"` in the myCamelBucket bucket
+
+- `CopyObject`: this operation copies an object from one bucket to a different one
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process( exchange -> {
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.copyObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
+  })
+  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will copy the object with the name expressed in the header DESTINATION_OBJECT_NAME to the DESTINATION_BUCKET_NAME bucket, from the bucket myCamelBucket.
+
+- `DeleteObject`: this operation deletes an object from a bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process( exchange -> {
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
+    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
+  })
+  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the object from the bucket myCamelBucket.
+
+- `ListBuckets`: this operation lists the buckets for this account in this region
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the buckets for this account.
+
+- `DeleteBucket`: this operation deletes the bucket specified as URI parameter or header
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the bucket myCamelBucket.
+
+- `ListObjects`: this operation list object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the objects in the myCamelBucket bucket.
+
+- `GetObject`: this operation gets a single object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+.process( exchange -> {
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
+})
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a Blob object instance related to the `OBJECT_NAME` object in `myCamelBucket` bucket.
+
+- `CreateDownloadLink`: this operation will return a download link
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+.process( exchange -> {
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
+  exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
+})
+.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a download link url for the file OBJECT_NAME in the bucket myCamelBucket. It's possible to specify the expiration time for the created link through the header DOWNLOAD_LINK_EXPIRATION_TIME. If not specified, by default it is 5 minutes.
+
+== Bucket Auto creation
+
+With the option `autoCreateBucket` users are able to avoid the autocreation of a Bucket in case it doesn't exist. The default for this option is `true`.
+If set to false, any operation on a not-existent bucket won't be successful and an error will be returned.
+
+== MoveAfterRead consumer option
+
+In addition to `deleteAfterRead` it has been added another option, `moveAfterRead`.
+With this option enabled the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
+This will require specifying the destinationBucket option. As example:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"
+    + "&autoCreateBucket=true"
+    + "&destinationBucket=myCamelProcessedBucket"
+    + "&moveAfterRead=true"
+    + "&deleteAfterRead=true"
+    + "&includeBody=true"
+  )
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
+
+
+include::spring-boot:partial$starter.adoc[]

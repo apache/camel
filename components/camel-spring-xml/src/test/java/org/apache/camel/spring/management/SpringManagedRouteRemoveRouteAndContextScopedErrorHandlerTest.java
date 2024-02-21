@@ -18,16 +18,14 @@ package org.apache.camel.spring.management;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
+@DisabledOnOs(OS.AIX)
 public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest
         extends ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

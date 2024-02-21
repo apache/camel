@@ -46,7 +46,10 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql")
+        db = new EmbeddedDatabaseBuilder()
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql")
                 .build();
 
         super.setUp();
@@ -57,7 +60,9 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -91,7 +96,7 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

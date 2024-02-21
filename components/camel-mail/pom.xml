@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mail</artifactId>
@@ -32,9 +32,7 @@
     <description>Camel Mail support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}"
-        </camel.osgi.import.before.defaults>
+        <camel.surefire.fork.additional-vmargs>-Dfile.encoding=UTF-8</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -47,16 +45,9 @@
             <artifactId>camel-attachments</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>${jakarta-mail-version}</version>
-            <exclusions>
-                <!-- javax activation is part of the JDK now -->
-                <exclusion>
-                    <groupId>com.sun.activation</groupId>
-                    <artifactId>jakarta.activation</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -71,15 +62,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>${mock-javamail-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>${greenmail-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -88,18 +73,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -110,6 +92,13 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -119,7 +108,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>unpack</id>
@@ -130,9 +118,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.sun.mail</groupId>
-                                    <artifactId>jakarta.mail</artifactId>
-                                    <version>${jakarta-mail-version}</version>
+                                    <groupId>org.eclipse.angus</groupId>
+                                    <artifactId>angus-mail</artifactId>
+                                    <version>${angus-mail-version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${project.basedir}/src/generated/resources</outputDirectory>
                                     <includes>
@@ -144,14 +132,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                </configuration>
             </plugin>
         </plugins>
     </build>

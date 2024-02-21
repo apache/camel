@@ -51,10 +51,7 @@ public final class InetAddressUtil {
         } catch (UnknownHostException uhe) {
             String host = uhe.getMessage(); // host = "hostname: hostname"
             if (host != null) {
-                int colon = host.indexOf(':');
-                if (colon > 0) {
-                    return host.substring(0, colon);
-                }
+                return StringHelper.before(host, ":");
             }
             throw uhe;
         }
@@ -79,7 +76,7 @@ public final class InetAddressUtil {
     public static String getLocalHostNameSafe() {
         try {
             return getLocalHostName();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;

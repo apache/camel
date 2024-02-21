@@ -16,16 +16,26 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsInOnlyWithReplyToDisabledTest extends AbstractJMSTest {
 
-public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
@@ -35,33 +45,42 @@ public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&disableReplyTo=true")
+                        .to("activemq:queue:JmsInOnlyWithReplyToDisabledTestRequest?replyTo=queue:JmsInOnlyWithReplyToDisabledTestReply&disableReplyTo=true")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToDisabledTestRequest")
                         .to("mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:bar")
+                from("activemq:queue:JmsInOnlyWithReplyToDisabledTestReply")
                         .to("mock:bar");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

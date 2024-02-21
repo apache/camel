@@ -18,7 +18,7 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import java.util.Objects;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
@@ -35,7 +35,7 @@ public final class ComponentDslBuilderFactoryGenerator {
 
     private final ComponentModel componentModel;
     private final String packageName;
-    private JavaClass javaClass;
+    private final JavaClass javaClass;
     private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
     private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
 

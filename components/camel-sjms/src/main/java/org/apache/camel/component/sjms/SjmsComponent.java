@@ -19,7 +19,8 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
@@ -56,7 +57,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
     @Metadata(label = "advanced",
               description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
-                            + " of javax.jms.Message objects when Camel is sending a JMS message.")
+                            + " of jakarta.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @Metadata(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
               description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
@@ -70,6 +71,10 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced", defaultValue = "1",
               description = "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
     private int replyToOnTimeoutMaxConcurrentConsumers = 1;
+
+    @Metadata(label = "advanced",
+              description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
+    private ExceptionListener exceptionListener;
 
     public SjmsComponent() {
     }
@@ -87,6 +92,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         endpoint.setRecoveryInterval(recoveryInterval);
         endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
         endpoint.setClientId(clientId);
+        endpoint.setExceptionListener(exceptionListener);
         if (getHeaderFilterStrategy() != null) {
             endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
@@ -144,6 +150,14 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return exceptionListener;
     }
 
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {

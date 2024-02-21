@@ -16,10 +16,12 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.Ordered;
+
 /**
  * Strategy for {@link RouteBuilder} lifecycle notifications.
  */
-public interface RouteBuilderLifecycleStrategy {
+public interface RouteBuilderLifecycleStrategy extends Ordered {
     /**
      * This method is invoked before the {@link RouteBuilder#configure()} method is invoked.
      */
@@ -30,5 +32,17 @@ public interface RouteBuilderLifecycleStrategy {
      * This method is invoked after the {@link RouteBuilder#configure()} method is invoked.
      */
     default void afterConfigure(RouteBuilder builder) {
+    }
+
+    /**
+     * Gets the order.
+     * <p/>
+     * Default to {@link Ordered#LOWEST}.
+     *
+     * @return the order
+     */
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST;
     }
 }

@@ -28,6 +28,8 @@ public class LraConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 
+    @Metadata(defaultValue = "false")
+    private boolean enabled;
     private String coordinatorUrl;
     @Metadata(defaultValue = "/lra-coordinator")
     private String coordinatorContextPath = "/lra-coordinator";
@@ -46,6 +48,17 @@ public class LraConfigurationProperties implements BootstrapCloseable {
     @Override
     public void close() {
         parent = null;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * To enable Saga LRA
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getCoordinatorUrl() {
@@ -101,6 +114,14 @@ public class LraConfigurationProperties implements BootstrapCloseable {
      */
     public LraConfigurationProperties withCoordinatorUrl(String coordinatorUrl) {
         this.coordinatorUrl = coordinatorUrl;
+        return this;
+    }
+
+    /**
+     * To enable Saga LRA
+     */
+    public LraConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 

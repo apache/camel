@@ -16,55 +16,57 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpHeaderCaseTest extends BaseJettyTest {
 
     @Test
     public void testHttpHeaderCase() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost method = new HttpPost("http://localhost:" + getPort() + "/myapp/mytest");
 
         method.addHeader("clientHeader", "fooBAR");
         method.addHeader("OTHER", "123");
         method.addHeader("beer", "Carlsberg");
 
-        HttpResponse response = client.execute(method);
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(method)) {
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-        assertEquals("Bye World", responseString);
-        assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
-        assertEquals("456DEf", response.getFirstHeader("otherCaseHeader").getValue());
+            assertEquals("Bye World", responseString);
+            assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
+            assertEquals("456DEf", response.getFirstHeader("otherCaseHeader").getValue());
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
 
                         // headers received should be in case as well
-                        Map<String, Object> map = new LinkedHashMap<>();
-                        map.putAll(exchange.getIn().getHeaders());
+                        Map<String, Object> map = new LinkedHashMap<>(exchange.getIn().getHeaders());
 
                         assertEquals("123", map.get("OTHER"));
-                        assertEquals(null, map.get("other"));
+                        assertNull(map.get("other"));
                         assertEquals("Carlsberg", map.get("beer"));
-                        assertEquals(null, map.get("Beer"));
+                        assertNull(map.get("Beer"));
 
                         exchange.getMessage().setBody("Bye World");
                         exchange.getMessage().setHeader("MyCaseHeader", "aBc123");

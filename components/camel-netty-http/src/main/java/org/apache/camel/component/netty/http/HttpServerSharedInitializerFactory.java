@@ -84,7 +84,8 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
+        pipeline.addLast("decoder", new HttpRequestDecoder(
+                configuration.getMaxInitialLineLength(), configuration.getMaxHeaderSize(), configuration.getMaxChunkSize()));
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
             pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
@@ -109,15 +110,8 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(null);
         } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase() == null) {
-                LOG.debug("passphrase is null");
-            }
+            InitializerHelper.logConfiguration(configuration);
+
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
@@ -143,7 +137,7 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand() {
         if (!configuration.isSsl()) {
             return null;
         }

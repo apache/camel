@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.strategy;
 
-import java.util.List;
-
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -76,8 +74,9 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
 
             long newLastModified = 0;
             long newLength = 0;
-            List files; // operations.listFiles returns List<SftpRemoteFile> so
-                       // do not use generic in the List files
+            // operations.listFiles returns SftpRemoteFile[] so
+            // do not use generic in the List files
+            Object[] files;
             if (fastExistsCheck) {
                 // use the absolute file path to only pickup the file we want to
                 // check, this avoids expensive
@@ -105,7 +104,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
                     files = operations.listFiles(path);
                 }
             }
-            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
             for (Object f : files) {
                 SftpRemoteFile rf = (SftpRemoteFile) f;
                 boolean match;
@@ -127,8 +126,8 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
-                    || (minAge != 0 && newLastModified < newOlderThan))) {
+            if (newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
+                    || minAge != 0 && newLastModified < newOlderThan)) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -154,6 +153,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
             Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return true;
         }

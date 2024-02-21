@@ -73,18 +73,46 @@ public class LogInputStreamTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testE() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:e");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World");
+
+        InputStream is = new ByteArrayInputStream("Hello World".getBytes());
+        template.sendBody("direct:e", is);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testF() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:f");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World");
+
+        InputStream is = new ByteArrayInputStream("Hello World".getBytes());
+        template.sendBody("direct:f", is);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").to("log:a").to("mock:a");
+                from("direct:a").noStreamCaching().to("log:a").to("mock:a");
 
-                from("direct:b").to("log:b?showStreams=true").to("mock:b");
+                from("direct:b").noStreamCaching().to("log:b?showStreams=true").to("mock:b");
 
                 from("direct:c").streamCaching().to("log:c").to("mock:c");
 
                 from("direct:d").streamCaching().to("log:d?showStreams=true").to("mock:d");
+
+                from("direct:e").streamCaching().to("log:e?showCachedStreams=true").to("mock:e");
+
+                from("direct:f").streamCaching().to("log:f?showCachedStreams=false").to("mock:f");
             }
         };
     }

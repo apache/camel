@@ -54,14 +54,29 @@ public interface InternalProcessor extends AsyncProcessor {
      */
     <T> T getAdvice(Class<T> type);
 
+    /**
+     * Adds advice for handling {@link RoutePolicy} for the route
+     */
     void addRoutePolicyAdvice(List<RoutePolicy> routePolicyList);
 
+    /**
+     * Adds advice for tracking inflight exchanges for the given route
+     */
     void addRouteInflightRepositoryAdvice(InflightRepository inflightRepository, String routeId);
 
+    /**
+     * Add advice for setting up {@link UnitOfWork} with the lifecycle of the route.
+     */
     void addRouteLifecycleAdvice();
 
+    /**
+     * Add advice for JMX management for the route
+     */
     void addManagementInterceptStrategy(ManagementInterceptStrategy.InstrumentationProcessor processor);
 
+    /**
+     * To make it possible for advices to access the created route.
+     */
     void setRouteOnAdvices(Route route);
 
 }

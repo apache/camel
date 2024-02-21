@@ -35,8 +35,10 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected boolean consumerOnly;
     protected boolean producerOnly;
     protected boolean lenientProperties;
+    protected boolean remote;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
+    protected final List<EndpointHeaderModel> headers = new ArrayList<>();
     // lets sort apis A..Z so they are always in the same order
     protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
 
@@ -136,6 +138,14 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
         this.lenientProperties = lenientProperties;
     }
 
+    public boolean isRemote() {
+        return remote;
+    }
+
+    public void setRemote(boolean remote) {
+        this.remote = remote;
+    }
+
     public String getVerifiers() {
         return verifiers;
     }
@@ -160,6 +170,14 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
         endpointOptions.add(option);
     }
 
+    public List<EndpointHeaderModel> getEndpointHeaders() {
+        return headers;
+    }
+
+    public void addEndpointHeader(EndpointHeaderModel header) {
+        headers.add(header);
+    }
+
     public List<EndpointOptionModel> getEndpointParameterOptions() {
         return endpointOptions.stream()
                 .filter(o -> "parameter".equals(o.getKind()))
@@ -174,6 +192,22 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public Collection<ApiModel> getApiOptions() {
         return apiOptions;
+    }
+
+    public static class EndpointHeaderModel extends BaseOptionModel {
+
+        /**
+         * The name of the constant that defines the header.
+         */
+        private String constantName;
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
     }
 
     public static class ComponentOptionModel extends BaseOptionModel {

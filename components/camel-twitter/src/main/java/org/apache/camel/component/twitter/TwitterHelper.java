@@ -22,7 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.DefaultTwitterConsumer;
-import twitter4j.User;
+import twitter4j.v1.User;
 
 public final class TwitterHelper {
     private TwitterHelper() {

@@ -16,15 +16,21 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for the MLLP Protocol and the Camel MLLP component.
  */
 public final class MllpConstants {
+    @Metadata(description = "The local TCP Address of the Socket", javaType = "String")
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
+    @Metadata(description = "The remote TCP Address of the Socket", javaType = "String")
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
-
+    @Metadata(description = "The HL7 Acknowledgment received in bytes", javaType = "byte[]")
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
+    @Metadata(description = "The HL7 Acknowledgment received, converted to a String", javaType = "String")
     public static final String MLLP_ACKNOWLEDGEMENT_STRING = "CamelMllpAcknowledgementString";
+    @Metadata(description = "The HL7 acknowledgement type (AA, AE, AR, etc)", javaType = "String")
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
     public static final String MLLP_ACKNOWLEDGEMENT_MSA_TEXT = "CamelMllpAcknowledgementMsaText";
 
@@ -40,31 +46,44 @@ public final class MllpConstants {
     public static final String MLLP_CLOSE_CONNECTION_AFTER_SEND = "CamelMllpCloseConnectionAfterSend";
     public static final String MLLP_RESET_CONNECTION_AFTER_SEND = "CamelMllpResetConnectionAfterSend";
 
-    // MSH-3
+    /** MSH-3 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication";
-    // MSH-4
+    /** MSH-4 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SENDING_FACILITY = "CamelMllpSendingFacility";
-    // MSH-5
+    /** MSH-5 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_RECEIVING_APPLICATION = "CamelMllpReceivingApplication";
-    // MSH-6
+    /** MSH-6 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_RECEIVING_FACILITY = "CamelMllpReceivingFacility";
-    // MSH-7
+    /** MSH-7 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_TIMESTAMP = "CamelMllpTimestamp";
-    // MSH-8
+    /** MSH-8 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SECURITY = "CamelMllpSecurity";
-    // MSH-9
+    /** MSH-9 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType";
-    // MSH-9.1
+    /** MSH-9.1 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_EVENT_TYPE = "CamelMllpEventType";
-    // MSH-9.2
+    /** MSH-9.2 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent";
-    // MSH-10
+    /** MSH-10 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControlId";
-    // MSH-11
+    /** MSH-11 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId";
-    // MSH-12
+    /** MSH-12 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_VERSION_ID = "CamelMllpVersionId";
-    // MSH-18
+    /** MSH-18 value */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_CHARSET = "CamelMllpCharset";
 
     private MllpConstants() {

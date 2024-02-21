@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Tag;
@@ -43,17 +41,6 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     public AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
         this.session = session;
         this.config = config;
-    }
-
-    protected Message getResponseMessage(Exchange exchange) {
-        Message message;
-        if (exchange.getPattern().isOutCapable()) {
-            message = exchange.getOut();
-        } else {
-            message = exchange.getIn();
-        }
-
-        return message;
     }
 
     protected List<OptionalParameter> createOptionalParametersByCode(Map<Short, Object> optinalParamaters) {
@@ -119,13 +106,13 @@ public abstract class AbstractSmppCommand implements SmppCommand {
                 if (ancestorClasses.contains(OctetString.class)) {
                     optParam = (OptionalParameter) type.getConstructor(byte[].class).newInstance(value.getBytes());
                 } else if (ancestorClasses.contains(OptionalParameter.Byte.class)) {
-                    Byte byteValue = (value == null) ? 0 : Byte.valueOf(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    Byte byteValue = (value == null) ? 0 : Byte.parseByte(value); // required because jsmpp 2.1.1 interpreted null as 0
                     optParam = (OptionalParameter) type.getConstructor(byte.class).newInstance(byteValue);
                 } else if (ancestorClasses.contains(OptionalParameter.Int.class)) {
-                    Integer intValue = (value == null) ? 0 : Integer.valueOf(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    Integer intValue = (value == null) ? 0 : Integer.parseInt(value); // required because jsmpp 2.1.1 interpreted null as 0
                     optParam = (OptionalParameter) type.getConstructor(int.class).newInstance(intValue);
                 } else if (ancestorClasses.contains(OptionalParameter.Short.class)) {
-                    Short shortValue = (value == null) ? 0 : Short.valueOf(value); // required because jsmpp 2.1.1 interpreted null as 0
+                    Short shortValue = (value == null) ? 0 : Short.parseShort(value); // required because jsmpp 2.1.1 interpreted null as 0
                     optParam = (OptionalParameter) type.getConstructor(short.class).newInstance(shortValue);
                 }
 

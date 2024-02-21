@@ -1,37 +1,35 @@
-[[hl7terser-language]]
 = HL7 Terser Language
-:docTitle: HL7 Terser
-:artifactId: camel-hl7
-:description: Get the value of an HL7 message field specified by terse location specification syntax.
+:doctitle: HL7 Terser
+:shortname: hl7terser
+:artifactid: camel-hl7
+:description: Get the value of a HL7 message field specified by terse location specification syntax.
 :since: 2.11
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/hl7terser.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: hl7
 
 *Since Camel {since}*
 
-http://hl7api.sourceforge.net[HAPI] provides a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
+https://hapifhir.github.io/hapi-hl7v2/[HAPI] provides a
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
 class that provides access to fields using a commonly used terse
-location specification syntax. The Terser language allows to use this
-syntax to extract values from messages and to use them as expressions
-and predicates for filtering, content-based routing etc.
+location specification syntax.
+The HL7 Terser language allows using this
+syntax to extract values from HL7 messages and to use them as expressions
+and predicates for filtering, content-based routing, etc.
 
 == HL7 Terser Language options
 
 // language options: START
-The HL7 Terser language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 
-== Samples:
+== Example
+
+In the example below, we want to set a header with the patent id
+from field QRD-8 in the QRY_A19 message:
 
 [source,java]
 ----
@@ -48,13 +46,14 @@ from("direct:test2")
    .to("mock:test2");
 ----
 
-== HL7 Validation predicate
+== HL7 Validation
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext].
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext].
 
-Sample:
+The example below shows how to do that. Notice how we use the static method `messageConformsTo`
+which validates that the message is a HL7v2 message.
 
 [source,java]
 ----
@@ -64,22 +63,22 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 // Use standard or define your own validation rules
 ValidationContext defaultContext = new DefaultValidation();
 
-// Throws PredicateValidationException if message does not validate
+// Throws PredicateValidationException if a message does not validate
 from("direct:test1")
    .validate(messageConformsTo(defaultContext))
    .to("mock:test1");
 ----
 
-== HL7 Validation predicate using the HapiContext
+=== HL7 Validation using the HapiContext
 
 The HAPI Context is always configured with a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
 (or a
-http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html[ValidationRuleBuilder]),
-so you can access the validation rules indirectly. Furthermore, when
-unmarshalling the HL7DataFormat forwards the configured HAPI context in
-the `CamelHL7Context` header, and the validation rules of this context
-can be easily reused:
+https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html[ValidationRuleBuilder]),
+so you can access the validation rules indirectly.
+
+Furthermore, when unmarshalling the HL7 data format forwards the configured HAPI context in
+the `CamelHL7Context` header, and the validation rules of this context can be reused:
 
 [source,java]
 ----
@@ -89,7 +88,7 @@ import static org.apache.camel.component.hl7.HL7.messageConforms;
 HapiContext hapiContext = new DefaultHapiContext();
 hapiContext.getParserConfiguration().setValidating(false); // don't validate during parsing
 
-// customize HapiContext some more ... e.g. enforce that PID-8 in ADT_A01 messages of version 2.4 is not empty
+// customize HapiContext some more ... e.g., enforce that PID-8 in ADT_A01 messages of version 2.4 is not empty
 ValidationRuleBuilder builder = new ValidationRuleBuilder() {
    @Override
    protected void configure() {
@@ -106,14 +105,14 @@ hl7.setHapiContext(hapiContext);
 from("direct:test1")
   .unmarshal(hl7)                // uses the GenericParser returned from the HapiContext
   .validate(messageConforms())   // uses the validation rules returned from the HapiContext
-                                    // equivalent with .validate(messageConformsTo(hapiContext))
+                                 // equivalent with .validate(messageConformsTo(hapiContext))
    // route continues from here
 ----
 
 == HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
-message as response to an incoming HL7v2 message, e.g. based on a
+message as a response to an incoming HL7v2 message, e.g., based on a
 validation result. The `ack` expression lets us accomplish this very
 elegantly:
 
@@ -138,4 +137,21 @@ from("direct:test1")
   .transform(ack())
 ----
 
-include::camel-spring-boot::page$hl7-starter.adoc[]
+=== Custom Acknowledgement for MLLP
+
+In special situations, you may want to set a custom acknowledgement without using Exceptions.
+This can be achieved using the `ack` expression:
+
+[source,java]
+----
+import org.apache.camel.component.mllp.MllpConstants;
+import ca.uhn.hl7v2.AcknowledgmentCode;
+import ca.uhn.hl7v2.ErrorCode;
+
+// In process block
+exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT,
+  ack(AcknowledgmentCode.AR, "Server didn't accept this message", ErrorCode.UNKNOWN_KEY_IDENTIFIER).evaluate(exchange, Object.class)
+----
+
+
+include::spring-boot:partial$starter.adoc[]

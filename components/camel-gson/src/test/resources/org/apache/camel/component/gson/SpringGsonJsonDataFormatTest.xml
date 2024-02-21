@@ -30,8 +30,9 @@
         <!-- we define the json jackson data formats to be used -->
         <dataFormats>
             <!-- this one uses our own TestPojo class as unmarshal type -->
-            <json id="gson" library="Gson" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
-            <json id="pretty" library="Gson" prettyPrint="true" unmarshalTypeName="org.apache.camel.component.gson.TestPojo"/>
+            <json id="gson" library="Gson" unmarshalType="org.apache.camel.component.gson.TestPojo"/>
+            <json id="pretty" library="Gson" prettyPrint="true" unmarshalType="org.apache.camel.component.gson.TestPojo"/>
+            <json id="format_date" library="Gson" dateFormatPattern="yyyy-MM-dd" unmarshalType="org.apache.camel.component.gson.TestPojo"/>
         </dataFormats>
 
         <route>
@@ -53,6 +54,17 @@
         <route>
             <from uri="direct:backPretty"/>
             <unmarshal><custom ref="pretty"/></unmarshal>
+            <to uri="mock:reversePojo"/>
+        </route>
+
+        <route>
+            <from uri="direct:inFormatDate"/>
+            <marshal><custom ref="format_date"/></marshal>
+        </route>
+
+        <route>
+            <from uri="direct:backFormatDate"/>
+            <unmarshal><custom ref="format_date"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 

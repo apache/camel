@@ -1,0 +1,160 @@
+= Vert.x HTTP Client Component
+:doctitle: Vert.x HTTP Client
+:shortname: vertx-http
+:artifactid: camel-vertx-http
+:description: Send requests to external HTTP servers using Vert.x
+:since: 3.5
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: vertx-http
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The https://vertx.io/[Vert.x] HTTP component provides the capability to produce messages to HTTP endpoints via the https://vertx.io/docs/vertx-web-client/java/[Vert.x Web Client].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-vertx-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+---------------------------
+vertx-http:hostname[:port][/resourceUri][?options]
+---------------------------
+
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+The following example shows how to send a request to an HTTP endpoint.
+
+You can override the URI configured on the `vertx-http` producer via headers `Exchange.HTTP_URI` and `Exchange.HTTP_PATH`.
+
+[source,java]
+----
+from("direct:start")
+    .to("vertx-http:https://camel.apache.org");
+----
+
+== URI Parameters
+
+The `vertx-http` producer supports URI parameters to be sent to the HTTP
+server. The URI parameters can either be set directly on the endpoint
+URI, or as a header with the key `Exchange.HTTP_QUERY` on the message.
+
+== Response code
+
+Camel will handle according to the HTTP response code:
+
+* Response code is in the range 100..299, Camel regards it as a success
+response.
+* Response code is in the range 300..399, Camel regards it as a
+redirection response and will throw a `HttpOperationFailedException`
+with the information.
+* Response code is 400+, Camel regards it as an external server failure
+and will throw a `HttpOperationFailedException` with the information.
+
+== throwExceptionOnFailure
+
+The option, `throwExceptionOnFailure`, can be set to `false` to prevent
+the `HttpOperationFailedException` from being thrown for failed response
+codes. This allows you to get any response from the remote server.
+
+== Exceptions
+
+`HttpOperationFailedException` exception contains the following information:
+
+* The HTTP status code
+* The HTTP status line (text of the status code)
+* Redirect location, if server returned a redirect
+* Response body as a `java.lang.String`, if server provided a body as
+response
+
+== HTTP method
+
+The following algorithm determines the HTTP method to be used: +
+1. Use method provided as endpoint configuration (`httpMethod`). +
+2. Use method provided in header (`Exchange.HTTP_METHOD`). +
+3. `GET` if query string is provided in header. +
+4. `GET` if endpoint is configured with a query string. +
+5. `POST` if there is data to send (body is not `null`). +
+6. `GET` otherwise.
+
+== HTTP form parameters
+
+You can send HTTP form parameters in one of two ways.
+
+1. Set the `Exchange.CONTENT_TYPE` header to the value `application/x-www-form-urlencoded` and ensure the message
+body is a `String` formatted as form variables. For example `param1=value1&param2=value2`.
+
+2. Set the message body as a https://vertx.io/docs/apidocs/io/vertx/core/MultiMap.html[MultiMap] which allows you to
+configure form parameter names and values.
+
+== Multipart form data
+
+You can upload text or binary files by setting the message body as a https://vertx.io/docs/apidocs/io/vertx/ext/web/multipart/MultipartForm.html[MultipartForm].
+
+== Customizing Vert.x Web Client options
+
+When finer control of the Vert.x Web Client configuration is required, you can bind a custom https://vertx.io/docs/apidocs/io/vertx/ext/web/client/WebClientOptions.html[WebClientOptions]
+instance to the registry.
+
+[source,java]
+---------------------------
+WebClientOptions options = new WebClientOptions().setMaxRedirects(5)
+    .setIdleTimeout(10)
+    .setConnectTimeout(3);
+
+camelContext.getRegistry.bind("clientOptions", options);
+---------------------------
+
+Then reference the options on the `vertx-http` producer.
+
+[source,java]
+---------------------------
+from("direct:start")
+    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions")
+---------------------------
+
+== SSL
+
+The Vert.x HTTP component supports SSL/TLS configuration through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
+
+It is also possible to configure SSL options by providing a custom `WebClientOptions`.
+
+== Session Management
+
+Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.
+This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
+
+
+include::spring-boot:partial$starter.adoc[]

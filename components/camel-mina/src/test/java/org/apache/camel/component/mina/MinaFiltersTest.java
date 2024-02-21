@@ -60,7 +60,7 @@ public class MinaFiltersTest extends BaseMinaTest {
     private void testFilter(final String uri) throws Exception {
         context.addRoutes(new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri).to("mock:result");
             }
         });
@@ -77,7 +77,7 @@ public class MinaFiltersTest extends BaseMinaTest {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(2, TestFilter.called, "The filter should have been called twice (producer and consumer)");
 
@@ -85,7 +85,7 @@ public class MinaFiltersTest extends BaseMinaTest {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         IoFilter myFilter = new TestFilter();
         List<IoFilter> myFilters = new ArrayList<>();
         myFilters.add(myFilter);
@@ -99,7 +99,7 @@ public class MinaFiltersTest extends BaseMinaTest {
         public static volatile int called;
 
         @Override
-        public void sessionCreated(NextFilter nextFilter, IoSession session) throws Exception {
+        public void sessionCreated(NextFilter nextFilter, IoSession session) {
             incCalled();
             nextFilter.sessionCreated(session);
         }

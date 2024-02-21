@@ -100,7 +100,7 @@ public class DomainProducer extends AbstractKeystoneProducer {
     private Domain messageToDomain(Message message) {
         Domain domain = message.getBody(Domain.class);
         if (domain == null) {
-            Map headers = message.getHeaders();
+            Map<String, Object> headers = message.getHeaders();
             DomainBuilder builder = Builders.domain();
 
             StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");

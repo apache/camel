@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 /**
  * The parsing issue when field ends with separator is fixed by updating BindyCvsDataFormat.unquoteTokens(..)<br>
  * See capture.png<br>
- * 
+ *
  * The suggested update does fix only the separator at the end of field. !!! The separator in the beginning of the
  * quoted field is still not handled.
  *
@@ -89,7 +89,7 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
         ctx.start();
 
         // TODO The separator in the beginning of the quoted field is still not handled.
-        // We may need to convert the separators in the quote into some kind of safe code 
+        // We may need to convert the separators in the quote into some kind of safe code
         String addressLine1 = ",8506 SIX FORKS ROAD,";
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
@@ -107,7 +107,7 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
     private RouteBuilder createRoute() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:fromCsv").unmarshal().bindy(BindyType.Csv, MyCsvRecord.class)
                         .setProperty("addressLine1", simple("${in.body.addressLine1}"))
                         .setProperty("addressLine2", simple("${in.body.addressLine2}")).log("${in.body}")

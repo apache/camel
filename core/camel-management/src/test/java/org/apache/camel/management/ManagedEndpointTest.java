@@ -22,24 +22,23 @@ import javax.management.ObjectName;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedEndpointTest extends ManagementTestSupport {
 
     @Test
     public void testManageEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://test\"");
+        ObjectName on = getCamelObjectName(TYPE_ENDPOINT, "seda://test");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        on = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
         assertTrue(mbeanServer.isRegistered(on));
     }
 

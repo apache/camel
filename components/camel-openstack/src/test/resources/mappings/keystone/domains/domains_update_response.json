@@ -1,0 +1,18 @@
+{
+  "id" : "b09c0fc6-26bd-4152-877d-4a2c61478759",
+  "name" : "domains_update_response.json",
+  "request" : {
+    "url" : "/v3/domains/98c110ae41c249189c9d5c25d8377b65",
+    "method" : "PATCH"
+  },
+  "response" : {
+    "body": "{\"domain\":{\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/domains\/98c110ae41c249189c9d5c25d8377b65\"},\"enabled\":true,\"description\":\"An updated domain used for CRUD tests\",\"name\":\"Domain_CRUD\",\"id\":\"98c110ae41c249189c9d5c25d8377b65\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "b09c0fc6-26bd-4152-877d-4a2c61478759",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

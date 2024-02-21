@@ -19,7 +19,6 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,18 +26,11 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
-        super.setUp();
-    }
-
     @Test
     public void testRunLoggingLevel() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +40,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/files?runLoggingLevel=INFO&initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("?runLoggingLevel=INFO&initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +46,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
 
         template.sendBody("direct:start", "World\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(notify.matchesWaitTime());
 
@@ -56,15 +57,15 @@ public class NettyReuseChannelTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");
@@ -74,7 +75,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");

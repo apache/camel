@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -32,12 +32,9 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
     public void testBadFirstMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
-        try {
-            template.sendBody("direct:start", "A");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
+                "Should have thrown an exception");
+
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
@@ -50,12 +47,9 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
-        try {
-            template.sendBody("direct:start", "A");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
+                "Should have thrown an exception");
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
@@ -68,12 +62,10 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
 
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
-        try {
-            template.sendBody("direct:start", "A");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
+                "Should have thrown an exception");
+
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
         assertMockEndpointsSatisfied();
@@ -86,12 +78,9 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
-        try {
-            template.sendBody("direct:start", "A");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
+                "Should have thrown an exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -100,8 +89,8 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:start").resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
+            public void configure() {
+                from("direct:start").resequence(header("seqno")).stream().timeout(150).deliveryAttemptInterval(10)
                         .to("mock:result");
             }
         };

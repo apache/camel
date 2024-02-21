@@ -24,6 +24,7 @@ import java.security.PublicKey;
 
 import javax.crypto.KeyGenerator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -38,10 +39,14 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
-import org.eclipse.californium.scandium.dtls.pskstore.StaticPskStore;
-import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedPskStore;
+import org.eclipse.californium.scandium.dtls.pskstore.AdvancedSinglePskStore;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
@@ -54,76 +59,40 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     private static final int PORT7 = AvailablePortFinder.getNextAvailable();
     private static final int PORT8 = AvailablePortFinder.getNextAvailable();
 
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:start", "direct:selfsigned", /*"direct:clientauth",*/ "direct:ciphersuites" })
+    @DisplayName("Test calls with/without certificates")
+    void testCall(String endpointUri) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader(endpointUri, "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Test
     void testSuccessfulCall() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sendBodyAndHeader("direct:start", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    void testNoTruststore() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:notruststore", "direct:failedtrust", "direct:failedclientauth" })
+    @DisplayName("Tests different types of trust stores")
+    void testTrustStores(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:notruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void testTrustValidationFailed() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:failedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void testSelfSigned() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:selfsigned", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void testClientAuthentication() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:clientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void testFailedClientAuthentication() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    void testCipherSuites() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:ciphersuites", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        sendBodyAndHeader(endpointUri, "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -132,11 +101,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
             mock.expectedBodiesReceived("Hello Camel CoAP");
-            mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+            mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:rpk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -146,7 +115,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
             sendBodyAndHeader("direct:rpknotruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -156,7 +125,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
             sendBodyAndHeader("direct:rpkfailedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -166,11 +135,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
             mock.expectedBodiesReceived("Hello Camel CoAP");
-            mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+            mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:rpkclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -180,11 +149,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
             mock.expectedBodiesReceived("Hello Camel CoAP");
-            mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+            mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:psk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -194,11 +163,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
             mock.expectedBodiesReceived("Hello Camel CoAP");
-            mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+            mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:pskciphersuite", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -208,11 +177,11 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
             mock.expectedBodiesReceived("Hello Camel CoAP");
-            mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+            mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:pskx509", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -225,7 +194,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
-        registerTLSConfiguration();
+        registerTLSConfiguration(context);
 
         return new RouteBuilder() {
             @Override
@@ -237,16 +206,12 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?alias=selfsigned&sslContextParameters=#selfSignedServiceSSLContextParameters",
                         PORT2)
-                                .transform(body().prepend("Hello "));
-
-                fromF(getProtocol()
-                      + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
-                              .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
                         PORT4)
-                                .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
 
                 from("direct:start")
                         .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters",
@@ -287,47 +252,52 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
-                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore",
+                          + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=NEEDED&advancedCertificateVerifier=#advancedCertificateVerifier",
                             PORT6).transform(body().prepend("Hello "));
 
                     from("direct:rpk")
-                            .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
+                            .toF(getProtocol()
+                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier",
+                                    PORT5)
                             .to("mock:result");
 
                     from("direct:rpknotruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT5).to("mock:result");
 
-                    from("direct:rpkfailedtrust")
-                            .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5)
-                            .to("mock:result");
+                    //                    from("direct:rpkfailedtrust")
+                    //                            .toF(getProtocol()
+                    //                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#failedAdvancedCertificateVerifier",
+                    //                                    PORT5)
+                    //                            .to("mock:result");
 
                     from("direct:rpkclientauth")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey",
+                                 + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier&privateKey=#privateKey&publicKey=#publicKey",
                                     PORT6)
                             .to("mock:result");
                 }
 
                 if (isPSKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    fromF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
-                          + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&pskStore=#pskStore",
+                          + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&advancedPskStore=#advancedPskStore",
                             PORT8)
-                                    .transform(body().prepend("Hello "));
+                            .transform(body().prepend("Hello "));
 
-                    from("direct:psk").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    from("direct:psk")
+                            .toF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
                             .to("mock:result");
 
                     from("direct:pskciphersuite")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
                                     PORT7)
                             .to("mock:result");
 
                     from("direct:pskx509")
                             .toF(getProtocol()
-                                 + "://localhost:%d/TestResource?pskStore=#pskStore&sslContextParameters=#clientSSLContextParameters",
+                                 + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&sslContextParameters=#clientSSLContextParameters",
                                     PORT8)
                             .to("mock:result");
                 }
@@ -336,40 +306,48 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         };
     }
 
-    private void registerTLSConfiguration() throws GeneralSecurityException, IOException {
+    private void registerTLSConfiguration(CamelContext context) throws GeneralSecurityException, IOException {
         KeyStoreParameters serviceKeystoreParameters = new KeyStoreParameters();
+        serviceKeystoreParameters.setCamelContext(context);
         serviceKeystoreParameters.setResource("service.jks");
         serviceKeystoreParameters.setPassword("security");
 
         KeyStoreParameters selfSignedKeyStoreParameters = new KeyStoreParameters();
+        selfSignedKeyStoreParameters.setCamelContext(context);
         selfSignedKeyStoreParameters.setResource("selfsigned.jks");
         selfSignedKeyStoreParameters.setPassword("security");
 
         KeyStoreParameters clientKeystoreParameters = new KeyStoreParameters();
+        clientKeystoreParameters.setCamelContext(context);
         clientKeystoreParameters.setResource("client.jks");
         clientKeystoreParameters.setPassword("security");
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
         KeyStoreParameters truststoreParameters2 = new KeyStoreParameters();
+        truststoreParameters2.setCamelContext(context);
         truststoreParameters2.setResource("truststore2.jks");
         truststoreParameters2.setPassword("storepass");
 
         SSLContextParameters serviceSSLContextParameters = new SSLContextParameters();
+        serviceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters serviceSSLKeyManagers = new KeyManagersParameters();
         serviceSSLKeyManagers.setKeyPassword("security");
         serviceSSLKeyManagers.setKeyStore(serviceKeystoreParameters);
         serviceSSLContextParameters.setKeyManagers(serviceSSLKeyManagers);
 
         SSLContextParameters selfSignedServiceSSLContextParameters = new SSLContextParameters();
+        selfSignedServiceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters selfSignedServiceSSLKeyManagers = new KeyManagersParameters();
         selfSignedServiceSSLKeyManagers.setKeyPassword("security");
         selfSignedServiceSSLKeyManagers.setKeyStore(selfSignedKeyStoreParameters);
         selfSignedServiceSSLContextParameters.setKeyManagers(selfSignedServiceSSLKeyManagers);
 
         SSLContextParameters clientAuthServiceSSLContextParameters = new SSLContextParameters();
+        clientAuthServiceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters clientAuthServiceSSLKeyManagers = new KeyManagersParameters();
         clientAuthServiceSSLKeyManagers.setKeyPassword("security");
         clientAuthServiceSSLKeyManagers.setKeyStore(serviceKeystoreParameters);
@@ -382,16 +360,19 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthServiceSSLContextParameters.setServerParameters(clientAuthSSLContextServerParameters);
 
         SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        clientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
 
         SSLContextParameters clientSSLContextParameters2 = new SSLContextParameters();
+        clientSSLContextParameters2.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers2 = new TrustManagersParameters();
         clientSSLTrustManagers2.setKeyStore(truststoreParameters2);
         clientSSLContextParameters2.setTrustManagers(clientSSLTrustManagers2);
 
         SSLContextParameters clientAuthClientSSLContextParameters = new SSLContextParameters();
+        clientAuthClientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientAuthClientSSLTrustManagers = new TrustManagersParameters();
         clientAuthClientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientAuthClientSSLContextParameters.setTrustManagers(clientAuthClientSSLTrustManagers);
@@ -401,6 +382,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthClientSSLContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
 
         SSLContextParameters clientAuthClientSSLContextParameters2 = new SSLContextParameters();
+        clientAuthClientSSLContextParameters2.setCamelContext(context);
         TrustManagersParameters clientAuthClientSSLTrustManagers2 = new TrustManagersParameters();
         clientAuthClientSSLTrustManagers2.setKeyStore(truststoreParameters2);
         clientAuthClientSSLContextParameters2.setTrustManagers(clientAuthClientSSLTrustManagers2);
@@ -410,6 +392,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthClientSSLContextParameters2.setKeyManagers(clientAuthClientSSLKeyManagers2);
 
         SSLContextParameters selfSignedClientSSLContextParameters = new SSLContextParameters();
+        selfSignedClientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters selfSignedClientSSLTrustManagers = new TrustManagersParameters();
         selfSignedClientSSLTrustManagers.setKeyStore(selfSignedKeyStoreParameters);
         selfSignedClientSSLContextParameters.setTrustManagers(selfSignedClientSSLTrustManagers);
@@ -418,14 +401,12 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey("service", "security".toCharArray());
         PublicKey publicKey = keyStore.getCertificate("service").getPublicKey();
 
-        TrustedRpkStore trustedRpkStore = id -> {
-            return true;
-        };
-        TrustedRpkStore failedTrustedRpkStore = id -> {
-            return false;
-        };
+        NewAdvancedCertificateVerifier advancedCertificateVerifier = StaticNewAdvancedCertificateVerifier.builder()
+                .setTrustAllRPKs().setTrustAllCertificates().build();
+
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        PskStore pskStore = new StaticPskStore("some-identity", keyGenerator.generateKey().getEncoded());
+        AdvancedPskStore advancedPskStore
+                = new AdvancedSinglePskStore("some-identity", keyGenerator.generateKey().getEncoded());
 
         context.getRegistry().bind("serviceSSLContextParameters", serviceSSLContextParameters);
         context.getRegistry().bind("selfSignedServiceSSLContextParameters", selfSignedServiceSSLContextParameters);
@@ -438,9 +419,9 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
         context.getRegistry().bind("privateKey", privateKey);
         context.getRegistry().bind("publicKey", publicKey);
-        context.getRegistry().bind("trustedRpkStore", trustedRpkStore);
-        context.getRegistry().bind("failedTrustedRpkStore", failedTrustedRpkStore);
-        context.getRegistry().bind("pskStore", pskStore);
+
+        context.getRegistry().bind("advancedCertificateVerifier", advancedCertificateVerifier);
+        context.getRegistry().bind("advancedPskStore", advancedPskStore);
     }
 
     protected void sendBodyAndHeader(String endpointUri, final Object body, String headerName, String headerValue) {

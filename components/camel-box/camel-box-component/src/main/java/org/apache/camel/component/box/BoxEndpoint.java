@@ -116,7 +116,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         if (apiProxy == null) {
             // create API proxy lazily
-            createApiProxy(args);
+            createApiProxy();
         }
         return apiProxy;
     }
@@ -138,7 +138,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         }
     }
 
-    private void createApiProxy(Map<String, Object> args) {
+    private void createApiProxy() {
         switch (apiName) {
             case COLLABORATIONS:
                 apiProxy = new BoxCollaborationsManager(getBoxConnection());

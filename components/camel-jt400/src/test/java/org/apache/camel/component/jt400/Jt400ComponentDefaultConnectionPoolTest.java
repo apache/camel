@@ -46,7 +46,7 @@ public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (component != null) {
             component.stop();
         }

@@ -34,6 +34,7 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
+    private MicrometerRoutePolicyConfiguration policyConfiguration = MicrometerRoutePolicyConfiguration.DEFAULT;
 
     /**
      * To use a specific {@link io.micrometer.core.instrument.MeterRegistry} instance.
@@ -81,6 +82,14 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         this.namingStrategy = namingStrategy;
     }
 
+    public MicrometerRoutePolicyConfiguration getPolicyConfiguration() {
+        return policyConfiguration;
+    }
+
+    public void setPolicyConfiguration(MicrometerRoutePolicyConfiguration policyConfiguration) {
+        this.policyConfiguration = policyConfiguration;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode routeDefinition) {
         MicrometerRoutePolicy answer = new MicrometerRoutePolicy();
@@ -88,6 +97,7 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         answer.setPrettyPrint(isPrettyPrint());
         answer.setDurationUnit(getDurationUnit());
         answer.setNamingStrategy(getNamingStrategy());
+        answer.setConfiguration(getPolicyConfiguration());
         return answer;
     }
 

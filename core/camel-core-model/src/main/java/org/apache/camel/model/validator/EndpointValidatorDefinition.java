@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model.validator;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
@@ -48,8 +48,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set the reference of the Endpoint.
-     *
-     * @param ref reference of the Endpoint
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -61,8 +59,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set the URI of the Endpoint.
-     *
-     * @param uri URI of the Endpoint
      */
     public void setUri(String uri) {
         this.uri = uri;

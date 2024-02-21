@@ -16,22 +16,31 @@
  */
 package org.apache.camel.component.kubernetes.customresources;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
+import io.fabric8.kubernetes.client.utils.Serialization;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
@@ -48,14 +57,9 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
         String namespace;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
         if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
             namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         } else {
@@ -68,23 +72,27 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         switch (operation) {
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES:
-                doList(exchange, operation, namespace);
+                doList(exchange, namespace);
                 break;
 
             case KubernetesOperations.LIST_CUSTOMRESOURCES_BY_LABELS_OPERATION:
-                doListByLabels(exchange, operation, namespace);
+                doListByLabels(exchange, namespace);
                 break;
 
             case KubernetesOperations.GET_CUSTOMRESOURCE:
-                doGet(exchange, operation, namespace);
+                doGet(exchange, namespace);
                 break;
 
             case KubernetesOperations.DELETE_CUSTOMRESOURCE:
-                doDelete(exchange, operation, namespace);
+                doDelete(exchange, namespace);
                 break;
 
             case KubernetesOperations.CREATE_CUSTOMRESOURCE:
-                doCreate(exchange, operation, namespace);
+                doCreate(exchange, namespace);
+                break;
+
+            case KubernetesOperations.UPDATE_CUSTOMRESOURCE:
+                doUpdate(exchange, namespace);
                 break;
 
             default:
@@ -92,34 +100,45 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation, String namespaceName) throws Exception {
-        JsonObject customResourcesListJSON = new JsonObject(
-                getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
-        LOG.info(customResourcesListJSON.toString());
+    protected void doList(Exchange exchange, String namespaceName) {
+        CustomResourceDefinitionContext context = getCRDContext(exchange.getIn());
+
+        GenericKubernetesResourceList list = getEndpoint().getKubernetesClient()
+                .genericKubernetesResources(context)
+                .inNamespace(namespaceName)
+                .list();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Serialization.asJson(list));
+        }
 
         JsonArray customResourcesListItems;
-        if (customResourcesListJSON.getCollection("items") != null) {
-            customResourcesListItems = new JsonArray(customResourcesListJSON.getCollection("items"));
+        if (list.getItems() != null) {
+            customResourcesListItems = new JsonArray(list.getItems());
         } else {
             customResourcesListItems = new JsonArray();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourcesListItems);
+        prepareOutboundMessage(exchange, customResourcesListItems);
     }
 
-    protected void doListByLabels(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doListByLabels(Exchange exchange, String namespaceName) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, Map.class);
-        JsonObject customResourcesListJSON = new JsonObject(
-                getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).list(namespaceName));
-        LOG.info(customResourcesListJSON.toString());
-        JsonArray customResourcesListItems = new JsonArray(customResourcesListJSON.getCollection("items"));
+        GenericKubernetesResourceList list = getEndpoint().getKubernetesClient()
+                .genericKubernetesResources(getCRDContext(exchange.getIn()))
+                .inNamespace(namespaceName)
+                .withLabels(labels)
+                .list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourcesListItems);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Serialization.asJson(list));
+        }
+        JsonArray customResourcesListItems = new JsonArray(list.getItems());
+
+        prepareOutboundMessage(exchange, customResourcesListItems);
     }
 
-    protected void doGet(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doGet(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
@@ -127,8 +146,12 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
         JsonObject customResourceJSON = new JsonObject();
         try {
             customResourceJSON = new JsonObject(
-                    getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).get(namespaceName,
-                            customResourceName));
+                    getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
+                            .inNamespace(namespaceName)
+                            .withName(customResourceName)
+                            .require()
+                            .get());
+
         } catch (KubernetesClientException e) {
             if (e.getCode() == 404) {
                 LOG.info("Custom resource instance not found", e);
@@ -136,24 +159,24 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
                 throw e;
             }
         }
-        LOG.info(customResourceJSON.toString());
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourceJSON);
+        prepareOutboundMessage(exchange, customResourceJSON);
     }
 
-    protected void doDelete(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doDelete(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
-            LOG.error("Delete a specific deployment require specify a deployment name");
-            throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
+            LOG.error("Deleting a specific deployment require specify a deployment name");
+            throw new IllegalArgumentException("Deleting a specific deployment require specify a deployment name");
         }
 
-        JsonObject customResourceJSON = new JsonObject();
         try {
-            customResourceJSON = new JsonObject(
-                    getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).delete(namespaceName,
-                            customResourceName));
+            List<StatusDetails> statusDetails
+                    = getEndpoint().getKubernetesClient().genericKubernetesResources(getCRDContext(exchange.getIn()))
+                            .inNamespace(namespaceName).withName(customResourceName).delete();
+
+            boolean deleted = ObjectHelper.isNotEmpty(statusDetails);
+            exchange.getMessage().setHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, deleted);
         } catch (KubernetesClientException e) {
             if (e.getCode() == 404) {
                 LOG.info("Custom resource instance not found", e);
@@ -162,26 +185,35 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             }
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(customResourceJSON);
     }
 
-    protected void doCreate(Exchange exchange, String operation, String namespaceName) throws Exception {
+    protected void doUpdate(Exchange exchange, String namespaceName) {
+        doCreateOrUpdate(exchange, namespaceName, Resource::update);
+    }
+
+    protected void doCreate(Exchange exchange, String namespaceName) {
+        doCreateOrUpdate(exchange, namespaceName, Resource::create);
+    }
+
+    private void doCreateOrUpdate(
+            Exchange exchange, String namespaceName,
+            Function<Resource<GenericKubernetesResource>, GenericKubernetesResource> operation) {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
-        JsonObject gitHubSourceJSON = new JsonObject();
+        GenericKubernetesResource customResource = new GenericKubernetesResource();
         try {
-            gitHubSourceJSON = new JsonObject(
-                    getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).create(namespaceName,
-                            customResourceInstance));
+            customResource = operation.apply(getEndpoint().getKubernetesClient()
+                    .genericKubernetesResources(getCRDContext(exchange.getIn()))
+                    .inNamespace(namespaceName)
+                    .resource(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class)));
         } catch (KubernetesClientException e) {
             if (e.getCode() == 409) {
-                LOG.info("Custom resoure instance already exists", e);
+                LOG.info("Custom resource instance already exists", e);
             } else {
                 throw e;
             }
         }
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(gitHubSourceJSON);
+
+        prepareOutboundMessage(exchange, customResource);
     }
 
     private CustomResourceDefinitionContext getCRDContext(Message message) {
@@ -222,13 +254,12 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             throw new IllegalArgumentException("one of more of the custom resource definition argument(s) are missing.");
         }
 
-        CustomResourceDefinitionContext cRDContext = new CustomResourceDefinitionContext.Builder()
+        return new CustomResourceDefinitionContext.Builder()
                 .withName(message.getHeader(KubernetesConstants.KUBERNETES_CRD_NAME, String.class))       // example: "githubsources.sources.knative.dev"
                 .withGroup(message.getHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, String.class))     // example: "sources.knative.dev"
                 .withScope(message.getHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, String.class))     // example: "Namespaced"
                 .withVersion(message.getHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, String.class)) // example: "v1alpha1"
                 .withPlural(message.getHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, String.class))   // example: "githubsources"
                 .build();
-        return cRDContext;
     }
 }

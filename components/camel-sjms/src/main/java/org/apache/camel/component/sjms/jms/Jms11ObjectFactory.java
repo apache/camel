@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.sjms.SjmsEndpoint;

@@ -15,9 +15,7 @@
 # limitations under the License.
 #
 
+# A distributed part of main camel "docs/components" 'components' component descriptor:
+
 name: components
-#title: Enterprise Integration Patterns
-version: latest
-#start_page: eips:enterprise-integration-patterns.adoc
-#nav:
-#- modules/eips/nav.adoc
+version: next

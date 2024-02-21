@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,6 +40,9 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
     private static String sedaThreadName;
     private static String route = "";
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+
     @Test
     public void testAsyncTopicProducer() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
@@ -46,7 +53,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
         // we should run before the async processor that sets B
         route += "A";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
         assertFalse(beforeThreadName.equalsIgnoreCase(sedaThreadName), "Should use different threads");
@@ -60,7 +67,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false&broker.useJmx=false");
+                service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
@@ -69,23 +76,23 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
                         .to("mock:before")
                         .to("log:before")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
                         .to("async:bye:camel")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         })
@@ -96,7 +103,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
                         .to("log:after")
                         .delay(1000)
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 route += "B";
                                 sedaThreadName = Thread.currentThread().getName();
                             }

@@ -22,6 +22,8 @@ public enum JobStateEnum {
 
     @JsonProperty("Open")
     OPEN("Open"),
+    @JsonProperty("Closed")
+    CLOSED("Closed"),
     @JsonProperty("UploadComplete")
     UPLOAD_COMPLETE("UploadComplete"),
     @JsonProperty("InProgress")

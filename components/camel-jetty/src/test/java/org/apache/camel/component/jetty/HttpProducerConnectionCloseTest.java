@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerConnectionCloseTest extends BaseJettyTest {
 
-    private String url = "http://127.0.0.1:" + getPort() + "/cheese";
+    private final String url = "http://127.0.0.1:" + getPort() + "/cheese";
 
     @Test
-    public void testConnectionCloseHeader() throws Exception {
+    public void testConnectionCloseHeader() {
         Exchange exchange = template.request(url + "?connectionClose=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks");
             }
         });
@@ -45,12 +45,12 @@ public class HttpProducerConnectionCloseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + url).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String quote = exchange.getIn().getHeader("quote", String.class);
                         assertEquals("Camel rocks", quote);
                     }

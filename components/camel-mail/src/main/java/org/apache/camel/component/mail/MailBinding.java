@@ -27,23 +27,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Header;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.Address;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Header;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -61,6 +62,10 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
+
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and from a Mail
  * {@link MimeMessage}
@@ -68,19 +73,57 @@ import org.slf4j.LoggerFactory;
 public class MailBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy;
+    private final HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
+    private boolean mapMailMessage = true;
+    private boolean failOnDuplicateAttachment;
+    private String generateMissingAttachmentNames;
+    private String handleDuplicateAttachmentNames;
 
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
 
+    @Deprecated
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage,
+                       boolean failOnDuplicateAttachment) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, failOnDuplicateAttachment,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage,
+                       boolean failOnDuplicateAttachment, String generateMissingAttachmentNames,
+                       String handleDuplicateAttachmentNames) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
         this.decodeFilename = decodeFilename;
+        this.mapMailMessage = mapMailMessage;
+        this.failOnDuplicateAttachment = failOnDuplicateAttachment;
+        this.generateMissingAttachmentNames = generateMissingAttachmentNames;
+        this.handleDuplicateAttachmentNames = handleDuplicateAttachmentNames;
+    }
+
+    public boolean isFailOnDuplicateAttachment() {
+        return failOnDuplicateAttachment;
+    }
+
+    public void setFailOnDuplicateAttachment(boolean failOnDuplicateAttachment) {
+        this.failOnDuplicateAttachment = failOnDuplicateAttachment;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -96,7 +139,7 @@ public class MailBinding {
 
         // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
         // and headers the headers win.
-        String replyTo = exchange.getIn().getHeader("Reply-To", String.class);
+        String replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
         if (replyTo == null) {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
@@ -106,7 +149,7 @@ public class MailBinding {
                 replyToAddresses
                         .add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
-            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[replyToAddresses.size()]));
+            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[0]));
         }
 
         // must have at least one recipients otherwise we do not know where to send the mail
@@ -145,8 +188,8 @@ public class MailBinding {
     protected String determineContentType(MailConfiguration configuration, Exchange exchange) {
         // see if we got any content type set
         String contentType = configuration.getContentType();
-        if (exchange.getIn().getHeader("contentType") != null) {
-            contentType = exchange.getIn().getHeader("contentType", String.class);
+        if (exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE, String.class);
         } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
@@ -172,8 +215,8 @@ public class MailBinding {
 
         // see if we got any content type set
         String contentType = configuration.getContentType();
-        if (exchange.getIn().getHeader("contentType") != null) {
-            contentType = exchange.getIn().getHeader("contentType", String.class);
+        if (exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE, String.class);
         } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
@@ -255,7 +298,7 @@ public class MailBinding {
     public Object extractBodyFromMail(Exchange exchange, MailMessage mailMessage) {
         Message message = mailMessage.getMessage();
         try {
-            if (((MailEndpoint) exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+            if (mapMailMessage) {
                 return message.getContent();
             }
             return message; // raw message
@@ -326,11 +369,25 @@ public class MailBinding {
             } else {
                 String disposition = part.getDisposition();
                 String fileName = part.getFileName();
+                // fix file name if using malicious parameter name
+                if (fileName != null) {
+                    fileName = fileName.replaceAll("[\n\r\t]", "_");
+                }
+
+                if (isAttachment(disposition) && (fileName == null || fileName.isEmpty())) {
+                    if (generateMissingAttachmentNames != null
+                            && generateMissingAttachmentNames.equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
+                        fileName = UUID.randomUUID().toString();
+                    }
+                }
                 if (fileName != null && decodeFilename) {
                     fileName = MimeUtility.decodeText(fileName);
                 }
                 if (fileName != null) {
                     fileName = FileUtil.stripPath(fileName);
+                }
+                if (fileName != null) {
+                    fileName = fileName.trim();
                 }
 
                 if (LOG.isTraceEnabled()) {
@@ -342,9 +399,17 @@ public class MailBinding {
                     LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
-                if (validDisposition(disposition, fileName)
-                        || fileName != null) {
+                if (validDisposition(disposition, fileName) || (fileName != null && !fileName.isEmpty())) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
+                    if (handleDuplicateAttachmentNames != null) {
+                        if (handleDuplicateAttachmentNames
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
+                            fileName = prefixDuplicateFilenames(map, fileName);
+                        } else if (handleDuplicateAttachmentNames
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)) {
+                            fileName = suffixDuplicateFilenames(map, fileName);
+                        }
+                    }
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
                         final DataHandler dataHandler = part.getDataHandler();
@@ -360,16 +425,84 @@ public class MailBinding {
                         }
                         map.put(fileName, camelAttachment);
                     } else {
-                        LOG.warn("Cannot extract duplicate file attachment: {}.", fileName);
+                        handleDuplicateFileAttachment(mp, fileName);
                     }
                 }
             }
         }
     }
 
+    /**
+     * Strategy for handling extracting mail message that has duplicate file attachments
+     *
+     * @param  mp                 the multipart entity
+     * @param  duplicateFileName  the duplicated file name
+     * @throws MessagingException is thrown, failing with an error
+     */
+    protected void handleDuplicateFileAttachment(Multipart mp, String duplicateFileName) throws MessagingException {
+        if (failOnDuplicateAttachment) {
+            throw new MessagingException("Duplicate file attachment: " + duplicateFileName);
+        } else {
+            LOG.warn("Cannot extract duplicate file attachment: {}.", duplicateFileName);
+        }
+    }
+
+    /**
+     * Updates already existing filenames in the map and prefixes the current filename
+     *
+     * @param  map
+     * @param  fileName
+     * @return
+     */
+    private String prefixDuplicateFilenames(Map<String, Attachment> map, String fileName) {
+        if (map.containsKey(fileName)) {
+            Attachment obj = map.remove(fileName);
+            map.put(prefixWithUUID(fileName), obj);
+            return prefixWithUUID(fileName);
+        }
+        return fileName;
+    }
+
+    /**
+     * Updates already existing filenames in the map and suffixes the current filename Filename will be suffixed, the
+     * file extension will remain If the string starts with a dot and no further dots are contained in the string, this
+     * is considered as a filename without file extension
+     *
+     * @param  map
+     * @param  fileName
+     * @return
+     */
+    private String suffixDuplicateFilenames(Map<String, Attachment> map, String fileName) {
+        if (map.containsKey(fileName)) {
+            Attachment obj = map.remove(fileName);
+            map.put(suffixWithUUID(fileName), obj);
+            return suffixWithUUID(fileName);
+        }
+        return fileName;
+    }
+
+    private String prefixWithUUID(String string) {
+        return UUID.randomUUID() + "_" + string;
+    }
+
+    private String suffixWithUUID(String string) {
+        if (string.lastIndexOf(".") > 0) {
+            string = new StringBuilder(string).insert(string.lastIndexOf("."), "_" + UUID.randomUUID()).toString();
+        } else {
+            string = string + "_" + UUID.randomUUID();
+        }
+        return string;
+    }
+
     private boolean validDisposition(String disposition, String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return false;
+        }
+        return isAttachment(disposition);
+    }
+
+    private boolean isAttachment(String disposition) {
         return disposition != null
-                && fileName != null
                 && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE));
     }
 
@@ -510,7 +643,7 @@ public class MailBinding {
                 LOG.trace("Attachment #{}: FileName: {}", i, attachmentFilename);
             }
             if (attachment != null) {
-                if (shouldAddAttachment(exchange, attachmentFilename, attachment.getDataHandler())) {
+                if (shouldAddAttachment()) {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
@@ -631,7 +764,7 @@ public class MailBinding {
     /**
      * Strategy to allow filtering of attachments which are added on the Mail message
      */
-    protected boolean shouldAddAttachment(Exchange exchange, String attachmentFilename, DataHandler handler) {
+    protected boolean shouldAddAttachment() {
         return true;
     }
 
@@ -655,7 +788,7 @@ public class MailBinding {
             }
         }
         // if the message is a multipart message, do not set the content type to multipart/*
-        if (mailConfiguration.isMapMailMessage()) {
+        if (mapMailMessage) {
             Object content = mailMessage.getContent();
             if (content instanceof MimeMultipart) {
                 MimeMultipart multipart = (MimeMultipart) content;
@@ -681,6 +814,10 @@ public class MailBinding {
             }
         }
 
+        if (mailMessage.getSentDate() != null) {
+            answer.put(Exchange.MESSAGE_TIMESTAMP, mailMessage.getSentDate().getTime());
+        }
+
         return answer;
     }
 
@@ -698,7 +835,7 @@ public class MailBinding {
         }
 
         mimeMessage.addRecipients(asRecipientType(type),
-                recipientsAddresses.toArray(new InternetAddress[recipientsAddresses.size()]));
+                recipientsAddresses.toArray(new InternetAddress[0]));
     }
 
     private static String[] splitRecipients(String recipients) {
@@ -777,7 +914,22 @@ public class MailBinding {
     }
 
     private static boolean isCollection(Object value) {
-        return value instanceof Collection || (value != null && value.getClass().isArray());
+        return value instanceof Collection || value != null && value.getClass().isArray();
     }
 
+    public String getGenerateMissingAttachmentNames() {
+        return generateMissingAttachmentNames;
+    }
+
+    public void setGenerateMissingAttachmentNames(String generateMissingAttachmentNames) {
+        this.generateMissingAttachmentNames = generateMissingAttachmentNames;
+    }
+
+    public String getHandleDuplicateAttachmentNames() {
+        return handleDuplicateAttachmentNames;
+    }
+
+    public void setHandleDuplicateAttachmentNames(String handleDuplicateAttachmentNames) {
+        this.handleDuplicateAttachmentNames = handleDuplicateAttachmentNames;
+    }
 }

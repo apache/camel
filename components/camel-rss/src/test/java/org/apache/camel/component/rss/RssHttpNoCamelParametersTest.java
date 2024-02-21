@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
-    public void testRssHttpNoCamelParameters() throws Exception {
+    public void testRssHttpNoCamelParameters() {
         RssEndpoint rss = context.getEndpoint(
                 "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
         assertNotNull(rss);
@@ -36,7 +36,7 @@ public class RssHttpNoCamelParametersTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRssHttpNoCamelParametersAndOneFeedParameter() throws Exception {
+    public void testRssHttpNoCamelParametersAndOneFeedParameter() {
         RssEndpoint rss = context.getEndpoint(
                 "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar",
                 RssEndpoint.class);

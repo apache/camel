@@ -36,7 +36,7 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+    public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
@@ -48,9 +48,9 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
         //any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME_ONLY, onlyName);
+        dummy.getIn().setHeader(FtpConstants.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
 

@@ -25,19 +25,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(
-             firstVersion = "3.8.0",
-             scheme = "kamelet",
-             syntax = "kamelet:templateId/routeId",
-             title = "Kamelet",
-             lenientProperties = true,
-             category = Category.CORE)
+@UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
+             lenientProperties = true, category = Category.CORE)
 public class KameletEndpoint extends DefaultEndpoint {
     private final String key;
     private final Map<String, Object> kameletProperties;
@@ -45,19 +42,24 @@ public class KameletEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The Route Template ID")
     private final String templateId;
-    @Metadata
+    @Metadata(label = "advanced")
     @UriPath(description = "The Route ID", defaultValueNote = "The ID will be auto-generated if not provided")
     private final String routeId;
+    @Metadata(label = "advanced")
+    @UriParam(description = "Location of the Kamelet to use which can be specified as a resource from file system, classpath etc."
+                            + " The location cannot use wildcards, and must refer to a file including extension, for example file:/etc/foo-kamelet.xml")
+    private String location;
 
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean block = true;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer,advanced", defaultValue = "30000")
     private long timeout = 30000L;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean failIfNoConsumers = true;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean noErrorHandler = true;
 
-    public KameletEndpoint(
-                           String uri,
+    public KameletEndpoint(String uri,
                            KameletComponent component,
                            String templateId,
                            String routeId) {
@@ -71,6 +73,18 @@ public class KameletEndpoint extends DefaultEndpoint {
         this.routeId = routeId;
         this.key = templateId + "/" + routeId;
         this.kameletProperties = new HashMap<>();
+    }
+
+    public boolean isNoErrorHandler() {
+        return noErrorHandler;
+    }
+
+    /**
+     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
+     * turned off, to use old behaviour in earlier versions of Camel.
+     */
+    public void setNoErrorHandler(boolean noErrorHandler) {
+        this.noErrorHandler = noErrorHandler;
     }
 
     public boolean isBlock() {
@@ -133,6 +147,14 @@ public class KameletEndpoint extends DefaultEndpoint {
         return routeId;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public Map<String, Object> getKameletProperties() {
         return Collections.unmodifiableMap(kameletProperties);
     }
@@ -159,4 +181,19 @@ public class KameletEndpoint extends DefaultEndpoint {
         return answer;
     }
 
+    @Override
+    public void setProperties(Object bean, Map<String, Object> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
+        PropertyConfigurer configurer = null;
+        if (bean instanceof KameletEndpoint) {
+            configurer = getComponent().getEndpointPropertyConfigurer();
+        }
+        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
+                .withOptional(isLenientProperties())
+                .withReflection(false) // avoid reflection as additional parameters are for the actual kamelet and not this endpoint
+                .bind(getCamelContext(), bean, parameters);
+    }
 }

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
 
     @Test
-    public void testFailWithoutException() throws Exception {
+    public void testFailWithoutException() {
         String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
                 String.class);
         assertEquals("Fail", out);
@@ -67,10 +67,10 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .component("undertow").port(getPort2())
                         .bindingMode(RestBindingMode.json);

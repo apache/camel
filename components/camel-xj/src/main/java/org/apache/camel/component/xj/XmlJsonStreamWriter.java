@@ -55,7 +55,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     /**
      * Creates a new XmlJsonStreamWriter instance
-     * 
+     *
      * @param jsonGenerator the {@link JsonGenerator} to use to write the json document
      */
     public XmlJsonStreamWriter(JsonGenerator jsonGenerator) {
@@ -224,7 +224,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
     public void writeCharacters(String text) {
         // check for non coalescing read
         final List<TreeElement> childs = currentTreeElement.childs;
-        if (childs.size() > 0) {
+        if (!childs.isEmpty()) {
             final TreeElement child = childs.get(childs.size() - 1);
             if (child.getXmlEvent() == XMLStreamConstants.CHARACTERS) {
                 child.appendValue(text);
@@ -312,7 +312,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
         }
 
         void addChild(TreeElement treeElement) {
-            if (this.childs == Collections.EMPTY_LIST) {
+            if (this.childs.equals(Collections.emptyList())) {
                 this.childs = new ArrayList<>(1);
             }
 
@@ -524,7 +524,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             int len = text.length();
             int st = 0;
 
-            while ((st < len) && (text.charAt(st) <= ' ')) {
+            while (st < len && text.charAt(st) <= ' ') {
                 st++;
             }
 

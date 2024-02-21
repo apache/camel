@@ -22,7 +22,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 
@@ -37,18 +37,14 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
     @Test
     public void testLifecycleStrategyFailOnStartup() throws Exception {
         CamelContext context = createCamelContext();
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertEquals("Forced", e.getMessage());
-        }
+        Exception e = assertThrows(Exception.class, context::start, "Should have thrown exception");
+        assertEquals("Forced", e.getMessage());
     }
 
     private static class MyLifecycleStrategy extends DummyLifecycleStrategy {
 
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             throw new IllegalArgumentException("Forced");
         }
     }

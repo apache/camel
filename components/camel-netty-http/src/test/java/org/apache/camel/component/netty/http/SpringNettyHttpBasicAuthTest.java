@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -54,12 +54,12 @@ public class SpringNettyHttpBasicAuthTest {
     }
 
     @BeforeAll
-    public static void setUpJaas() throws Exception {
+    public static void setUpJaas() {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
     }
 
     @AfterAll
-    public static void tearDownJaas() throws Exception {
+    public static void tearDownJaas() {
         System.clearProperty("java.security.auth.login.config");
     }
 
@@ -97,7 +97,7 @@ public class SpringNettyHttpBasicAuthTest {
     }
 
     @Test
-    public void testGuestAuth() throws Exception {
+    public void testGuestAuth() {
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2VjcmV0";
         String out = template.requestBodyAndHeader("netty-http:http://localhost:" + port + "/foo/guest/hello", "Hello Guest",

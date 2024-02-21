@@ -68,7 +68,7 @@ public class StreamGroupLinesTest extends CamelTestSupport {
         mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals(3, list.size());
@@ -84,10 +84,10 @@ public class StreamGroupLinesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3").to("mock:result");
             }
         };

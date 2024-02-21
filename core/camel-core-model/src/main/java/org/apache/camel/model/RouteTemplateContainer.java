@@ -18,10 +18,10 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElementRef;
 
 /**
- * Container to hold {@link RouteTemplateDefinition Route}.
+ * Container to hold {@link RouteTemplateDefinition route templates}.
  */
 public interface RouteTemplateContainer {
 

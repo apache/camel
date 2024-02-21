@@ -55,7 +55,7 @@ public class DockerStatsConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    void testStats() throws Exception {
+    void testStats() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
     }

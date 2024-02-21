@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
+import org.apache.camel.component.salesforce.codegen.GenerateExecution;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -75,6 +76,7 @@ public class GenerateMojoTest {
         final GenerateMojo mojo = new GenerateMojo();
         mojo.picklistToStrings = invalidPicklistToStrings;
         mojo.picklistToEnums = invalidPicklistToEnums;
+        mojo.setup();
 
         // when
         int resultCountExceptions = 0;
@@ -101,6 +103,7 @@ public class GenerateMojoTest {
         final GenerateMojo mojo = new GenerateMojo();
         mojo.picklistToStrings
                 = new String[] { sObjectName + ".StandardPicklist", sObjectName + ".Stringified_Custom_Picklist_Type__c" };
+        mojo.setup();
         mojo.parsePicklistToStrings();
         assertTrue(mojo.picklistToStrings != null && mojo.picklistToStrings.length > 1);
 
@@ -120,7 +123,7 @@ public class GenerateMojoTest {
         accountDescription.getFields().add(multipicklistToString);
 
         mojo.useStringsForPicklists = false;
-        final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
+        final GenerateExecution.GeneratorUtility utility = mojo.generatorUtility();
 
         // when
         final String resultDefaultPicklistType = utility.getFieldType(accountDescription, defaultPicklist);
@@ -142,6 +145,7 @@ public class GenerateMojoTest {
         final GenerateMojo mojo = new GenerateMojo();
         mojo.picklistToEnums
                 = new String[] { sObjectName + ".Enum_Contact_Source_Information__c", sObjectName + ".Enum_Contract_Type__c" };
+        mojo.setup();
         mojo.parsePicklistToEnums();
 
         final SObjectDescription contactDescription = new SObjectDescription();
@@ -160,7 +164,8 @@ public class GenerateMojoTest {
         contactDescription.getFields().add(multipicklistToEnum);
 
         mojo.useStringsForPicklists = true;
-        final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
+        mojo.setup();
+        final GenerateExecution.GeneratorUtility utility = mojo.generatorUtility();
 
         // when
         final String resultStringPicklistType = utility.getFieldType(contactDescription, stringPicklist);

@@ -27,6 +27,7 @@ import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
+import org.apache.pulsar.client.api.RedeliveryBackoff;
 import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
@@ -35,6 +36,12 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType
 @UriParams
 public class PulsarConfiguration implements Cloneable {
 
+    @UriParam(label = "common")
+    private String serviceUrl;
+    @UriParam(label = "common")
+    private String authenticationClass;
+    @UriParam(label = "common")
+    private String authenticationParams;
     @UriParam(label = "consumer")
     private boolean topicsPattern;
     @UriParam(label = "consumer", defaultValue = "PersistentOnly")
@@ -59,6 +66,10 @@ public class PulsarConfiguration implements Cloneable {
     private long ackTimeoutMillis = 10000;
     @UriParam(label = "consumer", defaultValue = "60000000")
     private long negativeAckRedeliveryDelayMicros = 60000000;
+    @UriParam(label = "consumer", description = "RedeliveryBackoff to use for ack timeout redelivery backoff.")
+    private RedeliveryBackoff ackTimeoutRedeliveryBackoff;
+    @UriParam(label = "consumer", description = "RedeliveryBackoff to use for negative ack redelivery backoff.")
+    private RedeliveryBackoff negativeAckRedeliveryBackoff;
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
@@ -71,6 +82,21 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "consumer",
               description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
+    @UriParam(label = "consumer",
+              description = "To enable retry letter topic mode. The default retry letter topic uses this format: topicname-subscriptionname-RETRY")
+    private boolean enableRetry;
+    @UriParam(label = "consumer",
+              description = "Name of the topic to use in retry mode. Note: if not set, default topic name will be topicName-subscriptionName-RETRY")
+    private String retryLetterTopic;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
+    private boolean messageListener = true;
+    @UriParam(label = "consumer", defaultValue = "1",
+              description = "Number of threads to receive and handle messages when using a separate thread pool")
+    private int numberOfConsumerThreads = 1;
+    @UriParam(label = "consumer", enums = "AUTO_SPLIT,STICKY",
+              description = "Policy to use by consumer when using key-shared subscription type.")
+    private String keySharedPolicy;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer",
@@ -85,6 +111,7 @@ public class PulsarConfiguration implements Cloneable {
               description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
                             + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.",
               defaultValue = "50000")
+    @Deprecated
     private int maxPendingMessagesAcrossPartitions = 50000;
     @UriParam(label = "producer",
               description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.",
@@ -102,18 +129,24 @@ public class PulsarConfiguration implements Cloneable {
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
+    @UriParam(label = "producer", description = "Control whether chunking of messages is enabled for the producer.",
+              defaultValue = "false")
+    private boolean chunkingEnabled;
     @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition")
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
     @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;
+    @UriParam(label = "producer",
+              description = "Hashing function to use when choosing the partition to use for a particular message",
+              enums = "JavaStringHash,Murmur3_32Hash", defaultValue = "JavaStringHash")
+    private String hashingScheme = "JavaStringHash";
 
     /**
      * Returns a copy of this configuration
      */
     public PulsarConfiguration copy() {
         try {
-            PulsarConfiguration copy = (PulsarConfiguration) clone();
-            return copy;
+            return (PulsarConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -295,12 +328,15 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the number of max pending messages across all the partitions. Default is 50000.
+     * Set the number of max pending messages across all the partitions. Default is 50000. This option is deprecated and
+     * will be removed in a future version.
      */
+    @Deprecated
     public void setMaxPendingMessagesAcrossPartitions(int maxPendingMessagesAcrossPartitions) {
         this.maxPendingMessagesAcrossPartitions = maxPendingMessagesAcrossPartitions;
     }
 
+    @Deprecated
     public int getMaxPendingMessagesAcrossPartitions() {
         return maxPendingMessagesAcrossPartitions;
     }
@@ -411,6 +447,17 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
+     * Control whether chunking of messages is enabled for the producer. Default is false.
+     */
+    public void setChunkingEnabled(boolean chunkingEnabled) {
+        this.chunkingEnabled = chunkingEnabled;
+    }
+
+    public boolean isChunkingEnabled() {
+        return chunkingEnabled;
+    }
+
+    /**
      * Set the message routing mode for the producer.
      */
     public MessageRoutingMode getMessageRoutingMode() {
@@ -443,6 +490,28 @@ public class PulsarConfiguration implements Cloneable {
         this.negativeAckRedeliveryDelayMicros = negativeAckRedeliveryDelayMicros;
     }
 
+    public RedeliveryBackoff getAckTimeoutRedeliveryBackoff() {
+        return ackTimeoutRedeliveryBackoff;
+    }
+
+    /**
+     * Set a RedeliveryBackoff to use for ack timeout redelivery backoff.
+     */
+    public void setAckTimeoutRedeliveryBackoff(RedeliveryBackoff redeliveryBackoff) {
+        this.ackTimeoutRedeliveryBackoff = redeliveryBackoff;
+    }
+
+    public RedeliveryBackoff getNegativeAckRedeliveryBackoff() {
+        return negativeAckRedeliveryBackoff;
+    }
+
+    /**
+     * Set a RedeliveryBackoff to use for negative ack redelivery backoff.
+     */
+    public void setNegativeAckRedeliveryBackoff(RedeliveryBackoff redeliveryBackoff) {
+        this.negativeAckRedeliveryBackoff = redeliveryBackoff;
+    }
+
     public Integer getMaxRedeliverCount() {
         return maxRedeliverCount;
     }
@@ -457,5 +526,92 @@ public class PulsarConfiguration implements Cloneable {
 
     public void setDeadLetterTopic(String deadLetterTopic) {
         this.deadLetterTopic = deadLetterTopic;
+    }
+
+    public boolean isEnableRetry() {
+        return enableRetry;
+    }
+
+    public void setEnableRetry(boolean enableRetry) {
+        this.enableRetry = enableRetry;
+    }
+
+    public String getRetryLetterTopic() {
+        return retryLetterTopic;
+    }
+
+    public void setRetryLetterTopic(String retryLetterTopic) {
+        this.retryLetterTopic = retryLetterTopic;
+    }
+
+    public boolean isMessageListener() {
+        return messageListener;
+    }
+
+    public void setMessageListener(boolean messageListener) {
+        this.messageListener = messageListener;
+    }
+
+    public int getNumberOfConsumerThreads() {
+        return numberOfConsumerThreads;
+    }
+
+    /**
+     * Number of consumers threads - defaults to 1
+     */
+    public void setNumberOfConsumerThreads(int numberOfConsumerThreads) {
+        this.numberOfConsumerThreads = numberOfConsumerThreads;
+    }
+
+    public String getKeySharedPolicy() {
+        return keySharedPolicy;
+    }
+
+    public void setKeySharedPolicy(String keySharedPolicy) {
+        this.keySharedPolicy = keySharedPolicy;
+    }
+
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    /**
+     * The Pulsar Service URL to point while creating the client from URI
+     */
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    public String getAuthenticationClass() {
+        return authenticationClass;
+    }
+
+    /**
+     * The Authentication FQCN to be used while creating the client from URI
+     */
+    public void setAuthenticationClass(String authenticationClass) {
+        this.authenticationClass = authenticationClass;
+    }
+
+    public String getAuthenticationParams() {
+        return authenticationParams;
+    }
+
+    /**
+     * The Authentication Parameters to be used while creating the client from URI
+     */
+    public void setAuthenticationParams(String authenticationParams) {
+        this.authenticationParams = authenticationParams;
+    }
+
+    public String getHashingScheme() {
+        return hashingScheme;
+    }
+
+    /**
+     * Hashing function to use when choosing the partition to use for a particular message
+     */
+    public void setHashingScheme(String hashingScheme) {
+        this.hashingScheme = hashingScheme;
     }
 }

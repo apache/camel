@@ -33,11 +33,15 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
             "java.lang.String", "java.util.Map"
@@ -55,35 +59,24 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
     @Test
     public void testVerifySupported() throws Exception {
-        // JMX tests don't work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on;
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
+        on = getCamelObjectName(TYPE_COMPONENT, "my-verifiable-component");
         assertTrue(mbeanServer.isRegistered(on));
         assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"direct\"");
+        on = getCamelObjectName(TYPE_COMPONENT, "direct");
         assertTrue(mbeanServer.isRegistered(on));
         assertFalse((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
     }
 
     @Test
     public void testVerify() throws Exception {
-        // JMX tests don't work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServerConnection mbeanServer = getMBeanServer();
 
-        ObjectName on
-                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
+        ObjectName on = getCamelObjectName(TYPE_COMPONENT, "my-verifiable-component");
         assertTrue(mbeanServer.isRegistered(on));
         assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 

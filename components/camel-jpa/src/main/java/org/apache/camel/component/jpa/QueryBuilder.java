@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 /**
  * A builder of query expressions
@@ -32,7 +32,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Creates a query builder using the JPA query syntax
-     * 
+     *
      * @param  query JPA query language to create
      * @return       a query builder
      */
@@ -99,7 +99,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Specifies the parameters to the query
-     * 
+     *
      * @param  parameters the parameters to be configured on the query
      * @return            this query builder
      */
@@ -109,7 +109,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Specifies the parameters to the query as an ordered collection of parameters
-     * 
+     *
      * @param  parameters the parameters to be configured on the query
      * @return            this query builder
      */
@@ -133,7 +133,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Specifies the parameters to the query as a Map of key/value pairs
-     * 
+     *
      * @param  parameterMap the parameters to be configured on the query
      * @return              this query builder
      */

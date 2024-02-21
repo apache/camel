@@ -205,7 +205,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
      * If there is a signing certificate chain specified, then the URIs are assigned to the certificates in the chain in
      * the order given in the provided list. You have to specify an empty entry (null or empty srting), if no URI should
      * be assigned to a specific certificate in the list. If you specify an empty list, then no URIs are assigned.
-     * 
+     *
      * @throws IllegalArgumentException if the parameter is <code>null</code> or one of the URIs is <code>null</code>
      */
     public void setSigningCertificateURIs(List<String> signingCertificateURIs) {
@@ -228,7 +228,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
      * "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2001/04/xmlenc#sha256",
      * "http://www.w3.org/2001/04/xmldsig-more#sha384", "http://www.w3.org/2001/04/xmlenc#sha512". Default value is
      * "http://www.w3.org/2001/04/xmlenc#sha256".
-     * 
+     *
      */
     public void setDigestAlgorithmForSigningCertificate(String digestAlgorithm) {
         this.digestAlgorithmForSigningCertificate = digestAlgorithm;
@@ -241,7 +241,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     /**
      * Signature Policy. Possible values: {@link #SIG_POLICY_NONE}, {@link #SIG_POLICY_IMPLIED},
      * {@link #SIG_POLICY_EXPLICIT_ID}. Default value is {@link #SIG_POLICY_NONE}.
-     * 
+     *
      */
     public void setSignaturePolicy(String signaturePolicy) {
         if (!SIG_POLICY_VALUES.contains(signaturePolicy)) {
@@ -290,9 +290,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     /**
-     * 
+     *
      * Sets the documentation references of the signature policy.
-     * 
+     *
      * @throws IllegalArgumentException if the parameter is <code>null</code> or one of the documentation references is
      *                                  <code>null</code> or empty
      */
@@ -318,7 +318,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
      * "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2001/04/xmlenc#sha256",
      * "http://www.w3.org/2001/04/xmldsig-more#sha384", "http://www.w3.org/2001/04/xmlenc#sha512". Default value is
      * "http://www.w3.org/2001/04/xmlenc#sha256".
-     * 
+     *
      */
     public void setSignaturePolicyDigestAlgorithm(String signaturePolicyDigestAlgorithm) {
         this.signaturePolicyDigestAlgorithm = signaturePolicyDigestAlgorithm;
@@ -340,10 +340,10 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     /**
      * Sets the signature policy qualifiers. Each qualifier can be a text or a XML fragment with the root element
      * 'SigPolicyQualifier' with the XAdES namespace.
-     * 
+     *
      * @throws IllegalArgumentException if the input parameter is <code>null</code>, or one of the qualifiers is
      *                                  <code>null</code> or empty
-     * 
+     *
      */
     public void setSigPolicyQualifiers(List<String> sigPolicyQualifiers) {
         if (sigPolicyQualifiers == null) {
@@ -407,9 +407,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     /**
-     * 
+     *
      * Sets the documentation references of the data object format identifier.
-     * 
+     *
      * @throws IllegalArgumentException if the parameter is <code>null</code> or one of the documentation references is
      *                                  <code>null</code> or empty
      */
@@ -435,7 +435,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     /**
      * Sets the claimed roles list. A role can be either a text or a XML fragment with the root element 'ClaimedRole'
      * with the XAdES namespace.
-     * 
+     *
      * @throws IllegalArgumentException if <tt>signerClaimedRoles</tt> is <code>null</code>, or if one of the roles is
      *                                  <code>null</code> or empty
      */
@@ -457,7 +457,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     /**
      * Sets the certified roles.
-     * 
+     *
      * @throws IllegalArgumentException if <tt>signerCertifiedRoles</tt> is <code>null</code>
      */
     public void setSignerCertifiedRoles(List<XAdESEncapsulatedPKIData> signerCertifiedRoles) {
@@ -539,10 +539,10 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     /**
      * Sets the documentation references for the Commitment Type ID:
-     * 
+     *
      * @throws IllegalArgumentException if the parameter is <code>null</code> or a documentation reference is
      *                                  <code>null</code> or empty
-     * 
+     *
      */
     public void setCommitmentTypeIdDocumentationReferences(List<String> commitmentTypeIdDocumentationReferences) {
         if (commitmentTypeIdDocumentationReferences == null) {
@@ -564,7 +564,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     /**
      * List of additional qualifying information on the commitment. Each list element can be a text or an XML fragment
      * with the root element 'CommitmentTypeQualifier' with the XAdES namespace.
-     * 
+     *
      * @throws IllegalArgumentException if the input parameter is <code>null</code>, or one qualifier is
      *                                  <code>null</code> or empty
      */
@@ -647,7 +647,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     protected String addSignedDataObjectProperties(Document doc, Element signedProperties, Input input)
             throws XmlSignatureException,
-            SAXException, IOException, ParserConfigurationException {
+            IOException, ParserConfigurationException {
         if (isAddSignedDataObjectPropeties()) {
             Element signedDataObjectProperties = createElement("SignedDataObjectProperties", doc, input);
             setIdAttributeFromHeader(XmlSignatureConstants.HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID,
@@ -666,8 +666,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addCommitmentTypeIndication(Element signedDataObjectProperties, Document doc, Input input)
-            throws SAXException,
-            IOException, ParserConfigurationException, XmlSignatureException {
+            throws IOException, ParserConfigurationException, XmlSignatureException {
         if (!isAddCommitmentType()) {
             return;
         }
@@ -718,8 +717,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         return getCommitmentTypeId() != null && !getCommitmentTypeId().isEmpty();
     }
 
-    protected String addDataObjectFormat(Element signedDataObjectProperties, Document doc, Input input)
-            throws XmlSignatureException {
+    protected String addDataObjectFormat(Element signedDataObjectProperties, Document doc, Input input) {
         if (!isAddDataObjectFormat()) {
             return null;
         }
@@ -776,9 +774,9 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected boolean isAddDataObjectFormat() {
-        return (getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty())
-                || (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty())
-                || (getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty());
+        return getDataObjectFormatIdentifier() != null && !getDataObjectFormatIdentifier().isEmpty()
+                || getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()
+                || getDataObjectFormatMimeType() != null && !getDataObjectFormatMimeType().isEmpty();
     }
 
     protected void addSignedSignatureProperties(Document doc, Element signedProperties, Input input) throws Exception {
@@ -798,7 +796,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
 
     protected boolean isAddSignedSignatureProperties() throws Exception {
         return isAddSigningTime() || getSigningCertificate() != null
-                || (getSigningCertificateChain() != null && getSigningCertificateChain().length > 0) || isAddSignaturePolicy()
+                || getSigningCertificateChain() != null && getSigningCertificateChain().length > 0 || isAddSignaturePolicy()
                 || isAddSignatureProductionPlace() || isAddSignerRole();
     }
 
@@ -845,8 +843,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addSignerRole(Document doc, Element signedSignatureProperties, Input input)
-            throws XmlSignatureException, SAXException,
-            IOException, ParserConfigurationException {
+            throws XmlSignatureException, IOException, ParserConfigurationException {
         if (!isAddSignerRole()) {
             return;
         }
@@ -887,8 +884,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected void addSignaturePolicyIdentifier(Document doc, Element signedProperties, Input input)
-            throws XmlSignatureException,
-            SAXException, IOException, ParserConfigurationException {
+            throws XmlSignatureException, IOException, ParserConfigurationException {
         if (!isAddSignaturePolicy()) {
             return;
         }
@@ -1181,7 +1177,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
     }
 
     protected String calculateDigest(String algorithm, byte[] bytes)
-            throws NoSuchAlgorithmException, CertificateEncodingException {
+            throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         byte[] digestBytes = digest.digest(bytes);
         return new Base64().encodeAsString(digestBytes);

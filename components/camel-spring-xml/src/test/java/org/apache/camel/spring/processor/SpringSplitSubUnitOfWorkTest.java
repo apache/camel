@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.Collections;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SplitSubUnitOfWorkTest;
 
@@ -25,6 +27,7 @@ public class SpringSplitSubUnitOfWorkTest extends SplitSubUnitOfWorkTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringSplitSubUnitOfWorkTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringSplitSubUnitOfWorkTest.xml",
+                Collections.singletonMap("myProcessor", new MyProcessor()));
     }
 }

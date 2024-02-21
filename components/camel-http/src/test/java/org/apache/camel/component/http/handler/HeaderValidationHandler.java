@@ -17,19 +17,25 @@
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class HeaderValidationHandler extends BasicValidationHandler {
 
-    protected Map<String, String> expectedHeaders;
+    // Map of headers and values that are expected to be present
+    // in HttpRequest.
+    protected final Map<String, String> expectedHeaders;
+    // List of headers that are expected to be absent from HttpRequest
+    // (e.g. for testing filtering).
+    protected List<String> absentHeaders;
 
     public HeaderValidationHandler(String expectedMethod, String expectedQuery,
                                    Object expectedContent, String responseContent,
@@ -38,9 +44,17 @@ public class HeaderValidationHandler extends BasicValidationHandler {
         this.expectedHeaders = expectedHeaders;
     }
 
+    public HeaderValidationHandler(String expectedMethod, String expectedQuery,
+                                   Object expectedContent, String responseContent,
+                                   Map<String, String> expectedHeaders,
+                                   List<String> absentHeaders) {
+        this(expectedMethod, expectedQuery, expectedContent, responseContent, expectedHeaders);
+        this.absentHeaders = absentHeaders;
+    }
+
     @Override
     public void handle(
-            final HttpRequest request, final HttpResponse response,
+            final ClassicHttpRequest request, final ClassicHttpResponse response,
             final HttpContext context)
             throws HttpException, IOException {
 
@@ -57,7 +71,16 @@ public class HeaderValidationHandler extends BasicValidationHandler {
                 }
 
                 if (!headerExist) {
-                    response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
+                    response.setCode(HttpStatus.SC_EXPECTATION_FAILED);
+                    return;
+                }
+            }
+        }
+
+        if (absentHeaders != null) {
+            for (String header : absentHeaders) {
+                if (request.getHeaders(header).length > 0) {
+                    response.setCode(HttpStatus.SC_EXPECTATION_FAILED);
                     return;
                 }
             }

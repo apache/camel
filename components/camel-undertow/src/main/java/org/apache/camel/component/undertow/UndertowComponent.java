@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -60,6 +59,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.http.HttpUtil.recreateUrl;
+
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
@@ -77,11 +78,11 @@ public class UndertowComponent extends DefaultComponent
     private UndertowHttpBinding undertowHttpBinding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
-    @Metadata(label = "consumer", defaultValue = "false")
+    @Metadata(label = "consumer")
     private boolean muteException;
     @Metadata(label = "security")
     private Object securityConfiguration;
@@ -96,8 +97,6 @@ public class UndertowComponent extends DefaultComponent
 
     public UndertowComponent(CamelContext context) {
         super(context);
-
-        registerExtension(UndertowComponentVerifierExtension::new);
     }
 
     @Override
@@ -150,7 +149,7 @@ public class UndertowComponent extends DefaultComponent
         return endpoint;
     }
 
-    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) throws URISyntaxException {
+    protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) {
         return new UndertowEndpoint(endpointUri.toString(), component);
     }
 
@@ -269,8 +268,7 @@ public class UndertowComponent extends DefaultComponent
 
         String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
 
-        UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(endpoint, parameters);
+        UndertowEndpoint endpoint = (UndertowEndpoint) camelContext.getEndpoint(url, parameters);
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding
@@ -321,21 +319,16 @@ public class UndertowComponent extends DefaultComponent
             }
         }
 
-        // get the endpoint
-        String query = URISupport.createQueryString(map);
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        url = recreateUrl(map, url);
 
-        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
 
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component
         RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
-        UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(endpoint, parameters);
+        UndertowEndpoint endpoint = (UndertowEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new UndertowRestHeaderFilterStrategy(path, queryParameters));
 
@@ -363,7 +356,7 @@ public class UndertowComponent extends DefaultComponent
         } catch (IllegalArgumentException e) {
             // if there's a mismatch between the component and the rest-configuration,
             // then getRestConfiguration throws IllegalArgumentException which can be
-            // safely ignored as it means there's no special conf for this componet.
+            // safely ignored as it means there's no special conf for this component.
         }
     }
 

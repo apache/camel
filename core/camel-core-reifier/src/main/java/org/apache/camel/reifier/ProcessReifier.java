@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -39,6 +40,7 @@ public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
             ObjectHelper.notNull(definition.getRef(), "ref", definition);
             answer = mandatoryLookup(definition.getRef(), Processor.class);
         }
+        LineNumberAware.trySetLineNumberAware(answer, definition);
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX
         // (a Processor must be a Service to be enlisted in JMX)

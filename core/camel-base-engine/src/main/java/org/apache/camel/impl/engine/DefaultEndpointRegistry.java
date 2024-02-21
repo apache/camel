@@ -22,34 +22,48 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.NormalizedUri;
 
 /**
  * Default implementation of {@link org.apache.camel.spi.EndpointRegistry}
  */
-public class DefaultEndpointRegistry extends AbstractDynamicRegistry<EndpointKey, Endpoint>
-        implements EndpointRegistry<EndpointKey> {
+public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedUri, Endpoint>
+        implements EndpointRegistry<NormalizedUri> {
 
     public DefaultEndpointRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumEndpointCacheSize(context));
     }
 
-    public DefaultEndpointRegistry(CamelContext context, Map<EndpointKey, Endpoint> endpoints) {
+    public DefaultEndpointRegistry(CamelContext context, Map<NormalizedUri, Endpoint> endpoints) {
         this(context);
-        putAll(endpoints);
+        if (!context.isStarted()) {
+            // optimize to put all into the static map as we are not started
+            staticMap.putAll(endpoints);
+        } else {
+            putAll(endpoints);
+        }
     }
 
     @Override
     public boolean isStatic(String key) {
-        return isStatic(new EndpointKey(key));
+        return isStatic(NormalizedUri.newNormalizedUri(key, false));
     }
 
     @Override
     public boolean isDynamic(String key) {
-        return isDynamic(new EndpointKey(key));
+        return isDynamic(NormalizedUri.newNormalizedUri(key, false));
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        if (key instanceof String) {
+            key = NormalizedUri.newNormalizedUri(key.toString(), false);
+        }
+        return super.containsKey(key);
     }
 
     @Override
     public String toString() {
-        return "EndpointRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
+        return "EndpointRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
 }

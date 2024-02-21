@@ -1,11 +1,13 @@
-[[reactor-other]]
 = Reactor Component
-:docTitle: Reactor
-:artifactId: camel-reactor
+:doctitle: Reactor
+:shortname: reactor
+:artifactid: camel-reactor
 :description: Reactor based back-end for Camel's reactive streams component
 :since: 2.20
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactor.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: reactor
 
 *Since Camel {since}*
 
@@ -21,3 +23,5 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

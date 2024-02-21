@@ -26,16 +26,20 @@ import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultScheduledPollConsumer;
+import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_DESIGN_DOCUMENT_NAME;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_KEY;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_VIEWNAME;
 
-public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
+public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements ResumeAware<ResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConsumer.class);
 
@@ -43,6 +47,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     private final Bucket bucket;
     private final Collection collection;
     private ViewOptions viewOptions;
+
+    private ResumeStrategy resumeStrategy;
 
     public CouchbaseConsumer(CouchbaseEndpoint endpoint, Bucket client, Processor processor) {
         super(endpoint, processor);
@@ -81,15 +87,17 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
 
         String rangeStartKey = endpoint.getRangeStartKey();
         String rangeEndKey = endpoint.getRangeEndKey();
-        if ("".equals(rangeStartKey) || "".equals(rangeEndKey)) {
+        if (rangeStartKey == null || rangeStartKey.isEmpty() || rangeEndKey == null || rangeEndKey.isEmpty()) {
             return;
         }
-        viewOptions.startKey(rangeEndKey).endKey(rangeEndKey);
+        viewOptions.startKey(rangeStartKey).endKey(rangeEndKey);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        ResumeStrategyHelper.resume(getEndpoint().getCamelContext(), this, resumeStrategy, COUCHBASE_RESUME_ACTION);
     }
 
     @Override
@@ -104,8 +112,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
     protected synchronized int poll() throws Exception {
         ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
-        LOG.info("Received result set from Couchbase");
-        Collection collection = bucket.defaultCollection();
+        // okay we have some response from CouchBase so lets mark the consumer as ready
+        forceConsumerAsReady();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
@@ -116,7 +124,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             Object doc;
             String id = row.id().get();
             if (endpoint.isFullDocument()) {
-                doc = collection.get(id);
+                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
             } else {
                 doc = row.valueAs(Object.class);
             }
@@ -137,8 +145,8 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Deleting doc with ID {}", id);
                     }
-
-                    collection.remove(id);
+                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                            endpoint.getProducerRetryPause());
                 } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Filtering out ID {}", id);
@@ -172,5 +180,15 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
             LOG.trace("View Name = {}", viewName);
         }
 
+    }
+
+    @Override
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 }

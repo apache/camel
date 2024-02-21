@@ -21,15 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the file filter option
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
-
-    private String fileUrl = "file://target/data/filefilter/?initialDelay=0&delay=10&filter=#myFilter";
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -38,19 +35,13 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         return jndi;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filefilter");
-        super.setUp();
-    }
-
     @Test
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri(), "This is a file to be filtered",
+                Exchange.FILE_NAME,
                 "skipme.txt");
 
         mock.setResultWaitTime(100);
@@ -62,10 +53,12 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri(), "This is a file to be filtered",
+                Exchange.FILE_NAME,
                 "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/data/filefilter/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -74,13 +67,14 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10&filter=#myFilter"))
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
+    public static class MyFileFilter<T> implements GenericFileFilter<T> {
         @Override
         public boolean accept(GenericFile<T> file) {
             // we want all directories

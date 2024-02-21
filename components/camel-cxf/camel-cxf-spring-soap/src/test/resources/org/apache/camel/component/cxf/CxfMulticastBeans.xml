@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf/jaxws"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/cxf/jaxws http://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfMulticastTest.port}/SoapContext/SoapPort"
+                   wsdlURL="/wsdl/hello_world.wsdl"
+                   serviceClass="org.apache.hello_world_soap_http.Greeter"
+                   endpointName="s:SoapPort"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http">
+  </cxf:cxfEndpoint>
+
+  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9003/SoapContext/SoapPort"
+                   wsdlURL="/wsdl/hello_world.wsdl"
+                   serviceClass="org.apache.hello_world_soap_http.Greeter"
+                   endpointName="s:SoapPort"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http">
+  </cxf:cxfEndpoint>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <route>
+      <from uri="direct:start"/>
+      <multicast>
+        <to uri="cxf:bean:serviceEndpoint"/>
+        <to uri="cxf:bean:serviceEndpoint2"/>
+      </multicast>
+      <to uri="mock:output"/>
+    </route>
+
+    <route>
+      <from uri="cxf:bean:serviceEndpoint"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="log:reply"/>
+      <to uri="mock:reply"/>
+    </route>
+
+    <route>
+      <from uri="cxf:bean:serviceEndpoint2"/>
+      <transform>
+        <simple>Bye ${body}</simple>
+      </transform>
+      <to uri="log:reply2"/>
+      <to uri="mock:reply2"/>
+    </route>
+
+  </camelContext>
+
+</beans>

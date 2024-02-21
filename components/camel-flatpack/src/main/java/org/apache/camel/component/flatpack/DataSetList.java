@@ -20,11 +20,13 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.DoubleSupplier;
@@ -62,23 +64,33 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     @Override
     public Iterator<Map<String, Object>> iterator() {
         dataSet.goTop();
+
         return new Iterator<Map<String, Object>>() {
-            private boolean hasNext = dataSet.next();
+            Optional<Record> nextData = Optional.empty();
 
+            @Override
             public boolean hasNext() {
-                return hasNext;
+                if (nextData.isPresent()) {
+                    return true;
+                } else {
+                    if (DataSetList.this.next()) {
+                        nextData = dataSet.getRecord();
+                    } else {
+                        nextData = Optional.empty();
+                    }
+                    return nextData.isPresent();
+                }
             }
 
+            @Override
             public Map<String, Object> next() {
-                // because of a limitation in split() we need to create an object for the current position
-                // otherwise strangeness occurs when the same object is used to represent each row
-                Map<String, Object> result = FlatpackConverter.toMap(dataSet);
-                hasNext = dataSet.next();
-                return result;
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException("remove() not supported");
+                if (nextData.isPresent() || hasNext()) {
+                    final Record line = nextData.orElse(null);
+                    nextData = Optional.empty();
+                    return FlatpackConverter.toMap(line);
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
         };
     }
@@ -305,6 +317,11 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     @Override
     public LocalDate getLocalDate(String column) throws ParseException {
         return dataSet.getLocalDate(column);
+    }
+
+    @Override
+    public LocalDate getLocalDate(String column, DateTimeFormatter formatter) throws ParseException {
+        return dataSet.getLocalDate(column, formatter);
     }
 
     @Override

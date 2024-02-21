@@ -25,21 +25,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
 
     @Test
-    public void shouldReturnCustomResponseForOptions() throws Exception {
+    public void shouldReturnCustomResponseForOptions() {
         String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
                 String.class);
         assertEquals("expectedOptionsResponse", response);
     }
 
     @Test
-    public void shouldPreferStrictMatchOverPrefixMatch() throws Exception {
+    public void shouldPreferStrictMatchOverPrefixMatch() {
         String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path2/foo", "", HTTP_METHOD,
                 "GET", String.class);
         assertEquals("exact", response);
     }
 
     @Test
-    public void shouldPreferOptionsForEqualPaths() throws Exception {
+    public void shouldPreferOptionsForEqualPaths() {
         String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "POST",
                 String.class);
         assertEquals("postPath3", response);
@@ -49,10 +49,10 @@ public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/path1?httpMethodRestrict=POST").setBody().constant("somePostResponse");
                 from("netty-http:http://0.0.0.0:{{port}}?matchOnUriPrefix=true&httpMethodRestrict=OPTIONS").setBody()
                         .constant("expectedOptionsResponse");

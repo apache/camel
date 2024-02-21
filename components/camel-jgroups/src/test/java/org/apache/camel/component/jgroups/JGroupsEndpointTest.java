@@ -32,10 +32,10 @@ public class JGroupsEndpointTest extends CamelTestSupport {
     // Routes fixture
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jgroups:" + CLUSTER_NAME).to("mock:test");
             }
         };
@@ -44,7 +44,7 @@ public class JGroupsEndpointTest extends CamelTestSupport {
     // Tests
 
     @Test
-    public void shouldSetClusterName() throws Exception {
+    public void shouldSetClusterName() {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
 
@@ -53,7 +53,7 @@ public class JGroupsEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldResolveDefaultChannel() throws Exception {
+    public void shouldResolveDefaultChannel() {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
 

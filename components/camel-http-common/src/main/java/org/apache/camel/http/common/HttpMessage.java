@@ -18,8 +18,8 @@ package org.apache.camel.http.common;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -28,14 +28,31 @@ import org.apache.camel.util.ObjectHelper;
 
 public class HttpMessage extends DefaultMessage {
 
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
-    private final HttpCommonEndpoint endpoint;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private HttpCommonEndpoint endpoint;
     private boolean requestRead;
 
     public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request,
                        HttpServletResponse response) {
         super(exchange);
+        init(exchange, endpoint, request, response);
+    }
+
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange,
+                        HttpCommonEndpoint endpoint,
+                        boolean requestRead) {
+        super(exchange);
+        this.request = request;
+        this.response = response;
+        this.endpoint = endpoint;
+        this.requestRead = requestRead;
+    }
+
+    public void init(
+            Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request,
+            HttpServletResponse response) {
+        setExchange(exchange);
         this.requestRead = false;
         this.endpoint = endpoint;
 
@@ -56,14 +73,13 @@ public class HttpMessage extends DefaultMessage {
         endpoint.getHttpBinding().readRequest(request, this);
     }
 
-    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange,
-                        HttpCommonEndpoint endpoint,
-                        boolean requestRead) {
-        super(exchange);
-        this.request = request;
-        this.response = response;
-        this.endpoint = endpoint;
-        this.requestRead = requestRead;
+    @Override
+    public void reset() {
+        super.reset();
+        request = null;
+        response = null;
+        endpoint = null;
+        requestRead = false;
     }
 
     public HttpServletRequest getRequest() {
@@ -82,7 +98,7 @@ public class HttpMessage extends DefaultMessage {
         }
 
         try {
-            return endpoint.getHttpBinding().parseBody(this);
+            return endpoint.getHttpBinding().parseBody(request, this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         } finally {

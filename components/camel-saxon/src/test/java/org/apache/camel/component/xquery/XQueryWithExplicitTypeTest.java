@@ -20,7 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     protected MockEndpoint raleighEndpoint;
@@ -33,7 +33,7 @@ public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "<person name='Hadrian' city='Raleigh'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/xqueryWithExplicitTypeContext.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("xqueryWithExplicitTypeContext.xml");
     }
 }

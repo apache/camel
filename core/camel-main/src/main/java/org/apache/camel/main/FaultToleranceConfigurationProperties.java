@@ -28,7 +28,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
 
     private MainConfigurationProperties parent;
 
-    private String circuitBreakerRef;
+    private String circuitBreaker;
     @Metadata(defaultValue = "5")
     private Long delay;
     @Metadata(defaultValue = "1")
@@ -43,14 +43,14 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     private Long timeoutDuration;
     @Metadata(defaultValue = "10")
     private Integer timeoutPoolSize;
-    private String timeoutScheduledExecutorServiceRef;
+    private String timeoutScheduledExecutorService;
     @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
     @Metadata(defaultValue = "10")
     private Integer bulkheadMaxConcurrentCalls;
     @Metadata(defaultValue = "10")
     private Integer bulkheadWaitingTaskQueue;
-    private String bulkheadExecutorServiceRef;
+    private String bulkheadExecutorService;
 
     public FaultToleranceConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -68,16 +68,16 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     // getter and setters
     // --------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
      * from the registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
     public Long getDelay() {
@@ -160,15 +160,15 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
         this.timeoutPoolSize = timeoutPoolSize;
     }
 
-    public String getTimeoutScheduledExecutorServiceRef() {
-        return timeoutScheduledExecutorServiceRef;
+    public String getTimeoutScheduledExecutorService() {
+        return timeoutScheduledExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public void setTimeoutScheduledExecutorServiceRef(String timeoutScheduledExecutorServiceRef) {
-        this.timeoutScheduledExecutorServiceRef = timeoutScheduledExecutorServiceRef;
+    public void setTimeoutScheduledExecutorService(String timeoutScheduledExecutorService) {
+        this.timeoutScheduledExecutorService = timeoutScheduledExecutorService;
     }
 
     public Boolean getBulkheadEnabled() {
@@ -204,15 +204,15 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
     }
 
-    public String getBulkheadExecutorServiceRef() {
-        return bulkheadExecutorServiceRef;
+    public String getBulkheadExecutorService() {
+        return bulkheadExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when bulkhead is enabled.
      */
-    public void setBulkheadExecutorServiceRef(String bulkheadExecutorServiceRef) {
-        this.bulkheadExecutorServiceRef = bulkheadExecutorServiceRef;
+    public void setBulkheadExecutorService(String bulkheadExecutorService) {
+        this.bulkheadExecutorService = bulkheadExecutorService;
     }
 
     /**
@@ -220,7 +220,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
      * from the registry. When using this, then any other circuit breaker options are not in use.
      */
     public FaultToleranceConfigurationProperties withCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+        this.circuitBreaker = circuitBreakerRef;
         return this;
     }
 
@@ -288,7 +288,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
      */
     public FaultToleranceConfigurationProperties withTimeoutScheduledExecutorServiceRef(
             String timeoutScheduledExecutorServiceRef) {
-        this.timeoutScheduledExecutorServiceRef = timeoutScheduledExecutorServiceRef;
+        this.timeoutScheduledExecutorService = timeoutScheduledExecutorServiceRef;
         return this;
     }
 
@@ -320,7 +320,7 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
      * References to a custom thread pool to use when bulkhead is enabled.
      */
     public FaultToleranceConfigurationProperties withBulkheadExecutorServiceRef(String bulkheadExecutorServiceRef) {
-        this.bulkheadExecutorServiceRef = bulkheadExecutorServiceRef;
+        this.bulkheadExecutorService = bulkheadExecutorServiceRef;
         return this;
     }
 

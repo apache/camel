@@ -17,15 +17,15 @@
 package com.example;
 
 
-import io.apicurio.datamodels.openapi.models.OasOperation;
+import io.apicurio.datamodels.models.openapi.OpenApiOperation;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 
 
 public class MyDestinationGenerator implements DestinationGenerator {
 
     @Override
-    public String generateDestinationFor(final OasOperation operation) {
-        return "rest-" + operation.operationId;
+    public String generateDestinationFor(final OpenApiOperation operation) {
+        return "rest-" + operation.getOperationId();
     }
 
 }

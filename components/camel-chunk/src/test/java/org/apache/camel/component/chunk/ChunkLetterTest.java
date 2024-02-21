@@ -55,7 +55,7 @@ public class ChunkLetterTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("chunk:letter")
                         .to("mock:result");

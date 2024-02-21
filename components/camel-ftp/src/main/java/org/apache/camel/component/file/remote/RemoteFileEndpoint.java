@@ -42,7 +42,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
                                                 + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
     private int maximumReconnectAttempts = 3;
-    @UriParam(label = "advanced", description = "Delay in millis Camel will wait before performing a reconnect attempt.",
+    @UriParam(label = "advanced", defaultValue = "1000",
+              description = "Delay in millis Camel will wait before performing a reconnect attempt.",
               javaType = "java.time.Duration")
     private long reconnectDelay = 1000;
     @UriParam(label = "common", description = "Whether or not to disconnect from remote FTP server right after use. "
@@ -66,7 +67,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
                                                          + "not be downloaded.")
     private boolean download = true;
 
-    public RemoteFileEndpoint() {
+    protected RemoteFileEndpoint() {
+        // ftp must be synchronous as the ftp-client is not thread-safe
+        setSynchronous(true);
         // no args constructor for spring bean endpoint configuration
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
@@ -76,9 +79,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
-    public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
+    protected RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        // ftp must be synchronous as the ftp-client is not thread-safe
+        setSynchronous(true);
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
         setReadLockCheckInterval(5000);
@@ -113,7 +118,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         afterPropertiesSet();
 
         // you cannot use temp file and file exists append
-        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+        if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {
             throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
         // ensure fileExist and moveExisting is configured correctly if in use
@@ -142,7 +147,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         }
 
         // if idempotent and no repository set then create a default one
-        if (isIdempotentSet() && isIdempotent() && idempotentRepository == null) {
+        if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
             LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
@@ -179,12 +184,16 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     /**
      * Validates this endpoint if its configured properly.
      *
-     * @throws Exception is thrown if endpoint is invalid configured for its mandatory options
+     * @throws IllegalArgumentException is thrown if endpoint is invalid configured for its mandatory options
      */
-    protected void afterPropertiesSet() throws Exception {
+    protected void afterPropertiesSet() {
         RemoteFileConfiguration config = getConfiguration();
         StringHelper.notEmpty(config.getHost(), "host");
         StringHelper.notEmpty(config.getProtocol(), "protocol");
+
+        if (!isSynchronous()) {
+            throw new IllegalArgumentException("Using synchronous=false is not supported for camel-ftp");
+        }
     }
 
     @Override

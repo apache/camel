@@ -1,11 +1,13 @@
-[[ical-dataformat]]
 = iCal DataFormat
-:docTitle: iCal
-:artifactId: camel-ical
-:description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
+:doctitle: iCal
+:shortname: ical
+:artifactid: camel-ical
+:description: Marshal and unmarshal iCal (.ics) documents to/from model objects.
 :since: 2.12
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/ical.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: ical
 
 *Since Camel {since}*
 
@@ -36,15 +38,7 @@ END:VCALENDAR
 == Options
 
 // dataformat options: START
-The iCal dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| validating | false | Boolean | Whether to validate.
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Basic Usage
@@ -75,4 +69,5 @@ for this component:
 ------------------------------------------------------------
 
 
-include::camel-spring-boot::page$ical-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

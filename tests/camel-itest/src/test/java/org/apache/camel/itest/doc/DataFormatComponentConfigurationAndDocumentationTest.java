@@ -28,10 +28,13 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class DataFormatComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
@@ -42,7 +45,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     void testFlatpackDefaultValue() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("flatpack");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("flatpack");
             assertNotNull(json);
 
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
@@ -56,11 +59,11 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertNotNull(found);
             assertEquals("textQualifier", found.getName());
             assertEquals("attribute", found.getKind());
-            assertEquals(false, found.isRequired());
+            assertFalse(found.isRequired());
             assertEquals("string", found.getType());
             assertEquals("java.lang.String", found.getJavaType());
-            assertEquals(false, found.isDeprecated());
-            assertEquals(false, found.isSecret());
+            assertFalse(found.isDeprecated());
+            assertFalse(found.isSecret());
             assertEquals("If the text is qualified with a character. Uses quote character by default.", found.getDescription());
         }
     }
@@ -68,7 +71,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     void testUniVocityTsvEscapeChar() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("univocity-tsv");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("univocity-tsv");
             assertNotNull(json);
 
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
@@ -82,11 +85,11 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
             assertNotNull(found);
             assertEquals("escapeChar", found.getName());
             assertEquals("attribute", found.getKind());
-            assertEquals(false, found.isRequired());
+            assertFalse(found.isRequired());
             assertEquals("string", found.getType());
             assertEquals("java.lang.String", found.getJavaType());
-            assertEquals(false, found.isDeprecated());
-            assertEquals(false, found.isSecret());
+            assertFalse(found.isDeprecated());
+            assertFalse(found.isSecret());
             assertEquals("\\", found.getDefaultValue());
             assertEquals("The escape character.", found.getDescription());
         }

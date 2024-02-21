@@ -29,21 +29,31 @@
     <bean id="myXmlProcessor" class="org.apache.camel.spring.impl.transformer.SpringTransformerRouteTest$MyXmlProcessor"/>
     <bean id="otherToXOrder" class="org.apache.camel.processor.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
     <bean id="xOrderResponseToOther" class="org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
-    
+    <bean id="myMyDataTypeFormatDef" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyDataFormatDefinition"/>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-    
+    <jmxAgent id="jmx" disabled="true"/>
+
         <endpoint id="myXmlEndpoint" uri="direct:endpointXmlTransformer"/>
-        
+
         <transformers>
+            <loadTransformer defaults="true"/>
+            <loadTransformer packageScan="org.apache.camel.processor.transformer.custom"/>
             <dataFormatTransformer scheme="json">
                 <custom ref="myJsonDataFormatDef"/>
+            </dataFormatTransformer>
+            <dataFormatTransformer name="myDataType">
+                <custom ref="myMyDataTypeFormatDef"/>
             </dataFormatTransformer>
             <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
             <endpointTransformer ref="myXmlEndpoint" fromType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse" toType="xml:XmlXOrderResponse"/>
             <customTransformer ref="otherToXOrder" fromType="other:OtherXOrder" toType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
             <customTransformer ref="xOrderResponseToOther" fromType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse" toType="other:OtherXOrderResponse"/>
         </transformers>
-        
+        <validators>
+            <predicateValidator type="myDataType"><simple>${body} contains 'fake'</simple></predicateValidator>
+        </validators>
+
         <route>
             <from uri="direct:abc"/>
             <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$AOrder"/>
@@ -52,7 +62,7 @@
                 <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$AOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected AOrder object but was '${body}'"/>
             </when>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
             <to uri="mock:abcresult"/>
         </route>
 
@@ -67,33 +77,45 @@
             <setBody><constant>response</constant></setBody>
             <to uri="mock:xyzresult"/>
         </route>
-        
+
         <route>
             <from uri="direct:dataFormat"/>
             <inputType urn="json:JsonXOrder"/>
             <outputType urn="json:JsonXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
-        
+
         <route>
             <from uri="direct:endpoint"/>
             <inputType urn="xml:XmlXOrder"/>
             <outputType urn="xml:XmlXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
-        
+
         <route>
             <from uri="direct:endpointXmlTransformer"/>
             <process ref="myXmlProcessor"/>
         </route>
-        
+
         <route>
             <from uri="direct:custom"/>
             <inputType urn="other:OtherXOrder"/>
             <outputType urn="other:OtherXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
-        
+
+        <route>
+            <from uri="direct:testDataType"/>
+            <inputType urn="myDataType" validate="true"/>
+            <to uri="direct:testDataTypeStep2"/>
+        </route>
+
+        <route>
+            <from uri="direct:testDataTypeStep2"/>
+            <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$MyDataType"/>
+            <to uri="mock:testDataType"/>
+        </route>
+
     </camelContext>
-  
+
 </beans>

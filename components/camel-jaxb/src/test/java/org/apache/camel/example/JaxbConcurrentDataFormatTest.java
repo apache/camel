@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -48,11 +49,11 @@ public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     PurchaseOrder bean = new PurchaseOrder();
                     bean.setName("Beer");
-                    bean.setAmount(Double.valueOf("" + index));
-                    bean.setPrice(Double.valueOf("" + index) * 2);
+                    bean.setAmount(Double.valueOf(index));
+                    bean.setPrice(Double.valueOf(index) * 2);
 
                     template.sendBody("direct:start", bean);
                     return null;
@@ -60,7 +61,7 @@ public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

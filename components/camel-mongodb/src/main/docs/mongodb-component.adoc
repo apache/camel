@@ -1,21 +1,18 @@
-[[mongodb-component]]
 = MongoDB Component
-:docTitle: MongoDB
-:artifactId: camel-mongodb
+:doctitle: MongoDB
+:shortname: mongodb
+:artifactid: camel-mongodb
 :description: Perform operations on MongoDB documents and collections.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/mongodb.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: mongodb
 
 *Since Camel {since}*
 
 *{component-header}*
-
-[NOTE]
-====
-The MongoDB Camel component uses Mongo Java Driver 4.x.
-====
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
@@ -42,6 +39,11 @@ documents, but rather hierarchical data defined in JSON/BSON) and
 collections. This component page will assume you are familiar with them.
 Otherwise, visit http://www.mongodb.org/[http://www.mongodb.org/].
 
+[NOTE]
+====
+The MongoDB Camel component uses Mongo Java Driver 4.x.
+====
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -55,87 +57,28 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+== URI formats
 
-[source,java]
 ---------------------------------------------------------------------------------------------------------------
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-== MongoDB options
+// component-configure options: START
 
+// component-configure options: END
 
 // component options: START
-The MongoDB component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *mongoConnection* (common) | *Autowired* Shared client used for connection. All endpoints generated from the component will share this connection client. |  | MongoClient
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
-
-
 // endpoint options: START
-The MongoDB endpoint is configured using URI syntax:
 
-----
-mongodb:connectionBean
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *connectionBean* | *Required* Sets the connection bean reference used to lookup a client for connecting to a database. |  | String
-|===
-
-
-=== Query Parameters (24 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *collection* (common) | Sets the name of the MongoDB collection to bind to this endpoint |  | String
-| *collectionIndex* (common) | Sets the collection index (JSON FORMAT : { field1 : order1, field2 : order2}) |  | String
-| *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
-| *database* (common) | Sets the name of the MongoDB database to target |  | String
-| *mongoConnection* (common) | Sets the connection bean used as a client for connecting to a database. |  | MongoClient
-| *operation* (common) | Sets the operation this endpoint will execute against MongoDB. There are 14 enums and the value can be one of: findById, findOneByQuery, findAll, findDistinct, insert, save, update, remove, bulkWrite, aggregate, getDbStats, getColStats, count, command |  | MongoDbOperation
-| *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. There are 3 enums and the value can be one of: DocumentList, Document, MongoIterable |  | MongoDbOutputType
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerType* (consumer) | Consumer type. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *cursorRegenerationDelay* (advanced) | MongoDB tailable cursors will block until new data arrives. If no new data is inserted, after some time the cursor will be automatically freed and closed by the MongoDB server. The client is expected to regenerate the cursor if needed. This value specifies the time to wait before attempting to fetch a new cursor, and if the attempt fails, how long before the next attempt is made. Default value is 1000ms. | 1000 | long
-| *dynamicity* (advanced) | Sets whether this endpoint will attempt to dynamically resolve the target database and collection from the incoming Exchange properties. Can be used to override at runtime the database and collection specified on the otherwise static endpoint URI. It is disabled by default to boost performance. Enabling it will take a minimal performance hit. | false | boolean
-| *readPreference* (advanced) | Configure how MongoDB clients route read operations to the members of a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED, SECONDARY, SECONDARY_PREFERRED or NEAREST. There are 5 enums and the value can be one of: PRIMARY, PRIMARY_PREFERRED, SECONDARY, SECONDARY_PREFERRED, NEAREST | PRIMARY | String
-| *writeConcern* (advanced) | Configure the connection bean with the level of acknowledgment requested from MongoDB for write operations to a standalone mongod, replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3, UNACKNOWLEDGED, JOURNALED or MAJORITY. There are 7 enums and the value can be one of: ACKNOWLEDGED, W1, W2, W3, UNACKNOWLEDGED, JOURNALED, MAJORITY | ACKNOWLEDGED | String
-| *writeResultAsHeader* (advanced) | In write operations, it determines whether instead of returning WriteResult as the body of the OUT message, we transfer the IN message to the OUT and attach the WriteResult as a header. | false | boolean
-| *streamFilter* (changeStream) | Filter condition for change streams consumer. |  | String
-| *persistentId* (tail) | One tail tracking collection can host many trackers for several tailable consumers. To keep them separate, each tracker should have its own unique persistentId. |  | String
-| *persistentTailTracking* (tail) | Enable persistent tail tracking, which is a mechanism to keep track of the last consumed message across system restarts. The next time the system is up, the endpoint will recover the cursor from the point where it last stopped slurping records. | false | boolean
-| *tailTrackCollection* (tail) | Collection where tail tracking information will be persisted. If not specified, MongoDbTailTrackingConfig#DEFAULT_COLLECTION will be used by default. |  | String
-| *tailTrackDb* (tail) | Indicates what database the tail tracking mechanism will persist to. If not specified, the current database will be picked by default. Dynamicity will not be taken into account even if enabled, i.e. the tail tracking database will not vary past endpoint initialisation. |  | String
-| *tailTrackField* (tail) | Field where the last tracked value will be placed. If not specified, MongoDbTailTrackingConfig#DEFAULT_FIELD will be used by default. |  | String
-| *tailTrackIncreasingField* (tail) | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField greater than lastValue (possibly recovered from persistent tail tracking). Can be of type Integer, Date, String, etc. NOTE: No support for dot notation at the current time, so the field should be at the top level of the document. |  | String
-|===
 // endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 
 [[MongoDB-ConfigurationofdatabaseinSpringXML]]
@@ -286,33 +229,6 @@ from("direct:findAll")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
-Paging and efficient retrieval is supported via the following headers:
-
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbNumToSkip` |`MongoDbConstants.NUM_TO_SKIP` |Discards a given number of elements at the beginning of the cursor. |int/Integer
-
-|`CamelMongoDbLimit` |`MongoDbConstants.LIMIT` |Limits the number of elements returned. |int/Integer
-
-|`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` |Limits the number of elements returned in one batch. A cursor typically
-fetches a batch of result objects and store them locally. If batchSize
-is positive, it represents the size of each batch of objects retrieved.
-It can be adjusted to optimize performance and limit data transfer. If
-batchSize is negative, it will limit of number objects returned, that
-fit within the max batch size limit (usually 4MB), and cursor will be
-closed. For example if batchSize is -10, then the server will return a
-maximum of 10 documents and as many as can fit in 4MB, then close the
-cursor. Note that this feature is different from limit() in that
-documents must fit within a maximum size, and it removes the need to
-send a request to close the cursor server-side. The batch size can be
-changed even after a cursor is iterated, in which case the setting will
-apply on the next batch retrieval. |int/Integer
-|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Sets allowDiskUse MongoDB flag.
-This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail. |boolean/Boolean
-|=======================================================================
-
 ===== Example with option _outputType=MongoIterable_ and batch size
 
 [source,java]
@@ -323,20 +239,6 @@ from("direct:findAll")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
-
-The `findAll` operation will also return the following OUT headers to
-enable you to iterate through result pages if you are using paging:
-
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Data type
-
-|`CamelMongoDbResultTotalSize` |`MongoDbConstants.RESULT_TOTAL_SIZE` |Number of objects matching the query. This does not take limit/skip into
-consideration. |int/Integer
-
-|`CamelMongoDbResultPageSize` |`MongoDbConstants.RESULT_PAGE_SIZE` |Number of objects matching the query. This does not take limit/skip into
-consideration. |int/Integer
-|=======================================================================
 
 [TIP]
 ====
@@ -358,7 +260,9 @@ collection.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------
-// from("direct:count").to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+from("direct:count")
+  .to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+
 Long result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, "dynamicCollectionName");
 assertTrue("Result is not of type Long", result instanceof Long);
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -522,6 +426,14 @@ from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
 ---------------------------------------------------------------------------
 
+[source,java]
+------------------------------------------------------------------------------------------------------------------------------------------
+// route: from("direct:insert").to("mongodb:myDb?database=flights&collection=tickets&operation=save");
+org.bson.Document docForSave = new org.bson.Document();
+docForSave.put("key", "value");
+Object result = template.requestBody("direct:insert", docForSave);
+------------------------------------------------------------------------------------------------------------------------------------------
+
 ==== update
 
 Update one or multiple records on the collection. Requires a filter query and 
@@ -566,18 +478,6 @@ A header with key `CamelMongoDbRecordsAffected` will be returned
 (`MongoDbConstants.RECORDS_AFFECTED` constant) with the number of
 records updated (copied from `WriteResult.getN()`).
 
-Supports the following IN message headers:
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbMultiUpdate` |`MongoDbConstants.MULTIUPDATE` |If the update should be applied to all objects matching. See
-http://www.mongodb.org/display/DOCS/Atomic+Operations[http://www.mongodb.org/display/DOCS/Atomic+Operations] |boolean/Boolean
-
-|`CamelMongoDbUpsert` |`MongoDbConstants.UPSERT` |If the database should create the element if it does not exist |boolean/Boolean
-|=======================================================================
-
 For example, the following will update *all* records whose filterField
 field equals true by setting the value of the "scientist" field to
 "Darwin":
@@ -585,9 +485,12 @@ field equals true by setting the value of the "scientist" field to
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
+List<Bson> body = new ArrayList<>();
 Bson filterField = Filters.eq("filterField", true);
-String updateObj = Updates.set("scientist", "Darwin");
-Object result = template.requestBodyAndHeader("direct:update", new Bson[] {filterField, Document.parse(updateObj)}, MongoDbConstants.MULTIUPDATE, true);
+body.add(filterField);
+BsonDocument updateObj = new BsonDocument().append("$set", new BsonDocument("scientist", new BsonString("Darwin")));
+body.add(updateObj);
+Object result = template.requestBodyAndHeader("direct:update", body, MongoDbConstants.MULTIUPDATE, true);
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 [source,java]
@@ -636,8 +539,6 @@ containing the number of records deleted (copied from
 
 ==== bulkWrite
 
-*Since Camel 2.21*
-
 Performs write operations in bulk with controls for order of execution.
 Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.
 
@@ -660,13 +561,6 @@ By default, operations are executed in order and interrupted on the first write 
 To instruct MongoDB to continue to process remaining write operations in the list, set the `CamelMongoDbBulkOrdered` IN message header to `false`. 
 Unordered operations are executed in parallel and this behavior is not guaranteed.
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbBulkOrdered` |`MongoDbConstants.BULK_ORDERED` | Perform an ordered or unordered operation execution. Defaults to true. |boolean/Boolean
-|=======================================================================
-
 
 === Other operations
 
@@ -675,7 +569,6 @@ Unordered operations are executed in parallel and this behavior is not guarantee
 Perform a aggregation with the given pipeline contained in the
 body.
 *Aggregations could be long and heavy operations. Use with care.*
-
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -688,18 +581,7 @@ from("direct:aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-Supports the following IN message headers:
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` | Sets the number of documents to return per batch. |int/Integer
-|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Enable aggregation pipeline stages to write data to temporary files. |boolean/Boolean
-|=======================================================================
-
-By default a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
+By default, a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
 outputType=MongoIterable. The next Processor will see an iterable in the message body allowing it to step through the results one by one. Thus setting
 a batch size and returning an iterable allows for efficient retrieval and processing of the result.
 
@@ -728,7 +610,6 @@ Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
  For example:
 
-[source,java]
 -------------------------------------
 > db.stats();
 {
@@ -765,7 +646,6 @@ Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
  For example:
 
-[source,java]
 -----------------------------
 > db.camelTest.stats();
 {
@@ -991,34 +871,20 @@ It could be easily specified using XML DSL configuration:
 [source,xml]
 -------------
 <route id="filterConsumer">
-    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets"/>
+    <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
     <to uri="mock:test"/>
-
-    <routeProperty key="streamFilter" value="{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}"/>
 </route>
 -------------
 
 Java configuration:
 [source,java]
 -------------
-from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets")
-    .routeProperty("streamFilter", "{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}")
+from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets&streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }")
     .to("mock:test");
-
 -------------
-The `changeStreams` consumer type will also return the following OUT headers:
 
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Data type
-
-|`CamelMongoDbStreamOperationType` |`MongoDbConstants.STREAM_OPERATION_TYPE` | The type of operation that occurred. Can
-be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate. |String
-
-|`_id` |`MongoDbConstants.MONGO_ID` |A document that contains the _id of the document created or modified by the insert,
-replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for
-the document. The _id field is not repeated if it is already a part of the shard key. |ObjectId
-|=======================================================================
+TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
+URI parameters to be _cleaner_ and easier to read.
 
 == Type conversions
 
@@ -1032,13 +898,14 @@ camel-mongodb component provides the following conversions:
 constructor.
 |fromDocumentToMap |`Document` |`Map` |`Document` already implements `Map`.
 |fromStringToDocument |`String` |`Document` |uses `com.mongodb.Document.parse(String s)`.
-|fromAnyObjectToDocument |`Object`  |`Document` |uses the http://jackson.codehaus.org/[Jackson library] to convert the
-object to a `Map`, which is in turn used to initialise a new
-`Document`.
+|fromStringToObjectId |`String` |`ObjectId` |constructs a new `ObjectId` via the `new ObjectId(s)`
+|fromFileToDocument|`File` |`Document` |uses `fromInputStreamToDocument` under the hood
+|fromInputStreamToDocument|`InputStream` |`Document` |converts the inputstream bytes to a `Document`
 |fromStringToList |`String` |`List<Bson>` |uses `org.bson.codecs.configuration.CodecRegistries` to convert to BsonArray then to List<Bson>.
 |=======================================================================
 
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
 
-include::camel-spring-boot::page$mongodb-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

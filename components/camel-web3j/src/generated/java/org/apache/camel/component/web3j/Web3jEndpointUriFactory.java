@@ -19,49 +19,51 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(39);
-        props.add("blockHash");
+        props.add("address");
         props.add("addresses");
-        props.add("toBlock");
-        props.add("headerPowHash");
+        props.add("atBlock");
+        props.add("blockHash");
+        props.add("bridgeErrorHandler");
+        props.add("clientId");
         props.add("data");
         props.add("databaseName");
-        props.add("signedTransactionData");
-        props.add("hashrate");
-        props.add("toAddress");
-        props.add("transactionHash");
-        props.add("gasLimit");
-        props.add("sourceCode");
-        props.add("bridgeErrorHandler");
-        props.add("web3j");
-        props.add("fullTransactionObjects");
-        props.add("atBlock");
-        props.add("fromAddress");
-        props.add("value");
-        props.add("gasPrice");
-        props.add("sha3HashOfDataToSign");
-        props.add("address");
-        props.add("clientId");
-        props.add("quorumAPI");
-        props.add("topics");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
-        props.add("keyName");
+        props.add("filterId");
+        props.add("fromAddress");
+        props.add("fromBlock");
+        props.add("fullTransactionObjects");
+        props.add("gasLimit");
+        props.add("gasPrice");
+        props.add("hashrate");
+        props.add("headerPowHash");
         props.add("index");
-        props.add("privateFor");
+        props.add("keyName");
+        props.add("lazyStartProducer");
         props.add("mixDigest");
-        props.add("priority");
         props.add("nodeAddress");
         props.add("nonce");
-        props.add("ttl");
-        props.add("filterId");
-        props.add("fromBlock");
-        props.add("lazyStartProducer");
-        props.add("position");
-        props.add("exceptionHandler");
         props.add("operation");
+        props.add("position");
+        props.add("priority");
+        props.add("privateFor");
+        props.add("quorumAPI");
+        props.add("sha3HashOfDataToSign");
+        props.add("signedTransactionData");
+        props.add("sourceCode");
+        props.add("toAddress");
+        props.add("toBlock");
+        props.add("topics");
+        props.add("transactionHash");
+        props.add("ttl");
+        props.add("value");
+        props.add("web3j");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -89,6 +91,11 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "constructors",
+    "title": "Constructors",
+    "description": "Bean constructor arguments",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.BeanConstructorsDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "constructor": { "index": 0, "kind": "element", "displayName": "Constructor", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.BeanConstructorDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Constructor arguments" }
+  }
+}

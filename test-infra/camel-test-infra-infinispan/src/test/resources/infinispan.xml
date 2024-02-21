@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<infinispan
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="urn:infinispan:config:14.0 https://infinispan.org/schemas/infinispan-config-14.0.xsd
+                            urn:infinispan:server:14.0 https://infinispan.org/schemas/infinispan-server-14.0.xsd"
+      xmlns="urn:infinispan:config:14.0"
+      xmlns:server="urn:infinispan:server:14.0">
+
+   <cache-container name="default" statistics="true">
+      <transport cluster="${infinispan.cluster.name:cluster}" stack="${infinispan.cluster.stack:tcp}" node-name="${infinispan.node.name:}"/>
+      <security>
+         <authorization/>
+      </security>
+   </cache-container>
+
+   <server xmlns="urn:infinispan:server:14.0">
+      <interfaces>
+         <interface name="public">
+            <inet-address value="${infinispan.bind.address:127.0.0.1}"/>
+         </interface>
+      </interfaces>
+
+      <socket-bindings default-interface="public" port-offset="${infinispan.socket.binding.port-offset:0}">
+         <socket-binding name="default" port="${infinispan.bind.port:11222}"/>
+         <socket-binding name="memcached" port="11221"/>
+      </socket-bindings>
+
+      <security>
+         <credential-stores>
+            <credential-store name="credentials" path="credentials.pfx">
+               <clear-text-credential clear-text="secret"/>
+            </credential-store>
+         </credential-stores>
+         <security-realms>
+            <security-realm name="default">
+               <!-- Uncomment to enable TLS on the realm -->
+               <!-- server-identities>
+                  <ssl>
+                     <keystore path="application.keystore"
+                               password="password" alias="server"
+                               generate-self-signed-certificate-host="localhost"/>
+                  </ssl>
+               </server-identities-->
+               <properties-realm groups-attribute="Roles">
+                  <user-properties path="users.properties"/>
+                  <group-properties path="groups.properties"/>
+               </properties-realm>
+            </security-realm>
+         </security-realms>
+      </security>
+
+      <endpoints socket-binding="default" security-realm="default" />
+   </server>
+</infinispan>

@@ -16,43 +16,55 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
+@Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSupport {
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public static class BadErrorHandler {
+
+        @SuppressWarnings("unused")
         @Handler
-        public void onException(Exchange exchange, Exception exception) throws Exception {
-            throw new RuntimeException("error in errorhandler");
+        public void onException(Exchange exchange, Exception exception) {
+            throw new RuntimeCamelException("error in errorhandler");
         }
     }
 
     protected final String testingEndpoint = "activemq:test." + getClass().getName();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we attempt to handle the exception but if it throw a new exception
                 // then it causes the JMS transaction to rollback
                 onException(Exception.class).handled(true).bean(BadErrorHandler.class);
 
                 from(testingEndpoint)
                         .log("Incoming JMS message ${body}")
-                        .throwException(new RuntimeException("bad error"));
+                        .throwException(new RuntimeCamelException("bad error"));
             }
         };
     }
@@ -61,7 +73,8 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
     public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
         template.sendBody(testingEndpoint, "Hello World");
 
-        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
+        Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
+
         assertEquals("Hello World", dlqBody);
     }
 
@@ -70,7 +83,8 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
         CamelContext camelContext = super.createCamelContext();
 
         // no redeliveries
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory(null, 0);
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service, 0);
+
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;

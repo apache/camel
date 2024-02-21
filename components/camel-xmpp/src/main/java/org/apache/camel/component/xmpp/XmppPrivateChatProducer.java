@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StringHelper;
@@ -60,8 +61,11 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             if (!connection.isConnected()) {
                 this.reconnect();
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeCamelException("Interrupted while connecting to XMPP server.", e);
         } catch (Exception e) {
-            throw new RuntimeException("Could not connect to XMPP server.", e);
+            throw new RuntimeCamelException("Could not connect to XMPP server.", e);
         }
 
         String participant = endpoint.getParticipant();
@@ -87,6 +91,12 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 LOG.debug("Sending XMPP message to {} from {} : {}", participant, endpoint.getUser(), message.getBody());
             }
             chat.send(message);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeExchangeException(
+                    "Interrupted while sending XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
+                                               + " to: " + XmppEndpoint.getConnectionMessage(connection),
+                    exchange, e);
         } catch (Exception e) {
             throw new RuntimeExchangeException(
                     "Could not send XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
@@ -116,7 +126,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 connection = endpoint.createConnection();
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
-                    throw new RuntimeException(
+                    throw new RuntimeCamelException(
                             "Could not establish connection to XMPP server: " + endpoint.getConnectionDescription(), e);
                 } else {
                     LOG.warn("Could not connect to XMPP server: {} Producer will attempt lazy connection when needed.",

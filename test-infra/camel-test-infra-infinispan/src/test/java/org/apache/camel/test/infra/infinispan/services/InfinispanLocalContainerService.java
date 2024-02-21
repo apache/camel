@@ -18,47 +18,62 @@ package org.apache.camel.test.infra.infinispan.services;
 
 import java.util.function.Consumer;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:12.0.1.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalContainerService.class);
 
-    private GenericContainer<?> container;
+    private final GenericContainer container;
+    private final boolean isNetworkHost;
 
     public InfinispanLocalContainerService() {
-        String containerImage = System.getProperty("infinispan.container", CONTAINER_IMAGE);
-
-        initContainer(containerImage);
+        this(LocalPropertyResolver.getProperty(
+                InfinispanLocalContainerService.class,
+                InfinispanProperties.INFINISPAN_CONTAINER));
     }
 
     public InfinispanLocalContainerService(String containerImage) {
-        initContainer(containerImage);
+        isNetworkHost = isHostNetworkMode();
+        container = initContainer(containerImage, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerImage) {
-        final Logger containerLog = LoggerFactory.getLogger("container." + CONTAINER_NAME);
+    public InfinispanLocalContainerService(GenericContainer container) {
+        isNetworkHost = isHostNetworkMode();
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
-        container = new GenericContainer<>(containerImage)
-                .withNetworkAliases(CONTAINER_NAME)
+        final GenericContainer c = new GenericContainer<>(imageName)
+                .withNetworkAliases(containerName)
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
                 .withLogConsumer(logConsumer)
-                .withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
-                .waitingFor(Wait.forListeningPort())
+                .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
+                .withCommand("-c", "/user-config/infinispan.xml")
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
+        if (isNetworkHost) {
+            c.withNetworkMode("host");
+        } else {
+            c.withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
+                    .waitingFor(Wait.forListeningPort());
+        }
+        return c;
     }
 
     @Override
@@ -68,6 +83,7 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         System.setProperty(InfinispanProperties.SERVICE_ADDRESS, getServiceAddress());
         System.setProperty(InfinispanProperties.SERVICE_USERNAME, DEFAULT_USERNAME);
         System.setProperty(InfinispanProperties.SERVICE_PASSWORD, DEFAULT_PASSWORD);
+        System.setProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST, String.valueOf(isNetworkHost));
     }
 
     @Override
@@ -89,6 +105,7 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         System.clearProperty(InfinispanProperties.SERVICE_ADDRESS);
         System.clearProperty(InfinispanProperties.SERVICE_USERNAME);
         System.clearProperty(InfinispanProperties.SERVICE_PASSWORD);
+        System.clearProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST);
     }
 
     @Override
@@ -103,7 +120,9 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
 
     @Override
     public int port() {
-        return container.getMappedPort(InfinispanProperties.DEFAULT_SERVICE_PORT);
+        return isNetworkHost
+                ? InfinispanProperties.DEFAULT_SERVICE_PORT
+                : container.getMappedPort(InfinispanProperties.DEFAULT_SERVICE_PORT);
     }
 
     @Override
@@ -119,5 +138,10 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
     @Override
     public String password() {
         return DEFAULT_PASSWORD;
+    }
+
+    private boolean isHostNetworkMode() {
+        return Boolean.parseBoolean(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST,
+                String.valueOf(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT)));
     }
 }

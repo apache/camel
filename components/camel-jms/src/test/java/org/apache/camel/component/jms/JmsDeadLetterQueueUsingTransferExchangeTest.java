@@ -16,23 +16,32 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit test for using JMS as DLQ and to preserve the Exchange using transferExchange=true option
  */
-public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSupport {
+public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     protected String getUri() {
-        return "activemq:queue:dead?transferExchange=true";
+        return "activemq:queue:JmsDeadLetterQueueUsingTransferExchangeTest?transferExchange=true";
     }
 
     @Test
@@ -42,46 +51,52 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testKabom() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedBodiesReceived("Kabom");
+    public void testKaboom() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:JmsDeadLetterQueueUsingTransferExchangeTest.dead");
+        mock.expectedBodiesReceived("Kaboom");
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel(getUri()).disableRedelivery());
 
                 from("direct:start").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
-                    if ("Kabom".equals(body)) {
-                        throw new IllegalArgumentException("Kabom");
+                    if ("Kaboom".equals(body)) {
+                        throw new IllegalArgumentException("Kaboom");
                     }
                 }).to("mock:result");
 
-                from(getUri()).to("mock:dead");
+                from(getUri()).to("mock:JmsDeadLetterQueueUsingTransferExchangeTest.dead");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

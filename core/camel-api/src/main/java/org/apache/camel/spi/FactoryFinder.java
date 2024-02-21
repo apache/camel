@@ -65,4 +65,9 @@ public interface FactoryFinder {
      */
     Optional<Class<?>> findOptionalClass(String key);
 
+    /**
+     * Clear the resolver state from previous scans.
+     */
+    void clear();
+
 }

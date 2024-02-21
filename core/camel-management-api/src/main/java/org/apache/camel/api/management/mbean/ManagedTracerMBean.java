@@ -27,6 +27,9 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
 
+    @ManagedAttribute(description = "Is tracing standby")
+    boolean isStandby();
+
     @ManagedAttribute(description = "Is tracing enabled")
     boolean isEnabled();
 
@@ -38,6 +41,12 @@ public interface ManagedTracerMBean {
 
     @ManagedAttribute(description = "To filter tracing by nodes (pattern)")
     String getTracePattern();
+
+    @ManagedAttribute(description = "Whether tracing routes created from Rest DSL.")
+    boolean isTraceRests();
+
+    @ManagedAttribute(description = "Whether tracing routes created from route templates or kamelets.")
+    boolean isTraceTemplates();
 
     @ManagedAttribute(description = "Number of total traced messages")
     long getTraceCounter();

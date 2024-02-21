@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -93,7 +95,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doSelectOne(Exchange exchange, SqlSession session) throws Exception {
+    private void doSelectOne(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -107,7 +109,7 @@ public class MyBatisProducer extends DefaultProducer {
         doProcessResult(exchange, result, session);
     }
 
-    private void doSelectList(Exchange exchange, SqlSession session) throws Exception {
+    private void doSelectList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -121,12 +123,17 @@ public class MyBatisProducer extends DefaultProducer {
         doProcessResult(exchange, result, session);
     }
 
-    private void doInsert(Exchange exchange, SqlSession session) throws Exception {
+    private void doInsert(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Inserting: {} using statement: {}", value, statement);
@@ -140,7 +147,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doInsertList(Exchange exchange, SqlSession session) throws Exception {
+    private void doInsertList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -155,12 +162,17 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doUpdate(Exchange exchange, SqlSession session) throws Exception {
+    private void doUpdate(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Updating: {} using statement: {}", value, statement);
@@ -174,7 +186,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doUpdateList(Exchange exchange, SqlSession session) throws Exception {
+    private void doUpdateList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
@@ -189,12 +201,17 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doDelete(Exchange exchange, SqlSession session) throws Exception {
+    private void doDelete(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Deleting: {} using statement: {}", value, statement);
@@ -208,7 +225,7 @@ public class MyBatisProducer extends DefaultProducer {
         }
     }
 
-    private void doDeleteList(Exchange exchange, SqlSession session) throws Exception {
+    private void doDeleteList(Exchange exchange, SqlSession session) {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {

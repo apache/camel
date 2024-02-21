@@ -51,6 +51,14 @@ public interface JSonSchemaResolver {
     String getLanguageJSonSchema(String name);
 
     /**
+     * Returns the transformer information as JSON format.
+     *
+     * @param  name the transformer name
+     * @return      transformer details in JSon
+     */
+    String getTransformerJSonSchema(String name);
+
+    /**
      * Returns the other (miscellaneous) information as JSON format.
      *
      * @param  name the other (miscellaneous) name

@@ -27,7 +27,7 @@ public abstract class FeedPollingConsumer extends ScheduledPollConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     protected final FeedEndpoint endpoint;
 
-    public FeedPollingConsumer(FeedEndpoint endpoint, Processor processor) {
+    protected FeedPollingConsumer(FeedEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }

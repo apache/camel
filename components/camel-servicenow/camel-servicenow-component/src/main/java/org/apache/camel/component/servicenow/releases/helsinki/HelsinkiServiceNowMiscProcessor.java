@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.servicenow.releases.helsinki;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -52,7 +52,6 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
     private void retrieveUserRoleInheritance(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)

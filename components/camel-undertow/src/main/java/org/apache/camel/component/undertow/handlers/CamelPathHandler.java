@@ -26,7 +26,7 @@ import io.undertow.server.handlers.PathHandler;
  * Extended PathHandler to monitor add/remove handlers.
  */
 public class CamelPathHandler extends PathHandler {
-    private Map<String, HttpHandler> handlers = new HashMap<>();
+    private final Map<String, HttpHandler> handlers = new HashMap<>();
     private String handlerString;
 
     public CamelPathHandler(HttpHandler defaultHandler) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,16 +24,13 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-//CHECKSTYLE:OFF
 @JsonFilter("fieldsToNull")
 public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
     // DO NOT change these field names to camel case!!!
-    @XStreamOmitField
     private Attributes attributes;
     private String Id;
     private String OwnerId;
@@ -43,11 +41,10 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastModifiedDate;
     private String LastModifiedById;
     private ZonedDateTime SystemModstamp;
-    private ZonedDateTime LastActivityDate;
+    private LocalDate LastActivityDate;
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
 
-    @XStreamOmitField
     private Set<String> fieldsToNull = new HashSet<>();
 
     public AbstractSObjectBase() {
@@ -60,12 +57,12 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
      * Useful when reusing a DTO for a new record, or for update/upsert.
      * </p>
      * <p>
-     * This method does not clear {@code Name} to allow updating it, so it must
-     * be explicitly set to {@code null} if needed.
+     * This method does not clear {@code Name} to allow updating it, so it must be explicitly set to {@code null} if
+     * needed.
      * </p>
      */
     public final void clearBaseFields() {
-//
+        //
         attributes = null;
         Id = null;
         IsDeleted = null;
@@ -75,6 +72,8 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
         LastModifiedById = null;
         SystemModstamp = null;
         LastActivityDate = null;
+        LastViewedDate = null;
+        LastReferencedDate = null;
     }
 
     @JsonProperty("attributes")
@@ -178,12 +177,12 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastActivityDate")
-    public ZonedDateTime getLastActivityDate() {
+    public LocalDate getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(ZonedDateTime lastActivityDate) {
+    public void setLastActivityDate(LocalDate lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
     }
 
@@ -218,4 +217,3 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     }
 
 }
-//CHECKSTYLE:ON

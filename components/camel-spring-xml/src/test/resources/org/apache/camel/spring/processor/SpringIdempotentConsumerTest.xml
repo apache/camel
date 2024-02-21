@@ -29,9 +29,10 @@
     <bean id="myRepo" class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <idempotentConsumer messageIdRepositoryRef="myRepo">
+            <idempotentConsumer idempotentRepository="myRepo">
                 <!-- use the messageId header as key for identifying duplicate messages -->
                 <header>messageId</header>
                 <!-- if not a duplicate send it to this mock endpoint -->

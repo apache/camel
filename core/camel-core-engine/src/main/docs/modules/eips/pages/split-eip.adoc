@@ -1,98 +1,148 @@
-[[split-eip]]
 = Split EIP
-:docTitle: Split
+:doctitle: Split
+:shortname: split
 :description: Splits a single message into many sub-messages.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
+How can we process a message if it contains multiple elements, each of which may have to be processed in a different way?
 
 image::eip/Sequencer.gif[image]
 
-You need to specify a Splitter as `split()`. In earlier versions of Camel, you need to use `splitter()`.
+Use a Splitter to break out the composite message into a series of individual messages, each containing data related to one item.
 
+The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
+
+== Options
 
 // eip options: START
-The Split EIP supports 12 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *parallelProcessing* | If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only processing the sub messages from the splitter which happens concurrently. | false | Boolean
-| *strategyRef* | Sets a reference to the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy |  | String
-| *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String
-| *strategyMethodAllowNull* | If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy | false | Boolean
-| *executorServiceRef* | Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well. |  | String
-| *streaming* | When in streaming mode, then the splitter splits the original message on-demand, and each splitted message is processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we do not know the total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In non-streaming mode (default) the splitter will split each message first, to know the total size, and then process each message one by one. This requires to keep all the splitted messages in memory and therefore requires more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the messages was splitted. | false | Boolean
-| *stopOnException* | Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the splitter will stop further processing. This is the same behavior as in pipeline, which is used by the routing engine. The default behavior is to not stop but continue processing till the end | false | Boolean
-| *timeout* | Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to split and process all the sub messages within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care. | 0 | String
-| *onPrepareRef* | Uses the Processor when preparing the org.apache.camel.Exchange to be send. This can be used to deep-clone messages that should be send, or any custom logic needed before the exchange is send. |  | String
-| *shareUnitOfWork* | Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Splitter will by default not share unit of work between the parent exchange and each splitted exchange. This means each splitted exchange has its own individual unit of work. | false | Boolean
-| *parallelAggregate* | If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe. | false | Boolean
-| *stopOnAggregateException* | If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used. Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling this option allows to work around this behavior. The default value is false for the sake of backward compatibility. | false | Boolean
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
 == Exchange properties
-The following properties are set on each Exchange that are split:
 
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Property | Type | Description
-| `CamelSplitIndex` | `int` | A split counter that increases for each Exchange being split. The counter starts from 0.
-| `CamelSplitSize` | `int` | The total number of Exchanges that was splitted. This header is not applied for stream based splitting. This header is also set in stream based splitting, but only on the completed Exchange.
-| `CamelSplitComplete` | `boolean` |Whether or not this Exchange is the last.
-|=======================================================================
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
+== Using Split
 
-== Examples
-The following example shows how to take a request from the *direct:a* endpoint the split it into pieces using an Expression, then forward each piece to *direct:b*
+The following example shows how to take a request from the direct:a endpoint,
+then split into sub messages, which each are sent to the direct:b endpoint.
+
+The example splits the message body using a tokenizer to split into lines
+using the new-line character as separator.
 
 [source,java]
 ----
 from("direct:a")
-    .split(body(String.class).tokenize("\n"))
+    .split(body().tokenize("\n"))
         .to("direct:b");
 ----
 
-The splitter can use any Expression language so you could use any of the Languages Supported such as XPath, XQuery, SQL or one of the Scripting Languages to perform the split. e.g.
+And in XML:
 
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <split>
+    <tokenize token="\n"/>
+    <to uri="direct:b"/>
+  </split>
+</route>
+----
+
+The Split EIP has special support for splitting using a delimiter, instead of using
+xref:components:languages:tokenize-language.adoc[Tokenize] language.
+
+The previous example can also be done as follows:
+
+[source,java]
+----
+from("direct:a")
+    .split(body()).delimiter("\n")
+        .to("direct:b");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <split delimiter="\n">
+    <simple>${body}</simple>
+    <to uri="direct:b"/>
+  </split>
+</route>
+----
+
+The splitter can use any xref:manual:ROOT:expression.adoc[Expression],
+so you could use any of the supported languages such as
+xref:components:languages:simple-language.adoc[Simple], xref:components:languages:xpath-language.adoc[XPath],
+xref:components:languages:jsonpath-language.adoc[JSonPath], xref:components:languages:groovy-language.adoc[Groovy] to perform the split.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:my.queue")
     .split(xpath("//foo/bar"))
-        .to("file://some/directory")
+        .to("file:some/directory")
 ----
 
+XML::
++
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="activemq:my.queue"/>
-        <split>
-            <xpath>//foo/bar</xpath>
-            <to uri="file://some/directory"/>
-        </split>
-    </route>
-</camelContext>
+<route>
+    <from uri="activemq:my.queue"/>
+    <split>
+        <xpath>//foo/bar</xpath>
+        <to uri="file:some/directory"/>
+    </split>
+</route>
 ----
+====
 
-== Splitting a Collection, Iterator or Array
+=== Splitting the message body
 
-A common use case is to split a Collection, Iterator or Array from the message. In the sample below we simply use an Expression to identify the value to split.
+A common use case is to split a list/set/collection/map, array, or something that is iterable
+from the message body.
 
+The Split EIP will by default split the message body based on the value type:
+
+- `java.util.Collection` - splits by each element from the collection/list/set.
+- `java.util.Map` - splits by each `Map.Entry` from the map.
+- `Object[]` - splits the array by each element
+- `Iterator` - splits by the iterator
+- `Iterable` - splits by the iterable
+- `org.w3c.dom.NodeList` - splits the XML document by each element from the list
+- `String` - splits the string value by comma as separator
+
+For any other type the message body is not split, and instead used _as-is_, meaning that
+the Split EIP will be split into a single message (the same).
+
+To use this with the splitter you should _just_ use body as the expression:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:splitUsingBody")
     .split(body())
         .to("mock:result");
-
-from("direct:splitUsingHeader")
-    .split(header("foo"))
-        .to("mock:result");
 ----
 
-In XML you can use the Simple language to identify the value to split.
+XML::
++
+In XML you use xref:components:languages:simple-language.adoc[Simple] to refer to the message body:
 
 [source,xml]
 ----
@@ -103,78 +153,165 @@ In XML you can use the Simple language to identify the value to split.
      <to uri="mock:result"/>
   </split>
 </route>
+----
+====
 
-<route>
-  <from uri="direct:splitUsingHeader"/>
-  <split>
-     <simple>${header.foo}</simple>
-     <to uri="mock:result"/>
-  </split>
-</route>
+=== Splitting with parallel processing
+
+You can enable parallel processing with Split EIP so each split message
+is processed by its own thread in parallel.
+
+The example below enabled parallel mode:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+  .split(body()).parallelProcessing()
+    .to("direct:x")
+    .to("direct:y")
+    .to("direct:z");
 ----
 
-== Using Tokenizer from Spring XML Extensions*
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <split parallelProcessing="true">
+        <simple>${body}</simple>
+        <to uri="direct:b"/>
+        <to uri="direct:c"/>
+        <to uri="direct:d"/>
+    </split>
+</route>
+----
+====
 
-You can use the tokenizer expression in the Spring DSL to split bodies or headers using a token. This is a common use-case, so we provided a special *tokenizer* tag for this.
-In the sample below we split the body using a `@` as separator. You can of course use comma or space or even a regex pattern, also set `regex=true`.
+[IMPORTANT]
+====
+When parallel processing is enabled, then the Camel routing engin will continue processing
+using last used thread from the parallel thread pool. However, if you want to use the original
+thread that called the splitter, then make sure to enable the synchronous option as well.
+====
+
+=== Ending a Split block
+
+You may want to continue routing the exchange after the Split EIP. In Java DSL you need to use `end()`
+to mark where split ends, and where other EIPs can be added to continue the route.
+
+In the example above then sending to mock:result happens after the Spllit EIP has finished.
+In other words the message should finish splitting the entire message before the message
+continues.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+  .split(body()).parallelProcessing()
+    .to("direct:x")
+    .to("direct:y")
+    .to("direct:z")
+  .end()
+  .to("mock:result");
+----
+
+XML::
++
+And in XML its intuitive as `</split>` marks the end of the block:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:start"/>
-        <split>
-            <tokenize token="@"/>
-            <to uri="mock:result"/>
-        </split>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:a"/>
+    <split parallelProcessing="true">
+        <simple>${body}</simple>
+        <to uri="direct:b"/>
+        <to uri="direct:c"/>
+        <to uri="direct:d"/>
+    </split>
+    <to uri="mock:result"/>
+</route>
 ----
+====
 
-== What the Splitter returns
+=== What is returned from Split EIP when its complete
 
 The Splitter will by default return the original input message.
 
-You can override this by supplying your own strategy as an `AggregationStrategy`.
-There is a sample on this page (Split aggregate request/reply sample).
-Notice its the same strategy as the Aggregate EIP supports.
-This Splitter can be viewed as having a build in light weight Aggregate EIP.
+You can control this by using a custom `AggregationStrategy`.
+
+=== Aggregating
+
+The `AggregationStrategy` is used for aggregating all the split exchanges together
+as a single response exchange, that becomes the outgoing exchange after the Split EIP block.
+
+The example now aggregates with the `MyAggregationStrategy` class:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .split(body(), new MyAggregationStrategy())
+    .to("direct:x")
+    .to("direct:y")
+    .to("direct:z")
+  .end()
+  .to("mock:result");
+----
+
+XML::
++
+And in XML we can refer to the FQN class name with `#class:` syntax as shown below:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <split aggregationStrategy="#class:com.foo.MyAggregationStrategy">
+        <simple>${body}</simple>
+        <to uri="direct:b"/>
+        <to uri="direct:c"/>
+        <to uri="direct:d"/>
+    </split>
+    <to uri="mock:result"/>
+</route>
+----
+====
 
 [NOTE]
 ====
 The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
 access to the original input exchange. You may want to use this when you aggregate messages and
 there has been a failure in one of the messages, which you then want to enrich on the original
-input message and return as response; its the aggregate method with 3 exchange parameters.
+input message and return as response; it's the aggregate method with 3 exchange parameters.
 ====
 
-== Parallel execution of distinct parts
+=== Splitting modes
 
-If you want to execute all parts in parallel you can use the `parallelProcessing` option as show:
+The Split EIP operates in two modes when splitting:
 
-[source,java]
-----
-XPathBuilder xPathBuilder = new XPathBuilder("//foo/bar");
+- _default mode_ - The message is split into sub messages, which allows to know the total split size. However this causes all sub messages to be kept temporary in-memory.
+- _streaming mode_ - The message is split on-demand. This uses an iterator to keep track of the splitting index, but avoids loading all sub messages into memory. However, the total size cannot be know ahead of time.
 
-from("activemq:my.queue")
-  .split(xPathBuilder).parallelProcessing()
-    .to("activemq:my.parts");
-----
+=== Using streaming mode
 
-== Stream based
+You can split in streaming mode as shown:
 
-[NOTE]
+[tabs]
 ====
-*Splitting big XML payloads*
-
-The XPath engine in Java and saxon will load the entire XML content into memory. And thus they are not well suited for very big
-XML payloads. Instead you can use a custom Expression which will iterate the XML payload in a streamed fashion.
-You can use the Tokenizer language which supports this when you supply the start and end tokens.
-You can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
-====
-
-You can split streams by enabling the streaming mode using the streaming builder method.
-
+Java::
++
 [source,java]
 ----
 from("direct:streaming")
@@ -182,30 +319,102 @@ from("direct:streaming")
     .to("activemq:my.parts");
 ----
 
-You can also supply your custom Bean as the splitter to use with streaming like this:
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:streaming"/>
+    <split streaming="true">
+        <tokenize token=","/>
+        <to uri="activemq:my.parts"/>
+    </split>
+</route>
+----
+====
 
+You can also supply a custom xref:components:languages:bean-language.adoc[Bean]
+to perform the splitting in streaming mode like this:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-
 from("direct:streaming")
-  .split(method(new MyCustomIteratorFactory(), "iterator")) .streaming()
+  .split(method(new MyCustomSplitter(), "splitMe")).streaming()
     .to("activemq:my.parts")
 ----
 
-== Streaming big XML payloads using Tokenizer language
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:streaming"/>
+    <split streaming="true">
+        <method ref="#class:com.foo.MyCustomSplitter" method="splitMe"/>
+        <to uri="activemq:my.parts"/>
+    </split>
+</route>
+----
+====
 
-There are two tokenizers that can be used to tokenize an XML payload. The first tokenizer uses the same principle as in the text tokenizer to scan the XML payload and extract a sequence of tokens.
+Then the custom bean could for example be implemented as follows:
 
-If you have a big XML payload, from a file source, and want to split it in streaming mode, then you can use the Tokenizer language with start/end tokens to do this with low memory footprint.
+[source,java]
+----
+public class MyCustomSplitter {
+
+    public List splitMe(Exchange exchange) {
+        Object body = exchange.getMessage().getBody();
+
+        List answer = new ArrayList();
+        // split the message body how you like
+        return answer;
+    }
+}
+----
+
+The bean should just return something that the splitter can work with when splitting, such as a `List` or `Iterator` etc.
+
+TIP: The bean method `splitMe` uses `Exchange` as parameter, however Camel supports
+xref:manual:ROOT:bean-binding.adoc[Bean Parameter Binding], which allows using other parameters types instead.
+
+=== Streaming big XML payloads
+
+[NOTE]
+====
+*Splitting big XML payloads*
+
+The XPath engine in Java and Saxon will load the entire XML content into memory. And thus they are not well suited for very big
+XML payloads. Instead, you can use a custom Expression which will iterate the XML payload in a streamed fashion.
+You can use the Tokenizer language which supports this when you supply the start and end tokens.
+You can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
+====
+
+There are two tokenizers that can be used to tokenize an XML payload:
+
+- xref:components:languages:tokenize-language.adoc[Tokenize] language
+- xref:components:languages:xtokenize-language.adoc[XML Tokenize] language
+
+=== Streaming big XML payloads using Tokenize language
+
+The first tokenizer uses the same principle as in the text tokenizer to scan the XML payload and extract a sequence of tokens.
+If you have a big XML payload, from a file source, and want to split it in streaming mode, then you can use the
+xref:components:languages:tokenize-language.adoc[Tokenize] language with start/end tokens to do this with low memory footprint.
 
 [NOTE]
 ====
 *StAX component*
 
-The Camel StAX component can also be used to split big XML files in a streaming mode. See more details at StAX.
+The Camel StAX component can also be used to split big XML files in a streaming mode.
+See more details at xref:components::stax-component.adoc[StAX].
 ====
 
-For example you may have a XML payload structured as follows
+For example, you may have an XML payload structured as follows:
+
 [source,xml]
 ----
 <orders>
@@ -222,15 +431,22 @@ For example you may have a XML payload structured as follows
 </orders>
 ----
 
-Now to split this big file using XPath would cause the entire content to be loaded into memory. So instead we can use the Tokenizer language to do this as follows:
+Now to split this big file using xref:components:languages:xpath-language.adoc[XPath]
+would cause the entire content to be loaded into memory. So instead we can use the
+xref:components:languages:tokenize-language.adoc[Tokenize] language to do this as follows:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
   .split().tokenizeXML("order").streaming()
      .to("activemq:queue:order");
 ----
-
-In XML DSL the route would be as follows:
+XML::
++
 [source,xml]
 ----
 <route>
@@ -241,8 +457,13 @@ In XML DSL the route would be as follows:
   </split>
 </route>
 ----
+====
 
-Notice the `tokenizeXML` method which will split the file using the tag name of the child node (more precisely speaking, the local name of the element without its namespace prefix if any), which mean it will grab the content between the <order> and </order> tags (incl. the tokens). So for example a splitted message would be as follows:
+This will split the file using the tag name of the child nodes (more precisely speaking, the local name of the element without its namespace prefix if any),
+which mean it will grab the content between the `<order>` and `</order>` tags (incl. the tags).
+
+So for example a split message would be structured as follows:
+
 [source,xml]
 ----
 <order>
@@ -251,6 +472,20 @@ Notice the `tokenizeXML` method which will split the file using the tag name of 
 ----
 
 If you want to inherit namespaces from a root/parent tag, then you can do this as well by providing the name of the root/parent tag:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .split().tokenizeXML("order", "orders").streaming()
+     .to("activemq:queue:order");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -261,31 +496,34 @@ If you want to inherit namespaces from a root/parent tag, then you can do this a
   </split>
 </route>
 ----
+====
 
-And in Java DSL its as follows:
-[source,java]
-----
-from("file:inbox")
-  .split().tokenizeXML("order", "orders").streaming()
-     .to("activemq:queue:order");
-----
-
-You can set the above `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
+You can set `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
 The above tokenizer works well on simple structures but has some inherent limitations in handling more complex XML structures.
 
-The second tokenizer uses a StAX parser to overcome these limitations. This tokenizer recognizes XML namespaces and also handles simple and complex XML structures more naturally and efficiently.
-To split using this tokenizer at {urn:shop}order, we can write
+=== Streaming big XML payloads using XML Tokenize language
+
+The second tokenizer (xref:components:languages:xtokenize-language.adoc[XML Tokenize]) uses a StAX parser
+to overcome these limitations. This tokenizer recognizes XML namespaces and also handles simple and complex XML
+structures more naturally and efficiently.
+
+To split with XML namespaces on a tag with a local namespace such as `{urn:shop}order`, we can write:
 
 [source,java]
 ----
 Namespaces ns = new Namespaces("ns1", "urn:shop");
-...
+
 from("file:inbox")
   .split().xtokenize("//ns1:order", 'i', ns).streaming()
     .to("activemq:queue:order)
 ----
 
-Two arguments control the behavior of the tokenizer. The first argument specifies the element using a path notation. This path notation uses a subset of xpath with wildcard support. The second argument represents the extraction mode. The available extraction modes are:
+Two arguments control the behavior of the tokenizer:
+
+. The first argument specifies the element using a path notation This path notation uses a subset of xpath with wildcard support.
+. The second argument represents the extraction mode.
+
+The available extraction modes are:
 
 [width="100%",cols="3,6",options="header"]
 |===
@@ -296,7 +534,8 @@ Two arguments control the behavior of the tokenizer. The first argument specifie
 | t | extracting the text content of the specified element
 |===
 
-Having an input XML
+Having an input XML:
+
 [source,xml]
 ----
 <m:orders xmlns:m="urn:shop" xmlns:cat="urn:shop:catalog">
@@ -306,6 +545,7 @@ Having an input XML
 ----
 
 Each mode will result in the following tokens,
+
 [width="100%",cols="3,6",options="header"]
 |===
 | Mode | Description
@@ -319,7 +559,7 @@ Each mode will result in the following tokens,
 | t | 1232014-02-25...
 |===
 
-In XML DSL, the equivalent route would be written as follows:
+In XML, the equivalent route would be written as follows:
 
 [source,xml]
 ----
@@ -341,20 +581,29 @@ or setting the extraction mode explicitly as
 <xtokenize mode="i">//ns1:order</xtokenize>
 ----
 
-Note that this StAX based tokenizer's uses StAX Location API and requires a StAX Reader implementation (e.g., woodstox)
-that correctly returns the offset position pointing to the beginning of each event triggering segment (e.g., the offset position
+Note that this StAX based tokenizer uses StAX Location API and requires a StAX Reader implementation (such as Woodstox)
+that correctly returns the offset position pointing to the beginning of each event triggering segment (the offset position
 of `<` at each start and end element event). If you use a StAX Reader which does not implement that API correctly
-it results in invalid xml snippets after the split. For example the snippet could be wrong terminated:
+it results in invalid XML snippets after the split.
+
+For example the snippet could be wrong terminated:
 
 [source,xml]
 ----
 <Start>...<</Start> .... <Start>...</</Start>
 ----
 
-== Splitting files by grouping N lines together
+=== Splitting files by grouping N lines together
 
-The Tokenizer language has a new option group that allows you to group N parts together, for example to split big files into chunks of 1000 lines.
+The xref:components:languages:tokenize-language.adoc[Tokenize] language
+can be used for grouping N parts together, for example to split big files into chunks of 1000 lines.
 
+Doing this is easy as the following example shows:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -362,8 +611,8 @@ from("file:inbox")
      .to("activemq:queue:order");
 ----
 
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -374,135 +623,39 @@ And in XML DSL
   </split>
 </route>
 ----
+====
 
-The group option is a number that must be a positive number that dictates how many groups to combine together. Each part will be combined using the token.
+The `group` value must be a positive number dictating how many elements to combine together in a group.
+Each part will be combined using the token.
 
-So in the example above the message being sent to the activemq order queue, will contain 1000 lines, and each line separated by the token (which is a new line token).
+In the example above the message being sent to the activemq order queue, will contain 1000 lines,
+and each line separated by the token (which is a new line token).
 
 The output when using the group option is always a `java.lang.String` type.
 
-== Specifying a custom aggregation strategy
+=== Split and aggregate example
 
-This is specified similar to the Aggregate EIP.
+This sample shows how you can split an Exchange, process each split message,
+aggregate and return a combined response to the original caller.
 
-== Specifying a custom ThreadPoolExecutor
-
-You can customize the underlying `ThreadPoolExecutor` used in the parallel splitter via the `executorService` option.
-In the Java DSL try something like this:
-
-[source,java]
-----
-XPathBuilder xPathBuilder = new XPathBuilder("//foo/bar");
-
-ExecutorService pool = ...
-
-from("activemq:my.queue")
-    .split(xPathBuilder).executorService(pool)
-        .to("activemq:my.parts");
-----
-
-== Using a Pojo to do the splitting
-
-As the Splitter can use any Expression to do the actual splitting we leverage this fact and use a *method* expression to invoke a Bean to get the splitted parts.
-
-The Bean should return a value that is iterable such as: `java.util.Collection`, `java.util.Iterator` or an array.
-
-So the returned value, will then be used by Camel at runtime, to split the message.
-
-[TIP]
-.Streaming mode and using pojo
-===
-When you have enabled the streaming mode, then you should return a `Iterator` to ensure streamish fashion. For example if the message is a big file, then by using an iterator, that returns a piece of the file in chunks, in the next method of the `Iterator` ensures low memory footprint. This avoids the need for reading the entire content into memory. For an example see the source code for the TokenizePair implementation.
-===
-
-In the route we define the Expression as a method call to invoke our Bean that we have registered with the id mySplitterBean in the Registry.
-
-[source,java]
-----
-from("direct:body")
-    // here we use a POJO bean mySplitterBean to do the split of the payload
-    .split().method("mySplitterBean", "splitBody")
-      .to("mock:result");
-from("direct:message")
-    // here we use a POJO bean mySplitterBean to do the split of the message
-    // with a certain header value
-    .split().method("mySplitterBean", "splitMessage")
-      .to("mock:result");
-----
-
-And the logic for our Bean is as simple as. Notice we use Camel Bean Binding to pass in the message body as a String object.
-
-[source,java]
-----
-public class MySplitterBean {
-
-    /**
-     * The split body method returns something that is iteratable such as a java.util.List.
-     *
-     * @param body the payload of the incoming message
-     * @return a list containing each part splitted
-     */
-    public List<String> splitBody(String body) {
-        // since this is based on an unit test you can of cause
-        // use different logic for splitting as Camel have out
-        // of the box support for splitting a String based on comma
-        // but this is for show and tell, since this is java code
-        // you have the full power how you like to split your messages
-        List<String> answer = new ArrayList<String>();
-        String[] parts = body.split(",");
-        for (String part : parts) {
-            answer.add(part);
-        }
-        return answer;
-    }
-
-    /**
-     * The split message method returns something that is iteratable such as a java.util.List.
-     *
-     * @param header the header of the incoming message with the name user
-     * @param body the payload of the incoming message
-     * @return a list containing each part splitted
-     */
-    public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
-        // we can leverage the Parameter Binding Annotations
-        // http://camel.apache.org/parameter-binding-annotations.html
-        // to access the message header and body at same time,
-        // then create the message that we want, splitter will
-        // take care rest of them.
-        // *NOTE* this feature requires Camel version >= 1.6.1
-        List<Message> answer = new ArrayList<Message>();
-        String[] parts = header.split(",");
-        for (String part : parts) {
-            DefaultMessage message = new DefaultMessage(camelContext);
-            message.setHeader("user", part);
-            message.setBody(body);
-            answer.add(message);
-        }
-        return answer;
-    }
-}
-----
-
-== Split aggregate request/reply sample
-
-This sample shows how you can split an Exchange, process each splitted message, aggregate and return a combined response to the original caller using request/reply.
-The route below illustrates this and how the split supports a `aggregationStrategy` to hold the in progress processed messages:
+The route below illustrates this and how the split supports a custom `AggregationStrategy`
+to build up the combined response message.
 
 [source,java]
 ----
 // this routes starts from the direct:start endpoint
-// the body is then splitted based on @ separator
+// the body is then split based on @ separator
 // the splitter in Camel supports InOut as well and for that we need
 // to be able to aggregate what response we need to send back, so we provide our
 // own strategy with the class MyOrderStrategy.
 from("direct:start")
     .split(body().tokenize("@"), new MyOrderStrategy())
-        // each splitted message is then send to this bean where we can process it
+        // each split message is then send to this bean where we can process it
         .to("bean:MyOrderService?method=handleOrder")
         // this is important to end the splitter route as we do not want to do more routing
-        // on each splitted message
+        // on each split message
     .end()
-    // after we have splitted and handled each message we want to send a single combined
+    // after we have split and handled each message we want to send a single combined
     // response back to the original caller, so we let this bean build it for us
     // this bean will receive the result of the aggregate strategy: MyOrderStrategy
     .to("bean:MyOrderService?method=buildCombinedResponse")
@@ -517,10 +670,10 @@ public static class MyOrderService {
     private static int counter;
 
     /**
-     * We just handle the order by returning a id line for the order
+     * We just handle the order by returning an id line for the order
      */
     public String handleOrder(String line) {
-        LOG.debug("HandleOrder: " + line);
+        LOG.debug("HandleOrder: {}", line);
         return "(id=" + ++counter + ",item=" + line + ")";
     }
 
@@ -529,20 +682,21 @@ public static class MyOrderService {
      * back to the original caller
      */
     public String buildCombinedResponse(String line) {
-        LOG.debug("BuildCombinedResponse: " + line);
+        LOG.debug("BuildCombinedResponse: {}", line);
         return "Response[" + line + "]";
     }
 }
 ----
 
-And our custom `aggregationStrategy` that is responsible for holding the in progress aggregated message that after
-the splitter is ended will be sent to the `buildCombinedResponse` method for final processing before the combined response can be returned to the waiting caller.
+And our custom `AggregationStrategy` that is responsible for holding the in progress aggregated message that after
+the splitter is ended will be sent to the `buildCombinedResponse` method for final processing before the combined
+response can be returned to the waiting caller.
 
 [source,java]
 ----
 /**
  * This is our own order aggregation strategy where we can control
- * how each splitted message should be combined. As we do not want to
+ * how each split message should be combined. As we do not want to
  * loos any message we copy from the new to the old to preserve the
  * order lines as long we process them
  */
@@ -560,10 +714,10 @@ public static class MyOrderStrategy implements AggregationStrategy {
         String orders = oldExchange.getIn().getBody(String.class);
         String newLine = newExchange.getIn().getBody(String.class);
 
-        LOG.debug("Aggregate old orders: " + orders);
-        LOG.debug("Aggregate new order: " + newLine);
+        LOG.debug("Aggregate old orders: {}", orders);
+        LOG.debug("Aggregate new order: {}", newLine);
 
-        // put orders together separating by semi colon
+        // put orders together separating by semicolon
         orders = orders + ";" + newLine;
         // put combined order back on old to preserve it
         oldExchange.getIn().setBody(orders);
@@ -576,8 +730,9 @@ public static class MyOrderStrategy implements AggregationStrategy {
 
 So lets run the sample and see how it works.
 
-We send an Exchange to the *direct:start* endpoint containing a IN body with the String value: A@B@C. The flow is:
-[source]
+We send an Exchange to the direct:start endpoint containing a message body with the String value: `A@B@C`. The flow is:
+
+[source,text]
 ----
 HandleOrder: A
 HandleOrder: B
@@ -590,20 +745,39 @@ BuildCombinedResponse: (id=1,item=A);(id=2,item=B);(id=3,item=C)
 Response to caller: Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]
 ----
 
-== Stop processing in case of exception
-The Splitter will by default continue to process the entire Exchange even in case of one of the splitted message will thrown an exception during routing.
-For example if you have an Exchange with 1000 rows that you split and route each sub message. During processing of these sub messages an exception is thrown at the 17th. What Camel does by default is to process the remainder 983 messages. You have the chance to remedy or handle this in the `AggregationStrategy`.
-But sometimes you just want Camel to stop and let the exception be propagated back, and let the Camel error handler handle it. You can do this in Camel 2.1 by specifying that it should stop in case of an exception occurred. This is done by the `stopOnException` option as shown below:
+=== Stop processing in case of exception
 
+The Splitter will by default continue to process
+the entire Exchange even in case of one of the
+split message will throw an exception during routing.
+
+For example if you have an Exchange with 1000 rows that you split.
+During processing of these split messages an exception is thrown at the 17th.
+What Camel does by default is to process the remainder 983 messages.
+You have the chance to deal with the exception when aggregating using an `AggregationStrategy`.
+
+But sometimes you just want Camel to stop and let the exception be
+propagated back, and let the Camel xref:manual:ROOT:error-handler.adoc[Error Handler]
+handle it. You can do this by specifying that it should stop in case of an
+exception occurred. This is done by the `stopOnException` option as
+shown below:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .split(body().tokenize(",")).stopOnException()
         .process(new MyProcessor())
-        .to("mock:split");
+        .to("mock:split")
+    .end()
+    .to("direct:cheese");
 ----
 
-And using XML DSL you specify it as follows:
+XML::
++
 [source,xml]
 ----
 <route>
@@ -613,23 +787,26 @@ And using XML DSL you specify it as follows:
         <process ref="myProcessor"/>
         <to uri="mock:split"/>
     </split>
+    <to uri="direct:cheese"/>
 </route>
 ----
+====
 
-== Using onPrepare to execute custom logic when preparing messages
+In the example above, then `MyProcessor` is causing a failure and throws an exception.
+This means the Split EIP will stop after this, and not split anymore.
 
-See details at Multicast EIP
-
-== Sharing unit of work
+=== Sharing unit of work
 
 The Splitter will by default not share unit of work between the parent exchange and each split exchange.
 This means each sub exchange has its own individual unit of work.
-For example you may have an use case, where you want to split a big message.
-And you want to regard that process as an atomic isolated operation that either is a success or failure.
-In case of a failure you want that big message to be moved into a dead letter queue.
+
+For example, you need to split a big message, and regard that process as an atomic isolated operation
+that either is a success or failure. In case of a failure you want that big message to be moved into a dead letter queue.
+
 To support this use case, you would have to share the unit of work on the Splitter.
 
-Here is an example in Java DSL
+Here is an example in Java DSL:
+
 [source,java]
 ----
 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
@@ -638,7 +815,7 @@ errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
 from("direct:start")
     .to("mock:a")
     // share unit of work in the splitter, which tells Camel to propagate failures from
-    // processing the splitted messages back to the result of the splitter, which allows
+    // processing the split messages back to the result of the splitter, which allows
     // it to act as a combined unit of work
     .split(body().tokenize(",")).shareUnitOfWork()
         .to("mock:b")
@@ -652,17 +829,22 @@ from("direct:line")
     .to("mock:line");
 ----
 
-Now in this example what would happen is that in case there is a problem processing each sub message,
+What would happen is that in case there is an exception thrown during splitting then
 the error handler will kick in (yes error handling still applies for the sub messages).
-*But* what doesn't happen is that if a sub message fails all redelivery attempts (its exhausted),
-then its *not* moved into that dead letter queue. The reason is that we have shared the unit of work,
-so the sub message will report the error on the shared unit of work. When the Splitter is done,
-it checks the state of the shared unit of work and checks if any errors occurred.
-And if an error occurred it will set the exception on the Exchange and mark it for rollback.
-The error handler will yet again kick in, as the Exchange has been marked as rollback and it had an exception as well.
-No redelivery attempts are performed (as it was marked for rollback) and the Exchange will be moved into the dead letter queue.
 
-Using this from XML DSL is just as easy as you just have to set the `shareUnitOfWork` attribute to true:
+The error handler in this example is configured to retry up till 3 times.
+And when a split message fails all redelivery attempts (its exhausted),
+then this message is *not* moved into that dead letter queue.
+
+The reason is that we have shared the unit of work, so the split message will report the error on the shared unit of work.
+When the Splitter is done, it checks the state of the shared unit of work and checks if any errors occurred.
+If an error occurred it will set the exception on the `Exchange` and mark it for rollback.
+
+The error handler will yet again kick in, as the `Exchange` has been marked as rollback.
+No redelivery attempts are performed (as it was marked for rollback) and the `Exchange`
+will be moved into the dead letter queue.
+
+Using this from XML DSL is just as easy as all you have to set is the `shareUnitOfWork`:
 
 [source,xml]
 ----
@@ -677,7 +859,7 @@ Using this from XML DSL is just as easy as you just have to set the `shareUnitOf
     <from uri="direct:start"/>
     <to uri="mock:a"/>
     <!-- share unit of work in the splitter, which tells Camel to propagate failures from
-         processing the splitted messages back to the result of the splitter, which allows
+         processing the split messages back to the result of the splitter, which allows
          it to act as a combined unit of work -->
     <split shareUnitOfWork="true">
       <tokenize token=","/>
@@ -687,7 +869,7 @@ Using this from XML DSL is just as easy as you just have to set the `shareUnitOf
     <to uri="mock:result"/>
   </route>
 
-  <!-- route for processing each splitted line -->
+  <!-- route for processing each split line -->
   <route>
     <from uri="direct:line"/>
     <to uri="log:line"/>
@@ -698,9 +880,10 @@ Using this from XML DSL is just as easy as you just have to set the `shareUnitOf
 </camelContext>
 ----
 
-[NOTE]
-====
-*Implementation of shared unit of work*
 
-So in reality the unit of work is not shared as a single object instance. Instead `SubUnitOfWork` is attached to their parent, and issues callback to the parent about their status (commit or rollback). This may be refactored in Camel 3.0 where larger API changes can be done.
-====
+== See Also
+
+Because xref:multicast-eip.adoc[Multicast] EIP is baseline for
+the xref:recipientList-eip.adoc[Recipient List] and Split EIPs,
+then you can find more information in those EIPs about features that is also available
+with Split EIP.

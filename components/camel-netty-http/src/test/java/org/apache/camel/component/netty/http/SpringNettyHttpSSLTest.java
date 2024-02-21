@@ -18,7 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import java.net.URL;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -63,7 +63,7 @@ public class SpringNettyHttpSSLTest {
     }
 
     @AfterAll
-    public static void tearDownJSSE() throws Exception {
+    public static void tearDownJSSE() {
         System.clearProperty("javax.net.ssl.trustStore");
         System.clearProperty("javax.net.ssl.trustStorePassword");
     }

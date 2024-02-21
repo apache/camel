@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ContinuousQuery;
 import org.apache.ignite.cache.query.QueryCursor;
@@ -67,11 +68,11 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
     private void maybeFireExistingQueryResults() {
         if (!endpoint.isFireExistingQueryResults()) {
-            LOG.info(String.format("Skipping existing cache results for cache name = %s.", endpoint.getCacheName()));
+            LOG.info("Skipping existing cache results for cache name = {}.", endpoint.getCacheName());
             return;
         }
 
-        LOG.info(String.format("Processing existing cache results for cache name = %s.", endpoint.getCacheName()));
+        LOG.info("Processing existing cache results for cache name = {}.", endpoint.getCacheName());
 
         for (Entry<Object, Object> entry : cursor) {
             Exchange exchange = createExchange(entry.getValue());
@@ -137,22 +138,12 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_EVENT_TYPE, entry.getEventType());
         exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_OLD_VALUE, entry.getOldValue());
         exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_KEY, entry.getKey());
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                // do nothing
-            }
-        });
+        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
     private void fireGroupedExchange(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events) {
         Exchange exchange = createExchange(events);
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                // do nothing
-            }
-        });
+        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
     private Exchange createExchange(Object payload) {

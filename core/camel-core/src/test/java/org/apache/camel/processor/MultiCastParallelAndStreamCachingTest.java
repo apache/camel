@@ -46,7 +46,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(5L);
 
                 from("direct:start").multicast().parallelProcessing().stopOnException().to("direct:a", "direct:b").end()
@@ -120,7 +120,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
     /**
      * Tests the ByteArrayInputStreamCache. The send byte array is transformed to a ByteArrayInputStreamCache before the
      * multi-cast processor is called.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -138,7 +138,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
     /**
      * Tests the FileInputStreamCache. The sent input stream is transformed to FileInputStreamCache before the
      * multi-cast processor is called.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -158,7 +158,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
     /**
      * Tests the FileInputStreamCache. The sent input stream is transformed to InputStreamCache before the multi-cast
      * processor is called.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -181,7 +181,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
     /**
      * Tests the ReaderCache. The sent InputStreamReader is transformed to a ReaderCache before the multi-cast processor
      * is called.
-     * 
+     *
      * @throws Exception
      */
     @Test

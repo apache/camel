@@ -46,18 +46,18 @@ public class TimerEndpointTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.TIMER, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testTimerEndpoint() throws Exception {
+    public void testTimerEndpoint() {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -71,12 +71,12 @@ public class TimerEndpointTest {
     }
 
     @Test
-    public void testGetAction() throws Exception {
+    public void testGetAction() {
         assertThat(endpoint.getAction(), is(nullValue()));
     }
 
     @Test
-    public void testSetAction() throws Exception {
+    public void testSetAction() {
         assertThat(endpoint.getAction(), is(nullValue()));
         endpoint.setAction(MetricsTimerAction.start);
         assertThat(endpoint.getAction(), is(MetricsTimerAction.start));

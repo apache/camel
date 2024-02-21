@@ -45,7 +45,7 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setSSLContextParameters(createServerSSLContextParameters());
+        context.setSSLContextParameters(createServerSSLContextParameters(context));
         LumberjackComponent component = (LumberjackComponent) context.getComponent("lumberjack");
         component.setUseGlobalSslContextParameters(true);
         return context;
@@ -73,7 +73,7 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
         List<Integer> windows = Arrays.asList(15, 10, 15, 10, 10);
 
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters(), windows);
+        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters(context), windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
@@ -87,8 +87,9 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
      *
      * @return The {@link SSLContextParameters} Camel object for the Lumberjack component
      */
-    private SSLContextParameters createServerSSLContextParameters() {
+    private SSLContextParameters createServerSSLContextParameters(CamelContext context) {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setCamelContext(context);
 
         KeyManagersParameters keyManagersParameters = new KeyManagersParameters();
         KeyStoreParameters keyStore = new KeyStoreParameters();
@@ -96,20 +97,24 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
         keyStore.setResource("org/apache/camel/component/lumberjack/keystore.jks");
         keyManagersParameters.setKeyPassword("changeit");
         keyManagersParameters.setKeyStore(keyStore);
+        keyManagersParameters.setCamelContext(context);
         sslContextParameters.setKeyManagers(keyManagersParameters);
 
         return sslContextParameters;
     }
 
-    private SSLContextParameters createClientSSLContextParameters() {
+    private SSLContextParameters createClientSSLContextParameters(CamelContext context) {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setCamelContext(context);
 
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         KeyStoreParameters trustStore = new KeyStoreParameters();
         trustStore.setPassword("changeit");
         trustStore.setResource("org/apache/camel/component/lumberjack/keystore.jks");
         trustManagersParameters.setKeyStore(trustStore);
+        trustManagersParameters.setCamelContext(context);
         sslContextParameters.setTrustManagers(trustManagersParameters);
+        sslContextParameters.setCamelContext(context);
 
         return sslContextParameters;
     }

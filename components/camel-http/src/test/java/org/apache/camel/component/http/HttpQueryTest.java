@@ -18,8 +18,8 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,15 +39,15 @@ public class HttpQueryTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent()))
-                .registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
-                .registerHandler("/user/pass",
+                .setSslContext(getSSLContext())
+                .register("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent()))
+                .register("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
+                .register("/user/pass",
                         new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent()))
                 .create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
     }
 
     @AfterEach
@@ -61,7 +61,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQuery() throws Exception {
+    public void httpQuery() {
         Exchange exchange = template.request(baseUrl + "/?hl=en&q=camel", exchange1 -> {
         });
 
@@ -69,7 +69,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryHeader() throws Exception {
+    public void httpQueryHeader() {
         Exchange exchange = template.request(baseUrl + "/",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel"));
 
@@ -77,7 +77,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryWithEscapedCharacter() throws Exception {
+    public void httpQueryWithEscapedCharacter() {
         Exchange exchange = template.request(baseUrl + "/test/?my=%40%20camel", exchange1 -> {
         });
 
@@ -85,7 +85,7 @@ public class HttpQueryTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpQueryWithUsernamePassword() throws Exception {
+    public void httpQueryWithUsernamePassword() {
         Exchange exchange = template.request(baseUrl + "/user/pass?password=baa&username=foo", exchange1 -> {
         });
 

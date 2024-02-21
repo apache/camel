@@ -26,20 +26,13 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.entity.ContentLengthStrategy;
-import org.apache.http.impl.DefaultBHttpClientConnection;
+import org.apache.http.impl.conn.DefaultManagedHttpClientConnection;
 import org.apache.http.io.HttpMessageParserFactory;
 import org.apache.http.io.HttpMessageWriterFactory;
 
-public class AS2BHttpClientConnection extends DefaultBHttpClientConnection {
+public class AS2BHttpClientConnection extends DefaultManagedHttpClientConnection {
 
-    public AS2BHttpClientConnection(int buffersize,
-                                    CharsetDecoder chardecoder,
-                                    CharsetEncoder charencoder,
-                                    MessageConstraints constraints) {
-        super(buffersize, chardecoder, charencoder, constraints);
-    }
-
-    public AS2BHttpClientConnection(int buffersize,
+    public AS2BHttpClientConnection(String id, int buffersize,
                                     int fragmentSizeHint,
                                     CharsetDecoder chardecoder,
                                     CharsetEncoder charencoder,
@@ -48,12 +41,12 @@ public class AS2BHttpClientConnection extends DefaultBHttpClientConnection {
                                     ContentLengthStrategy outgoingContentStrategy,
                                     HttpMessageWriterFactory<HttpRequest> requestWriterFactory,
                                     HttpMessageParserFactory<HttpResponse> responseParserFactory) {
-        super(buffersize, fragmentSizeHint, chardecoder, charencoder, constraints, incomingContentStrategy,
+        super(id, buffersize, fragmentSizeHint, chardecoder, charencoder, constraints, incomingContentStrategy,
               outgoingContentStrategy, requestWriterFactory, responseParserFactory);
     }
 
-    public AS2BHttpClientConnection(int buffersize) {
-        super(buffersize);
+    public AS2BHttpClientConnection(String id, int buffersize) {
+        super(id, buffersize);
     }
 
     @Override

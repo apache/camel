@@ -47,7 +47,7 @@ public class ConstantBeanHolder implements BeanHolder {
         ObjectHelper.notNull(bean, "bean");
 
         this.bean = bean;
-        this.beanInfo = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
+        this.beanInfo = new BeanInfo(context, bean.getClass(), bean, null, parameterMappingStrategy, beanComponent);
     }
 
     @Override

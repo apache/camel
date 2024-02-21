@@ -17,6 +17,7 @@
 package org.apache.camel.component.openstack.cinder;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
+import org.apache.camel.spi.Metadata;
 
 public final class CinderConstants extends OpenstackConstants {
 
@@ -24,14 +25,21 @@ public final class CinderConstants extends OpenstackConstants {
     public static final String SNAPSHOTS = "snapshots";
 
     //volumes
+    @Metadata(label = "volume", description = "Size of volume.", javaType = "Integer")
     public static final String SIZE = "size";
+    @Metadata(label = "volume", description = "Volume type.", javaType = "String")
     public static final String VOLUME_TYPE = "volumeType";
+    @Metadata(label = "volume", description = "ID of image.", javaType = "String")
     public static final String IMAGE_REF = "imageRef";
+    @Metadata(label = "volume", description = "ID of snapshot.", javaType = "String")
     public static final String SNAPSHOT_ID = "snapshotId";
+    @Metadata(label = "volume", description = "Is bootable.", javaType = "Boolean")
     public static final String IS_BOOTABLE = "isBootable";
 
     //volumeSnapshots
+    @Metadata(label = "snapshot", description = "The Volume ID.", javaType = "String")
     public static final String VOLUME_ID = "volumeId";
+    @Metadata(label = "snapshot", description = "Force.", javaType = "Boolean")
     public static final String FORCE = "force";
 
     public static final String GET_ALL_TYPES = "getAllTypes";

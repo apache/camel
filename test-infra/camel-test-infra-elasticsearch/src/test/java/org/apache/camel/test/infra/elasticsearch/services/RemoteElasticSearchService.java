@@ -17,6 +17,10 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
+import java.util.Optional;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
 
 public class RemoteElasticSearchService implements ElasticSearchService {
@@ -51,5 +55,25 @@ public class RemoteElasticSearchService implements ElasticSearchService {
     @Override
     public void shutdown() {
         // NO-OP
+    }
+
+    @Override
+    public Optional<String> getCertificatePath() {
+        return Optional.ofNullable(System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_CERTIFICATE_PATH));
+    }
+
+    @Override
+    public Optional<SSLContext> getSslContext() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String getUsername() {
+        return System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_USERNAME);
+    }
+
+    @Override
+    public String getPassword() {
+        return System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_PASSWORD);
     }
 }

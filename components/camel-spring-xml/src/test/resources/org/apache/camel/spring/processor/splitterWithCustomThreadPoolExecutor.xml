@@ -26,9 +26,10 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:parallel-custom-pool"/>
-      <split executorServiceRef="myThreadPoolExecutor">
+      <split executorService="myThreadPoolExecutor">
         <xpath>/invoice/lineItems</xpath>
         <to uri="mock:result"/>
       </split>

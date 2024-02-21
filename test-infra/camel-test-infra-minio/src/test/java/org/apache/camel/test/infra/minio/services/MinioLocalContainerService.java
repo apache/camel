@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.minio.services;
 
 import java.time.Duration;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.minio.common.MinioProperties;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 public class MinioLocalContainerService implements MinioService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "minio/minio:latest";
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY;
     private static final String SECRET_KEY;
@@ -39,27 +39,29 @@ public class MinioLocalContainerService implements MinioService, ContainerServic
         SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
     }
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public MinioLocalContainerService() {
-        String containerName = System.getProperty("minio.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(LocalPropertyResolver.getProperty(MinioLocalContainerService.class, MinioProperties.MINIO_CONTAINER));
     }
 
     public MinioLocalContainerService(String containerName) {
-        initContainer(containerName);
+        container = initContainer(containerName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerName) {
-        container = new GenericContainer(containerName)
-                .withNetworkAliases(CONTAINER_NAME)
+    public MinioLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withEnv("MINIO_ACCESS_KEY", accessKey())
                 .withEnv("MINIO_SECRET_KEY", secretKey())
                 .withCommand("server /data")
                 .withExposedPorts(BROKER_PORT)
                 .waitingFor(new HttpWaitStrategy()
-                        .forPath("/minio/health/ready")
+                        .forPath("/minio/health/live")
                         .forPort(BROKER_PORT)
                         .withStartupTimeout(Duration.ofSeconds(10)));
     }

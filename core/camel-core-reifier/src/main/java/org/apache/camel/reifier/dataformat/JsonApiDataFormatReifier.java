@@ -31,6 +31,8 @@ public class JsonApiDataFormatReifier extends DataFormatReifier<JsonApiDataForma
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("mainFormatType", definition.getMainFormatType());
+        properties.put("mainFormatTypeClass", definition.getMainFormatTypeClass());
         properties.put("dataFormatTypes", definition.getDataFormatTypes());
+        properties.put("dataFormatTypesClasses", definition.getDataFormatTypeClasses());
     }
 }

@@ -19,7 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -71,15 +71,25 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
-            List<Path> jsonFiles = PackageHelper.findJsonFiles(outDir.toPath()).collect(Collectors.toList());
+            List<Path> jsonFiles;
+            try (Stream<Path> stream = PackageHelper.findJsonFiles(outDir.toPath())) {
+                jsonFiles = stream.toList();
+            }
             boolean failed = false;
 
             for (Path file : jsonFiles) {
                 final String name = PackageHelper.asName(file);
                 final ErrorDetail detail = new ErrorDetail();
 
-                getLog().debug("Validating file " + file);
-                ValidateHelper.validate(file.toFile(), detail);
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Validating file " + file);
+                }
+
+                try {
+                    ValidateHelper.validate(file.toFile(), detail);
+                } catch (Exception e) {
+                    // ignore as it may not be a camel component json file
+                }
 
                 if (detail.hasErrors()) {
                     failed = true;

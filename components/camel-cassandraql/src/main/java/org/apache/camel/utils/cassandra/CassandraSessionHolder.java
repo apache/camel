@@ -29,7 +29,7 @@ public class CassandraSessionHolder {
     /**
      * Keyspace name
      */
-    private String keyspace;
+    //private String keyspace; // this field is reported unused
     /**
      * Indicates whether Session is externally managed
      */

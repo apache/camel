@@ -40,7 +40,9 @@ public class SqlProducerAndInTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -50,7 +52,9 @@ public class SqlProducerAndInTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -60,7 +64,7 @@ public class SqlProducerAndInTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "ASF", "names", new String[] { "Camel", "AMQ" });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
@@ -81,7 +85,7 @@ public class SqlProducerAndInTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "ASF", "names", names);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
@@ -98,7 +102,7 @@ public class SqlProducerAndInTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "ASF", "names", "Camel,AMQ");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
@@ -109,10 +113,10 @@ public class SqlProducerAndInTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 

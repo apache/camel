@@ -60,12 +60,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": target.getConfiguration().setFailOnDuplicateFileAttachment(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
         case "fetchSize": target.getConfiguration().setFetchSize(property(camelContext, int.class, value)); return true;
         case "foldername":
         case "folderName": target.getConfiguration().setFolderName(property(camelContext, java.lang.String.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": target.getConfiguration().setGenerateMissingAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": target.getConfiguration().setHandleDuplicateAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "handlefailedmessage":
         case "handleFailedMessage": target.getConfiguration().setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -114,14 +120,14 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "searchterm":
-        case "searchTerm": target.setSearchTerm(property(camelContext, javax.mail.search.SearchTerm.class, value)); return true;
+        case "searchTerm": target.setSearchTerm(property(camelContext, jakarta.mail.search.SearchTerm.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "session": target.getConfiguration().setSession(property(camelContext, javax.mail.Session.class, value)); return true;
+        case "session": target.getConfiguration().setSession(property(camelContext, jakarta.mail.Session.class, value)); return true;
         case "skipfailedmessage":
         case "skipFailedMessage": target.getConfiguration().setSkipFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "sortterm":
-        case "sortTerm": target.setSortTerm(property(camelContext, com.sun.mail.imap.SortTerm[].class, value)); return true;
+        case "sortTerm": target.setSortTerm(property(camelContext, org.eclipse.angus.mail.imap.SortTerm[].class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startscheduler":
@@ -182,12 +188,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return boolean.class;
         case "fetchsize":
         case "fetchSize": return int.class;
         case "foldername":
         case "folderName": return java.lang.String.class;
         case "from": return java.lang.String.class;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return java.lang.String.class;
         case "handlefailedmessage":
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
@@ -236,14 +248,14 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
         case "searchterm":
-        case "searchTerm": return javax.mail.search.SearchTerm.class;
+        case "searchTerm": return jakarta.mail.search.SearchTerm.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "session": return javax.mail.Session.class;
+        case "session": return jakarta.mail.Session.class;
         case "skipfailedmessage":
         case "skipFailedMessage": return boolean.class;
         case "sortterm":
-        case "sortTerm": return com.sun.mail.imap.SortTerm[].class;
+        case "sortTerm": return org.eclipse.angus.mail.imap.SortTerm[].class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startscheduler":
@@ -305,12 +317,18 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return target.getConfiguration().isFailOnDuplicateFileAttachment();
         case "fetchsize":
         case "fetchSize": return target.getConfiguration().getFetchSize();
         case "foldername":
         case "folderName": return target.getConfiguration().getFolderName();
         case "from": return target.getConfiguration().getFrom();
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return target.getConfiguration().getGenerateMissingAttachmentNames();
         case "greedy": return target.isGreedy();
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return target.getConfiguration().getHandleDuplicateAttachmentNames();
         case "handlefailedmessage":
         case "handleFailedMessage": return target.getConfiguration().isHandleFailedMessage();
         case "headerfilterstrategy":

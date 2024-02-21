@@ -166,17 +166,14 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     /**
      * Schedules execution of the doStart() operation to occur again after the reconnect delay
      */
-    protected void scheduleDelayedStart() throws Exception {
-        Runnable startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    doStart();
-                } catch (Exception e) {
-                    LOG.error("An unrecoverable exception has occurred while starting the JMX consumer"
-                              + " for endpoint {}",
-                            URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
-                }
+    protected void scheduleDelayedStart() {
+        Runnable startRunnable = () -> {
+            try {
+                doStart();
+            } catch (Exception e) {
+                LOG.error("An unrecoverable exception has occurred while starting the JMX consumer"
+                          + " for endpoint {}",
+                        URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
             }
         };
         LOG.info("Delaying JMX consumer startup for endpoint {}. Trying again in {} seconds.",
@@ -214,16 +211,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      * Schedules an attempt to re-initialize a lost connection after the reconnect delay
      */
     protected void scheduleReconnect() {
-        Runnable startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    initNetworkConnection();
-                    addNotificationListener();
-                } catch (Exception e) {
-                    LOG.warn("Failed to reconnect to JMX server. >> {}", e.getMessage());
-                    scheduleReconnect();
-                }
+        Runnable startRunnable = () -> {
+            try {
+                initNetworkConnection();
+                addNotificationListener();
+            } catch (Exception e) {
+                LOG.warn("Failed to reconnect to JMX server. >> {}", e.getMessage());
+                scheduleReconnect();
             }
         };
         LOG.info("Delaying JMX consumer reconnection for endpoint {}. Trying again in {} seconds.",
@@ -308,8 +302,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     }
 
     /**
-     * Processes the Notification received. The handback will be set as the header "jmx.handback" while the Notification
-     * will be set as the body.
+     * Processes the Notification received. The handback will be set as the header {@link JMXConstants#JMX_HANDBACK}
+     * while the Notification will be set as the body.
      * <p/>
      * If the format is set to "xml" then the Notification will be converted to XML first using
      * {@link NotificationXmlFormatter}
@@ -321,7 +315,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         JMXEndpoint ep = getEndpoint();
         Exchange exchange = createExchange(true);
         Message message = exchange.getIn();
-        message.setHeader("jmx.handback", aHandback);
+        message.setHeader(JMXConstants.JMX_HANDBACK, aHandback);
         try {
             if (ep.isXML()) {
                 message.setBody(getFormatter().format(aNotification));

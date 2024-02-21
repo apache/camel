@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsToDSendDynamicTwoDisabledTest extends CamelTestSupport {
+public class JmsToDSendDynamicTwoDisabledTest extends AbstractPersistentJMSTest {
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
         template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
@@ -43,20 +38,10 @@ public class JmsToDSendDynamicTwoDisabledTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD but turn off send dynamic aware
                 from("direct:start").toD().allowOptimisedComponents(false).uri("activemq:queue:${header.where}");
                 from("direct:start2").toD().allowOptimisedComponents(false).uri("activemq:queue:${header.where2}");

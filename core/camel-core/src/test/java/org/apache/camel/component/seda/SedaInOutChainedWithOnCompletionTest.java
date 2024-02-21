@@ -18,7 +18,6 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -32,7 +31,7 @@ public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
     public void testInOutSedaChainedWithCustomOnCompletion() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");
-        // the onCustomCompletion should be send very last (as it will be handed
+        // the onCustomCompletion should be sent very last (as it will be handed
         // over)
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b", "onCustomCompletion");
 
@@ -50,7 +49,7 @@ public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
                 from("seda:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // should come in last
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
                                 template.sendBody("mock:c", "onCustomCompletion");

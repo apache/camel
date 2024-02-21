@@ -52,7 +52,7 @@ public final class TestSupportJmxCleanup {
         if (s.size() > 0) {
             LOG.warn(" + {} ObjectNames registered in domain \"{}\"", s.size(), d);
             for (ObjectName on : s) {
-                LOG.warn(" |  " + on);
+                LOG.warn(" |  {}", on);
             }
         }
     }

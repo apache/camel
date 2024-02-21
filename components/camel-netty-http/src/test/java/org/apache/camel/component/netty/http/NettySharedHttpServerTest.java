@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     private NettySharedHttpServer nettySharedHttpServer;
 
     @BindToRegistry("myNettyServer")
-    public NettySharedHttpServer createServer() throws Exception {
+    public NettySharedHttpServer createServer() {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
         nettySharedHttpServer.setCamelContext(context);
 
@@ -65,14 +66,14 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
 
         assertEquals(2, nettySharedHttpServer.getConsumersSize());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
                         .log("Foo route using thread ${threadName}")

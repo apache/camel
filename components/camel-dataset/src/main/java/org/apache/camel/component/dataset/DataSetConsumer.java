@@ -35,11 +35,13 @@ public class DataSetConsumer extends DefaultConsumer {
     private DataSetEndpoint endpoint;
     private Processor reporter;
     private ExecutorService executorService;
+    private final boolean withIndexHeader;
 
     public DataSetConsumer(DataSetEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.camelContext = endpoint.getCamelContext();
+        this.withIndexHeader = !endpoint.getDataSetIndex().equals("off");
     }
 
     @Override
@@ -56,19 +58,16 @@ public class DataSetConsumer extends DefaultConsumer {
         sendMessages(0, preloadSize);
         executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
-        executorService.execute(new Runnable() {
-            public void run() {
-                if (endpoint.getInitialDelay() > 0) {
-                    try {
-                        Thread.sleep(endpoint.getInitialDelay());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
+        executorService.execute(() -> {
+            if (endpoint.getInitialDelay() > 0) {
+                try {
+                    Thread.sleep(endpoint.getInitialDelay());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
-
-                sendMessages(preloadSize, dataSet.getSize());
             }
+            sendMessages(preloadSize, dataSet.getSize());
         });
     }
 
@@ -90,9 +89,9 @@ public class DataSetConsumer extends DefaultConsumer {
 
         endpoint.getDataSet().populateMessage(exchange, messageIndex);
 
-        if (!endpoint.getDataSetIndex().equals("off")) {
+        if (withIndexHeader) {
             Message in = exchange.getIn();
-            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+            in.setHeader(DataSetConstants.DATASET_INDEX, messageIndex);
         }
 
         return exchange;

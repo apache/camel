@@ -28,7 +28,7 @@
   <bean id="quartzDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
     <!-- refer the embedded database we setup inside SpringQuartzConsumerClusteredAppDatabase.xml -->
-    <property name="url" value="jdbc:derby:memory:quartz-db" />
+    <property name="url" value="jdbc:derby:memory:{{testClassSimpleName}}" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>
@@ -45,23 +45,23 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-          <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext"/>
+          <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext-{{testClassSimpleName}}"/>
       </map>
     </property>
     <property name="quartzProperties">
       <props>
-        <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
+        <prop key="org.quartz.scheduler.instanceName">myscheduler-{{testClassSimpleName}}</prop>
         <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
-        <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+        <prop key="org.quartz.jobStore.class">org.springframework.scheduling.quartz.LocalDataSourceJobStore</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
       </props>
     </property>
   </bean>
 
-  <camelContext id="camelContext" managementNamePattern="#name#" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext-{{testClassSimpleName}}" managementNamePattern="#name#" xmlns="http://camel.apache.org/schema/spring">
     <route id="quartzRoute">
       <from uri="quartzBean://app/test?cron=0+0/1+*+1/1+*+?+*"/>
       <to uri="log:trigger"/>

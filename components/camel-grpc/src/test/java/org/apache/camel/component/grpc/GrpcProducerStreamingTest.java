@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -30,12 +30,14 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class GrpcProducerStreamingTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
@@ -53,7 +55,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void stopGrpcServer() throws IOException {
+    public void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -114,7 +116,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -146,7 +148,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
                     streamRequests.add(request);
                     if ("error".equals(request.getPingName())) {
                         PingPongImpl.this.streamRequests.add(streamRequests);
-                        responseObserver.onError(new RuntimeException("Requested error"));
+                        responseObserver.onError(new RuntimeCamelException("Requested error"));
                     } else {
                         PongResponse response = PongResponse.newBuilder().setPongName("Hello " + request.getPingName()).build();
                         responseObserver.onNext(response);

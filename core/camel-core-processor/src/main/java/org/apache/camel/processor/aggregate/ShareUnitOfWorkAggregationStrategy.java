@@ -20,7 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -44,9 +44,7 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
     }
 
     @Override
@@ -71,6 +69,11 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     @Override
     public void onCompletion(Exchange exchange) {
         strategy.onCompletion(exchange);
+    }
+
+    @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        strategy.onCompletion(exchange, inputExchange);
     }
 
     @Override
@@ -103,30 +106,31 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
         return answer;
     }
 
-    protected void propagateFailure(Exchange answer, Exchange newExchange) {
-        ExtendedExchange nee = (ExtendedExchange) newExchange;
+    private void propagateFailure(Exchange answer, Exchange newExchange) {
         // if new exchange failed then propagate all the error related properties to the answer
-        if (nee.isFailed() || nee.isRollbackOnly() || nee.isRollbackOnlyLast()
-                || (nee.isErrorHandlerHandledSet() && nee.isErrorHandlerHandled())) {
+        if (newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()
+                || newExchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && newExchange.getExchangeExtension().isErrorHandlerHandled()) {
             if (newExchange.getException() != null) {
                 answer.setException(newExchange.getException());
             }
-            if (newExchange.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
-                answer.setProperty(Exchange.EXCEPTION_CAUGHT, newExchange.getProperty(Exchange.EXCEPTION_CAUGHT));
+            if (newExchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT) != null) {
+                answer.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT,
+                        newExchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT));
             }
-            if (newExchange.getProperty(Exchange.FAILURE_ENDPOINT) != null) {
-                answer.setProperty(Exchange.FAILURE_ENDPOINT, newExchange.getProperty(Exchange.FAILURE_ENDPOINT));
+            if (newExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) != null) {
+                answer.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        newExchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT));
             }
-            if (newExchange.getProperty(Exchange.FAILURE_ROUTE_ID) != null) {
-                answer.setProperty(Exchange.FAILURE_ROUTE_ID, newExchange.getProperty(Exchange.FAILURE_ROUTE_ID));
+            if (newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID) != null) {
+                answer.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID,
+                        newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID));
             }
-            if (newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null) {
-                answer.adapt(ExtendedExchange.class)
-                        .setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
+            if (newExchange.getExchangeExtension().getErrorHandlerHandled() != null) {
+                answer.getExchangeExtension()
+                        .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());
             }
-            if (newExchange.getProperty(Exchange.FAILURE_HANDLED) != null) {
-                answer.setProperty(Exchange.FAILURE_HANDLED, newExchange.getProperty(Exchange.FAILURE_HANDLED));
-            }
+            answer.getExchangeExtension().setFailureHandled(newExchange.getExchangeExtension().isFailureHandled());
         }
     }
 

@@ -18,7 +18,9 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +28,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
 /**
- * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
+ * Global configuration for Camel Main to configure context name, stream caching and other global configurations.
  */
 @Configurer(bootstrap = true)
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
@@ -38,22 +40,30 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
-    private String packageScanRouteBuilders;
+    private int extraShutdownTimeout = 15;
+    private String basePackageScan;
+    private boolean basePackageScanEnabled = true;
 
     private String routesBuilderClasses;
     private String configurationClasses;
 
     private List<RoutesBuilder> routesBuilders = new ArrayList<>();
-    private List<Object> configurations = new ArrayList<>();
+    private List<CamelConfiguration> configurations = new ArrayList<>();
 
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
+    private OtelConfigurationProperties otelConfigurationProperties;
+    private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
-    private HystrixConfigurationProperties hystrixConfigurationProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
     private RestConfigurationProperties restConfigurationProperties;
+    private VaultConfigurationProperties vaultConfigurationProperties;
+    private HttpServerConfigurationProperties httpServerConfigurationProperties;
+    private SSLConfigurationProperties sslConfigurationProperties;
+    private DebuggerConfigurationProperties debuggerConfigurationProperties;
+    private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
 
     @Override
     public void close() {
@@ -65,13 +75,17 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             lraConfigurationProperties.close();
             lraConfigurationProperties = null;
         }
+        if (otelConfigurationProperties != null) {
+            otelConfigurationProperties.close();
+            otelConfigurationProperties = null;
+        }
+        if (metricsConfigurationProperties != null) {
+            metricsConfigurationProperties.close();
+            metricsConfigurationProperties = null;
+        }
         if (threadPoolProperties != null) {
             threadPoolProperties.close();
             threadPoolProperties = null;
-        }
-        if (hystrixConfigurationProperties != null) {
-            hystrixConfigurationProperties.close();
-            hystrixConfigurationProperties = null;
         }
         if (resilience4jConfigurationProperties != null) {
             resilience4jConfigurationProperties.close();
@@ -85,10 +99,34 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             restConfigurationProperties.close();
             restConfigurationProperties = null;
         }
-        routesBuilders.clear();
-        routesBuilders = null;
-        configurations.clear();
-        configurations = null;
+        if (vaultConfigurationProperties != null) {
+            vaultConfigurationProperties.close();
+            vaultConfigurationProperties = null;
+        }
+        if (httpServerConfigurationProperties != null) {
+            httpServerConfigurationProperties.close();
+            httpServerConfigurationProperties = null;
+        }
+        if (sslConfigurationProperties != null) {
+            sslConfigurationProperties.close();
+            sslConfigurationProperties = null;
+        }
+        if (debuggerConfigurationProperties != null) {
+            debuggerConfigurationProperties.close();
+            debuggerConfigurationProperties = null;
+        }
+        if (routeControllerConfigurationProperties != null) {
+            routeControllerConfigurationProperties.close();
+            routeControllerConfigurationProperties = null;
+        }
+        if (routesBuilders != null) {
+            routesBuilders.clear();
+            routesBuilders = null;
+        }
+        if (configurations != null) {
+            configurations.clear();
+            configurations = null;
+        }
     }
 
     // extended
@@ -129,6 +167,111 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure OpenTelemetry.
+     */
+    public OtelConfigurationProperties otel() {
+        if (otelConfigurationProperties == null) {
+            otelConfigurationProperties = new OtelConfigurationProperties(this);
+        }
+        return otelConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any OpenTelemetry configuration specified
+     */
+    public boolean hasOtelConfiguration() {
+        return otelConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Micrometer metrics.
+     */
+    public MetricsConfigurationProperties metrics() {
+        if (metricsConfigurationProperties == null) {
+            metricsConfigurationProperties = new MetricsConfigurationProperties(this);
+        }
+        return metricsConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Micrometer metrics configuration specified
+     */
+    public boolean hasMetricsConfiguration() {
+        return metricsConfigurationProperties != null;
+    }
+
+    /**
+     * To configure embedded HTTP server (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpServerConfigurationProperties httpServer() {
+        if (httpServerConfigurationProperties == null) {
+            httpServerConfigurationProperties = new HttpServerConfigurationProperties(this);
+        }
+        return httpServerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any embedded HTTP server configuration specified
+     */
+    public boolean hasHttpServerConfiguration() {
+        return httpServerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure SSL.
+     */
+    public SSLConfigurationProperties sslConfig() {
+        if (sslConfigurationProperties == null) {
+            sslConfigurationProperties = new SSLConfigurationProperties(this);
+        }
+
+        return sslConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any SSL configuration specified.
+     */
+    public boolean hasSslConfiguration() {
+        return sslConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Debugger.
+     */
+    public DebuggerConfigurationProperties debuggerConfig() {
+        if (debuggerConfigurationProperties == null) {
+            debuggerConfigurationProperties = new DebuggerConfigurationProperties(this);
+        }
+
+        return debuggerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Debugger configuration specified.
+     */
+    public boolean hasDebuggerConfiguration() {
+        return debuggerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Route Controller.
+     */
+    public RouteControllerConfigurationProperties routeControllerConfig() {
+        if (routeControllerConfigurationProperties == null) {
+            routeControllerConfigurationProperties = new RouteControllerConfigurationProperties(this);
+        }
+
+        return routeControllerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Route Controller configuration specified.
+     */
+    public boolean hasRouteControllerConfiguration() {
+        return routeControllerConfigurationProperties != null;
+    }
+
+    /**
      * To configure thread pools
      */
     public ThreadPoolConfigurationProperties threadPool() {
@@ -143,24 +286,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasThreadPoolConfiguration() {
         return threadPoolProperties != null;
-    }
-
-    /**
-     * To configure Circuit Breaker EIP with Hystrix
-     */
-    @Deprecated
-    public HystrixConfigurationProperties hystrix() {
-        if (hystrixConfigurationProperties == null) {
-            hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
-        }
-        return hystrixConfigurationProperties;
-    }
-
-    /**
-     * Whether there has been any Hystrix EIP configuration specified
-     */
-    public boolean hasHystrixConfiguration() {
-        return hystrixConfigurationProperties != null;
     }
 
     /**
@@ -214,6 +339,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         return restConfigurationProperties != null;
     }
 
+    /**
+     * To configure access to AWS vaults
+     */
+    public VaultConfigurationProperties vault() {
+        if (vaultConfigurationProperties == null) {
+            vaultConfigurationProperties = new VaultConfigurationProperties(this);
+        }
+        return vaultConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any vault configuration specified
+     */
+    public boolean hasVaultConfiguration() {
+        return vaultConfigurationProperties != null;
+    }
+
     // getter and setters
     // --------------------------------------------------------------
 
@@ -223,9 +365,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the
-     * configuration parameters are loaded from the properties component and optionally from the classpath file
-     * META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file
-     * with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
+     * configuration parameters are loaded from the properties component. You can prefix the parameters in the
+     * properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
      * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
      * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
      * seda,direct,jaxb.
@@ -300,18 +441,31 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autoConfigurationLogSummary = autoConfigurationLogSummary;
     }
 
-    public String getPackageScanRouteBuilders() {
-        return packageScanRouteBuilders;
+    public String getBasePackageScan() {
+        return basePackageScan;
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
-     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
-     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
-     * mode.
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder},
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
+     *
+     * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
+     * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.
      */
-    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
-        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    public void setBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
+    }
+
+    public boolean isBasePackageScanEnabled() {
+        return basePackageScanEnabled;
+    }
+
+    /**
+     * Whether base package scan is enabled.
+     */
+    public void setBasePackageScanEnabled(boolean basePackageScanEnabled) {
+        this.basePackageScanEnabled = basePackageScanEnabled;
     }
 
     public int getDurationHitExitCode() {
@@ -323,6 +477,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+    }
+
+    public int getExtraShutdownTimeout() {
+        return extraShutdownTimeout;
+    }
+
+    /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    public void setExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
     }
 
     // getter and setters - configurations
@@ -341,39 +509,44 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Add an additional configuration class to the known list of configurations classes.
+     * Adds configuration object to the known list of configurations objects.
      */
-    public void addConfigurationClass(Class<?>... configuration) {
-        String existing = configurationClasses;
-        if (existing == null) {
-            existing = "";
+    @SuppressWarnings("unchecked")
+    private void addConfigurationClass(Class<? extends CamelConfiguration>... configuration) {
+        StringJoiner existing = new StringJoiner(",");
+        if (configurationClasses != null && !configurationClasses.isEmpty()) {
+            existing.add(configurationClasses);
         }
         if (configuration != null) {
-            for (Class clazz : configuration) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
+            for (Class<? extends CamelConfiguration> clazz : configuration) {
+                existing.add(clazz.getName());
             }
         }
-        setConfigurationClasses(existing);
+        setConfigurationClasses(existing.toString());
     }
 
     /**
-     * Add an additional configuration object to the known list of configurations objects.
+     * Adds configuration object to the known list of configurations objects.
      */
-    public void addConfiguration(Object configuration) {
+    public void addConfiguration(CamelConfiguration configuration) {
         configurations.add(configuration);
     }
 
-    public List<Object> getConfigurations() {
+    /**
+     * Adds configuration object to the known list of configurations objects.
+     */
+    public void addConfiguration(Class<? extends CamelConfiguration> configuration) {
+        addConfigurationClass(configuration);
+    }
+
+    public List<CamelConfiguration> getConfigurations() {
         return configurations;
     }
 
     /**
      * Sets the configuration objects used to configure the camel context.
      */
-    public void setConfigurations(List<Object> configurations) {
+    public void setConfigurations(List<CamelConfiguration> configurations) {
         this.configurations = configurations;
     }
 
@@ -413,19 +586,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Add an additional {@link RoutesBuilder} class to the known list of builders.
      */
     public void addRoutesBuilder(Class<?>... routeBuilder) {
-        String existing = routesBuilderClasses;
-        if (existing == null) {
-            existing = "";
+        StringJoiner existing = new StringJoiner(",");
+        if (routesBuilderClasses != null && !routesBuilderClasses.isEmpty()) {
+            existing.add(routesBuilderClasses);
         }
         if (routeBuilder != null) {
             for (Class<?> clazz : routeBuilder) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
+                existing.add(clazz.getName());
             }
         }
-        setRoutesBuilderClasses(existing);
+        setRoutesBuilderClasses(existing.toString());
     }
 
     /**
@@ -521,13 +691,34 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
-     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
-     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
-     * mode.
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
      */
-    public MainConfigurationProperties withPackageScanRouteBuilders(String packageScanRouteBuilders) {
-        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    public MainConfigurationProperties withExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
+        return this;
+    }
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder},
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
+     *
+     * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
+     * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     */
+    public MainConfigurationProperties withBasePackageScan(String basePackageScan) {
+        this.basePackageScan = basePackageScan;
+        return this;
+    }
+
+    /**
+     * Whether base package scan is enabled.
+     */
+    public MainConfigurationProperties withBasePackageScanEnabled(boolean basePackageScanEnabled) {
+        this.basePackageScanEnabled = basePackageScanEnabled;
         return this;
     }
 
@@ -535,34 +726,35 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // --------------------------------------------------------------
 
     /**
-     * Sets classes names that will be used to configure the camel context as example by providing custom beans through
+     * Adds classes names that will be used to configure the camel context as example by providing custom beans through
      * {@link org.apache.camel.BindToRegistry} annotation.
      */
-    public MainConfigurationProperties withConfigurationClasses(String configurations) {
-        setConfigurationClasses(configurations);
+    public MainConfigurationProperties withConfigurations(String configurations) {
+        if (this.configurationClasses == null) {
+            this.configurationClasses = "";
+        }
+        if (this.configurationClasses.isEmpty()) {
+            this.configurationClasses = configurations;
+        } else {
+            this.configurationClasses = "," + configurations;
+        }
         return this;
     }
 
     /**
-     * Add an additional configuration class to the known list of configurations classes.
+     * Adds a configuration class to the known list of configurations classes.
      */
-    public MainConfigurationProperties withAdditionalConfigurationClasses(Class... configuration) {
+    @SuppressWarnings("unchecked")
+    public MainConfigurationProperties withConfigurations(
+            Class<? extends CamelConfiguration>... configuration) {
         addConfigurationClass(configuration);
-        return this;
-    }
-
-    /**
-     * Add an additional configuration object to the known list of configurations objects.
-     */
-    public MainConfigurationProperties withAdditionalConfiguration(Object configuration) {
-        addConfiguration(configuration);
         return this;
     }
 
     /**
      * Sets the configuration objects used to configure the camel context.
      */
-    public MainConfigurationProperties withConfigurations(List<Object> configurations) {
+    public MainConfigurationProperties withConfigurations(List<CamelConfiguration> configurations) {
         setConfigurations(configurations);
         return this;
     }

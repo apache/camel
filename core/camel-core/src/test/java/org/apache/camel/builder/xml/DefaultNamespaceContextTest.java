@@ -44,7 +44,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertNull(prefix);
 
         Iterator<String> it = context.getPrefixes("foo");
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals("pre", prefix);
 
         Iterator<String> it = context.getPrefixes("http://acme/cheese");
-        assertEquals(true, it.hasNext());
+        assertTrue(it.hasNext());
         assertEquals("pre", it.next());
     }
 
@@ -84,11 +84,11 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals("bar", prefix2);
 
         Iterator<String> it = context.getPrefixes("http://acme/cheese");
-        assertEquals(true, it.hasNext());
+        assertTrue(it.hasNext());
         assertEquals("pre", it.next());
 
         Iterator<String> it2 = context.getPrefixes("http://acme/bar");
-        assertEquals(true, it2.hasNext());
+        assertTrue(it2.hasNext());
         assertEquals("bar", it2.next());
     }
 
@@ -104,7 +104,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         String prefix = context.getPrefix(Namespaces.IN_NAMESPACE);
         assertEquals("in", prefix);
         Iterator<String> it = context.getPrefixes(Namespaces.IN_NAMESPACE);
-        assertEquals(true, it.hasNext());
+        assertTrue(it.hasNext());
         assertEquals("in", it.next());
 
         String uri2 = context.getNamespaceURI("out");
@@ -123,7 +123,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
         // should not have any namespaces
         String uri = context.getNamespaceURI("in");
-        assertEquals(null, uri);
+        assertNull(uri);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
         // should not have any default namespaces
         String uri = context.getNamespaceURI("in");
-        assertEquals(null, uri);
+        assertNull(uri);
 
         String uri2 = context.getNamespaceURI("foo");
         assertEquals("http://acme/cheese", uri2);

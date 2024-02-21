@@ -1,0 +1,14 @@
+= Google Component
+//attributes written by hand, not generated
+:doctitle: Google
+
+The *google-* component allows you to work with the
+https://gsuite.google.co.in/[G Suite].
+Google offers a great palette of different components like use of calender, mail, sheets and 
+drive . The main reason to use Google is the G Suite features.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]

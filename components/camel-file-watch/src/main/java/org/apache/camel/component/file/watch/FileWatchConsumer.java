@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -32,10 +34,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.watch.constants.FileEvent;
+import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.file.watch.utils.PathUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ public class FileWatchConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatchConsumer.class);
 
+    private final Set<FileEventEnum> events = new HashSet<>();
     private ExecutorService watchDirExecutorService;
     private ExecutorService pollExecutorService;
     private LinkedBlockingQueue<FileEvent> eventQueue;
@@ -63,6 +66,16 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         antPathMatcher = new AntPathMatcher();
         baseDirectory = Paths.get(getEndpoint().getPath()).toAbsolutePath();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        for (String event : getEndpoint().getEvents().split(",")) {
+            FileEventEnum fe = FileEventEnum.valueOf(event);
+            events.add(fe);
+        }
     }
 
     @Override
@@ -143,30 +156,30 @@ public class FileWatchConsumer extends DefaultConsumer {
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
-        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType().name());
-        message.setHeader(Exchange.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
-        message.setHeader("CamelFileAbsolute", true);
+        message.setHeader(FileWatchConstants.EVENT_TYPE_HEADER, event.getEventType().name());
+        message.setHeader(FileWatchConstants.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
+        message.setHeader(FileWatchConstants.FILE_ABSOLUTE, true);
 
         final String absolutePath = PathUtils.normalizeToString(event.getEventPath().toAbsolutePath());
-        message.setHeader("CamelFileAbsolutePath", absolutePath);
-        message.setHeader(Exchange.FILE_PATH, absolutePath);
+        message.setHeader(FileWatchConstants.FILE_ABSOLUTE_PATH, absolutePath);
+        message.setHeader(FileWatchConstants.FILE_PATH, absolutePath);
 
         final String relativePath = PathUtils.normalizeToString(baseDirectory.relativize(event.getEventPath()));
-        message.setHeader(Exchange.FILE_NAME, relativePath);
-        message.setHeader("CamelFileRelativePath", relativePath);
-        message.setHeader(Exchange.FILE_NAME_CONSUMED, relativePath);
+        message.setHeader(FileWatchConstants.FILE_NAME, relativePath);
+        message.setHeader(FileWatchConstants.FILE_RELATIVE_PATH, relativePath);
+        message.setHeader(FileWatchConstants.FILE_NAME_CONSUMED, relativePath);
 
-        message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
-        message.setHeader(Exchange.FILE_LAST_MODIFIED, event.getEventDate());
+        message.setHeader(FileWatchConstants.FILE_PARENT,
+                PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
+        message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, event.getEventDate());
+        message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;
     }
 
     private boolean matchFilters(FileEvent fileEvent) {
-        if (ObjectHelper.isNotEmpty(getEndpoint().getEvents())) {
-            if (!getEndpoint().getEvents().contains(fileEvent.getEventType())) {
-                return false;
-            }
+        if (!events.isEmpty() && !events.contains(fileEvent.getEventType())) {
+            return false;
         }
 
         if (!getEndpoint().isRecursive()) {
@@ -184,7 +197,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         String pattern = getEndpoint().getAntInclude();
-        if (pattern == null || pattern.trim().isEmpty()) {
+        if (pattern == null || pattern.isBlank()) {
             return true;
         }
 
@@ -231,6 +244,7 @@ public class FileWatchConsumer extends DefaultConsumer {
                 try {
                     event = eventQueue.poll(1000, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     return;
                 }
 

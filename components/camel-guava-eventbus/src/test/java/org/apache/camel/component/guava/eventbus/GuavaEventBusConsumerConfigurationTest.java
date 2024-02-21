@@ -43,7 +43,7 @@ public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
         CamelContext context = new DefaultCamelContext(registry);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener&eventClass=org.apache.camel.component.guava.eventbus.MessageWrapper")
                         .to("mock:customListenerEvents");
             }

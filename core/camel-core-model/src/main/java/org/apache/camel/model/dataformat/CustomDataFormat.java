@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -28,9 +30,10 @@ import org.apache.camel.spi.Metadata;
  * Delegate to a custom {@link org.apache.camel.spi.DataFormat} implementation via Camel registry.
  */
 @Metadata(label = "dataformat,transformation", title = "Custom")
-@XmlRootElement(name = "customDataFormat")
+@XmlRootElement(name = "custom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
+
     @XmlAttribute(required = true)
     private String ref;
 
@@ -39,6 +42,11 @@ public class CustomDataFormat extends DataFormatDefinition {
 
     public CustomDataFormat(String ref) {
         this.ref = ref;
+    }
+
+    private CustomDataFormat(Builder builder) {
+        this();
+        this.ref = builder.ref;
     }
 
     /**
@@ -58,5 +66,27 @@ public class CustomDataFormat extends DataFormatDefinition {
     @Override
     public String toString() {
         return "CustomDataFormat[" + ref + "]";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link CustomDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CustomDataFormat> {
+
+        private String ref;
+
+        /**
+         * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+         */
+        public Builder ref(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        @Override
+        public CustomDataFormat end() {
+            return new CustomDataFormat(this);
+        }
     }
 }

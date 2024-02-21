@@ -22,13 +22,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_JOB;
 
 /**
  * Perform operations on Kubernetes Jobs.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_JOB, title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl",
+             category = { Category.CONTAINER, Category.CLOUD }, producerOnly = true, headersClass = KubernetesConstants.class)
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {

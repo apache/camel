@@ -19,13 +19,14 @@ package org.apache.camel.component.infinispan.remote;
 import java.util.function.Supplier;
 
 import org.apache.camel.component.infinispan.InfinispanAggregationRepository;
+import org.apache.camel.component.infinispan.remote.protostream.DefaultExchangeHolderContextInitializer;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.jboss.marshalling.core.JBossUserMarshaller;
+import org.infinispan.commons.configuration.Combine;
 
 public class InfinispanRemoteAggregationRepository extends InfinispanAggregationRepository {
     private final Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
@@ -54,25 +55,16 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
 
         InfinispanRemoteConfiguration conf = configuration != null ? configuration : new InfinispanRemoteConfiguration();
 
-        //
-        // the Aggregation repository uses org.apache.camel.support.DefaultExchangeHolder as
-        // "wire format" which is based on java.io.Serializable. Starting from Infinispan 11
-        // the Jboss Marshaller has been removed for internal operation and deprecated thus
-        // to make DefaultExchangeHolder working, we need to explicit register JBoss Marshaller
-        //
-        // TODO: we should re-work DefaultExchangeHolder and make it possible to plug a custom
-        //       serialization strategy (i.e. json, protobuf, avro)
-        //
         if (conf.getCacheContainerConfiguration() == null) {
             conf.setCacheContainerConfiguration(
                     new ConfigurationBuilder()
-                            .marshaller(JBossUserMarshaller.class)
+                            .addContextInitializer(new DefaultExchangeHolderContextInitializer())
                             .build());
         } else {
             conf.setCacheContainerConfiguration(
                     new ConfigurationBuilder()
-                            .read(conf.getCacheContainerConfiguration())
-                            .marshaller(JBossUserMarshaller.class)
+                            .read(conf.getCacheContainerConfiguration(), Combine.DEFAULT)
+                            .addContextInitializer(new DefaultExchangeHolderContextInitializer())
                             .build());
         }
 

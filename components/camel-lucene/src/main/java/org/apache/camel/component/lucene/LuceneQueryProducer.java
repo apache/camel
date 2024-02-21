@@ -32,7 +32,7 @@ public class LuceneQueryProducer extends DefaultProducer {
     int maxNumberOfHits;
     int totalHitsThreshold;
 
-    public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) throws Exception {
+    public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) {
         super(endpoint);
         this.config = config;
         indexDirectory = config.getIndexDir();
@@ -56,8 +56,8 @@ public class LuceneQueryProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Hits hits;
 
-        String phrase = exchange.getIn().getHeader("QUERY", String.class);
-        String returnLuceneDocs = exchange.getIn().getHeader("RETURN_LUCENE_DOCS", String.class);
+        String phrase = exchange.getIn().getHeader(LuceneConstants.HEADER_QUERY, String.class);
+        String returnLuceneDocs = exchange.getIn().getHeader(LuceneConstants.HEADER_RETURN_LUCENE_DOCS, String.class);
         boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {

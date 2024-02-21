@@ -18,22 +18,21 @@ package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
@@ -43,10 +42,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @CamelSpringTest
-@ContextConfiguration(
-                      classes = { HistogramRouteTest.TestConfig.class })
-@MockEndpoints
-public class HistogramRouteTest {
+public class HistogramRouteTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:out")
     private MockEndpoint endpoint;
@@ -60,35 +56,33 @@ public class HistogramRouteTest {
 
     private InOrder inOrder;
 
-    @Configuration
-    public static class TestConfig extends SingleRouteCamelConfiguration {
-
-        @Bean
-        @Override
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-
-                @Override
-                public void configure() throws Exception {
-                    from("direct:in")
-                            .to("metrics:histogram:A?value=332491")
-                            .to("mock:out");
-                }
-            };
-        }
-
-        @Bean(name = METRIC_REGISTRY_NAME)
-        public MetricRegistry getMetricRegistry() {
-            return Mockito.mock(MetricRegistry.class);
-        }
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
     }
 
-    @BeforeEach
-    public void setup() {
-        // TODO - 12.05.2014, Lauri - is there any better way to set this up?
-        mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRIC_REGISTRY_NAME, MetricRegistry.class);
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        mockRegistry = Mockito.mock(MetricRegistry.class);
+        context.getRegistry().bind(METRIC_REGISTRY_NAME, mockRegistry);
         mockHistogram = Mockito.mock(Histogram.class);
         inOrder = Mockito.inOrder(mockRegistry, mockHistogram);
+
+        return context;
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:in")
+                        .to("metrics:histogram:A?value=332491")
+                        .to("mock:out");
+            }
+        };
     }
 
     @AfterEach

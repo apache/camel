@@ -34,7 +34,7 @@ public class DependencyMatcher {
     private static final Pattern ARTIFACT_PATTERN = Pattern
             .compile("(?<groupId>[^:]+):(?<artifactId>[^:]+)(:(?<version>[^:]+))?(:(?<type>[^:]+))?(:(?<classifier>[^:]+))?");
 
-    private Collection<String> selectors;
+    private final Collection<String> selectors;
 
     public DependencyMatcher(Collection<String> selectors) {
         this.selectors = selectors;

@@ -41,7 +41,7 @@ public interface IsSingleton {
     /**
      * Whether this class supports being singleton or not.
      *
-     * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
+     * @return <tt>true</tt> to be a singleton shared instance, <tt>false</tt> to create new instances.
      */
     boolean isSingleton();
 }

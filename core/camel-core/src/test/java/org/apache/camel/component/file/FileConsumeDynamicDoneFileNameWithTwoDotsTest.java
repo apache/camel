@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,28 +32,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 
-    private static final String TARGET_DIR_NAME = "target/data/" + MethodHandles.lookup().lookupClass().getSimpleName();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(TARGET_DIR_NAME);
-        super.setUp();
-    }
-
     @Test
     public void testDynamicDoneFileNameContainingTwoDots() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("input-body");
 
-        template.sendBodyAndHeader("file:" + TARGET_DIR_NAME, "input-body", Exchange.FILE_NAME, "test.twodot.txt");
-        template.sendBodyAndHeader("file:" + TARGET_DIR_NAME, "done-body", Exchange.FILE_NAME, "test.twodot.done");
+        template.sendBodyAndHeader(fileUri(), "input-body", Exchange.FILE_NAME, "test.twodot.txt");
+        template.sendBodyAndHeader(fileUri(), "done-body", Exchange.FILE_NAME, "test.twodot.done");
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesWaitTime());
 
-        assertFalse(new File(TARGET_DIR_NAME, "test.twodot.txt").exists(), "Input file should be deleted");
-        assertFalse(new File(TARGET_DIR_NAME, "test.twodot.done").exists(), "Done file should be deleted");
+        assertFalse(Files.exists(testFile("test.twodot.txt")), "Input file should be deleted");
+        assertFalse(Files.exists(testFile("test.twodot.done")), "Done file should be deleted");
     }
 
     @Override
@@ -63,7 +52,7 @@ public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + TARGET_DIR_NAME + "?doneFileName=${file:name.noext}.done&initialDelay=0").to("mock:result");
+                from(fileUri("?doneFileName=${file:name.noext}.done&initialDelay=0")).to("mock:result");
             }
         };
     }

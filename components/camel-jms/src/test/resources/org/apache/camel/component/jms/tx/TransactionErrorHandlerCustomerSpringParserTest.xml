@@ -33,7 +33,7 @@
         <!-- in this route the transactionErrorHandler is used -->
         <camel:route errorHandlerRef="transactionErrorHandler">
             <!-- 1: from the jms queue -->
-            <camel:from uri="activemq:queue:okay"/>
+            <camel:from uri="activemq:queue:okay.TransactionErrorHandlerCustomerSpringParserTest"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
             <camel:transacted ref="required"/>
             <!-- 3: call our business logic that is myProcessor -->
@@ -72,13 +72,15 @@
     <camel:errorHandler id="noErrorHandler" type="NoErrorHandler"/>
     <!-- END SNIPPET: e2 -->
 
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
+                </property>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

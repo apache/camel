@@ -38,7 +38,7 @@ public class AggregationStrategyGroupedBodyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = (List) getMockEndpoint("mock:result").getExchanges().get(0).getMessage().getBody();
+        List<?> list = (List<?>) getMockEndpoint("mock:result").getExchanges().get(0).getMessage().getBody();
         assertNotNull(list);
         assertEquals(3, list.size());
         assertEquals("A", list.get(0));

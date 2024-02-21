@@ -47,7 +47,7 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         String data = IOConverter.toString(new File("src/test/data/fixed/PEOPLE-FixedLength.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
@@ -72,16 +72,16 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         data.add(row);
 
         template.sendBody("direct:marshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String s = mock.getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(s.startsWith("JOHN                               DOE"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 FlatpackDataFormat df = new FlatpackDataFormat();
                 df.setDefinition("PEOPLE-FixedLength.pzmap.xml");
                 df.setFixed(true);

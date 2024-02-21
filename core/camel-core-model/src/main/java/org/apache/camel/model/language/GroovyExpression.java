@@ -16,19 +16,20 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a Groovy script.
+ * Evaluates a Groovy script.
  */
 @Metadata(firstVersion = "1.3.0", label = "language,script", title = "Groovy")
 @XmlRootElement(name = "groovy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GroovyExpression extends ExpressionDefinition {
+public class GroovyExpression extends TypedExpressionDefinition {
 
     public GroovyExpression() {
     }
@@ -37,8 +38,24 @@ public class GroovyExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private GroovyExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "groovy";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link GroovyExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, GroovyExpression> {
+
+        @Override
+        public GroovyExpression end() {
+            return new GroovyExpression(this);
+        }
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -27,6 +28,7 @@ import java.util.function.Supplier;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -37,17 +39,27 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.CircuitBreakerConstants;
+import org.apache.camel.processor.PooledExchangeTask;
+import org.apache.camel.processor.PooledExchangeTaskFactory;
+import org.apache.camel.processor.PooledTaskFactory;
+import org.apache.camel.processor.PrototypeTaskFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProcessorExchangeFactory;
+import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,29 +69,112 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Resilience Processor")
 public class ResilienceProcessor extends AsyncProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
     private volatile CircuitBreaker circuitBreaker;
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private final CircuitBreakerConfig circuitBreakerConfig;
     private final BulkheadConfig bulkheadConfig;
+    private Bulkhead bulkhead;
     private final TimeLimiterConfig timeLimiterConfig;
+    private TimeLimiter timeLimiter;
     private final Processor processor;
     private final Processor fallback;
+    private final boolean throwExceptionWhenHalfOpenOrOpenState;
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
+    private ProcessorExchangeFactory processorExchangeFactory;
+    private PooledExchangeTaskFactory taskFactory;
+    private PooledExchangeTaskFactory fallbackTaskFactory;
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
                                TimeLimiterConfig timeLimiterConfig, Processor processor,
-                               Processor fallback) {
+                               Processor fallback, boolean throwExceptionWhenHalfOpenOrOpenState) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
         this.timeLimiterConfig = timeLimiterConfig;
         this.processor = processor;
         this.fallback = fallback;
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        if (timeLimiterConfig != null) {
+            timeLimiter = TimeLimiter.of(id, timeLimiterConfig);
+        }
+        if (bulkheadConfig != null) {
+            bulkhead = Bulkhead.of(id, bulkheadConfig);
+        }
+
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        if (pooled) {
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            taskFactory = new PooledTaskFactory(getId()) {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new CircuitBreakerTask();
+                }
+            };
+            taskFactory.setCapacity(capacity);
+            fallbackTaskFactory = new PooledTaskFactory(getId()) {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new CircuitBreakerFallbackTask();
+                }
+            };
+            fallbackTaskFactory.setCapacity(capacity);
+        } else {
+            taskFactory = new PrototypeTaskFactory() {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new CircuitBreakerTask();
+                }
+            };
+            fallbackTaskFactory = new PrototypeTaskFactory() {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new CircuitBreakerFallbackTask();
+                }
+            };
+        }
+
+        // create a per processor exchange factory
+        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory.setRouteId(getRouteId());
+        this.processorExchangeFactory.setId(getId());
+
+        ServiceHelper.buildService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (circuitBreaker == null) {
+            circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
+        }
+
+        ServiceHelper.startService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+
+        ServiceHelper.stopService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
     @Override
@@ -100,6 +195,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public CircuitBreaker getCircuitBreaker() {
@@ -281,7 +386,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     @ManagedAttribute
     public long getCircuitBreakerWaitDurationInOpenState() {
-        return circuitBreakerConfig.getWaitDurationInOpenState().getSeconds();
+        return Duration.ofMillis(circuitBreakerConfig.getWaitIntervalFunctionInOpenState().apply(1)).getSeconds();
     }
 
     @ManagedAttribute
@@ -353,152 +458,238 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // run this as if we run inside try .. catch so there is no regular
         // Camel error handler
-        exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
+        exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
-        Callable<Exchange> task;
+        CircuitBreakerFallbackTask fallbackTask = null;
+        CircuitBreakerTask task = null;
+        try {
+            fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
+            task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
+            final CircuitBreakerTask ftask = task; // annoying final java thingy!
+            Callable<Exchange> callable;
 
-        if (timeLimiterConfig != null) {
-            // timeout handling is more complex with thread-pools
-
-            TimeLimiter tl = TimeLimiter.of(id, timeLimiterConfig);
-            Supplier<CompletableFuture<Exchange>> futureSupplier;
-            if (executorService == null) {
-                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange));
+            if (timeLimiter != null) {
+                Supplier<CompletableFuture<Exchange>> futureSupplier;
+                if (executorService == null) {
+                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask);
+                } else {
+                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                }
+                callable = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
             } else {
-                futureSupplier = () -> CompletableFuture.supplyAsync(() -> processInCopy(exchange), executorService);
+                callable = task;
             }
-            task = TimeLimiter.decorateFutureSupplier(tl, futureSupplier);
-        } else {
-            task = new CircuitBreakerTask(() -> processInCopy(exchange));
+            if (bulkhead != null) {
+                callable = Bulkhead.decorateCallable(bulkhead, callable);
+            }
+
+            callable = CircuitBreaker.decorateCallable(circuitBreaker, callable);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
+            }
+            Try.ofCallable(callable).recover(fallbackTask).get();
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            if (task != null) {
+                taskFactory.release(task);
+            }
+            if (fallbackTask != null) {
+                fallbackTaskFactory.release(fallbackTask);
+            }
         }
 
-        if (bulkheadConfig != null) {
-            Bulkhead bh = Bulkhead.of(id, bulkheadConfig);
-            task = Bulkhead.decorateCallable(bh, task);
+        if (LOG.isTraceEnabled()) {
+            boolean failed = exchange.isFailed();
+            LOG.trace("Processing exchange: {} using circuit breaker: {} complete (failed: {})", exchange.getExchangeId(), id,
+                    failed);
         }
 
-        task = CircuitBreaker.decorateCallable(circuitBreaker, task);
-
-        Function<Throwable, Exchange> fallbackTask = new CircuitBreakerFallbackTask(this.fallback, exchange);
-        Try.ofCallable(task).recover(fallbackTask).andFinally(() -> callback.done(false)).get();
-        return false;
+        exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+        callback.done(true);
+        return true;
     }
 
-    private Exchange processInCopy(Exchange exchange) {
+    private Exchange processTask(Exchange exchange) {
+        Exchange copy = null;
+        UnitOfWork uow = null;
+        Throwable cause;
         try {
             LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
             // prepare a copy of exchange so downstream processors don't
             // cause side-effects if they mutate the exchange
             // in case timeout processing and continue with the fallback etc
-            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
+            copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            if (copy.getUnitOfWork() != null) {
+                uow = copy.getUnitOfWork();
+            } else {
+                // prepare uow on copy
+                uow = PluginHelper.getUnitOfWorkFactory(copy.getContext()).createUnitOfWork(copy);
+                copy.getExchangeExtension().setUnitOfWork(uow);
+                // the copy must be starting from the route where its copied from
+                Route route = ExchangeHelper.getRoute(exchange);
+                if (route != null) {
+                    uow.pushRoute(route);
+                }
+            }
+
             // process the processor until its fully done
             processor.process(copy);
+
+            // handle the processing result
             if (copy.getException() != null) {
                 exchange.setException(copy.getException());
             } else {
                 // copy the result as its regarded as success
                 ExchangeHelper.copyResults(exchange, copy);
-                exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
-                exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
+        } finally {
+            // must done uow
+            UnitOfWorkHelper.doneUow(uow, copy);
+            // remember any thrown exception
+            cause = exchange.getException();
         }
-        if (exchange.getException() != null) {
+
+        // and release exchange back in pool
+        processorExchangeFactory.release(exchange);
+
+        if (cause != null) {
             // throw exception so resilient4j know it was a failure
-            throw RuntimeExchangeException.wrapRuntimeException(exchange.getException());
+            throw RuntimeExchangeException.wrapRuntimeException(cause);
         }
         return exchange;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-        if (circuitBreaker == null) {
-            circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
+    private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange>, Supplier<Exchange> {
+
+        private Exchange exchange;
+
+        @Override
+        public void prepare(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            // callback not in use
         }
-    }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        @Override
+        public void reset() {
+            this.exchange = null;
         }
-    }
 
-    private static final class CircuitBreakerTask implements Callable<Exchange> {
-
-        Supplier<Exchange> supplier;
-
-        public CircuitBreakerTask(Supplier<Exchange> supplier) {
-            this.supplier = supplier;
+        @Override
+        public void run() {
+            // not in use
         }
 
         @Override
         public Exchange call() throws Exception {
-            return supplier.get();
+            // this task is either use as callable or supplier
+            // therefore we must call process task before returning the response
+            return processTask(exchange);
+        }
+
+        @Override
+        public Exchange get() {
+            // this task is either use as callable or supplier
+            // therefore we must call process task before returning the response
+            return processTask(exchange);
         }
     }
 
-    private static final class CircuitBreakerFallbackTask implements Function<Throwable, Exchange> {
+    private final class CircuitBreakerFallbackTask implements PooledExchangeTask, Function<Throwable, Exchange> {
 
-        private final Processor processor;
-        private final Exchange exchange;
+        private Exchange exchange;
 
-        private CircuitBreakerFallbackTask(Processor processor, Exchange exchange) {
-            this.processor = processor;
+        @Override
+        public void prepare(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
+            // callback not in use
+        }
+
+        @Override
+        public void reset() {
+            this.exchange = null;
+        }
+
+        @Override
+        public void run() {
+            // not in use
         }
 
         @Override
         public Exchange apply(Throwable throwable) {
-            if (processor == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} recover task using circuit breaker: {} from: {}", exchange.getExchangeId(),
+                        id, throwable);
+            }
+
+            if (fallback == null) {
                 if (throwable instanceof TimeoutException) {
                     // the circuit breaker triggered a timeout (and there is no
                     // fallback) so lets mark the exchange as failed
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_TIMED_OUT, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
                     exchange.setException(throwable);
                     return exchange;
                 } else if (throwable instanceof CallNotPermittedException) {
                     // the circuit breaker triggered a call rejected
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
-                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
-                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
+                    if (throwExceptionWhenHalfOpenOrOpenState) {
+                        exchange.setException(throwable);
+                    }
+                    return exchange;
+                } else if (throwable instanceof BulkheadFullException) {
+                    // the circuit breaker bulkhead is full
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
+                    exchange.setException(throwable);
+                    return exchange;
                 } else {
-                    // throw exception so resilient4j know it was a failure
-                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
+                    // other kind of exception
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
+                    exchange.setException(throwable);
+                    return exchange;
                 }
             }
 
             // fallback route is handling the exception so its short-circuited
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
 
             // store the last to endpoint as the failure endpoint
-            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
             // give the rest of the pipeline another chance
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exchange.getException());
             exchange.setRouteStop(false);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..
             // catch block
-            exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+            exchange.getExchangeExtension().setRedeliveryExhausted(false);
             // run the fallback processor
             try {
-                LOG.debug("Running fallback: {} with exchange: {}", processor, exchange);
+                LOG.debug("Running fallback: {} with exchange: {}", fallback, exchange);
                 // process the fallback until its fully done
-                processor.process(exchange);
-                LOG.debug("Running fallback: {} with exchange: {} done", processor, exchange);
-            } catch (Exception e) {
+                fallback.process(exchange);
+                LOG.debug("Running fallback: {} with exchange: {} done", fallback, exchange);
+            } catch (Throwable e) {
                 exchange.setException(e);
             }
 

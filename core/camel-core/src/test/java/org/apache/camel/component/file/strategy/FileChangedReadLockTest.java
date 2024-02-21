@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,11 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated("Does not play well with parallel unit test execution")
 public class FileChangedReadLockTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
@@ -37,8 +39,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
+        testDirectory("in", true);
         super.setUp();
     }
 
@@ -46,14 +47,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/slowfile.dat");
+        mock.expectedFileExists(testFile("out/slowfile.dat"));
         mock.expectedHeaderReceived(Exchange.FILE_LENGTH, expectedFileLength());
 
         writeSlowFile();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/data/changed/out/slowfile.dat"));
+        String content = new String(Files.readAllBytes(testFile("out/slowfile.dat")));
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -63,16 +64,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
 
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
-
-        FileOutputStream fos = new FileOutputStream("target/data/changed/in/slowfile.dat");
-        for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + LS).getBytes());
-            LOG.debug("Writing line " + i);
-            Thread.sleep(50);
+        try (OutputStream fos = Files.newOutputStream(testFile("in/slowfile.dat"))) {
+            for (int i = 0; i < 20; i++) {
+                fos.write(("Line " + i + LS).getBytes());
+                LOG.debug("Writing line {}", i);
+                Thread.sleep(50);
+            }
+            fos.flush();
         }
-
-        fos.flush();
-        fos.close();
         LOG.debug("Writing slow file DONE...");
     }
 
@@ -89,8 +88,8 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
-                        .to("file:target/data/changed/out", "mock:result");
+                from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

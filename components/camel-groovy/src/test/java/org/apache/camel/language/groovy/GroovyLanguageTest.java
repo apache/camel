@@ -22,10 +22,22 @@ import org.junit.jupiter.api.Test;
 public class GroovyLanguageTest extends LanguageTestSupport {
 
     @Test
-    public void testGroovyExpressions() throws Exception {
+    public void testGroovyExpressions() {
         assertExpression("exchange.in.headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
         assertExpression("headers.foo", "abc");
+    }
+
+    @Test
+    public void testGroovyExchangeProperty() {
+        exchange.setProperty("myProp1", "myValue");
+        exchange.setProperty("myProp2", 123);
+
+        assertExpression("exchange.properties.myProp1", "myValue");
+        assertExpression("exchange.properties.myProp2", 123);
+
+        assertExpression("exchangeProperties.myProp1", "myValue");
+        assertExpression("exchangeProperties.myProp2", 123);
     }
 
     @Override

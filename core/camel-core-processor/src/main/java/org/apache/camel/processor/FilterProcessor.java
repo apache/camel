@@ -42,11 +42,20 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     private String routeId;
     private final Predicate predicate;
     private transient long filtered;
+    private String statusPropertyName;
 
     public FilterProcessor(CamelContext context, Predicate predicate, Processor processor) {
         super(processor);
         this.context = context;
         this.predicate = predicate;
+    }
+
+    public String getStatusPropertyName() {
+        return statusPropertyName;
+    }
+
+    public void setStatusPropertyName(String statusPropertyName) {
+        this.statusPropertyName = statusPropertyName;
     }
 
     @Override
@@ -61,6 +70,9 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
         try {
             matches = matches(exchange);
+            if (statusPropertyName != null) {
+                exchange.setProperty(statusPropertyName, matches);
+            }
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -77,9 +89,6 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         boolean matches = predicate.matches(exchange);
 
         LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
-
-        // set property whether the filter matches or not
-        exchange.setProperty(Exchange.FILTER_MATCHED, matches);
 
         if (matches) {
             filtered++;

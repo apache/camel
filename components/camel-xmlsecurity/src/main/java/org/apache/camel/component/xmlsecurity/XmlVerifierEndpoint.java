@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierProcessor;
 import org.apache.camel.spi.Metadata;
@@ -27,11 +29,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
+import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_VERIFIER;
+
 /**
  * Verify XML payloads using the XML signature specification.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-verify", title = "XML Security Verify",
-             syntax = "xmlsecurity-verify:name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_VERIFIER, title = "XML Security Verify",
+             syntax = "xmlsecurity-verify:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
+             remote = false, headersClass = XmlSignatureConstants.class)
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
     @UriPath

@@ -24,9 +24,9 @@ import com.hazelcast.cp.CPSubsystem;
 import com.hazelcast.cp.IAtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSpringTestSupport {
 
     @Mock
@@ -62,7 +63,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/META-INF/spring/test-camel-context-atomicnumber.xml");
+        return newAppContext("/META-INF/spring/test-camel-context-atomicnumber.xml");
     }
 
     @Test

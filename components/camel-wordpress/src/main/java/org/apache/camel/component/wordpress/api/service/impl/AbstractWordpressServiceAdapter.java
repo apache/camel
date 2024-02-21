@@ -18,20 +18,18 @@ package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.Collections;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
 import org.apache.camel.component.wordpress.api.service.WordpressService;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
 
 abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWordpressServiceAdapter.class);
@@ -42,8 +40,7 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
     private WordpressAuthentication authentication;
 
     AbstractWordpressServiceAdapter(final String wordpressUrl, final String apiVersion) {
-        checkNotNull(emptyToNull(apiVersion));
-        this.apiVersion = apiVersion;
+        this.apiVersion = ObjectHelper.notNullOrEmpty(apiVersion, "apiVersion");
 
         // @formatter:off
         this.spi = JAXRSClientFactory.create(wordpressUrl, this.getSpiType(),

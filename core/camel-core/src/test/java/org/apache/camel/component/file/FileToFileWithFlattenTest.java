@@ -26,17 +26,13 @@ import org.junit.jupiter.api.Test;
 
 public class FileToFileWithFlattenTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/flatten-in";
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/flatten-in");
-        deleteDirectory("target/data/flatten-out");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+        template.sendBodyAndHeader(fileUri("flatten-in"), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri("flatten-in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUri("flatten-in"), "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     @Override
@@ -51,8 +47,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true")
-                        .to("file://target/data/flatten-out", "mock:result");
+                from(fileUri("flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true"))
+                        .to(fileUri("flatten-out"), "mock:result");
             }
         });
         context.start();
@@ -61,14 +57,14 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         mock.expectedMessageCount(3);
 
         // flatten files
-        mock.expectedFileExists("target/data/flatten-out/bye.txt");
-        mock.expectedFileExists("target/data/flatten-out/hello.txt");
-        mock.expectedFileExists("target/data/flatten-out/goodday.txt");
+        mock.expectedFileExists(testFile("flatten-out/bye.txt"));
+        mock.expectedFileExists(testFile("flatten-out/hello.txt"));
+        mock.expectedFileExists(testFile("flatten-out/goodday.txt"));
 
         // default move files
-        mock.expectedFileExists("target/data/flatten-in/.camel/bye.txt");
-        mock.expectedFileExists("target/data/flatten-in/sub/.camel/hello.txt");
-        mock.expectedFileExists("target/data/flatten-in/sub/sub2/.camel/goodday.txt");
+        mock.expectedFileExists(testFile("flatten-in/.camel/bye.txt"));
+        mock.expectedFileExists(testFile("flatten-in/sub/.camel/hello.txt"));
+        mock.expectedFileExists(testFile("flatten-in/sub/sub2/.camel/goodday.txt"));
 
         assertMockEndpointsSatisfied();
     }
@@ -78,8 +74,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true")
-                        .to("file://target/data/flatten-out?flatten=true", "mock:result");
+                from(fileUri("flatten-in?initialDelay=0&delay=10&recursive=true"))
+                        .to(fileUri("flatten-out?flatten=true"), "mock:result");
             }
         });
         context.start();
@@ -88,14 +84,14 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         mock.expectedMessageCount(3);
 
         // flatten files
-        mock.expectedFileExists("target/data/flatten-out/bye.txt");
-        mock.expectedFileExists("target/data/flatten-out/hello.txt");
-        mock.expectedFileExists("target/data/flatten-out/goodday.txt");
+        mock.expectedFileExists(testFile("flatten-out/bye.txt"));
+        mock.expectedFileExists(testFile("flatten-out/hello.txt"));
+        mock.expectedFileExists(testFile("flatten-out/goodday.txt"));
 
         // default move files
-        mock.expectedFileExists("target/data/flatten-in/.camel/bye.txt");
-        mock.expectedFileExists("target/data/flatten-in/sub/.camel/hello.txt");
-        mock.expectedFileExists("target/data/flatten-in/sub/sub2/.camel/goodday.txt");
+        mock.expectedFileExists(testFile("flatten-in/.camel/bye.txt"));
+        mock.expectedFileExists(testFile("flatten-in/sub/.camel/hello.txt"));
+        mock.expectedFileExists(testFile("flatten-in/sub/sub2/.camel/goodday.txt"));
 
         assertMockEndpointsSatisfied();
     }

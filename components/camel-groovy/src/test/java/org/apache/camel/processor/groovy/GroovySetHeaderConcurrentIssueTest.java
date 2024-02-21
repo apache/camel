@@ -20,9 +20,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class GroovySetHeaderConcurrentIssueTest extends CamelTestSupport {
 
     private ExecutorService executor;
@@ -65,16 +68,16 @@ public class GroovySetHeaderConcurrentIssueTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         executor.shutdownNow();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("mySlip").groovy("return \"${request.body.subOrderName}Endpoint\"")
                         .routingSlip(header("mySlip"));

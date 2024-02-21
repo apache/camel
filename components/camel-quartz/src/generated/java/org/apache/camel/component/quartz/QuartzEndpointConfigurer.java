@@ -36,8 +36,8 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "firenow":
-        case "fireNow": target.setFireNow(property(camelContext, boolean.class, value)); return true;
+        case "ignoreexpirednextfiretime":
+        case "ignoreExpiredNextFireTime": target.setIgnoreExpiredNextFireTime(property(camelContext, boolean.class, value)); return true;
         case "jobparameters":
         case "jobParameters": target.setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "pausejob":
@@ -46,8 +46,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": target.setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
         case "recoverablejob":
         case "recoverableJob": target.setRecoverableJob(property(camelContext, boolean.class, value)); return true;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
         case "stateful": target.setStateful(property(camelContext, boolean.class, value)); return true;
         case "triggerparameters":
         case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
@@ -77,8 +75,8 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "firenow":
-        case "fireNow": return boolean.class;
+        case "ignoreexpirednextfiretime":
+        case "ignoreExpiredNextFireTime": return boolean.class;
         case "jobparameters":
         case "jobParameters": return java.util.Map.class;
         case "pausejob":
@@ -87,8 +85,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": return boolean.class;
         case "recoverablejob":
         case "recoverableJob": return boolean.class;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return int.class;
         case "stateful": return boolean.class;
         case "triggerparameters":
         case "triggerParameters": return java.util.Map.class;
@@ -119,8 +115,8 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "firenow":
-        case "fireNow": return target.isFireNow();
+        case "ignoreexpirednextfiretime":
+        case "ignoreExpiredNextFireTime": return target.isIgnoreExpiredNextFireTime();
         case "jobparameters":
         case "jobParameters": return target.getJobParameters();
         case "pausejob":
@@ -129,8 +125,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": return target.isPrefixJobNameWithEndpointId();
         case "recoverablejob":
         case "recoverableJob": return target.isRecoverableJob();
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return target.getStartDelayedSeconds();
         case "stateful": return target.isStateful();
         case "triggerparameters":
         case "triggerParameters": return target.getTriggerParameters();

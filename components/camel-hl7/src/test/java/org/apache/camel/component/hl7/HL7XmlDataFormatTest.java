@@ -43,7 +43,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         String body = createHL7AsString();
         template.sendBody("direct:unmarshalOk", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,13 +57,13 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         assertTrue(xml.contains("<ORM_O01"));
         template.sendBody("direct:unmarshalOkXml", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message received = mock.getReceivedExchanges().get(0).getIn().getMandatoryBody(Message.class);
         assertEquals("O01", new Terser(received).get("MSH-9-2"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());
         Parser p = new GenericParser(hapiContext);
@@ -71,7 +71,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         hl7.setParser(p);
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkXml").unmarshal(hl7).to("mock:unmarshal");
             }

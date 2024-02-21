@@ -18,7 +18,6 @@ package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,8 +55,7 @@ public final class PropertyConfigurerHelper {
         if (configurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it
-            configurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver()
+            configurer = PluginHelper.getConfigurerResolver(context)
                     .resolvePropertyConfigurer(name, context);
         }
 
@@ -77,8 +75,7 @@ public final class PropertyConfigurerHelper {
 
         String name = targetType.getName();
         // see if there is a configurer for it
-        return context.adapt(ExtendedCamelContext.class)
-                .getConfigurerResolver()
+        return PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(name, context);
     }
 

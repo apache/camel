@@ -21,23 +21,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.mail.search.SearchTerm;
+import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
+import org.eclipse.angus.mail.imap.SortTerm;
 
 /**
  * Component for JavaMail.
  */
 @Component("imap,imaps,pop3,pop3s,smtp,smtps")
-public class MailComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
+public class MailComponent extends HealthCheckComponent implements HeaderFilterStrategyAware, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private MailConfiguration configuration;
@@ -45,6 +47,9 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
     private ContentTypeResolver contentTypeResolver;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(label = "filter",
+              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public MailComponent() {
     }
@@ -179,4 +184,28 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+    }
+
+    /**
+     * Sets the header filter strategy to use from the given endpoint if the endpoint is a
+     * {@link HeaderFilterStrategyAware} type.
+     */
+    public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
+        if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware) endpoint).setHeaderFilterStrategy(headerFilterStrategy);
+        }
+    }
+
 }

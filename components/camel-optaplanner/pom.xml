@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-optaplanner</artifactId>
@@ -32,6 +32,9 @@
     <description>Camel OptaPlanner support</description>
 
     <properties>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
+        <!-- Needs to be investigated: crashes on CI on ppc64le -->
+        <skipTests.ppc64le>true</skipTests.ppc64le>
     </properties>
 
     <dependencies>
@@ -43,27 +46,35 @@
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-core</artifactId>
+            <version>${optaplanner-version}</version>
         </dependency>
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-persistence-common</artifactId>
+            <version>${optaplanner-version}</version>
         </dependency>
 
         <!-- testing -->
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-examples</artifactId>
+            <version>${optaplanner-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -76,6 +87,13 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

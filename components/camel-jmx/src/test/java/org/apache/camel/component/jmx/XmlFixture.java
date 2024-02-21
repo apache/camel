@@ -21,46 +21,36 @@ import java.io.File;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
-import org.xmlunit.diff.Diff;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public final class XmlFixture {
 
     private XmlFixture() {
     }
 
-    public static Source toSource(String aXmlString) throws Exception {
+    public static Source toSource(String aXmlString) {
         return Input.fromString(aXmlString).build();
     }
 
-    public static Source toSource(File aFile) throws Exception {
+    public static Source toSource(File aFile) {
         return Input.fromFile(aFile).build();
     }
 
     public static void assertXMLIgnorePrefix(String aMessage, Source aExpected, Source aActual) throws Exception {
-        Diff diff = DiffBuilder.compare(aExpected).withTest(aActual)
-                .ignoreComments().ignoreWhitespace()
-                .checkForSimilar().build();
-        try {
-            assertFalse(diff.hasDifferences(), aMessage + ":\n" + diff.toString());
-        } catch (Throwable t) {
-            dump(aActual);
-            throw t;
-        }
+        XmlAssert.assertThat(aExpected).and(aActual)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areSimilar();
     }
 
     public static void dump(Source aActual)
-            throws TransformerConfigurationException,
-            TransformerException {
+            throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -77,7 +67,7 @@ public final class XmlFixture {
         return transform(aSource, resourcePath);
     }
 
-    protected static Source transform(Source aSource, String aResourcePath) throws Exception {
+    protected static Source transform(Source aSource, String aResourcePath) {
         Source stylesheet = new StreamSource(XmlFixture.class.getResourceAsStream(aResourcePath));
         stylesheet.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
         return Input.byTransforming(aSource).withStylesheet(stylesheet).build();

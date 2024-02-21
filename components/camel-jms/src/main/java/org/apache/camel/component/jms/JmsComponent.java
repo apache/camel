@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.Session;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -59,6 +59,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(label = "advanced", description = "To use a shared JMS configuration")
     private JmsConfiguration configuration;
+    @Metadata(label = "advanced",
+              description = "Whether the JMS consumer should include JMSCorrelationIDAsBytes as a header on the Camel Message.",
+              defaultValue = "true")
+    private boolean includeCorrelationIDAsBytes = true;
     @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
     private QueueBrowseStrategy queueBrowseStrategy;
     @Metadata(label = "advanced",
@@ -178,6 +182,17 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         this.allowAutoWiredDestinationResolver = allowAutoWiredDestinationResolver;
     }
 
+    /**
+     * Whether the JMS consumer should include JMSCorrelationIDAsBytes as a header on the Camel Message.
+     */
+    public boolean isIncludeCorrelationIDAsBytes() {
+        return includeCorrelationIDAsBytes;
+    }
+
+    public void setIncludeCorrelationIDAsBytes(boolean includeCorrelationIDAsBytes) {
+        this.includeCorrelationIDAsBytes = includeCorrelationIDAsBytes;
+    }
+
     public QueueBrowseStrategy getQueueBrowseStrategy() {
         if (queueBrowseStrategy == null) {
             queueBrowseStrategy = new DefaultQueueBrowseStrategy();
@@ -208,7 +223,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return configuration.createInOnlyTemplate(endpoint, pubSubDomain, destination);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
         return configuration.createMessageListenerContainer(endpoint);
     }
 
@@ -222,6 +237,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     public void setConsumerType(ConsumerType consumerType) {
         configuration.setConsumerType(consumerType);
+    }
+
+    public ConsumerType getReplyToConsumerType() {
+        return configuration.getReplyToConsumerType();
+    }
+
+    public void setReplyToConsumerType(ConsumerType replyToConsumerType) {
+        configuration.setReplyToConsumerType(replyToConsumerType);
     }
 
     public ConnectionFactory getConnectionFactory() {
@@ -684,8 +707,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return JmsConfiguration.createDestinationResolver(destinationEndpoint);
     }
 
-    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint)
-            throws Exception {
+    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) {
         configuration.configureMessageListenerContainer(container, endpoint);
     }
 
@@ -1234,6 +1256,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     /**
      * A strategy method allowing the URI destination to be translated into the actual JMS destination name (say by
      * looking up in JNDI or something)
+     *
+     * @param  path       the path to convert
+     * @param  parameters an optional, component specific, set of parameters
+     * @return            the path as the actual destination
      */
     protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         return path;

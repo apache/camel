@@ -1,4 +1,3 @@
-[[Exception-org.xml.sax.SAXParseException-Exceptionorg.xml.sax.SAXParseException]]
 = Exception: `org.xml.sax.SAXParseException`
 
 ----

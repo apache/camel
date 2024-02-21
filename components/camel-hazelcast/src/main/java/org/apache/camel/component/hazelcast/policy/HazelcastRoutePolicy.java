@@ -165,17 +165,6 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         }
     }
 
-    private synchronized void startConsumer(Route route) {
-        try {
-            if (suspendedRoutes.contains(route)) {
-                startConsumer(route.getConsumer());
-                suspendedRoutes.remove(route);
-            }
-        } catch (Exception e) {
-            handleException(e);
-        }
-    }
-
     private synchronized void stopConsumer(Route route) {
         try {
             if (!suspendedRoutes.contains(route)) {
@@ -309,7 +298,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                             tryLockTimeoutUnit.name());
                 }
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             } finally {

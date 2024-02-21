@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestApiMatchUriNettyTest extends BaseNettyTest {
 
-    protected Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
+    protected final Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
 
     @Test
-    public void testApi() throws Exception {
+    public void testApi() {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
         log.info(out);
@@ -42,10 +42,10 @@ public class RestApiMatchUriNettyTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).apiContextPath("/api-doc")
                         .endpointProperty("matchOnUriPrefix", "true")
                         .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jms</artifactId>
@@ -33,8 +33,12 @@
     <description>Camel JMS support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.jms*</camel.osgi.export.pkg>
-        <camel.osgi.import.additional>javax.jms;version="[1.1,3)"</camel.osgi.import.additional>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
+        <camel.surefire.forkCount>1</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
+        <camel.surefire.fork.additional-vmargs>-Xmx1G</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -49,28 +53,34 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <!-- either use JMS 1.1 or 2.0 provided by JMS client -->
         <!-- here we use JMS 2.0 API but using JMS 1.1 should work as well -->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_2.0_spec</artifactId>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>${jakarta-jms-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2-version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -91,53 +101,45 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-spring</artifactId>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- test infra -->
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-jaas</artifactId>
-            <version>${activemq-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-artemis</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+            <version>${pooled-jms-version}</version>
             <scope>test</scope>
-            <!-- lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-            <scope>test</scope>
-            <!-- lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
+            <version>${xbean-spring-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -147,27 +149,15 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <forkedProcessTimeoutInSeconds>6000</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -181,4 +171,43 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludedGroups>not-parallel</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>serials-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>4</forkCount>
+                                    <groups>not-parallel</groups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

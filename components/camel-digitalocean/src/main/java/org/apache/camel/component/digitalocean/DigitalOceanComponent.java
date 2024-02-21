@@ -23,14 +23,9 @@ import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("digitalocean")
 public class DigitalOceanComponent extends DefaultComponent {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanComponent.class);
-
     public DigitalOceanComponent() {
     }
 

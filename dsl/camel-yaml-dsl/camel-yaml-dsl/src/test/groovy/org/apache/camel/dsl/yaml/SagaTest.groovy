@@ -19,16 +19,17 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.SagaActionUriDefinition
 import org.apache.camel.model.SagaDefinition
-import org.apache.camel.model.SagaOptionDefinition
 import org.apache.camel.model.ToDefinition
-import org.apache.camel.model.language.ExpressionDefinition
+import org.apache.camel.model.language.JqExpression
+import org.apache.camel.model.language.SimpleExpression
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class SagaTest extends YamlTestSupport {
 
     def "saga (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], SagaDefinition) {
                 propagation == "MANDATORY"
@@ -40,43 +41,68 @@ class SagaTest extends YamlTestSupport {
                 with(completion, SagaActionUriDefinition) {
                     uri == "direct:completion"
                 }
+                // saga spans the entire route so steps are inserted before any saga specific step
+                // https://issues.apache.org/jira/browse/CAMEL-17129
                 with(outputs[0], ToDefinition) {
+                    endpointUri == 'mock:result'
+                }
+                with(outputs[1], ToDefinition) {
                     endpointUri == 'direct:something'
                 }
-                with(options[0], SagaOptionDefinition) {
-                    optionName == 'o1'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
-                with(options[1], SagaOptionDefinition) {
-                    optionName == 'o2'
-                    with(expression, ExpressionDefinition) {
-                        language == 'simple'
-                        expression == '${body}'
-                    }
-                }
+                options.size() == 2
+                options[0].key == "o1"
+                options[0].expression instanceof JqExpression
+                options[0].expression.expression == '.foo'
+                options[1].key == "o2"
+                options[1].expression instanceof SimpleExpression
+                options[1].expression.expression == '${body}'
             }
         where:
             resource << [
-                asResource('full', '''
+                asResource('full-parameters-id', '''
                     - from:
                         uri: "direct:start"
                         steps:    
                           - saga:  
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: 
-                                 uri: "direct:compensation"
+                                 uri: "direct"
+                                 parameters:
+                                   name: compensation
                              completion:
                                  uri: "direct:completion"
                              steps:
                                - to: "direct:something"
                              option:
-                               - option-name: o1
-                                 simple: "${body}" 
-                               - option-name: o2
+                               - key: o1
+                                 jq: ".foo" 
+                               - key: o2
+                                 expression:
+                                   simple:
+                                     id: key2
+                                     expression: "${body}"        
+                          - to: "mock:result"
+                    '''),
+                asResource('full-parameters-out-of-order)', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - saga:  
+                             propagation: "MANDATORY"
+                             completionMode: "MANUAL"
+                             compensation: 
+                                 parameters:
+                                   name: compensation
+                                 uri: "direct"
+                             completion:
+                                 uri: "direct:completion"
+                             steps:
+                               - to: "direct:something"
+                             option:
+                               - key: o1
+                                 jq: ".foo" 
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
@@ -87,40 +113,17 @@ class SagaTest extends YamlTestSupport {
                         steps:    
                           - saga: 
                              propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
+                             completionMode: "MANUAL"
                              compensation: "direct:compensation"
                              completion: "direct:completion"
                              steps:
                                - to: "direct:something"    
                              option:
-                               - option-name: o1
-                                 simple: "${body}" 
-                               - option-name: o2
+                               - key: o1
+                                 jq: ".foo" 
+                               - key: o2
                                  expression:
                                    simple: "${body}"        
-                          - to: "mock:result"
-                    '''),
-                asResource('endpoint-dsl', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - saga: 
-                             propagation: "MANDATORY"
-                             completion-mode: "MANUAL"
-                             compensation: 
-                               direct:
-                                 name: "compensation"
-                             completion:
-                               direct:
-                                 name: "completion"
-                             steps:
-                               - to: "direct:something"  
-                             option:
-                               - option-name: o1
-                                 simple: "${body}" 
-                               - option-name: o2
-                                 expression:
-                                   simple: "${body}"          
                           - to: "mock:result"
                     ''')
            ]

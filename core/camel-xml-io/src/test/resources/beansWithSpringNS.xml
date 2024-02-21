@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://camel.apache.org/schema/spring" xmlns:s="http://www.springframework.org/schema/beans">
+
+	<s:bean id="s1" class="java.lang.String">
+		<s:description>Real Spring Bean</s:description>
+		<s:constructor-arg index="0" value="Hello " />
+		<s:constructor-arg index="1" value="World!" />
+	</s:bean>
+
+	<s:bean id="s2" class="java.lang.String">
+		<s:property name="a" ref="x" />
+		<s:property name="b">
+			<s:list value-type="java.lang.Integer">
+				<s:null />
+				<s:value>there's value in it</s:value>
+			</s:list>
+		</s:property>
+	</s:bean>
+
+	<component-scan base-package="com.example" />
+
+</beans>

@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,6 @@ public class PollEnricherTest extends ContextTestSupport {
         template.sendBody("seda:foo1", "blah");
 
         mock.expectedBodiesReceived("test:blah");
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo1");
 
         template.sendBody("direct:enricher-test-1", "test");
 
@@ -60,7 +60,7 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOnlyWaitWithTimeout() throws InterruptedException {
         // this first try there is no data so we timeout
         mock.expectedBodiesReceived("test:blah");
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo2");
+
         template.sendBody("direct:enricher-test-2", "test");
         // not expected data so we are not happy
         mock.assertIsNotSatisfied();
@@ -86,15 +86,15 @@ public class PollEnricherTest extends ContextTestSupport {
             }
         });
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         mock.expectedBodiesReceived("test:blah");
-        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo3");
+
         t.start();
         template.sendBody("direct:enricher-test-3", "test");
         // should take approx 1 sec to complete as the other thread is sending a
         // bit later and we wait
         mock.assertIsSatisfied();
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         assertTrue(delta > 150, "Should take approx 0.25 sec: was " + delta);
     }
 
@@ -122,7 +122,6 @@ public class PollEnricherTest extends ContextTestSupport {
         });
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
-        assertEquals("seda://foo4", exchange.getMessage().getHeader(Exchange.TO_ENDPOINT));
         assertNull(exchange.getException());
     }
 

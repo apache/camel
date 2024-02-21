@@ -16,85 +16,69 @@
  */
 package org.apache.camel.component.amqp.artemis;
 
-import org.apache.activemq.artemis.api.core.RoutingType;
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
-import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
-import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
-public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
+public class AMQPEmbeddedBrokerTest {
 
-    static int amqpPort = AvailablePortFinder.getNextAvailable();
+    @Order(1)
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
 
-    static EmbeddedActiveMQ server = new EmbeddedActiveMQ();
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    @EndpointInject("mock:result")
-    MockEndpoint resultEndpoint;
+    private MockEndpoint resultEndpoint;
 
-    String expectedBody = "Hello there!";
+    private final String expectedBody = "Hello there!";
 
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        Configuration config = new ConfigurationImpl();
-        AddressSettings addressSettings = new AddressSettings();
-        // Disable auto create address to make sure that topic name is correct without prefix
-        addressSettings.setAutoCreateAddresses(false);
-        config.addAcceptorConfiguration("amqp", "tcp://0.0.0.0:" + amqpPort
-                                                + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
-        config.setPersistenceEnabled(false);
-        config.addAddressesSetting("#", addressSettings);
-        config.setSecurityEnabled(false);
+    @BeforeEach
+    void prepareTest() {
+        resultEndpoint = contextExtension.getMockEndpoint("mock:result");
 
-        // Set explicit topic name
-        CoreAddressConfiguration pingTopicConfig = new CoreAddressConfiguration();
-        pingTopicConfig.setName("topic.ping");
-        pingTopicConfig.addRoutingType(RoutingType.MULTICAST);
-
-        config.addAddressConfiguration(pingTopicConfig);
-
-        server.setConfiguration(config);
-        server.start();
-        System.setProperty(AMQP_PORT, amqpPort + "");
-        System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
-    }
-
-    @AfterAll
-    public static void afterClass() throws Exception {
-        server.stop();
+        resultEndpoint.expectedMessageCount(1);
+        contextExtension.getProducerTemplate().sendBody("direct:send-topic", expectedBody);
     }
 
     @Test
     public void testTopicWithoutPrefix() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:send-topic", expectedBody);
-        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        camelContext.addComponent("amqp-customized", new AMQPComponent());
-        return camelContext;
+    @ContextFixture
+    public static void setupRoutes(CamelContext context) {
+        System.setProperty(AMQP_PORT, String.valueOf(service.brokerPort()));
+        System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
+
+        context.getRegistry().bind("amqpConnection", discoverAMQP(context));
+        context.addComponent("amqp-customized", new AMQPComponent());
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
+    @RouteFixture
+    public static void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:send-topic")

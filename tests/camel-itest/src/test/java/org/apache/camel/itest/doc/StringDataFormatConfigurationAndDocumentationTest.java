@@ -21,12 +21,14 @@ import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class StringDataFormatConfigurationAndDocumentationTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(EipDocumentationTest.class);
@@ -39,7 +41,7 @@ public class StringDataFormatConfigurationAndDocumentationTest extends CamelTest
     @Test
     void testDataFormatJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getDataFormatParameterJsonSchema("string");
+            String json = ((CatalogCamelContext) context).getDataFormatParameterJsonSchema("string");
             assertNotNull(json, "Should have found some auto-generated JSON");
             LOG.info(json);
 

@@ -31,7 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<?, ?> redisTemplate;
 
     public RedisComponent() {
     }
@@ -57,14 +57,14 @@ public class RedisComponent extends DefaultComponent {
         }
     }
 
-    public RedisTemplate getRedisTemplate() {
+    public RedisTemplate<?, ?> getRedisTemplate() {
         return redisTemplate;
     }
 
     /**
      * Reference to a pre-configured RedisTemplate instance to use.
      */
-    public void setRedisTemplate(RedisTemplate redisTemplate) {
+    public void setRedisTemplate(RedisTemplate<?, ?> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 }

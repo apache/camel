@@ -1,0 +1,34 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "wasm",
+    "title": "Wasm",
+    "description": "Invoke Wasm functions.",
+    "deprecated": false,
+    "firstVersion": "4.4.0",
+    "label": "core,script",
+    "javaType": "org.apache.camel.component.wasm.WasmComponent",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-wasm",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "wasm",
+    "extendsScheme": "",
+    "syntax": "wasm:functionName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "functionName": { "index": 0, "kind": "path", "displayName": "Function Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Function Name" },
+    "module": { "index": 1, "kind": "parameter", "displayName": "Module", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.wasm.WasmConfiguration", "configurationField": "configuration", "description": "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the producer function." },
+    "lazyStartProducer": { "index": 2, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

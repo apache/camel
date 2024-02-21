@@ -52,7 +52,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     public void testSplitter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
         mock.expectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
@@ -84,10 +84,10 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true&recursive=true")
                         .aggregate(new ZipAggregationStrategy(true, true))

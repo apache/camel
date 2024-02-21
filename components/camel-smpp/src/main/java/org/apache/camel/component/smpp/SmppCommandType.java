@@ -59,7 +59,7 @@ public enum SmppCommandType {
         }
     };
 
-    private String commandName;
+    private final String commandName;
 
     SmppCommandType(String commandName) {
         this.commandName = commandName;
@@ -82,7 +82,7 @@ public enum SmppCommandType {
      * <span style="font: bold;">ReplaceSm</span>, <span style="font: bold;">QuerySm</span>,
      * <span style="font: bold;">SubmitMulti</span>, <span style="font: bold;">CancelSm</span>,
      * <span style="font: bold;">DataSm</span>.
-     * 
+     *
      * @param  exchange an exchange to get an incoming message from
      * @return          an instance of {@link SmppCommandType}
      */

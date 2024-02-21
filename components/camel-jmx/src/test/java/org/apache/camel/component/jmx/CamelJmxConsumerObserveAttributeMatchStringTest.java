@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -37,35 +38,36 @@ public class CamelJmxConsumerObserveAttributeMatchStringTest extends CamelTestSu
         getMockEndpoint("mock:result").message(0).body().contains("<attributeName>Tracing</attributeName>");
 
         // change the attribute so JMX triggers but should be filtered
-        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
+        ManagedRouteMBean mr
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setStatisticsEnabled(true);
 
         // change the attribute so JMX triggers
-        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
         // change the attribute so JMX triggers
-        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(false);
 
         // change the attribute so JMX triggers
-        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String id = getContext().getName();
 
                 fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"&observedAttribute=Tracing&stringToCompare=false",
                         id).routeId("jmxRoute")
-                                .to("log:jmx")
-                                .to("mock:result");
+                        .to("log:jmx")
+                        .to("mock:result");
 
                 from("direct:foo").routeId("foo").to("log:foo", "mock:foo");
             }

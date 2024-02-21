@@ -31,7 +31,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFilePollingConsumer.class);
     private final long delay;
 
-    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) throws Exception {
+    public GenericFilePollingConsumer(GenericFileEndpoint endpoint) {
         super(endpoint);
         this.delay = endpoint.getDelay() > 0 ? endpoint.getDelay() : endpoint.getDefaultDelay();
     }
@@ -57,16 +57,6 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
         super.doStart();
         // ensure consumer is started
         ServiceHelper.startService(getConsumer());
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
     }
 
     @Override
@@ -146,6 +136,8 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         if (polledMessages == 0 && sendEmptyMessageWhenIdle) {
                             // send an "empty" exchange
                             processEmptyMessage();
+                            // set polledMessages=1 since the empty message is queued
+                            polledMessages = 1;
                         } else if (polledMessages == 0 && timeout > 0) {
                             // if we did not poll a file and we are using
                             // timeout then try to poll again
@@ -173,9 +165,6 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                     cause = t;
                     done = true;
                 }
-            } catch (Throwable t) {
-                cause = t;
-                done = true;
             }
 
             if (!done && timeout > 0) {
@@ -187,7 +176,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         // sleep for next pool
                         sleep(min);
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                 } else {
                     // timeout hit
@@ -205,7 +194,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object name = exchange.getIn().getHeader(Exchange.FILE_NAME);
+        Object name = exchange.getIn().getHeader(FileConstants.FILE_NAME);
         if (name != null) {
             LOG.debug("Received file: {}", name);
         }

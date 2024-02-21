@@ -19,17 +19,19 @@ public class JGroupsEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(7);
-        props.add("enableViewMessages");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("channelProperties");
         props.add("clusterName");
-        props.add("exchangePattern");
+        props.add("enableViewMessages");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +59,11 @@ public class JGroupsEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

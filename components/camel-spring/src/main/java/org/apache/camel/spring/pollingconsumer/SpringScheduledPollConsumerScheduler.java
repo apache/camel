@@ -114,6 +114,8 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport
     @Override
     protected void doStart() throws Exception {
         StringHelper.notEmpty(cron, "cron", this);
+        // special for cron where we replace + as space
+        cron = cron.replace('+', ' ');
 
         trigger = new CronTrigger(getCron(), getTimeZone());
 

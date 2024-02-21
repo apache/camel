@@ -41,7 +41,7 @@ public class JdbcAggregateCompletionIntervalTest extends AbstractJdbcAggregation
 
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // from endpoint should be preserved
         assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());

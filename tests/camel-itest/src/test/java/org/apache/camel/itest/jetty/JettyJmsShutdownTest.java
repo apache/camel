@@ -43,7 +43,7 @@ public class JettyJmsShutdownTest {
         URL = "http://localhost:" + port + "/JettyJmsShutdownTest";
 
         //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("JettyJmsShutdownTest.port", Integer.toString(port));
     }
 

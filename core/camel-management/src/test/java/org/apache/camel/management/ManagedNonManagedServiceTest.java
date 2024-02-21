@@ -26,20 +26,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 12;
+    private static final int SERVICES = 16;
 
     @Test
     public void testService() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         template.sendBody("direct:start", "Hello World");
 
         // must enable always as CamelContext has been started
@@ -59,11 +57,6 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
     @Test
     public void testNonManagedService() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         // must enable always as CamelContext has been started
         // and we add the service manually below
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
@@ -90,7 +83,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         };
     }
 
-    private final class MyService extends ServiceSupport {
+    private static final class MyService extends ServiceSupport {
 
         @Override
         protected void doStart() throws Exception {
@@ -103,7 +96,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         }
     }
 
-    private final class MyNonService extends ServiceSupport implements NonManagedService {
+    private static final class MyNonService extends ServiceSupport implements NonManagedService {
 
         @Override
         protected void doStart() throws Exception {

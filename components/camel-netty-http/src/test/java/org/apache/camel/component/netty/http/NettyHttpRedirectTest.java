@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NettyHttpRedirectTest extends BaseNettyTest {
 
     @Test
-    public void testHttpRedirect() throws Exception {
+    public void testHttpRedirect() {
         try {
             template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
@@ -43,10 +43,10 @@ public class NettyHttpRedirectTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/test")
                         .process(exchange -> {
                             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);

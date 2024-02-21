@@ -20,13 +20,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringSqlMultilineTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/sql/SpringSqlMultilineTest.xml");
+        return newAppContext("SpringSqlMultilineTest.xml");
     }
 
     @Test
@@ -36,7 +35,7 @@ public class SpringSqlMultilineTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

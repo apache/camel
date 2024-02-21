@@ -67,7 +67,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for a canonicalization algorithm.
-     * 
+     *
      * @param  algorithm                algorithm URI
      * @return                          canonicalization
      * @throws IllegalArgumentException if <tt>algorithm</tt> is <code>null</code>
@@ -78,7 +78,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for a canonicalization algorithm.
-     * 
+     *
      * @param  algorithm                  algorithm URI
      * @param  inclusiveNamespacePrefixes namespace prefixes which should be treated like in the inclusive
      *                                    canonicalization, only relevant if the algorithm is exclusive
@@ -103,7 +103,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for a base64 transformation.
-     * 
+     *
      * @return Base64 transformation
      */
     public static AlgorithmMethod getBase64Transform() {
@@ -112,7 +112,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH transformation.
-     * 
+     *
      * @param  xpath                    XPATH expression
      * @return                          XPATH transformation
      * @throws IllegalArgumentException if <tt>xpath</tt> is <code>null</code>
@@ -123,7 +123,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH transformation which needs a namespace map.
-     * 
+     *
      * @param  xpath                    XPATH expression
      * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
      *                                  <code>null</code>
@@ -204,7 +204,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH2 transformation.
-     * 
+     *
      * @param  xpath                    XPATH expression
      * @param  filter                   possible values are "intersect", "subtract", "union"
      * @throws IllegalArgumentException if <tt>xpath</tt> or <tt>filter</tt> is <code>null</code>, or is neither
@@ -217,7 +217,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
-     * 
+     *
      * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
      *                                  <code>null</code>
      * @throws IllegalArgumentException if <tt>xpathAndFilterList</tt> is <code>null</code> or empty, or the specified
@@ -235,7 +235,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
-     * 
+     *
      * @param  xpathAndFilterList       list of XPATH expressions with their filters
      * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
      *                                  <code>null</code>
@@ -283,7 +283,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
-     * 
+     *
      * @param  xpathAndFilterList       list of XPATH expressions with their filters
      * @throws IllegalArgumentException if <tt>xpathAndFilterList</tt> is <code>null</code> or empty, or the specified
      *                                  filte values are neither "intersect", nor "subtract", nor "union"
@@ -295,7 +295,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XSL transformation.
-     * 
+     *
      * @param  path                     path to the XSL file in the classpath
      * @return                          XSL transform
      * @throws IllegalArgumentException if <tt>path</tt> is <code>null</code>
@@ -316,7 +316,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Returns a configuration for an XSL transformation.
-     * 
+     *
      * @param  is                       input stream of the XSL
      * @return                          XSL transform
      * @throws IllegalArgumentException if <tt>is</tt> is <code>null</code>
@@ -340,7 +340,11 @@ public final class XmlSignatureHelper {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
-        return XmlSignatureHelper.class.getResourceAsStream(path);
+        InputStream is = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
+        if (is == null) {
+            is = XmlSignatureHelper.class.getResourceAsStream(path);
+        }
+        return is;
     }
 
     public static List<AlgorithmMethod> getTransforms(List<AlgorithmMethod> list) {
@@ -378,7 +382,7 @@ public final class XmlSignatureHelper {
         // avoid external entity attacks
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        boolean isDissalowDoctypeDecl = disallowDoctypeDecl == null ? true : disallowDoctypeDecl;
+        boolean isDissalowDoctypeDecl = disallowDoctypeDecl == null || disallowDoctypeDecl;
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", isDissalowDoctypeDecl);
         // avoid overflow attacks
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -425,7 +429,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Serializes a node using a certain character encoding.
-     * 
+     *
      * @param  node               DOM node to serialize
      * @param  os                 output stream, to which the node is serialized
      * @param  omitXmlDeclaration indicator whether to omit the XML declaration or not
@@ -459,7 +463,7 @@ public final class XmlSignatureHelper {
 
     /**
      * Trannsforms a text node to byte array using a certain character encoding.
-     * 
+     *
      * @param  node                  text node
      * @param  encoding              character encoding, can be <code>null</code>, if <code>null</code> then UTF-8 is
      *                               used

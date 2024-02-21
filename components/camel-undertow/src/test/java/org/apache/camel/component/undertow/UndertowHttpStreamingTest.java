@@ -107,10 +107,10 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}?useStreaming=true")
                         .process(e -> consumeStream(e))
                         .to("mock:length")

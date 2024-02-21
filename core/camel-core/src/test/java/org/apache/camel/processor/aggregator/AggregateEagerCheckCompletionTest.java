@@ -53,7 +53,7 @@ public class AggregateEagerCheckCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id")).aggregationStrategy(BodyInAggregatingStrategy::new)
+                from("direct:start").aggregate(header("id")).aggregationStrategy(new BodyInAggregatingStrategy())
                         .completionPredicate(body().isEqualTo("A+B+END")).to("mock:result");
             }
         });

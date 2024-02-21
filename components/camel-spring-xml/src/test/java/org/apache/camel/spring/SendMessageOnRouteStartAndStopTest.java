@@ -16,26 +16,26 @@
  */
 package org.apache.camel.spring;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
 
+    @TempDir
+    private static Path testDirectory;
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        deleteDirectory("target/startandstop");
-
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SendMessageOnRouteStartAndStopTest.xml");
     }
 
@@ -43,11 +43,9 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
         // the event notifier should have send a message to the file endpoint
         // so the start file is created on startup
-        File start = new File("target/startandstop/start.txt");
-        assertTrue(start.exists(), "Start file should exist on startup");
+        assertFileExists(testDirectory.resolve("start.txt"));
     }
 
     @Override
@@ -57,8 +55,7 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
 
         // the event notifier should have send a message to the file endpoint
         // so the stop file is created on shutdown
-        File start = new File("target/startandstop/stop.txt");
-        assertTrue(start.exists(), "Stop file should exist on shutdown");
+        assertFileExists(testDirectory.resolve("stop.txt"));
     }
 
     @Test
@@ -70,6 +67,10 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public static Path getTestDirectory() {
+        return testDirectory;
     }
 
 }

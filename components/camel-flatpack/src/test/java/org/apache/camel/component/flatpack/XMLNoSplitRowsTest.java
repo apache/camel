@@ -86,7 +86,7 @@ public class XMLNoSplitRowsTest {
                 }
             }
             assertTrue(firstNameFound);
-            LOG.info("Result: " + counter + " = " + record);
+            LOG.info("Result: {} = {}", counter, record);
         }
 
         // assert trailer

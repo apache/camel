@@ -31,26 +31,26 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class JdbcProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
 
-    private DataSource dataSource;
-    private int readSize;
-    private Map<String, Object> parameters;
+    private final DataSource dataSource;
+    private final ConnectionStrategy connectionStrategy;
+    private final int readSize;
+    private final Map<String, Object> parameters;
 
-    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize,
-                        Map<String, Object> parameters) throws Exception {
+    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, ConnectionStrategy connectionStrategy,
+                        int readSize, Map<String, Object> parameters) {
         super(endpoint);
         this.dataSource = dataSource;
+        this.connectionStrategy = connectionStrategy;
         this.readSize = readSize;
         this.parameters = parameters;
     }
@@ -75,11 +75,11 @@ public class JdbcProducer extends DefaultProducer {
     private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
-        Boolean autoCommit = null;
+        boolean autoCommit = false;
         boolean shouldCloseResources = true;
 
         try {
-            conn = DataSourceUtils.getConnection(dataSource);
+            conn = connectionStrategy.getConnection(dataSource);
             autoCommit = conn.getAutoCommit();
             if (autoCommit) {
                 conn.setAutoCommit(false);
@@ -93,7 +93,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (conn != null) {
                     conn.rollback();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
             }
             throw e;
@@ -101,6 +101,21 @@ public class JdbcProducer extends DefaultProducer {
             if (shouldCloseResources) {
                 resetAutoCommit(conn, autoCommit);
                 closeQuietly(conn);
+            } else {
+                final Connection finalConn = conn;
+                final boolean finalAutoCommit = autoCommit;
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        resetAutoCommit(finalConn, finalAutoCommit);
+                        closeQuietly(finalConn);
+                    }
+
+                    @Override
+                    public int getOrder() {
+                        return LOWEST + 200;
+                    }
+                });
             }
         }
     }
@@ -111,11 +126,24 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            conn = DataSourceUtils.getConnection(dataSource);
+            conn = connectionStrategy.getConnection(dataSource);
             shouldCloseResources = createAndExecuteSqlStatement(exchange, sql, conn);
         } finally {
-            if (shouldCloseResources && !DataSourceUtils.isConnectionTransactional(conn, dataSource)) {
+            if (shouldCloseResources && !connectionStrategy.isConnectionTransactional(conn, dataSource)) {
                 closeQuietly(conn);
+            } else {
+                final Connection finalConn = conn;
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        closeQuietly(finalConn);
+                    }
+
+                    @Override
+                    public int getOrder() {
+                        return LOWEST + 200;
+                    }
+                });
             }
         }
     }
@@ -137,7 +165,7 @@ public class JdbcProducer extends DefaultProducer {
             final String preparedQuery
                     = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
-            Boolean shouldRetrieveGeneratedKeys
+            boolean shouldRetrieveGeneratedKeys
                     = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             if (shouldRetrieveGeneratedKeys) {
@@ -156,6 +184,8 @@ public class JdbcProducer extends DefaultProducer {
             } else {
                 ps = conn.prepareStatement(preparedQuery);
             }
+
+            bindParameters(exchange, ps);
 
             int expectedCount = ps.getParameterMetaData().getParameterCount();
 
@@ -184,27 +214,40 @@ public class JdbcProducer extends DefaultProducer {
             if (shouldCloseResources) {
                 closeQuietly(rs);
                 closeQuietly(ps);
+            } else {
+                final Statement finalPs = ps;
+                final ResultSet finalRs = rs;
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        closeQuietly(finalRs);
+                        closeQuietly(finalPs);
+                    }
+
+                    @Override
+                    public int getOrder() {
+                        // Make sure it happens before close Connection.
+                        return LOWEST + 100;
+                    }
+                });
             }
         }
         return shouldCloseResources;
     }
 
     private boolean doCreateAndExecuteSqlStatement(Exchange exchange, String sql, Connection conn) throws Exception {
+
         Statement stmt = null;
         ResultSet rs = null;
         boolean shouldCloseResources = true;
 
         try {
             stmt = conn.createStatement();
-
-            if (parameters != null && !parameters.isEmpty()) {
-                Map<String, Object> copy = new HashMap<>(parameters);
-                PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
-            }
+            bindParameters(exchange, stmt);
 
             LOG.debug("Executing JDBC Statement: {}", sql);
 
-            Boolean shouldRetrieveGeneratedKeys
+            boolean shouldRetrieveGeneratedKeys
                     = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             boolean stmtExecutionResult;
@@ -241,9 +284,32 @@ public class JdbcProducer extends DefaultProducer {
             if (shouldCloseResources) {
                 closeQuietly(rs);
                 closeQuietly(stmt);
+            } else {
+                final Statement finalStmt = stmt;
+                final ResultSet finalRs = rs;
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        closeQuietly(finalRs);
+                        closeQuietly(finalStmt);
+                    }
+
+                    @Override
+                    public int getOrder() {
+                        // Make sure it happens before close Connection.
+                        return LOWEST + 100;
+                    }
+                });
             }
         }
         return shouldCloseResources;
+    }
+
+    private void bindParameters(Exchange exchange, Statement stmt) {
+        if (parameters != null && !parameters.isEmpty()) {
+            Map<String, Object> copy = new HashMap<>(parameters);
+            PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
+        }
     }
 
     private void closeQuietly(ResultSet rs) {
@@ -252,7 +318,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (!rs.isClosed()) {
                     rs.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing result set", sqle);
             }
         }
@@ -264,17 +330,17 @@ public class JdbcProducer extends DefaultProducer {
                 if (!stmt.isClosed()) {
                     stmt.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing statement", sqle);
             }
         }
     }
 
-    private void resetAutoCommit(Connection con, Boolean autoCommit) {
-        if (con != null && autoCommit != null) {
+    private void resetAutoCommit(Connection con, boolean autoCommit) {
+        if (con != null) {
             try {
                 con.setAutoCommit(autoCommit);
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by resetting auto commit to its original value", sqle);
             }
         }
@@ -286,7 +352,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (!con.isClosed()) {
                     con.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing connection", sqle);
             }
         }
@@ -330,7 +396,6 @@ public class JdbcProducer extends DefaultProducer {
                     .setBody(new StreamListIterator(
                             getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(),
                             iterator));
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {
@@ -377,26 +442,6 @@ public class JdbcProducer extends DefaultProducer {
             return row.values().iterator().next();
         } else {
             return row;
-        }
-    }
-
-    private static final class ResultSetIteratorCompletion implements Synchronization {
-        private final ResultSetIterator iterator;
-
-        private ResultSetIteratorCompletion(ResultSetIterator iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public void onComplete(Exchange exchange) {
-            iterator.close();
-            iterator.closeConnection();
-        }
-
-        @Override
-        public void onFailure(Exchange exchange) {
-            iterator.close();
-            iterator.closeConnection();
         }
     }
 }

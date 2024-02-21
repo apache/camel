@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,13 +32,9 @@ public class FileAbsolutePathIssueTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/issue");
-        deleteDirectory("target/data/done");
-
-        start = new File("target/data/issue").getAbsolutePath();
-        done = new File("target/data/done").getAbsolutePath();
+        start = testDirectory("issue").toAbsolutePath().toString();
+        done = testDirectory("done").toAbsolutePath().toString();
         uri = "file:" + start + "?initialDelay=0&delay=10&move=" + done + "/${file:name}";
-
         super.setUp();
     }
 

@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routeConfigurationContext",
+    "title": "Route Configuration Context",
+    "description": "Configuration of route configurations using XML",
+    "deprecated": false,
+    "label": "spring,configuration,routing",
+    "javaType": "org.apache.camel.spring.xml.CamelRouteConfigurationContextFactoryBean",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "routeConfiguration": { "index": 1, "kind": "element", "displayName": "Route Configuration", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteConfigurationDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Route Configurations" }
+  }
+}

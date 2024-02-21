@@ -35,14 +35,14 @@ public class Web3jConsumerBlockHashTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
                      + OPERATION.toLowerCase() + "=" + ETH_BLOCK_HASH_OBSERVABLE)
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

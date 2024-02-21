@@ -24,12 +24,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myBean" class="org.apache.camel.component.jms.JmsRoutingSlipInOutTest$MyBean"/>
+    <bean id="myBean" class="org.apache.camel.component.jms.SpringJmsRoutingSlipInOutTest$MyBean"/>
 
     <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory">
-      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+      <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+          <property name="brokerURL">
+              <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
+          </property>
       </bean>
     </property>
     </bean>
@@ -37,7 +39,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
         <route>
-            <from uri="activemq:queue:start"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.start"/>
             <to uri="direct:start"/>
             <to uri="bean:myBean?method=doResult"/>
             <to uri="mock:result"/>
@@ -54,12 +56,12 @@
         </route>
 
         <route>
-            <from uri="activemq:queue:a"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.a"/>
             <to uri="bean:myBean?method=doA"/>
         </route>
 
         <route>
-            <from uri="activemq:queue:b"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.b"/>
             <to uri="bean:myBean?method=doB"/>
         </route>
 

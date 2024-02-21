@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
  * Test XPath DSL with the ability to apply XPath on a header
  */
 public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSupport {
+
     @Test
     public void testXPathWithNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:55");
@@ -43,8 +44,10 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+                var xpath = expression().xpath().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
+                        .source("header:cheeseDetails").end();
 
-                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55")
+                from("direct:in").choice().when(xpath).to("mock:55")
                         .otherwise().to("mock:other").end();
             }
         };

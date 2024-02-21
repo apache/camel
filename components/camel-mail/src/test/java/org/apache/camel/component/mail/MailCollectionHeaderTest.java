@@ -19,16 +19,18 @@ package org.apache.camel.component.mail;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailCollectionHeaderTest extends CamelTestSupport {
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     @Test
     public void testMailHeaderWithCollection() throws Exception {
@@ -39,7 +41,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello World\r\n");
         mock.message(0).header("beers").isNotNull();
 
         mock.assertIsSatisfied();
@@ -52,12 +54,13 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:a").to("smtp://localhost?username=james@localhost");
+            public void configure() {
+                from("direct:a").to(james.uriPrefix(Protocol.smtp));
 
-                from("pop3://localhost?username=james&password=secret&initialDelay=100&delay=100").to("mock:result");
+                from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3)
+                     + "?username=james&password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

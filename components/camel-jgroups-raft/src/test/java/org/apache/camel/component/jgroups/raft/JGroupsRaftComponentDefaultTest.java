@@ -32,10 +32,10 @@ public class JGroupsRaftComponentDefaultTest extends CamelTestSupport {
     static final String CONFIGURED_ENDPOINT_URI = String.format("my-default-jgroupsraft:%s?raftId=A", CLUSTER_NAME);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JGroupsRaftComponent defaultComponent = new JGroupsRaftComponent();
                 context().addComponent("my-default-jgroupsraft", defaultComponent);
 

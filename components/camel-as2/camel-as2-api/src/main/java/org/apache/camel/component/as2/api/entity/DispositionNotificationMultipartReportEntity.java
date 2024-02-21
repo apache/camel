@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Map;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
 
@@ -51,29 +52,29 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         String boundary,
                                                         boolean isMainBody,
                                                         PrivateKey decryptingPrivateKey,
-                                                        String mdnMessage)
-                                                                           throws HttpException {
+                                                        String mdnMessage,
+                                                        Certificate[] validateSigningCertificateChain)
+                                                                                                       throws HttpException {
         super(charset, isMainBody, boundary);
         removeHeaders(AS2Header.CONTENT_TYPE);
         setContentType(getContentTypeValue(boundary));
-        Args.notNull(dispositionMode, "dispositionMode");
-        Args.notNull(dispositionType, "dispositionType");
-        Args.notNull(mdnMessage, "mdnMessageTemplate");
+        ObjectHelper.notNull(dispositionMode, "dispositionMode");
+        ObjectHelper.notNull(dispositionType, "dispositionType");
+        ObjectHelper.notNull(mdnMessage, "mdnMessageTemplate");
 
         addPart(buildPlainTextReport(mdnMessage));
         addPart(new AS2MessageDispositionNotificationEntity(
                 request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false,
-                decryptingPrivateKey));
+                decryptingPrivateKey, validateSigningCertificateChain));
     }
 
     public String getMainMessageContentType() {
         return AS2MimeType.MULTIPART_REPORT + "; report-type=disposition-notification; boundary=\"" + boundary + "\"";
     }
 
-    protected TextPlainEntity buildPlainTextReport(String mdnMessage)
-            throws HttpException {
-        return new TextPlainEntity(mdnMessage, AS2Charset.US_ASCII, AS2TransferEncoding.SEVENBIT, false);
+    protected TextPlainEntity buildPlainTextReport(String mdnMessage) {
+        return new TextPlainEntity(mdnMessage, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.SEVENBIT, false);
     }
 
     protected String getContentTypeValue(String boundary) {

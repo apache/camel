@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -26,6 +27,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
+
+    @ManagedAttribute(description = "Camel Description")
+    String getCamelDescription();
 
     @ManagedAttribute(description = "Camel ManagementName")
     String getManagementName();
@@ -119,6 +123,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Average load over the last fifteen minutes")
     String getLoad15();
 
+    @ManagedAttribute(description = "Throughput message/second")
+    String getThroughput();
+
     @ManagedAttribute(description = "Whether breadcrumbs is in use")
     boolean isUseBreadcrumb();
 
@@ -189,15 +196,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception;
 
     @ManagedOperation(description = "Dumps the routes as XML")
-    String dumpRoutesAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception;
-
-    @Deprecated
-    @ManagedOperation(description = "Adds or updates existing routes from XML")
-    void addOrUpdateRoutesFromXml(String xml) throws Exception;
-
-    @Deprecated
-    @ManagedOperation(description = "Adds or updates existing routes from XML")
-    void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception;
+    String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
 
     @ManagedOperation(description = "Dumps the CamelContext and routes stats as XML")
     String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
@@ -210,6 +209,18 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedOperation(description = "Dumps the route templates as XML")
     String dumpRouteTemplatesAsXml() throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml() throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml(boolean resolvePlaceholders) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds) throws Exception;
 
     /**
      * Creates the endpoint by the given uri
@@ -233,47 +244,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     int removeEndpoints(String pattern) throws Exception;
 
     /**
-     * Returns the JSON schema representation with information about the component and the endpoint parameters it
-     * supports
-     *
-     * @param  componentName the name of the component to lookup
-     * @throws Exception     is thrown if error occurred
-     */
-    @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
-    @Deprecated
-    String componentParameterJsonSchema(String componentName) throws Exception;
-
-    /**
-     * Returns the JSON schema representation with information about the data format and the parameters it supports
-     *
-     * @param  dataFormatName the name of the data format to lookup
-     * @throws Exception      is thrown if error occurred
-     */
-    @ManagedOperation(description = "Returns the JSON schema representation of the data format parameters for the given data format name")
-    @Deprecated
-    String dataFormatParameterJsonSchema(String dataFormatName) throws Exception;
-
-    /**
-     * Returns the JSON schema representation with information about the language and the parameters it supports
-     *
-     * @param  languageName the name of the language to lookup
-     * @throws Exception    is thrown if error occurred
-     */
-    @ManagedOperation(description = "Returns the JSON schema representation of the language parameters for the given language name")
-    @Deprecated
-    String languageParameterJsonSchema(String languageName) throws Exception;
-
-    /**
-     * Returns the JSON schema representation with information about the EIP and the parameters it supports
-     *
-     * @param  eipName   the name of the EIP to lookup
-     * @throws Exception is thrown if error occurred
-     */
-    @ManagedOperation(description = "Returns the JSON schema representation of the EIP parameters for the given EIP name")
-    @Deprecated
-    String eipParameterJsonSchema(String eipName) throws Exception;
-
-    /**
      * Resets all the performance counters.
      *
      * @param  includeRoutes whether to reset all routes as well.
@@ -281,5 +251,23 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
+
+    /**
+     * The names of the components currently registered
+     */
+    @ManagedOperation(description = "The names of the components currently registered")
+    Set<String> componentNames() throws Exception;
+
+    /**
+     * The names of the languages currently registered
+     */
+    @ManagedOperation(description = "The names of the languages currently registered")
+    Set<String> languageNames() throws Exception;
+
+    /**
+     * The names of the data formats currently registered
+     */
+    @ManagedOperation(description = "The names of the data formats currently registered")
+    Set<String> dataFormatNames() throws Exception;
 
 }

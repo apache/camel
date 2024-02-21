@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.bonita.api;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.core.Cookie;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.core.Cookie;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class BonitaAuthFilterAlreadyConnectedTest {
 
@@ -45,7 +48,11 @@ public class BonitaAuthFilterAlreadyConnectedTest {
     }
 
     @Test
-    public void testAlreadyConnected() throws Exception {
+    public void testAlreadyConnected() {
+        assertDoesNotThrow(() -> runAlreadyConnectedTest());
+    }
+
+    private void runAlreadyConnectedTest() throws IOException {
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("hostname", "port", "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);

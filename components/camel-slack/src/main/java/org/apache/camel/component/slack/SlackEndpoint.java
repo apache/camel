@@ -36,6 +36,11 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.SOCIAL })
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
+    @UriParam(defaultValue = "" + SlackConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
+              label = "consumer,scheduler",
+              description = "Milliseconds before the next poll.")
+    private long delay = SlackConsumer.DEFAULT_CONSUMER_DELAY;
+
     @UriPath
     @Metadata(required = true)
     private String channel;
@@ -75,6 +80,10 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         this.webhookUrl = component.getWebhookUrl();
         this.token = component.getToken();
         this.channel = channelName;
+
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling slack,
+        // so we override with a new default value. End user can override this value by providing a delay parameter
+        setDelay(SlackConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     @Override
@@ -83,8 +92,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
             throw new RuntimeCamelException(
                     "Missing required endpoint configuration: token or webhookUrl must be defined for Slack producer");
         }
-        SlackProducer producer = new SlackProducer(this);
-        return producer;
+        return new SlackProducer(this);
     }
 
     @Override
@@ -118,7 +126,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The channel name (syntax #name) or slackuser (syntax @userName) to send a message directly to an user.
+     * The channel name (syntax #name) or slack user (syntax @userName) to send a message directly to an user.
      */
     public void setChannel(String channel) {
         this.channel = channel;
@@ -162,7 +170,8 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The token to use
+     * The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history,
+     * channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed.
      */
     public void setToken(String token) {
         this.token = token;
@@ -211,4 +220,14 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     public ConversationType getConversationType() {
         return conversationType;
     }
+
+    /**
+     * Milliseconds before the next poll.
+     */
+    @Override
+    public void setDelay(long delay) {
+        super.setDelay(delay);
+        this.delay = delay;
+    }
+
 }

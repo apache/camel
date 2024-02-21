@@ -47,18 +47,18 @@ public final class TimePatternConverter {
         if (matcher.find()) {
             // Note: This will also be used for regular numeric strings.
             //       This String -> long converter will be used for all strings.
-            milliseconds = Long.valueOf(source);
+            milliseconds = Long.parseLong(source);
         } else {
             matcher = createMatcher(HOUR_REGEX_PATTERN, source);
             if (matcher.find()) {
-                milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
+                milliseconds = milliseconds + (3600000 * Long.parseLong(matcher.group(1)));
                 foundFlag = true;
             }
 
             matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
             if (matcher.find()) {
-                long minutes = Long.valueOf(matcher.group(1));
-                if ((minutes > 59) && foundFlag) {
+                long minutes = Long.parseLong(matcher.group(1));
+                if (minutes > 59 && foundFlag) {
                     throw new IllegalArgumentException("Minutes should contain a valid value between 0 and 59: " + source);
                 }
                 foundFlag = true;
@@ -67,8 +67,8 @@ public final class TimePatternConverter {
 
             matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
             if (matcher.find()) {
-                long seconds = Long.valueOf(matcher.group(1));
-                if ((seconds > 59) && foundFlag) {
+                long seconds = Long.parseLong(matcher.group(1));
+                if (seconds > 59 && foundFlag) {
                     throw new IllegalArgumentException("Seconds should contain a valid value between 0 and 59: " + source);
                 }
                 foundFlag = true;
@@ -78,7 +78,7 @@ public final class TimePatternConverter {
             // No pattern matched... initiating fallback check and conversion (if required).
             // The source at this point may contain illegal values or special characters
             if (!foundFlag) {
-                milliseconds = Long.valueOf(source);
+                milliseconds = Long.parseLong(source);
             }
         }
 
@@ -111,7 +111,7 @@ public final class TimePatternConverter {
         }
         replaceSource = matcher.replaceFirst("");
 
-        if (replaceSource.length() > 0) {
+        if (!replaceSource.isEmpty()) {
             throw new IllegalArgumentException("Illegal characters: " + source);
         }
     }

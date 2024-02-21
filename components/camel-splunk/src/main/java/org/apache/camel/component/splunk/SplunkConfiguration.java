@@ -48,6 +48,8 @@ public class SplunkConfiguration {
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
+    @UriParam(label = "security", secret = true)
+    private String token;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
     @UriParam(label = "security")
@@ -63,6 +65,8 @@ public class SplunkConfiguration {
     private String eventHost;
     @UriParam(label = "producer")
     private int tcpReceiverPort;
+    @UriParam(label = "producer")
+    private Integer tcpReceiverLocalPort;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean raw;
 
@@ -155,6 +159,18 @@ public class SplunkConfiguration {
         this.tcpReceiverPort = tcpReceiverPort;
     }
 
+    public Integer getTcpReceiverLocalPort() {
+        return tcpReceiverLocalPort;
+    }
+
+    /**
+     * Splunk tcp receiver port defined locally on splunk server. (For example if splunk port 9997 is mapped to 12345,
+     * tcpReceiverLocalPort has to be 9997)
+     */
+    public void setTcpReceiverLocalPort(Integer tcpReceiverLocalPort) {
+        this.tcpReceiverLocalPort = tcpReceiverLocalPort;
+    }
+
     public boolean isRaw() {
         return raw;
     }
@@ -238,7 +254,7 @@ public class SplunkConfiguration {
 
     /**
      * Set the ssl protocol to use
-     * 
+     *
      * @param sslProtocol
      */
     public void setSslProtocol(SSLSecurityProtocol sslProtocol) {
@@ -298,6 +314,17 @@ public class SplunkConfiguration {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * User's token for Splunk. This takes precedence over password when both are set
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public boolean isStreaming() {
@@ -370,6 +397,7 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setScheme(getScheme());
         splunkConnectionFactory.setUseSunHttpsHandler(isUseSunHttpsHandler());
         splunkConnectionFactory.setSslProtocol(getSslProtocol());
+        splunkConnectionFactory.setToken(getToken());
         return splunkConnectionFactory;
     }
 

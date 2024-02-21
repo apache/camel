@@ -32,7 +32,7 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
     private static final int SIZE = 1024;
 
     @Test
-    public void testGrowIssue() throws Exception {
+    public void testGrowIssue() {
         // a 1kb string for testing
         StringBuilder sb = new StringBuilder(SIZE);
         for (int i = 0; i < SIZE; i++) {
@@ -46,7 +46,7 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
 
         // we update using the same key, which means we should be able to do this within the file size limit
         for (int i = 0; i < SIZE; i++) {
-            LOG.debug("Updating " + i);
+            LOG.debug("Updating {}", i);
             exchange = repoAddAndGet(key, exchange);
         }
 

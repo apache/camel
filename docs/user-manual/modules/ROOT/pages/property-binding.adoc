@@ -1,8 +1,7 @@
-[[PropertyBinding-PropertyBinding]]
 = Property binding in Camel
 
 Camel supports binding property values (key=value) in many places such as configuration of Camel
-components, endpoints, EIPs, and Camel bootstrap configuration.
+components, endpoints, EIPs, routes, and Camel bootstrap configuration.
 
 Together with property placeholders, property placeholder functions, then there is plenty of power, but also
 something that takes a little learning to master.
@@ -29,6 +28,11 @@ The `PropertyBindingSupport` class supports binding String valued properties to 
        `#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true)`.
        Or if you need to create the instance via constructor parameters then you can specify the parameters as shown:
        `#class:com.foo.MyClass('Hello World', 5, true)`.
+       If the factory method is on another bean or class, then you must specify this as shown:
+       `#class:com.foo.MyClassType#com.foo.MyFactory:myFactoryMethod`. Where `com.foo.MyFactory` either refers to a FQN classname,
+       or can refer to an existing bean by id, such as: `#class:com.foo.MyClassType#myFactoryBean:myFactoryMethod`.
+- _valueAs(type):value_ - To declare that the value should be converted to the given type, such as `#valueAs(int):123`
+       which indicates that the value 123 should be converted to an integer.
 - _ignore case_ - Whether to ignore case for property keys (will ignore by default)
 
 == Property binding basics
@@ -44,7 +48,7 @@ For example to set brokers on the Kafka component you can do:
 camel.component.kafka.brokers = mykafka1,mykafka2
 ----
 
-This will essentially be equivavlent to configuring Kafka component in regular Java code via setters:
+This will essentially be equivalent to configuring Kafka component in regular Java code via setters:
 
 [source,java]
 ----
@@ -189,9 +193,60 @@ PropertyBindingSupport.build().withCamelContext(context).withTarget(foo)
     .bind();
 ----
 
+=== Using fluent builder class
+
+When you are in need to configure a bean via _fluent builder class_, such as the following example:
+
+[source,java]
+----
+public class MyDriverBuilder {
+
+ private String url;
+ private String username;
+ private String password;
+
+ public MyDriverBuilder url(String url) {
+     this.url = url;
+     return this;
+ }
+
+ public MyDriverBuilder username(String username) {
+     this.username = username;
+     return this;
+ }
+
+ public MyDriverBuilder password(String password) {
+     this.password = password;
+     return this;
+ }
+
+ public MyDriver build() {
+     return new MyDriver(url, username, password);
+ }
+}
+----
+
+And you want to create an instance of `MyDriver` via the `MyDriverBuilder` class, then this can be done as follows:
+
+[source,java]
+----
+MyDriver driver = PropertyBindingSupport.build()
+  .withCamelContext(context)
+  .withTarget(new MyDriverBuilder())
+  .withFluentBuilder(true)
+  .withProperty("url", "localhost:1234")
+  .withProperty("username", "scott")
+  .withProperty("password", "tiger")
+  .build(MyDriver.class);
+----
+
+Notice how we use the `build(MyDriver.class)` to build the bean via the target class `.withTarget(new MyDriverBuilder())`.
+The build method will by default invoke `build` as the builder method, but you can specify the name, such as `.build(MyDriver.class, "myBuilderMethod");`
+
+
 == More details
 
-Property binding is noteably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,
+Property binding is notably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,
 Camel Kafka Connector, or Camel Quarkus. All these runtimes have a similar way of configuring via property bindings such
 as from `application.properties` files.
 

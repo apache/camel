@@ -42,7 +42,8 @@ public class PropertyBindingSupportClassFactoryMethodTest {
                 .withCamelContext(context)
                 .withTarget(target)
                 .withProperty("name", "Donald")
-                .withProperty("myDriver", "#class:" + MyDriver.class.getName() + "('localhost:2121', 'scott', 'tiger')")
+                .withProperty("myDriver",
+                        "#class:" + MyDriver.class.getName() + "#createDriver('localhost:2121', 'scott', 'tiger')")
                 .withRemoveParameters(false).bind();
 
         assertEquals("Donald", target.getName());
@@ -72,7 +73,7 @@ public class PropertyBindingSupportClassFactoryMethodTest {
                 .withTarget(target)
                 .withProperty("name", "Donald")
                 .withProperty("myDriver",
-                        "#class:" + MyDriver.class.getName() + "('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
+                        "#class:" + MyDriver.class.getName() + "#createDriver('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')")
                 .withRemoveParameters(false).bind();
 
         assertEquals("Donald", target.getName());
@@ -111,10 +112,12 @@ public class PropertyBindingSupportClassFactoryMethodTest {
         private String username;
         private String password;
 
-        public MyDriver(String url, String username, String password) {
-            this.url = url;
-            this.username = username;
-            this.password = password;
+        public static MyDriver createDriver(String url, String username, String password) {
+            MyDriver driver = new MyDriver();
+            driver.url = url;
+            driver.username = username;
+            driver.password = password;
+            return driver;
         }
 
         public String getUrl() {

@@ -22,14 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CONFIG_MAPS;
 
 /**
  * Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap",
-             syntax = "kubernetes-config-maps:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CONFIG_MAPS, title = "Kubernetes ConfigMap",
+             syntax = "kubernetes-config-maps:masterUrl",
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {

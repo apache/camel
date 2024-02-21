@@ -34,8 +34,10 @@ import org.apache.camel.support.service.ServiceSupport;
 @Dataformat("ical")
 public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    private CalendarOutputter outputer = new CalendarOutputter();
-    private CalendarBuilder builder = new CalendarBuilder();
+    private boolean validating;
+
+    private CalendarOutputter outputer;
+    private CalendarBuilder builder;
 
     @Override
     public String getDataFormatName() {
@@ -55,7 +57,8 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        outputer = new CalendarOutputter(validating);
+        builder = new CalendarBuilder();
     }
 
     @Override
@@ -63,28 +66,12 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
         // noop
     }
 
-    public void setValidating(boolean validate) {
-        outputer.setValidating(validate);
+    public void setValidating(boolean validating) {
+        this.validating = validating;
     }
 
     public boolean isValidating() {
-        return outputer.isValidating();
-    }
-
-    public CalendarOutputter getOutputer() {
-        return outputer;
-    }
-
-    public void setOutputer(CalendarOutputter outputer) {
-        this.outputer = outputer;
-    }
-
-    public CalendarBuilder getBuilder() {
-        return builder;
-    }
-
-    public void setBuilder(CalendarBuilder builder) {
-        this.builder = builder;
+        return validating;
     }
 
 }

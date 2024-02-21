@@ -49,7 +49,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
                            + " ref will lookup the resource in the registry."
                            + " bean will call a method on a bean to be used as the resource."
                            + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
     @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;

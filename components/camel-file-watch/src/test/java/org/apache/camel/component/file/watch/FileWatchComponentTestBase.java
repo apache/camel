@@ -47,13 +47,7 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
 
     static void assertFileEvent(String expectedFileName, FileEventEnum expectedEventType, Exchange exchange) {
         assertEquals(expectedFileName, exchange.getIn().getBody(File.class).getName());
-        assertEquals(expectedEventType, exchange.getIn().getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class));
-    }
-
-    static boolean isWindows() {
-        //WatchService behaves differently on Windows (Emits both MODIFY and DELETE when file deleted)
-        //see https://stackoverflow.com/questions/33753561/java-nio-watch-service-created-both-entry-create-and-entry-modify-when-a-new
-        return System.getProperty("os.name").toLowerCase().contains("win");
+        assertEquals(expectedEventType, exchange.getIn().getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class));
     }
 
     public void beforeEach(ExtensionContext context) throws Exception {

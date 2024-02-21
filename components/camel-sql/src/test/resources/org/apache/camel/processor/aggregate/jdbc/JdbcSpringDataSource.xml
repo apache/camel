@@ -36,59 +36,126 @@
 
     <tx:annotation-driven transaction-manager="txManager"/>
 
-	<!-- In Memory Database #1 -->
-    <jdbc:embedded-database id="dataSource1" type="DERBY">
+    <!-- In Memory Database #1 -->
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource1" type="H2">
         <jdbc:script location="classpath:/sql/init.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #2 -->
-    <jdbc:embedded-database id="dataSource2" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource2" type="H2">
         <jdbc:script location="classpath:/sql/init2.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #3 -->
-    <jdbc:embedded-database id="dataSource3" type="DERBY">
-      <jdbc:script location="classpath:/sql/init3.sql"/>
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource3" type="H2">
+        <jdbc:script location="classpath:/sql/init3.sql"/>
     </jdbc:embedded-database>
 
+    <!-- In Memory Database #4 -->
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource4" type="H2">
+        <jdbc:script location="classpath:/sql/init4.sql"/>
+    </jdbc:embedded-database>
+    
+    <!-- In Memory Database #5 -->
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource5" type="H2">
+        <jdbc:script location="classpath:/sql/init5.sql"/>
+    </jdbc:embedded-database>
+    
+    <!-- In Memory Database #6 -->
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSourceSlow" type="H2">
+        <jdbc:script location="classpath:/sql/init.sql"/>
+    </jdbc:embedded-database>
+    
+
     <bean id="repo1" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
-        <property name="repositoryName" value="aggregationRepo1" />
-        <property name="transactionManager" ref="txManager1" />
-        <property name="dataSource" ref="dataSource1" />
-    </bean>
+        <property name="repositoryName" value="aggregationRepo1"/>
+        <property name="transactionManager" ref="txManager1"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource1"/>
+    </bean>    
 
     <bean id="repo2" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
-        <property name="repositoryName" value="aggregationRepo2" />
-        <property name="transactionManager" ref="txManager2" />
-        <property name="dataSource" ref="dataSource2" />
+        <property name="repositoryName" value="aggregationRepo2"/>
+        <property name="transactionManager" ref="txManager2"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource2"/>
     </bean>
 
     <!-- START SNIPPET: e3 -->
     <bean id="repo3" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
         <property name="repositoryName" value="aggregationRepo3"/>
         <property name="transactionManager" ref="txManager3"/>
-        <property name="dataSource" ref="dataSource3"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource3"/>
         <!-- configure to store the message body and following headers as text in the repo -->
         <property name="storeBodyAsText" value="true"/>
         <property name="headersToStoreAsText">
-        	<list>
-        		<value>companyName</value>
-    		    <value>accountName</value>
-        	</list>
+            <list>
+                <value>companyName</value>
+                <value>accountName</value>
+            </list>
         </property>
     </bean>
     <!-- END SNIPPET: e3 -->
 
+    <bean id="repo4" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo4"/>
+        <property name="transactionManager" ref="txManager4"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource4"/>
+        <!-- configure to store the message body and following headers as text in the repo -->
+        <property name="storeBodyAsText" value="true"/>
+        <property name="headersToStoreAsText">
+            <list>
+                <value>companyName</value>
+                <value>accountName</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="repo5" class="org.apache.camel.processor.aggregate.jdbc.ClusteredJdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo5"/>
+        <property name="transactionManager" ref="txManager5"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
+    </bean>
+    <bean id="repo6" class="org.apache.camel.processor.aggregate.jdbc.ClusteredJdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo5"/>
+        <property name="transactionManager" ref="txManager5"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
+    </bean>
+    
+     <bean id="repoSlowCommit" class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+        <property name="repositoryName" value="aggregationRepo1"/>
+        <property name="transactionManager" ref="txManagerSlow"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSourceSlow"/>
+    </bean>    
+
     <bean id="txManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-      <property name="dataSource" ref="dataSource1"/>
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource1"/>
     </bean>
 
-	  <bean id="txManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-      <property name="dataSource" ref="dataSource2"/>
+    <bean id="txManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource2"/>
     </bean>
 
-	  <bean id="txManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-      <property name="dataSource" ref="dataSource3"/>
+    <bean id="txManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource3"/>
+    </bean>
+
+    <bean id="txManager4" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource4"/>
+    </bean>
+    
+    <bean id="txManager5" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSource5"/>
+    </bean>
+    
+   <bean id="txManagerSlow" class="org.apache.camel.processor.aggregate.jdbc.JdbcRemoveConfirmOrderAggregateTest$SlowCommitDataSourceTransactionManager">
+        <property name="dataSource" ref="{{testClassSimpleName}}-dataSourceSlow"/>
+    </bean>
+
+    <bean id="required"
+        class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager"
+            ref="txManagerSlow" />
+        <property name="propagationBehaviorName"
+            value="PROPAGATION_REQUIRED" />
     </bean>
 
 </beans>

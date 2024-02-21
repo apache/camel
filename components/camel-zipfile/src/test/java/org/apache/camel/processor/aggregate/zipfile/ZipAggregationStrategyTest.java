@@ -51,7 +51,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
@@ -73,10 +73,10 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true")
                         .setHeader("foo", constant("bar"))

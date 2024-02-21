@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
@@ -40,11 +42,11 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
         // notify when the 1st exchange is done (by index)
         NotifyBuilder notify = new NotifyBuilder(context).whenDoneByIndex(0).create();
 
-        assertEquals(false, notify.matches());
+        assertFalse(notify.matches());
 
         template.sendBody("seda:foo", "A,B,C");
 
-        assertEquals(true, notify.matchesWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(3, counter.get());
     }

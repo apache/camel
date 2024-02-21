@@ -21,16 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SObjectBatchResponseTest {
 
@@ -61,63 +58,6 @@ public class SObjectBatchResponseTest {
         final SObjectBatchResponse response = mapper.readerFor(SObjectBatchResponse.class).readValue(json);
 
         assertResponse(response);
-    }
-
-    @Test
-    public void shouldDeserializeFromXml() {
-        final String xml = "<batchResults>\n"//
-                           + "    <hasErrors>false</hasErrors>\n"//
-                           + "    <results>\n"//
-                           + "        <batchResult>\n"//
-                           + "            <statusCode>204</statusCode>\n"//
-                           + "            <result/>\n"//
-                           + "        </batchResult>\n"//
-                           + "        <batchResult>\n"//
-                           + "            <statusCode>200</statusCode>\n"//
-                           + "            <result>\n"//
-                           + "                <Account type=\"Account\" url=\"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\">\n"//
-                           + "                    <Id>001D000000K0fXOIAZ</Id>\n"//
-                           + "                    <Name>NewName</Name>\n"//
-                           + "                    <BillingPostalCode>94105</BillingPostalCode>"//
-                           + "                </Account>\n"//
-                           + "            </result>\n"//
-                           + "        </batchResult>\n"//
-                           + "    </results>\n"//
-                           + "</batchResults>";
-
-        final XStream xStream = XStreamUtils.createXStream(SObjectBatchResponse.class);
-
-        final SObjectBatchResponse response = (SObjectBatchResponse) xStream.fromXML(xml);
-
-        assertNotNull(response, "Response should be parsed");
-
-        assertFalse(response.hasErrors(), "It should not have errors");
-
-        final List<SObjectBatchResult> results = response.getResults();
-        assertEquals(2, results.size(), "It should contain 2 results");
-
-        final SObjectBatchResult firstResult = results.get(0);
-        assertEquals(204, firstResult.getStatusCode(), "First result should have status code of 204");
-        assertTrue(((Map) firstResult.getResult()).isEmpty(), "First result contain no data");
-
-        final SObjectBatchResult secondResult = results.get(1);
-        assertEquals(200, secondResult.getStatusCode(), "Second result should have status code of 200");
-
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> account = (Map<String, Object>) secondResultMap.get("Account");
-
-        @SuppressWarnings("unchecked")
-        final Map<String, String> attributes = (Map<String, String>) account.get("attributes");
-        assertEquals("Account", attributes.get("type"), "Second result data should have attribute type set to `Account`");
-        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"),
-                "Second result data should have attribute url set as expected");
-
-        assertEquals("NewName", account.get("Name"), "Second result data should have `NewName` set as expected");
-        assertEquals("94105", account.get("BillingPostalCode"),
-                "Second result data should have `BillingPostalCode` set as expected");
-        assertEquals("001D000000K0fXOIAZ", account.get("Id"), "Second result data should have `Id` set as expected");
     }
 
     static void assertResponse(final SObjectBatchResponse response) {

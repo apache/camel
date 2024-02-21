@@ -30,12 +30,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_KEYSTONE;
+
 /**
  * Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant
  * authorization.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone",
-             syntax = "openstack-keystone:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_KEYSTONE, title = "OpenStack Keystone",
+             syntax = "openstack-keystone:host", category = { Category.CONTAINER }, producerOnly = true,
+             headersClass = KeystoneConstants.class)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")

@@ -27,7 +27,6 @@ import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -105,7 +104,7 @@ public class GrpcConsumer extends DefaultConsumer {
         if (configuration.isRouteControlledStreamObserver()
                 && configuration.getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
             throw new IllegalArgumentException(
-                    "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION");
+                    "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION or DELEGATION");
         }
 
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
@@ -120,8 +119,7 @@ public class GrpcConsumer extends DefaultConsumer {
                                     ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                             configuration.getKeyResource()),
                                     configuration.getKeyPassword())
-                            .clientAuth(ClientAuth.REQUIRE)
-                            .sslProvider(SslProvider.OPENSSL);
+                            .clientAuth(ClientAuth.REQUIRE);
 
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
                 sslContextBuilder
@@ -138,6 +136,10 @@ public class GrpcConsumer extends DefaultConsumer {
             serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(
                     configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
                     configuration.getJwtIssuer(), configuration.getJwtSubject()));
+        }
+
+        for (ServerInterceptor si : configuration.getServerInterceptors()) {
+            serverBuilder.intercept(si);
         }
 
         server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))

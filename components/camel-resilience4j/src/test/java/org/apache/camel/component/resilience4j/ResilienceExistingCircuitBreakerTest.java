@@ -19,6 +19,7 @@ package org.apache.camel.component.resilience4j;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
 
         template.sendBody(endPointUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CircuitBreaker cb = context().getRegistry().lookupByNameAndType("myCircuitBreaker", CircuitBreaker.class);
         assertNotNull(cb);
@@ -60,17 +61,17 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreakerRef("myCircuitBreaker").end()
+                        .circuitBreaker("myCircuitBreaker").end()
                         .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
                         .constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:start.with.timeout.enabled").to("log:direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreakerRef("myCircuitBreaker").timeoutEnabled(true).timeoutDuration(2000).end()
+                        .circuitBreaker("myCircuitBreaker").timeoutEnabled(true).timeoutDuration(2000).end()
                         .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
                         .constant("Fallback message").end().to("log:result").to("mock:result");
             }

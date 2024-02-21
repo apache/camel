@@ -43,24 +43,24 @@ public final class FhirHelper {
         // hide utility class constructor
     }
 
-    public static IGenericClient createClient(FhirConfiguration endpointConfiguration, CamelContext camelContext) {
-        if (endpointConfiguration.getClient() != null) {
-            return endpointConfiguration.getClient();
+    public static IGenericClient createClient(FhirConfiguration config, CamelContext camelContext) {
+        if (config.getClient() != null) {
+            return config.getClient();
         }
-        FhirContext fhirContext = getFhirContext(endpointConfiguration);
-        if (endpointConfiguration.isDeferModelScanning()) {
+        FhirContext fhirContext = getFhirContext(config);
+        if (config.isDeferModelScanning()) {
             fhirContext.setPerformanceOptions(PerformanceOptionsEnum.DEFERRED_MODEL_SCANNING);
         }
-        if (endpointConfiguration.getClientFactory() != null) {
-            fhirContext.setRestfulClientFactory(endpointConfiguration.getClientFactory());
+        if (config.getClientFactory() != null) {
+            fhirContext.setRestfulClientFactory(config.getClientFactory());
         }
 
         IRestfulClientFactory restfulClientFactory = fhirContext.getRestfulClientFactory();
-        configureClientFactory(endpointConfiguration, restfulClientFactory, camelContext);
-        IGenericClient genericClient = fhirContext.newRestfulGenericClient(endpointConfiguration.getServerUrl());
-        genericClient.setPrettyPrint(endpointConfiguration.isPrettyPrint());
-        EncodingEnum encoding = endpointConfiguration.getEncoding();
-        SummaryEnum summary = endpointConfiguration.getSummary();
+        configureClientFactory(config, restfulClientFactory, camelContext);
+        IGenericClient genericClient = fhirContext.newRestfulGenericClient(config.getServerUrl());
+        genericClient.setPrettyPrint(config.isPrettyPrint());
+        EncodingEnum encoding = config.getEncoding();
+        SummaryEnum summary = config.getSummary();
 
         if (encoding != null) {
             genericClient.setEncoding(encoding);
@@ -68,18 +68,18 @@ public final class FhirHelper {
         if (summary != null) {
             genericClient.setSummary(summary);
         }
-        if (endpointConfiguration.isForceConformanceCheck()) {
+        if (config.isForceConformanceCheck()) {
             genericClient.forceConformanceCheck();
         }
 
-        registerClientInterceptors(genericClient, endpointConfiguration);
+        registerClientInterceptors(genericClient, config);
         return genericClient;
     }
 
     private static void configureClientFactory(
-            FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
-        Integer connectionTimeout = endpointConfiguration.getConnectionTimeout();
-        Integer socketTimeout = endpointConfiguration.getSocketTimeout();
+            FhirConfiguration config, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+        Integer connectionTimeout = config.getConnectionTimeout();
+        Integer socketTimeout = config.getSocketTimeout();
 
         if (ObjectHelper.isNotEmpty(connectionTimeout)) {
             restfulClientFactory.setConnectTimeout(connectionTimeout);
@@ -88,16 +88,16 @@ public final class FhirHelper {
             restfulClientFactory.setSocketTimeout(socketTimeout);
         }
 
-        configureProxy(endpointConfiguration, restfulClientFactory, camelContext);
+        configureProxy(config, restfulClientFactory, camelContext);
     }
 
     private static void configureProxy(
-            FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
-        ServerValidationModeEnum validationMode = endpointConfiguration.getValidationMode();
-        String proxyHost = endpointConfiguration.getProxyHost();
-        Integer proxyPort = endpointConfiguration.getProxyPort();
-        String proxyUser = endpointConfiguration.getProxyUser();
-        String proxyPassword = endpointConfiguration.getProxyPassword();
+            FhirConfiguration config, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+        ServerValidationModeEnum validationMode = config.getValidationMode();
+        String proxyHost = config.getProxyHost();
+        Integer proxyPort = config.getProxyPort();
+        String proxyUser = config.getProxyUser();
+        String proxyPassword = config.getProxyPassword();
 
         String camelProxyHost = camelContext.getGlobalOption("http.proxyHost");
         String camelProxyPort = camelContext.getGlobalOption("http.proxyPort");
@@ -116,21 +116,21 @@ public final class FhirHelper {
         }
     }
 
-    private static void registerClientInterceptors(IGenericClient genericClient, FhirConfiguration endpointConfiguration) {
-        String username = endpointConfiguration.getUsername();
-        String password = endpointConfiguration.getPassword();
-        String accessToken = endpointConfiguration.getAccessToken();
-        String sessionCookie = endpointConfiguration.getSessionCookie();
+    private static void registerClientInterceptors(IGenericClient genericClient, FhirConfiguration config) {
+        String username = config.getUsername();
+        String password = config.getPassword();
+        String accessToken = config.getAccessToken();
+        String sessionCookie = config.getSessionCookie();
         if (ObjectHelper.isNotEmpty(username)) {
             genericClient.registerInterceptor(new BasicAuthInterceptor(username, password));
         }
         if (ObjectHelper.isNotEmpty(accessToken)) {
             genericClient.registerInterceptor(new BearerTokenAuthInterceptor(accessToken));
         }
-        if (endpointConfiguration.isLog()) {
+        if (config.isLog()) {
             genericClient.registerInterceptor(new LoggingInterceptor(true));
         }
-        if (endpointConfiguration.isCompress()) {
+        if (config.isCompress()) {
             genericClient.registerInterceptor(new GZipContentInterceptor());
         }
         if (ObjectHelper.isNotEmpty(sessionCookie)) {
@@ -138,15 +138,15 @@ public final class FhirHelper {
         }
     }
 
-    private static FhirContext getFhirContext(FhirConfiguration endpointConfiguration) {
-        FhirContext context = endpointConfiguration.getFhirContext();
+    private static FhirContext getFhirContext(FhirConfiguration config) {
+        FhirContext context = config.getFhirContext();
         if (context != null) {
             return context;
         }
-        if (ObjectHelper.isEmpty(endpointConfiguration.getServerUrl())) {
+        if (ObjectHelper.isEmpty(config.getServerUrl())) {
             throw new RuntimeCamelException("The FHIR URL must be set!");
         }
-        FhirVersionEnum fhirVersion = endpointConfiguration.getFhirVersion();
+        FhirVersionEnum fhirVersion = config.getFhirVersion();
         return new FhirContext(fhirVersion);
     }
 }

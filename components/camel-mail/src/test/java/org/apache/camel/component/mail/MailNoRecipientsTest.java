@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MailNoRecipientsTest extends CamelTestSupport {
 
     @Test
-    public void testMailNoRecipients() throws Exception {
+    public void testMailNoRecipients() {
         try {
             template.sendBody("direct:a", "Hello World");
             fail("Should have thrown exception");
@@ -42,9 +42,9 @@ public class MailNoRecipientsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("smtp://localhost");
             }
         };

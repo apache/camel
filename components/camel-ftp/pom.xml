@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -32,9 +32,8 @@
     <description>Camel FTP support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            com.jcraft.jsch.*;version="[0.1.5,0.2)"
-        </camel.osgi.import.before.defaults>
+
+        <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
     </properties>
 
     <dependencies>
@@ -48,7 +47,7 @@
             <artifactId>camel-core-catalog</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.jcraft</groupId>
+            <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
             <version>${jsch-version}</version>
         </dependency>
@@ -83,11 +82,13 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -98,36 +99,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftpserver-core</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftplet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- for testing sftp -->
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-sftp</artifactId>
-            <version>${sshd-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-scp</artifactId>
-            <version>${sshd-version}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- for testing sftp through http proxy -->
         <dependency>
-            <groupId>org.littleshoot</groupId>
+            <groupId>xyz.rogfam</groupId>
             <artifactId>littleproxy</artifactId>
-            <version>1.1.2</version>
+            <version>${littleproxy-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -149,13 +126,13 @@
         <!-- needed for sftp server -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
+            <artifactId>bcpg-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
             <scope>test</scope>
         </dependency>
@@ -164,25 +141,25 @@
         <dependency>
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
+            <version>${mina-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.i2p.crypto</groupId>
+            <artifactId>eddsa</artifactId>
+            <version>${eddsa-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
 
         <!-- test infra -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-ftp</artifactId>
@@ -192,19 +169,61 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- The default timeout of 5 minutes through the parent pom is not long enough -->
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx3G</argLine>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                    <excludedGroups>not-parallel</excludedGroups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                    <systemPropertyVariables>
+                                        <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
+                                        <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+                                        <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                                        <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
+                                        <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>serials-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>4</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                    <groups>not-parallel</groups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

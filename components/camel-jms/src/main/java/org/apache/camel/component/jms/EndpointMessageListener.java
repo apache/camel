@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
@@ -108,7 +107,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 exchange.getIn().getHeaders();
             }
 
-            String correlationId = message.getJMSCorrelationID();
+            String correlationId = JmsMessageHelper.getJMSCorrelationID(message);
             if (correlationId != null) {
                 LOG.debug("Received Message has JMSCorrelationID [{}]", correlationId);
             }
@@ -150,9 +149,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // if we failed processed the exchange from the async callback task, then grab the exception
             rce = exchange.getException(RuntimeCamelException.class);
 
-            // the exchange is now done so release it
+            // release back when synchronous mode
             consumer.releaseExchange(exchange, false);
-
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
@@ -223,11 +221,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 // process OK so get the reply body if we are InOut and has a body
                 // If the ppl don't want to send the message back, he should use the InOnly
                 if (sendReply && exchange.getPattern().isOutCapable()) {
-                    if (exchange.hasOut()) {
-                        body = exchange.getOut();
-                    } else {
-                        body = exchange.getIn();
-                    }
+                    body = exchange.getMessage();
                     cause = null;
                 }
             }
@@ -257,9 +251,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 }
             }
 
-            // if we completed from async processing then we should release the exchange
-            // the sync processing will release the exchange outside this callback
             if (!doneSync) {
+                // release back when in asynchronous mode
                 consumer.releaseExchange(exchange, false);
             }
         }
@@ -270,15 +263,13 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
 
-        // optimize: either create a new JmsMessage or reuse existing if exists
-        JmsMessage msg = exchange.adapt(ExtendedExchange.class).getInOrNull(JmsMessage.class);
-        if (msg == null) {
-            msg = new JmsMessage(exchange, message, session, binding);
-            exchange.setIn(msg);
+        // reuse existing jms message if pooled
+        org.apache.camel.Message msg = exchange.getIn();
+        if (msg instanceof JmsMessage) {
+            JmsMessage jm = (JmsMessage) msg;
+            jm.init(exchange, message, session, getBinding());
         } else {
-            msg.setJmsMessage(message);
-            msg.setJmsSession(session);
-            msg.setBinding(binding);
+            exchange.setIn(new JmsMessage(exchange, message, session, getBinding()));
         }
 
         // lets set to an InOut if we have some kind of reply-to destination
@@ -355,7 +346,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      * Provides an explicit reply to destination which overrides any incoming value of {@link Message#getJMSReplyTo()}
      *
      * @param replyToDestination the destination that should be used to send replies to as either a String or
-     *                           {@link javax.jms.Destination} type.
+     *                           {@link jakarta.jms.Destination} type.
      */
     public void setReplyToDestination(Object replyToDestination) {
         this.replyToDestination = replyToDestination;
@@ -387,11 +378,12 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      */
     protected String determineCorrelationId(final Message message) throws JMSException {
         final String messageId = message.getJMSMessageID();
-        final String correlationId = message.getJMSCorrelationID();
-
         if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
             return messageId;
-        } else if (ObjectHelper.isEmpty(correlationId)) {
+        }
+
+        final String correlationId = JmsMessageHelper.getJMSCorrelationID(message);
+        if (ObjectHelper.isEmpty(correlationId)) {
             // correlation id is empty so fallback to message id
             return messageId;
         } else {
@@ -406,16 +398,20 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
-        getTemplate().send(replyDestination, session -> {
-            Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-            final String correlationID = determineCorrelationId(message);
-            reply.setJMSCorrelationID(correlationID);
+        getTemplate().send(replyDestination, session -> createMessage(message, exchange, out, cause, session));
+    }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
-            }
-            return reply;
-        });
+    private Message createMessage(
+            Message message, Exchange exchange, org.apache.camel.Message out, Exception cause, Session session)
+            throws JMSException {
+        Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+        final String correlationID = determineCorrelationId(message);
+        reply.setJMSCorrelationID(correlationID);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+        }
+        return reply;
     }
 
     protected void sendReply(
@@ -425,19 +421,10 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
-        getTemplate().send(replyDestination, session -> {
-            Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-            final String correlationID = determineCorrelationId(message);
-            reply.setJMSCorrelationID(correlationID);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
-            }
-            return reply;
-        });
+        getTemplate().send(replyDestination, session -> createMessage(message, exchange, out, cause, session));
     }
 
-    protected Object getReplyToDestination(Message message) throws JMSException {
+    protected Object getReplyToDestination(Message message) {
         // lets send a response back if we can
         Object destination = getReplyToDestination();
         if (destination == null) {

@@ -19,24 +19,28 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(16);
+        props.add("allowTemplateFromHeader");
         props.add("contentCache");
-        props.add("resourceUri");
         props.add("deleteOutputFile");
-        props.add("output");
-        props.add("errorListener");
-        props.add("lazyStartProducer");
         props.add("entityResolver");
-        props.add("transformerFactoryConfigurationStrategy");
+        props.add("errorListener");
         props.add("failOnNullBody");
-        props.add("transformerCacheSize");
+        props.add("lazyStartProducer");
+        props.add("output");
+        props.add("resourceUri");
         props.add("resultHandlerFactory");
-        props.add("transformerFactoryClass");
+        props.add("transformerCacheSize");
         props.add("transformerFactory");
+        props.add("transformerFactoryClass");
+        props.add("transformerFactoryConfigurationStrategy");
         props.add("uriResolver");
+        props.add("xsltMessageLogger");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +68,11 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

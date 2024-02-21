@@ -16,38 +16,46 @@
  */
 package org.apache.camel.component.platform.http;
 
-import org.eclipse.jetty.server.Server;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 public class JettyServerTest {
     public static final String JETTY_SERVER_NAME = "JettyServerTest";
 
-    private Server server;
-    private HandlerCollection contextHandlerCollection;
+    private final int port;
+    private final ContextHandlerCollection contextHandlerCollection;
+    private final JettyEmbeddedService service;
 
     public JettyServerTest(int port) {
-        server = new Server(port);
-        contextHandlerCollection = new HandlerCollection(true);
-        server.setHandler(contextHandlerCollection);
+        contextHandlerCollection = new ContextHandlerCollection(true);
+
+        final JettyConfiguration configuration = JettyConfigurationBuilder.bareTemplate()
+                .withPort(port)
+                .withHandlerCollectionConfiguration().addHandlers(contextHandlerCollection).build().build();
+        this.service = new JettyEmbeddedService(configuration);
+
+        this.port = port;
+
     }
 
-    public void start() throws Exception {
-        server.start();
+    public void start() {
+        service.initialize();
+
     }
 
     public void stop() throws Exception {
-        server.stop();
+        service.stop();
     }
 
-    /**
-     * adds a context handler and starts it
-     *
-     * @param  contextHandler
-     * @throws Exception
-     */
     public void addHandler(ContextHandler contextHandler) throws Exception {
         contextHandlerCollection.addHandler(contextHandler);
         contextHandler.start();
+    }
+
+    public int getServerPort() {
+        return port;
     }
 }

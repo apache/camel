@@ -347,7 +347,7 @@ public class NotifyBuilder {
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
         stack.add(wereSentToIndex++, new EventPredicateSupport() {
-            private ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<>();
+            private final ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<>();
 
             @Override
             public boolean isAbstract() {
@@ -398,7 +398,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenReceived(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCreated(Exchange exchange) {
@@ -478,9 +478,9 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenDoneByIndex(final int index) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
             private String id;
-            private AtomicBoolean done = new AtomicBoolean();
+            private final AtomicBoolean done = new AtomicBoolean();
 
             @Override
             public boolean onExchangeCreated(Exchange exchange) {
@@ -539,7 +539,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -574,7 +574,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenFailed(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeFailed(Exchange exchange) {
@@ -609,7 +609,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyDone(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -651,7 +651,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -684,7 +684,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyFailed(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeFailed(Exchange exchange) {
@@ -858,8 +858,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesReceived(Object...)
      */
     public NotifyBuilder whenBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, false);
     }
 
@@ -874,8 +873,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, false);
     }
 
@@ -889,8 +887,7 @@ public class NotifyBuilder {
      * @see           #whenBodiesReceived(Object...)
      */
     public NotifyBuilder whenExactBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, true);
     }
 
@@ -904,8 +901,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenExactBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, true);
     }
 
@@ -966,9 +962,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
+                    return (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
                 } else {
-                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
+                    return (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
                 }
             }
         });
@@ -1233,27 +1229,14 @@ public class NotifyBuilder {
             throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
         try {
-            latch.await(timeout, timeUnit);
+            if (!latch.await(timeout, timeUnit)) {
+                LOG.warn("The notify builder latch has timed out. It's likely the condition has never been satisfied");
+            }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return matches();
-    }
-
-    /**
-     * Does all the expressions match?
-     * <p/>
-     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur which means <tt>false</tt>
-     * will be returned.
-     * <p/>
-     * The timeout value is by default 10 seconds.
-     *
-     * @return     <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
-     * @deprecated use {@link #matchesWaitTime()} instead
-     */
-    @Deprecated
-    public boolean matchesMockWaitTime() {
-        return matchesWaitTime();
     }
 
     /**
@@ -1289,7 +1272,7 @@ public class NotifyBuilder {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (EventPredicateHolder eventPredicateHolder : predicates) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append(".");
             }
             sb.append(eventPredicateHolder.toString());
@@ -1386,6 +1369,11 @@ public class NotifyBuilder {
             }
         }
 
+        /*
+         * At a first glance, it may seem like a bug that the latch may not be count down in some cases: this is by design. It
+         * means there was never a match.
+         * This may cause the matchesWaitTime() to take a long time in some cases as it waits for the latch to be counted.
+         */
         private synchronized void computeMatches() {
             // use a temporary answer until we have computed the value to assign
             Boolean answer = null;
@@ -1494,7 +1482,7 @@ public class NotifyBuilder {
         boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken);
     }
 
-    private abstract class EventPredicateSupport implements EventPredicate {
+    private abstract static class EventPredicateSupport implements EventPredicate {
 
         @Override
         public boolean isAbstract() {
@@ -1537,7 +1525,7 @@ public class NotifyBuilder {
     /**
      * To hold an operation and predicate
      */
-    private final class EventPredicateHolder {
+    private static final class EventPredicateHolder {
         private final EventOperation operation;
         private final EventPredicate predicate;
 
@@ -1567,9 +1555,9 @@ public class NotifyBuilder {
     /**
      * To hold multiple predicates which are part of same expression
      */
-    private final class CompoundEventPredicate implements EventPredicate {
+    private static final class CompoundEventPredicate implements EventPredicate {
 
-        private List<EventPredicate> predicates = new ArrayList<>();
+        private final List<EventPredicate> predicates = new ArrayList<>();
 
         private CompoundEventPredicate(List<EventPredicate> predicates) {
             this.predicates.addAll(predicates);
@@ -1657,7 +1645,7 @@ public class NotifyBuilder {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (EventPredicate eventPredicate : predicates) {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     sb.append(".");
                 }
                 sb.append(eventPredicate.toString());

@@ -25,6 +25,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test testing the Removr.
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JoltRemovrTest extends CamelTestSupport {
 
     @Test
-    public void testFirstSampleJolt() throws Exception {
+    public void testFirstSampleJolt() {
         Exchange exchange = template.request("direct://start", exchange1 -> {
             Map<String, String> body = new HashMap<>();
             body.put("keepMe", "This should still be in the result");
@@ -42,12 +43,12 @@ public class JoltRemovrTest extends CamelTestSupport {
         });
 
         assertEquals(2, exchange.getMessage().getBody(Map.class).size());
-        assertEquals(null, exchange.getMessage().getBody(Map.class).get("removeMe"));
+        assertNull(exchange.getMessage().getBody(Map.class).get("removeMe"));
         assertEquals("World", exchange.getMessage().getBody(Map.class).get("Hello"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")

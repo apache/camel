@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,7 +38,7 @@ import org.mvel2.templates.TemplateRuntime;
  * Transform messages using an MVEL template.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION, Category.SCRIPT })
+             remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT }, headersClass = MvelConstants.class)
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
@@ -145,9 +144,7 @@ public class MvelEndpoint extends ResourceEndpoint {
         Object result = TemplateRuntime.execute(compiled, mvelContext, variableMap);
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut();
-        out.setBody(result.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, result.toString());
     }
 
     public MvelEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {

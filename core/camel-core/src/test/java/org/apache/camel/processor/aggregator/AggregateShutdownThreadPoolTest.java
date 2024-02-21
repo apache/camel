@@ -23,7 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
@@ -58,7 +59,7 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
     @Test
     public void testAggregateShutdownCustomThreadPoolTest() throws Exception {
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
@@ -67,15 +68,15 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:bar", "C", "id", 123);
 
         assertMockEndpointsSatisfied();
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         context.getRouteController().stopRoute("bar");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         resetMocks();
 
         context.getRouteController().startRoute("bar");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("D+E+F");
 
@@ -84,11 +85,11 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:bar", "F", "id", 123);
 
         assertMockEndpointsSatisfied();
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         context.stop();
         // now it should be shutdown when CamelContext is stopped/shutdown
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Override

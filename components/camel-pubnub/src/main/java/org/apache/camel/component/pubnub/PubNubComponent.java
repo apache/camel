@@ -20,12 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 @Component("pubnub")
 public class PubNubComponent extends DefaultComponent {
+
+    @Metadata
+    private PubNubConfiguration configuration = new PubNubConfiguration();
 
     public PubNubComponent(CamelContext context) {
         super(context);
@@ -38,13 +42,23 @@ public class PubNubComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(remaining, "channel");
 
-        PubNubConfiguration pubNubConfiguration = new PubNubConfiguration();
-        pubNubConfiguration.setChannel(remaining);
-        setProperties(pubNubConfiguration, parameters);
+        final PubNubConfiguration config
+                = this.configuration != null ? this.configuration.copy() : new PubNubConfiguration();
 
-        PubNubEndpoint endpoint = new PubNubEndpoint(uri, this, pubNubConfiguration);
+        config.setChannel(remaining);
+        PubNubEndpoint endpoint = new PubNubEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
+    public PubNubConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The component configurations
+     */
+    public void setConfiguration(PubNubConfiguration configuration) {
+        this.configuration = configuration;
+    }
 }

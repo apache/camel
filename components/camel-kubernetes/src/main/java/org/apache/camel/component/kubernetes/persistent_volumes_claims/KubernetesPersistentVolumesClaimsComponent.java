@@ -25,9 +25,7 @@ public class KubernetesPersistentVolumesClaimsComponent extends AbstractKubernet
 
     @Override
     protected KubernetesPersistentVolumesClaimsEndpoint doCreateEndpoint(
-            String uri, String remaining, KubernetesConfiguration config)
-            throws Exception {
-        KubernetesPersistentVolumesClaimsEndpoint endpoint = new KubernetesPersistentVolumesClaimsEndpoint(uri, this, config);
-        return endpoint;
+            String uri, String remaining, KubernetesConfiguration config) {
+        return new KubernetesPersistentVolumesClaimsEndpoint(uri, this, config);
     }
 }

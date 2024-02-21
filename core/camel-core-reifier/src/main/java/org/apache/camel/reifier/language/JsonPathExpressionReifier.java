@@ -17,51 +17,27 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JsonPathExpression;
-import org.apache.camel.spi.Language;
 
-public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpression> {
+public class JsonPathExpressionReifier extends SingleInputTypedExpressionReifier<JsonPathExpression> {
 
     public JsonPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (JsonPathExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    private Object[] createProperties() {
-        Object[] properties = new Object[7];
-        properties[0] = definition.getResultType();
-        properties[1] = parseBoolean(definition.getSuppressExceptions());
-        properties[2] = parseBoolean(definition.getAllowSimple());
-        properties[3] = parseBoolean(definition.getAllowEasyPredicate());
-        properties[4] = parseBoolean(definition.getWriteAsString());
-        properties[5] = parseString(definition.getHeaderName());
-        properties[6] = parseString(definition.getOption());
+    protected Object[] createProperties() {
+        Object[] properties = new Object[8];
+        properties[0] = asResultType();
+        properties[1] = parseString(definition.getSource());
+        properties[2] = parseBoolean(definition.getSuppressExceptions());
+        properties[3] = parseBoolean(definition.getAllowSimple());
+        properties[4] = parseBoolean(definition.getAllowEasyPredicate());
+        properties[5] = parseBoolean(definition.getWriteAsString());
+        properties[6] = parseBoolean(definition.getUnpackArray());
+        properties[7] = parseString(definition.getOption());
         return properties;
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
 }

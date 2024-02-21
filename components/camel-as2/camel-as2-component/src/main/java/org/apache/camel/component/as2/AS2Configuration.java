@@ -18,6 +18,10 @@ package org.apache.camel.component.as2;
 
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.time.Duration;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
@@ -55,7 +59,7 @@ public class AS2Configuration {
     private String serverFqdn = "camel.apache.org";
     @UriParam
     private String targetHostname;
-    @UriParam
+    @UriParam(defaultValue = "80")
     private Integer targetPortNumber = 80;
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
@@ -77,26 +81,43 @@ public class AS2Configuration {
     private String as2From;
     @UriParam
     private String as2To;
-    @UriParam
+    @UriParam(label = "security")
     private AS2SignatureAlgorithm signingAlgorithm;
-    @UriParam
+    @UriParam(label = "security")
     private Certificate[] signingCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private PrivateKey signingPrivateKey;
     @UriParam
     private AS2CompressionAlgorithm compressionAlgorithm;
     @UriParam
     private String dispositionNotificationTo;
-    @UriParam
+    @UriParam(label = "security")
     private String[] signedReceiptMicAlgorithms;
-    @UriParam
+    @UriParam(label = "security")
     private AS2EncryptionAlgorithm encryptingAlgorithm;
-    @UriParam
+    @UriParam(label = "security")
     private Certificate[] encryptingCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private PrivateKey decryptingPrivateKey;
     @UriParam
     private String mdnMessageTemplate;
+    @UriParam
+    private String attachedFileName;
+    @UriParam(defaultValue = "5s")
+    private Duration httpSocketTimeout = Duration.ofSeconds(5);
+    @UriParam(defaultValue = "5s")
+    private Duration httpConnectionTimeout = Duration.ofSeconds(5);
+    @UriParam(defaultValue = "5")
+    private Integer httpConnectionPoolSize = 5;
+    @UriParam(defaultValue = "15m")
+    private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
+    @UriParam(label = "security")
+    private Certificate[] validateSigningCertificateChain;
+    @UriParam
+    private SSLContext sslContext;
+    // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
+    @UriParam
+    private HostnameVerifier hostnameVerifier;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -238,7 +259,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent
+     * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
+     * application/xml
      */
     public void setEdiMessageType(ContentType ediMessageType) {
         this.ediMessageType = ediMessageType;
@@ -361,7 +383,7 @@ public class AS2Configuration {
 
     /**
      * The value of the Disposition-Notification-To header.
-     * 
+     *
      * Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message.
      */
     public void setDispositionNotificationTo(String dispositionNotificationTo) {
@@ -424,4 +446,96 @@ public class AS2Configuration {
         this.mdnMessageTemplate = mdnMessageTemplate;
     }
 
+    public String getAttachedFileName() {
+        return attachedFileName;
+    }
+
+    /**
+     * The name of the attached file
+     */
+    public void setAttachedFileName(String attachedFileName) {
+        this.attachedFileName = attachedFileName;
+    }
+
+    public Duration getHttpSocketTimeout() {
+        return httpSocketTimeout;
+    }
+
+    /**
+     * The timeout of the underlying http socket (client only)
+     */
+    public void setHttpSocketTimeout(Duration httpSocketTimeout) {
+        this.httpSocketTimeout = httpSocketTimeout;
+    }
+
+    public Duration getHttpConnectionTimeout() {
+        return httpConnectionTimeout;
+    }
+
+    /**
+     * The timeout of the http connection (client only)
+     */
+    public void setHttpConnectionTimeout(Duration httpConnectionTimeout) {
+        this.httpConnectionTimeout = httpConnectionTimeout;
+    }
+
+    public Integer getHttpConnectionPoolSize() {
+        return httpConnectionPoolSize;
+    }
+
+    /**
+     * The maximum size of the connection pool for http connections (client only)
+     */
+    public void setHttpConnectionPoolSize(Integer httpConnectionPoolSize) {
+        this.httpConnectionPoolSize = httpConnectionPoolSize;
+    }
+
+    public Duration getHttpConnectionPoolTtl() {
+        return httpConnectionPoolTtl;
+    }
+
+    /**
+     * The time to live for connections in the connection pool (client only)
+     */
+    public void setHttpConnectionPoolTtl(Duration httpConnectionPoolTtl) {
+        this.httpConnectionPoolTtl = httpConnectionPoolTtl;
+    }
+
+    public Certificate[] getValidateSigningCertificateChain() {
+        return validateSigningCertificateChain;
+    }
+
+    /**
+     * Certificates to validate the message's signature against. If not supplied, validation will not take place.
+     * Server: validates the received message. Client: not yet implemented, should validate the MDN
+     */
+    public void setValidateSigningCertificateChain(Certificate[] validateSigningCertificateChain) {
+        this.validateSigningCertificateChain = validateSigningCertificateChain;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
+    /**
+     * Set SSL context for connection to remote server.
+     *
+     * @param sslContext
+     */
+    public void setSslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * Set hostname verifier for SSL session.
+     *
+     * @param hostnameVerifier
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
 }

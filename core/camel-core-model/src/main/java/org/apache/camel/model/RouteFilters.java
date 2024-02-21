@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
@@ -64,12 +64,12 @@ public final class RouteFilters implements Function<RouteDefinition, Boolean> {
         String id = route.getId();
         String uri = route.getInput() != null ? route.getInput().getEndpointUri() : null;
 
-        boolean answer = filter(route, id, uri);
+        boolean answer = filter(id, uri);
         LOG.debug("Route filter: include={}, exclude={}, id={}, from={} -> {}", includesText, excludesText, id, uri, answer);
         return answer;
     }
 
-    private boolean filter(RouteDefinition route, String id, String uri) {
+    private boolean filter(String id, String uri) {
         boolean match = false;
 
         // exclude takes precedence

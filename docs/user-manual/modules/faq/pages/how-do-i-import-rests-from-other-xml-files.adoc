@@ -1,10 +1,8 @@
-[[HowdoIimportrestsfromotherXMLfiles-HowdoIimportrestsfromotherXMLfiles]]
 = How do I import rests from other XML files?
 
 *Since Camel 2.14*
 
-When defining rests in Camel using xref:ROOT:xml-configuration.adoc[Xml
-Configuration] you may want to define some rests in other XML files. For
+When defining rests in Camel using Spring XML you may want to define some rests in other XML files. For
 example you may have many rest services and it may help to maintain the
 application if some of the rests are in separate XML files. You may also
 want to store common and reusable rests in other XML files, which you
@@ -28,7 +26,7 @@ a rest (can have more) as shown:
 [source,xml]
 ----
   <restContext id="myCoolRest" xmlns="http://camel.apache.org/schema/spring">
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
@@ -47,7 +45,7 @@ And then inside `<camelContext/>` you can refer to the
 
     <restContextRef ref="myCoolRest"/>
 
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get consumes="application/json">
         <to uri="direct:bye"/>
       </get>

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpDeleteWithBodyTest extends BaseJettyTest {
 
     @Test
-    public void testHttpDeleteWithBodyFalseTest() throws Exception {
+    public void testHttpDeleteWithBodyFalseTest() {
         byte[] data = "World".getBytes();
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/test", data, Exchange.HTTP_METHOD, "DELETE",
                 String.class);
@@ -34,7 +34,7 @@ public class HttpDeleteWithBodyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpDeleteWithBodyTrueTest() throws Exception {
+    public void testHttpDeleteWithBodyTrueTest() {
         byte[] data = "World".getBytes();
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/test?deleteWithBody=true", data,
                 Exchange.HTTP_METHOD, "DELETE", String.class);
@@ -42,13 +42,13 @@ public class HttpDeleteWithBodyTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
                         assertEquals("DELETE", method);
                     }

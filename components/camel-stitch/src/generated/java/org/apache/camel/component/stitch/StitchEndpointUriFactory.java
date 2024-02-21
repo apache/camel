@@ -19,21 +19,23 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("stitchSchema");
-        props.add("httpClient");
-        props.add("lazyStartProducer");
         props.add("connectionProvider");
-        props.add("stitchClient");
-        props.add("region");
-        props.add("tableName");
+        props.add("httpClient");
         props.add("keyNames");
+        props.add("lazyStartProducer");
+        props.add("region");
+        props.add("stitchClient");
+        props.add("stitchSchema");
+        props.add("tableName");
         props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("token");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +63,11 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

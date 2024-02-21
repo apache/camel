@@ -30,119 +30,262 @@ import org.apache.camel.spi.EventFactory;
  */
 public class DefaultEventFactory implements EventFactory {
 
+    private boolean timestampEnabled;
+
+    @Override
+    public boolean isTimestampEnabled() {
+        return timestampEnabled;
+    }
+
+    @Override
+    public void setTimestampEnabled(boolean timestampEnabled) {
+        this.timestampEnabled = timestampEnabled;
+    }
+
     @Override
     public CamelEvent createCamelContextInitializingEvent(CamelContext context) {
-        return new CamelContextInitializingEvent(context);
+        CamelEvent answer = new CamelContextInitializingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextInitializedEvent(CamelContext context) {
-        return new CamelContextInitializedEvent(context);
+        CamelEvent answer = new CamelContextInitializedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStartingEvent(CamelContext context) {
-        return new CamelContextStartingEvent(context);
+        CamelEvent answer = new CamelContextStartingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStartedEvent(CamelContext context) {
-        return new CamelContextStartedEvent(context);
+        CamelEvent answer = new CamelContextStartedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStoppingEvent(CamelContext context) {
-        return new CamelContextStoppingEvent(context);
+        CamelEvent answer = new CamelContextStoppingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStoppedEvent(CamelContext context) {
-        return new CamelContextStoppedEvent(context);
+        CamelEvent answer = new CamelContextStoppedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextRoutesStartingEvent(CamelContext context) {
-        return new CamelContextRoutesStartingEvent(context);
+        CamelEvent answer = new CamelContextRoutesStartingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextRoutesStartedEvent(CamelContext context) {
-        return new CamelContextRoutesStartedEvent(context);
+        CamelEvent answer = new CamelContextRoutesStartedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextRoutesStoppingEvent(CamelContext context) {
-        return new CamelContextRoutesStoppingEvent(context);
+        CamelEvent answer = new CamelContextRoutesStoppingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context) {
-        return new CamelContextRoutesStoppedEvent(context);
+        CamelEvent answer = new CamelContextRoutesStoppedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
-        return new CamelContextStartupFailureEvent(context, cause);
+        CamelEvent answer = new CamelContextStartupFailureEvent(context, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextStopFailureEvent(CamelContext context, Throwable cause) {
-        return new CamelContextStopFailureEvent(context, cause);
+        CamelEvent answer = new CamelContextStopFailureEvent(context, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public CamelEvent createCamelContextReloading(CamelContext context, Object source) {
+        CamelEvent answer = new CamelContextReloadingEvent(context, source);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public CamelEvent createCamelContextReloadFailure(CamelContext context, Object source, Throwable cause) {
+        CamelEvent answer = new CamelContextReloadFailureEvent(context, source, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public CamelEvent createCamelContextReloaded(CamelContext context, Object source) {
+        CamelEvent answer = new CamelContextReloadedEvent(context, source);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
-        return new ServiceStartupFailureEvent(context, service, cause);
+        CamelEvent answer = new ServiceStartupFailureEvent(context, service, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
-        return new ServiceStopFailureEvent(context, service, cause);
+        CamelEvent answer = new ServiceStopFailureEvent(context, service, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createRouteStartingEvent(Route route) {
-        return new RouteStartingEvent(route);
+        CamelEvent answer = new RouteStartingEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createRouteStartedEvent(Route route) {
-        return new RouteStartedEvent(route);
+        CamelEvent answer = new RouteStartedEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createRouteStoppingEvent(Route route) {
-        return new RouteStoppingEvent(route);
+        CamelEvent answer = new RouteStoppingEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createRouteStoppedEvent(Route route) {
-        return new RouteStoppedEvent(route);
+        CamelEvent answer = new RouteStoppedEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+
     }
 
     @Override
     public CamelEvent createRouteAddedEvent(Route route) {
-        return new RouteAddedEvent(route);
+        CamelEvent answer = new RouteAddedEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+
     }
 
     @Override
     public CamelEvent createRouteRemovedEvent(Route route) {
-        return new RouteRemovedEvent(route);
+        CamelEvent answer = new RouteRemovedEvent(route);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+
+    }
+
+    @Override
+    public CamelEvent createRouteReloaded(Route route, int index, int total) {
+        CamelEvent answer = new RouteReloadedEvent(route, index, total);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeCreatedEvent(Exchange exchange) {
-        return new ExchangeCreatedEvent(exchange);
+        CamelEvent answer = new ExchangeCreatedEvent(exchange);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeCompletedEvent(Exchange exchange) {
-        return new ExchangeCompletedEvent(exchange);
+        CamelEvent answer = new ExchangeCompletedEvent(exchange);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeFailedEvent(Exchange exchange) {
-        return new ExchangeFailedEvent(exchange);
+        CamelEvent answer = new ExchangeFailedEvent(exchange);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
@@ -153,7 +296,11 @@ public class DefaultEventFactory implements EventFactory {
         if (handler instanceof DelegateProcessor) {
             handler = ((DelegateProcessor) handler).getProcessor();
         }
-        return new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
+        CamelEvent answer = new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
@@ -165,61 +312,118 @@ public class DefaultEventFactory implements EventFactory {
         if (handler instanceof DelegateProcessor) {
             handler = ((DelegateProcessor) handler).getProcessor();
         }
-        return new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel, deadLetterUri);
+        CamelEvent answer = new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel, deadLetterUri);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeRedeliveryEvent(Exchange exchange, int attempt) {
-        return new ExchangeRedeliveryEvent(exchange, attempt);
+        CamelEvent answer = new ExchangeRedeliveryEvent(exchange, attempt);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeSendingEvent(Exchange exchange, Endpoint endpoint) {
-        return new ExchangeSendingEvent(exchange, endpoint);
+        CamelEvent answer = new ExchangeSendingEvent(exchange, endpoint);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
-        return new ExchangeSentEvent(exchange, endpoint, timeTaken);
+        CamelEvent answer = new ExchangeSentEvent(exchange, endpoint, timeTaken);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createStepStartedEvent(Exchange exchange, String stepId) {
-        return new StepStartedEvent(exchange, stepId);
+        CamelEvent answer = new StepStartedEvent(exchange, stepId);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createStepCompletedEvent(Exchange exchange, String stepId) {
-        return new StepCompletedEvent(exchange, stepId);
+        CamelEvent answer = new StepCompletedEvent(exchange, stepId);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createStepFailedEvent(Exchange exchange, String stepId) {
-        return new StepFailedEvent(exchange, stepId);
+        CamelEvent answer = new StepFailedEvent(exchange, stepId);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextSuspendingEvent(CamelContext context) {
-        return new CamelContextSuspendingEvent(context);
+        CamelEvent answer = new CamelContextSuspendingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextSuspendedEvent(CamelContext context) {
-        return new CamelContextSuspendedEvent(context);
+        CamelEvent answer = new CamelContextSuspendedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextResumingEvent(CamelContext context) {
-        return new CamelContextResumingEvent(context);
+        CamelEvent answer = new CamelContextResumingEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextResumedEvent(CamelContext context) {
-        return new CamelContextResumedEvent(context);
+        CamelEvent answer = new CamelContextResumedEvent(context);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 
     @Override
     public CamelEvent createCamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
-        return new CamelContextResumeFailureEvent(context, cause);
+        CamelEvent answer = new CamelContextResumeFailureEvent(context, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange) {
+        CamelEvent answer = new ExchangeAsyncProcessingStartedEvent(exchange);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
     }
 }

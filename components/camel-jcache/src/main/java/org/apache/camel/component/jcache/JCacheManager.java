@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class JCacheManager<K, V> implements Closeable {
     private final JCacheConfiguration configuration;
-    private final ClassLoader classLoader;
     private final String cacheName;
     private final CamelContext camelContext;
     private CachingProvider provider;
@@ -46,7 +45,6 @@ public class JCacheManager<K, V> implements Closeable {
     public JCacheManager(JCacheConfiguration configuration) {
         this.configuration = configuration;
         this.camelContext = configuration.getCamelContext();
-        this.classLoader = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
         this.cacheName = configuration.getCacheName();
         this.provider = null;
         this.manager = null;
@@ -56,7 +54,6 @@ public class JCacheManager<K, V> implements Closeable {
     public JCacheManager(Cache<K, V> cache) {
         this.configuration = null;
         this.camelContext = null;
-        this.classLoader = null;
         this.cacheName = cache.getName();
         this.provider = null;
         this.manager = null;

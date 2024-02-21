@@ -16,9 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.eclipse.californium.core.CoapClient;
 
@@ -33,7 +30,7 @@ public class CoAPRestComponentTest extends CoAPRestComponentTestBase {
     }
 
     @Override
-    protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
+    protected void decorateClient(CoapClient client) {
         // Nothing here
     }
 

@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +34,7 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
         String out = template2.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         Exchange out = template2.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
@@ -52,7 +53,7 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
         // Should return the in message as no reply is expected
         assertEquals("Hello World", out.getMessage().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

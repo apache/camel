@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.spring.security;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 public interface SpringSecurityConfiguration {
 

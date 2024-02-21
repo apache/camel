@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
              syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
-             category = { Category.DATABASE, Category.SQL }, consumerOnly = true)
+             category = { Category.DATABASE }, consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);

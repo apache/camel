@@ -1,0 +1,24 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "beans",
+    "title": "Beans",
+    "description": "Container for beans, routes, and more.",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.BeansDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "component-scan": { "index": 0, "kind": "element", "displayName": "Component-scan", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.ComponentScanDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Component scanning that can auto-discover Camel route builders from the classpath." },
+    "bean": { "index": 1, "kind": "element", "displayName": "Bean", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.RegistryBeanDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "List of bean" },
+    "restConfiguration": { "index": 2, "kind": "element", "displayName": "Rest Configuration", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestConfigurationDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel Rest DSL Configuration" },
+    "rest": { "index": 3, "kind": "element", "displayName": "Rest", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel Rest DSL" },
+    "routeConfiguration": { "index": 4, "kind": "element", "displayName": "Route Configuration", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteConfigurationDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel route configurations" },
+    "routeTemplate": { "index": 5, "kind": "element", "displayName": "Route Template", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel route templates" },
+    "templatedRoute": { "index": 6, "kind": "element", "displayName": "Templated Route", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.TemplatedRouteDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel routes to be created from template" },
+    "route": { "index": 7, "kind": "element", "displayName": "Route", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Camel routes" }
+  }
+}

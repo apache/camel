@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAggregationTestSupport {
@@ -55,14 +56,14 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
@@ -71,7 +72,7 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
                         .to("mock:aggregated")
                         // simulate errors the first three times
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int count = counter.incrementAndGet();
                                 if (count <= 3) {
                                     throw new IllegalArgumentException("Damn");

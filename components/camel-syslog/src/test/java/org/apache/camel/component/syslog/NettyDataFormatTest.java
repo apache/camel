@@ -71,11 +71,11 @@ public class NettyDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testSendingRawUDPFromNetty() throws IOException, InterruptedException {
+    public void testSendingRawUDPFromNetty() throws InterruptedException {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -86,13 +86,13 @@ public class NettyDataFormatTest extends CamelTestSupport {
         template.sendBody("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false&useByteBuf=true",
                 message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();

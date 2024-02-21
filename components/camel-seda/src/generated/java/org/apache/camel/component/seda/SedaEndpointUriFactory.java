@@ -19,29 +19,31 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(19);
-        props.add("exchangePattern");
-        props.add("pollTimeout");
-        props.add("failIfNoConsumers");
-        props.add("waitForTaskToComplete");
-        props.add("limitConcurrentConsumers");
         props.add("blockWhenFull");
-        props.add("discardWhenFull");
-        props.add("concurrentConsumers");
-        props.add("timeout");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("offerTimeout");
-        props.add("size");
+        props.add("concurrentConsumers");
         props.add("discardIfNoConsumers");
-        props.add("name");
+        props.add("discardWhenFull");
         props.add("exceptionHandler");
-        props.add("purgeWhenStopping");
+        props.add("exchangePattern");
+        props.add("failIfNoConsumers");
+        props.add("lazyStartProducer");
+        props.add("limitConcurrentConsumers");
         props.add("multipleConsumers");
+        props.add("name");
+        props.add("offerTimeout");
+        props.add("pollTimeout");
+        props.add("purgeWhenStopping");
         props.add("queue");
+        props.add("size");
+        props.add("timeout");
+        props.add("waitForTaskToComplete");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -69,6 +71,11 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

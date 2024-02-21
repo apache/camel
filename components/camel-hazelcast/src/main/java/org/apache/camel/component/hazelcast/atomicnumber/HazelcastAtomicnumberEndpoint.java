@@ -23,14 +23,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_ATOMIC_VALUE;
 
 /**
  * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-atomicvalue", title = "Hazelcast Atomic Number",
-             syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_ATOMIC_VALUE, title = "Hazelcast Atomic Number",
+             syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true,
+             category = { Category.CACHE, Category.CLUSTERING },
+             headersClass = HazelcastConstants.class)
 public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastAtomicnumberEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,

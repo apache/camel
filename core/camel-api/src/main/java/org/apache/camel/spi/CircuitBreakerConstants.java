@@ -18,10 +18,20 @@ package org.apache.camel.spi;
 
 public interface CircuitBreakerConstants {
 
+    @Metadata(label = "circuitBreaker", description = "Whether the exchange was processed successfully by the circuit breaker",
+              javaType = "boolean")
     String RESPONSE_SUCCESSFUL_EXECUTION = "CamelCircuitBreakerSuccessfulExecution";
+    @Metadata(label = "circuitBreaker",
+              description = "Whether the exchange was processed by the onFallback by the circuit breaker", javaType = "boolean")
     String RESPONSE_FROM_FALLBACK = "CamelCircuitBreakerResponseFromFallback";
+    @Metadata(label = "circuitBreaker", description = "Whether the exchange was short circuited by the breaker",
+              javaType = "boolean")
     String RESPONSE_SHORT_CIRCUITED = "CamelCircuitBreakerResponseShortCircuited";
+    @Metadata(label = "circuitBreaker", description = "Whether the exchange timed out during processing by the circuit breaker",
+              javaType = "boolean")
     String RESPONSE_TIMED_OUT = "CamelCircuitBreakerResponseTimedOut";
+    @Metadata(label = "circuitBreaker", description = "Whether the circuit breaker rejected processing the exchange",
+              javaType = "boolean")
     String RESPONSE_REJECTED = "CamelCircuitBreakerResponseRejected";
 
 }

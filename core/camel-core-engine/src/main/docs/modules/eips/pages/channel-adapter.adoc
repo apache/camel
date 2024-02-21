@@ -1,4 +1,3 @@
-[[Channel-Adapter]]
 = Channel Adapter
 
 Camel supports the
@@ -17,10 +16,10 @@ The Channel Adapter is implemented in Camel by components.
 Each component adapters between the systems and Camel where all details are hidden in the implementation
 of the component, which allows applications to easily send and receive data.
 
-== Samples
+== Example
 
 An application must receive messages from a Kafka topic, which can be done by using the
-xref:components::kafka-component.adoc[Kafka] component.
+xref:ROOT:kafka-component.adoc[Kafka] component.
 
 One solution is to use a Camel route which consumes from the Kafka topic which calls a bean with the data.
 
@@ -35,13 +34,14 @@ And the bean has method which accepts the message payload as a byte array.
 [source,java]
 ----
 public class CheeseBean {
+
   public void receiveCheeseData(byte[] data) {
     // do something
   }
 }
 ----
 
-You can also use xref:latest@manual:ROOT:pojo-consuming.adoc[POJO consuming] with `@Consume` annotation.
+You can also use xref:manual::pojo-consuming.adoc[POJO consuming] with `@Consume` annotation.
 
 [source,java]
 ----

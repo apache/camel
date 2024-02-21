@@ -23,16 +23,14 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
-import org.apache.camel.spi.OnCamelContextStart;
-import org.apache.camel.spi.OnCamelContextStop;
+import org.apache.camel.spi.OnCamelContextStarting;
+import org.apache.camel.spi.OnCamelContextStopping;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitialized;
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitializing;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStart;
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarted;
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarting;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStop;
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopped;
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,10 +40,8 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
     public void testLifecycleStrategyDiscovery() throws Exception {
         final AtomicInteger onInitializing = new AtomicInteger();
         final AtomicInteger onInitialized = new AtomicInteger();
-        final AtomicInteger onStart = new AtomicInteger();
         final AtomicInteger onStarting = new AtomicInteger();
         final AtomicInteger onStarted = new AtomicInteger();
-        final AtomicInteger onStop = new AtomicInteger();
         final AtomicInteger onStopping = new AtomicInteger();
         final AtomicInteger onStopped = new AtomicInteger();
         final AtomicInteger onInitializingRoute = new AtomicInteger();
@@ -56,17 +52,16 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.getRegistry().bind("myOnInitializing", onCamelContextInitializing(c -> onInitializing.incrementAndGet()));
         context.getRegistry().bind("myOnInitialized", onCamelContextInitialized(c -> onInitialized.incrementAndGet()));
-        context.getRegistry().bind("myOnStart", onCamelContextStart(c -> onStart.incrementAndGet()));
         context.getRegistry().bind("myOnStarting", onCamelContextStarting(c -> onStarting.incrementAndGet()));
         context.getRegistry().bind("myOnStarted", onCamelContextStarted(c -> onStarted.incrementAndGet()));
-        context.getRegistry().bind("myOnStop", onCamelContextStop(c -> onStop.incrementAndGet()));
         context.getRegistry().bind("myOnStopping", onCamelContextStopping(c -> onStopping.incrementAndGet()));
         context.getRegistry().bind("myOnStopped", onCamelContextStopped(c -> onStopped.incrementAndGet()));
 
         try {
             class MyBuilder
                     extends RouteBuilder
-                    implements OnCamelContextInitializing, OnCamelContextInitialized, OnCamelContextStart, OnCamelContextStop {
+                    implements OnCamelContextInitializing, OnCamelContextInitialized, OnCamelContextStarting,
+                    OnCamelContextStopping {
 
                 @Override
                 public void configure() throws Exception {
@@ -83,12 +78,12 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
                 }
 
                 @Override
-                public void onContextStart(CamelContext context) {
+                public void onContextStarting(CamelContext context) {
                     onStartRoute.incrementAndGet();
                 }
 
                 @Override
-                public void onContextStop(CamelContext context) {
+                public void onContextStopping(CamelContext context) {
                     onStopRoute.incrementAndGet();
                 }
             }
@@ -101,10 +96,8 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
 
         assertEquals(1, onInitializing.get());
         assertEquals(1, onInitialized.get());
-        assertEquals(1, onStart.get());
         assertEquals(1, onStarting.get());
         assertEquals(1, onStarted.get());
-        assertEquals(1, onStop.get());
         assertEquals(1, onStopping.get());
         assertEquals(1, onStopped.get());
         assertEquals(1, onInitializingRoute.get());

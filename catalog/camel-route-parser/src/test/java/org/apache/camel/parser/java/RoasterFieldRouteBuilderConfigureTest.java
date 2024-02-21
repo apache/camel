@@ -42,13 +42,13 @@ public class RoasterFieldRouteBuilderConfigureTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals("timer:foo", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
         }
         assertEquals("file:output?fileExist=Override", list.get(0).getElement());
         assertEquals("log:b", list.get(1).getElement());

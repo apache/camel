@@ -1,0 +1,184 @@
+{
+  "fiToFICstmrCdtTrf": {
+    "grpHdr": {
+      "msgId": "823823423",
+      "creDtTm": {
+        "dateTime": {
+          "date": {
+            "year": 2019,
+            "month": 10,
+            "day": 19
+          },
+          "time": {
+            "hour": 21,
+            "minute": 0,
+            "second": 45,
+            "nano": 0
+          }
+        },
+        "offset": {
+          "totalSeconds": 0
+        }
+      },
+      "btchBookg": false,
+      "nbOfTxs": "1",
+      "ctrlSum": 10000,
+      "ttlIntrBkSttlmAmt": {
+        "value": 10000,
+        "ccy": "USD"
+      },
+      "intrBkSttlmDt": {
+        "year": 2019,
+        "month": 10,
+        "day": 28
+      },
+      "sttlmInf": {
+        "sttlmMtd": "INDA"
+      },
+      "instgAgt": {
+        "finInstnId": {
+          "bicfi": "CITTGB2LPBG",
+          "nm": "Lionel Messi",
+          "othr": {
+            "id": "2342342342",
+            "issr": "FOOISSUER"
+          }
+        }
+      },
+      "instdAgt": {
+        "finInstnId": {
+          "bicfi": "ICBCUS4CXXX",
+          "nm": "Manu Ginobili",
+          "pstlAdr": {
+            "adrTp": "PBOX",
+            "dept": "1",
+            "subDept": "DFGH",
+            "strtNm": "My Street",
+            "bldgNb": "1122",
+            "pstCd": "10002",
+            "twnNm": "Los Angeles",
+            "ctrySubDvsn": "ABCD"
+          }
+        }
+      }
+    },
+    "cdtTrfTxInf": [
+      {
+        "pmtId": {
+          "instrId": "2233445566",
+          "endToEndId": "987654321987654321",
+          "txId": "123456789",
+          "clrSysRef": "SDSDS333"
+        },
+        "intrBkSttlmAmt": {
+          "value": 5000,
+          "ccy": "USD"
+        },
+        "intrBkSttlmDt": {
+          "year": 2019,
+          "month": 7,
+          "day": 31
+        },
+        "sttlmPrty": "URGT",
+        "accptncDtTm": {
+          "dateTime": {
+            "date": {
+              "year": 2019,
+              "month": 4,
+              "day": 28
+            },
+            "time": {
+              "hour": 20,
+              "minute": 54,
+              "second": 39,
+              "nano": 0
+            }
+          },
+          "offset": {
+            "totalSeconds": 0
+          }
+        },
+        "poolgAdjstmntDt": {
+          "year": 2019,
+          "month": 4,
+          "day": 29
+        },
+        "instdAmt": {
+          "value": 5000,
+          "ccy": "USD"
+        },
+        "chrgBr": "SHAR",
+        "dbtr": {
+          "nm": "Jhon Doe",
+          "pstlAdr": {
+            "adrTp": "HOME",
+            "dept": "ABCD",
+            "subDept": "1",
+            "strtNm": "Foo Street",
+            "bldgNb": "1",
+            "pstCd": "1234",
+            "twnNm": "Buenos Aires",
+            "ctrySubDvsn": "CABA",
+            "ctry": "AR"
+          },
+          "ctryOfRes": "AR"
+        },
+        "dbtrAgt": {
+          "finInstnId": {
+            "bicfi": "ITUSUSP1XXX",
+            "nm": "Foo Corp"
+          }
+        },
+        "cdtrAgt": {
+          "finInstnId": {
+            "bicfi": "USTBUS31XXX"
+          }
+        },
+        "cdtr": {
+          "nm": "Mike Smith"
+        }
+      }
+    ]
+  },
+  "appHdr": {
+    "fr": {
+      "fiId": {
+        "finInstnId": {
+          "bicfi": "ABCDUS33XXX"
+        }
+      }
+    },
+    "to": {
+      "fiId": {
+        "finInstnId": {
+          "bicfi": "EFGHUS33XXX"
+        }
+      }
+    },
+    "bizMsgIdr": "12312312312",
+    "msgDefIdr": "pacs.008.001.07",
+    "creDt": {
+      "dateTime": {
+        "date": {
+          "year": 2019,
+          "month": 10,
+          "day": 19
+        },
+        "time": {
+          "hour": 20,
+          "minute": 53,
+          "second": 13,
+          "nano": 0
+        }
+      },
+      "offset": {
+        "totalSeconds": 0
+      }
+    },
+    "pssblDplct": false,
+    "namespace": "urn:iso:std:iso:20022:tech:xsd:head.001.001.01"
+  },
+  "type": "MX",
+  "@xmlns": "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.07",
+  "identifier": "pacs.008.001.07"
+}

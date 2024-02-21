@@ -38,6 +38,8 @@ public class JdbcComponent extends DefaultComponent {
 
     @Metadata
     private DataSource dataSource;
+    @Metadata(label = "advanced")
+    private ConnectionStrategy connectionStrategy;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -72,12 +74,19 @@ public class JdbcComponent extends DefaultComponent {
 
         Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "statement.");
 
-        JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
+        JdbcEndpoint jdbc = createEndpoint(uri, this, dataSource);
+        if (connectionStrategy != null) {
+            jdbc.setConnectionStrategy(connectionStrategy);
+        }
         jdbc.setDataSourceName(dataSourceRef);
         jdbc.setParameters(params);
         setProperties(jdbc, parameters);
 
         return jdbc;
+    }
+
+    protected JdbcEndpoint createEndpoint(String uri, JdbcComponent component, DataSource dataSource) {
+        return new JdbcEndpoint(uri, component, dataSource);
     }
 
     /**
@@ -89,6 +98,20 @@ public class JdbcComponent extends DefaultComponent {
 
     public DataSource getDataSource() {
         return dataSource;
+    }
+
+    public ConnectionStrategy getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    /**
+     * To use a custom strategy for working with connections.
+     *
+     * Do not use a custom strategy when using the spring-jdbc component because a special Spring ConnectionStrategy is
+     * used by default to support Spring Transactions.
+     */
+    public void setConnectionStrategy(ConnectionStrategy connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
     }
 
     private static boolean isDefaultDataSourceName(String remaining) {

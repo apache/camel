@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
@@ -31,6 +31,10 @@
 
     <name>Camel :: Maven Plugins :: Camel EIP Documentation Enricher Plugin</name>
     <description>Adds documentation to camel xsd schema</description>
+
+    <properties>
+        <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -59,21 +63,17 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
+            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.3</version>
+            <version>3.11.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -95,16 +95,23 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3-version}</version>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
         </dependency>
 
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -119,12 +126,14 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -136,6 +145,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <configuration>
+                        <goalPrefix>camel-eip-documentation-enricher</goalPrefix>
                         <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                         <mojoDependencies />
@@ -158,31 +168,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk9s-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.base/java.io=ALL-UNNAMED --add-opens
-                                java.base/java.lang=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

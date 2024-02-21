@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.clock.Clock;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.ConstantProvider;
 
@@ -63,20 +65,35 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * details.
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
-public interface Exchange {
+public interface Exchange extends VariableAware {
 
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     @Deprecated
     String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
+    @Metadata(label = "aggregate", description = "Number of exchanges that was grouped together.", javaType = "int")
     String AGGREGATED_SIZE = "CamelAggregatedSize";
+    @Metadata(label = "aggregate", description = "The time in millis this group will timeout", javaType = "long")
     String AGGREGATED_TIMEOUT = "CamelAggregatedTimeout";
+    @Metadata(label = "aggregate", description = "Enum that tell how this group was completed",
+              enums = "consumer,force,interval,predicate,size,strategy,timeout", javaType = "String")
     String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
+    @Metadata(label = "aggregate", description = "The correlation key for this aggregation group", javaType = "String")
     String AGGREGATED_CORRELATION_KEY = "CamelAggregatedCorrelationKey";
     String AGGREGATED_COLLECTION_GUARD = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY = "CamelAggregationStrategy";
+    @Metadata(label = "consumer,aggregate",
+              description = "Input property. Set to true to force completing the current group. This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
+              javaType = "boolean")
     String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
+    @Metadata(label = "consumer,aggregate",
+              description = "Input property. Set to true to force completing all the groups (excluding this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group."
+                            + " This message is considered a signal message only, the message headers/contents will not be processed otherwise. Instead use CamelAggregationCompleteAllGroupsInclusive if this message should be included in the aggregator.",
+              javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS = "CamelAggregationCompleteAllGroups";
+    @Metadata(label = "consumer,aggregate",
+              description = "Input property. Set to true to force completing all the groups (including this message). This allows to overrule any existing completion predicates, sizes, timeouts etc, and complete the group.",
+              javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT = "CamelAsyncWait";
 
@@ -90,6 +107,7 @@ public interface Exchange {
     String BREADCRUMB_ID = "breadcrumbId";
 
     String CHARSET_NAME = "CamelCharsetName";
+    @Deprecated
     String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
     @Deprecated
     String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
@@ -100,25 +118,45 @@ public interface Exchange {
     String COOKIE_HANDLER = "CamelCookieHandler";
     String CORRELATION_ID = "CamelCorrelationId";
 
+    // The schema of the message payload
+    String CONTENT_SCHEMA = "CamelContentSchema";
+    // The schema type of the message payload (json schema, avro, etc)
+    String CONTENT_SCHEMA_TYPE = "CamelContentSchemaType";
+
     String DATASET_INDEX = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
+    @Metadata(label = "idempotentConsumer",
+              description = "Whether this exchange is a duplicate detected by the Idempotent Consumer EIP",
+              javaType = "boolean")
     String DUPLICATE_MESSAGE = "CamelDuplicateMessage";
 
     String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Stores the caught exception due to a processing error of the current Exchange",
+              javaType = "java.lang.Exception")
     String EXCEPTION_CAUGHT = "CamelExceptionCaught";
     String EXCEPTION_HANDLED = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
-    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    String ERRORHANDLER_BRIDGE = "CamelErrorHandlerBridge";
+    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelErrorHandlerCircuitDetected";
     @Deprecated
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     @Deprecated
     String EXTERNAL_REDELIVERED = "CamelExternalRedelivered";
 
+    @Deprecated
     String FAILURE_HANDLED = "CamelFailureHandled";
+
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Endpoint URI where the Exchange failed during processing",
+              javaType = "String")
     String FAILURE_ENDPOINT = "CamelFailureEndpoint";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Route ID where the Exchange failed during processing",
+              javaType = "String")
     String FAILURE_ROUTE_ID = "CamelFailureRouteId";
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE = "CamelFileContentType";
@@ -136,6 +174,7 @@ public interface Exchange {
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
+    @Deprecated
     String FILTER_MATCHED = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
@@ -159,6 +198,8 @@ public interface Exchange {
     String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
     String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
 
+    @Metadata(label = "interceptFrom,interceptSendToEndpoint", description = "The endpoint URI that was intercepted",
+              javaType = "String")
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
     @Deprecated
@@ -168,7 +209,11 @@ public interface Exchange {
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS = "CamelLogDebugStreams";
     String LOG_EIP_NAME = "CamelLogEipName";
+    @Metadata(label = "loop", description = "Index of the current iteration (0 based).", javaType = "int")
     String LOOP_INDEX = "CamelLoopIndex";
+    @Metadata(label = "loop",
+              description = "Total number of loops. This is not available if running the loop in while loop mode.",
+              javaType = "int")
     String LOOP_SIZE = "CamelLoopSize";
 
     // Long running action (saga): using "Long-Running-Action" as header value allows sagas
@@ -183,19 +228,28 @@ public interface Exchange {
     String MESSAGE_HISTORY = "CamelMessageHistory";
     String MESSAGE_HISTORY_HEADER_FORMAT = "CamelMessageHistoryHeaderFormat";
     String MESSAGE_HISTORY_OUTPUT_FORMAT = "CamelMessageHistoryOutputFormat";
+    String MESSAGE_TIMESTAMP = "CamelMessageTimestamp";
+    @Metadata(label = "multicast",
+              description = "An index counter that increases for each Exchange being multicasted. The counter starts from 0.",
+              javaType = "int")
     String MULTICAST_INDEX = "CamelMulticastIndex";
+    @Metadata(label = "multicast", description = "Whether this Exchange is the last.", javaType = "boolean")
     String MULTICAST_COMPLETE = "CamelMulticastComplete";
 
     @Deprecated
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
+    @Metadata(label = "onCompletion",
+              description = "Flag to mark that this exchange is currently being executed as onCompletion", javaType = "boolean")
     String ON_COMPLETION = "CamelOnCompletion";
     String ON_COMPLETION_ROUTE_IDS = "CamelOnCompletionRouteIds";
+    String OFFSET = "CamelOffset";
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
     String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
 
+    @Metadata(label = "recipientList", description = "The endpoint uri of this recipient list", javaType = "String")
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP = "CamelReceivedTimestamp";
     String REDELIVERED = "CamelRedelivered";
@@ -216,17 +270,28 @@ public interface Exchange {
     String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
     String COMPILE_SCRIPT = "CamelCompileScript";
 
+    @Deprecated
     String SAXPARSER_FACTORY = "CamelSAXParserFactory";
 
     String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
+    @Deprecated
     String SOAP_ACTION = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
+    @Metadata(label = "routingSlip", description = "The endpoint uri of this routing slip", javaType = "String")
     String SLIP_ENDPOINT = "CamelSlipEndpoint";
     String SLIP_PRODUCER = "CamelSlipProducer";
+    @Metadata(label = "split",
+              description = "A split counter that increases for each Exchange being split. The counter starts from 0.",
+              javaType = "int")
     String SPLIT_INDEX = "CamelSplitIndex";
+    @Metadata(label = "split", description = "Whether this Exchange is the last.", javaType = "boolean")
     String SPLIT_COMPLETE = "CamelSplitComplete";
+    @Metadata(label = "split",
+              description = "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.",
+              javaType = "int")
     String SPLIT_SIZE = "CamelSplitSize";
+    @Metadata(label = "step", description = "The id of the Step EIP", javaType = "String")
     String STEP_ID = "CamelStepId";
 
     String TIMER_COUNTER = "CamelTimerCounter";
@@ -234,38 +299,32 @@ public interface Exchange {
     String TIMER_NAME = "CamelTimerName";
     String TIMER_PERIOD = "CamelTimerPeriod";
     String TIMER_TIME = "CamelTimerTime";
+
+    @Metadata(label = "enrich,multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
+              description = "Endpoint URI where this Exchange is being sent to", javaType = "String")
     String TO_ENDPOINT = "CamelToEndpoint";
+    @Deprecated
     String TRACE_EVENT = "CamelTraceEvent";
+    @Deprecated
     String TRACE_EVENT_NODE_ID = "CamelTraceEventNodeId";
+    @Deprecated
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
+    @Deprecated
     String TRACE_EVENT_EXCHANGE = "CamelTraceEventExchange";
+    @Deprecated
     String TRACING_HEADER_FORMAT = "CamelTracingHeaderFormat";
+    @Deprecated
     String TRACING_OUTPUT_FORMAT = "CamelTracingOutputFormat";
+    String TRANSACTION_CONTEXT_DATA = "CamelTransactionContextData";
     String TRY_ROUTE_BLOCK = "TryRouteBlock";
     String TRANSFER_ENCODING = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED = "CamelUnitOfWorkExhausted";
 
-    /**
-     * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
-     */
-    @Deprecated
-    String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
-
     String XSLT_FILE_NAME = "CamelXsltFileName";
     String XSLT_ERROR = "CamelXsltError";
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING = "CamelXsltWarning";
-
-    /**
-     * Adapts this {@link org.apache.camel.Exchange} to the specialized type.
-     * <p/>
-     * For example to adapt to <tt>ExtendedExchange</tt>.
-     *
-     * @param  type the type to adapt to
-     * @return      this {@link org.apache.camel.Exchange} adapted to the given type
-     */
-    <T extends Exchange> T adapt(Class<T> type);
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
@@ -285,23 +344,57 @@ public interface Exchange {
     void setPattern(ExchangePattern pattern);
 
     /**
+     * Returns a property associated with this exchange by the key
+     *
+     * @param  key the exchange key
+     * @return     the value of the given property or <tt>null</tt> if there is no property for the given key
+     */
+    Object getProperty(ExchangePropertyKey key);
+
+    /**
+     * Returns a property associated with this exchange by the key and specifying the type required
+     *
+     * @param  key  the exchange key
+     * @param  type the type of the property
+     * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
+     *              <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getProperty(ExchangePropertyKey key, Class<T> type);
+
+    /**
+     * Returns a property associated with this exchange by name and specifying the type required
+     *
+     * @param  key          the exchange key
+     * @param  defaultValue the default value to return if property was absent
+     * @param  type         the type of the property
+     * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
+     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type);
+
+    /**
+     * Sets a property on the exchange
+     *
+     * @param key   the exchange key
+     * @param value to associate with the name
+     */
+    void setProperty(ExchangePropertyKey key, Object value);
+
+    /**
+     * Removes the given property on the exchange
+     *
+     * @param  key the exchange key
+     * @return     the old value of the property
+     */
+    Object removeProperty(ExchangePropertyKey key);
+
+    /**
      * Returns a property associated with this exchange by name
      *
      * @param  name the name of the property
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name
      */
     Object getProperty(String name);
-
-    /**
-     * Returns a property associated with this exchange by name
-     *
-     * @param  name         the name of the property
-     * @param  defaultValue the default value to return if property was absent
-     * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
-     *                      given name
-     */
-    @Deprecated
-    Object getProperty(String name, Object defaultValue);
 
     /**
      * Returns a property associated with this exchange by name and specifying the type required
@@ -341,7 +434,7 @@ public interface Exchange {
     Object removeProperty(String name);
 
     /**
-     * Remove all of the properties associated with the exchange matching a specific pattern
+     * Remove all the properties associated with the exchange matching a specific pattern
      *
      * @param  pattern pattern of names
      * @return         boolean whether any properties matched
@@ -350,8 +443,8 @@ public interface Exchange {
 
     /**
      * Removes the properties from this exchange that match the given <tt>pattern</tt>, except for the ones matching one
-     * ore more <tt>excludePatterns</tt>
-     * 
+     * or more <tt>excludePatterns</tt>
+     *
      * @param  pattern         pattern of names that should be removed
      * @param  excludePatterns one or more pattern of properties names that should be excluded (= preserved)
      * @return                 boolean whether any properties matched
@@ -359,18 +452,86 @@ public interface Exchange {
     boolean removeProperties(String pattern, String... excludePatterns);
 
     /**
-     * Returns all of the properties associated with the exchange
+     * Returns the properties associated with the exchange
      *
-     * @return all the headers in a Map
+     * @return the properties in a Map
+     * @see    #getAllProperties()
      */
     Map<String, Object> getProperties();
 
     /**
-     * Returns whether any properties has been set
+     * Returns all (both internal and custom) properties associated with the exchange
+     *
+     * @return all (both internal and custom) properties in a Map
+     * @see    #getProperties()
+     */
+    Map<String, Object> getAllProperties();
+
+    /**
+     * Returns whether any properties have been set
      *
      * @return <tt>true</tt> if any properties has been set
      */
     boolean hasProperties();
+
+    /**
+     * Returns a variable by name
+     *
+     * @param  name the name of the variable
+     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
+     */
+    Object getVariable(String name);
+
+    /**
+     * Returns a variable by name and specifying the type required
+     *
+     * @param  name the name of the variable
+     * @param  type the type of the variable
+     * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
+     *              <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getVariable(String name, Class<T> type);
+
+    /**
+     * Returns a variable by name and specifying the type required
+     *
+     * @param  name         the name of the variable
+     * @param  defaultValue the default value to return if variable was absent
+     * @param  type         the type of the variable
+     * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
+     *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getVariable(String name, Object defaultValue, Class<T> type);
+
+    /**
+     * Sets a variable on the exchange
+     *
+     * @param name  of the variable
+     * @param value the value of the variable
+     */
+    void setVariable(String name, Object value);
+
+    /**
+     * Removes the given variable
+     *
+     * @param  name of the variable, or use * to remove all variables
+     * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
+     */
+    Object removeVariable(String name);
+
+    /**
+     * Returns the variables
+     *
+     * @return the variables in a Map.
+     */
+    Map<String, Object> getVariables();
+
+    /**
+     * Returns whether any variables have been set
+     *
+     * @return <tt>true</tt> if any variables has been set
+     */
+    boolean hasVariables();
 
     /**
      * Returns the inbound request message
@@ -506,9 +667,9 @@ public interface Exchange {
     void setException(Throwable t);
 
     /**
-     * Returns true if this exchange failed due to either an exception or fault
+     * Returns true if this exchange failed due to an exception
      *
-     * @return true if this exchange failed due to either an exception or fault
+     * @return true if this exchange failed due to an exception
      * @see    Exchange#getException()
      */
     boolean isFailed();
@@ -575,13 +736,24 @@ public interface Exchange {
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message
-     * exchange, otherwise this property will be <tt>null</tt>
+     * exchange, otherwise his property will be <tt>null</tt>.
+     *
+     * Note: In case this message exchange has been cloned through another parent message exchange (which itself has
+     * been created through the consumer of it's own endpoint), then if desired one could still retrieve the consumer
+     * endpoint of such a parent message exchange as the following:
+     *
+     * <pre>
+     * getContext().getRoute(getFromRouteId()).getEndpoint()
+     * </pre>
      */
     Endpoint getFromEndpoint();
 
     /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint created the
-     * message exchange, otherwise this property will be <tt>null</tt>
+     * message exchange, otherwise his property will be <tt>null</tt>.
+     *
+     * Note: In case this message exchange has been cloned through another parent message exchange then this method
+     * would return the <tt>fromRouteId<tt> property of that exchange.
      */
     String getFromRouteId();
 
@@ -602,7 +774,23 @@ public interface Exchange {
 
     /**
      * Gets the timestamp in millis when this exchange was created.
+     *
+     * @see Message#getMessageTimestamp()
      */
+    @Deprecated
     long getCreated();
+
+    /**
+     * Gets the {@link ExchangeExtension} that contains the extension points for internal exchange APIs. These APIs are
+     * intended for internal usage within Camel and end-users should avoid using them.
+     *
+     * @return the {@link ExchangeExtension} point for this exchange.
+     */
+    ExchangeExtension getExchangeExtension();
+
+    /**
+     * Gets {@link Clock} that holds time information about the exchange
+     */
+    Clock getClock();
 
 }

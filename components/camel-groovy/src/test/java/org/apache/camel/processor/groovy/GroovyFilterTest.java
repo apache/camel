@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.groovy;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -34,7 +35,7 @@ public class GroovyFilterTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,7 +44,7 @@ public class GroovyFilterTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -33,8 +35,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test with custom codec.
@@ -42,10 +44,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MinaCustomCodecTest extends BaseMinaTest {
 
     @BindToRegistry("myCodec")
-    private MyCodec codec1 = new MyCodec();
+    private final MyCodec codec1 = new MyCodec();
 
     @BindToRegistry("failingCodec")
-    private MyCodec codec2 = new MyCodec(true);
+    private final MyCodec codec2 = new MyCodec(true);
 
     @Test
     public void testMyCodec() throws Exception {
@@ -61,25 +63,23 @@ public class MinaCustomCodecTest extends BaseMinaTest {
     }
 
     @Test
-    public void testProducerFailInDecodingResponse() throws Exception {
+    public void testProducerFailInDecodingResponse() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        try {
-            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
-                    "Hello World");
-            fail("Expecting that decode of result fails");
-        } catch (Exception e) {
-            assertTrue(e instanceof CamelExecutionException);
-            assertNotNull(e.getCause());
-            Throwable rootCause = e;
-            while (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-            }
-            assertTrue(rootCause instanceof IllegalArgumentException);
-            assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
-        }
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
+                        "Hello World"),
+                "Expecting that decode of result fails");
 
+        assertTrue(e instanceof CamelExecutionException);
+        assertNotNull(e.getCause());
+        Throwable rootCause = e;
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+        assertTrue(rootCause instanceof IllegalArgumentException);
+        assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
     }
 
     @Test
@@ -101,26 +101,25 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(myUri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testBadConfiguration() throws Exception {
-        try {
-            template.sendBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#XXX", getPort()), "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+    public void testBadConfiguration() {
+        final int port = getPort();
+        final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#XXX", port);
+
+        assertThrows(ResolveEndpointFailedException.class, () -> template.sendBody(format, "Hello World"),
+                "Should have thrown a ResolveEndpointFailedException");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())
                         .transform(constant("Bye World")).to("mock:result");
             }
         };
@@ -139,20 +138,20 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolEncoder getEncoder(IoSession session) throws Exception {
+        public ProtocolEncoder getEncoder(IoSession session) {
             return new ProtocolEncoder() {
 
                 @Override
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
                     String s = (String) message;
-                    bb.put(s.getBytes("US-ASCII"));
+                    bb.put(s.getBytes(StandardCharsets.US_ASCII));
                     bb.flip();
                     out.write(bb);
                 }
 
                 @Override
-                public void dispose(IoSession ioSession) throws Exception {
+                public void dispose(IoSession ioSession) {
                     // do nothing
                 }
             };
@@ -160,7 +159,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolDecoder getDecoder(IoSession session) throws Exception {
+        public ProtocolDecoder getDecoder(IoSession session) {
             return new CumulativeProtocolDecoder() {
 
                 @Override
@@ -172,7 +171,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                     if (in.remaining() > 0) {
                         byte[] buf = new byte[in.remaining()];
                         in.get(buf);
-                        out.write(new String(buf, "US-ASCII"));
+                        out.write(new String(buf, StandardCharsets.US_ASCII));
                         return true;
                     } else {
                         return false;

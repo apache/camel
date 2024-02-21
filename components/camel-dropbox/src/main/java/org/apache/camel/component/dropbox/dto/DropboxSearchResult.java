@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.dropbox.core.v2.files.SearchMatch;
+import com.dropbox.core.v2.files.SearchMatchV2;
 
 public class DropboxSearchResult {
 
-    private final List<SearchMatch> found;
+    private final List<SearchMatchV2> found;
 
-    public DropboxSearchResult(List<SearchMatch> found) {
+    public DropboxSearchResult(List<SearchMatchV2> found) {
         this.found = new ArrayList<>(found);
     }
 
-    public List<SearchMatch> getFound() {
+    public List<SearchMatchV2> getFound() {
         return Collections.unmodifiableList(found);
     }
 

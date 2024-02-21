@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.ThriftConstants;
 import org.apache.camel.component.thrift.ThriftConsumer;
-import org.apache.camel.component.thrift.ThriftEndpoint;
 import org.apache.camel.component.thrift.ThriftUtils;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
@@ -34,11 +33,9 @@ import org.apache.thrift.async.AsyncMethodCallback;
  * Thrift server methods invocation handler
  */
 public class ThriftMethodHandler implements MethodHandler {
-    private final ThriftEndpoint endpoint;
     private final ThriftConsumer consumer;
 
-    public ThriftMethodHandler(ThriftEndpoint endpoint, ThriftConsumer consumer) {
-        this.endpoint = endpoint;
+    public ThriftMethodHandler(ThriftConsumer consumer) {
         this.consumer = consumer;
     }
 
@@ -67,11 +64,7 @@ public class ThriftMethodHandler implements MethodHandler {
                         callback.onError(exception);
                     }
 
-                    if (exchange.hasOut()) {
-                        message = exchange.getOut();
-                    } else {
-                        message = exchange.getIn();
-                    }
+                    message = exchange.getMessage();
 
                     if (message != null) {
                         Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");

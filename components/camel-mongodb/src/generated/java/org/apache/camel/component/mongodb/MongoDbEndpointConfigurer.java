@@ -21,11 +21,20 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "appname":
+        case "appName": target.setAppName(property(camelContext, java.lang.String.class, value)); return true;
+        case "authsource":
+        case "authSource": target.setAuthSource(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionindex":
         case "collectionIndex": target.setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
+        case "compressors": target.setCompressors(property(camelContext, java.lang.String.class, value)); return true;
+        case "connecttimeoutms":
+        case "connectTimeoutMS": target.setConnectTimeoutMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "connectionuristring":
+        case "connectionUriString": target.setConnectionUriString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumertype":
         case "consumerType": target.setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
         case "createcollection":
@@ -33,24 +42,64 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "cursorregenerationdelay":
         case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
+        case "directconnection":
+        case "directConnection": target.setDirectConnection(property(camelContext, boolean.class, value)); return true;
         case "dynamicity": target.setDynamicity(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fulldocument":
+        case "fullDocument": target.setFullDocument(property(camelContext, com.mongodb.client.model.changestream.FullDocument.class, value)); return true;
+        case "heartbeatfrequencyms":
+        case "heartbeatFrequencyMS": target.setHeartbeatFrequencyMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "hosts": target.setHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "loadbalanced":
+        case "loadBalanced": target.setLoadBalanced(property(camelContext, boolean.class, value)); return true;
+        case "localthresholdms":
+        case "localThresholdMS": target.setLocalThresholdMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxconnecting":
+        case "maxConnecting": target.setMaxConnecting(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxidletimems":
+        case "maxIdleTimeMS": target.setMaxIdleTimeMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxlifetimems":
+        case "maxLifeTimeMS": target.setMaxLifeTimeMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxpoolsize":
+        case "maxPoolSize": target.setMaxPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxstalenessseconds":
+        case "maxStalenessSeconds": target.setMaxStalenessSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "minpoolsize":
+        case "minPoolSize": target.setMinPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "mongoconnection":
         case "mongoConnection": target.setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "persistentid":
         case "persistentId": target.setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
         case "persistenttailtracking":
         case "persistentTailTracking": target.setPersistentTailTracking(property(camelContext, boolean.class, value)); return true;
         case "readpreference":
         case "readPreference": target.setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
+        case "readpreferencetags":
+        case "readPreferenceTags": target.setReadPreferenceTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "replicaset":
+        case "replicaSet": target.setReplicaSet(property(camelContext, java.lang.String.class, value)); return true;
+        case "retryreads":
+        case "retryReads": target.setRetryReads(property(camelContext, boolean.class, value)); return true;
+        case "retrywrites":
+        case "retryWrites": target.setRetryWrites(property(camelContext, boolean.class, value)); return true;
+        case "serverselectiontimeoutms":
+        case "serverSelectionTimeoutMS": target.setServerSelectionTimeoutMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "sockettimeoutms":
+        case "socketTimeoutMS": target.setSocketTimeoutMS(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "srvmaxhosts":
+        case "srvMaxHosts": target.setSrvMaxHosts(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "srvservicename":
+        case "srvServiceName": target.setSrvServiceName(property(camelContext, java.lang.String.class, value)); return true;
         case "streamfilter":
         case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackcollection":
@@ -61,10 +110,18 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": target.setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": target.setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
+        case "tls": target.setTls(property(camelContext, boolean.class, value)); return true;
+        case "tlsallowinvalidhostnames":
+        case "tlsAllowInvalidHostnames": target.setTlsAllowInvalidHostnames(property(camelContext, boolean.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "waitqueuetimeoutms":
+        case "waitQueueTimeoutMS": target.setWaitQueueTimeoutMS(property(camelContext, java.lang.Integer.class, value)); return true;
         case "writeconcern":
         case "writeConcern": target.setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
         case "writeresultasheader":
         case "writeResultAsHeader": target.setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
+        case "zlibcompressionlevel":
+        case "zlibCompressionLevel": target.setZlibCompressionLevel(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
     }
@@ -72,11 +129,20 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "appname":
+        case "appName": return java.lang.String.class;
+        case "authsource":
+        case "authSource": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "collection": return java.lang.String.class;
         case "collectionindex":
         case "collectionIndex": return java.lang.String.class;
+        case "compressors": return java.lang.String.class;
+        case "connecttimeoutms":
+        case "connectTimeoutMS": return java.lang.Integer.class;
+        case "connectionuristring":
+        case "connectionUriString": return java.lang.String.class;
         case "consumertype":
         case "consumerType": return java.lang.String.class;
         case "createcollection":
@@ -84,24 +150,64 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "cursorregenerationdelay":
         case "cursorRegenerationDelay": return long.class;
         case "database": return java.lang.String.class;
+        case "directconnection":
+        case "directConnection": return boolean.class;
         case "dynamicity": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fulldocument":
+        case "fullDocument": return com.mongodb.client.model.changestream.FullDocument.class;
+        case "heartbeatfrequencyms":
+        case "heartbeatFrequencyMS": return java.lang.Integer.class;
+        case "hosts": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "loadbalanced":
+        case "loadBalanced": return boolean.class;
+        case "localthresholdms":
+        case "localThresholdMS": return java.lang.Integer.class;
+        case "maxconnecting":
+        case "maxConnecting": return java.lang.Integer.class;
+        case "maxidletimems":
+        case "maxIdleTimeMS": return java.lang.Integer.class;
+        case "maxlifetimems":
+        case "maxLifeTimeMS": return java.lang.Integer.class;
+        case "maxpoolsize":
+        case "maxPoolSize": return java.lang.Integer.class;
+        case "maxstalenessseconds":
+        case "maxStalenessSeconds": return java.lang.Integer.class;
+        case "minpoolsize":
+        case "minPoolSize": return java.lang.Integer.class;
         case "mongoconnection":
         case "mongoConnection": return com.mongodb.client.MongoClient.class;
         case "operation": return org.apache.camel.component.mongodb.MongoDbOperation.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.mongodb.MongoDbOutputType.class;
+        case "password": return java.lang.String.class;
         case "persistentid":
         case "persistentId": return java.lang.String.class;
         case "persistenttailtracking":
         case "persistentTailTracking": return boolean.class;
         case "readpreference":
         case "readPreference": return java.lang.String.class;
+        case "readpreferencetags":
+        case "readPreferenceTags": return java.lang.String.class;
+        case "replicaset":
+        case "replicaSet": return java.lang.String.class;
+        case "retryreads":
+        case "retryReads": return boolean.class;
+        case "retrywrites":
+        case "retryWrites": return boolean.class;
+        case "serverselectiontimeoutms":
+        case "serverSelectionTimeoutMS": return java.lang.Integer.class;
+        case "sockettimeoutms":
+        case "socketTimeoutMS": return java.lang.Integer.class;
+        case "srvmaxhosts":
+        case "srvMaxHosts": return java.lang.Integer.class;
+        case "srvservicename":
+        case "srvServiceName": return java.lang.String.class;
         case "streamfilter":
         case "streamFilter": return java.lang.String.class;
         case "tailtrackcollection":
@@ -112,10 +218,18 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": return java.lang.String.class;
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": return java.lang.String.class;
+        case "tls": return boolean.class;
+        case "tlsallowinvalidhostnames":
+        case "tlsAllowInvalidHostnames": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "waitqueuetimeoutms":
+        case "waitQueueTimeoutMS": return java.lang.Integer.class;
         case "writeconcern":
         case "writeConcern": return java.lang.String.class;
         case "writeresultasheader":
         case "writeResultAsHeader": return boolean.class;
+        case "zlibcompressionlevel":
+        case "zlibCompressionLevel": return java.lang.Integer.class;
         default: return null;
         }
     }
@@ -124,11 +238,20 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "appname":
+        case "appName": return target.getAppName();
+        case "authsource":
+        case "authSource": return target.getAuthSource();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "collection": return target.getCollection();
         case "collectionindex":
         case "collectionIndex": return target.getCollectionIndex();
+        case "compressors": return target.getCompressors();
+        case "connecttimeoutms":
+        case "connectTimeoutMS": return target.getConnectTimeoutMS();
+        case "connectionuristring":
+        case "connectionUriString": return target.getConnectionUriString();
         case "consumertype":
         case "consumerType": return target.getConsumerType();
         case "createcollection":
@@ -136,24 +259,64 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "cursorregenerationdelay":
         case "cursorRegenerationDelay": return target.getCursorRegenerationDelay();
         case "database": return target.getDatabase();
+        case "directconnection":
+        case "directConnection": return target.isDirectConnection();
         case "dynamicity": return target.isDynamicity();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fulldocument":
+        case "fullDocument": return target.getFullDocument();
+        case "heartbeatfrequencyms":
+        case "heartbeatFrequencyMS": return target.getHeartbeatFrequencyMS();
+        case "hosts": return target.getHosts();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "loadbalanced":
+        case "loadBalanced": return target.isLoadBalanced();
+        case "localthresholdms":
+        case "localThresholdMS": return target.getLocalThresholdMS();
+        case "maxconnecting":
+        case "maxConnecting": return target.getMaxConnecting();
+        case "maxidletimems":
+        case "maxIdleTimeMS": return target.getMaxIdleTimeMS();
+        case "maxlifetimems":
+        case "maxLifeTimeMS": return target.getMaxLifeTimeMS();
+        case "maxpoolsize":
+        case "maxPoolSize": return target.getMaxPoolSize();
+        case "maxstalenessseconds":
+        case "maxStalenessSeconds": return target.getMaxStalenessSeconds();
+        case "minpoolsize":
+        case "minPoolSize": return target.getMinPoolSize();
         case "mongoconnection":
         case "mongoConnection": return target.getMongoConnection();
         case "operation": return target.getOperation();
         case "outputtype":
         case "outputType": return target.getOutputType();
+        case "password": return target.getPassword();
         case "persistentid":
         case "persistentId": return target.getPersistentId();
         case "persistenttailtracking":
         case "persistentTailTracking": return target.isPersistentTailTracking();
         case "readpreference":
         case "readPreference": return target.getReadPreference();
+        case "readpreferencetags":
+        case "readPreferenceTags": return target.getReadPreferenceTags();
+        case "replicaset":
+        case "replicaSet": return target.getReplicaSet();
+        case "retryreads":
+        case "retryReads": return target.isRetryReads();
+        case "retrywrites":
+        case "retryWrites": return target.isRetryWrites();
+        case "serverselectiontimeoutms":
+        case "serverSelectionTimeoutMS": return target.getServerSelectionTimeoutMS();
+        case "sockettimeoutms":
+        case "socketTimeoutMS": return target.getSocketTimeoutMS();
+        case "srvmaxhosts":
+        case "srvMaxHosts": return target.getSrvMaxHosts();
+        case "srvservicename":
+        case "srvServiceName": return target.getSrvServiceName();
         case "streamfilter":
         case "streamFilter": return target.getStreamFilter();
         case "tailtrackcollection":
@@ -164,10 +327,18 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": return target.getTailTrackField();
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": return target.getTailTrackIncreasingField();
+        case "tls": return target.isTls();
+        case "tlsallowinvalidhostnames":
+        case "tlsAllowInvalidHostnames": return target.isTlsAllowInvalidHostnames();
+        case "username": return target.getUsername();
+        case "waitqueuetimeoutms":
+        case "waitQueueTimeoutMS": return target.getWaitQueueTimeoutMS();
         case "writeconcern":
         case "writeConcern": return target.getWriteConcern();
         case "writeresultasheader":
         case "writeResultAsHeader": return target.isWriteResultAsHeader();
+        case "zlibcompressionlevel":
+        case "zlibCompressionLevel": return target.getZlibCompressionLevel();
         default: return null;
         }
     }

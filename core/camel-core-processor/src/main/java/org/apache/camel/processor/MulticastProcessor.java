@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,8 +43,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -52,9 +52,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InternalProcessorFactory;
+import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
@@ -63,14 +65,16 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -134,20 +138,17 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     }
 
-    /**
-     * Class that represents prepared fine grained error handlers when processing multicasted/splitted exchanges
-     * <p/>
-     * See the <tt>createProcessorExchangePair</tt> and <tt>createErrorHandler</tt> methods.
-     */
-    static final class ErrorHandlerKey extends KeyValueHolder<Route, Processor> {
+    private final class Scheduler implements Executor {
 
-        ErrorHandlerKey(Route key, Processor value) {
-            super(key, value);
+        @Override
+        public void execute(Runnable command) {
+            schedule(command);
         }
-
     }
 
     protected final Processor onPrepare;
+    protected final ProcessorExchangeFactory processorExchangeFactory;
+    private final AsyncProcessorAwaitManager awaitManager;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
     private final Route route;
@@ -155,19 +156,20 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private Processor errorHandler;
     private String id;
     private String routeId;
-    private Collection<Processor> processors;
+    private final Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
+    private boolean synchronous;
     private final boolean streaming;
     private final boolean parallelAggregate;
-    private final boolean stopOnAggregateException;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
+    private final Scheduler scheduler = new Scheduler();
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<ErrorHandlerKey, Processor> errorHandlers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Processor, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -180,26 +182,17 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
-                              AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
-                              boolean stopOnException, long timeout, Processor onPrepare,
-                              boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, route, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-             streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, parallelAggregate, false);
-    }
-
-    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
                               AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                               boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate, boolean stopOnAggregateException) {
+                              boolean parallelAggregate) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
-        this.internalProcessorFactory = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
+        this.internalProcessorFactory = PluginHelper.getInternalProcessorFactory(camelContext);
+        this.awaitManager = PluginHelper.getAsyncProcessorAwaitManager(camelContext);
         this.route = route;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
@@ -212,7 +205,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
-        this.stopOnAggregateException = stopOnAggregateException;
+        this.processorExchangeFactory = camelContext.getCamelContextExtension()
+                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
     }
 
     @Override
@@ -259,6 +253,23 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return camelContext;
     }
 
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (processorExchangeFactory != null) {
+            processorExchangeFactory.setId(id);
+            processorExchangeFactory.setRouteId(routeId);
+        }
+        ServiceHelper.buildService(processorExchangeFactory);
+    }
+
     @Override
     protected void doInit() throws Exception {
         if (route != null) {
@@ -267,14 +278,42 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 wrapInErrorHandler(route, exchange, processor);
             }
         }
+
+        ServiceHelper.initService(processorExchangeFactory);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (synchronous) {
+            try {
+                // force synchronous processing using await manager
+                awaitManager.process(new AsyncProcessorSupport() {
+                    @Override
+                    public boolean process(Exchange exchange, AsyncCallback callback) {
+                        // must invoke doProcess directly here to avoid calling recursive
+                        return doProcess(exchange, callback);
+                    }
+                }, exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            } finally {
+                callback.done(true);
+            }
+            return true;
+        } else {
+            return doProcess(exchange, callback);
+        }
+    }
+
+    protected boolean doProcess(Exchange exchange, AsyncCallback callback) {
         Iterable<ProcessorExchangePair> pairs;
+        int size = 0;
         try {
             pairs = createProcessorExchangePairs(exchange);
-        } catch (Throwable e) {
+            if (pairs instanceof Collection) {
+                size = ((Collection<ProcessorExchangePair>) pairs).size();
+            }
+        } catch (Exception e) {
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
             // and do the done work
@@ -290,12 +329,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // which is how the routing engine normally operates
         // if we have parallel processing enabled then we cannot run in transacted mode (requires synchronous processing via same thread)
         MulticastTask state = !isParallelProcessing() && exchange.isTransacted()
-                ? new MulticastTransactedTask(exchange, pairs, callback) : new MulticastReactiveTask(exchange, pairs, callback);
+                ? new MulticastTransactedTask(exchange, pairs, callback, size)
+                : new MulticastReactiveTask(exchange, pairs, callback, size);
         if (isParallelProcessing()) {
             executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
             if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleSync(state);
+                reactiveExecutor.scheduleQueue(state);
             } else {
                 reactiveExecutor.scheduleMain(state);
             }
@@ -309,10 +349,42 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     protected void schedule(Runnable runnable) {
         if (isParallelProcessing()) {
-            executorService.submit(() -> reactiveExecutor.schedule(runnable));
+            Runnable task = prepareParallelTask(runnable);
+            executorService.submit(() -> reactiveExecutor.schedule(task));
         } else {
             reactiveExecutor.schedule(runnable);
         }
+    }
+
+    private Runnable prepareParallelTask(Runnable runnable) {
+        Runnable answer = runnable;
+
+        // if MDC is enabled we need to propagate the information
+        // to the sub task which is executed on another thread from the thread pool
+        if (camelContext.isUseMDCLogging()) {
+            String pattern = camelContext.getMDCLoggingKeysPattern();
+            Map<String, String> mdc = MDC.getCopyOfContextMap();
+            if (mdc != null && !mdc.isEmpty()) {
+                answer = () -> {
+                    try {
+                        if (pattern == null || "*".equals(pattern)) {
+                            mdc.forEach(MDC::put);
+                        } else {
+                            final String[] patterns = pattern.split(",");
+                            mdc.forEach((k, v) -> {
+                                if (PatternHelper.matchPatterns(k, patterns)) {
+                                    MDC.put(k, v);
+                                }
+                            });
+                        }
+                    } finally {
+                        runnable.run();
+                    }
+                };
+            }
+        }
+
+        return answer;
     }
 
     protected abstract class MulticastTask implements Runnable {
@@ -321,30 +393,51 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final Iterable<ProcessorExchangePair> pairs;
         final AsyncCallback callback;
         final Iterator<ProcessorExchangePair> iterator;
-        final ReentrantLock lock;
+        final ReentrantLock lock = new ReentrantLock();
         final AsyncCompletionService<Exchange> completion;
-        final AtomicReference<Exchange> result;
+        final AtomicReference<Exchange> result = new AtomicReference<>();
         final AtomicInteger nbExchangeSent = new AtomicInteger();
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
+        final Map<String, String> mdc;
+        final ScheduledFuture<?> timeoutTask;
 
-        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
             this.iterator = pairs.iterator();
-            this.lock = new ReentrantLock();
-            this.completion = new AsyncCompletionService<>(MulticastProcessor.this::schedule, !isStreaming(), lock);
-            this.result = new AtomicReference<>();
             if (timeout > 0) {
-                schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
+                timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
+            } else {
+                timeoutTask = null;
+            }
+            // if MDC is enabled we must make a copy in this constructor when the task
+            // is created by the caller thread, and then propagate back when run is called
+            // which can happen from another thread
+            if (isParallelProcessing() && original.getContext().isUseMDCLogging()) {
+                this.mdc = MDC.getCopyOfContextMap();
+            } else {
+                this.mdc = null;
+            }
+            if (capacity > 0) {
+                this.completion = new AsyncCompletionService<>(scheduler, !isStreaming(), lock, capacity);
+            } else {
+                this.completion = new AsyncCompletionService<>(scheduler, !isStreaming(), lock);
             }
         }
 
         @Override
         public String toString() {
             return "MulticastTask";
+        }
+
+        @Override
+        public void run() {
+            if (this.mdc != null) {
+                this.mdc.forEach(MDC::put);
+            }
         }
 
         protected void aggregate() {
@@ -358,7 +451,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                             doDone(result.get(), true);
                         }
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     original.setException(e);
                     // and do the done work
                     doDone(null, false);
@@ -385,35 +478,53 @@ public class MulticastProcessor extends AsyncProcessorSupport
                             nbAggregated.incrementAndGet();
                         }
                     }
-                    doDone(result.get(), true);
-                } catch (Throwable e) {
+                    doTimeoutDone(result.get(), true);
+                } catch (Exception e) {
                     original.setException(e);
                     // and do the done work
-                    doDone(null, false);
+                    doTimeoutDone(null, false);
                 } finally {
                     lock.unlock();
                 }
             }
         }
 
+        protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
+            if (done.compareAndSet(false, true)) {
+                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (done.compareAndSet(false, true)) {
+                // cancel timeout if we are done normally (we cannot cancel if called via onTimeout)
+                if (timeoutTask != null) {
+                    try {
+                        timeoutTask.cancel(true);
+                    } catch (Exception e) {
+                        // ignore
+                        LOG.debug("Cancel timeout task caused an exception. This exception is ignored.", e);
+                    }
+                }
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
     }
 
     /**
-     * Sub taks processed reactive via the {@link ReactiveExecutor}.
+     * Sub task processed reactive via the {@link ReactiveExecutor}.
      */
     protected class MulticastReactiveTask extends MulticastTask {
 
-        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
-            super(original, pairs, callback);
+        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
+                                     int size) {
+            super(original, pairs, callback, size);
         }
 
         @Override
         public void run() {
+            super.run();
+
             try {
                 if (done.get()) {
                     return;
@@ -436,16 +547,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     return;
                 }
 
+                // TODO looks like pair can still be null as the if above has composite condition?
                 Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
-
-                // Schedule the processing of the next pair
-                if (hasNext) {
-                    if (isParallelProcessing()) {
-                        schedule(this);
-                    }
-                } else {
+                if (!hasNext) {
                     allSent.set(true);
                 }
 
@@ -459,8 +565,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
-                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
-                                "Multicast processing failed for number " + index, LOG);
+                        String msg = null;
+                        if (LOG.isDebugEnabled()) {
+                            msg = "Multicast processing failed for number " + index;
+                        }
+                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
                         if (stopOnException && !continueProcessing) {
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
@@ -488,12 +597,15 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         }
                     });
                 });
+                // after submitting this pair then move on to the next pair (if in parallel mode)
+                if (hasNext && isParallelProcessing()) {
+                    schedule(this);
+                }
             } catch (Exception e) {
                 original.setException(e);
                 doDone(null, false);
             }
         }
-
     }
 
     /**
@@ -502,12 +614,15 @@ public class MulticastProcessor extends AsyncProcessorSupport
      */
     protected class MulticastTransactedTask extends MulticastTask {
 
-        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
-            super(original, pairs, callback);
+        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
+                                       int size) {
+            super(original, pairs, callback, size);
         }
 
         @Override
         public void run() {
+            super.run();
+
             boolean next = true;
             while (next) {
                 try {
@@ -542,16 +657,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 return false;
             }
 
+            // TODO looks like pair can still be null as the if above has composite condition?
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
-
-            // Schedule the processing of the next pair
-            if (hasNext) {
-                if (isParallelProcessing()) {
-                    schedule(this);
-                }
-            } else {
+            if (!hasNext) {
                 allSent.set(true);
             }
 
@@ -559,17 +669,24 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
             // compute time taken if sending to another endpoint
             StopWatch watch = beforeSend(pair);
+
+            // use synchronous processing in transacted mode
             Processor sync = pair.getProcessor();
             try {
                 sync.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
             } finally {
                 afterSend(pair, watch);
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
             // remember to test for stop on exception and aggregate before copying back results
-            boolean continueProcessing = PipelineHelper.continueProcessing(exchange,
-                    "Multicast processing failed for number " + index, LOG);
+            String msg = null;
+            if (LOG.isDebugEnabled()) {
+                msg = "Multicast processing failed for number " + index;
+            }
+            boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
             if (stopOnException && !continueProcessing) {
                 if (exchange.getException() != null) {
                     // wrap in exception to explain where it failed
@@ -586,30 +703,40 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 return false;
             }
 
-            // accept the exchange as a result
-            completion.submit(exchangeResult -> exchangeResult.accept(exchange));
+            completion.submit(exchangeResult -> {
+                // accept the exchange as a result
+                exchangeResult.accept(exchange);
 
-            // aggregate exchanges if any
-            aggregate();
+                // aggregate exchanges if any
+                aggregate();
+            });
+
+            // after submitting this pair then move on to the next pair (if in parallel mode)
+            if (hasNext && isParallelProcessing()) {
+                schedule(this);
+            }
 
             // next step
-            return true;
+            boolean next = hasNext && !isParallelProcessing();
+            LOG.trace("Run next: {}", next);
+            return next;
         }
     }
 
-    protected void schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
+    protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
         if (executor instanceof ScheduledExecutorService) {
-            ((ScheduledExecutorService) executor).schedule(runnable, delay, unit);
+            return ((ScheduledExecutorService) executor).schedule(runnable, delay, unit);
         } else {
             executor.execute(() -> {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    // ignore
+                    Thread.currentThread().interrupt();
                 }
                 runnable.run();
             });
         }
+        return null;
     }
 
     protected StopWatch beforeSend(ProcessorExchangePair pair) {
@@ -660,21 +787,16 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param pairs        the pairs with the exchanges to process
      * @param callback     the callback
      * @param doneSync     the <tt>doneSync</tt> parameter to call on callback
-     * @param forceExhaust whether or not error handling is exhausted
+     * @param forceExhaust whether error handling is exhausted
      */
     protected void doDone(
             Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
             AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
-        // we are done so close the pairs iterator
-        if (pairs instanceof Closeable) {
-            IOHelper.close((Closeable) pairs, "pairs", LOG);
-        }
-
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
         // invoke the on completion callback
         if (strategy != null) {
-            strategy.onCompletion(subExchange);
+            strategy.onCompletion(subExchange, original);
         }
 
         // cleanup any per exchange aggregation strategy
@@ -684,8 +806,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        ExtendedExchange see = (ExtendedExchange) subExchange;
-        boolean exhaust = forceExhaust || see != null && (see.getException() != null || see.isRedeliveryExhausted());
+        boolean exhaust = forceExhaust || subExchange != null
+                && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();
@@ -698,9 +820,29 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // if we stopped due an exception then only propagate the exception
                 original.setException(subExchange.getException());
             } else {
-                // copy the current result to original so it will contain this result of this eip
+                // copy the current result to original (preserve original correlation id),
+                // so it will contain this result of this eip
+                Object correlationId = original.removeProperty(ExchangePropertyKey.CORRELATION_ID);
                 ExchangeHelper.copyResults(original, subExchange);
+                if (correlationId != null) {
+                    original.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
+                }
             }
+        }
+
+        if (processorExchangeFactory != null && pairs != null) {
+            // the exchanges on the pairs was created with a factory, so they should be released
+            try {
+                for (ProcessorExchangePair pair : pairs) {
+                    processorExchangeFactory.release(pair.getExchange());
+                }
+            } catch (Exception e) {
+                LOG.warn("Error releasing exchange due to {}. This exception is ignored.", e.getMessage(), e);
+            }
+        }
+        // we are done so close the pairs iterator
+        if (pairs instanceof Closeable) {
+            IOHelper.close((Closeable) pairs, "pairs", LOG);
         }
 
         // .. and then if there was an exception we need to configure the redelivery exhaust
@@ -710,7 +852,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we would then do that twice
-            original.adapt(ExtendedExchange.class).setRedeliveryExhausted(exhaust);
+            original.getExchangeExtension().setRedeliveryExhausted(exhaust);
         }
 
         reactiveExecutor.schedule(callback);
@@ -767,20 +909,22 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
-        exchange.setProperty(Exchange.MULTICAST_INDEX, index);
+        exchange.setProperty(ExchangePropertyKey.MULTICAST_INDEX, index);
         if (hasNext) {
-            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.FALSE);
+            exchange.setProperty(ExchangePropertyKey.MULTICAST_COMPLETE, Boolean.FALSE);
         } else {
-            exchange.setProperty(Exchange.MULTICAST_COMPLETE, Boolean.TRUE);
+            exchange.setProperty(ExchangePropertyKey.MULTICAST_COMPLETE, Boolean.TRUE);
         }
     }
 
     protected Integer getExchangeIndex(Exchange exchange) {
-        return exchange.getProperty(Exchange.MULTICAST_INDEX, Integer.class);
+        return exchange.getProperty(ExchangePropertyKey.MULTICAST_INDEX, Integer.class);
     }
 
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
+            throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<>(processors.size());
+        Map<String, Object> txData = null;
 
         StreamCache streamCache = null;
         if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache) {
@@ -791,8 +935,16 @@ public class MulticastProcessor extends AsyncProcessorSupport
         int index = 0;
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
-            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-
+            Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            copy.getExchangeExtension().setTransacted(exchange.isTransacted());
+            // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
+            // during the transaction.
+            if (exchange.isTransacted() && copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+                if (txData == null) {
+                    txData = new ConcurrentHashMap<>();
+                }
+                copy.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
+            }
             if (streamCache != null) {
                 if (index > 0) {
                     // copy it otherwise parallel processing is not possible,
@@ -810,8 +962,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
             // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
             // Set therefore the unit of work of the  parent route as stream cache unit of work,
             // if it is not already set.
-            if (copy.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                copy.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
+            if (copy.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                copy.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
             }
             // if we share unit of work, we need to prepare the child exchange
             if (isShareUnitOfWork()) {
@@ -868,37 +1020,35 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     protected Processor wrapInErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
+        Processor key = processor;
 
         if (route != this.route && this.route != null) {
             throw new UnsupportedOperationException("Is this really correct ?");
         }
-        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
+        Boolean tryBlock = (Boolean) exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
 
         // do not wrap in error handler if we are inside a try block
-        if (!tryBlock && route != null) {
+        if (route != null && (tryBlock == null || !tryBlock)) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
 
-            // create key for cache
-            final ErrorHandlerKey key = new ErrorHandlerKey(route, processor);
-
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
             if (answer != null) {
-                LOG.trace("Using existing error handler for: {}", processor);
+                LOG.trace("Using existing error handler for: {}", key);
                 return answer;
             }
 
-            LOG.trace("Creating error handler for: {}", processor);
+            LOG.trace("Creating error handler for: {}", key);
             try {
-                processor = wrapInErrorHandler(route, processor);
+                processor = wrapInErrorHandler(route, key);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
+                boolean child = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
 
                 // must start the error handler
                 ServiceHelper.startService(answer);
@@ -906,6 +1056,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // here we don't cache the child unit of work
                 if (!child) {
                     // add to cache
+                    // TODO returned value ignored intentionally?
+                    // Findbugs alert:
+                    // The putIfAbsent method is typically used to ensure that a single value
+                    // is associated with a given key (the first value for which put if absent succeeds).
+                    // If you ignore the return value and retain a reference to the value passed in,
+                    // you run the risk of retaining a value that is not the one that is associated
+                    // with the key in the map. If it matters which one you use and you use the one
+                    // that isn't stored in the map, your program will behave incorrectly.
                     errorHandlers.putIfAbsent(key, answer);
                 }
 
@@ -926,7 +1084,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             return ((ErrorHandlerSupport) errorHandler).clone(processor);
         }
         // fallback and use reifier to create the error handler
-        return camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(route, processor);
+        return camelContext.getCamelContextExtension().createErrorHandler(route, processor);
     }
 
     /**
@@ -938,7 +1096,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      */
     protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        UnitOfWork parent = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
             return internalProcessorFactory.addChildUnitOfWorkProcessorAdvice(camelContext, processor, route, parent);
         } else {
@@ -956,7 +1114,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param parentExchange the parent exchange
      */
     protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
-        childExchange.setProperty(Exchange.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
+        childExchange.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
     }
 
     @Override
@@ -972,11 +1130,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
             aggregateExecutorService = createAggregateExecutorService(name);
             shutdownAggregateExecutorService = true;
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
-        }
-
-        ServiceHelper.startService(aggregationStrategy, processors);
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
+        ServiceHelper.startService(aggregationStrategy, processors, processorExchangeFactory);
     }
 
     /**
@@ -993,12 +1148,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy);
+        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy);
+        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         errorHandlers.clear();
 
@@ -1013,7 +1168,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer) {
             Producer producer = (Producer) processor;
-            exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
         }
     }
 
@@ -1022,7 +1177,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         // prefer to use per Exchange aggregation strategy over a global strategy
         if (exchange != null) {
-            Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+            Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
             Map<Object, AggregationStrategy> map = CastUtils.cast(property);
             if (map != null) {
                 answer = map.get(this);
@@ -1042,7 +1197,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param aggregationStrategy the strategy
      */
     protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationStrategy aggregationStrategy) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             map = new ConcurrentHashMap<>();
@@ -1054,7 +1209,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // store the strategy using this processor as the key
         // (so we can store multiple strategies on the same exchange)
         map.put(this, aggregationStrategy);
-        exchange.setProperty(Exchange.AGGREGATION_STRATEGY, map);
+        exchange.setProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, map);
     }
 
     /**
@@ -1063,7 +1218,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param exchange the current exchange
      */
     protected void removeAggregationStrategyFromExchange(Exchange exchange) {
-        Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
+        Map<?, ?> property = exchange.getProperty(ExchangePropertyKey.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
             return;
@@ -1120,10 +1275,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     public boolean isParallelAggregate() {
         return parallelAggregate;
-    }
-
-    public boolean isStopOnAggregateException() {
-        return stopOnAggregateException;
     }
 
     public boolean isShareUnitOfWork() {

@@ -17,7 +17,6 @@
 package org.apache.camel.component.grpc;
 
 import java.io.File;
-import java.io.IOException;
 
 import io.grpc.Server;
 import io.grpc.StatusRuntimeException;
@@ -25,13 +24,16 @@ import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.SslProvider;
+import io.netty.handler.ssl.JdkSslContext;
+import io.netty.handler.ssl.OpenSslClientContext;
+import io.netty.handler.ssl.SslContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -61,13 +63,16 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startGrpcServer() throws Exception {
+        SslContext sslContext = GrpcSslContexts
+                .forServer(new File("src/test/resources/certs/server.pem"), new File("src/test/resources/certs/server.key"))
+                .trustManager(new File("src/test/resources/certs/ca.pem"))
+                .clientAuth(ClientAuth.REQUIRE)
+                .build();
+
+        Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
+
         grpcServerWithTLS = NettyServerBuilder.forPort(GRPC_TLS_TEST_PORT)
-                .sslContext(GrpcSslContexts.forServer(new File("src/test/resources/certs/server.pem"),
-                        new File("src/test/resources/certs/server.key"))
-                        .trustManager(new File("src/test/resources/certs/ca.pem"))
-                        .clientAuth(ClientAuth.REQUIRE)
-                        .sslProvider(SslProvider.OPENSSL)
-                        .build())
+                .sslContext(sslContext)
                 .addService(new PingPongImpl()).build().start();
 
         grpcServerWithJWT = NettyServerBuilder.forPort(GRPC_JWT_TEST_PORT)
@@ -81,20 +86,20 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServerWithTLS != null) {
             grpcServerWithTLS.shutdown();
-            LOG.info("gRPC server with TLS stoped");
+            LOG.info("gRPC server with TLS stopped");
         }
 
         if (grpcServerWithJWT != null) {
             grpcServerWithJWT.shutdown();
-            LOG.info("gRPC server with JWT stoped");
+            LOG.info("gRPC server with JWT stopped");
         }
     }
 
     @Test
-    public void testWithEnableTLS() throws Exception {
+    public void testWithEnableTLS() {
         LOG.info("gRPC PingSyncSync method test start with TLS enable");
         // Testing simple sync method invoke using TLS negotiation
         PingRequest pingRequest
@@ -108,7 +113,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testWithCorrectJWT() throws Exception {
+    public void testWithCorrectJWT() {
         LOG.info("gRPC PingSyncSync method test start with correct JWT authentication");
         // Testing simple sync method invoke using correct JWT authentication
         PingRequest pingRequest
@@ -122,7 +127,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testWithIncorrectJWT() throws Exception {
+    public void testWithIncorrectJWT() {
         LOG.info("gRPC PingSyncSync method test start with incorrect JWT authentication");
         // Testing simple sync method invoke using incorrect JWT authentication
         PingRequest pingRequest
@@ -140,7 +145,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

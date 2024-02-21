@@ -17,7 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -27,9 +26,12 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
@@ -39,21 +41,30 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final Processor processor;
     private final ProcessorDefinition<?> definition;
     private final String id;
-    private String stepId;
+    private final int nodeLevel;
+    private final String stepId;
     private Route route;
+    private String sourceLocation;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
         this.context = context;
         this.processor = processor;
         this.definition = definition;
-        this.id = definition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        this.nodeLevel = ProcessorDefinitionHelper.getNodeLevel(definition);
+        this.id = definition.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         StepDefinition step;
         if (definition instanceof StepDefinition) {
             step = (StepDefinition) definition;
         } else {
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
-        this.stepId = step != null ? step.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()) : null;
+        this.stepId = step != null
+                ? step.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)) : null;
+        this.sourceLocation = definition.getLocation();
+        if (sourceLocation == null) {
+            RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+            sourceLocation = rd != null ? rd.getLocation() : null;
+        }
     }
 
     @Override
@@ -92,6 +103,22 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     @Override
     public Integer getIndex() {
         return definition.getIndex();
+    }
+
+    @Override
+    public int getLevel() {
+        return nodeLevel;
+    }
+
+    @Override
+    public String getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
+    public Integer getSourceLineNumber() {
+        int line = definition.getLineNumber();
+        return line >= 0 ? line : null;
     }
 
     @Override
@@ -140,8 +167,21 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     }
 
     @Override
+    public String getNodePrefixId() {
+        if (route != null) {
+            return route.getNodePrefixId();
+        }
+        return null;
+    }
+
+    @Override
     public String getProcessorId() {
         return id;
+    }
+
+    @Override
+    public String getProcessorName() {
+        return definition.getShortName();
     }
 
     @Override
@@ -162,7 +202,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     @Override
     public String dumpProcessorAsXml() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        return ecc.getModelToXMLDumper().dumpModelAsXml(context, definition);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, definition);
     }
 }

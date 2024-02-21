@@ -17,7 +17,11 @@
 package org.apache.camel.impl.engine;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -26,6 +30,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,25 +38,40 @@ import org.slf4j.LoggerFactory;
  * Base class for package scan resolvers.
  */
 public abstract class BasePackageScanResolver extends ServiceSupport implements CamelContextAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected String[] acceptableSchemes = {};
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
     private CamelContext camelContext;
 
     public BasePackageScanResolver() {
+        initialize();
+    }
+
+    /**
+     * Performs overridable initialization logic for the package scan resolver
+     */
+    public void initialize() {
         try {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
-                log.trace("Adding ContextClassLoader from current thread: {}", ccl);
                 classLoaders.add(ccl);
             }
         } catch (Exception e) {
             // Ignore this exception
-            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
+            logger().warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
                     e.getMessage());
         }
 
         classLoaders.add(BasePackageScanResolver.class.getClassLoader());
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // ensure we also use app context class-loader
+        if (camelContext != null && camelContext.getApplicationContextClassLoader() != null) {
+            addClassLoader(camelContext.getApplicationContextClassLoader());
+        }
     }
 
     @Override
@@ -112,14 +132,81 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        log.trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
+        logger().trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
 
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
         // trailing slash is harmless for other URLs
-        if (!packageName.endsWith("/")) {
+        if (!packageName.isEmpty() && !packageName.endsWith("/")) {
             packageName = packageName + "/";
         }
         return loader.getResources(packageName);
+    }
+
+    protected String parseUrlPath(URL url) {
+        String urlPath = url.getFile();
+        urlPath = URLDecoder.decode(urlPath, StandardCharsets.UTF_8);
+        if (logger().isTraceEnabled()) {
+            logger().trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
+        }
+
+        // If it's a file in a directory, trim the stupid file: spec
+        if (urlPath.startsWith("file:")) {
+            // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
+            // for example + being decoded to something else (+ can be used in temp folders on Mac OS)
+            // to remedy this then create new path without using the URLDecoder
+            try {
+                urlPath = new URI(url.getFile()).getPath();
+            } catch (URISyntaxException e) {
+                // fallback to use as it was given from the URLDecoder
+                // this allows us to work on Windows if users have spaces in paths
+            }
+
+            if (urlPath.startsWith("file:")) {
+                urlPath = urlPath.substring(5);
+            }
+        }
+
+        // osgi bundles should be skipped
+        if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
+            logger().trace("Skipping OSGi bundle: {}", url);
+            return null;
+        }
+
+        // bundle resource should be skipped
+        if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
+            logger().trace("Skipping bundleresource: {}", url);
+            return null;
+        }
+
+        // Else it's in a JAR, grab the path to the jar
+        return StringHelper.before(urlPath, "!", urlPath);
+    }
+
+    protected Enumeration<URL> getUrls(String packageName, ClassLoader loader) {
+        Enumeration<URL> urls;
+        try {
+            urls = getResources(loader, packageName);
+            if (!urls.hasMoreElements()) {
+                logger().trace("No URLs returned by classloader");
+            }
+        } catch (IOException ioe) {
+            logger().warn("Cannot read package: {}", packageName, ioe);
+            return null;
+        }
+        return urls;
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private static final class Holder {
+        static final Logger LOG = LoggerFactory.getLogger(Holder.class);
+    }
+
+    private static Logger logger() {
+        return Holder.LOG;
     }
 
 }

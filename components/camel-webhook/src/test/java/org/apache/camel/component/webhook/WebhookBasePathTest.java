@@ -70,7 +70,7 @@ public class WebhookBasePathTest extends WebhookTestBase {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("wb-delegate-component", new TestComponent(endpoint -> {
             endpoint.setWebhookHandler(proc -> ex -> {
                 ex.getMessage().setBody("webhook");
@@ -80,10 +80,10 @@ public class WebhookBasePathTest extends WebhookTestBase {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 restConfiguration()
                         .host("0.0.0.0")

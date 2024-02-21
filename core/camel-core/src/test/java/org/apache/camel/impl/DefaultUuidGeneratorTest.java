@@ -44,13 +44,13 @@ public class DefaultUuidGeneratorTest {
         UuidGenerator uuidGenerator = new DefaultUuidGenerator();
         StopWatch watch = new StopWatch();
 
-        LOG.info("First id: " + uuidGenerator.generateUuid());
+        LOG.info("First id: {}", uuidGenerator.generateUuid());
         for (int i = 0; i < 500000; i++) {
             uuidGenerator.generateUuid();
         }
-        LOG.info("Last id:  " + uuidGenerator.generateUuid());
+        LOG.info("Last id: {}", uuidGenerator.generateUuid());
 
-        LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
     }
 
 }

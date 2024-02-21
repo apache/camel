@@ -1,14 +1,15 @@
-[[spring-ldap-component]]
 = Spring LDAP Component
-:docTitle: Spring LDAP
-:artifactId: camel-spring-ldap
+:doctitle: Spring LDAP
+:shortname: spring-ldap
+:artifactid: camel-spring-ldap
 :description: Perform searches in LDAP servers using filters as the message payload.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-ldap.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-ldap
 
 *Since Camel {since}*
 
@@ -32,7 +33,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ----------------------------------------
 spring-ldap:springLdapTemplate[?options]
 ----------------------------------------
@@ -42,55 +42,20 @@ http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap
 LDAP Template bean]. In this bean, you configure the URL and the
 credentials for your LDAP access.
 
-== Options
 
+
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Spring LDAP component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The Spring LDAP endpoint is configured using URI syntax:
 
-----
-spring-ldap:templateName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *templateName* | *Required* Name of the Spring LDAP Template bean |  | String
-|===
-
-
-=== Query Parameters (3 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The LDAP operation to be performed. There are 6 enums and the value can be one of: SEARCH, BIND, UNBIND, AUTHENTICATE, MODIFY_ATTRIBUTES, FUNCTION_DRIVEN |  | LdapOperation
-| *scope* (producer) | The scope of the search operation. There are 3 enums and the value can be one of: object, onelevel, subtree | subtree | String
-|===
 // endpoint options: END
-
 
 
 == Usage
@@ -144,15 +109,16 @@ This operation allows dynamic invocation of LdapTemplate methods that are not co
 
 *Key definitions*
 
-In order to avoid spelling errors, the following constants are defined
+To avoid spelling errors, the following constants are defined
 in `org.apache.camel.springldap.SpringLdapProducer`:
 
-* public static final String DN = "dn"
-* public static final String FILTER = "filter"
-* public static final String ATTRIBUTES = "attributes"
-* public static final String PASSWORD = "password";
-* public static final String MODIFICATION_ITEMS = "modificationItems";
-* public static final String FUNCTION = "function";
-* public static final String REQUEST = "request";
+* `public static final String DN = "dn"`
+* `public static final String FILTER = "filter"`
+* `public static final String ATTRIBUTES = "attributes"`
+* `public static final String PASSWORD = "password";`
+* `public static final String MODIFICATION_ITEMS = "modificationItems";`
+* `public static final String FUNCTION = "function";`
+* `public static final String REQUEST = "request";`
 
-include::camel-spring-boot::page$spring-ldap-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

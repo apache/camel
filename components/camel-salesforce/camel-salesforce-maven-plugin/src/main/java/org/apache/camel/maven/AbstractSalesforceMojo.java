@@ -16,48 +16,22 @@
  */
 package org.apache.camel.maven;
 
-import java.io.IOException;
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.eclipse.jetty.client.HttpProxy;
-import org.eclipse.jetty.client.Origin;
-import org.eclipse.jetty.client.ProxyConfiguration;
-import org.eclipse.jetty.client.Socks4Proxy;
-import org.eclipse.jetty.client.api.Authentication;
-import org.eclipse.jetty.client.util.BasicAuthentication;
-import org.eclipse.jetty.client.util.DigestAuthentication;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * Base class for any Salesforce MOJO.
  */
-abstract class AbstractSalesforceMojo extends AbstractMojo {
-
-    // default connect and call timeout
-    private static final int DEFAULT_TIMEOUT = 60000;
+public abstract class AbstractSalesforceMojo extends AbstractMojo {
 
     /**
      * Salesforce client id.
@@ -173,155 +147,42 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.version", defaultValue = SalesforceEndpointConfig.DEFAULT_VERSION)
     String version;
 
-    private long responseTimeout;
+    private AbstractSalesforceExecution execution;
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
-        setup();
-
-        final RestClient restClient = connectToSalesforce();
         try {
-            executeWithClient(restClient);
-        } finally {
-            disconnectFromSalesforce(restClient);
+            setup();
+            execution.execute();
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
+
     }
 
-    public long getResponseTimeout() {
-        return responseTimeout;
-    }
-
-    private RestClient connectToSalesforce() throws MojoExecutionException {
-        RestClient restClient = null;
-        try {
-            final SalesforceHttpClient httpClient = createHttpClient();
-
-            // connect to Salesforce
-            getLog().info("Logging in to Salesforce");
-            final SalesforceSession session = httpClient.getSession();
-            try {
-                session.login(null);
-            } catch (final SalesforceException e) {
-                final String msg = "Salesforce login error " + e.getMessage();
-                throw new MojoExecutionException(msg, e);
-            }
-            getLog().info("Salesforce login successful");
-
-            // create rest client
-
-            restClient = new DefaultRestClient(httpClient, version, PayloadFormat.JSON, session, new SalesforceLoginConfig());
-            // remember to start the active client object
-            ((DefaultRestClient) restClient).start();
-
-            return restClient;
-        } catch (final Exception e) {
-            final String msg = "Error connecting to Salesforce: " + e.getMessage();
-            disconnectFromSalesforce(restClient);
-            throw new MojoExecutionException(msg, e);
-        }
-    }
-
-    private SalesforceHttpClient createHttpClient() throws MojoExecutionException {
-        final SalesforceHttpClient httpClient;
-
-        CamelContext camelContext = new DefaultCamelContext();
-
-        // set ssl context parameters
-        try {
-            final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
-
-            SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
-
-            httpClient = new SalesforceHttpClient(sslContextFactory);
-        } catch (final GeneralSecurityException e) {
-            throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
-        } catch (final IOException e) {
-            throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
-        }
-
-        // default settings
-        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
-        httpClient.setTimeout(DEFAULT_TIMEOUT);
-
-        // enable redirects, no need for a RedirectListener class in Jetty 9
-        httpClient.setFollowRedirects(true);
-
-        // set HTTP client parameters
-        if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
-            try {
-                PropertyBindingSupport.bindProperties(camelContext, httpClient, new HashMap<>(httpClientProperties));
-            } catch (final Exception e) {
-                throw new MojoExecutionException("Error setting HTTP client properties: " + e.getMessage(), e);
-            }
-        }
-
-        // wait for 1 second longer than the HTTP client response timeout
-        responseTimeout = httpClient.getTimeout() + 1000L;
-
-        // set http proxy settings
-        // set HTTP proxy settings
-        if (httpProxyHost != null && httpProxyPort != null) {
-            final Origin.Address proxyAddress = new Origin.Address(httpProxyHost, httpProxyPort);
-            ProxyConfiguration.Proxy proxy;
-            if (isHttpProxySocks4) {
-                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
-            } else {
-                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
-            }
-            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
-                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
-            }
-            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
-                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
-            }
-            httpClient.getProxyConfiguration().getProxies().add(proxy);
-        }
-        if (httpProxyUsername != null && httpProxyPassword != null) {
-            StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
-            StringHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
-
-            final Authentication authentication;
-            if (httpProxyUseDigestAuth) {
-                authentication = new DigestAuthentication(
-                        URI.create(httpProxyAuthUri), httpProxyRealm, httpProxyUsername, httpProxyPassword);
-            } else {
-                authentication = new BasicAuthentication(
-                        URI.create(httpProxyAuthUri), httpProxyRealm, httpProxyUsername, httpProxyPassword);
-            }
-            httpClient.getAuthenticationStore().addAuthentication(authentication);
-        }
-
-        // set session before calling start()
-        final SalesforceSession session = new SalesforceSession(
-                new DefaultCamelContext(), httpClient, httpClient.getTimeout(),
-                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
-        httpClient.setSession(session);
-
-        try {
-            httpClient.start();
-        } catch (final Exception e) {
-            throw new MojoExecutionException("Error creating HTTP client: " + e.getMessage(), e);
-        }
-
-        return httpClient;
-    }
-
-    private void disconnectFromSalesforce(final RestClient restClient) {
-        if (restClient == null) {
-            return;
-        }
-
-        try {
-            final SalesforceHttpClient httpClient = (SalesforceHttpClient) ((DefaultRestClient) restClient).getHttpClient();
-            ServiceHelper.stopAndShutdownServices(restClient, httpClient.getSession(), httpClient);
-        } catch (final Exception e) {
-            getLog().error("Error stopping Salesforce HTTP client", e);
-        }
-    }
-
-    protected abstract void executeWithClient(RestClient client) throws MojoExecutionException;
+    protected abstract AbstractSalesforceExecution getSalesforceExecution();
 
     protected void setup() {
+        execution = getSalesforceExecution();
+
+        execution.setClientId(clientId);
+        execution.setClientSecret(clientSecret);
+        execution.setHttpClientProperties(httpClientProperties);
+        execution.setHttpProxyAuthUri(httpProxyAuthUri);
+        execution.setHttpProxyHost(httpProxyHost);
+        execution.setHttpProxyPort(httpProxyPort);
+        execution.setHttpProxyRealm(httpProxyRealm);
+        execution.setHttpProxyUsername(httpProxyUsername);
+        execution.setHttpProxyPassword(httpProxyPassword);
+        execution.setHttpProxyExcludedAddresses(httpProxyExcludedAddresses);
+        execution.setHttpProxyIncludedAddresses(httpProxyIncludedAddresses);
+        execution.setHttpProxySocks4(isHttpProxySocks4);
+        execution.setHttpProxySecure(isHttpProxySecure);
+        execution.setHttpProxyUseDigestAuth(httpProxyUseDigestAuth);
+        execution.setLoginUrl(loginUrl);
+        execution.setUserName(userName);
+        execution.setPassword(password);
+        execution.setVersion(version);
+        execution.setSslContextParameters(sslContextParameters);
     }
 }

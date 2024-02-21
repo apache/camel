@@ -36,21 +36,22 @@ public @interface Message {
 
     /**
      * Name describing the message (optional)
-     * 
+     *
      * @return String
      */
     String name() default "";
 
     /**
-     * Pair separator used to split the key value pairs in tokens (mandatory)
-     * 
+     * Pair separator used to split the key value pairs in tokens (mandatory). Can be '=', ';', or 'anything'.
+     *
      * @return String
      */
     String pairSeparator();
 
     /**
-     * Key value pair separator is used to split the values from their keys (mandatory)
-     * 
+     * Key value pair separator is used to split the values from their keys (mandatory). Can be '\u0001', '\u0009', '#',
+     * or 'anything'.
+     *
      * @return String
      */
     String keyValuePairSeparator();
@@ -66,16 +67,18 @@ public @interface Message {
     String version() default "4.1";
 
     /**
-     * Character to be used to add a carriage return after each record (optional) Three values can be used : WINDOWS,
-     * UNIX or MAC
-     * 
+     * Character to be used to add a carriage return after each record (optional). Possible values = WINDOWS, UNIX, MAC,
+     * or custom. If you specify a value other than the three listed before, the value you enter (custom) will be used
+     * as the CRLF character(s).
+     *
      * @return String
      */
     String crlf() default "WINDOWS";
 
     /**
-     * Indicates if the message must be ordered in output
-     * 
+     * Indicates if the message must be ordered in output. This annotation is associated to the message class of the
+     * model and must be declared one time.
+     *
      * @return boolean
      */
     boolean isOrdered() default false;

@@ -43,6 +43,7 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -143,16 +144,19 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
     }
 
+    @Override
     protected void doSuspend() throws Exception {
         this.suspended = true;
         super.doSuspend();
     }
 
+    @Override
     protected void doResume() throws Exception {
         this.suspended = false;
         super.doResume();
     }
 
+    @Override
     public boolean isSuspended() {
         return this.suspended;
     }
@@ -161,30 +165,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     public void handleRequest(HttpServerExchange httpExchange) throws Exception {
         HttpString requestMethod = httpExchange.getRequestMethod();
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
-            StringJoiner methodsBuilder = new StringJoiner(",");
-
-            Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
-            for (HttpHandlerRegistrationInfo reg : handlers) {
-                URI uri = reg.getUri();
-                // what other HTTP methods may exists for the same path
-                if (reg.getMethodRestrict() != null && getEndpoint().getHttpURI().equals(uri)) {
-                    String restrict = reg.getMethodRestrict();
-                    if (restrict.endsWith(",OPTIONS")) {
-                        restrict = restrict.substring(0, restrict.length() - 8);
-                    }
-                    methodsBuilder.add(restrict);
-                }
-            }
-            String allowedMethods = methodsBuilder.toString();
-            if (ObjectHelper.isEmpty(allowedMethods)) {
-                allowedMethods = getEndpoint().getHttpMethodRestrict();
-            }
-            if (ObjectHelper.isEmpty(allowedMethods)) {
-                allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            if (!allowedMethods.contains("OPTIONS")) {
-                allowedMethods = allowedMethods + ",OPTIONS";
-            }
+            final String allowedMethods = evalAllowedMethods();
             //return list of allowed methods in response headers
             httpExchange.setStatusCode(StatusCodes.OK);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
@@ -240,22 +221,49 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
     }
 
+    private String evalAllowedMethods() {
+        StringJoiner methodsBuilder = new StringJoiner(",");
+
+        Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
+        for (HttpHandlerRegistrationInfo reg : handlers) {
+            URI uri = reg.getUri();
+            // what other HTTP methods may exists for the same path
+            if (reg.getMethodRestrict() != null && getEndpoint().getHttpURI().equals(uri)) {
+                String restrict = reg.getMethodRestrict();
+                if (restrict.endsWith(",OPTIONS")) {
+                    restrict = restrict.substring(0, restrict.length() - 8);
+                }
+                methodsBuilder.add(restrict);
+            }
+        }
+        String allowedMethods = methodsBuilder.toString();
+        if (ObjectHelper.isEmpty(allowedMethods)) {
+            allowedMethods = getEndpoint().getHttpMethodRestrict();
+        }
+        if (ObjectHelper.isEmpty(allowedMethods)) {
+            allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+        }
+        if (!allowedMethods.contains("OPTIONS")) {
+            allowedMethods = allowedMethods + ",OPTIONS";
+        }
+        return allowedMethods;
+    }
+
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange)
             throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
-            String message = httpExchange.getStatusCode() == 500 ? "Exception" : "No response available";
             LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             // respect Content-Type assigned from HttpBinding if any
-            String contentType = camelExchange.getIn().getHeader(Exchange.CONTENT_TYPE,
+            String contentType = camelExchange.getIn().getHeader(UndertowConstants.CONTENT_TYPE,
                     MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"), String.class);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, contentType);
-            httpExchange.getResponseSender().send(message);
+            httpExchange.getResponseSender().send(""); // empty body
             return;
         }
 
-        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+        if (getEndpoint().isUseStreaming() && body instanceof InputStream) {
             httpExchange.startBlocking();
             try (InputStream input = (InputStream) body;
                  OutputStream output = httpExchange.getOutputStream()) {
@@ -289,15 +297,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
         exchange.getIn().setBody(message);
 
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                            exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     /**
@@ -322,14 +324,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (transportExchange != null) {
             in.setHeader(UndertowConstants.EXCHANGE, transportExchange);
         }
-        // send exchange using the async routing engine
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                }
-            }
-        });
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
@@ -362,8 +359,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
         }
 
-        exchange.setProperty(Exchange.CHARSET_NAME, httpExchange.getRequestCharset());
-        in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, httpExchange.getRequestCharset());
+        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, httpExchange.getRequestCharset());
+        in.setHeader(UndertowConstants.HTTP_CHARACTER_ENCODING, httpExchange.getRequestCharset());
 
         exchange.setIn(in);
         return exchange;

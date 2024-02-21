@@ -66,7 +66,7 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      * Test exception when trying to access any other object type on AS/400
      */
     @Test
-    public void testCreateEndpointForOtherObjectType() throws Exception {
+    public void testCreateEndpointForOtherObjectType() {
         try {
             component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
             fail("Exception should been thrown when trying to create an endpoint for an unsupported object type");

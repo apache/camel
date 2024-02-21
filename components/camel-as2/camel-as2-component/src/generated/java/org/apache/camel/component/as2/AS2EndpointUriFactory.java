@@ -19,45 +19,55 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
-        props.add("server");
+        Set<String> props = new HashSet<>(43);
         props.add("apiName");
-        props.add("as2Version");
-        props.add("as2MessageStructure");
-        props.add("ediMessageTransferEncoding");
-        props.add("encryptingCertificateChain");
-        props.add("subject");
-        props.add("signingPrivateKey");
-        props.add("signedReceiptMicAlgorithms");
-        props.add("ediMessage");
-        props.add("as2To");
         props.add("as2From");
-        props.add("targetHostname");
-        props.add("from");
-        props.add("serverFqdn");
-        props.add("dispositionNotificationTo");
-        props.add("requestUriPattern");
-        props.add("encryptingAlgorithm");
-        props.add("exchangePattern");
-        props.add("ediMessageContentType");
-        props.add("methodName");
-        props.add("serverPortNumber");
-        props.add("userAgent");
-        props.add("requestUri");
+        props.add("as2MessageStructure");
+        props.add("as2To");
+        props.add("as2Version");
+        props.add("attachedFileName");
         props.add("clientFqdn");
-        props.add("lazyStartProducer");
-        props.add("decryptingPrivateKey");
-        props.add("signingAlgorithm");
         props.add("compressionAlgorithm");
+        props.add("decryptingPrivateKey");
+        props.add("dispositionNotificationTo");
+        props.add("ediMessage");
+        props.add("ediMessageContentType");
+        props.add("ediMessageTransferEncoding");
         props.add("ediMessageType");
-        props.add("inBody");
-        props.add("mdnMessageTemplate");
-        props.add("signingCertificateChain");
+        props.add("encryptingAlgorithm");
+        props.add("encryptingCertificateChain");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("from");
+        props.add("hostnameVerifier");
+        props.add("httpConnectionPoolSize");
+        props.add("httpConnectionPoolTtl");
+        props.add("httpConnectionTimeout");
+        props.add("httpSocketTimeout");
+        props.add("inBody");
+        props.add("lazyStartProducer");
+        props.add("mdnMessageTemplate");
+        props.add("methodName");
+        props.add("requestUri");
+        props.add("requestUriPattern");
+        props.add("server");
+        props.add("serverFqdn");
+        props.add("serverPortNumber");
+        props.add("signedReceiptMicAlgorithms");
+        props.add("signingAlgorithm");
+        props.add("signingCertificateChain");
+        props.add("signingPrivateKey");
+        props.add("sslContext");
+        props.add("subject");
+        props.add("targetHostname");
         props.add("targetPortNumber");
+        props.add("userAgent");
+        props.add("validateSigningCertificateChain");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -86,6 +96,11 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

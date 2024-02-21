@@ -262,7 +262,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithText() throws Exception {
+    public void testRouteWithText() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -280,7 +280,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
     @Test
     @Disabled
-    public void testRouteWithTextAndCustomKeyBoard() throws Exception {
+    public void testRouteWithTextAndCustomKeyBoard() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -302,7 +302,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithTextHtml() throws Exception {
+    public void testRouteWithTextHtml() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -320,7 +320,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithTextMarkdown() throws Exception {
+    public void testRouteWithTextMarkdown() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -338,7 +338,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithGame() throws Exception {
+    public void testRouteWithGame() {
         final MockProcessor<OutgoingGameMessage> mockProcessor = getMockRoutes().getMock("sendGame");
         mockProcessor.clearRecordedMessages();
 
@@ -357,12 +357,12 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
                     }
                 } };

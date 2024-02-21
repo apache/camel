@@ -1,11 +1,13 @@
-[[undertow-spring-security-other]]
 = Undertow Spring Security Component
-:docTitle: Undertow Spring Security
-:artifactId: camel-undertow-spring-security
+:doctitle: Undertow Spring Security
+:shortname: undertow-spring-security
+:artifactid: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow
 :since: 3.3
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/undertow-spring-security.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: undertow-spring-security
 
 *Since Camel {since}*
 
@@ -32,3 +34,5 @@ for example from DelegatingFilterProxyRegistrationBean. | Filter
 Each exchange created by Undertow endpoint with spring security contains header 'SpringSecurityProvider_principal' (
 name of header is provided as a constant `SpringSecurityProvider.PRINCIPAL_NAME_HEADER`) with current authorized identity
 as value  or header is not present in case of rejected requests.
+
+include::spring-boot:partial$starter.adoc[]

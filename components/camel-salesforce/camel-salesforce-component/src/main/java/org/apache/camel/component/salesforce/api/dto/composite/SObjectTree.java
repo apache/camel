@@ -27,17 +27,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
@@ -89,19 +84,15 @@ import static java.util.Objects.requireNonNull;
  * @see AbstractSObjectBase
  * @see AbstractDescribedSObjectBase
  */
-@XStreamAlias("SObjectTreeRequest")
 public final class SObjectTree implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamImplicit
     @JsonProperty
     final List<SObjectNode> records = new CopyOnWriteArrayList<>();
 
-    @XStreamOmitField
     final ReferenceGenerator referenceGenerator;
 
-    @XStreamOmitField
     private String objectType;
 
     /**
@@ -159,9 +150,8 @@ public final class SObjectTree implements Serializable {
     }
 
     public Class[] objectTypes() {
-        final Set<Class> types = records.stream().flatMap(n -> n.objectTypes()).collect(Collectors.toSet());
 
-        return types.toArray(new Class[types.size()]);
+        return records.stream().flatMap(SObjectNode::objectTypes).distinct().toArray(Class[]::new);
     }
 
     /**

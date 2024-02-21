@@ -1,0 +1,131 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.12 to 3.13
+
+=== API changes
+
+Added method `getStartedEventNotifiers` to `org.apache.camel.spi.ManagementStrategy`.
+
+Added method `scheduleQueue` to `org.apache.camel.spi.ReactiveExecutor`.
+
+The `org.apache.camel.support.ObjectHelper#createIterable` now supports `java.util.Map` returning
+an `Iterable<Map.Entry>` iterating each row in the map.
+
+The `org.apache.camel.spi.RestApiProcessorFactory` has removed
+the following two parameters (`String contextIdPattern, boolean contextIdListing`)
+from the `createApiProcessor` method.
+
+=== Split EIP
+
+The Split EIP now supports splitting message bodies that are of type `java.util.Map`, which
+now splits that into a `Set<Map.Entry>` - eg a set of each map entry as key/value pairs.
+
+=== SimpleBuilder
+
+The `org.apache.camel.builder.SimpleBuilder` has been deprecated. This builder
+was mostly used internally in Camel with the Java DSL in some situations.
+
+End users that may use `SimpleBuilder` in Camel Java DSL can migrate from:
+
+[source,java]
+----
+simple("1").resultType(Integer.class))
+----
+
+to
+
+[source,java]
+----
+simple("1", Integer.class)
+----
+
+=== CamelContextInitializing and CamelContextInitialized events
+
+These two events are fired during bootstrap of `CamelContext` even if a custom `EventNotifier`
+may not have been fully started. This is due to that these events happen very early in the
+bootstrap process, but are of importance for event notifiers to be able to react upon.
+
+=== Using custom Debugger
+
+Previously when setting a custom `org.apache.camel.spi.Debugger`, then Camel would automatically
+enable debug mode. Now debugging must be enabled by setting `setDebugging(true)` on `CamelContext`.
+
+=== Using Transactions
+
+The routing engine has been changed to route exchanges in a different order
+when using transactions (`.transacted()`). When an `Exchange` is continued
+routed a task is scheduled to the `ReactiveExecutor`. This fixed issues
+with could lead to `StackOverflowException`.
+
+=== camel-couchdb
+
+The `since` configuration was replaced by the `resumeStrategy`. Integrations can now manage the last update sequence for tracking the changes directly. Check the samples section on the component documentation page for a sample.
+
+=== camel-file
+
+In order to reduce memory pressure, the component was modified to avoid using Lists for certain file operations (CAMEL-17059). This affected the APIs of some the APIs and interfaces provided by the component.
+
+- `GenericFileOperations`: the return type for the methods `listFiles` and `listFiles(String)` was modified to return an array of (generic) objects instead of a List
+- `GenericFileConsumer`: the signature of the methods `isValidFile` and `isMatched` was modified to receive an array of files.
+
+=== camel-ftp
+
+The `FtpConsumer`, `FtpOperations`, `SftConsumer` and `SftpOperations` classes were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-hazelcast-starter
+
+The `camel-hazelcast-starter` for Spring Boot no longer has _customer_ auto configuration options for all its components
+
+eg the following configuration keys have been removed
+
+- `...customizer.hazelcast-instance.enabled`
+- `...customizer.hazelcast-instance.override`
+
+Any Camel component can be customized by using the `org.apache.camel.spi.ComponentCustomizer` SPI.
+
+=== camel-jsch
+
+The `ScpOperations` class were modified to comply with the API changes on the `camel-file` component.
+
+=== camel-kafka
+
+The `KafkaManualCommit` class were modified in order to support async manual commit. Please use the new function `commit()` instead of the old deprecated one `commitSync()`.
+
+=== camel-mllp
+
+This component has been refactored to be similar to other Camel components.
+The old component had an unusual static configuration of the `MllpComponent` which now is
+refactored to be Camel standard with regular getter/setters. The component is now also
+configured _reflection free_. We also cleaned up how the component dealt with which charset
+to use when processing HL7 messages. Users using `camel-mllp` is recommended to test
+their applications when upgrading to ensure this continues to work.
+
+=== camel-openapi-java / camel-swagger-java
+
+When using Rest DSL and the `restConfiguration` has a `contextPath` configured, then this value
+is used as leading base path for all API services that are in the generated api-docs.
+
+This is i.e. needed when using `camel-servlet` which runs under a specific `context-path`.
+
+Support for rendering api docs by discovering other CamelContext via JMX in the same JVM has been removed.
+Rendering of api docs is now only supported for the same CamelContext.
+
+=== camel-quartz
+
+The `fireNow` parameter was removed because have no effect.
+The `triggerStartDelay` parameter supports negative value to shift trigger start time in the past. It allows to fire the trigger immediately by configured `MISFIRE_INSTRUCTION_FIRE_ONCE_NOW`.
+
+=== camel-aws2-sqs
+
+Since the maximum number of attributes per SQS message is 10, we are limiting the number of headers to be converted to attributes to 10.
+
+=== When using muteException
+
+HTTP based components that are using `muteException=true` will return an empty message body,
+instead of the text `Exception`.
+
+This applies to camel-jetty, camel-undertow, camel-servlet, camel-netty-http

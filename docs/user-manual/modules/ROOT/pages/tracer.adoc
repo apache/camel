@@ -1,17 +1,11 @@
 = Tracer
 
 Camel's tracer is used for logging message details during routing, where
-you can see the route path of each message as they happens. Details of the message is also logged such as the message body.
+you can see the route path of each message as they happen. Details of the message is also logged such as the message body, and headers.
 
-== Formatting
+TIP: There is an alternative tracer that captures the messages in a xref:backlog-tracer.adoc[Backlog Tracer].
 
-The tracer formats the execution of exchanges to log lines. They are
-logged at *`INFO`* level in the log category:
-*`org.apache.camel.Tracing`*. 
-
-The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation has many options you can configure. See the source code/javadoc of the `org.apache.camel.support.processor.DefaultExchangeFormatter` class.
-
-== Enabling
+== Enabling Tracing
 
 In Java you set tracing on `CamelContext`:
 
@@ -36,4 +30,87 @@ And in Spring Boot
 camel.springboot.tracing = true
 ----
 
+=== Setting Tracing in Standby mode
 
+By default Camel optimizes and opt-out tracing. Therefore, you would either have to enable tracing from the startup,
+or turn on standby mode, to allow tracing to be enabled later during runtime.
+
+To set tracing in standby mode you can do:
+
+[source,java]
+----
+context.setTracingStandby(true);
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext trace="standby" xmlns="http://activemq.apache.org/camel/schema/spring">
+...
+</camelContext>
+----
+
+And in Spring Boot
+
+[source,text]
+----
+camel.springboot.tracing-standby = true
+----
+
+If tracer is in standby mode, then tracing is made available, and can be enabled during runtime.
+This requires to either use JMX or enable via Java code:
+
+[source,java]
+----
+Tracer tracer = context.getTracer();
+tracer.setEnabled(true);
+----
+
+=== Trace Logging Formatting
+
+The tracer formats the execution of exchanges to log lines. They are
+logged at `INFO` level in the log category: `org.apache.camel.Tracing`.
+
+The message information from the Exchange is formatted using `ExchangeFormatter` and the default implementation
+has many options you can configure accordingly to the https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/org/apache/camel/support/processor/DefaultExchangeFormatter.html[javadoc].
+
+The tracer outputs the logging with a prefix with the following information:
+
+- arrow - (direction whether input or output)
+- routeId - the current route
+- label - the current EIP node
+
+This output is assembled using the following default format:
+
+- %-4.4s [%-12.12s] [%-33.33s]
+
+The default format can be customized using, for exameple to use wider columns:
+
+[source,java]
+----
+context.setTracingLoggingFormat("%-4.4s [%-30.30s] [%-50.50s]");
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext trace="true" traceLoggingFormat="%-4.4s [%-30.30s] [%-50.50s]">
+...
+</camelContext>
+----
+
+And in Spring Boot
+
+[source,properties]
+----
+camel.springboot.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
+----
+
+And in Camel Main / Quarkus
+
+[source,properties]
+----
+camel.main.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
+----

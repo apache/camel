@@ -22,6 +22,12 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedRouteControllerMBean extends ManagedServiceMBean {
 
+    @ManagedAttribute(description = "Indicates whether the route controller is doing initial starting of the routes.")
+    boolean isStartingRoutes();
+
+    @ManagedAttribute(description = "Indicates if the route controller has routes that are currently unhealthy")
+    boolean isHasUnhealthyRoutes();
+
     @ManagedAttribute(description = "Controlled Routes")
     Collection<String> getControlledRoutes();
 

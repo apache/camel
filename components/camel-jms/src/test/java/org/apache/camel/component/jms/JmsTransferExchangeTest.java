@@ -16,31 +16,42 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsTransferExchangeTest extends AbstractJMSTest {
 
-public class JmsTransferExchangeTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     protected String getUri() {
-        return "activemq:queue:foo?transferExchange=true";
+        return "activemq:queue:JmsTransferExchangeTest?transferExchange=true";
     }
 
     @Test
     public void testBodyOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -48,11 +59,11 @@ public class JmsTransferExchangeTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +72,7 @@ public class JmsTransferExchangeTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
         mock.expectedPropertyReceived("bar", 123);
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.send("direct:start", exchange -> {
             exchange.getIn().setBody("Hello World");
@@ -69,28 +80,34 @@ public class JmsTransferExchangeTest extends CamelTestSupport {
             exchange.setProperty("bar", 123);
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(getUri());
                 from(getUri()).to("mock:result");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

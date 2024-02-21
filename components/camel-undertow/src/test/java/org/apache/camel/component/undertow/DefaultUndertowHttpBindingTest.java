@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultUndertowHttpBindingTest {
 
+    @Timeout(10)
     @Test
-    @Timeout(1)
     public void readEntireDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
                 "",
@@ -51,7 +51,8 @@ public class DefaultUndertowHttpBindingTest {
         checkResult(result, delayedPayloads);
     }
 
-    @Timeout(1)
+    @Timeout(10)
+    @Test
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
                 "",
@@ -71,7 +72,8 @@ public class DefaultUndertowHttpBindingTest {
         assertEquals(Stream.of(delayedPayloads).collect(Collectors.joining()), result);
     }
 
-    @Timeout(1)
+    @Timeout(10)
+    @Test
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
                 "",
@@ -96,7 +98,7 @@ public class DefaultUndertowHttpBindingTest {
             boolean mustWait;  // make sure that the caller is not spinning on read==0
 
             @Override
-            public int read(ByteBuffer dst) throws IOException {
+            public int read(ByteBuffer dst) {
                 if (mustWait) {
                     fail("must wait before reading");
                 }

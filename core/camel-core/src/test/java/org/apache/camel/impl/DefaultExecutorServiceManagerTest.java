@@ -27,9 +27,19 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
     @Test
@@ -117,14 +127,14 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetThreadNameCustomPatternInvalid() throws Exception {
+    public void testGetThreadNameCustomPatternInvalid() {
         context.getExecutorServiceManager().setThreadNamePattern("Cool #xxx#");
-        try {
-            context.getExecutorServiceManager().resolveThreadName("foo");
-            fail("Should thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Pattern is invalid: Cool #xxx#", e.getMessage());
-        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.getExecutorServiceManager().resolveThreadName("foo"),
+                "Should thrown an exception");
+
+        assertEquals("Pattern is invalid: [Cool #xxx#] in resolved thread name: [Cool #xxx#]", e.getMessage());
 
         // reset it so we can shutdown properly
         context.getExecutorServiceManager().setThreadNamePattern("Camel Thread #counter# - #name#");
@@ -133,7 +143,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     @Test
     public void testDefaultThreadPool() throws Exception {
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -143,7 +153,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(1000, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -155,10 +165,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(Integer.MAX_VALUE);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -168,7 +178,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(Integer.MAX_VALUE, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -180,10 +190,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(0);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -193,7 +203,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(0, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -205,10 +215,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(2000);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -218,7 +228,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(2000, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test

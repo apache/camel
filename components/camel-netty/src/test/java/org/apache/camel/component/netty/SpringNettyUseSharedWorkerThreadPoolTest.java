@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -41,7 +42,7 @@ public class SpringNettyUseSharedWorkerThreadPoolTest extends CamelSpringTestSup
             assertEquals("Hello Claus", reply);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -20,19 +20,20 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ThrottleDefinition
 import org.apache.camel.model.language.ConstantExpression
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class ThrottleTest extends YamlTestSupport {
 
     def "throttle definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], ThrottleDefinition) {
                 with (expression, ConstantExpression) {
                     language == 'constant'
-                    expression == '5s'
+                    expression == '5'
                 }
-                executorServiceRef == 'myExecutor'
+                executorService == 'myExecutor'
             }
         where:
             resource << [
@@ -41,8 +42,8 @@ class ThrottleTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - throttle:  
-                              constant: "5s"
-                              executor-service-ref: "myExecutor"
+                              constant: "5"
+                              executor-service: "myExecutor"
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
@@ -51,8 +52,8 @@ class ThrottleTest extends YamlTestSupport {
                         steps:    
                           - throttle: 
                               expression: 
-                                constant: "5s"
-                              executor-service-ref: "myExecutor"
+                                constant: "5"
+                              executor-service: "myExecutor"
                           - to: "mock:result"
                     ''')
             ]

@@ -28,9 +28,11 @@ import org.w3c.dom.NodeList;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DOMNodeList;
 import net.sf.saxon.dom.NodeOverNodeInfo;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.tiny.TinyDocumentImpl;
+import net.sf.saxon.tree.tiny.TinyElementImpl;
 import net.sf.saxon.type.Type;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -44,6 +46,16 @@ public final class SaxonConverter {
     }
 
     @Converter
+    public static Document toDOMDocument(TinyElementImpl node) throws XPathException {
+        return toDOMDocument((NodeInfo) node);
+    }
+
+    @Converter
+    public static Document toDOMDocument(TinyDocumentImpl node) throws XPathException {
+        return toDOMDocument((NodeInfo) node);
+    }
+
+    @Converter
     public static Document toDOMDocument(NodeInfo node) throws XPathException {
         switch (node.getNodeKind()) {
             case Type.DOCUMENT:
@@ -52,16 +64,26 @@ public final class SaxonConverter {
             case Type.ELEMENT:
                 // ELEMENT nodes need to build a new DocumentInfo before wrapping
                 Configuration config = node.getConfiguration();
-                DocumentInfo documentInfo = config.buildDocument(node);
-                return (Document) NodeOverNodeInfo.wrap(documentInfo);
+                TreeInfo documentInfo = config.buildDocumentTree(node);
+                return (Document) NodeOverNodeInfo.wrap(documentInfo.getRootNode());
             default:
                 return null;
         }
     }
 
     @Converter
+    public static Node toDOMNode(TinyDocumentImpl node) {
+        return toDOMNode((NodeInfo) node);
+    }
+
+    @Converter
     public static Node toDOMNode(NodeInfo node) {
         return NodeOverNodeInfo.wrap(node);
+    }
+
+    @Converter
+    public static DOMSource toDOMSourceFromNodeInfo(TinyDocumentImpl nodeInfo) {
+        return new DOMSource(toDOMNode(nodeInfo));
     }
 
     @Converter
@@ -96,7 +118,7 @@ public final class SaxonConverter {
             tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
                 List<NodeInfo> nil = new LinkedList<>();
-                nil.add((NodeInfo) value);
+                nil.add(ni);
                 return tc.convertTo(type, exchange, toDOMNodeList(nil));
             }
         } else if (List.class.isAssignableFrom(value.getClass())) {

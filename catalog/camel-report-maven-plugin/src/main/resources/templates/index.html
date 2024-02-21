@@ -1,0 +1,73 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<span th:replace="~{fragments-static :: common-head-datatables(title=${project} + ' :: Route Coverage')}"></span>
+
+<body>
+
+<div class="card">
+    <div class="card-body">
+        <h1 th:text="${project} + ' :: Route Coverage'">Camel Route Coverage</h1>
+        <table class="display " id="routes" width="100%">
+            <thead>
+            <tr>
+                <td>Route</td>
+                <td class="text-right">Total EIPs</td>
+                <td class="text-right">Tested</td>
+                <td class="text-right">Coverage %</td>
+                <td class="text-right">Time (ms)</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="route : ${routes}">
+                <td><a th:href="${route.id} + '.html'" th:target="_blank"><span th:text="${route.id}" }></span></a></td>
+                <td class="text-right" th:text="${route.totalEips}"></td>
+                <td class="text-right" th:text="${route.totalEipsTested}"></td>
+                <td class="text-right" th:text="${route.coverage}"></td>
+                <td class="text-right" th:text="${route.totalProcessingTime}"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td>Totals</td>
+                <td class="text-right" th:text="${totals.totalEips}"></td>
+                <td class="text-right" th:text="${totals.totalEipsTested}"></td>
+                <td class="text-right" th:text="${totals.coverage}"></td>
+                <td class="text-right" th:text="${totals.totalProcessingTime}"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<span th:replace="~{fragments-static :: common-js-datatables}"></span>
+<script type="text/javascript">
+            $(document).ready(function() {
+                $('#routes').DataTable( {
+                    stateSave: true,
+                    order: [ [ 0, 'asc' ] ],
+                    pageLength: 25
+                } );
+            });
+</script>
+</body>
+
+</html>

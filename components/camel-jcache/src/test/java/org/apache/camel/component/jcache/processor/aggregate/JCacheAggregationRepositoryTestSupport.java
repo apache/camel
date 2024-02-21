@@ -17,12 +17,15 @@
 package org.apache.camel.component.jcache.processor.aggregate;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
+import org.apache.camel.component.jcache.support.HazelcastTest;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
+@HazelcastTest
 class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {
 
-    protected JCacheAggregationRepository createRepository(boolean optimistic) throws Exception {
+    protected JCacheAggregationRepository createRepository(boolean optimistic) {
         JCacheAggregationRepository repository = new JCacheAggregationRepository();
+        repository.setCamelContext(context);
         repository.setConfiguration(new JCacheConfiguration("aggregation-repository"));
         repository.setOptimistic(optimistic);
 

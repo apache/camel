@@ -70,7 +70,12 @@ public final class BeanHelper {
 
         // numeric is valid
         boolean numeric = true;
-        for (char ch : value.toCharArray()) {
+        char[] chars = value.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char ch = chars[i];
+            if (i == 0 && ch == '-') {
+                continue;
+            }
             if (!Character.isDigit(ch)) {
                 numeric = false;
                 break;
@@ -104,18 +109,33 @@ public final class BeanHelper {
      * <p/>
      * This implementation will check if the given parameter type matches the expected type as class using either
      * <ul>
-     * <li>FQN class name - com.foo.MyOrder</li>
-     * <li>Simple class name - MyOrder</li>
+     * <li>FQN class name - com.foo.MyOrder.class</li>
+     * <li>Simple class name - MyOrder.class</li>
      * </ul>
      * If the given parameter type is <b>not</b> a class, then <tt>null</tt> is returned
      *
      * @param  resolver      the class resolver
-     * @param  parameterType the parameter type as a String, can be a FQN or a simple name of the class
+     * @param  parameterType the parameter type as a String, can be a FQN or a simple name of the class (must end with
+     *                       .class)
      * @param  expectedType  the expected type
      * @return               <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is
      *                       assignable, <tt>false</tt> if not assignable
      */
     public static Boolean isAssignableToExpectedType(ClassResolver resolver, String parameterType, Class<?> expectedType) {
+        if (parameterType == null || !parameterType.contains(".class")) {
+            // not a class so return null
+            return null;
+        }
+        if (parameterType.contains(" ")) {
+            parameterType = StringHelper.before(parameterType, " ");
+        }
+        if (!parameterType.endsWith(".class")) {
+            // not a class so return null
+            return null;
+        }
+
+        parameterType = parameterType.substring(0, parameterType.length() - 6); // clip .class
+
         // if its a class, then it should be assignable
         Class<?> parameterClass = resolver.resolveClass(parameterType);
         if (parameterClass == null && parameterType.equals(expectedType.getSimpleName())) {

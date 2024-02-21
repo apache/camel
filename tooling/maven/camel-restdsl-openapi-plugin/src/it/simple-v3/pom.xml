@@ -29,9 +29,23 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>@jakarta-annotation-api-version@</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -41,7 +55,7 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>simple</id>
+            <id>simple-v3</id>
             <goals>
               <goal>generate</goal>
             </goals>

@@ -19,6 +19,7 @@ package org.apache.camel.component.cron;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.support.ScheduledPollConsumer;
 
 public class SpringCronConsumer extends ScheduledPollConsumer {
@@ -32,5 +33,11 @@ public class SpringCronConsumer extends ScheduledPollConsumer {
         Exchange exchange = createExchange(true);
         getProcessor().process(exchange);
         return 1;
+    }
+
+    @Override
+    protected HealthCheck.State initialHealthCheckState() {
+        // the spring cron should be regarded as healthy on startup
+        return HealthCheck.State.UP;
     }
 }

@@ -33,22 +33,25 @@ import java.lang.annotation.Target;
 public @interface Converter {
 
     /**
-     * Whether or not returning <tt>null</tt> is a valid response.
+     * Whether returning <tt>null</tt> is a valid response.
      */
     boolean allowNull() default false;
 
     /**
      * Whether this converter is a regular converter or a fallback converter.
      *
+     * <b>Important</b>: Fallback type converters is not recommended being used by Camel end users, but are used by
+     * Camel internally and for some special Camel components.
+     *
      * The difference between a regular converter and a fallback-converter is that the fallback is resolved at last if
-     * no regular converter could be found. Also the method signature is scoped to be generic to allow handling a
-     * broader range of types trying to be converted. The fallback converter can just return <tt>null</tt> if it can not
-     * handle the types to convert from/to.
+     * no regular converter could be found. The method signature is scoped to be generic to allow handling a broader
+     * range of types trying to be converted. The fallback converter can just return <tt>null</tt> if it can not handle
+     * the types to convert from/to.
      */
     boolean fallback() default false;
 
     /**
-     * Whether or not this fallback converter can be promoted to a first class type converter.
+     * Whether this fallback converter can be promoted to a first class type converter.
      */
     boolean fallbackCanPromote() default false;
 

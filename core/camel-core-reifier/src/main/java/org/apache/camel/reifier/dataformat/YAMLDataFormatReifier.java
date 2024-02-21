@@ -41,13 +41,13 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     }
 
     protected void configureSnakeDataFormat(Map<String, Object> properties) {
-        if (definition.getUnmarshalType() != null) {
-            properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
-        } else {
-            properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
-        }
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("classLoader", definition.getClassLoader());
-        properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
+        if (definition.getUseApplicationContextClassLoader() != null) {
+            properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
+        } else {
+            properties.put("useApplicationContextClassLoader", "true");
+        }
         properties.put("prettyFlow", definition.getPrettyFlow());
         properties.put("allowAnyType", definition.getAllowAnyType());
         properties.put("typeFilterDefinitions", getTypeFilterDefinitions());
@@ -64,15 +64,16 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
             for (YAMLTypeFilterDefinition definition : definition.getTypeFilters()) {
                 String value = parseString(definition.getValue());
-                if (!value.startsWith("type") && !value.startsWith("regexp")) {
+                if (value != null && !value.startsWith("type") && !value.startsWith("regexp")) {
                     YAMLTypeFilterType type = parse(YAMLTypeFilterType.class, definition.getType());
                     if (type == null) {
                         type = YAMLTypeFilterType.type;
                     }
-
                     value = type.name() + ":" + value;
                 }
-                typeFilterDefinitions.add(value);
+                if (value != null) {
+                    typeFilterDefinitions.add(value);
+                }
             }
             return typeFilterDefinitions;
         } else {

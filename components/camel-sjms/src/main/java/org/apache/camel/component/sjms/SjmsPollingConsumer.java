@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -26,8 +26,8 @@ import org.apache.camel.support.PollingConsumerSupport;
  * A JMS {@link org.apache.camel.PollingConsumer}.
  */
 public class SjmsPollingConsumer extends PollingConsumerSupport {
-    private SjmsTemplate template;
-    private SjmsEndpoint jmsEndpoint;
+    private final SjmsTemplate template;
+    private final SjmsEndpoint jmsEndpoint;
 
     public SjmsPollingConsumer(SjmsEndpoint endpoint, SjmsTemplate template) {
         super(endpoint);
@@ -53,7 +53,8 @@ public class SjmsPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive(long timeout) {
         try {
-            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.isTopic(), timeout);
+            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(),
+                    jmsEndpoint.isTopic(), timeout);
             if (message != null) {
                 return getEndpoint().createExchange(message, null);
             }

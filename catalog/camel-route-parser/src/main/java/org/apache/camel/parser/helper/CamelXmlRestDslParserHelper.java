@@ -29,7 +29,7 @@ import org.apache.camel.parser.model.RestVerbDetails;
 
 public final class CamelXmlRestDslParserHelper {
 
-    public List<RestConfigurationDetails> parseRestConfiguration(Node xmlNode, String baseDir, String fullyQualifiedFileName) {
+    public List<RestConfigurationDetails> parseRestConfiguration(Node xmlNode, String fullyQualifiedFileName) {
 
         List<RestConfigurationDetails> answer = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public final class CamelXmlRestDslParserHelper {
         return answer;
     }
 
-    public List<RestServiceDetails> parseRestService(Node xmlNode, String baseDir, String fullyQualifiedFileName) {
+    public List<RestServiceDetails> parseRestService(Node xmlNode, String fullyQualifiedFileName) {
 
         List<RestServiceDetails> answer = new ArrayList<>();
 
@@ -71,9 +71,6 @@ public final class CamelXmlRestDslParserHelper {
             detail.setProducerApiDoc(extractAttribute(map, "producerApiDoc"));
             detail.setContextPath(extractAttribute(map, "contextPath"));
             detail.setApiContextPath(extractAttribute(map, "apiContextPath"));
-            detail.setApiContextRouteId(extractAttribute(map, "apiContextRouteId"));
-            detail.setApiContextIdPattern(extractAttribute(map, "apiContextIdPattern"));
-            detail.setApiContextListening(extractAttribute(map, "apiContextListening"));
             detail.setApiVendorExtension(extractAttribute(map, "apiVendorExtension"));
             detail.setHostNameResolver(extractAttribute(map, "hostNameResolver"));
             detail.setBindingMode(extractAttribute(map, "bindingMode"));
@@ -85,7 +82,7 @@ public final class CamelXmlRestDslParserHelper {
         }
 
         if ("componentProperty".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -93,7 +90,7 @@ public final class CamelXmlRestDslParserHelper {
                 detail.addComponentProperty(key, value);
             }
         } else if ("endpointProperty".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -101,7 +98,7 @@ public final class CamelXmlRestDslParserHelper {
                 detail.addEndpointProperty(key, value);
             }
         } else if ("consumerProperty".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -109,7 +106,7 @@ public final class CamelXmlRestDslParserHelper {
                 detail.addConsumerProperty(key, value);
             }
         } else if ("dataFormatProperty".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -117,7 +114,7 @@ public final class CamelXmlRestDslParserHelper {
                 detail.addDataFormatProperty(key, value);
             }
         } else if ("apiProperty".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -125,7 +122,7 @@ public final class CamelXmlRestDslParserHelper {
                 detail.addApiProperty(key, value);
             }
         } else if ("corsHeaders".equals(xmlNode.getNodeName())
-                && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+                && xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName())) {
             NamedNodeMap map = xmlNode.getAttributes();
             String key = extractAttribute(map, "key");
             String value = extractAttribute(map, "value");
@@ -201,13 +198,6 @@ public final class CamelXmlRestDslParserHelper {
                 if (verb != null) {
                     verb.setTo(uri);
                 }
-            } else if ("toD".equals(xmlNode.getNodeName())) {
-                NamedNodeMap map = xmlNode.getAttributes();
-                String uri = extractAttribute(map, "uri");
-                RestVerbDetails verb = getLastVerb(detail);
-                if (verb != null) {
-                    verb.setToD(uri);
-                }
             }
         }
 
@@ -236,7 +226,7 @@ public final class CamelXmlRestDslParserHelper {
 
     private static void extractAttributes(Node xmlNode, RestVerbDetails detail) {
         NamedNodeMap map = xmlNode.getAttributes();
-        detail.setUri(extractAttribute(map, "uri"));
+        detail.setPath(extractAttribute(map, "path"));
         detail.setConsumes(extractAttribute(map, "consumes"));
         detail.setProduces(extractAttribute(map, "produces"));
         detail.setApiDocs(extractAttribute(map, "apiDocs"));

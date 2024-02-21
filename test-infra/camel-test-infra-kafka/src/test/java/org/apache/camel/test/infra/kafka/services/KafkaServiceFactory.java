@@ -17,33 +17,63 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class KafkaServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaServiceFactory.class);
+    static class SingletonKafkaService extends SingletonService<KafkaService> implements KafkaService {
+        public SingletonKafkaService(KafkaService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getBootstrapServers() {
+            return getService().getBootstrapServers();
+        }
+    }
 
     private KafkaServiceFactory() {
 
     }
 
-    public static KafkaService createService() {
-        String kafkaInstanceType = System.getProperty("kafka.instance.type");
-
-        if (kafkaInstanceType == null || kafkaInstanceType.isEmpty() || kafkaInstanceType.equals("local-kafka-container")) {
-            return new ContainerLocalKafkaService();
-        }
-
-        if (kafkaInstanceType.equals("local-strimzi-container")) {
-            return new StrimziService();
-        }
-
-        if (kafkaInstanceType.equals("remote")) {
-            return new RemoteKafkaService();
-        }
-
-        LOG.error("Kafka instance must be one of 'local-strimzi-container', 'local-kafka-container', 'embedded' or 'remote");
-        throw new UnsupportedOperationException("Invalid Kafka instance type: " + kafkaInstanceType);
+    public static SimpleTestServiceBuilder<KafkaService> builder() {
+        return new SimpleTestServiceBuilder<>("kafka");
     }
 
+    public static KafkaService createService() {
+        SimpleTestServiceBuilder<KafkaService> builder = new SimpleTestServiceBuilder<>("kafka");
+
+        return builder.addLocalMapping(ContainerLocalKafkaService::kafka3Container)
+                .addMapping("local-strimzi-container", StrimziService::new)
+                .addRemoteMapping(RemoteKafkaService::new)
+                .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
+                .addMapping("local-kafka2-container", ContainerLocalKafkaService::kafka2Container)
+                .addMapping("local-redpanda-container", RedpandaService::new)
+                .build();
+    }
+
+    public static KafkaService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final KafkaService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<KafkaService> instance = builder();
+
+            instance.addLocalMapping(
+                    () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka"))
+                    .addRemoteMapping(RemoteKafkaService::new)
+                    .addMapping("local-kafka3-container",
+                            () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
+                    .addMapping("local-kafka2-container",
+                            () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka2Container(), "kafka2"))
+                    .addMapping("local-strimzi-container",
+                            () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
+                    .addMapping("local-redpanda-container",
+                            () -> new SingletonKafkaService(new RedpandaService(), "redpanda"));
+
+            INSTANCE = instance.build();
+        }
+    }
 }

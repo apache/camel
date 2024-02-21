@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PassThroughJmsKeyFormatStrategyTest {
 
-    private JmsKeyFormatStrategy strategy = new PassThroughJmsKeyFormatStrategy();
+    private final JmsKeyFormatStrategy strategy = new PassThroughJmsKeyFormatStrategy();
 
     @Test
     public void testEncodeValidKeys() {

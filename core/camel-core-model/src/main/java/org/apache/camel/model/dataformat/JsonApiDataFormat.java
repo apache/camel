@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -34,35 +36,117 @@ import org.apache.camel.spi.Metadata;
 public class JsonApiDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    private Class<?>[] dataFormatTypes;
-
+    private String dataFormatTypes;
+    @XmlTransient
+    private Class<?>[] dataFormatTypeClasses;
     @XmlAttribute
-    private Class<?> mainFormatType;
+    private String mainFormatType;
+    @XmlTransient
+    private Class<?> mainFormatTypeClass;
 
     public JsonApiDataFormat() {
         super("jsonApi");
     }
 
-    public Class<?>[] getDataFormatTypes() {
+    private JsonApiDataFormat(Builder builder) {
+        this();
+        this.dataFormatTypes = builder.dataFormatTypes;
+        this.dataFormatTypeClasses = builder.dataFormatTypeClasses;
+        this.mainFormatType = builder.mainFormatType;
+        this.mainFormatTypeClass = builder.mainFormatTypeClass;
+    }
+
+    public String getDataFormatTypes() {
         return dataFormatTypes;
     }
 
     /**
-     * The classes to take into account for the marshalling
+     * The classes to take into account for the marshalling. Multiple classes can be separated by comma.
      */
-    public void setDataFormatTypes(Class<?>[] dataFormatTypes) {
+    public void setDataFormatTypes(String dataFormatTypes) {
         this.dataFormatTypes = dataFormatTypes;
     }
 
-    public Class<?> getMainFormatType() {
+    public Class<?>[] getDataFormatTypeClasses() {
+        return dataFormatTypeClasses;
+    }
+
+    /**
+     * The classes to take into account for the marshalling.
+     */
+    public void setDataFormatTypeClasses(Class<?>[] dataFormatTypeClasses) {
+        this.dataFormatTypeClasses = dataFormatTypeClasses;
+    }
+
+    public String getMainFormatType() {
         return mainFormatType;
     }
 
     /**
-     * The classes to take into account while unmarshalling
+     * The class to take into account while unmarshalling.
      */
-    public void setMainFormatType(Class<?> mainFormatType) {
+    public void setMainFormatType(String mainFormatType) {
         this.mainFormatType = mainFormatType;
     }
 
+    public Class<?> getMainFormatTypeClass() {
+        return mainFormatTypeClass;
+    }
+
+    /**
+     * The classes to take into account while unmarshalling.
+     */
+    public void setMainFormatTypeClass(Class<?> mainFormatTypeClass) {
+        this.mainFormatTypeClass = mainFormatTypeClass;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link JsonApiDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<JsonApiDataFormat> {
+
+        private String dataFormatTypes;
+        private Class<?>[] dataFormatTypeClasses;
+        private String mainFormatType;
+        private Class<?> mainFormatTypeClass;
+
+        /**
+         * The classes to take into account for the marshalling,
+         */
+        public Builder dataFormatTypes(Class<?>[] dataFormatTypes) {
+            this.dataFormatTypeClasses = dataFormatTypes;
+            return this;
+        }
+
+        /**
+         * The classes (FQN name) to take into account for the marshalling. Multiple class names can be separated by
+         * comma.
+         */
+        public Builder dataFormatTypes(String dataFormatTypes) {
+            this.dataFormatTypes = dataFormatTypes;
+            return this;
+        }
+
+        /**
+         * The classes to take into account while unmarshalling,
+         */
+        public Builder mainFormatType(Class<?> mainFormatType) {
+            this.mainFormatTypeClass = mainFormatType;
+            return this;
+        }
+
+        /**
+         * The class (FQN name) to take into account while unmarshalling,
+         */
+        public Builder mainFormatType(String mainFormatType) {
+            this.mainFormatType = mainFormatType;
+            return this;
+        }
+
+        @Override
+        public JsonApiDataFormat end() {
+            return new JsonApiDataFormat(this);
+        }
+    }
 }

@@ -24,9 +24,9 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
+import org.apache.camel.support.ObjectHelper;
 
 public class GroovyExpression extends ExpressionSupport {
     private final String text;
@@ -47,15 +47,16 @@ public class GroovyExpression extends ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Script script = instantiateScript(exchange);
-        script.setBinding(createBinding(exchange));
+        Map<String, Object> globalVariables = new HashMap<>();
+        Script script = instantiateScript(exchange, globalVariables);
+        script.setBinding(createBinding(exchange, globalVariables));
         Object value = script.run();
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 
     @SuppressWarnings("unchecked")
-    private Script instantiateScript(Exchange exchange) {
+    private Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
         // Get the script from the cache, or create a new instance
         GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
         Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
@@ -64,6 +65,7 @@ public class GroovyExpression extends ExpressionSupport {
         if (shellFactories.size() == 1) {
             shellFactory = shellFactories.iterator().next();
             fileName = shellFactory.getFileName(exchange);
+            globalVariables.putAll(shellFactory.getVariables(exchange));
         }
         final String key = fileName != null ? fileName + text : text;
         Class<Script> scriptClass = language.getScriptFromCache(key);
@@ -75,17 +77,12 @@ public class GroovyExpression extends ExpressionSupport {
                     ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
             language.addScriptToCache(key, scriptClass);
         }
-
         // New instance of the script
-        try {
-            return scriptClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        }
+        return ObjectHelper.newInstance(scriptClass, Script.class);
     }
 
-    private Binding createBinding(Exchange exchange) {
-        Map<String, Object> variables = new HashMap<>();
+    private Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
+        Map<String, Object> variables = new HashMap<>(globalVariables);
         ExchangeHelper.populateVariableMap(exchange, variables, true);
         return new Binding(variables);
     }

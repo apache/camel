@@ -18,65 +18,73 @@ package org.apache.camel.openapi;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import io.apicurio.datamodels.core.models.ExtensibleNode;
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.core.models.common.AuthorizationCodeOAuthFlow;
-import io.apicurio.datamodels.core.models.common.ImplicitOAuthFlow;
-import io.apicurio.datamodels.core.models.common.OAuthFlow;
-import io.apicurio.datamodels.core.models.common.SecurityRequirement;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.models.OasOperation;
-import io.apicurio.datamodels.openapi.models.OasParameter;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Header;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Items;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Operation;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Parameter;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Response;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Header;
-import io.apicurio.datamodels.openapi.v3.models.Oas30MediaType;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
-import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
-import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
+import io.swagger.v3.core.filter.AbstractSpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
+import io.swagger.v3.core.model.ApiDescription;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.ByteArraySchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.FileSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.PasswordSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.Parameter.StyleEnum;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.rest.ApiKeyDefinition;
+import org.apache.camel.model.rest.BasicAuthDefinition;
+import org.apache.camel.model.rest.BearerTokenDefinition;
+import org.apache.camel.model.rest.CollectionFormat;
+import org.apache.camel.model.rest.MutualTLSDefinition;
+import org.apache.camel.model.rest.OAuth2Definition;
+import org.apache.camel.model.rest.OpenIdConnectDefinition;
+import org.apache.camel.model.rest.ParamDefinition;
+import org.apache.camel.model.rest.ResponseHeaderDefinition;
+import org.apache.camel.model.rest.ResponseMessageDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestOperationParamDefinition;
-import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
-import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
-import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
-import org.apache.camel.model.rest.RestSecurityApiKey;
-import org.apache.camel.model.rest.RestSecurityBasicAuth;
 import org.apache.camel.model.rest.RestSecurityDefinition;
-import org.apache.camel.model.rest.RestSecurityOAuth2;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.invoke.MethodHandles.publicLookup;
 
@@ -86,6 +94,16 @@ import static java.lang.invoke.MethodHandles.publicLookup;
  * This reader supports the <a href="https://www.openapis.org/">OpenApi Specification 2.0 and 3.0</a>
  */
 public class RestOpenApiReader {
+
+    public static final String OAS20_SCHEMA_DEFINITION_PREFIX = "#/definitions/";
+    public static final String OAS30_SCHEMA_DEFINITION_PREFIX = "#/components/schemas/";
+    private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiReader.class);
+    // Types that are not allowed in references.
+    private static final Set<String> NO_REFERENCE_TYPE_NAMES = new HashSet<>(
+            Arrays.asList(
+                    "byte", "char", "short", "int", "java.lang.Integer", "long", "java.lang.Long", "float", "java.lang.Float",
+                    "double", "java.lang.Double", "string", "java.lang.String", "boolean", "java.lang.Boolean",
+                    "file", "java.io.File"));
 
     private static String getValue(CamelContext camelContext, String text) {
         return camelContext.resolvePropertyPlaceholders(text);
@@ -107,57 +125,92 @@ public class RestOpenApiReader {
      *
      * @param  camelContext           the camel context
      * @param  rests                  the rest-dsl
-     * @param  route                  optional route path to filter the rest-dsl to only include from the chose route
      * @param  config                 the openApi configuration
      * @param  classResolver          class resolver to use @return the openApi model
      * @throws ClassNotFoundException is thrown if error loading class
      */
-    public OasDocument read(
-            CamelContext camelContext, List<RestDefinition> rests, String route, BeanConfig config,
+    public OpenAPI read(
+            CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
             String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
 
-        OasDocument openApi;
-        if (config.isOpenApi3()) {
-            openApi = new Oas30Document();
-        } else {
-            openApi = new Oas20Document();
+        OpenAPI openApi = config.isOpenApi31() ? new OpenAPI(SpecVersion.V31) : new OpenAPI();
+        if (config.getVersion() != null) {
+            openApi.setOpenapi(config.getVersion());
         }
 
         for (RestDefinition rest : rests) {
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
-                // filter by route
-                String path = getValue(camelContext, rest.getPath());
-                if (!path.equals(route)) {
-                    continue;
-                }
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
+            if (disabled == null || !disabled) {
+                parse(camelContext, openApi, rest, camelContextId, classResolver, config);
             }
+        }
 
-            parse(camelContext, openApi, rest, camelContextId, classResolver);
+        openApi = shortenClassNames(openApi);
+
+        /*
+         * Fixes the problem of not generating the "paths" section when no rest route is defined.
+         * A schema with no paths is considered invalid.
+         */
+        if (openApi.getPaths() == null) {
+            openApi.setPaths(new Paths());
+        }
+
+        /*
+         * Fixes the problem of generating duplicated tags which is invalid per the specification
+         */
+        if (openApi.getTags() != null) {
+            openApi.setTags(new ArrayList<>(
+                    openApi.getTags()
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    Tag::getName,
+                                    Function.identity(),
+                                    (prev, current) -> prev,
+                                    LinkedHashMap::new))
+                            .values()));
         }
 
         // configure before returning
         openApi = config.configure(openApi);
+        checkCompatOpenApi2(openApi, config);
         return openApi;
     }
 
+    private void checkCompatOpenApi2(OpenAPI openApi, BeanConfig config) {
+        if (config.isOpenApi2()) {
+            // Verify that the OpenAPI 3 model can be downgraded to OpenApi 2
+            OpenAPI3to2 converter = new OpenAPI3to2();
+            converter.convertOpenAPI3to2(openApi);
+        }
+    }
+
     private void parse(
-            CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
-            ClassResolver classResolver)
+            CamelContext camelContext, OpenAPI openApi, RestDefinition rest, String camelContextId,
+            ClassResolver classResolver, BeanConfig config)
             throws ClassNotFoundException {
 
-        List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
-        // must sort the verbs by uri so we group them together when an uri has multiple operations
-        Collections.sort(verbs, new VerbOrdering(camelContext));
-        // we need to group the operations within the same tag, so use the path as default if not
-        // configured
-        String pathAsTag = getValue(camelContext, rest.getTag() != null
-                ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath()));
-        if (openApi instanceof Oas20Document) {
-            parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTag);
-        } else if (openApi instanceof Oas30Document) {
-            parseOas30((Oas30Document) openApi, rest, pathAsTag);
+        // only include enabled verbs
+        List<VerbDefinition> filter = new ArrayList<>();
+        for (VerbDefinition verb : rest.getVerbs()) {
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, verb.getDisabled());
+            if (disabled == null || !disabled) {
+                filter.add(verb);
+            }
         }
+        List<VerbDefinition> verbs = new ArrayList<>(filter);
+        // must sort the verbs by uri so we group them together when an uri has multiple operations
+        verbs.sort(new VerbOrdering(camelContext));
+
+        // we need to group the operations within the same tag, so use the path as default if not configured
+        // Multi tag support for a comma delimeted tag
+        String[] pathAsTags = null != rest.getTag()
+                ? getValue(camelContext, rest.getTag()).split(",")
+                : null != rest.getPath()
+                        ? new String[] { getValue(camelContext, rest.getPath()) }
+                : new String[0];
+
+        parseOas30(openApi, rest, pathAsTags);
 
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
@@ -191,7 +244,7 @@ public class RestOpenApiReader {
             }
             // there can also be types in response messages
             if (verb.getResponseMsgs() != null) {
-                for (RestOperationResponseMsgDefinition def : verb.getResponseMsgs()) {
+                for (ResponseMessageDefinition def : verb.getResponseMsgs()) {
                     type = def.getResponseModel();
                     if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
                         if (type.endsWith("[]")) {
@@ -206,159 +259,134 @@ public class RestOpenApiReader {
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
             Class<?> clazz = classResolver.resolveMandatoryClass(type);
-            appendModels(clazz, openApi);
+            appendModels(clazz, openApi, config.isOpenApi31());
         }
 
-        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTag);
+        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags, config);
+
+        // setup root security node if necessary
+        List<SecurityDefinition> securityRequirements = rest.getSecurityRequirements();
+        securityRequirements.forEach(requirement -> {
+            SecurityRequirement oasRequirement = new SecurityRequirement();
+            List<String> scopes;
+            if (requirement.getScopes() == null || requirement.getScopes().isBlank()) {
+                scopes = Collections.emptyList();
+            } else {
+                scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));
+            }
+            oasRequirement.addList(requirement.getKey(), scopes);
+            openApi.addSecurityItem(oasRequirement);
+        });
     }
 
-    private void parseOas30(Oas30Document openApi, RestDefinition rest, String pathAsTag) {
+    private void parseOas30(OpenAPI openApi, RestDefinition rest, String[] pathAsTags) {
         String summary = rest.getDescriptionText();
 
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
+        for (String tag : pathAsTags) {
             // add rest as tag
-            openApi.addTag(pathAsTag, summary);
+            openApi.addTagsItem(new Tag().name(tag).description(summary));
         }
 
         // setup security definitions
         RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
-        if (sd != null && sd.getSecurityDefinitions().size() != 0
-                && openApi.components == null) {
-            openApi.components = openApi
-                    .createComponents();
+        if (sd != null && !sd.getSecurityDefinitions().isEmpty() && openApi.getComponents() == null) {
+            openApi.setComponents(new Components());
         }
         if (sd != null) {
             for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
-                if (def instanceof RestSecurityBasicAuth) {
-                    Oas30SecurityScheme auth = openApi.components
-                            .createSecurityScheme(def.getKey());
-                    auth.type = "http";
-                    auth.scheme = "basic";
-                    auth.description = def.getDescription();
-                    openApi.components.addSecurityScheme("BasicAuth", auth);
-                } else if (def instanceof RestSecurityApiKey) {
-                    RestSecurityApiKey rs = (RestSecurityApiKey) def;
-                    Oas30SecurityScheme auth = openApi.components
-                            .createSecurityScheme(def.getKey());
-                    auth.type = "apiKey";
-                    auth.description = rs.getDescription();
-                    auth.name = rs.getName();
-                    if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
-                        auth.in = "header";
-                    } else {
-                        auth.in = "query";
-                    }
-                    openApi.components.addSecurityScheme(def.getKey(), auth);
-                } else if (def instanceof RestSecurityOAuth2) {
-                    RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
+                if (def instanceof BasicAuthDefinition) {
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                            .scheme("basic").description(def.getDescription());
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
+                } else if (def instanceof BearerTokenDefinition) {
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer").description(def.getDescription())
+                            .bearerFormat(((BearerTokenDefinition) def).getFormat());
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
+                } else if (def instanceof ApiKeyDefinition) {
+                    ApiKeyDefinition rs = (ApiKeyDefinition) def;
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.APIKEY)
+                            .name(rs.getName()).description(def.getDescription());
 
-                    Oas30SecurityScheme auth = openApi.components
-                            .createSecurityScheme(def.getKey());
-                    auth.type = "oauth2";
-                    auth.description = rs.getDescription();
+                    if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
+                        auth.setIn(SecurityScheme.In.HEADER);
+                    } else if (rs.getInQuery() != null && Boolean.parseBoolean(rs.getInQuery())) {
+                        auth.setIn(SecurityScheme.In.QUERY);
+                    } else if (rs.getInCookie() != null && Boolean.parseBoolean(rs.getInCookie())) {
+                        auth.setIn(SecurityScheme.In.COOKIE);
+                    } else {
+                        throw new IllegalStateException("No API Key location specified.");
+                    }
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
+                } else if (def instanceof OAuth2Definition) {
+                    OAuth2Definition rs = (OAuth2Definition) def;
+
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.OAUTH2)
+                            .description(def.getDescription());
                     String flow = rs.getFlow();
                     if (flow == null) {
-                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
-                            flow = "accessCode";
-                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
-                            flow = "implicit";
+                        flow = inferOauthFlow(rs);
+                    }
+                    OAuthFlows oauthFlows = new OAuthFlows();
+                    auth.setFlows(oauthFlows);
+                    OAuthFlow oauthFlow = new OAuthFlow();
+                    switch (flow) {
+                        case "authorizationCode":
+                        case "accessCode":
+                            oauthFlows.setAuthorizationCode(oauthFlow);
+                            break;
+                        case "implicit":
+                            oauthFlows.setImplicit(oauthFlow);
+                            break;
+                        case "clientCredentials":
+                        case "application":
+                            oauthFlows.setClientCredentials(oauthFlow);
+                            break;
+                        case "password":
+                            oauthFlows.setPassword(oauthFlow);
+                            break;
+                        default:
+                            throw new IllegalStateException("Invalid OAuth flow '" + flow + "' specified");
+                    }
+                    oauthFlow.setAuthorizationUrl(rs.getAuthorizationUrl());
+                    oauthFlow.setTokenUrl(rs.getTokenUrl());
+                    oauthFlow.setRefreshUrl(rs.getRefreshUrl());
+                    if (!rs.getScopes().isEmpty()) {
+                        oauthFlow.setScopes(new Scopes());
+                        for (RestPropertyDefinition scope : rs.getScopes()) {
+                            oauthFlow.getScopes().addString(scope.getKey(), scope.getValue());
                         }
                     }
-                    OAuthFlow oauthFlow = null;
-                    if (auth.flows == null) {
-                        auth.flows = auth.createOAuthFlows();
-                    }
-                    if (flow.equals("accessCode")) {
-                        oauthFlow = auth.flows.createAuthorizationCodeOAuthFlow();
-                        auth.flows.authorizationCode = (AuthorizationCodeOAuthFlow) oauthFlow;
-                    } else if (flow.equals("implicit")) {
-                        oauthFlow = auth.flows.createImplicitOAuthFlow();
-                        auth.flows.implicit = (ImplicitOAuthFlow) oauthFlow;
-                    }
-                    oauthFlow.authorizationUrl = rs.getAuthorizationUrl();
-                    oauthFlow.tokenUrl = rs.getTokenUrl();
-                    for (RestPropertyDefinition scope : rs.getScopes()) {
-                        oauthFlow.addScope(scope.getKey(), scope.getValue());
-                    }
-
-                    openApi.components.addSecurityScheme(def.getKey(), auth);
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
+                } else if (def instanceof MutualTLSDefinition) {
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.MUTUALTLS)
+                            .description(def.getDescription());
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
+                } else if (def instanceof OpenIdConnectDefinition) {
+                    SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.OPENIDCONNECT)
+                            .description(def.getDescription());
+                    auth.setOpenIdConnectUrl(((OpenIdConnectDefinition) def).getUrl());
+                    openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
                 }
             }
         }
     }
 
-    private void parseOas20(CamelContext camelContext, Oas20Document openApi, RestDefinition rest, String pathAsTag) {
-        String summary = getValue(camelContext, rest.getDescriptionText());
-
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
-            // add rest as tag
-            openApi.addTag(pathAsTag, summary);
+    private String buildBasePath(CamelContext camelContext, RestDefinition rest) {
+        // used during gathering of apis
+        String basePath = FileUtil.stripLeadingSeparator(getValue(camelContext, rest.getPath()));
+        // must start with leading slash
+        if (basePath != null && !basePath.startsWith("/")) {
+            basePath = "/" + basePath;
         }
-
-        // setup security definitions
-        RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
-        if (sd != null && sd.getSecurityDefinitions().size() != 0 && openApi.securityDefinitions == null) {
-            openApi.securityDefinitions = openApi.createSecurityDefinitions();
-        }
-        if (sd != null) {
-            for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
-                if (def instanceof RestSecurityBasicAuth) {
-                    Oas20SecurityScheme auth
-                            = openApi.securityDefinitions.createSecurityScheme(getValue(camelContext, def.getKey()));
-                    auth.type = "basicAuth";
-                    auth.description = getValue(camelContext, def.getDescription());
-                    openApi.securityDefinitions.addSecurityScheme("BasicAuth", auth);
-                } else if (def instanceof RestSecurityApiKey) {
-                    RestSecurityApiKey rs = (RestSecurityApiKey) def;
-                    Oas20SecurityScheme auth
-                            = openApi.securityDefinitions.createSecurityScheme(getValue(camelContext, def.getKey()));
-                    auth.type = "apiKey";
-                    auth.description = getValue(camelContext, rs.getDescription());
-                    auth.name = getValue(camelContext, rs.getName());
-                    if (rs.getInHeader() != null && CamelContextHelper.parseBoolean(camelContext, rs.getInHeader())) {
-                        auth.in = "header";
-                    } else {
-                        auth.in = "query";
-                    }
-                    openApi.securityDefinitions.addSecurityScheme(getValue(camelContext, def.getKey()), auth);
-                } else if (def instanceof RestSecurityOAuth2) {
-                    RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
-                    Oas20SecurityScheme auth
-                            = openApi.securityDefinitions.createSecurityScheme(getValue(camelContext, def.getKey()));
-                    auth.type = "oauth2";
-                    auth.description = getValue(camelContext, rs.getDescription());
-                    String flow = rs.getFlow();
-                    if (flow == null) {
-                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
-                            flow = "accessCode";
-                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
-                            flow = "implicit";
-                        }
-                    }
-                    auth.flow = flow;
-                    auth.authorizationUrl = getValue(camelContext, rs.getAuthorizationUrl());
-                    auth.tokenUrl = getValue(camelContext, rs.getTokenUrl());
-                    if (rs.getScopes().size() != 0 && auth.scopes == null) {
-                        auth.scopes = auth.createScopes();
-                    }
-                    for (RestPropertyDefinition scope : rs.getScopes()) {
-                        auth.scopes.addScope(getValue(camelContext, scope.getKey()), getValue(camelContext, scope.getValue()));
-                    }
-                    if (openApi.securityDefinitions == null) {
-                        openApi.securityDefinitions = openApi.createSecurityDefinitions();
-                    }
-                    openApi.securityDefinitions.addSecurityScheme(getValue(camelContext, def.getKey()), auth);
-                }
-            }
-        }
+        return basePath;
     }
 
     private void doParseVerbs(
-            CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
-            List<VerbDefinition> verbs, String pathAsTag) {
+            CamelContext camelContext, OpenAPI openApi, RestDefinition rest, String camelContextId,
+            List<VerbDefinition> verbs, String[] pathAsTags, BeanConfig config) {
 
-        // used during gathering of apis
-        String basePath = getValue(camelContext, rest.getPath());
+        String basePath = buildBasePath(camelContext, rest);
 
         for (VerbDefinition verb : verbs) {
             // check if the Verb Definition must be excluded from documentation
@@ -376,26 +404,22 @@ public class RestOpenApiReader {
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
-            String opPath = OpenApiHelper.buildUrl(basePath, getValue(camelContext, verb.getUri()));
+            String opPath = OpenApiHelper.buildUrl(basePath, getValue(camelContext, verb.getPath()));
 
-            if (openApi.paths == null) {
-                openApi.paths = openApi.createPaths();
+            if (openApi.getPaths() == null) {
+                openApi.paths(new Paths());
             }
-            OasPathItem path = openApi.paths.getPathItem(opPath);
+            PathItem path = openApi.getPaths().get(opPath);
             if (path == null) {
-                path = openApi.paths.createPathItem(opPath);
+                path = new PathItem();   //openApi.paths.createPathItem(opPath);
             }
 
-            OasOperation op = path.createOperation(method);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
+            Operation op = new Operation(); //path.createOperation(method);
+            for (String tag : pathAsTags) {
                 // group in the same tag
-                if (op.tags == null) {
-                    op.tags = new ArrayList<>();
-                }
-                op.tags.add(pathAsTag);
+                op.addTagsItem(tag);
             }
 
-            final String routeId = getValue(camelContext, verb.getRouteId());
             // favour ids from verb, rest, route
             final String operationId;
             if (verb.getId() != null) {
@@ -403,41 +427,44 @@ public class RestOpenApiReader {
             } else if (rest.getId() != null) {
                 operationId = getValue(camelContext, rest.getId());
             } else {
-                operationId = routeId;
+                verb.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+                operationId = verb.getId();
             }
-            op.operationId = operationId;
+            op.setOperationId(operationId);
 
             // add id as vendor extensions
-            Extension extension = op.createExtension();
-            extension.name = "x-camelContextId";
-            extension.value = camelContextId;
-            op.addExtension(extension.name, extension);
-            extension = op.createExtension();
-            extension.name = "x-routeId";
-            extension.value = routeId;
-            op.addExtension(extension.name, extension);
-            path = setPathOperation(path, op, method);
+            op.addExtension("x-camelContextId", camelContextId);
+
+            path.operation(PathItem.HttpMethod.valueOf(method.toUpperCase()), op);
 
             String consumes = getValue(camelContext, verb.getConsumes() != null ? verb.getConsumes() : rest.getConsumes());
-            String produces = getValue(camelContext, verb.getProduces() != null ? verb.getProduces() : rest.getProduces());
-            if (openApi instanceof Oas20Document) {
-                doParseVerbOas20(camelContext, (Oas20Document) openApi, verb, (Oas20Operation) op, consumes, produces);
-            } else if (openApi instanceof Oas30Document) {
-                doParseVerbOas30(camelContext, (Oas30Document) openApi, verb, (Oas30Operation) op, consumes, produces);
+            if (consumes == null) {
+                consumes = config.defaultConsumes;
             }
+
+            String produces = getValue(camelContext, verb.getProduces() != null ? verb.getProduces() : rest.getProduces());
+            if (produces == null) {
+                produces = config.defaultProduces;
+            }
+
+            doParseVerb(camelContext, openApi, verb, op, consumes, produces);
             // enrich with configured response messages from the rest-dsl
             doParseResponseMessages(camelContext, openApi, verb, op, produces);
 
             // add path
-            openApi.paths.addPathItem(opPath, path);
+            openApi.getPaths().addPathItem(opPath, path);
         }
     }
 
-    private void doParseVerbOas30(
-            CamelContext camelContext, Oas30Document openApi, VerbDefinition verb, Oas30Operation op, String consumes,
+    private void doParseVerb(
+            CamelContext camelContext, OpenAPI openApi, VerbDefinition verb, Operation op, String consumes,
             String produces) {
         if (verb.getDescriptionText() != null) {
-            op.summary = getValue(camelContext, verb.getDescriptionText());
+            op.setSummary(getValue(camelContext, verb.getDescriptionText()));
+        }
+
+        if ("true".equals(verb.getDeprecated())) {
+            op.setDeprecated(Boolean.TRUE);
         }
 
         // security
@@ -448,532 +475,341 @@ public class RestOpenApiReader {
                     scopes.add(scope);
                 }
             }
-            SecurityRequirement securityRequirement = op.createSecurityRequirement();
-            securityRequirement.addSecurityRequirementItem(getValue(camelContext, sd.getKey()), scopes);
-            op.addSecurityRequirement(securityRequirement);
+            SecurityRequirement securityRequirement = new SecurityRequirement(); //op.createSecurityRequirement();
+            securityRequirement.addList(getValue(camelContext, sd.getKey()), scopes);
+            op.addSecurityItem(securityRequirement);
         }
 
-        for (RestOperationParamDefinition param : verb.getParams()) {
-            OasParameter parameter = null;
-            if (param.getType().equals(RestParamType.body)) {
-                parameter = op.createParameter();
-                parameter.in = "body";
-            } else if (param.getType().equals(RestParamType.formData)) {
-                parameter = op.createParameter();
-                parameter.in = "formData";
-            } else if (param.getType().equals(RestParamType.header)) {
-                parameter = op.createParameter();
-                parameter.in = "header";
-            } else if (param.getType().equals(RestParamType.path)) {
-                parameter = op.createParameter();
-                parameter.in = "path";
-            } else if (param.getType().equals(RestParamType.query)) {
-                parameter = op.createParameter();
-                parameter.in = "query";
-            }
+        for (ParamDefinition param : verb.getParams()) {
+            Parameter parameter = new Parameter().in(param.getType().name());
 
             if (parameter != null) {
-                parameter.name = getValue(camelContext, param.getName());
+                parameter.setName(getValue(camelContext, param.getName()));
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDescription())) {
-                    parameter.description = getValue(camelContext, param.getDescription());
+                    parameter.setDescription(getValue(camelContext, param.getDescription()));
                 }
-                parameter.required = param.getRequired();
+                parameter.setRequired(param.getRequired());
 
                 // set type on parameter
-                if (!parameter.in.equals("body")) {
-                    Oas30Parameter parameter30 = (Oas30Parameter) parameter;
-                    Oas30Schema oas30Schema = null;
+                if (!"body".equals(parameter.getIn())) {
+                    Schema schema = new Schema<>();
                     final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
-                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValues());
+                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValuesAsStringList());
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                     if (param.getDataType() != null) {
-                        parameter30.schema = parameter30.createSchema();
-                        oas30Schema = (Oas30Schema) parameter30.schema;
-                        oas30Schema.type = getValue(camelContext, param.getDataType());
+                        parameter.setSchema(schema);
+                        String type = getValue(camelContext, param.getDataType());
+                        schema.setType(type);
+                        if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
+                            schema.addType(type);
+                        }
                         if (param.getDataFormat() != null) {
-                            oas30Schema.format = getValue(camelContext, param.getDataFormat());
+                            schema.setFormat(getValue(camelContext, param.getDataFormat()));
                         }
                         if (isArray) {
                             String arrayType = getValue(camelContext, param.getArrayType());
                             if (arrayType != null) {
                                 if (arrayType.equalsIgnoreCase("string")) {
-                                    defineSchemas(parameter30, allowableValues, String.class);
+                                    defineSchemas(parameter, allowableValues, String.class);
                                 }
                                 if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
-                                    defineSchemas(parameter30, allowableValues, Integer.class);
+                                    defineSchemas(parameter, allowableValues, Integer.class);
                                 }
                                 if (arrayType.equalsIgnoreCase("long")) {
-                                    defineSchemas(parameter30, allowableValues, Long.class);
+                                    defineSchemas(parameter, allowableValues, Long.class);
                                 }
                                 if (arrayType.equalsIgnoreCase("float")) {
-                                    defineSchemas(parameter30, allowableValues, Float.class);
+                                    defineSchemas(parameter, allowableValues, Float.class);
                                 }
                                 if (arrayType.equalsIgnoreCase("double")) {
-                                    defineSchemas(parameter30, allowableValues, Double.class);
+                                    defineSchemas(parameter, allowableValues, Double.class);
                                 }
                                 if (arrayType.equalsIgnoreCase("boolean")) {
-                                    defineSchemas(parameter30, allowableValues, Boolean.class);
+                                    defineSchemas(parameter, allowableValues, Boolean.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("byte")) {
+                                    defineSchemas(parameter, allowableValues, ByteArraySchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("binary")) {
+                                    defineSchemas(parameter, allowableValues, BinarySchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("date")) {
+                                    defineSchemas(parameter, allowableValues, DateSchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("date-time")) {
+                                    defineSchemas(parameter, allowableValues, DateTimeSchema.class);
+                                }
+                                if (arrayType.equalsIgnoreCase("password")) {
+                                    defineSchemas(parameter, allowableValues, PasswordSchema.class);
                                 }
                             }
                         }
                     }
                     if (param.getCollectionFormat() != null) {
-                        parameter30.style = getValue(camelContext, param.getCollectionFormat().name());
+                        parameter.setStyle(convertToOpenApiStyle(getValue(camelContext, param.getCollectionFormat().name())));
                     }
                     if (hasAllowableValues && !isArray) {
-                        oas30Schema.enum_ = allowableValues;
+                        schema.setEnum(allowableValues);
                     }
 
                     // set default value on parameter
                     if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDefaultValue())) {
-                        oas30Schema.default_ = getValue(camelContext, param.getDefaultValue());
+                        schema.setDefault(getValue(camelContext, param.getDefaultValue()));
                     }
                     // add examples
-                    if (param.getExamples() != null && param.getExamples().size() >= 1) {
-                        // we can only set one example on the parameter
-                        Extension exampleExtension = parameter30.createExtension();
-                        boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;
-                        if (emptyKey) {
-                            exampleExtension.name = "x-example";
-                            exampleExtension.value = getValue(camelContext, param.getExamples().get(0).getValue());
-                            parameter30.addExtension("x-example", exampleExtension);
-                        } else {
-                            Map<String, String> exampleValue = new LinkedHashMap<>();
-                            exampleValue.put(getValue(camelContext, param.getExamples().get(0).getKey()),
-                                    getValue(camelContext, param.getExamples().get(0).getValue()));
-                            exampleExtension.name = "x-examples";
-                            exampleExtension.value = exampleValue;
-                            parameter30.addExtension("x-examples", exampleExtension);
+                    if (param.getExamples() != null && !param.getExamples().isEmpty()) {
+                        // Examples can be added with a key or a single one with no key
+                        for (RestPropertyDefinition example : param.getExamples()) {
+                            if (example.getKey().isEmpty()) {
+                                if (parameter.getExample() != null) {
+                                    LOG.warn("The parameter already has an example with no key!");
+                                }
+                                parameter.setExample(example.getValue());
+                            } else {
+                                parameter.addExample(example.getKey(), new Example().value(example.getValue()));
+                            }
                         }
                     }
+                    op.addParametersItem(parameter);
                 }
 
-                // set schema on body parameter
-                if (parameter.in.equals("body")) {
-                    Oas30Parameter bp = (Oas30Parameter) parameter;
+                // In OpenAPI 3x, body or form parameters are replaced by requestBody
+                if (parameter.getIn().equals("body")) {
+                    RequestBody reqBody = new RequestBody().content(new Content());
+                    reqBody.setRequired(param.getRequired());
+                    reqBody.setDescription(getValue(camelContext, param.getDescription()));
+                    op.setRequestBody(reqBody);
                     String type = getValue(camelContext, param.getDataType() != null ? param.getDataType() : verb.getType());
+                    Schema<?> bodySchema = null;
                     if (type != null) {
                         if (type.endsWith("[]")) {
                             type = type.substring(0, type.length() - 2);
 
-                            OasSchema arrayModel = (Oas30Schema) bp.createSchema();
-                            arrayModel = modelTypeAsProperty(type, openApi, arrayModel);
-                            bp.schema = arrayModel;
+                            //                            Schema arrayModel = (Oas30Schema) bp.createSchema();
+                            bodySchema = modelTypeAsProperty(type, openApi);
 
                         } else {
                             String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {
-                                Oas30Schema refModel = (Oas30Schema) bp.createSchema();
-                                refModel.$ref = "#/components/schemas/" + ref;
-                                bp.schema = refModel;
+                                bodySchema = new Schema().$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
                             } else {
-                                OasSchema model = (Oas30Schema) bp.createSchema();
-                                model = modelTypeAsProperty(type, openApi, model);
-                                bp.schema = model;
+                                bodySchema = modelTypeAsProperty(type, openApi);
                             }
                         }
                     }
 
                     if (consumes != null) {
                         String[] parts = consumes.split(",");
-                        if (op.requestBody == null) {
-                            op.requestBody = op.createRequestBody();
-                            op.requestBody.required = param.getRequired();
-                            op.requestBody.description = getValue(camelContext, param.getDescription());
-                        }
                         for (String part : parts) {
-                            Oas30MediaType mediaType = op.requestBody.createMediaType(part);
-                            mediaType.schema = mediaType.createSchema();
-                            mediaType.schema.$ref = bp.schema.$ref;
-                            op.requestBody.addMediaType(part, mediaType);
+                            MediaType mediaType = new MediaType().schema(bodySchema);
+                            if (param.getExamples() != null) {
+                                for (RestPropertyDefinition example : param.getExamples()) {
+                                    if (part.equals(example.getKey())) {
+                                        mediaType.setExample(example.getValue());
+                                    }
+                                    // TODO: Check for non-matched or empty key
+                                }
+                            }
+                            reqBody.getContent().addMediaType(part, mediaType);
                         }
                     }
-
-                    // add examples
-                    if (param.getExamples() != null) {
-                        Extension exampleExtension = op.requestBody.createExtension();
-                        boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;
-                        if (emptyKey) {
-                            exampleExtension.name = "x-example";
-                            exampleExtension.value = getValue(camelContext, param.getExamples().get(0).getValue());
-                            op.requestBody.addExtension("x-example", exampleExtension);
-                        } else {
-                            Map<String, String> exampleValue = new LinkedHashMap<>();
-                            exampleValue.put(getValue(camelContext, param.getExamples().get(0).getKey()),
-                                    getValue(camelContext, param.getExamples().get(0).getValue()));
-                            exampleExtension.name = "x-examples";
-                            exampleExtension.value = exampleValue;
-                            op.requestBody.addExtension("x-examples", exampleExtension);
-                        }
-                    }
-                    parameter = null;
                 }
 
-                op.addParameter(parameter);
+                //                op.addParameter(parameter);
             }
         }
 
         // clear parameters if its empty
         if (op.getParameters() != null && op.getParameters().isEmpty()) {
-            op.parameters.clear();
+            //            op.parameters.clear();
+            op.setParameters(null); // Is this necessary?
         }
 
         // if we have an out type then set that as response message
         if (verb.getOutType() != null) {
-            if (op.responses == null) {
-                op.responses = op.createResponses();
+            if (op.getResponses() == null) {
+                op.setResponses(new ApiResponses());
             }
-            Oas30Response response = (Oas30Response) op.responses.createResponse("200");
+
             String[] parts;
             if (produces != null) {
                 parts = produces.split(",");
                 for (String produce : parts) {
-                    Oas30MediaType contentType = response.createMediaType(produce);
-                    response.addMediaType(produce, contentType);
-                    OasSchema model = contentType.createSchema();
-                    model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi, model);
-                    contentType.schema = (Oas30Schema) model;
-                    response.description = "Output type";
-                    op.responses.addResponse("200", response);
+                    ApiResponse response = new ApiResponse().description("Output type"); // ??
+                    Content responseContent = new Content();
+                    MediaType contentType = new MediaType();
+                    responseContent.addMediaType(produce, contentType);
+                    Schema<?> model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
+                    contentType.setSchema(model);
+                    response.setContent(responseContent);
+                    // response.description = "Output type";
+                    //                    op.responses.addResponse("200", response);
+                    op.getResponses().addApiResponse("200", response);
                 }
             }
         }
 
     }
 
-    private void doParseVerbOas20(
-            CamelContext camelContext, Oas20Document openApi, VerbDefinition verb, Oas20Operation op, String consumes,
-            String produces) {
-        if (consumes != null) {
-            String[] parts = consumes.split(",");
-            if (op.consumes == null) {
-                op.consumes = new ArrayList<>();
-            }
-            op.consumes.addAll(Arrays.asList(parts));
-        }
-
-        if (produces != null) {
-            String[] parts = produces.split(",");
-            if (op.produces == null) {
-                op.produces = new ArrayList<>();
-            }
-            op.produces.addAll(Arrays.asList(parts));
-        }
-
-        if (verb.getDescriptionText() != null) {
-            op.summary = getValue(camelContext, verb.getDescriptionText());
-        }
-
-        // security
-        for (SecurityDefinition sd : verb.getSecurity()) {
-            List<String> scopes = new ArrayList<>();
-            if (sd.getScopes() != null) {
-                for (String scope : ObjectHelper.createIterable(getValue(camelContext, sd.getScopes()))) {
-                    scopes.add(scope);
-                }
-            }
-            SecurityRequirement securityRequirement = op.createSecurityRequirement();
-            securityRequirement.addSecurityRequirementItem(getValue(camelContext, sd.getKey()), scopes);
-            op.addSecurityRequirement(securityRequirement);
-        }
-
-        for (RestOperationParamDefinition param : verb.getParams()) {
-            OasParameter parameter = null;
-            if (param.getType().equals(RestParamType.body)) {
-                parameter = op.createParameter();
-                parameter.in = "body";
-            } else if (param.getType().equals(RestParamType.formData)) {
-                parameter = op.createParameter();
-                parameter.in = "formData";
-            } else if (param.getType().equals(RestParamType.header)) {
-                parameter = op.createParameter();
-                parameter.in = "header";
-            } else if (param.getType().equals(RestParamType.path)) {
-                parameter = op.createParameter();
-                parameter.in = "path";
-            } else if (param.getType().equals(RestParamType.query)) {
-                parameter = op.createParameter();
-                parameter.in = "query";
-            }
-
-            if (parameter != null) {
-                parameter.name = getValue(camelContext, param.getName());
-                if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDescription())) {
-                    parameter.description = getValue(camelContext, param.getDescription());
-                }
-                parameter.required = param.getRequired();
-
-                // set type on parameter
-                if (!parameter.in.equals("body")) {
-
-                    Oas20Parameter serializableParameter = (Oas20Parameter) parameter;
-                    final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
-                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValues());
-                    final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
-                    if (param.getDataType() != null) {
-                        serializableParameter.type = param.getDataType();
-                        if (param.getDataFormat() != null) {
-                            serializableParameter.format = getValue(camelContext, param.getDataFormat());
-                        }
-                        if (isArray) {
-                            if (param.getArrayType() != null) {
-                                String arrayType = getValue(camelContext, param.getArrayType());
-                                if (arrayType.equalsIgnoreCase("string")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), String.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), Integer.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("long")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), Long.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("float")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), Float.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("double")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), Double.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("boolean")) {
-                                    defineItems(serializableParameter, allowableValues, new Oas20Items(), Boolean.class);
-                                }
-                            }
-                        }
-                    }
-                    if (param.getCollectionFormat() != null) {
-                        serializableParameter.collectionFormat = param.getCollectionFormat().name();
-                    }
-                    if (hasAllowableValues && !isArray) {
-                        serializableParameter.enum_ = allowableValues;
-                    }
-                    // set default value on parameter
-                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDefaultValue())) {
-                        serializableParameter.default_ = getValue(camelContext, param.getDefaultValue());
-                    }
-                    // add examples
-                    if (param.getExamples() != null && param.getExamples().size() >= 1) {
-                        // we can only set one example on the parameter
-                        Extension exampleExtension = serializableParameter.createExtension();
-                        boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;
-                        if (emptyKey) {
-                            exampleExtension.name = "x-example";
-                            exampleExtension.value = getValue(camelContext, param.getExamples().get(0).getValue());
-                            serializableParameter.addExtension("x-example", exampleExtension);
-                        } else {
-                            Map<String, String> exampleValue = new LinkedHashMap<>();
-                            exampleValue.put(getValue(camelContext, param.getExamples().get(0).getKey()),
-                                    getValue(camelContext, param.getExamples().get(0).getValue()));
-                            exampleExtension.name = "x-examples";
-                            exampleExtension.value = exampleValue;
-                            serializableParameter.addExtension("x-examples", exampleExtension);
-                        }
-                    }
-                }
-
-                // set schema on body parameter
-                if (parameter.in.equals("body")) {
-                    Oas20Parameter bp = (Oas20Parameter) parameter;
-                    String type = getValue(camelContext, param.getDataType() != null ? param.getDataType() : verb.getType());
-                    if (type != null) {
-                        if (type.endsWith("[]")) {
-                            type = type.substring(0, type.length() - 2);
-                            OasSchema arrayModel = (Oas20Schema) bp.createSchema();
-                            arrayModel = modelTypeAsProperty(type, openApi, arrayModel);
-                            bp.schema = arrayModel;
-                        } else {
-                            String ref = modelTypeAsRef(type, openApi);
-                            if (ref != null) {
-                                Oas20Schema refModel = (Oas20Schema) bp.createSchema();
-                                refModel.$ref = "#/definitions/" + ref;
-                                bp.schema = refModel;
-                            } else {
-                                OasSchema model = (Oas20Schema) bp.createSchema();
-                                model = modelTypeAsProperty(type, openApi, model);
-                                bp.schema = model;
-                            }
-                        }
-                    }
-
-                    // add examples
-                    if (param.getExamples() != null) {
-                        Extension exampleExtension = bp.createExtension();
-                        boolean emptyKey = param.getExamples().get(0).getKey().length() == 0;
-                        if (emptyKey) {
-                            exampleExtension.name = "x-example";
-                            exampleExtension.value = getValue(camelContext, param.getExamples().get(0).getValue());
-                            bp.addExtension("x-example", exampleExtension);
-                        } else {
-                            Map<String, String> exampleValue = new LinkedHashMap<>();
-                            exampleValue.put(getValue(camelContext, param.getExamples().get(0).getKey()),
-                                    getValue(camelContext, param.getExamples().get(0).getValue()));
-                            exampleExtension.name = "x-examples";
-                            exampleExtension.value = exampleValue;
-                            bp.addExtension("x-examples", exampleExtension);
-                        }
-                    }
-                }
-                op.addParameter(parameter);
-            }
-        }
-
-        // clear parameters if its empty
-        if (op.getParameters() != null && op.getParameters().isEmpty()) {
-            op.parameters.clear();
-        }
-
-        // if we have an out type then set that as response message
-        if (verb.getOutType() != null) {
-            if (op.responses == null) {
-                op.responses = op.createResponses();
-            }
-            Oas20Response response = (Oas20Response) op.responses.createResponse("200");
-            OasSchema model = response.createSchema();
-            model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi, model);
-
-            response.schema = (Oas20Schema) model;
-            response.description = "Output type";
-            op.responses.addResponse("200", response);
-        }
-    }
-
-    private OasPathItem setPathOperation(OasPathItem path, OasOperation operation, String method) {
-        if (method.equals("post")) {
-            path.post = operation;
-        } else if (method.equals("get")) {
-            path.get = operation;
-        } else if (method.equals("put")) {
-            path.put = operation;
-        } else if (method.equals("patch")) {
-            path.patch = operation;
-        } else if (method.equals("delete")) {
-            path.delete = operation;
-        } else if (method.equals("head")) {
-            path.head = operation;
-        } else if (method.equals("options")) {
-            path.options = operation;
-        }
-        return path;
-    }
-
-    private static void defineItems(
-            final Oas20Parameter serializableParameter,
-            final List<String> allowableValues, final Oas20Items items,
-            final Class<?> type) {
-        serializableParameter.items = items;
-        if (allowableValues != null && !allowableValues.isEmpty()) {
-            if (String.class.equals(type)) {
-                items.enum_ = allowableValues;
-            } else {
-                convertAndSetItemsEnum(items, allowableValues, type);
-            }
+    private StyleEnum convertToOpenApiStyle(String value) {
+        //Should be a Collection Format name
+        switch (CollectionFormat.valueOf(value)) {
+            case csv:
+                return StyleEnum.FORM;
+            case ssv:
+            case tsv:
+                return StyleEnum.SPACEDELIMITED;
+            case pipes:
+                return StyleEnum.PIPEDELIMITED;
+            case multi:
+                return StyleEnum.DEEPOBJECT;
+            default:
+                return null;
         }
     }
 
     private static void defineSchemas(
-            final Oas30Parameter serializableParameter,
+            final Parameter serializableParameter,
             final List<String> allowableValues,
             final Class<?> type) {
+        Schema parameterSchema = serializableParameter.getSchema();
         if (allowableValues != null && !allowableValues.isEmpty()) {
             if (String.class.equals(type)) {
-                ((Oas30Schema) serializableParameter.schema).enum_ = allowableValues;
+                parameterSchema.setEnum(allowableValues);
             } else {
-                convertAndSetItemsEnum(serializableParameter.schema, allowableValues, type);
+                convertAndSetItemsEnum(parameterSchema, allowableValues, type);
             }
+        }
+        if (Objects.equals(parameterSchema.getType(), "array")) {
+
+            Schema<?> itemsSchema;
+
+            if (Integer.class.equals(type)) {
+                itemsSchema = new IntegerSchema();
+            } else if (Long.class.equals(type)) {
+                itemsSchema = new IntegerSchema().format("int64");
+            } else if (Float.class.equals(type)) {
+                itemsSchema = new NumberSchema().format("float");
+            } else if (Double.class.equals(type)) {
+                itemsSchema = new NumberSchema().format("double");
+            } else if (Boolean.class.equals(type)) {
+                itemsSchema = new BooleanSchema();
+            } else if (ByteArraySchema.class.equals(type)) {
+                itemsSchema = new ByteArraySchema();
+            } else if (BinarySchema.class.equals(type)) {
+                itemsSchema = new BinarySchema();
+            } else if (DateSchema.class.equals(type)) {
+                itemsSchema = new DateSchema();
+            } else if (DateTimeSchema.class.equals(type)) {
+                itemsSchema = new DateTimeSchema();
+            } else if (PasswordSchema.class.equals(type)) {
+                itemsSchema = new PasswordSchema();
+            } else {
+                itemsSchema = new StringSchema();
+            }
+
+            parameterSchema.setItems(itemsSchema);
         }
     }
 
     private static void convertAndSetItemsEnum(
-            final ExtensibleNode items, final List<String> allowableValues,
+            final Schema items, final List<String> allowableValues,
             final Class<?> type) {
         try {
-            final MethodHandle valueOf = publicLookup().findStatic(type, "valueOf",
-                    MethodType.methodType(type, String.class));
+            final MethodHandle valueOf = ClassUtils.isPrimitiveWrapper(type)
+                    ? publicLookup().findStatic(type, "valueOf", MethodType.methodType(type, String.class)) : null;
             final MethodHandle setEnum = publicLookup().bind(items, "setEnum",
                     MethodType.methodType(void.class, List.class));
+            final Method castSchema
+                    = type.getSuperclass().equals(Schema.class) ? type.getDeclaredMethod("cast", Object.class) : null;
+            if (castSchema != null) {
+                castSchema.setAccessible(true);
+            }
+            final Object schema = castSchema != null ? type.getDeclaredConstructor().newInstance() : null;
+
             final List<?> values = allowableValues.stream().map(v -> {
                 try {
-                    return valueOf.invoke(v);
-                } catch (Throwable e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
+                    if (valueOf != null) {
+                        return valueOf.invoke(v);
+                    } else if (castSchema != null) {
+                        return castSchema.invoke(schema, v);
+                    } else {
+                        throw new RuntimeException("Can not convert allowable value " + v);
                     }
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
             }).collect(Collectors.toList());
             setEnum.invoke(values);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Throwable e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
             throw new IllegalStateException(e);
         }
     }
 
     private void doParseResponseMessages(
-            CamelContext camelContext, OasDocument openApi, VerbDefinition verb, OasOperation op, String produces) {
-        if (op.responses == null) {
-            op.responses = op.createResponses();
+            CamelContext camelContext, OpenAPI openApi, VerbDefinition verb, Operation op, String produces) {
+        if (op.getResponses() == null) {
+            op.setResponses(new ApiResponses());
         }
-        for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
-            if (openApi instanceof Oas20Document) {
-                doParseResponseOas20(camelContext, (Oas20Document) openApi, (Oas20Operation) op, msg);
-            } else if (openApi instanceof Oas30Document) {
-                doParseResponseOas30(camelContext, (Oas30Document) openApi, (Oas30Operation) op, produces, msg);
-            }
+        for (ResponseMessageDefinition msg : verb.getResponseMsgs()) {
+            doParseResponse(camelContext, openApi, op, produces, msg);
         }
 
         // must include an empty noop response if none exists
-        if (op.responses == null || op.responses.getResponses().isEmpty()) {
-            op.responses.addResponse("200", op.responses.createResponse("200"));
+        if (op.getResponses().isEmpty()) {
+            op.getResponses().addApiResponse(ApiResponses.DEFAULT, new ApiResponse());
         }
     }
 
-    private void doParseResponseOas30(
-            CamelContext camelContext, Oas30Document openApi, Oas30Operation op, String produces,
-            RestOperationResponseMsgDefinition msg) {
-        Oas30Response response = null;
+    private void doParseResponse(
+            CamelContext camelContext, OpenAPI openApi, Operation op, String produces,
+            ResponseMessageDefinition msg) {
+        ApiResponse response = null;
 
         String code = getValue(camelContext, msg.getCode());
-        if (op.responses != null && op.responses.getResponses() != null) {
-            response = (Oas30Response) op.responses.getResponse(code);
-        }
+        response = op.getResponses().get(code);
         if (response == null) {
-            response = (Oas30Response) op.responses.createResponse(code);
-            op.responses.addResponse(code, response);
+            response = new ApiResponse();
+            op.getResponses().addApiResponse(code, response);
         }
+
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getResponseModel())) {
             String[] parts;
             if (produces != null) {
+                Content respContent = new Content();
                 parts = produces.split(",");
                 for (String produce : parts) {
-                    Oas30MediaType contentType = response.createMediaType(produce);
-                    response.addMediaType(produce, contentType);
-                    OasSchema model = contentType.createSchema();
-                    model = modelTypeAsProperty(getValue(camelContext, msg.getResponseModel()), openApi, model);
-                    contentType.schema = (Oas30Schema) model;
+                    Schema model = modelTypeAsProperty(getValue(camelContext, msg.getResponseModel()), openApi);
+                    respContent.addMediaType(produce, new MediaType().schema(model));
                 }
+                response.setContent(respContent);
             }
         }
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getMessage())) {
-            response.description = getValue(camelContext, msg.getMessage());
+            response.setDescription(getValue(camelContext, msg.getMessage()));
         }
 
         // add headers
         if (msg.getHeaders() != null) {
-            for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
+            for (ResponseHeaderDefinition header : msg.getHeaders()) {
                 String name = getValue(camelContext, header.getName());
                 String type = getValue(camelContext, header.getDataType());
                 String format = getValue(camelContext, header.getDataFormat());
 
                 if ("string".equals(type) || "long".equals(type) || "float".equals(type)
                         || "double".equals(type) || "boolean".equals(type)) {
-                    setResponseHeaderOas30(camelContext, response, header, name, format, type);
+                    setResponseHeader(camelContext, response, header, name, format, type);
                 } else if ("int".equals(type) || "integer".equals(type)) {
-                    setResponseHeaderOas30(camelContext, response, header, name, format, "integer");
+                    setResponseHeader(camelContext, response, header, name, format, "integer");
                 } else if ("array".equals(type)) {
-                    Oas30Header ap = response.createHeader(name);
-
+                    Header ap = new Header();
+                    response.addHeaderObject(name, ap);
                     if (org.apache.camel.util.ObjectHelper.isNotEmpty(header.getDescription())) {
-                        ap.description = getValue(camelContext, header.getDescription());
+                        ap.setDescription(getValue(camelContext, header.getDescription()));
                     }
                     if (header.getArrayType() != null) {
                         String arrayType = getValue(camelContext, header.getArrayType());
@@ -991,234 +827,91 @@ public class RestOpenApiReader {
                     }
                     // add example
                     if (header.getExample() != null) {
-                        Extension exampleExtension = ap.createExtension();
-                        exampleExtension.name = "x-example";
-                        exampleExtension.value = getValue(camelContext, header.getExample());
-                        ap.getExtensions().add(exampleExtension);
+                        ap.addExample("", new Example().value(getValue(camelContext, header.getExample())));
                     }
-                    response.addHeader(name, ap);
                 }
             }
         }
 
         // add examples
         if (msg.getExamples() != null) {
-            Extension exampleExtension = response.createExtension();
-            exampleExtension.name = "x-examples";
-            Map<String, String> examplesValue = new LinkedHashMap<>();
-            for (RestPropertyDefinition prop : msg.getExamples()) {
-                examplesValue.put(getValue(camelContext, prop.getKey()), getValue(camelContext, prop.getValue()));
-
+            if (response.getContent() != null) {
+                for (MediaType mediaType : response.getContent().values()) {
+                    for (RestPropertyDefinition prop : msg.getExamples()) {
+                        mediaType.addExamples(getValue(camelContext, prop.getKey()), new Example()
+                                .value(getValue(camelContext, prop.getValue())));
+                    }
+                }
             }
-            exampleExtension.value = examplesValue;
-            response.addExtension(exampleExtension.name, exampleExtension);
+            // if no content, can't add examples!
         }
     }
 
-    private void setHeaderSchemaOas30(Oas30Header ap, String arrayType) {
-        Oas30Schema items = ap.createSchema();
-        items.type = arrayType;
-        ap.schema = items;
+    private void setHeaderSchemaOas30(Header ap, String arrayType) {
+        Schema items = new Schema().type(arrayType);
+        ap.setSchema(items);
     }
 
-    private void setResponseHeaderOas30(
-            CamelContext camelContext, Oas30Response response, RestOperationResponseHeaderDefinition header,
+    private void setResponseHeader(
+            CamelContext camelContext, ApiResponse response, ResponseHeaderDefinition header,
             String name, String format, String type) {
-        Oas30Header ip = response.createHeader(name);
-        response.addHeader(name, ip);
-        Oas30Schema schema = ip.createSchema();
-        ip.schema = schema;
-        schema.type = type;
+        Header ip = new Header();
+        response.addHeaderObject(name, ip);
+        Schema schema = new Schema().type(type);
+        ip.setSchema(schema);
         if (format != null) {
-            schema.format = format;
+            schema.setFormat(format);
         }
-        ip.description = getValue(camelContext, header.getDescription());
+        ip.setDescription(getValue(camelContext, header.getDescription()));
 
         List<String> values;
-        if (!header.getAllowableValues().isEmpty()) {
+        if (header.getAllowableValues() != null) {
             values = new ArrayList<>();
-            for (String text : header.getAllowableValues()) {
+            for (String text : header.getAllowableValuesAsStringList()) {
                 values.add(getValue(camelContext, text));
             }
-            schema.enum_ = values;
+            schema.setEnum(values);
         }
         // add example
         if (header.getExample() != null) {
-            Extension exampleExtension = ip.createExtension();
-            exampleExtension.name = "x-example";
-            exampleExtension.value = getValue(camelContext, header.getExample());
-            ip.getExtensions().add(exampleExtension);
+            ip.addExample("", new Example().value(getValue(camelContext, header.getExample())));
         }
     }
 
-    private void doParseResponseOas20(
-            CamelContext camelContext, Oas20Document openApi, Oas20Operation op,
-            RestOperationResponseMsgDefinition msg) {
-        Oas20Response response = null;
-
-        String code = getValue(camelContext, msg.getCode());
-        if (op.responses != null && op.responses.getResponses() != null) {
-            response = (Oas20Response) op.responses.getResponse(code);
-        }
-        if (response == null) {
-            response = (Oas20Response) op.responses.createResponse(code);
-            op.responses.addResponse(code, response);
-        }
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getResponseModel())) {
-            OasSchema model = response.createSchema();
-            model = modelTypeAsProperty(getValue(camelContext, msg.getResponseModel()), openApi, model);
-            response.schema = (Oas20Schema) model;
-        }
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getMessage())) {
-            response.description = getValue(camelContext, msg.getMessage());
-        }
-
-        // add headers
-        if (msg.getHeaders() != null) {
-            for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
-                String name = getValue(camelContext, header.getName());
-                String type = getValue(camelContext, header.getDataType());
-                String format = getValue(camelContext, header.getDataFormat());
-                if (response.headers == null) {
-                    response.headers = response.createHeaders();
-                }
-                if ("string".equals(type) || "long".equals(type) || "float".equals(type)
-                        || "double".equals(type) || "boolean".equals(type)) {
-                    setResponseHeaderOas20(camelContext, response, header, name, format, type);
-                } else if ("int".equals(type) || "integer".equals(type)) {
-                    setResponseHeaderOas20(camelContext, response, header, name, format, "integer");
-                } else if ("array".equals(type)) {
-                    Oas20Header ap = response.headers.createHeader(name);
-
-                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(header.getDescription())) {
-                        ap.description = getValue(camelContext, header.getDescription());
-                    }
-                    if (header.getArrayType() != null) {
-                        String arrayType = header.getArrayType();
-                        if (arrayType.equalsIgnoreCase("string")
-                                || arrayType.equalsIgnoreCase("long")
-                                || arrayType.equalsIgnoreCase("float")
-                                || arrayType.equalsIgnoreCase("double")
-                                || arrayType.equalsIgnoreCase("boolean")) {
-                            setHeaderSchemaOas20(ap, arrayType);
-                        } else if (header.getArrayType().equalsIgnoreCase("int")
-                                || header.getArrayType().equalsIgnoreCase("integer")) {
-                            setHeaderSchemaOas20(ap, "integer");
-                        }
-
-                    }
-                    // add example
-                    if (header.getExample() != null) {
-                        Extension exampleExtension = ap.createExtension();
-                        exampleExtension.name = "x-example";
-                        exampleExtension.value = getValue(camelContext, header.getExample());
-                        ap.getExtensions().add(exampleExtension);
-                    }
-                    response.headers.addHeader(name, ap);
-                }
-            }
-        }
-
-        // add examples
-        if (msg.getExamples() != null) {
-            Extension exampleExtension = response.createExtension();
-            exampleExtension.name = "examples";
-            Map<String, String> examplesValue = new LinkedHashMap<>();
-            for (RestPropertyDefinition prop : msg.getExamples()) {
-                examplesValue.put(getValue(camelContext, prop.getKey()), getValue(camelContext, prop.getValue()));
-
-            }
-            exampleExtension.value = examplesValue;
-            response.addExtension(exampleExtension.name, exampleExtension);
-        }
-    }
-
-    private void setHeaderSchemaOas20(Oas20Header ap, String arrayType) {
-        Oas20Items items = ap.createItems();
-        items.type = arrayType;
-        ap.items = items;
-    }
-
-    private void setResponseHeaderOas20(
-            CamelContext camelContext, Oas20Response response, RestOperationResponseHeaderDefinition header,
-            String name, String format, String type) {
-        Oas20Header ip = response.headers.createHeader(name);
-        ip.type = type;
-        if (format != null) {
-            ip.format = format;
-        }
-        ip.description = getValue(camelContext, header.getDescription());
-
-        List<String> values;
-        if (!header.getAllowableValues().isEmpty()) {
-            values = new ArrayList<>();
-            for (String text : header.getAllowableValues()) {
-                values.add(getValue(camelContext, text));
-            }
-            ip.enum_ = values;
-        }
-        // add example
-        if (header.getExample() != null) {
-            Extension exampleExtension = ip.createExtension();
-            exampleExtension.name = "x-example";
-            exampleExtension.value = getValue(camelContext, header.getExample());
-            ip.getExtensions().add(exampleExtension);
-        }
-        response.headers.addHeader(name, ip);
-    }
-
-    private OasSchema asModel(String typeName, OasDocument openApi) {
-        if (openApi instanceof Oas20Document) {
-            boolean array = typeName.endsWith("[]");
-            if (array) {
-                typeName = typeName.substring(0, typeName.length() - 2);
-            }
-
-            if (((Oas20Document) openApi).definitions != null) {
-                for (Oas20SchemaDefinition model : ((Oas20Document) openApi).definitions.getDefinitions()) {
-                    @SuppressWarnings("rawtypes")
-                    Map modelType = (Map) model.getExtension("x-className").value;
-                    if (modelType != null && typeName.equals(modelType.get("format"))) {
-                        return model;
-                    }
-                }
-            }
-        } else if (openApi instanceof Oas30Document) {
-            boolean array = typeName.endsWith("[]");
-            if (array) {
-                typeName = typeName.substring(0, typeName.length() - 2);
-            }
-
-            if (((Oas30Document) openApi).components != null
-                    && ((Oas30Document) openApi).components.schemas != null) {
-                for (Oas30SchemaDefinition model : ((Oas30Document) openApi).components.schemas.values()) {
-                    @SuppressWarnings("rawtypes")
-                    Map modelType = (Map) model.getExtension("x-className").value;
-                    if (modelType != null && typeName.equals(modelType.get("format"))) {
-                        return model;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private String modelTypeAsRef(String typeName, OasDocument openApi) {
+    private String modelTypeAsRef(String typeName, OpenAPI openApi) {
         boolean array = typeName.endsWith("[]");
         if (array) {
             typeName = typeName.substring(0, typeName.length() - 2);
         }
 
-        OasSchema model = asModel(typeName, openApi);
-        if (model != null) {
-            typeName = model.type;
-            return typeName;
+        if (NO_REFERENCE_TYPE_NAMES.contains(typeName)) {
+            return null;
         }
 
+        if (openApi.getComponents() != null
+                && openApi.getComponents().getSchemas() != null) {
+            for (Schema model : openApi.getComponents().getSchemas().values()) {
+                if (typeName.equals(getClassNameExtension(model))) {
+                    return model.getName();
+                }
+            }
+        }
         return null;
     }
 
-    private OasSchema modelTypeAsProperty(String typeName, OasDocument openApi, OasSchema prop) {
+    private Object getClassNameExtension(Schema model) {
+        Object className = null;
+        if (model.getExtensions() != null) {
+            Object value = model.getExtensions().get("x-className");
+            if (value instanceof Map) {
+                className = ((Map) value).get("format");
+            }
+        }
+        return className;
+    }
+
+    private Schema<?> modelTypeAsProperty(String typeName, OpenAPI openApi) {
+        Schema<?> prop = null;
         boolean array = typeName.endsWith("[]");
         if (array) {
             typeName = typeName.substring(0, typeName.length() - 2);
@@ -1226,58 +919,42 @@ public class RestOpenApiReader {
 
         String ref = modelTypeAsRef(typeName, openApi);
 
-        if (ref != null) {
-            if (openApi instanceof Oas20Document) {
-                prop.$ref = "#/definitions/" + ref;
-            } else if (openApi instanceof Oas30Document) {
-                prop.$ref = "#/components/schemas/" + ref;
-            }
-        } else {
+        if (ref == null) {
+            // No explicit schema reference so handle primitive types
             // special for byte arrays
             if (array && ("byte".equals(typeName) || "java.lang.Byte".equals(typeName))) {
-                prop.format = "byte";
-                prop.type = "number";
+                // Note built-in ByteArraySchema sets type="string" !
+                prop = new Schema<byte[]>().type("number").format("byte");
                 array = false;
             } else if ("string".equalsIgnoreCase(typeName) || "java.lang.String".equals(typeName)) {
-                prop.format = "string";
-                prop.type = "sting";
+                prop = new StringSchema();
             } else if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
-                prop.format = "integer";
-                prop.type = "number";
+                prop = new IntegerSchema();
             } else if ("long".equals(typeName) || "java.lang.Long".equals(typeName)) {
-                prop.format = "long";
-                prop.type = "number";
+                prop = new IntegerSchema().format("int64");
             } else if ("float".equals(typeName) || "java.lang.Float".equals(typeName)) {
-                prop.format = "float";
-                prop.type = "number";
+                prop = new NumberSchema().format("float");
             } else if ("double".equals(typeName) || "java.lang.Double".equals(typeName)) {
-                prop.format = "double";
-                prop.type = "number";
+                prop = new NumberSchema().format("double");
             } else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
-                prop.format = "boolean";
-                prop.type = "number";
+                prop = new NumberSchema().format("boolean");
             } else if ("file".equals(typeName) || "java.io.File".equals(typeName)) {
-                if (openApi instanceof Oas20Document) {
-                    prop.type = "file";
-                } else if (openApi instanceof Oas30Document) {
-                    prop.type = "string";
-                    prop.format = "binary";
-                }
+                prop = new FileSchema();
             } else {
-                prop.type = "string";
+                prop = new StringSchema();
             }
         }
 
         if (array) {
-            OasSchema ret = prop.createItemsSchema();
-            ret.$ref = prop.$ref;
-            prop.$ref = null;
-            prop.items = ret;
-            prop.type = "array";
-            return prop;
-        } else {
-            return prop;
+            Schema<?> items = new Schema<>();
+            if (ref != null) {
+                items.set$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
+            }
+            prop = new ArraySchema().items(items);
+        } else if (prop == null) {
+            prop = new Schema<>().$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
         }
+        return prop;
     }
 
     /**
@@ -1287,46 +964,35 @@ public class RestOpenApiReader {
      * @param clazz   the class such as pojo with openApi annotation
      * @param openApi the openApi model
      */
-    private void appendModels(Class<?> clazz, OasDocument openApi) {
-        RestModelConverters converters = new RestModelConverters();
-        List<? extends OasSchema> models = converters.readClass(openApi, clazz);
+    private void appendModels(Class<?> clazz, OpenAPI openApi, boolean openapi31) {
+        RestModelConverters converters = new RestModelConverters(openapi31);
+        List<? extends Schema<?>> models = converters.readClass(openApi, clazz);
         if (models == null) {
             return;
         }
-        for (OasSchema entry : models) {
+        if (openApi.getComponents() == null) {
+            openApi.setComponents(new Components());
+        }
+        for (Schema<?> newSchema : models) {
             // favor keeping any existing model that has the vendor extension in the model
-            if (openApi instanceof Oas20Document) {
-                boolean oldExt = false;
-                if (((Oas20Document) openApi).definitions != null && ((Oas20Document) openApi).definitions
-                        .getDefinition(((Oas20SchemaDefinition) entry).getName()) != null) {
-                    Oas20SchemaDefinition oldModel = ((Oas20Document) openApi).definitions
-                            .getDefinition(((Oas20SchemaDefinition) entry).getName());
-                    if (oldModel.getExtensions() != null && !oldModel.getExtensions().isEmpty()) {
-                        oldExt = oldModel.getExtension("x-className") != null;
+            boolean addSchema = true;
+            if (openApi.getComponents().getSchemas() != null) {
+                Schema<?> existing = openApi.getComponents().getSchemas().get(newSchema.getName());
+                if (existing != null) {
+                    // check classname extension
+                    Object oldClassName = getClassNameExtension(existing);
+                    Object newClassName = getClassNameExtension(newSchema);
+                    if (oldClassName != null) {
+                        // a schema with this name and a classname is already in the model
+                        addSchema = false;
+                        LOG.info("Duplicate schema found for with name {}; classname1={}, classname2={}",
+                                newSchema.getName(), oldClassName,
+                                newClassName != null ? newClassName : "none");
                     }
                 }
-
-                if (!oldExt) {
-                    ((Oas20Document) openApi).definitions
-                            .addDefinition(((Oas20SchemaDefinition) entry).getName(),
-                                    (Oas20SchemaDefinition) entry);
-                }
-            } else if (openApi instanceof Oas30Document) {
-                boolean oldExt = false;
-                if (((Oas30Document) openApi).components != null && ((Oas30Document) openApi).components
-                        .getSchemaDefinition(((Oas30SchemaDefinition) entry).getName()) != null) {
-                    Oas30SchemaDefinition oldModel = ((Oas30Document) openApi).components
-                            .getSchemaDefinition(((Oas30SchemaDefinition) entry).getName());
-                    if (oldModel.getExtensions() != null && !oldModel.getExtensions().isEmpty()) {
-                        oldExt = oldModel.getExtension("x-className") != null;
-                    }
-                }
-
-                if (!oldExt) {
-                    ((Oas30Document) openApi).components
-                            .addSchemaDefinition(((Oas30SchemaDefinition) entry).getName(),
-                                    (Oas30SchemaDefinition) entry);
-                }
+            }
+            if (addSchema) {
+                openApi.getComponents().addSchemas(newSchema.getName(), newSchema);
             }
         }
 
@@ -1346,14 +1012,14 @@ public class RestOpenApiReader {
         @Override
         public int compare(VerbDefinition a, VerbDefinition b) {
             String u1 = "";
-            if (a.getUri() != null) {
+            if (a.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u1 = getValue(camelContext, a.getUri()).replace("{", "_");
+                u1 = getValue(camelContext, a.getPath()).replace("{", "_");
             }
             String u2 = "";
-            if (b.getUri() != null) {
+            if (b.getPath() != null) {
                 // replace { with _ which comes before a when soring by char
-                u2 = getValue(camelContext, b.getUri()).replace("{", "_");
+                u2 = getValue(camelContext, b.getPath()).replace("{", "_");
             }
 
             int num = u1.compareTo(u2);
@@ -1362,6 +1028,147 @@ public class RestOpenApiReader {
                 num = a.asVerb().compareTo(b.asVerb());
             }
             return num;
+        }
+    }
+
+    private OpenAPI shortenClassNames(OpenAPI document) {
+        if (document.getComponents() == null || document.getComponents().getSchemas() == null) {
+            return document;
+        }
+
+        // Make a mapping from full name to possibly shortened name.
+        Map<String, String> names = new HashMap<>();
+        Stream<String> schemaStream = document.getComponents().getSchemas().keySet().stream();
+
+        schemaStream.forEach(key -> {
+            String s = key.replaceAll("[^a-zA-Z0-9.-_]", "_");
+            String shortName = s.substring(s.lastIndexOf('.') + 1);
+            names.put(key, names.containsValue(shortName) ? s : shortName);
+        });
+        // Remap the names
+        for (Map.Entry<String, String> namePair : names.entrySet()) {
+            Schema<?> schema = document.getComponents().getSchemas().get(namePair.getKey());
+            if (schema != null) {
+                document.getComponents().getSchemas().remove(namePair.getKey());
+                document.getComponents().addSchemas(namePair.getValue(), schema);
+            }
+        }
+
+        AbstractSpecFilter filter = new SchemaFilter(names);
+        return new SpecFilter().filter(document, filter, null, null, null);
+
+    }
+
+    private String inferOauthFlow(OAuth2Definition rs) {
+        String flow;
+        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
+            flow = "authorizationCode";
+        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
+            flow = "implicit";
+        } else {
+            throw new IllegalStateException("Error inferring OAuth flow");
+        }
+        return flow;
+    }
+
+    private static class SchemaFilter extends AbstractSpecFilter {
+        private final Map<String, String> names;
+
+        SchemaFilter(Map<String, String> names) {
+            this.names = names;
+        }
+
+        @Override
+        public Optional<Parameter> filterParameter(
+                Parameter parameter, Operation operation, ApiDescription api,
+                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+            if (parameter.getContent() != null) {
+                processRefsInContent(parameter.getContent(), params, cookies, headers);
+            }
+            return Optional.of(parameter);
+        }
+
+        @Override
+        public Optional<RequestBody> filterRequestBody(
+                RequestBody requestBody, Operation operation, ApiDescription api,
+                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+            if (requestBody.getContent() != null) {
+                processRefsInContent(requestBody.getContent(), params, cookies, headers);
+            }
+            return Optional.of(requestBody);
+        }
+
+        @Override
+        public Optional<ApiResponse> filterResponse(
+                ApiResponse response, Operation operation, ApiDescription api,
+                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+            if (response.getContent() != null) {
+                processRefsInContent(response.getContent(), params, cookies, headers);
+            }
+            return Optional.of(response);
+        }
+
+        @SuppressWarnings("rawtypes")
+        @Override
+        public Optional<Schema> filterSchema(
+                Schema schema,
+                Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+            if (schema.getName() != null) {
+                schema.setName(fixSchemaReference(schema.getName(), OAS30_SCHEMA_DEFINITION_PREFIX));
+            }
+            if (schema.get$ref() != null) {
+                schema.set$ref(fixSchemaReference(schema.get$ref(), OAS30_SCHEMA_DEFINITION_PREFIX));
+            }
+            if (schema.getItems() != null) {
+                filterSchema(schema.getItems(), params, cookies, headers);
+            }
+            if (schema.getProperties() != null) {
+                for (Schema<?> propSchema : (Collection<Schema>) schema.getProperties().values()) {
+                    filterSchema(propSchema, params, cookies, headers);
+                }
+            }
+            if (schema.getAdditionalProperties() != null &&
+                    schema.getAdditionalProperties() instanceof Schema) {
+                filterSchema((Schema) schema.getAdditionalProperties(), params, cookies, headers);
+            }
+            if (schema.getAnyOf() != null) {
+                List<Schema> any = schema.getAnyOf();
+                for (Schema child : any) {
+                    filterSchema(child, params, cookies, headers);
+                }
+            }
+            if (schema.getAllOf() != null) {
+                List<Schema> all = schema.getAllOf();
+                for (Schema child : all) {
+                    filterSchema(child, params, cookies, headers);
+                }
+            }
+            if (schema.getOneOf() != null) {
+                List<Schema> oneOf = schema.getOneOf();
+                for (Schema child : oneOf) {
+                    filterSchema(child, params, cookies, headers);
+                }
+            }
+            return Optional.of(schema);
+        }
+
+        private void processRefsInContent(
+                Content content, Map<String, List<String>> params,
+                Map<String, String> cookies, Map<String, List<String>> headers) {
+            for (MediaType media : content.values()) {
+                if (media.getSchema() != null) {
+                    filterSchema(media.getSchema(), params, cookies, headers);
+                }
+            }
+        }
+
+        private String fixSchemaReference(String ref, String prefix) {
+            if (ref.startsWith(prefix)) {
+                ref = ref.substring(prefix.length());
+            }
+
+            String name = names.get(ref);
+            return name == null ? ref : name;
         }
     }
 

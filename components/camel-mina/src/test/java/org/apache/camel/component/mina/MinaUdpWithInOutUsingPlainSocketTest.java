@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To test InOut exchange for the UDP protocol.
@@ -38,7 +37,6 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testSendAndReceiveOnce() throws Exception {
         String out = sendAndReceiveUdpMessages("World");
-        assertNotNull("should receive data", out);
         assertEquals("Hello World", out);
     }
 
@@ -51,8 +49,6 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
         DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
         LOG.debug("+++ Sending data +++");
         socket.send(packet);
-
-        Thread.sleep(1000);
 
         byte[] buf = new byte[128];
         DatagramPacket receive = new DatagramPacket(buf, buf.length, address, getPort());
@@ -69,7 +65,7 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:udp://127.0.0.1:%1$s?sync=true", getPort())).process(exchange -> {
+                fromF("mina:udp://127.0.0.1:%1$s?sync=true", getPort()).process(exchange -> {
                     String s = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Hello " + s);
                 });

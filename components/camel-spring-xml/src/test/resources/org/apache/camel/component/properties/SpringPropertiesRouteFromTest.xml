@@ -26,6 +26,7 @@
 
     <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
       <propertyPlaceholder id="properties" location="org/apache/camel/component/properties/myproperties.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <route id="foo">
             <from uri="{{cool.start}}"/>

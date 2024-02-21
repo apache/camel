@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -44,7 +45,7 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     }
 
     @BindToRegistry("hl7encoder")
-    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addEncoder() {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
@@ -53,9 +54,9 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
                         // because HL7 message contains a bunch of control chars
@@ -99,7 +100,7 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19^ADR_A19|456|P|2.4", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // START SNIPPET: e3

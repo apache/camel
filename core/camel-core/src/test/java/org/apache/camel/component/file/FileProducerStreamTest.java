@@ -16,38 +16,25 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FileProducerStreamTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/stream");
-        super.setUp();
-    }
 
     @Test
     public void testStream() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         Object body = Stream.of("ABC", "DEF", "1234567890");
-        template.sendBodyAndHeader("direct:start", body, Exchange.FILE_NAME, "report.xt");
+        template.sendBodyAndHeader("direct:start", body, Exchange.FILE_NAME, "report.txt");
 
         assertMockEndpointsSatisfied();
 
-        File file = new File("target/stream/report.xt");
-        String text = context.getTypeConverter().convertTo(String.class, file);
-        assertEquals("ABCDEF1234567890", text);
+        assertFileExists(testFile("report.txt"), "ABCDEF1234567890");
     }
 
     @Override
@@ -55,7 +42,7 @@ public class FileProducerStreamTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("file:target/stream").to("mock:result");
+                from("direct:start").to(fileUri()).to("mock:result");
             }
         };
     }

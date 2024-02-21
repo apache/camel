@@ -25,7 +25,7 @@ public interface PGPSecretKeyAccessor {
 
     /**
      * Returns the signer keys for the given user ID parts. This method is used for signing.
-     * 
+     *
      * @param  exchange    exchange, can be <code>null</code>
      * @param  useridParts parts of User IDs, can be <code>null</code> or empty, then an empty list must be returned
      * @return             list of secret keys with their private keys and User Ids which corresponds to one of the
@@ -35,9 +35,9 @@ public interface PGPSecretKeyAccessor {
 
     /**
      * Returns the private key with a certain key ID. This method is used for decrypting.
-     * 
+     *
      * @param  exchange exchange, can be <code>null</code>
-     * 
+     *
      * @param  keyId    key ID
      * @return          private key or <code>null</code> if the key cannot be found
      */

@@ -32,6 +32,9 @@ import java.util.stream.StreamSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.component.salesforce.codegen.GenerateExecution;
+import org.apache.camel.component.salesforce.codegen.ObjectDescriptions;
+import org.apache.camel.component.salesforce.codegen.SchemaExecution;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
 import org.apache.camel.test.junit5.params.Parameter;
@@ -42,6 +45,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.stubbing.Answer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,6 +59,7 @@ import static org.mockito.Mockito.mock;
 public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String TEST_CASE_FILE = "case.json";
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaExecution.class.getName());
 
     @Parameter(1)
     public SObjectDescription description;
@@ -72,17 +78,19 @@ public class CamelSalesforceMojoOutputTest {
 
     @Test
     public void testProcessDescription(@TempDir File pkgDir) throws Exception {
-        final GenerateMojo.GeneratorUtility utility = mojo.new GeneratorUtility();
+        final GenerateExecution.GeneratorUtility utility = mojo.generatorUtility();
 
         final RestClient client = mockRestClient();
 
-        mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
+        ObjectDescriptions descriptions = new ObjectDescriptions(client, 0, null, null, null, null, LOG);
 
         mojo.enumerationOverrideProperties.put("Case.PickListValueOverride.A+", "APlus");
 
-        Set<String> sObjectNames = StreamSupport.stream(mojo.descriptions.fetched().spliterator(), false)
+        Set<String> sObjectNames = StreamSupport.stream(descriptions.fetched().spliterator(), false)
                 .map(SObjectDescription::getName).collect(Collectors.toSet());
 
+        mojo.setup();
+        mojo.setDescriptions(descriptions);
         mojo.processDescription(pkgDir, description, utility, sObjectNames);
 
         for (final String source : sources) {
@@ -120,8 +128,6 @@ public class CamelSalesforceMojoOutputTest {
 
     static GenerateMojo createMojo() {
         final GenerateMojo mojo = new GenerateMojo();
-        mojo.engine = GenerateMojo.createVelocityEngine();
-
         return mojo;
     }
 

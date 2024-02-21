@@ -81,13 +81,4 @@ public class RemovePropertyProcessor extends AsyncProcessorSupport implements Tr
         return propertyName;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

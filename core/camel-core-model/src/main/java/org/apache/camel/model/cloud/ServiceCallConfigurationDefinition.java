@@ -16,13 +16,13 @@
  */
 package org.apache.camel.model.cloud;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -40,6 +40,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routing,cloud")
 @XmlRootElement(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String uri;
@@ -47,7 +48,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
     @XmlAttribute
     private String serviceDiscoveryRef;
@@ -74,7 +75,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
             @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
@@ -89,7 +89,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-            @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
             @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
@@ -116,8 +115,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression.
      */
     public void setUri(String uri) {
         this.uri = uri;
@@ -502,13 +500,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
-        setServiceDiscoveryConfiguration(conf);
-
-        return conf;
-    }
-
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
         KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
@@ -644,22 +635,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
 
     public ServiceCallConfigurationDefinition defaultLoadBalancer() {
         DefaultServiceCallServiceLoadBalancerConfiguration conf = new DefaultServiceCallServiceLoadBalancerConfiguration();
-        setLoadBalancerConfiguration(conf);
-
-        return this;
-    }
-
-    public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
-        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
-        setLoadBalancerConfiguration(conf);
-
-        return this;
-    }
-
-    public ServiceCallConfigurationDefinition ribbonLoadBalancer(String clientName) {
-        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
-        conf.setClientName(clientName);
-
         setLoadBalancerConfiguration(conf);
 
         return this;

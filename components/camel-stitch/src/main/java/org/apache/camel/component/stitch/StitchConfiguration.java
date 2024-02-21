@@ -56,7 +56,7 @@ public class StitchConfiguration implements Cloneable {
      * The name of the destination table the data is being pushed to. Table names must be unique in each destination
      * schema, or loading issues will occur.
      *
-     * Note: The number of characters in the table name should be within the destination’s allowed limits or data will
+     * Note: The number of characters in the table name should be within the destination's allowed limits or data will
      * rejected.
      */
     public String getTableName() {

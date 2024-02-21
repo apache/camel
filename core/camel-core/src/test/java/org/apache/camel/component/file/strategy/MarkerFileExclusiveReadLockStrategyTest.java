@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,61 +28,58 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the MarkerFileExclusiveReadLockStrategy in a multi-threaded scenario.
  */
+@Isolated
 public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/marker/");
-        createDirectory("target/data/marker/in");
-        super.setUp();
-    }
+    private CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testMultithreadedLocking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedFileExists("target/data/marker/out/file1.dat");
-        mock.expectedFileExists("target/data/marker/out/file2.dat");
+        mock.expectedFileExists(testFile("out/file1.dat"));
+        mock.expectedFileExists(testFile("out/file2.dat"));
 
         writeFiles();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/data/marker/out/file1.dat"));
+        String content = new String(Files.readAllBytes(testFile("out/file1.dat")));
         String[] lines = content.split(LS);
+        assertEquals(20, lines.length);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
-        content = context.getTypeConverter().convertTo(String.class, new File("target/data/marker/out/file2.dat"));
+        content = new String(Files.readAllBytes(testFile("out/file2.dat")));
         lines = content.split(LS);
+        assertEquals(20, lines.length);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
-        waitUntilCompleted();
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "Did not process the messages within 10 seconds");
 
-        assertFileDoesNotExists("target/data/marker/in/file1.dat.camelLock");
-        assertFileDoesNotExists("target/data/marker/in/file2.dat.camelLock");
+        assertFileDoesNotExists(testFile("in/file1.dat.camelLock"));
+        assertFileDoesNotExists(testFile("in/file2.dat.camelLock"));
 
-        assertFileDoesNotExists("target/data/marker/in/file1.dat");
-        assertFileDoesNotExists("target/data/marker/in/file2.dat");
+        assertFileDoesNotExists(testFile("in/file1.dat"));
+        assertFileDoesNotExists(testFile("in/file2.dat"));
 
         assertEquals(2, this.numberOfFilesProcessed.get());
     }
@@ -87,18 +87,16 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private void writeFiles() throws Exception {
         LOG.debug("Writing files...");
 
-        FileOutputStream fos = new FileOutputStream("target/data/marker/in/file1.dat");
-        FileOutputStream fos2 = new FileOutputStream("target/data/marker/in/file2.dat");
-        for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + LS).getBytes());
-            fos2.write(("Line " + i + LS).getBytes());
-            LOG.debug("Writing line " + i);
+        try (OutputStream fos = Files.newOutputStream(testFile("in/file1.dat"));
+             OutputStream fos2 = Files.newOutputStream(testFile("in/file2.dat"))) {
+            for (int i = 0; i < 20; i++) {
+                fos.write(("Line " + i + LS).getBytes());
+                fos2.write(("Line " + i + LS).getBytes());
+                LOG.debug("Writing line {}", i);
+            }
+            fos.flush();
+            fos2.flush();
         }
-
-        fos.flush();
-        fos.close();
-        fos2.flush();
-        fos2.close();
     }
 
     @Override
@@ -106,29 +104,20 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/marker/in?readLock=markerFile&initialDelay=0&delay=10").onCompletion()
+                from(fileUri("in?readLock=markerFile&initialDelay=0&delay=10")).onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 numberOfFilesProcessed.addAndGet(1);
+                                latch.countDown();
                             }
-                        }).end().threads(NUMBER_OF_THREADS).to("file:target/data/marker/out", "mock:result");
+                        }).end().threads(NUMBER_OF_THREADS).to(fileUri("out"), "mock:result");
             }
         };
     }
 
-    private void waitUntilCompleted() {
-        while (this.numberOfFilesProcessed.get() < 2) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        }
-    }
-
-    private static void assertFileDoesNotExists(String filename) {
-        File file = new File(filename);
-        assertFalse(file.exists(), "File " + filename + " should not exist, it should have been deleted after being processed");
+    private static void assertFileDoesNotExists(Path file) {
+        assertFalse(Files.exists(file),
+                "File " + file + " should not exist, it should have been deleted after being processed");
     }
 
 }

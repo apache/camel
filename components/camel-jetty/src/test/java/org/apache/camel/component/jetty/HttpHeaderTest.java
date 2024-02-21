@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,16 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class HttpHeaderTest extends BaseJettyTest {
 
     @Test
-    public void testHttpHeaders() throws Exception {
+    public void testHttpHeaders() {
         String result = template.requestBody("direct:start", "hello", String.class);
         assertEquals("Find the key!", result, "Should send a right http header to the server.");
     }
 
     @Test
-    public void testServerHeader() throws Exception {
+    public void testServerHeader() {
         Exchange ex = template.request("http://localhost:{{port}}/server/mytest", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Do nothing here
             }
         });
@@ -52,7 +52,7 @@ public class HttpHeaderTest extends BaseJettyTest {
 
         ex = template.request("http://localhost:{{port2}}/server/mytest", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Do nothing here
             }
         });
@@ -62,16 +62,16 @@ public class HttpHeaderTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                         .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
                         .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
                         .to("http://localhost:{{port}}/myapp/mytest");
 
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
                         ServletRequest request
                                 = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);

@@ -17,13 +17,16 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 
     @Override
@@ -35,20 +38,20 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
     public void testNoTransactionRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context
-        context.addRoutes(new SpringRouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
-                from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
-                        .to("activemq:queue:bar?transacted=false");
+                from("activemq:queue:AbstractTransactionTest?transacted=false").process(new ConditionalExceptionProcessor())
+                        .to("activemq:queue:AbstractTransactionTest.dest?transacted=false");
 
             }
         });
 
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        template.sendBody("activemq:queue:foo", "blah");
+        template.sendBody("activemq:queue:AbstractTransactionTest", "blah");
 
         notify.matchesWaitTime();
 

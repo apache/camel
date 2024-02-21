@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.olingo2.internal;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for Olingo2 component.
  */
@@ -26,4 +28,7 @@ public interface Olingo2Constants {
 
     // thread profile name for this component
     String THREAD_PROFILE_NAME = "CamelOlingo2";
+
+    @Metadata(label = "producer", description = "The response Http headers", javaType = "Map<String, String>")
+    String RESPONSE_HTTP_HEADERS = PROPERTY_PREFIX + "responseHttpHeaders";
 }

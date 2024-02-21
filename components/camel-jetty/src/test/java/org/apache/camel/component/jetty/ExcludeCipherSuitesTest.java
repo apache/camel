@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -27,11 +28,11 @@ import org.junit.jupiter.api.Test;
 @Disabled
 public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
-    protected String pwd = "changeit";
+    protected final String pwd = "changeit";
 
-    private SSLContextParameters createSslContextParameters() throws Exception {
+    private SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource("file://" + this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -54,13 +55,13 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
         template.sendBody("jetty:https://localhost:" + getPort() + "/test", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSslContextParameters(createSslContextParameters());
 

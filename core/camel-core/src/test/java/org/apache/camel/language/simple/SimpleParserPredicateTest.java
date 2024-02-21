@@ -27,6 +27,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -304,5 +305,21 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("bronze");
         assertFalse(pre.matches(exchange), "Should not match bronze");
+    }
+
+    @Test
+    public void testSimpleWithAmbiguousBinaryOperator() {
+        String expression = """
+                ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[levelType]} == "1"
+                && ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[minLevel]} != null
+                && ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[minLevel]} == "50"
+                """;
+        SimplePredicateParser simplePredicateParser = new SimplePredicateParser(
+                context,
+                expression,
+                true,
+                new HashMap<>());
+        Predicate predicate = simplePredicateParser.parsePredicate();
+        assertNotNull(predicate);
     }
 }

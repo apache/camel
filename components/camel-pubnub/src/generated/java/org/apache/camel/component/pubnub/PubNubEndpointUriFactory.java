@@ -19,31 +19,33 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
         props.add("authKey");
-        props.add("pubnub");
-        props.add("secretKey");
-        props.add("channel");
-        props.add("exchangePattern");
-        props.add("secure");
-        props.add("uuid");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("withPresence");
+        props.add("channel");
         props.add("cipherKey");
-        props.add("subscribeKey");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
         props.add("operation");
         props.add("publishKey");
+        props.add("pubnub");
+        props.add("secretKey");
+        props.add("secure");
+        props.add("subscribeKey");
+        props.add("uuid");
+        props.add("withPresence");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(5);
         secretProps.add("authKey");
-        secretProps.add("secretKey");
         secretProps.add("cipherKey");
-        secretProps.add("subscribeKey");
         secretProps.add("publishKey");
+        secretProps.add("secretKey");
+        secretProps.add("subscribeKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +73,11 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

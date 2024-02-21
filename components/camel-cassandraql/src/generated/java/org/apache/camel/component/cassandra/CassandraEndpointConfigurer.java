@@ -40,6 +40,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "extratypecodecs":
+        case "extraTypeCodecs": target.setExtraTypeCodecs(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -99,6 +101,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "extratypecodecs":
+        case "extraTypeCodecs": return java.lang.String.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -159,6 +163,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "extratypecodecs":
+        case "extraTypeCodecs": return target.getExtraTypeCodecs();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();

@@ -17,6 +17,7 @@
 package org.apache.camel.processor.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -52,14 +53,14 @@ public class GroovySetHeaderIssueTest extends CamelTestSupport {
             template.sendBody("direct:start", new MySubOrder("mock:" + i));
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("mySlip").groovy("return \"${request.body.subOrderName}Endpoint\"")
                         .routingSlip(header("mySlip"));

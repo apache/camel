@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnCompletionIssueTest extends ContextTestSupport {
 
@@ -44,19 +44,17 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         template.sendBody("direct:input", "ile");
         template.sendBody("direct:input", "markRollback");
 
-        try {
-            template.sendBody("direct:input", "npe");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Darn NPE", e.getCause().getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:input", "npe"),
+                "Should have thrown exception");
 
-        try {
-            template.sendBody("direct:input", "rollback");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
-        }
+        assertEquals("Darn NPE", e.getCause().getMessage());
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:input", "rollback"),
+                "Should have thrown exception");
+
+        assertIsInstanceOf(RollbackExchangeException.class, ex.getCause());
 
         assertMockEndpointsSatisfied();
     }

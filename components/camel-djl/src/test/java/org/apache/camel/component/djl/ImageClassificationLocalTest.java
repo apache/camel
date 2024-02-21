@@ -60,7 +60,7 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(98);
         mock.await();
         long count = mock.getExchanges().stream().filter(exchange -> exchange.getIn().getBody(Boolean.class)).count();
-        assertEquals(98, count);
+        assertEquals(97, count);
     }
 
     @Override

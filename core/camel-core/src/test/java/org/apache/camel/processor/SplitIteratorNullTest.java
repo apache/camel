@@ -51,7 +51,7 @@ public class SplitIteratorNullTest extends ContextTestSupport {
         };
     }
 
-    private class MyIterator implements Iterator<String> {
+    private static class MyIterator implements Iterator<String> {
 
         private int count = 4;
         private boolean nullReturned;

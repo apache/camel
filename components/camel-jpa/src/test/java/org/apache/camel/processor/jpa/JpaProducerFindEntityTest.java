@@ -17,6 +17,7 @@
 package org.apache.camel.processor.jpa;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
@@ -43,7 +44,7 @@ public class JpaProducerFindEntityTest extends AbstractJpaTest {
         SendEmail out = template.requestBody("direct:start", id, SendEmail.class);
         SendEmail out2 = template.requestBody("direct:start", id2, SendEmail.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(one.getAddress(), out.getAddress());
         assertEquals(two.getAddress(), out2.getAddress());

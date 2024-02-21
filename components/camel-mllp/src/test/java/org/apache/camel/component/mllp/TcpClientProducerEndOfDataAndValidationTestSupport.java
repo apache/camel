@@ -118,7 +118,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             String routeId = "mllp-sender";
 
@@ -164,7 +164,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         };
     }
 
-    protected void setExpectedCounts() throws Exception {
+    protected void setExpectedCounts() {
         aa.expectedMessageCount(expectedAACount);
         ae.expectedMessageCount(expectedAECount);
         ar.expectedMessageCount(expectedARCount);
@@ -178,13 +178,13 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     @Override
     public void tearDown() throws Exception {
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         super.tearDown();
     }
 
     @Test
-    public void testSendSingleMessageWithEndOfDataByte() throws Exception {
+    public void testSendSingleMessageWithEndOfDataByte() {
         aa.expectedMessageCount(1);
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
@@ -208,7 +208,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testSendSingleMessageWithoutEndOfData() throws Exception;
+    public abstract void testSendSingleMessageWithoutEndOfData();
 
     protected void runSendSingleMessageWithoutEndOfData() throws Exception {
         setExpectedCounts();
@@ -219,9 +219,9 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception;
+    public abstract void testSendMultipleMessagesWithoutEndOfDataByte();
 
-    protected void runSendMultipleMessagesWithoutEndOfDataByte() throws Exception {
+    protected void runSendMultipleMessagesWithoutEndOfDataByte() {
         NotifyBuilder[] complete = new NotifyBuilder[expectedAACount];
         for (int i = 0; i < expectedAACount; ++i) {
             complete[i] = new NotifyBuilder(context).whenDone(i + 1).create();
@@ -345,7 +345,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testEmptyAcknowledgement() throws Exception;
+    public abstract void testEmptyAcknowledgement();
 
     protected void runEmptyAcknowledgement(MockEndpoint expectedEndpoint) throws Exception {
         setExpectedCounts();
@@ -358,7 +358,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testInvalidAcknowledgement() throws Exception;
+    public abstract void testInvalidAcknowledgement();
 
     protected void runInvalidAcknowledgement(MockEndpoint expectedEndpoint) throws Exception {
         final String badAcknowledgement = "A VERY BAD ACKNOWLEDGEMENT";
@@ -376,11 +376,11 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testMissingEndOfDataByte() throws Exception;
+    public abstract void testMissingEndOfDataByte();
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     * 
+     *
      * @throws Exception
      */
     protected void runMissingEndOfDataByte() throws Exception {
@@ -446,7 +446,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception;
+    public abstract void testSendMultipleMessagesWithoutSomeEndOfDataByte();
 
     protected void runSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception {
         setExpectedCounts();
@@ -467,11 +467,11 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception;
+    public abstract void testInvalidAcknowledgementContainingEmbeddedStartOfBlock();
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     * 
+     *
      * @throws Exception
      */
     public void runInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
@@ -485,14 +485,13 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception;
+    public abstract void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte();
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     * 
-     * @throws Exception
+     *
      */
-    protected void runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {
+    protected void runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() {
         final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.END_OF_BLOCK);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);

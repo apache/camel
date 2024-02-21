@@ -1,0 +1,128 @@
+{
+  "type": "MT",
+  "basicHeaderBlock": {
+    "applicationId": "F",
+    "serviceId": "01",
+    "logicalTerminal": "BICFOOYYAXXX",
+    "sessionNumber": "8683",
+    "sequenceNumber": "497519"
+  },
+  "applicationHeaderBlock": {
+    "senderInputTime": "1535",
+    "MIRDate": "051028",
+    "MIRLogicalTerminal": "ESPBESMMAXXX",
+    "MIRSessionNumber": "5423",
+    "MIRSequenceNumber": "752247",
+    "receiverOutputDate": "051028",
+    "receiverOutputTime": "1535",
+    "messagePriority": "N",
+    "messageType": "103",
+    "blockType": "O",
+    "direction": "O"
+  },
+  "userHeaderBlock": {
+    "fields": [
+      {
+        "name": "113",
+        "bankingPriority": "ROMF"
+      },
+      {
+        "name": "108",
+        "mUR": "0510280182794665"
+      },
+      {
+        "name": "119",
+        "validationFlag": "STP"
+      }
+    ]
+  },
+  "textBlock": {
+    "fields": [
+      {
+        "name": "20",
+        "reference": "0061350113089908"
+      },
+      {
+        "name": "13C",
+        "code": "RNCTIME",
+        "timeIndication": "1534",
+        "sign": "+",
+        "timeOffset": "0000"
+      },
+      {
+        "name": "23B",
+        "type": "CRED"
+      },
+      {
+        "name": "23E",
+        "instructionCode": "SDVA"
+      },
+      {
+        "name": "32A",
+        "date": "061028",
+        "currency": "EUR",
+        "amount": "100000,"
+      },
+      {
+        "name": "33B",
+        "currency": "EUR",
+        "amount": "100000,"
+      },
+      {
+        "name": "50K",
+        "account": "12345678",
+        "nameAndAddress": "AGENTES DE BOLSA FOO AGENCIA",
+        "nameAndAddress2": "AV XXXXX 123 BIS 9 PL",
+        "nameAndAddress3": "12345 BARCELONA"
+      },
+      {
+        "name": "52A",
+        "account": "2337",
+        "identifierCode": "FOOAESMMXXX"
+      },
+      {
+        "name": "53A",
+        "identifierCode": "FOOAESMMXXX"
+      },
+      {
+        "name": "57A",
+        "identifierCode": "BICFOOYYXXX"
+      },
+      {
+        "name": "59",
+        "account": "ES0123456789012345671234",
+        "nameAndAddress": "FOO AGENTES DE BOLSA ASOC"
+      },
+      {
+        "name": "71A",
+        "code": "OUR"
+      },
+      {
+        "name": "72",
+        "narrative": "/BNF/TRANSF. BCO. FOO",
+        "structured": [
+          {
+            "narrativeFragments": [
+              "TRANSF. BCO. FOO"
+            ],
+            "narrativeSupplementFragments": [],
+            "codeword": "BNF"
+          }
+        ],
+        "unstructuredFragments": []
+      }
+    ]
+  },
+  "trailerBlock": {
+    "fields": [
+      {
+        "name": "MAC",
+        "value": "88B4F929"
+      },
+      {
+        "name": "CHK",
+        "value": "22EF370A4073"
+      }
+    ]
+  }
+}

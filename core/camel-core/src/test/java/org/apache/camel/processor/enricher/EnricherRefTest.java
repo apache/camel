@@ -62,7 +62,7 @@ public class EnricherRefTest extends ContextTestSupport {
             public void configure() throws Exception {
                 cool.setCamelContext(context);
 
-                from("direct:start").enrich().simple("ref:cool").aggregationStrategyRef("agg");
+                from("direct:start").enrich().simple("ref:cool").aggregationStrategy("agg");
             }
         };
     }

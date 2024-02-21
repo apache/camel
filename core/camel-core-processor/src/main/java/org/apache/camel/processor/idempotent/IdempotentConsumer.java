@@ -25,8 +25,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
@@ -139,7 +139,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport
 
             if (!newKey) {
                 // mark the exchange as duplicate
-                exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
+                exchange.setProperty(ExchangePropertyKey.DUPLICATE_MESSAGE, Boolean.TRUE);
 
                 // we already have this key so its a duplicate message
                 onDuplicate(exchange, messageId);
@@ -154,10 +154,15 @@ public class IdempotentConsumer extends AsyncProcessorSupport
 
             final Synchronization onCompletion
                     = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
-            target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
-            if (!completionEager) {
+
+            if (completionEager) {
+                // the callback will eager complete
+                target = new IdempotentConsumerCallback(exchange, onCompletion, callback);
+            } else {
+                // we can use existing callback as target
+                target = callback;
                 // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+                exchange.getExchangeExtension().addOnCompletion(onCompletion);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -278,27 +283,21 @@ public class IdempotentConsumer extends AsyncProcessorSupport
         private final Exchange exchange;
         private final Synchronization onCompletion;
         private final AsyncCallback callback;
-        private final boolean completionEager;
 
-        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback,
-                                   boolean completionEager) {
+        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback) {
             this.exchange = exchange;
             this.onCompletion = onCompletion;
             this.callback = callback;
-            this.completionEager = completionEager;
         }
 
         @Override
         public void done(boolean doneSync) {
             try {
-                if (completionEager) {
-                    if (exchange.isFailed()) {
-                        onCompletion.onFailure(exchange);
-                    } else {
-                        onCompletion.onComplete(exchange);
-                    }
+                if (exchange.isFailed()) {
+                    onCompletion.onFailure(exchange);
+                } else {
+                    onCompletion.onComplete(exchange);
                 }
-                // if completion is not eager then the onCompletion is invoked as part of the UoW of the Exchange
             } finally {
                 callback.done(doneSync);
             }

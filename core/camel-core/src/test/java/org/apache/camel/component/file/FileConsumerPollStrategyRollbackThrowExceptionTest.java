@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -41,8 +40,6 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
-    private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
-
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
@@ -51,28 +48,23 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/pollstrategy");
-        super.setUp();
-        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class).to("mock:result");
+            }
+        };
     }
 
     @Test
     public void testRollbackThrowException() throws Exception {
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+
         await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);
 
         // and we should rollback X number of times
         assertTrue(event.startsWith("rollback"));
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(fileUrl).convertBodyTo(String.class).to("mock:result");
-            }
-        };
     }
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {

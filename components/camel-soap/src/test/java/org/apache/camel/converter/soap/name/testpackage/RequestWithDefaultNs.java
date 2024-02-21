@@ -16,8 +16,8 @@
  */
 package org.apache.camel.converter.soap.name.testpackage;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "one", namespace = "two")
 @XmlRootElement(name = "foo")

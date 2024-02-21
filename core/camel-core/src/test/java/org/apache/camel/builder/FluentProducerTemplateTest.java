@@ -28,7 +28,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for FluentProducerTemplate
@@ -36,22 +40,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FluentProducerTemplateTest extends ContextTestSupport {
 
     @Test
-    public void testNoEndpoint() throws Exception {
+    public void testNoEndpoint() {
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
 
-        try {
-            fluent.withBody("Hello World").send();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        FluentProducerTemplate helloWorld = fluent.withBody("Hello World");
+        assertThrows(IllegalArgumentException.class, () -> helloWorld.send(),
+                "Should have thrown exception");
 
-        try {
-            fluent.withBody("Hello World").request();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> helloWorld.request(),
+                "Should have thrown exception");
     }
 
     @Test
@@ -92,9 +89,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         FluentProducerTemplate on = DefaultFluentProducerTemplate.on(context);
-        on.withBody("Hello World");
-        on.toF("direct:%s", "in");
-        Object result = on.request();
+        Object result = on.withBody("Hello World").toF("direct:%s", "in").request();
 
         assertMockEndpointsSatisfied();
 
@@ -108,7 +103,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context).withDefaultEndpoint("direct:in");
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context, "direct:in");
 
         Object result = template.withBody("Hello World").request();
 
@@ -238,13 +233,19 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testExceptionUsingProcessorAndBody() {
+        assertThrows(IllegalArgumentException.class, () -> DefaultFluentProducerTemplate.on(context)
+                .withBody("World")
+                .withProcessor(exchange -> exchange.getIn().setHeader("foo", 123)).to("direct:async").send(), "");
+    }
+
+    @Test
     public void testRequestExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
         try {
             DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:exception").request();
-
             fail("Should have thrown RuntimeCamelException");
         } catch (RuntimeCamelException e) {
             boolean b = e.getCause() instanceof IllegalArgumentException;
@@ -288,24 +289,26 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testWithExchange() throws Exception {
+    public void testWithExchange() {
         Exchange exchange = ExchangeBuilder.anExchange(context).withBody("Hello!").withPattern(ExchangePattern.InOut).build();
 
         exchange = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").send();
 
         assertEquals("Bye World", exchange.getMessage().getBody());
 
-        try {
-            String out = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").request(String.class);
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("withExchange not supported on FluentProducerTemplate.request method. Use send method instead.",
-                    e.getMessage());
-        }
+        String str = "withExchange not supported on FluentProducerTemplate.request method. Use send method instead.";
+
+        Exchange finalExchange = exchange;
+        Exception e = assertThrows(IllegalArgumentException.class, () -> context.createFluentProducerTemplate()
+                .withExchange(finalExchange)
+                .to("direct:in")
+                .request(String.class), "Should throw exception");
+
+        assertEquals(str, e.getMessage());
     }
 
     @Test
-    public void testRequestBody() throws Exception {
+    public void testRequestBody() {
         // with endpoint as string uri
         FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
 
@@ -328,6 +331,30 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         assertEquals(expectedResult, template.withBody("Hello")
                 .to(context.getEndpoint("direct:inout")).request(Integer.class));
+    }
+
+    @Test
+    public void testWithVariable() {
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        assertEquals("Hello World", template.withVariable("foo", "World").withBody("Hello")
+                .to("direct:var").request(String.class));
+
+        assertEquals("Hello Moon", template.withVariable("foo", "Moon").withVariable("global:planet", "Mars").withBody("Hello")
+                .to("direct:var").request(String.class));
+        assertEquals("Mars", context.getVariable("planet"));
+    }
+
+    @Test
+    public void testWithExchangeProperty() {
+        FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
+
+        assertEquals("Hello World", template.withExchangeProperty("foo", "World").withBody("Hello")
+                .to("direct:ep").request(String.class));
+
+        assertEquals("Hello Moon",
+                template.withExchangeProperty("foo", "Moon").withExchangeProperty("planet", "Mars").withBody("Hello")
+                        .to("direct:ep").request(String.class));
     }
 
     @Test
@@ -408,6 +435,36 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUseFourTimesSameThread() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:echo");
+        mock.expectedBodiesReceived("Camel", "Beer");
+        mock.message(0).header("foo").isEqualTo("!");
+        mock.message(1).header("foo").isNull();
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        fluent.setDefaultEndpointUri("direct:red");
+        Object result = fluent.withBody("Camel").withHeader("foo", "!").to("direct:echo").request();
+        Object result2 = fluent.withBody("World").to("direct:hi").request();
+        Object result3 = fluent.withBody("Beer").to("direct:echo").request();
+        Object result4 = fluent.withBody("Wine").request();
+        assertEquals("CamelCamel!", result);
+        assertEquals("Hi World", result2);
+        assertEquals("BeerBeer", result3);
+        assertEquals("Red Wine", result4);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPerformance() {
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+        for (int i = 0; i < 1000; i++) {
+            Object result = fluent.withBody("Camel").withHeader("foo", "" + i).to("direct:echo").request();
+            assertEquals("CamelCamel" + i, result);
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -436,6 +493,13 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
                 from("direct:echo").to("mock:echo").setBody().simple("${body}${body}${header.foo}");
 
+                from("direct:hi").setBody().simple("Hi ${body}");
+
+                from("direct:red").setBody().simple("Red ${body}");
+
+                from("direct:var").transform().simple("${body} ${variable.foo}");
+
+                from("direct:ep").transform().simple("${body} ${exchangeProperty.foo}");
             }
         };
     }

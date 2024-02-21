@@ -40,7 +40,7 @@ class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
         String pathToFile = "src/test/java/org/apache/camel/parser/java/MyPartialRoute.java";
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File(pathToFile));
 
-        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".", pathToFile, true);
+        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, pathToFile, true);
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
         assertEquals(pathToFile, details.getFileName());
@@ -50,7 +50,7 @@ class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
         assertEquals("25", list.get(0).getLineNumberEnd());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("25\tfrom"));
     }

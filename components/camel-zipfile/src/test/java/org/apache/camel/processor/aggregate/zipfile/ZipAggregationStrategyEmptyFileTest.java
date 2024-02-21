@@ -57,7 +57,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
         template.sendBody("file:target/foo", "Bye");
         template.sendBody("file:target/foo", "Howdy");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
@@ -79,10 +79,10 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/foo")
                         .aggregate(new ZipAggregationStrategy())
                         .constant(true)

@@ -22,81 +22,98 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JaxbXmlRoutesBuilderLoaderTest {
+
+    private static final String NAMESPACE_ATTRIBUTE = "xmlns=\"http://camel.apache.org/schema/spring\"";
+    private final String routesContent = ""
+                                         + "<routes " + NAMESPACE_ATTRIBUTE + ">"
+                                         + "   <route id=\"xpath-route\">"
+                                         + "      <from uri=\"direct:test\"/>"
+                                         + "      <setBody>"
+                                         + "         <xpath resultType=\"java.lang.String\">"
+                                         + "            /foo:orders/order[1]/country/text()"
+                                         + "         </xpath>"
+                                         + "      </setBody>"
+                                         + "   </route>"
+                                         + "   <route id=\"timer\">"
+                                         + "      <from uri=\"timer:test\"/>"
+                                         + "      <log/>"
+                                         + "   </route>"
+                                         + "</routes>";
+
+    private final String routesTemplateContent = ""
+                                                 + "<routeTemplates " + NAMESPACE_ATTRIBUTE + ">"
+                                                 + "  <routeTemplate id=\"myTemplate\">"
+                                                 + "    <templateParameter name=\"foo\"/>"
+                                                 + "    <templateParameter name=\"bar\"/>"
+                                                 + "    <route>"
+                                                 + "      <from uri=\"direct:{{foo}}\"/>"
+                                                 + "      <to uri=\"mock:{{bar}}\"/>"
+                                                 + "    </route>"
+                                                 + "  </routeTemplate>"
+                                                 + "</routeTemplates>";
+
+    private final String restsContent = ""
+                                        + "<rests " + NAMESPACE_ATTRIBUTE + ">"
+                                        + "  <rest id=\"bar\" path=\"/say/hello\">"
+                                        + "    <get path=\"/bar\">"
+                                        + "      <to uri=\"mock:bar\"/>"
+                                        + "    </get>"
+                                        + "  </rest>"
+                                        + "</rests>";
+
     @Test
     public void canLoadRoutes() throws Exception {
-        String content = ""
-                         + "<routes xmlns=\"http://camel.apache.org/schema/spring\">"
-                         + "   <route id=\"xpath-route\">"
-                         + "      <from uri=\"direct:test\"/>"
-                         + "      <setBody>"
-                         + "         <xpath resultType=\"java.lang.String\">"
-                         + "            /foo:orders/order[1]/country/text()"
-                         + "         </xpath>"
-                         + "      </setBody>"
-                         + "   </route>"
-                         + "</routes>";
-
-        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
-
-        JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
-        loader.setCamelContext(new DefaultCamelContext());
-
-        RouteBuilder builder = (RouteBuilder) loader.loadRoutesBuilder(resource);
-        builder.setContext(loader.getCamelContext());
-        builder.configure();
-
+        RouteBuilder builder = configureBuilderWithContent(routesContent, false);
         assertFalse(builder.getRouteCollection().getRoutes().isEmpty());
     }
 
     @Test
+    public void canLoadRoutesNoNS() throws Exception {
+        RouteBuilder builder = configureBuilderWithContent(routesContent, true);
+        assertEquals(2, builder.getRouteCollection().getRoutes().size());
+    }
+
+    @Test
     public void canLoadRests() throws Exception {
-        String content = ""
-                         + "<rests xmlns=\"http://camel.apache.org/schema/spring\">"
-                         + "  <rest id=\"bar\" path=\"/say/hello\">"
-                         + "    <get uri=\"/bar\">"
-                         + "      <to uri=\"mock:bar\"/>"
-                         + "    </get>"
-                         + "  </rest>"
-                         + "</rests>";
+        RouteBuilder builder = configureBuilderWithContent(restsContent, false);
+        assertFalse(builder.getRestCollection().getRests().isEmpty());
+    }
 
-        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
-
-        JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
-        loader.setCamelContext(new DefaultCamelContext());
-
-        RouteBuilder builder = (RouteBuilder) loader.loadRoutesBuilder(resource);
-        builder.setContext(loader.getCamelContext());
-        builder.configure();
-
+    @Test
+    public void canLoadRestsNoNS() throws Exception {
+        RouteBuilder builder = configureBuilderWithContent(restsContent, true);
         assertFalse(builder.getRestCollection().getRests().isEmpty());
     }
 
     @Test
     public void canLoadTemplates() throws Exception {
-        String content = ""
-                         + "<routeTemplates xmlns=\"http://camel.apache.org/schema/spring\">"
-                         + "  <routeTemplate id=\"myTemplate\">"
-                         + "    <templateParameter name=\"foo\"/>"
-                         + "    <templateParameter name=\"bar\"/>"
-                         + "    <route>"
-                         + "      <from uri=\"direct:{{foo}}\"/>"
-                         + "      <to uri=\"mock:{{bar}}\"/>"
-                         + "    </route>"
-                         + "  </routeTemplate>"
-                         + "</routeTemplates>";
+        RouteBuilder builder = configureBuilderWithContent(routesTemplateContent, false);
+        assertFalse(builder.getRouteTemplateCollection().getRouteTemplates().isEmpty());
+    }
 
-        Resource resource = ResourceHelper.fromString("in-memory.xml", content);
+    @Test
+    public void canLoadTemplatesNoNS() throws Exception {
+        RouteBuilder builder = configureBuilderWithContent(routesTemplateContent, true);
+        assertFalse(builder.getRouteTemplateCollection().getRouteTemplates().isEmpty());
+    }
+
+    private RouteBuilder configureBuilderWithContent(String content, boolean removeNamespace) throws Exception {
+        String xmlContent = content;
+        if (removeNamespace) {
+            xmlContent = content.replaceFirst("xmlns=\"http://camel.apache.org/schema/spring\"", "");
+        }
+        Resource resource = ResourceHelper.fromString("in-memory.xml", xmlContent);
 
         JaxbXmlRoutesBuilderLoader loader = new JaxbXmlRoutesBuilderLoader();
         loader.setCamelContext(new DefaultCamelContext());
 
         RouteBuilder builder = (RouteBuilder) loader.loadRoutesBuilder(resource);
-        builder.setContext(loader.getCamelContext());
+        builder.setCamelContext(loader.getCamelContext());
         builder.configure();
-
-        assertFalse(builder.getRouteTemplateCollection().getRouteTemplates().isEmpty());
+        return builder;
     }
 }

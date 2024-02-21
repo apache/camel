@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package com.braintreegateway;
 
 import com.braintreegateway.exceptions.NotFoundException;
@@ -100,7 +99,7 @@ public class CustomerGateway {
      *         {@link com.braintreegateway.exceptions.NotFoundException}.
      */
     public Customer find(String id) {
-        if(id == null || id.trim().equals(""))
+        if(id == null || id.isBlank())
             throw new NotFoundException();
 
         return new Customer(http.get(configuration.getMerchantPath() + "/customers/" + id));
@@ -117,7 +116,7 @@ public class CustomerGateway {
      *         {@link com.braintreegateway.exceptions.NotFoundException}.
      */
     public Customer find(String id, String associationFilterId) {
-        if(id == null || id.trim().equals(""))
+        if(id == null || id.isBlank())
             throw new NotFoundException();
 
         if(associationFilterId == null || associationFilterId.isEmpty())
@@ -153,4 +152,3 @@ public class CustomerGateway {
     }
 
 }
-//CHECKSTYLE:ON

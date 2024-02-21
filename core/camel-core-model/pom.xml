@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-core-model</artifactId>
@@ -72,6 +72,19 @@
     <build>
         <plugins>
             <plugin>
+                <!-- Required by camel-spring-xml and possibly others which unpack the sources -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
@@ -81,30 +94,8 @@
                         <goals>
                             <goal>generate-configurer</goal>
                         </goals>
-                        <configuration>
-                            <discoverClasses>false</discoverClasses>
-                            <classes>
-                                <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
-                                <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
-                                <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
-                            </classes>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <_plugin>
-                            org.apache.felix.bundleplugin.BlueprintPlugin,
-                            aQute.lib.spring.SpringXMLType,
-                            org.apache.felix.bundleplugin.JpaPlugin,
-                            org.apache.camel.maven.bundle.CamelPlugin
-                        </_plugin>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>

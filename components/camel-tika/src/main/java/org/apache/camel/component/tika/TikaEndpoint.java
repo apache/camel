@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Parse documents and extract metadata and text using Apache Tika.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true,
-             category = { Category.DOCUMENT, Category.TRANSFORMATION })
+             remote = false, category = { Category.DOCUMENT, Category.TRANSFORMATION })
 public class TikaEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,10 +49,4 @@ public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSup
         result.assertIsSatisfied();
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/antpathmatcher");
-        super.setUp();
-    }
 }

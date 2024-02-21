@@ -117,7 +117,7 @@ public class TransformerContractTest extends ContextTestSupport {
         assertEquals("<foo/>", exa.getIn().getBody());
         assertEquals(A.class, exb.getIn().getBody().getClass());
         assertEquals(B.class, exa2.getIn().getBody().getClass());
-        assertEquals("<fooResponse/>", new String((byte[]) answer.getIn().getBody()));
+        assertEquals("<fooResponse/>", answer.getIn().getBody(String.class));
     }
 
     public static class MyTypeConverters implements TypeConverters {

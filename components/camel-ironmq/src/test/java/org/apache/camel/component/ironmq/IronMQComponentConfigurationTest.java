@@ -94,7 +94,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutTokenConfiguration() throws Exception {
+    public void createEndpointWithoutTokenConfiguration() {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
         assertThrows(IllegalArgumentException.class,
@@ -102,7 +102,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutProjectIdConfiguration() throws Exception {
+    public void createEndpointWithoutProjectIdConfiguration() {
         IronMQComponent component = new IronMQComponent(context);
         component.init();
         assertThrows(IllegalArgumentException.class,

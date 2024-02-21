@@ -24,20 +24,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
@@ -48,24 +53,28 @@ import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.appendHeader;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.writeResponse;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 /**
  * A {@link org.apache.camel.Consumer} for the {@link org.apache.camel.component.platform.http.spi.PlatformHttpEngine}
  * based on Vert.x Web.
  */
-public class VertxPlatformHttpConsumer extends DefaultConsumer {
+public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
+    private final boolean muteExceptions;
     private Set<Method> methods;
     private String path;
     private Route route;
     private VertxPlatformHttpRouter router;
+    private HttpRequestBodyHandler httpRequestBodyHandler;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
@@ -75,6 +84,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         this.handlers = handlers;
         this.fileNameExtWhitelist
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.muteExceptions = endpoint.isMuteException();
     }
 
     @Override
@@ -88,6 +98,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
+        if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
+            httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
+        } else {
+            httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
+        }
     }
 
     @Override
@@ -96,18 +111,28 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
         final Route newRoute = router.route(path);
 
+        if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
+            ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
+        }
+
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
 
         if (getEndpoint().getConsumes() != null) {
-            newRoute.consumes(getEndpoint().getConsumes());
+            //comma separated contentTypes has to be registered one by one
+            for (String c : getEndpoint().getConsumes().split(",")) {
+                newRoute.consumes(c);
+            }
         }
         if (getEndpoint().getProduces() != null) {
-            newRoute.produces(getEndpoint().getProduces());
+            //comma separated contentTypes has to be registered one by one
+            for (String p : getEndpoint().getProduces().split(",")) {
+                newRoute.produces(p);
+            }
         }
 
-        newRoute.handler(router.bodyHandler());
+        httpRequestBodyHandler.configureRoute(newRoute);
         for (Handler<RoutingContext> handler : handlers) {
             newRoute.handler(handler);
         }
@@ -126,22 +151,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        if (route != null) {
-            route.disable();
-        }
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        if (route != null) {
-            route.enable();
-        }
-        super.doResume();
-    }
-
     private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
         String path = endpoint.getPath();
         if (endpoint.isMatchOnUriPrefix() && !path.endsWith("*")) {
@@ -151,9 +160,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
-    private void handleRequest(RoutingContext ctx) {
+    protected void handleRequest(RoutingContext ctx) {
+        if (isSuspended()) {
+            handleSuspend(ctx);
+            return;
+        }
+
         final Vertx vertx = ctx.vertx();
-        final Exchange exchange = toExchange(ctx);
+        final Exchange exchange = createExchange(false);
+        exchange.setPattern(ExchangePattern.InOut);
 
         //
         // We do not know if any of the processing logic of the route is synchronous or not so we
@@ -163,7 +178,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         // for the rest dsl, then the following code may result in a blocking operation that could
         // block Vert.x event-loop for too long if the target service takes long to respond, as
         // example in case the service is a knative service scaled to zero that could take some time
-        // to be come available:
+        // to become available:
         //
         //     rest("/results")
         //         .get("/{id}")
@@ -171,104 +186,126 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         //             .removeHeaders("*", "CamelHttpPath")
         //             .to("rest:get:?bridgeEndpoint=true");
         //
-        vertx.executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
 
-                    getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
-                    });
-                },
-                false,
-                result -> {
-                    Throwable failure = null;
-                    try {
-                        if (result.succeeded()) {
-                            try {
-                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
-                            } catch (Exception e) {
-                                failure = e;
-                            }
-                        } else {
-                            failure = result.cause();
-                        }
+        // Note: any logic that needs to interrogate HTTP headers not provided by RoutingContext.parsedHeaders, should
+        // be done inside of the following onComplete block, to ensure that the HTTP request is fully processed.
+        processHttpRequest(exchange, ctx).onComplete(result -> {
+            if (result.failed()) {
+                handleFailure(exchange, ctx, result.cause());
+                return;
+            }
 
-                        if (failure != null) {
-                            getExceptionHandler().handleException(
-                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                    failure);
-                            ctx.fail(failure);
-                        }
-                    } finally {
-                        doneUoW(exchange);
-                        releaseExchange(exchange, false);
-                    }
-                });
+            if (getEndpoint().isHttpProxy()) {
+                handleProxy(ctx, exchange);
+            }
+
+            populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+
+            vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
+                if (processExchangeResult.succeeded()) {
+                    writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions)
+                            .onComplete(writeResponseResult -> {
+                                if (writeResponseResult.succeeded()) {
+                                    handleExchangeComplete(exchange);
+                                } else {
+                                    handleFailure(exchange, ctx, writeResponseResult.cause());
+                                }
+                            });
+                } else {
+                    handleFailure(exchange, ctx, processExchangeResult.cause());
+                }
+            });
+        });
     }
 
-    private Exchange toExchange(RoutingContext ctx) {
-        final Exchange exchange = createExchange(false);
-        exchange.setPattern(ExchangePattern.InOut);
-        final Message in = toCamelMessage(ctx, exchange);
+    private void handleExchangeComplete(Exchange exchange) {
+        doneUoW(exchange);
+        releaseExchange(exchange, false);
+    }
+
+    private void handleFailure(Exchange exchange, RoutingContext ctx, Throwable failure) {
+        getExceptionHandler().handleException(
+                "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                failure);
+        ctx.fail(failure);
+        handleExchangeComplete(exchange);
+    }
+
+    private Object processExchange(Exchange exchange) throws Exception {
+        createUoW(exchange);
+        getProcessor().process(exchange);
+        return null;
+    }
+
+    private static void handleSuspend(RoutingContext ctx) {
+        ctx.response().setStatusCode(503);
+        ctx.end();
+    }
+
+    private static void handleProxy(RoutingContext ctx, Exchange exchange) {
+        exchange.getExchangeExtension().setStreamCacheDisabled(true);
+        final MultiMap httpHeaders = ctx.request().headers();
+        exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
+        exchange.getMessage().removeHeader("Proxy-Connection");
+    }
+
+    protected Future<Void> processHttpRequest(Exchange exchange, RoutingContext ctx) {
+        // reuse existing http message if pooled
+        Message in = exchange.getIn();
+        if (in instanceof HttpMessage hm) {
+            hm.init(exchange, ctx.request(), ctx.response());
+        } else {
+            in = new HttpMessage(exchange, ctx.request(), ctx.response());
+            exchange.setMessage(in);
+        }
+
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
         }
-        return exchange;
+
+        User user = ctx.user();
+        if (user != null) {
+            in.setHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, user);
+        }
+
+        return populateCamelMessage(ctx, exchange, in);
     }
 
-    private Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
-        final Message result = exchange.getIn();
-
+    protected Future<Void> populateCamelMessage(RoutingContext ctx, Exchange exchange, Message message) {
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
-        populateCamelHeaders(ctx, result.getHeaders(), exchange, headerFilterStrategy);
-        final String mimeType = ctx.parsedHeaders().contentType().value();
-        final boolean isMultipartFormData = "multipart/form-data".equals(mimeType);
-        if ("application/x-www-form-urlencoded".equals(mimeType) || isMultipartFormData) {
+        populateCamelHeaders(ctx, message.getHeaders(), exchange, headerFilterStrategy);
+        return httpRequestBodyHandler.handle(ctx, message);
+    }
+
+    private void populateMultiFormData(
+            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy) {
+        final boolean isMultipartFormData = isMultiPartFormData(ctx);
+        if (isFormUrlEncoded(ctx) || isMultipartFormData) {
             final MultiMap formData = ctx.request().formAttributes();
             final Map<String, Object> body = new HashMap<>();
             for (String key : formData.names()) {
                 for (String value : formData.getAll(key)) {
                     if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
-                        appendHeader(result.getHeaders(), key, value);
-                        appendHeader(body, key, value);
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, message.getExchange())) {
+                        appendEntry(message.getHeaders(), key, value);
+                        appendEntry(body, key, value);
                     }
                 }
             }
-            result.setBody(body);
-            if (isMultipartFormData) {
-                populateAttachments(ctx.fileUploads(), result);
+
+            if (!body.isEmpty()) {
+                message.setBody(body);
             }
-        } else {
-            // extract body by myself if undertow parser didn't handle and the method is allowed to have one
-            // body is extracted as byte[] then auto TypeConverter kicks in
-            Method m = Method.valueOf(ctx.request().method().name());
-            if (m.canHaveBody()) {
-                final Buffer body = ctx.getBody();
-                if (body != null) {
-                    result.setBody(body);
-                } else {
-                    result.setBody(null);
-                }
-            } else {
-                result.setBody(null);
+
+            if (isMultipartFormData) {
+                populateAttachments(ctx.fileUploads(), message);
             }
         }
-        return result;
     }
 
-    private void populateAttachments(Set<FileUpload> uploads, Message message) {
+    protected void populateAttachments(List<FileUpload> uploads, Message message) {
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();

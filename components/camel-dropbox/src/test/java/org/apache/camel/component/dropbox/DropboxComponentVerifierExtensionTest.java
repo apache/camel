@@ -37,7 +37,7 @@ public class DropboxComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("dropbox");
 
         ComponentVerifierExtension verifier
@@ -45,6 +45,10 @@ public class DropboxComponentVerifierExtensionTest extends CamelTestSupport {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("accessToken", "l");
+        parameters.put("expireIn", "1000");
+        parameters.put("refreshToken", "l");
+        parameters.put("apiKey", "a");
+        parameters.put("apiSecret", "s");
         parameters.put("clientIdentifier", "k");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
@@ -53,13 +57,17 @@ public class DropboxComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("dropbox");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("accessToken", "l");
+        parameters.put("expireIn", "1000");
+        parameters.put("refreshToken", "l");
+        parameters.put("apiKey", "a");
+        parameters.put("apiSecret", "s");
         parameters.put("clientIdentifier", "k");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);

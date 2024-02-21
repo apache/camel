@@ -99,7 +99,7 @@ public class RegistryBean implements BeanHolder {
 
     @Override
     public Object getBean(Exchange exchange) throws NoSuchBeanException {
-        Object bean = doGetBean(exchange);
+        Object bean = doGetBean();
         if (options != null && !options.isEmpty()) {
             PropertyBindingSupport.build()
                     .withRemoveParameters(false)
@@ -111,7 +111,7 @@ public class RegistryBean implements BeanHolder {
         return bean;
     }
 
-    private Object doGetBean(Exchange exchange) throws NoSuchBeanException {
+    private Object doGetBean() throws NoSuchBeanException {
         // must always lookup bean first
         Object value = lookupBean();
 

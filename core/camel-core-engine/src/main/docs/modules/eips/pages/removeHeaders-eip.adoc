@@ -1,28 +1,118 @@
-[[removeHeaders-eip]]
 = Remove Headers EIP
-:docTitle: Remove Headers
+:doctitle: Remove Headers
+:shortname: removeHeaders
 :description: Removes message headers whose name matches a specified pattern
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Remove Headers EIP allows you to remove one or more headers from the xref:message.adoc[Message],
+based on pattern syntax.
 
 == Options
 
 // eip options: START
-The Remove Headers EIP supports 2 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *pattern* | *Required* Name or pattern of headers to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive). |  | String
-| *excludePattern* | Name or patter of headers to not remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive). |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Exchange properties
 
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Remove Headers by pattern
+
+The Remove Headers EIP supports pattern
+matching by the following rules in the given order:
+
+* match by exact name
+* match by wildcard
+* match by regular expression
+
+== Remove all headers
+
+To remove all headers you can use `*` as the pattern:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
-  .removeHeaders(map)
+  .removeHeaders("*")
   .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeHeaders pattern="*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeaders: "*"
+      - to:
+          uri: mock:result
+----
+====
+
+== Remove all Camel headers
+
+To remove all headers that start with `Camel` then use `Camel*` as shown:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:b")
+  .removeHeaders("Camel*")
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:b"/>
+  <removeHeaders pattern="Camel*"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeaders: "Camel*"
+      - to:
+          uri: mock:result
+----
+====
+
+== See Also
+
+Camel provides the following EIPs for removing headers or exchange properties:
+
+- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties

@@ -31,10 +31,10 @@ import java.util.concurrent.ExecutorService;
 /**
  * ${name} component which does bla bla.
  *
- * TODO: Update one line description above what the component does.
+ * TODO: Update one line description above what the component does, and update Category.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name",
-             category = {Category.JAVA})
+             category = {Category.DATABASE})
 public class ${name}Endpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = true)
     private String name;

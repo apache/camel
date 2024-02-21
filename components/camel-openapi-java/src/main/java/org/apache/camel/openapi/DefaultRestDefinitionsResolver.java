@@ -32,7 +32,7 @@ public class DefaultRestDefinitionsResolver implements RestDefinitionsResolver {
                     "Must use JmxRestDefinitionsResolver to generate rest model from another CamelContext in the same JVM");
         }
 
-        Model model = camelContext.getExtension(Model.class);
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         List<RestDefinition> rests = model.getRestDefinitions();
         if (rests.isEmpty()) {
             return null;
@@ -42,7 +42,7 @@ public class DefaultRestDefinitionsResolver implements RestDefinitionsResolver {
 
     @Override
     public List<String> findCamelContexts() throws Exception {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
 }

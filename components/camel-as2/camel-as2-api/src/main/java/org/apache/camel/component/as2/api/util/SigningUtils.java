@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -24,8 +27,11 @@ import java.util.Arrays;
 
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpException;
-import org.apache.http.util.Args;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -36,10 +42,20 @@ import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.SignerInformationVerifierProvider;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SigningUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SigningUtils.class);
 
     private SigningUtils() {
     }
@@ -47,11 +63,11 @@ public final class SigningUtils {
     public static AS2SignedDataGenerator createSigningGenerator(
             AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey)
             throws HttpException {
-        Args.notNull(certificateChain, "certificateChain");
+        ObjectHelper.notNull(certificateChain, "certificateChain");
         if (certificateChain.length == 0 || !(certificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
         }
-        Args.notNull(privateKey, "privateKey");
+        ObjectHelper.notNull(privateKey, "privateKey");
 
         AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
 
@@ -93,4 +109,51 @@ public final class SigningUtils {
         return gen;
 
     }
+
+    public static boolean isValidSigned(byte[] signedContent, byte[] signature, Certificate[] signingCertificateChain) {
+        if (signedContent == null || signature == null || signingCertificateChain == null) {
+            return false;
+        }
+
+        try {
+            CMSSignedData signedData
+                    = new CMSSignedData(new CMSProcessableByteArray(signedContent), new ByteArrayInputStream(signature));
+
+            SignerInformationVerifierProvider sivp = (SignerId sid) -> {
+                for (Certificate knownCert : signingCertificateChain) {
+                    SignerInformationVerifier siv
+                            = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) knownCert);
+                    if (siv.getAssociatedCertificate().getIssuer().equals(sid.getIssuer())
+                            && siv.getAssociatedCertificate().getSerialNumber().equals(sid.getSerialNumber())) {
+                        return siv;
+                    }
+                }
+                throw new RuntimeException("Signature was created with an unknown certificate");
+            };
+
+            return signedData.verifySignatures(sivp);
+        } catch (CMSException e) {
+            //Probably the signature was created with an unknown certificate or something else is wrong with the signature
+            LOG.debug(e.getMessage(), e);
+        } catch (Exception e) {
+            LOG.debug(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public static boolean isValid(MultipartSignedEntity multipartSignedEntity, Certificate[] signingCertificateChain) {
+        MimeEntity signedEntity = multipartSignedEntity.getSignedDataEntity();
+        ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = multipartSignedEntity.getSignatureEntity();
+        if (signedEntity == null || applicationPkcs7SignatureEntity == null) {
+            return false;
+        }
+
+        try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
+            signedEntity.writeTo(o);
+            return isValidSigned(o.toByteArray(), applicationPkcs7SignatureEntity.getSignature(), signingCertificateChain);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 }

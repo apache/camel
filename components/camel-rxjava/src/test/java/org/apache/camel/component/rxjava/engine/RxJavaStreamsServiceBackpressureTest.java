@@ -38,8 +38,8 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("timer:gen?period=20&repeatCount=20")
+            public void configure() {
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
@@ -73,8 +73,8 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("timer:gen?period=20&repeatCount=20")
+            public void configure() {
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
@@ -120,8 +120,8 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("timer:gen?period=20&repeatCount=20")
+            public void configure() {
+                from("timer:gen?period=20&repeatCount=20&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");

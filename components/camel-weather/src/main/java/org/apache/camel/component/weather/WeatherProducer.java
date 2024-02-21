@@ -19,11 +19,10 @@ package org.apache.camel.component.weather;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,32 +51,38 @@ public class WeatherProducer extends DefaultProducer {
         }
 
         HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
-        HttpGet method = new HttpGet(q);
-        try {
-            LOG.debug("Going to execute the Weather query {}", q);
-            HttpResponse response = httpClient.execute(method);
-            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
-                throw new IllegalStateException(
-                        "Got the invalid http status value '" + response.getStatusLine().getStatusCode()
-                                                + "' as the result of the query '" + query + "'");
-            }
-            String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
-            LOG.debug("Got back the Weather information {}", weather);
+        String uri = q;
+        HttpGet method = new HttpGet(uri);
+        httpClient.execute(
+                method,
+                response -> {
+                    try {
+                        LOG.debug("Going to execute the Weather query {}", uri);
+                        if (HttpStatus.SC_OK != response.getCode()) {
+                            throw new IllegalStateException(
+                                    "Got the invalid http status value '" + response.getCode()
+                                                            + "' as the result of the query '" + query + "'");
+                        }
+                        String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
+                        LOG.debug("Got back the Weather information {}", weather);
 
-            if (ObjectHelper.isEmpty(weather)) {
-                throw new IllegalStateException(
-                        "Got the unexpected value '" + weather + "' as the result of the query '" + q + "'");
-            }
+                        if (ObjectHelper.isEmpty(weather)) {
+                            throw new IllegalStateException(
+                                    "Got the unexpected value '" + weather + "' as the result of the query '" + uri + "'");
+                        }
 
-            String header = getEndpoint().getConfiguration().getHeaderName();
-            if (header != null) {
-                exchange.getIn().setHeader(header, weather);
-            } else {
-                exchange.getIn().setBody(weather);
-            }
-            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, q);
-        } finally {
-            method.releaseConnection();
-        }
+                        String header = getEndpoint().getConfiguration().getHeaderName();
+                        if (header != null) {
+                            exchange.getIn().setHeader(header, weather);
+                        } else {
+                            exchange.getIn().setBody(weather);
+                        }
+                        exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, uri);
+                        return null;
+                    } finally {
+                        method.reset();
+                    }
+                });
+
     }
 }

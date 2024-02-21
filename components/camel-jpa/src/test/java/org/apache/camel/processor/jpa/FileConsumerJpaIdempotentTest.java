@@ -19,7 +19,7 @@ package org.apache.camel.processor.jpa;
 import java.io.File;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,9 +50,9 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}")
                         .routeId("foo").autoStartup(false)
                         .to("mock:result");
@@ -86,7 +86,7 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(1000);
 
@@ -101,7 +101,7 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         Thread.sleep(2000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

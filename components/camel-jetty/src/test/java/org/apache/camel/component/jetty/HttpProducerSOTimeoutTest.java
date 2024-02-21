@@ -37,10 +37,10 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        String out = template.requestBody("http://localhost:{{port}}/myservice?socketTimeout=5000", null, String.class);
+        String out = template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=5000", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,20 +50,20 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
 
         try {
             // we use a timeout of 1 second
-            template.requestBody("http://localhost:{{port}}/myservice?socketTimeout=1000", null, String.class);
+            template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=1000", null, String.class);
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/myservice")
                         // but we wait for 2 sec before reply is sent back
                         .delay(2000).transform().constant("Bye World").to("mock:result");

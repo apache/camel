@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<wsdl:definitions name="TestServiceService" targetNamespace="http://www.example.com/duplicateerror" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.com/duplicateerror" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+<xs:schema xmlns:tns="http://www.example.com/duplicateerror" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.example.com/duplicateerror" version="1.0">
+  <xs:element name="throwErrorA" type="tns:throwErrorA"/>
+  <xs:element name="throwErrorAResponse" type="tns:throwErrorAResponse"/>
+  <xs:element name="throwErrorB" type="tns:throwErrorB"/>
+  <xs:element name="throwErrorBResponse" type="tns:throwErrorBResponse"/>
+  <xs:complexType name="throwErrorA">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="throwErrorAResponse">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="throwErrorB">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="throwErrorBResponse">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:element name="soapException" type="tns:soapException"/>
+  <xs:complexType name="soapException">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="ExceptionB">
+    <wsdl:part name="ExceptionB" element="tns:soapException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ExceptionA">
+    <wsdl:part name="ExceptionA" element="tns:soapException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="throwErrorA">
+    <wsdl:part name="parameters" element="tns:throwErrorA">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="throwErrorBResponse">
+    <wsdl:part name="parameters" element="tns:throwErrorBResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="throwErrorAResponse">
+    <wsdl:part name="parameters" element="tns:throwErrorAResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="throwErrorB">
+    <wsdl:part name="parameters" element="tns:throwErrorB">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="testService">
+    <wsdl:operation name="throwErrorA">
+      <wsdl:input name="throwErrorA" message="tns:throwErrorA">
+    </wsdl:input>
+      <wsdl:output name="throwErrorAResponse" message="tns:throwErrorAResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionA" message="tns:ExceptionA">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="throwErrorB">
+      <wsdl:input name="throwErrorB" message="tns:throwErrorB">
+    </wsdl:input>
+      <wsdl:output name="throwErrorBResponse" message="tns:throwErrorBResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionB" message="tns:ExceptionB">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TestServiceServiceSoapBinding" type="tns:testService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="throwErrorA">
+      <soap:operation soapAction="throwErrorA" style="document"/>
+      <wsdl:input name="throwErrorA">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="throwErrorAResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionA">
+        <soap:fault name="ExceptionA" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="throwErrorB">
+      <soap:operation soapAction="throwErrorB" style="document"/>
+      <wsdl:input name="throwErrorB">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="throwErrorBResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionB">
+        <soap:fault name="ExceptionB" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TestServiceService">
+    <wsdl:port name="testServicePort" binding="tns:TestServiceServiceSoapBinding">
+      <soap:address location="http://localhost:9090/testServicePort"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

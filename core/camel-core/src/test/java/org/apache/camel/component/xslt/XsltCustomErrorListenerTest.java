@@ -20,6 +20,7 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -34,7 +35,7 @@ public class XsltCustomErrorListenerTest extends TestSupport {
 
     private MyErrorListener listener = new MyErrorListener();
 
-    private class MyErrorListener implements ErrorListener {
+    private static class MyErrorListener implements ErrorListener {
 
         private boolean warning;
         private boolean error;
@@ -70,17 +71,11 @@ public class XsltCustomErrorListenerTest extends TestSupport {
 
     @Test
     public void testErrorListener() throws Exception {
-        try {
-            RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext();
-            context.getRegistry().bind("myListener", listener);
-            context.addRoutes(builder);
-            context.start();
-
-            fail("Should have thrown an exception due XSLT file not found");
-        } catch (Exception e) {
-            // expected
-        }
+        RouteBuilder builder = createRouteBuilder();
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("myListener", listener);
+        context.addRoutes(builder);
+        assertThrows(RuntimeCamelException.class, () -> context.start());
 
         assertFalse(listener.isWarning());
         assertTrue(listener.isError(), "My error listener should been invoked");

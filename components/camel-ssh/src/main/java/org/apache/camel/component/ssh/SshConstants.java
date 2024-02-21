@@ -16,9 +16,28 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.InputStream;
+
+import org.apache.camel.spi.Metadata;
+
 public interface SshConstants {
 
+    @Metadata(description = "The user name", javaType = "String")
     String USERNAME_HEADER = "CamelSshUsername";
+    @Metadata(description = "The password", javaType = "String")
     String PASSWORD_HEADER = "CamelSshPassword";
 
+    /**
+     * The value of this header is a {@link InputStream} with the standard error stream of the executable.
+     */
+    @Metadata(javaType = "InputStream")
+    String STDERR = "CamelSshStderr";
+
+    /**
+     * The value of this header is the exit value that is returned, after the execution. By convention a non-zero status
+     * exit value indicates abnormal termination. <br>
+     * <b>Note that the exit value is OS dependent.</b>
+     */
+    @Metadata(javaType = "Integer")
+    String EXIT_VALUE = "CamelSshExitValue";
 }

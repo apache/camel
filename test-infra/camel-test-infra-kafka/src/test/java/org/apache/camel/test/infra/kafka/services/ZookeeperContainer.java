@@ -23,11 +23,15 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
-    private static final String ZOOKEEPER_CONTAINER = System.getProperty("itest.zookeeper.container.image");
+    private static final String ZOOKEEPER_CONTAINER = StrimziContainer.STRIMZI_CONTAINER;
     private static final int ZOOKEEPER_PORT = 2181;
 
     public ZookeeperContainer(Network network, String name) {
-        super(ZOOKEEPER_CONTAINER);
+        this(network, name, ZOOKEEPER_CONTAINER);
+    }
+
+    public ZookeeperContainer(Network network, String name, String containerName) {
+        super(containerName);
 
         withEnv("LOG_DIR", "/tmp/logs");
         withExposedPorts(ZOOKEEPER_PORT);

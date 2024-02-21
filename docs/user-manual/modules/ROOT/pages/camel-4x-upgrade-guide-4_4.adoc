@@ -1,0 +1,297 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.3 to 4.4
+
+=== camel-core
+
+The `org.apache.camel.spi.DataFormat` has changed exception thrown from `IOException` to `Exception`
+in the unmarshal(Exchange exchange, InputStream stream)` method.
+
+Removed the deprecated constructor from the internal class `org.apache.camel.util.StopWatch`. Users of this class are advised to use the default constructor if necessary.
+
+The method `getCreated` from the `org.apache.camel.Exchange` is now deprecated. Access to the time-related information from the exchange should be done via `getClock`.
+
+We standardized and consolidated code computing durations so that they use a monotonic clock.
+
+Durations and some time-related information were consolidated in a new internal Clock API.
+
+The `lookup` method in `org.apache.camel.component.properties.PropertiesLookup` now has a 2nd parameter for the default value.
+
+Some of the Java DSL for `tokenize`, `xmlTokenize`, `xpath`, `xquery` and `jsonpath` has been removed as part of making the DSL model consistent.
+
+Here are a few examples of migration before vs after:
+
+[source,java]
+----
+ from("direct:in")
+    .choice()
+        .when().xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
+            .to("mock:premium")
+        .when() .xpath("/invoice/@orderType = 'standard'", "invoiceDetails")
+            .to("mock:standard")
+        .otherwise()
+            .to("mock:unknown")
+    .end();
+----
+
+You can use the _fluent expression_ builder to configure all the options:
+
+[source,java]
+----
+// use fluent builder expression to create the languages
+var premium = expression().xpath().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end();
+var standard = expression().xpath().expression("/invoice/@orderType = 'standard'").source("header:invoiceDetails").end();
+
+from("direct:in")
+    .choice()
+        .when(premium)
+            .to("mock:premium")
+        .when(standard)
+            .to("mock:standard")
+        .otherwise()
+            .to("mock:unknown")
+    .end();
+----
+
+In the example above notice how we use `source` to specify the input to use, in this case a header named invoiceDetails.
+The `source` can also be variable, or exchange property.
+
+And another example with `tokenize`:
+
+[source,java]
+----
+from("direct:start")
+    .split().tokenize("\r\n|\n", true, 2, "\n", true)
+        .log("${body}")
+        .to("mock:line");
+----
+
+You can use the _fluent expression_ builder to configure all the options:
+
+[source,java]
+----
+// use fluent builder expression to create the languages
+var token = expression().tokenize().token("\r\n|\n").regex(true).group(2).groupDelimiter("\n").skipFirst(true).end();
+
+from("direct:start")
+    .split(token)
+        .log("${body}")
+        .to("mock:line");
+----
+
+==== Languages
+
+The way languages are created and configured by Camel has been refactored to be aligned and avoid a thread-safety issues
+when using Java DSL. The setter/getter on the `Language` classes for options that are not general has been removed (such as in `TokenizeLanguage`).
+
+In XML and YAML DSL the `type` option in `<xquery>` has been renamed to `resultType` to be aligned with the other languages.
+
+In XML and YAML DSL The `headerName` on `<xpath>`, `<xquery>` has been renamed to `source` and you should prefix the value with `header:name` to declare
+it is a header, because other kind of sources can be specified also. The same change has applied to `@XPath` and `@XQuery`
+language annotations.
+
+==== WireTap EIP
+
+The copied exchange is no longer having exchange property CORRELATION_ID set that links to the original exchange.
+The reason is that this link should only be for EIPs with sub exchanges such as Splitter and Multicast.
+
+==== Throttle EIP
+
+Previously Camel used a throttler based on the total number of requests over a period of time ("TotalRequests" mode). That was
+the default on Camel up to version 4.2.0. On Camel 4.3.0 we introduced a new one based on the number of concurrent requests and
+replaced the former.
+
+With Camel 4.4.0 we refactored the xref:components:eips:throttle-eip.adoc[Throttle EIP] implementation so that Camel can support two different modes of throttling.
+
+Check the component documentation for details about how to use each mode.
+
+==== MDC logging
+
+When using custom MDC keys (need to configure `MDCLoggingKeysPattern`) then these custom keys are cleared at the end of routing.
+Also, custom keys is allowed to be changed during routing, using the `MDC.set(myKey, ...)` Java API.
+
+=== camel-main
+
+The route controller configuration has been moved from general main to its own group.
+All keys started with `camel.main.routesController` should be renamed to `camel.routecontroller.`, for example
+`camel.main.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
+
+=== camel-kamelet
+
+All kamelets are now turned off error handling in the route templates. This is done to make using kamelets
+the same as calling a regular Camel component endpoint. Backwards mode can be enabled by setting `noErrorHandler=false`
+on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=true&uri=xxxxx")`.
+
+=== camel-azure-cosmosdb
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-eventhubs
+
+The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
+With the CONNECTION_STRING mode the user could explicitly set the connectionString parameters or use the sharedAccessName and sharedAccessKey to automatically build the connection string.
+With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-servicebus
+
+The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
+With the CONNECTION_STRING mode the user could explicitly set the connectionString parameter.
+With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-files
+
+The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, SHARED_ACCOUNT_KEY and AZURE_SAS.
+With the SHARED_ACCOUNT_KEY mode the user could explicitly set the sharedKey parameter.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+With the AZURE_SAS mode the user could explicitly set the token parameter.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-storage-datalake
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, CLIENT_SECRET, SHARED_KEY_CREDENTIAL, AZURE_SAS and SERVICE_CLIENT_INSTANCE
+With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the sharedKey parameter or a SharedKeyCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+With the AZURE_SAS mode the user could explicitly set the sasSignature or sasCredential parameter.
+With the CLIENT_SECRET mode the user could explicitly set clientId, clientSecret and tenantId or specify a ClientSecretCredential instance.
+With the SERVICE_CLIENT_INSTANCE the user could explicitly set a serviceClient parameter by passing a DataLakeServiceClient instance.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-azure-storage-queue
+
+The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, SHARED_KEY_CREDENTIAL and SHARED_ACCOUNT_KEY
+With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the SharedKeyCredential instance.
+With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+With the SHARED_ACCOUNT_KEY mode the user could explicitly set the accessKey parameter.
+This is part of the effort explained in CAMEL-18590.
+
+=== camel-cassandraql
+
+The NamedCassandraAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20306.
+
+=== camel-coap
+
+Upgraded from org.eclipse.californium v2 to v3 which was a painful upgrade. Removed the `"CamelCoapUri` header that would
+allow a producer to create dynamic client to send to another Url. Use Camel's existing `toD` EIP for that instead.
+
+=== camel-consul
+
+This component has migrated from `com.orbitz.consul:consul-client` to `org.kiwiproject:consul-client` as the former is no longer maintained,
+and kiwiproject took over.
+
+=== camel-dynamic-router
+
+The dynamic router EIP component now handles control messages through a separate control component: `dynamic-router-control`.
+These changes were made after a user reported a bug that resulted in query-parameter-based subscriptions being ignored
+after the first URI control message was processed.
+All control message parameters can be submitted as query parameters when subscribers are within the same JVM as the
+dynamic router instance. Users must use "dynamic to", or `toD` when sending these control message properties as query
+parameters.
+Predicates that are not string expressions may be specified in the message body, or bound to the registry and specified
+as a reference with the `predicateBean` parameter.
+Control messages can still be sent in the message body, as in the previous version.
+The `DynamicRouterControlMessage` no longer has separate builders for `subscribe` and `unsubscribe` messages, so there
+is only one builder that you can use for any type of control message.
+The control channel will now report subscription details for a routing channel if a message with a control action of
+`list` is submitted, along with the dynamic router channel of interest.
+Please see the `dynamic-router-eip` module in the `camel-spring-boot-examples` repository for
+useful examples of how you might need to change your code to be compatible with the changes in this version.
+
+=== camel-hdfs
+
+The component has been removed after deprecation in 4.3.0
+
+=== camel-jms
+
+The header with key `JMSCorrelationIDAsBytes` has changed value from `String` to `byte[]`.
+
+=== camel-jsonata
+
+Replaced the previous JSONata library with a new one that offers complete compatibility with the JSONata reference implementation's features.
+
+=== camel-sql
+
+The JdbcAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20303.
+
+=== camel-facebook
+
+The component was removed without deprecation. The library supporting this component has been unmaintained for a long time. We found no indications that the library itself nor the component are working with modern Facebook, along with the absence of community interest, which lead us to decide to remove this component without deprecation.
+
+=== camel-kafka
+
+The component now has support for batch processing.
+
+=== camel-json-validator
+
+Removed deprecated `org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader`,
+use `org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader` instead.
+
+=== camel-splunk-hec
+
+Removed `token` from the URI's path in favor of setting it through a `token` query parameter. While the `token` was in the URI path, it could potentially be leaked within the logs.
+
+
+== Camel Spring Boot
+
+=== Ordering of BOM imports
+
+When using Camel on Spring Boot, it's recommended to use BOMs to import Camel and Spring dependencies.
+In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <!-- Camel BOM -->
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-spring-boot-bom</artifactId>
+            <version>${camel-version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Spring Boot BOM -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot-version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+In previous versions, then we would have `spring-boot-dependencies` before `camel-spring-boot-bom`. However, to better
+align and ensure Camel starters are using supported dependencies, then it's recommended to let Camel be first.
+
+=== Auto Configuration
+
+The route controller configuration has been moved from general main to its own group.
+All keys started with `camel.springboot.routesController` should be renamed to `camel.routecontroller.`, for example
+`camel.springboot.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
+And the option `camel.springboot.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
+
+=== Routes Collector
+
+Camel Spring Boot will not honor the `camel.springboot.includeNonSingletons` option (default false). This means
+that only singleton `RouteBuilder` beans is added by default. Previously then prototype scoped beans would be added as well.
+
+=== camel-platform-http-vertx
+
+Added configuration to enable Vert.x session handling.
+Sessions are disabled by default, but can be enabled by setting the `enabled` property on `VertxPlatformHttpServerConfiguration.SessionConfig`
+to `true`.
+Other properties include `sessionCookieName`, `sessionCookiePath`, `sessionTimeout`, `cookieSecure`, `cookieHttpOnly`
+`cookieSameSite` and `storeType`.
+The session `storeType` defaults to the Vert.x `LocalSessionStore` and `cookieSameSite` to `Strict`. The remainder
+of the properties are configured with Vert.x defaults if not set.

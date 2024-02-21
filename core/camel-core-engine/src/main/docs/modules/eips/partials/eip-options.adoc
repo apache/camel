@@ -1,0 +1,23 @@
+:tablespec: width="100%",cols="2,5a,^1,2",options="header"
+:cellformats: '`[#_option_${path[2]}]*${path[2]}*` \
+|util.description(value) \
+|util.valueAsString(value.defaultValue) \
+|util.javaSimpleName(value.javaType)'
+:requires: 'util=util/jsonpath-util.js'
+include::jsonpathcount$example$json/{shortname}.json[queries='optioncount=nodes$.properties[?(@.displayName!="Id" && @.displayName!="Description" && @.displayName!="Expression" && @.displayName!="Outputs")]']
+
+ifeval::[{optioncount} == 0]
+The {doctitle} eip has no options.
+endif::[]
+ifeval::[{optioncount} != 0]
+The {doctitle} eip supports {optioncount} options, which are listed below.
+
+
+[{tablespec}]
+|===
+| Name | Description | Default | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.displayName!="Id")]',{cellformats},{requires}]
+endif::[]
+

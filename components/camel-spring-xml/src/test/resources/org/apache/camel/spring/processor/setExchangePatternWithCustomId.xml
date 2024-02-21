@@ -25,16 +25,17 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- Send the exchange as InOnly -->
     <route>
       <from uri="direct:testInOut" id="a"/>
-      <inOut uri="mock:result" id="b"/>
+      <to uri="mock:result" pattern="InOut" id="b"/>
     </route>
 
     <!-- Send the exchange as InOnly -->
     <route>
       <from uri="direct:testInOnly" id="c"/>
-      <inOnly uri="mock:result" id="d"/>
+      <to uri="mock:result" pattern="InOnly" id="d"/>
     </route>
 
 
@@ -55,7 +56,6 @@
       <to uri="mock:result" id="m"/>
     </route>
 
-
     <!-- Lets pass the pattern as an argument in the to element -->
     <route>
       <from uri="direct:testToWithInOnlyParam" id="n"/>
@@ -64,6 +64,11 @@
     <route>
       <from uri="direct:testToWithInOutParam" id="p"/>
       <to uri="mock:result" pattern="InOut" id="q"/>
+    </route>
+    <route>
+      <from uri="direct:asString" id="r"/>
+      <setExchangePattern pattern="InOut" id="s"/>
+      <to uri="mock:result" id="t"/>
     </route>
    </camelContext>
 

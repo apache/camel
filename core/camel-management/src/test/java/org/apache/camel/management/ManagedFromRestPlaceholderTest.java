@@ -27,11 +27,14 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
     @Override
@@ -44,14 +47,9 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
     @Test
     public void testFromRestModelPlaceholder() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
@@ -68,10 +66,9 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("</rests>"));
 
         assertTrue(xml.contains(
-                "<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" "
-                                + "name=\"header_letter\" required=\"false\" type=\"query\">"));
-        assertTrue(xml.contains("<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" "
-                                + "name=\"header_count\" required=\"true\" type=\"header\">"));
+                "<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" name=\"header_count\" required=\"true\" type=\"header\">"));
+        assertTrue(xml.contains(
+                "<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" name=\"header_letter\" required=\"false\" type=\"query\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 

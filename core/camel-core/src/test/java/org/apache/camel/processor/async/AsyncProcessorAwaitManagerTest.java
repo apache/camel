@@ -20,21 +20,23 @@ import java.util.Collection;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
     @Test
     public void testAsyncAwait() throws Exception {
-        context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
-        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
+        assertEquals(0, asyncProcessorAwaitManager.size());
 
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
@@ -45,10 +47,10 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size());
+        assertEquals(0, asyncProcessorAwaitManager.size());
         assertEquals(1,
-                context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(0, context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().getStatistics()
+                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(0, asyncProcessorAwaitManager.getStatistics()
                 .getThreadsInterrupted());
     }
 
@@ -63,12 +65,12 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                int size = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().size();
+                                int size = PluginHelper.getAsyncProcessorAwaitManager(context).size();
                                 log.info("async inflight: {}", size);
                                 assertEquals(1, size);
 
                                 Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                                        = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager().browse();
+                                        = PluginHelper.getAsyncProcessorAwaitManager(context).browse();
                                 AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
                                 long wait = thread.getWaitDuration();
@@ -76,7 +78,7 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
                                 assertEquals("myRoute", thread.getRouteId());
                                 // assertEquals("myAsync", thread.getNodeId());
-                                assertEquals("process1", thread.getNodeId());
+                                assertThat(thread.getNodeId()).matches("process[0-9]+");
                             }
                         }).to("mock:result");
             }

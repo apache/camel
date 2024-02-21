@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class ArangoDbConfiguration implements Cloneable {
     private String database;
+
     @UriParam(label = "producer")
     private String host;
     @UriParam(label = "producer")

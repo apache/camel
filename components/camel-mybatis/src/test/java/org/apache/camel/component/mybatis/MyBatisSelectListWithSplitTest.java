@@ -31,7 +31,7 @@ public class MyBatisSelectListWithSplitTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account james = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
         Account claus = mock.getReceivedExchanges().get(1).getIn().getBody(Account.class);
@@ -40,10 +40,10 @@ public class MyBatisSelectListWithSplitTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .to("mybatis:selectAllAccounts?statementType=SelectList")

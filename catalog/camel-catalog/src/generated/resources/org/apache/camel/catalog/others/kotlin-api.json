@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "kotlin-api",
+    "title": "Kotlin API",
+    "description": "Camel Kotlin API",
+    "deprecated": false,
+    "firstVersion": "4.4.0",
+    "label": "dsl",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kotlin-api",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

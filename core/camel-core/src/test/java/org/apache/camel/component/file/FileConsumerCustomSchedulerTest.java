@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,18 +41,11 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         return jndi;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/file/custom");
-        super.setUp();
-    }
-
     @Test
     public void testCustomScheduler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/file/custom", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startRoute("foo");
 
@@ -69,7 +61,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/file/custom?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10")
+                from(fileUri("?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10"))
                         .routeId("foo").noAutoStartup().to("mock:result");
             }
         };

@@ -131,7 +131,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         sendText();
         result.assertIsSatisfied();
         List<Exchange> exchangeList = result.getExchanges();
-        assertTrue(exchangeList.get(0).getIn().getBody() instanceof byte[]);
+        exchangeList.get(0).getIn().getBody(byte[].class);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         assertTrue(exchangeList.get(0).getIn().getBody() instanceof InputStreamCache);
     }
 
-    private void sendText() throws Exception {
+    private void sendText() {
         template.sendBodyAndProperty("direct:start", TEXT, Exchange.CHARSET_NAME, "UTF-8");
     }
 

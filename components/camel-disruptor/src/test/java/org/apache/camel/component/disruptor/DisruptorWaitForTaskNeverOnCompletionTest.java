@@ -20,9 +20,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class DisruptorWaitForTaskNeverOnCompletionTest extends CamelTestSupport 
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
         // B should be first because we do not wait
@@ -60,7 +60,7 @@ public class DisruptorWaitForTaskNeverOnCompletionTest extends CamelTestSupport 
                 from("direct:start").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) {
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(final Exchange exchange) {
                                 done = done + "A";

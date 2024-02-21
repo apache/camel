@@ -1,4 +1,3 @@
-[[HowdoIconfigureendpoints-HowdoIconfigureendpoints]]
 = How do I configure endpoints?
 
 There are a few different approaches to configuring components and
@@ -19,74 +18,13 @@ SomeEndpoint endpoint = camelContext.getEndpoint("someURI", SomeEndpoint.class);
 endpoint.setSomething("aValue");
 ----
 
-[[HowdoIconfigureendpoints-UsingCDI]]
-== Using CDI
-
-You can use CDI as dependency injection framework to configure
-your Component or Endpoint instances.
-
-For example, to configure the SJMS component, you can declare a producer method
-in a CDI bean:
-
-[source,java]
-----
-class MyCdiComponent {
-
-  @PropertyInject("jms.maxConnections")
-  int maxConnections;
-
-  @Produces
-  @Named("sjms")
-  @ApplicationScoped
-    SjmsComponent sjms() {
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(new ActiveMQConnectionFactory("vm://broker?broker.persistent=false"));
-        component.setConnectionCount(maxConnections);
-        return component;
-    }
-}
-----
-
-Then, the component is lazily looked-up by Camel CDI whenever it is referenced,
-e.g. from the Camel Java DSL:
-
-[source,java]
-----
-class MyCdiRoute extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        from("sjms:sample.queue")
-            .log("Received message [${body}]");
-    }
-}
-----
-
-Besides, endpoints of that component can be injected in any CDI beans, e.g.:
-
-[source,java]
-----
-class MyCdiBean {
-
-    @Inject
-    @Uri("sjms:sample.queue")
-    Endpoint endpoint;
-}
-----
-
 [[HowdoIconfigureendpoints-UsingSpringXML]]
 == Using Spring XML
 
-You can configure your Component or
-Endpoint instances in your Spring
-XML as follows:
+You can configure your Component or Endpoint instances in your Spring XML as `<bean>` as follows:
 
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <jmxAgent id="agent" disabled="true"/>
-</camelContext>
-
 <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
   <property name="connectionFactory">
     <bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -110,7 +48,7 @@ Another approach is to use the URI syntax. The URI syntax supports the
 query notation. So for example with the xref:components::mail-component.adoc[Mail] component
 you can configure the password property via the URI
 
-[source]
+[source,text]
 ----
 pop3://host:port?password=foo
 ----
@@ -118,15 +56,14 @@ pop3://host:port?password=foo
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
 === Referring beans from Endpoint URIs
 
-When configuring endpoints using URI syntax you can now refer to beans
+When configuring endpoints using the URI syntax you can refer to beans
 in the Registry using the `#bean:id` notation.
 
 NOTE: The older syntax with just `#id` has been deprecated due to ambiguity
 as Camel supports a number of additional functions that start with the # notation.
 
-If the parameter value starts with a `#bean:` sign then Camel will lookup in
-the Registry for a bean of the given type. For
-instance:
+If the URI parameter value starts with `#bean:` then Camel will lookup in
+the Registry for a bean of the given type by id. For instance:
 
 [source]
 ----
@@ -145,9 +82,9 @@ When configuring endpoints using URI syntax you can now refer to bean by its cla
 using the `#class:fullyQualifiedName` notation.
 
 If the parameter value starts with a `#class:` sign then Camel will load the
-class with the given name, and create an instanace of the bean using its _no-arg_ constructor:
+class with the given name, and create an instance of the bean using its _no-arg_ constructor:
 
-[source]
+[source,text]
 ----
 file://inbox?sorter=#class:com.foo.MySpecialSorter
 ----
@@ -155,7 +92,7 @@ file://inbox?sorter=#class:com.foo.MySpecialSorter
 If you need to provide parameters to the constructor, then this is also possible
 (limited to numbers, boolean, literal, and null values)
 
-[source]
+[source,text]
 ----
 file://inbox?sorter=#class:com.foo.MySpecialSorter(10, 'Hello world', true)
 ----
@@ -197,6 +134,8 @@ Here is a little example:
 In the above example, we have declare the password value as raw, and the
 actual password would be as typed, eg `se+re?t&23`.
 
+NOTE: you may find a corner case when you use both `)` and `&` character as part of your password (ie, `se+re)t&23`). The parser will interpret the `)` as closing the `RAW` function and having a parameter started by `&`. In such case, you can instead use the `RAW{}` notation to let you include the `)` character and have it decoded as part of the password (ie, `RAW{se+re)t&23}`). As a safe alternative you can also use `password=#property:myPass` and then have `myPass` a xref:ROOT:property-binding.adoc[property placeholder value].
+
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
 === Using property placeholders
 
@@ -229,7 +168,7 @@ notation:
 And have a `myftp.properties` file with password. Notice we still define
 the `RAW(value)` style to ensure the password is used _as is_:
 
-[source]
+[source,text]
 ----
 myFtpPassword=RAW(se+re?t&23)
 ----
@@ -256,8 +195,6 @@ key, as discussed in the following section.
 
 === Referring to a property placeholder
 
-*Since Camel 3.4*
-
 When using `{\{key}}` in configuring endpoint URIs then Camel will replace the `{\{key}}` while parsing the endpoint URI.
 This has its pros but also a few cons, such as when using sensitive information such as passwords. As we have seen
 in the previous section you can use RAW() syntax. Instead of using RAW() you can use `#property:key` notation,
@@ -277,8 +214,6 @@ as shown in the example below:
 
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
 == Configuring URIs using endpoint with bean property style
-
-*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new
@@ -323,8 +258,6 @@ as:
 
 [[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
 == Configuring long URIs using new lines
-
-*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new

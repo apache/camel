@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
@@ -57,14 +58,14 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return template.requestBody("http://localhost:{{port}}/echo", "" + index, String.class);
                 }
             });
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(files, responses.size());
 
@@ -80,9 +81,9 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // expose a echo service
                 from("jetty:http://localhost:{{port}}/echo").transform(body().append(body())).to("mock:result");
             }

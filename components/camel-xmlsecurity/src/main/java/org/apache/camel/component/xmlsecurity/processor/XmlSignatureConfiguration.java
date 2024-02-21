@@ -24,6 +24,7 @@ import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLValidateContext;
 
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -41,6 +42,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
     @UriParam(label = "producer")
+    @Metadata(supportFileReference = true)
     private String schemaResourceUri;
     @UriParam(label = "producer")
     private String outputXmlEncoding;
@@ -60,7 +62,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
      * XPpointer URIs.
      * <p>
      * Attention: The implementation is provider dependent!
-     * 
+     *
      * @see XMLCryptoContext#setURIDereferencer(URIDereferencer)
      */
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
@@ -107,7 +109,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     /**
      * Disallows that the incoming XML document contains DTD DOCTYPE declaration. The default value is
      * {@link Boolean#TRUE}.
-     * 
+     *
      * @param disallowDoctypeDecl if set to {@link Boolean#FALSE} then DOCTYPE declaration is allowed, otherwise not
      */
     public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
@@ -128,7 +130,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
 
     /**
      * Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
-     * 
+     *
      * @return true if the Signature headers should be unset, false otherwise
      */
     public Boolean getClearHeaders() {

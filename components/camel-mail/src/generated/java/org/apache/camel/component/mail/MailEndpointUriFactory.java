@@ -20,81 +20,90 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
-        props.add("disconnect");
-        props.add("contentTypeResolver");
-        props.add("subject");
-        props.add("binding");
-        props.add("initialDelay");
-        props.add("copyTo");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("searchTerm");
+        Set<String> props = new HashSet<>(71);
+        props.add("additionalJavaMailProperties");
         props.add("alternativeBodyHeader");
-        props.add("mimeDecodeHeaders");
-        props.add("host");
         props.add("attachmentsContentTransferEncodingResolver");
-        props.add("skipFailedMessage");
-        props.add("greedy");
-        props.add("maxMessagesPerPoll");
-        props.add("from");
-        props.add("scheduledExecutorService");
-        props.add("contentType");
-        props.add("repeatCount");
-        props.add("postProcessAction");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("sortTerm");
-        props.add("idempotentRepositoryRemoveOnCommit");
+        props.add("authenticator");
+        props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("port");
-        props.add("startScheduler");
-        props.add("replyTo");
-        props.add("mailUidGenerator");
-        props.add("folderName");
-        props.add("exceptionHandler");
-        props.add("debugMode");
         props.add("backoffMultiplier");
         props.add("bcc");
-        props.add("session");
-        props.add("sslContextParameters");
-        props.add("mapMailMessage");
-        props.add("delete");
-        props.add("handleFailedMessage");
-        props.add("scheduler");
-        props.add("closeFolder");
-        props.add("additionalJavaMailProperties");
-        props.add("useFixedDelay");
-        props.add("headerFilterStrategy");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("authenticator");
-        props.add("connectionTimeout");
-        props.add("timeUnit");
+        props.add("binding");
+        props.add("bridgeErrorHandler");
         props.add("cc");
-        props.add("fetchSize");
-        props.add("javaMailSender");
-        props.add("useInlineAttachments");
-        props.add("idempotentRepository");
+        props.add("closeFolder");
+        props.add("connectionTimeout");
+        props.add("contentType");
+        props.add("contentTypeResolver");
+        props.add("copyTo");
+        props.add("debugMode");
+        props.add("decodeFilename");
+        props.add("delay");
+        props.add("delete");
+        props.add("disconnect");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("failOnDuplicateFileAttachment");
+        props.add("fetchSize");
+        props.add("folderName");
+        props.add("from");
+        props.add("generateMissingAttachmentNames");
+        props.add("greedy");
+        props.add("handleDuplicateAttachmentNames");
+        props.add("handleFailedMessage");
+        props.add("headerFilterStrategy");
+        props.add("host");
+        props.add("idempotentRepository");
+        props.add("idempotentRepositoryRemoveOnCommit");
         props.add("ignoreUnsupportedCharset");
         props.add("ignoreUriScheme");
+        props.add("initialDelay");
+        props.add("javaMailProperties");
+        props.add("javaMailSender");
+        props.add("lazyStartProducer");
+        props.add("mailUidGenerator");
+        props.add("mapMailMessage");
+        props.add("maxMessagesPerPoll");
+        props.add("mimeDecodeHeaders");
+        props.add("moveTo");
+        props.add("password");
         props.add("peek");
         props.add("pollStrategy");
-        props.add("decodeFilename");
+        props.add("port");
+        props.add("postProcessAction");
+        props.add("repeatCount");
+        props.add("replyTo");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("searchTerm");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("session");
+        props.add("skipFailedMessage");
+        props.add("sortTerm");
+        props.add("sslContextParameters");
+        props.add("startScheduler");
+        props.add("subject");
+        props.add("timeUnit");
         props.add("to");
-        props.add("javaMailProperties");
         props.add("unseen");
-        props.add("moveTo");
+        props.add("useFixedDelay");
+        props.add("useInlineAttachments");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(3);
+        prefixes.add("mail.");
+        prefixes.add("scheduler.");
+        prefixes.add("searchTerm.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -128,6 +137,11 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

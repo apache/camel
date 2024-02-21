@@ -36,7 +36,6 @@ import org.apache.camel.util.StringHelper;
  * <li>cql:host1:host2:9042/keyspace</li>
  * <li>cql:host1:host2</li>
  * <li>cql:bean:sessionRef</li>
- * <li>cql:bean:clusterRef/keyspace</li>
  * </ul>
  */
 @Component("cql")

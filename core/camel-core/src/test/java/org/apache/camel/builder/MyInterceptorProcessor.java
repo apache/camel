@@ -26,8 +26,8 @@ public class MyInterceptorProcessor extends DelegateProcessor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        LOG.debug("START of onExchange: " + exchange);
+        LOG.debug("START of onExchange: {}", exchange);
         super.process(exchange);
-        LOG.debug("END of onExchange: " + exchange);
+        LOG.debug("END of onExchange: {}", exchange);
     }
 }

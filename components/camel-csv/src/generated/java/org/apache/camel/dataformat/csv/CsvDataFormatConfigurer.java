@@ -28,7 +28,7 @@ public class CsvDataFormatConfigurer extends PropertyConfigurerSupport implement
         case "escape": dataformat.setEscape(property(camelContext, java.lang.Character.class, value)); return true;
         case "headerdisabled":
         case "headerDisabled": dataformat.setHeaderDisabled(property(camelContext, boolean.class, value)); return true;
-        case "header": dataformat.setHeader(property(camelContext, java.lang.String[].class, value)); return true;
+        case "header": dataformat.setHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "allowmissingcolumnnames":
         case "allowMissingColumnNames": dataformat.setAllowMissingColumnNames(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "ignoreemptylines":
@@ -55,6 +55,8 @@ public class CsvDataFormatConfigurer extends PropertyConfigurerSupport implement
         case "ignoreHeaderCase": dataformat.setIgnoreHeaderCase(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "trailingdelimiter":
         case "trailingDelimiter": dataformat.setTrailingDelimiter(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "captureheaderrecord":
+        case "captureHeaderRecord": dataformat.setCaptureHeaderRecord(property(camelContext, boolean.class, value)); return true;
         case "lazyload":
         case "lazyLoad": dataformat.setLazyLoad(property(camelContext, boolean.class, value)); return true;
         case "usemaps":

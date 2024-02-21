@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "removeVariable",
+    "title": "Remove Variable",
+    "description": "Removes a named variable",
+    "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.RemoveVariableDefinition",
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "index": 1, "kind": "element", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "name": { "index": 3, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of variable to remove." }
+  }
+}

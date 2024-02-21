@@ -16,9 +16,9 @@
  */
 package org.apache.camel.core.xml;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
@@ -39,7 +39,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "1000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String redeliveryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "false",
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. "
                             + "When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from blocking while waiting. "
                             + "Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must execute in the same thread context.")
@@ -49,7 +49,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
               description = "Sets the multiplier used to increase the delay between redeliveries if useExponentialBackOff is enabled")
     private String backOffMultiplier;
     @XmlAttribute
-    @Metadata(defaultValue = "false",
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Enables/disables exponential backoff using the backOffMultiplier to increase the time between retries")
     private String useExponentialBackOff;
     @XmlAttribute
@@ -57,64 +57,71 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
               description = "Sets the factor used for collision avoidance if enabled via useCollisionAvoidance.")
     private String collisionAvoidanceFactor;
     @XmlAttribute
-    @Metadata(defaultValue = "false",
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Enables/disables collision avoidance which adds some randomization to the backoff timings to reduce contention probability")
     private String useCollisionAvoidance;
     @XmlAttribute
     @Metadata(defaultValue = "60000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "ERROR",
+    @Metadata(defaultValue = "ERROR", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "Sets the logging level to use for log messages when retries have been exhausted.")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(defaultValue = "DEBUG",
+    @Metadata(defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "Sets the logging level to use for log messages when retries are attempted.")
     private String retryAttemptedLogLevel;
     @XmlAttribute
     @Metadata(defaultValue = "0", description = "Sets the interval for log messages when retries are attempted.")
     private String retryAttemptedLogInterval;
     @XmlAttribute
-    @Metadata(defaultValue = "true", description = "Sets whether to log retry attempts")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean", description = "Sets whether to log retry attempts")
     private String logRetryAttempted;
     @XmlAttribute
-    @Metadata(defaultValue = "true", description = "Sets whether stack traces should be logged or not")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Sets whether stack traces should be logged or not")
     private String logStackTrace;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether stack traces should be logged or not")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether stack traces should be logged or not")
     private String logRetryStackTrace;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its handled")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether errors should be logged even if its handled")
     private String logHandled;
     @XmlAttribute
-    @Metadata(defaultValue = "true",
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Sets whether errors should be logged when a new exception occurred during handling a previous exception")
     private String logNewException;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its continued")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether errors should be logged even if its continued")
     private String logContinued;
     @XmlAttribute
-    @Metadata(defaultValue = "true", description = "Sets whether exhausted exceptions should be logged or not")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Sets whether exhausted exceptions should be logged or not")
     private String logExhausted;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether to log exhausted errors including message history")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether to log exhausted errors including message history")
     private String logExhaustedMessageHistory;
     @XmlAttribute
-    @Metadata(defaultValue = "false",
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Sets whether exhausted message body/headers should be logged with message history included")
     private String logExhaustedMessageBody;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Disables redelivery by setting maximum redeliveries to 0.")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Disables redelivery by setting maximum redeliveries to 0.")
     private String disableRedelivery;
     @XmlAttribute
     @Metadata(description = "Sets an optional delay pattern to use instead of fixed delay.")
     private String delayPattern;
     @XmlAttribute
-    @Metadata(defaultValue = "true",
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
-    @Metadata(description = "Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.")
+    @Metadata(description = "Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to generate the log message from exchange.")
     private String exchangeFormatterRef;
 
     @Override

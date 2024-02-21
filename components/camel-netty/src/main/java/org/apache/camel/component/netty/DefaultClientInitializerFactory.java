@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -61,7 +62,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
-        List<ChannelHandler> decoders = producer.getConfiguration().getDecoders();
+        List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {
@@ -71,7 +72,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             addToPipeline("decoder-" + x, channelPipeline, decoder);
         }
 
-        List<ChannelHandler> encoders = producer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = producer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {
@@ -147,7 +148,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         return answer;
     }
 
-    private SslHandler configureClientSSLOnDemand() throws Exception {
+    private SslHandler configureClientSSLOnDemand() {
         if (!producer.getConfiguration().isSsl()) {
             return null;
         }
@@ -157,6 +158,11 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
+            if (producer.getConfiguration().isHostnameVerification()) {
+                SSLParameters sslParams = engine.getSSLParameters();
+                sslParams.setEndpointIdentificationAlgorithm("HTTPS");
+                engine.setSSLParameters(sslParams);
+            }
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));

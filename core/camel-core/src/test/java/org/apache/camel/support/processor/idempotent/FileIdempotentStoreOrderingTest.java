@@ -20,19 +20,17 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.TestSupport;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.TestSupport.createDirectory;
-import static org.apache.camel.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileIdempotentStoreOrderingTest {
+public class FileIdempotentStoreOrderingTest extends TestSupport {
 
     private FileIdempotentRepository fileIdempotentRepository;
     private List<String> files;
@@ -47,12 +45,8 @@ public class FileIdempotentStoreOrderingTest {
 
     @Test
     public void testTrunkStoreNotMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(10);
         fileIdempotentRepository.start();
@@ -62,25 +56,21 @@ public class FileIdempotentStoreOrderingTest {
         fileIdempotentRepository.stop();
 
         // then
-        Stream<String> fileContent = Files.lines(fileStore.toPath());
-        List<String> fileEntries = fileContent.collect(Collectors.toList());
-        fileContent.close();
-        // expected order
-        MatcherAssert.assertThat(fileEntries,
-                IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
-                        "file3.txt.20171125", "file2.txt.20171126",
-                        "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
-                        "processing.source.lamr.out.20171126"));
+        try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
+            List<String> fileEntries = fileContent.toList();
+            // expected order
+            MatcherAssert.assertThat(fileEntries,
+                    IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
+                            "file3.txt.20171125", "file2.txt.20171126",
+                            "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+                            "processing.source.lamr.out.20171126"));
+        }
     }
 
     @Test
     public void testTrunkStoreFirstLevelMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.start();
@@ -90,25 +80,21 @@ public class FileIdempotentStoreOrderingTest {
         fileIdempotentRepository.stop();
 
         // then
-        Stream<String> fileContent = Files.lines(fileStore.toPath());
-        List<String> fileEntries = fileContent.collect(Collectors.toList());
-        fileContent.close();
-        // expected order
-        MatcherAssert.assertThat(fileEntries,
-                IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
-                        "file3.txt.20171125", "file2.txt.20171126",
-                        "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
-                        "processing.source.lamr.out.20171126"));
+        try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
+            List<String> fileEntries = fileContent.toList();
+            // expected order
+            MatcherAssert.assertThat(fileEntries,
+                    IsIterableContainingInOrder.contains("file1.txt.20171123", "file2.txt.20171123", "file1.txt.20171124",
+                            "file3.txt.20171125", "file2.txt.20171126",
+                            "fixed.income.lamr.out.20171126", "pricing.px.20171126", "test.out.20171126",
+                            "processing.source.lamr.out.20171126"));
+        }
     }
 
     @Test
     public void testTrunkStoreFileMaxHit() throws Exception {
-        // ensure empty folder
-        deleteDirectory("target/data/mystore");
-        createDirectory("target/data/mystore");
-
         // given
-        File fileStore = new File("target/data/mystore/data.dat");
+        File fileStore = testDirectory().resolve("data.dat").toFile();
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.setMaxFileStoreSize(128);
@@ -124,12 +110,12 @@ public class FileIdempotentStoreOrderingTest {
         fileIdempotentRepository.stop();
 
         // then
-        Stream<String> fileContent = Files.lines(fileStore.toPath());
-        List<String> fileEntries = fileContent.collect(Collectors.toList());
-        fileContent.close();
+        try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
+            List<String> fileEntries = fileContent.toList();
 
-        // all old entries is removed
-        assertEquals(0, fileEntries.size());
+            // all old entries is removed
+            assertEquals(0, fileEntries.size());
+        }
     }
 
 }

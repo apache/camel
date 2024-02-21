@@ -22,10 +22,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 @Component("nats")
-public class NatsComponent extends DefaultComponent implements SSLContextParametersAware {
+public class NatsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata
     private String servers;

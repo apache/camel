@@ -64,11 +64,32 @@ public interface CamelBeanPostProcessor {
         // noop
     }
 
-    /**
-     * @see #setEnabled(boolean)
-     */
     default boolean isEnabled() {
         return true;
+    }
+
+    default void setUnbindEnabled(boolean unbindEnabled) {
+        // noop
+    }
+
+    /**
+     * Can be used to unbind any existing beans before binding a bean to the registry.
+     *
+     * Be careful to enable this, as this will unbind all beans with the given id. This is used in special use-cases
+     * such as reloading of Camel routes which triggered updating beans that have their implementation re-compiled and
+     * re-loaded.
+     */
+    default boolean isUnbindEnabled() {
+        return false;
+    }
+
+    /**
+     * Adds a custom bean post injector
+     *
+     * @param injector the custom injector
+     */
+    default void addCamelBeanPostProjectInjector(CamelBeanPostProcessorInjector injector) {
+        // noop
     }
 
 }

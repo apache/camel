@@ -21,9 +21,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
@@ -37,18 +40,27 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         String uri;
         Expression exp;
         if (definition.getEndpointProducerBuilder() != null) {
-            uri = definition.getEndpointProducerBuilder().getUri();
+            uri = definition.getEndpointProducerBuilder().getRawUri();
             exp = definition.getEndpointProducerBuilder().expr(camelContext);
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
             exp = createExpression(uri);
         }
 
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
         processor.setCamelContext(camelContext);
         processor.setPattern(parse(ExchangePattern.class, definition.getPattern()));
-        if (definition.getCacheSize() != null) {
-            processor.setCacheSize(parseInt(definition.getCacheSize()));
+        processor.setVariableSend(parseString(definition.getVariableSend()));
+        processor.setVariableReceive(parseString(definition.getVariableReceive()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            processor.setCacheSize(num);
         }
         if (definition.getIgnoreInvalidEndpoint() != null) {
             processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
@@ -64,9 +76,9 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
 
     protected Expression createExpression(String uri) {
         // make sure to parse property placeholders
-        uri = camelContext.resolvePropertyPlaceholders(uri);
+        uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
 
-        // we use simple language by default but you can configure a different language
+        // we use simple language by default, but you can configure a different language
         String language = "simple";
         if (uri.startsWith("language:")) {
             String value = StringHelper.after(uri, "language:");

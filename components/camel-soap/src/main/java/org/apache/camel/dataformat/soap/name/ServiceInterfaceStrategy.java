@@ -24,13 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
+import jakarta.xml.ws.WebFault;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
-import javax.xml.ws.WebFault;
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -46,11 +47,11 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private Map<String, QName> outTypeNameToQName = new HashMap<>();
     private boolean isClient;
     private ElementNameStrategy fallBackStrategy;
-    private Map<QName, Class<? extends Exception>> faultNameToException = new HashMap<>();
+    private Map<String, Map<QName, Class<? extends Exception>>> faultNameToException = new HashMap<>();
 
     /**
      * Init with JAX-WS service interface
-     * 
+     *
      * @param serviceInterface
      * @param isClient         determines if marhalling looks at input or output of method
      */
@@ -83,7 +84,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             } else {
                 throw new IllegalArgumentException(
                         "Result type of method " + method.getName()
-                                                   + " is not annotated with WebParam. This is not yet supported");
+                                                   + " is not annotated with WebResult. This is not yet supported");
             }
         }
     }
@@ -148,7 +149,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         String soapAction = (webMethod != null) ? webMethod.action() : null;
         return new MethodInfo(
                 method.getName(), soapAction,
-                inInfos.toArray(new TypeInfo[inInfos.size()]), outInfo);
+                inInfos.toArray(new TypeInfo[0]), outInfo);
     }
 
     private void analyzeServiceInterface(Class<?> serviceInterface) {
@@ -159,8 +160,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 TypeInfo ti = info.getIn()[i];
                 if (inTypeNameToQName.containsKey(ti.getTypeName())) {
                     if (ti.getTypeName() != null) {
-                        if (!(ti.getTypeName().equals("javax.xml.ws.Holder"))
-                                && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
+                        if (!ti.getTypeName().equals("jakarta.xml.ws.Holder")
+                                && !inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())) {
                             LOG.warn("Ambiguous QName mapping. The type [{}] is already mapped to a QName in this context.",
                                     ti.getTypeName());
                             continue;
@@ -169,24 +170,28 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 }
                 inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }
-            if (info.getSoapAction() != null && !"".equals(info.getSoapAction())) {
-                soapActionToMethodInfo.put(info.getSoapAction(), info);
+            String soapAction = info.getSoapAction();
+            if (soapAction != null && !soapAction.isEmpty()) {
+                soapActionToMethodInfo.put(soapAction, info);
+                addExceptions(soapAction, method);
+            } else {
+                addExceptions(null, method);
             }
 
             outTypeNameToQName.put(info.getOut().getTypeName(), info.getOut().getElName());
-
-            addExceptions(method);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void addExceptions(Method method) {
+    private void addExceptions(String soapAction, Method method) {
         Class<?>[] exTypes = method.getExceptionTypes();
         for (Class<?> exType : exTypes) {
             WebFault webFault = exType.getAnnotation(WebFault.class);
             if (webFault != null) {
                 QName faultName = new QName(webFault.targetNamespace(), webFault.name());
-                faultNameToException.put(faultName, (Class<? extends Exception>) exType);
+                faultNameToException.putIfAbsent(soapAction, new HashMap<>());
+                Map<QName, Class<? extends Exception>> soapActionFaultNameMap = faultNameToException.get(soapAction);
+                soapActionFaultNameMap.put(faultName, (Class<? extends Exception>) exType);
             }
         }
     }
@@ -194,7 +199,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     /**
      * Determine the QName of the method parameter of the method that matches either soapAction and type or if not
      * possible only the type
-     * 
+     *
      * @param  soapAction
      * @param  type
      * @return            matching QName throws RuntimeException if no matching QName was found
@@ -236,7 +241,27 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
     @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
-        return faultNameToException.get(faultName);
+        for (Map<QName, Class<? extends Exception>> perSoapActionFaultNameToException : faultNameToException.values()) {
+            if (perSoapActionFaultNameToException.get(faultName) != null) {
+                return perSoapActionFaultNameToException.get(faultName);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
+        if (soapAction == null || soapAction.isEmpty()) {
+            return findExceptionForFaultName(faultName);
+        }
+
+        Map<QName, Class<? extends Exception>> perSoapActionFaultNameToException = faultNameToException.get(soapAction);
+        if (perSoapActionFaultNameToException == null) {
+            return null;
+        }
+
+        return perSoapActionFaultNameToException.get(faultName);
     }
 
 }

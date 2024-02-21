@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 
 public abstract class DropboxProducer extends DefaultProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DropboxProducer.class);
 
     protected final DropboxEndpoint endpoint;
     protected final DropboxConfiguration configuration;
 
-    public DropboxProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
+    protected DropboxProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = configuration;
@@ -41,7 +41,7 @@ public abstract class DropboxProducer extends DefaultProducer {
             //create dropbox client
             configuration.createClient();
 
-            LOG.debug("Producer DropBox client created");
+            LOG.debug("Producer Dropbox client created");
         }
 
         super.doStart();
@@ -52,7 +52,7 @@ public abstract class DropboxProducer extends DefaultProducer {
         if (configuration.getClient() == null) {
             configuration.setClient(null);
 
-            LOG.debug("Producer DropBox client deleted");
+            LOG.debug("Producer Dropbox client deleted");
         }
         super.doStop();
     }

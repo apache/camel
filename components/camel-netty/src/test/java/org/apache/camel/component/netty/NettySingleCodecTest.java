@@ -45,9 +45,9 @@ public class NettySingleCodecTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoder&sync=false");
 
                 from("netty:tcp://localhost:{{port}}?decoders=#decoder&sync=false").to("mock:single-codec");

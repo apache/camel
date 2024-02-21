@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.dropbox;
 
-import java.util.Locale;
-
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
@@ -34,34 +33,48 @@ public class DropboxConfiguration {
     @UriPath
     @Metadata(required = true)
     private DropboxOperation operation;
+
     //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private String accessToken;
-    //local path to put files
     @UriParam
+    @Metadata(label = "security", required = true, secret = true)
+    private Long expireIn;
+    @UriParam
+    @Metadata(label = "security", required = true, secret = true)
+    private String refreshToken;
+    @UriParam
+    @Metadata(label = "security", required = true, secret = true)
+    private String apiKey;
+    @UriParam
+    @Metadata(label = "security", required = true, secret = true)
+    private String apiSecret;
+
+    //local path to put files
+    @UriParam(label = "producer")
     private String localPath;
     //where to put files on dropbox
-    @UriParam
+    @UriParam(label = "common")
     private String remotePath;
     //new path on dropbox when moving files
-    @UriParam
+    @UriParam(label = "producer")
     private String newRemotePath;
     //search query on dropbox
-    @UriParam
+    @UriParam(label = "common")
     private String query;
     //in case of uploading if force or add existing file
-    @UriParam
+    @UriParam(label = "producer")
     private DropboxUploadMode uploadMode;
     //id of the app
-    @UriParam
+    @UriParam(label = "common")
     private String clientIdentifier;
     //reference to dropbox client
-    @UriParam
+    @UriParam(label = "advanced")
     private DbxClientV2 client;
 
     /**
-     * To use an existing DbxClient instance as DropBox client.
+     * To use an existing DbxClient instance as Dropbox client.
      */
     public void setClient(DbxClientV2 client) {
         this.client = client;
@@ -75,8 +88,9 @@ public class DropboxConfiguration {
      * Obtain a new instance of DbxClient and store it in configuration.
      */
     public void createClient() {
-        DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        this.client = new DbxClientV2(config, accessToken);
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(clientIdentifier).build();
+        DbxCredential credential = new DbxCredential(accessToken, expireIn, refreshToken, apiKey, apiSecret);
+        this.client = new DbxClientV2(config, credential);
     }
 
     public String getAccessToken() {
@@ -92,6 +106,50 @@ public class DropboxConfiguration {
 
     public String getLocalPath() {
         return localPath;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * The refresh token to refresh the access token for a specific Dropbox user
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * The apiKey to make API requests for a specific Dropbox user
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * The apiSecret to make API requests for a specific Dropbox user
+     */
+    public String getApiSecret() {
+        return apiSecret;
+    }
+
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
+    /**
+     * The expire time to access token for a specific Dropbox user
+     */
+    public Long getExpireIn() {
+        return expireIn;
+    }
+
+    public void setExpireIn(Long expireIn) {
+        this.expireIn = expireIn;
     }
 
     /**

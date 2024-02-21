@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chunk;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Chunk component constants
  */
@@ -24,11 +26,13 @@ public final class ChunkConstants {
     /**
      * Header containing a Chunk template location
      */
+    @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
     public static final String CHUNK_RESOURCE_URI = "ChunkResourceUri";
 
     /**
      * Header containing the Chunk template code
      */
+    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String CHUNK_TEMPLATE = "ChunkTemplate";
 
     /**

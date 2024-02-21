@@ -3,15 +3,16 @@
     "kind": "model",
     "name": "sticky",
     "title": "Sticky",
-    "description": "Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.",
+    "description": "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "correlationExpression": { "kind": "expression", "displayName": "Correlation Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "joor", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The correlation expression to use to calculate the correlation key" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "correlationExpression": { "index": 1, "kind": "expression", "displayName": "Correlation Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The correlation expression to use to calculate the correlation key" }
   }
 }

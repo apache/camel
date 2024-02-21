@@ -23,7 +23,7 @@ public class CamelContextStartupFailureEvent extends AbstractContextEvent
         implements CamelEvent.CamelContextStartupFailureEvent {
     private static final long serialVersionUID = -4271899927507894567L;
 
-    private Throwable cause;
+    private final Throwable cause;
 
     public CamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         super(context);
@@ -37,6 +37,6 @@ public class CamelContextStartupFailureEvent extends AbstractContextEvent
 
     @Override
     public String toString() {
-        return "Failed to start Camel: " + getContext().getName() + " due to " + cause.getMessage();
+        return "CamelContext startup failure: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * Implements the <a href="http://camel.apache.org/message.html">Message</a> pattern and represents an inbound or
@@ -33,7 +34,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 public interface Message {
 
     /**
-     * Clears the message from user data so it may be reused.
+     * Clears the message from user data, so the message can be reused.
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
@@ -42,7 +43,7 @@ public interface Message {
     /**
      * Returns the id of the message.
      * <p/>
-     * By default the message uses the same id as {@link Exchange#getExchangeId()} as messages are associated with the
+     * By default, the message uses the same id as {@link Exchange#getExchangeId()} as messages are associated with the
      * exchange and using different IDs does not offer much value. Another reason is to optimize for performance to
      * avoid generating new IDs.
      * <p/>
@@ -53,11 +54,31 @@ public interface Message {
     String getMessageId();
 
     /**
+     * Returns the timestamp that this messages originates from.
+     * <p/>
+     * Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received. This method returns
+     * the timestamp, if a timestamp exists.
+     * <p/>
+     * The message timestamp and exchange created are not the same. An exchange always have a created timestamp which is
+     * the local timestamp when Camel created the exchange. The message timestamp is only available in some Camel
+     * components when the consumer is able to extract the timestamp from the source event.
+     *
+     * @return the timestamp, or <tt>0</tt> if the message has no source timestamp.
+     * @see    Exchange#getClock()
+     */
+    long getMessageTimestamp();
+
+    /**
      * Sets the id of the message
      *
      * @param messageId id of the message
      */
     void setMessageId(String messageId);
+
+    /**
+     * Whether the message has any message ID assigned.
+     */
+    boolean hasMessageId();
 
     /**
      * Returns the exchange this message is related to
@@ -155,7 +176,7 @@ public interface Message {
     /**
      * Removes the headers from this message that match the given <tt>pattern</tt>, except for the ones matching one or
      * more <tt>excludePatterns</tt>
-     * 
+     *
      * @param  pattern         pattern of names that should be removed
      * @param  excludePatterns one or more pattern of header names that should be excluded (= preserved)
      * @return                 boolean whether any headers matched
@@ -163,7 +184,7 @@ public interface Message {
     boolean removeHeaders(String pattern, String... excludePatterns);
 
     /**
-     * Returns all of the headers associated with the message.
+     * Returns all the headers associated with the message.
      * <p/>
      * Headers is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}. The
      * implementation of the map can be configured by the {@link HeadersMapFactory} which can be set on the
@@ -298,5 +319,29 @@ public interface Message {
      * @param newBody the new body to use
      */
     void copyFromWithNewBody(Message message, Object newBody);
+
+    /**
+     * Checks whether the message has a given {@link MessageTrait}
+     *
+     * @param  trait the {@link MessageTrait} to check
+     * @return       true if the message instance has the trait or false otherwise
+     */
+    boolean hasTrait(MessageTrait trait);
+
+    /**
+     * Gets the payload for the {@link MessageTrait}
+     *
+     * @param  trait the {@link MessageTrait} to obtain the payload
+     * @return       The trait payload or null if not available
+     */
+    Object getPayloadForTrait(MessageTrait trait);
+
+    /**
+     * Sets the payload for the {@link MessageTrait}
+     *
+     * @param trait  the {@link MessageTrait} to set the payload
+     * @param object the payload
+     */
+    void setPayloadForTrait(MessageTrait trait, Object object);
 
 }

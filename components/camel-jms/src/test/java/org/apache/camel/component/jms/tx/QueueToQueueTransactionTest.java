@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,19 +29,22 @@ import org.junit.jupiter.api.Test;
  * classes as I was unable to fully tear down and isolate the test cases, I'm not sure why, but as soon as we know the
  * Transaction classes can be joined into one.
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class QueueToQueueTransactionTest extends AbstractTransactionTest {
 
     @Test
     public void testRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context
-        context.addRoutes(new SpringRouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
-                Policy required = lookup("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
-                from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())
-                        .to("activemq:queue:bar?transacted=true");
+            public void configure() {
+                Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
+                        SpringTransactionPolicy.class);
+                from("activemq:queue:AbstractTransactionTest?transacted=true").policy(required)
+                        .process(new ConditionalExceptionProcessor())
+                        .to("activemq:queue:AbstractTransactionTest.dest?transacted=true");
             }
         });
 

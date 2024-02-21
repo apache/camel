@@ -16,11 +16,13 @@
  */
 package org.apache.camel.catalog;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -28,6 +30,8 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.TransformerModel;
 
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
@@ -190,6 +194,11 @@ public interface CamelCatalog {
     List<String> findLanguageNames();
 
     /**
+     * Find all the transformer names from the Camel catalog
+     */
+    List<String> findTransformerNames();
+
+    /**
      * Find all the model names from the Camel catalog
      */
     List<String> findModelNames();
@@ -211,6 +220,8 @@ public interface CamelCatalog {
                 return findDataFormatNames();
             case language:
                 return findLanguageNames();
+            case transformer:
+                return findTransformerNames();
             case other:
                 return findOtherNames();
             case eip:
@@ -270,6 +281,14 @@ public interface CamelCatalog {
     String languageJSonSchema(String name);
 
     /**
+     * Returns the transformer information as JSON format.
+     *
+     * @param  name the transformer name
+     * @return      transformer details in JSon
+     */
+    String transformerJSonSchema(String name);
+
+    /**
      * Returns the other (miscellaneous) information as JSON format.
      *
      * @param  name the other (miscellaneous) name
@@ -284,70 +303,6 @@ public interface CamelCatalog {
      * @return      model details in JSon
      */
     String modelJSonSchema(String name);
-
-    /**
-     * Returns the component documentation as Ascii doc format.
-     *
-     * @param  name the component name
-     * @return      component documentation in ascii doc format.
-     */
-    String componentAsciiDoc(String name);
-
-    /**
-     * Returns the component documentation as HTML format.
-     *
-     * @param  name the component name
-     * @return      component documentation in html format.
-     */
-    String componentHtmlDoc(String name);
-
-    /**
-     * Returns the data format documentation as Ascii doc format.
-     *
-     * @param  name the data format name
-     * @return      data format documentation in ascii doc format.
-     */
-    String dataFormatAsciiDoc(String name);
-
-    /**
-     * Returns the data format documentation as HTML format.
-     *
-     * @param  name the data format name
-     * @return      data format documentation in HTML format.
-     */
-    String dataFormatHtmlDoc(String name);
-
-    /**
-     * Returns the language documentation as Ascii doc format.
-     *
-     * @param  name the language name
-     * @return      language documentation in ascii doc format.
-     */
-    String languageAsciiDoc(String name);
-
-    /**
-     * Returns the language documentation as HTML format.
-     *
-     * @param  name the language name
-     * @return      language documentation in HTML format.
-     */
-    String languageHtmlDoc(String name);
-
-    /**
-     * Returns the other (miscellaneous) documentation as Ascii doc format.
-     *
-     * @param  name the other (miscellaneous) name
-     * @return      other (miscellaneous) documentation in ascii doc format.
-     */
-    String otherAsciiDoc(String name);
-
-    /**
-     * Returns the other (miscellaneous) documentation as HTML format.
-     *
-     * @param  name the other (miscellaneous) name
-     * @return      other (miscellaneous) documentation in HTML format.
-     */
-    String otherHtmlDoc(String name);
 
     /**
      * Find all the unique label names all the components are using.
@@ -383,13 +338,6 @@ public interface CamelCatalog {
      * @return a set of all the labels.
      */
     Set<String> findOtherLabels();
-
-    /**
-     * Returns the Apache Camel Maven Archetype catalog in XML format.
-     *
-     * @return the catalog in XML
-     */
-    String archetypeCatalogAsXml();
 
     /**
      * Returns the Camel Spring XML schema
@@ -473,6 +421,9 @@ public interface CamelCatalog {
     /**
      * Parses and validates the language as a predicate
      * <p/>
+     * It is possible to specify language options as query parameters in the language parameter, such as
+     * jsonpath?unpackArray=true&allowEasyPredicate=false
+     *
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
      * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for
@@ -486,6 +437,9 @@ public interface CamelCatalog {
     /**
      * Parses and validates the language as an expression
      * <p/>
+     * It is possible to specify language options as query parameters in the language parameter, such as
+     * jsonpath?unpackArray=true&allowEasyPredicate=false
+     *
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
      * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for
@@ -550,6 +504,11 @@ public interface CamelCatalog {
     String listLanguagesAsJson();
 
     /**
+     * Lists all the transformers summary details in JSon
+     */
+    String listTransformersAsJson();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
@@ -583,6 +542,12 @@ public interface CamelCatalog {
     LanguageModel languageModel(String name);
 
     /**
+     * @param  name the transformer name to look up
+     * @return      the requested transformer or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    TransformerModel transformerModel(String name);
+
+    /**
      * @param  name the other name to look up
      * @return      the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
      */
@@ -600,6 +565,8 @@ public interface CamelCatalog {
     MainModel mainModel();
 
     /**
+     * Lookup the model for the given kind and name
+     *
      * @param  kind the requested kind
      * @param  name the name to look up
      * @return      the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
@@ -612,6 +579,8 @@ public interface CamelCatalog {
                 return dataFormatModel(name);
             case language:
                 return languageModel(name);
+            case transformer:
+                return transformerModel(name);
             case other:
                 return otherModel(name);
             case eip:
@@ -620,5 +589,34 @@ public interface CamelCatalog {
                 throw new IllegalArgumentException("Unexpected kind " + kind);
         }
     }
+
+    /**
+     * Lookup the model for the given Maven GAV
+     *
+     * @param  groupId    maven group id
+     * @param  artifactId maven artifact id
+     * @param  version    maven version (optional)
+     * @return            the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version);
+
+    /**
+     * Load resource from catalog classpath
+     *
+     * @param  kind The resource kind, ex. camel-jbang
+     * @param  name The resource name
+     * @return      An input stream for reading the resource; null if the resource could not be found
+     */
+    InputStream loadResource(String kind, String name);
+
+    /**
+     * Load all Camel releases (core and spring-boot) from catalog
+     */
+    List<ReleaseModel> camelReleases();
+
+    /**
+     * Load all Camel Quarkus releases from catalog
+     */
+    List<ReleaseModel> camelQuarkusReleases();
 
 }

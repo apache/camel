@@ -25,14 +25,17 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.camel.component.as2.api.AS2Charset;
+import org.apache.camel.CamelException;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIConsentEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationXMLEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
@@ -42,7 +45,6 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +53,7 @@ public final class EntityUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityUtils.class);
 
-    private static AtomicLong partNumber = new AtomicLong();
+    private static final AtomicLong partNumber = new AtomicLong();
 
     private EntityUtils() {
     }
@@ -68,27 +70,23 @@ public final class EntityUtils {
      */
     public static String createBoundaryValue() {
         // TODO: ensure boundary string is limited to 70 characters or less.
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("----=_Part_").append(partNumber.incrementAndGet()).append("_").append(s.hashCode()).append(".")
                 .append(System.currentTimeMillis());
         return s.toString();
-    }
-
-    public static boolean validateBoundaryValue(String boundaryValue) {
-        return true; // TODO: add validation logic.
     }
 
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
 
-    public static String encode(String data, Charset charset, String encoding) throws Exception {
+    public static String encode(String data, Charset charset, String encoding) throws CamelException {
         byte[] encoded = encode(data.getBytes(charset), encoding);
         return new String(encoded, charset);
     }
 
-    public static byte[] encode(byte[] data, String encoding) throws Exception {
-        Args.notNull(data, "Data");
+    public static byte[] encode(byte[] data, String encoding) throws CamelException {
+        ObjectHelper.notNull(data, "Data");
 
         if (encoding == null) {
             // Identity encoding
@@ -107,12 +105,12 @@ public final class EntityUtils {
                 // Identity encoding
                 return data;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static OutputStream encode(OutputStream os, String encoding) throws Exception {
-        Args.notNull(os, "Output Stream");
+    public static OutputStream encode(OutputStream os, String encoding) throws CamelException {
+        ObjectHelper.notNull(os, "Output Stream");
 
         if (encoding == null) {
             // Identity encoding
@@ -130,17 +128,17 @@ public final class EntityUtils {
                 // Identity encoding
                 return os;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static String decode(String data, Charset charset, String encoding) throws Exception {
+    public static String decode(String data, Charset charset, String encoding) throws CamelException, DecoderException {
         byte[] decoded = decode(data.getBytes(charset), encoding);
         return new String(decoded, charset);
     }
 
-    public static byte[] decode(byte[] data, String encoding) throws Exception {
-        Args.notNull(data, "Data");
+    public static byte[] decode(byte[] data, String encoding) throws CamelException, DecoderException {
+        ObjectHelper.notNull(data, "Data");
 
         if (encoding == null) {
             // Identity encoding
@@ -157,12 +155,12 @@ public final class EntityUtils {
                 // Identity encoding
                 return data;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static InputStream decode(InputStream is, String encoding) throws Exception {
-        Args.notNull(is, "Input Stream");
+    public static InputStream decode(InputStream is, String encoding) throws CamelException {
+        ObjectHelper.notNull(is, "Input Stream");
 
         if (encoding == null) {
             // Identity encoding
@@ -180,36 +178,40 @@ public final class EntityUtils {
                 // Identity encoding
                 return is;
             default:
-                throw new Exception("Unknown encoding: " + encoding);
+                throw new CamelException("Unknown encoding: " + encoding);
         }
     }
 
-    public static ApplicationEDIEntity createEDIEntity(
-            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody)
-            throws Exception {
-        Args.notNull(ediMessage, "EDI Message");
-        Args.notNull(ediMessageContentType, "EDI Message Content Type");
-        String charset = ediMessageContentType.getCharset() == null
-                ? AS2Charset.US_ASCII : ediMessageContentType.getCharset().toString();
+    public static ApplicationEntity createEDIEntity(
+            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
+            String filename)
+            throws CamelException {
+        ObjectHelper.notNull(ediMessage, "EDI Message");
+        ObjectHelper.notNull(ediMessageContentType, "EDI Message Content Type");
+        String charset = null;
+        if (ediMessageContentType.getCharset() != null) {
+            charset = ediMessageContentType.getCharset().toString();
+        }
         switch (ediMessageContentType.getMimeType().toLowerCase()) {
             case AS2MediaType.APPLICATION_EDIFACT:
-                return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_X12:
-                return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_CONSENT:
-                return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
+                return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
+            case AS2MediaType.APPLICATION_XML:
+                return new ApplicationXMLEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             default:
-                throw new Exception("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
+                throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
 
     }
 
     public static byte[] getContent(HttpEntity entity) {
-        try {
-            final ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-            entity.writeTo(outstream);
-            outstream.flush();
-            return outstream.toByteArray();
+        try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            entity.writeTo(os);
+            os.flush();
+            return os.toByteArray();
         } catch (Exception e) {
             LOG.debug("failed to get content", e);
             return null;
@@ -218,35 +220,35 @@ public final class EntityUtils {
 
     public static boolean hasEntity(HttpMessage message) {
         boolean hasEntity = false;
-        if (message instanceof HttpEntityEnclosingRequest) {
-            hasEntity = ((HttpEntityEnclosingRequest) message).getEntity() != null;
-        } else if (message instanceof HttpResponse) {
-            hasEntity = ((HttpResponse) message).getEntity() != null;
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            hasEntity = httpEntityEnclosingRequest.getEntity() != null;
+        } else if (message instanceof HttpResponse httpResponse) {
+            hasEntity = httpResponse.getEntity() != null;
         }
         return hasEntity;
     }
 
     public static HttpEntity getMessageEntity(HttpMessage message) {
-        if (message instanceof HttpEntityEnclosingRequest) {
-            return ((HttpEntityEnclosingRequest) message).getEntity();
-        } else if (message instanceof HttpResponse) {
-            return ((HttpResponse) message).getEntity();
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            return httpEntityEnclosingRequest.getEntity();
+        } else if (message instanceof HttpResponse httpResponse) {
+            return httpResponse.getEntity();
         }
         return null;
     }
 
     public static void setMessageEntity(HttpMessage message, HttpEntity entity) {
-        if (message instanceof HttpEntityEnclosingRequest) {
-            ((HttpEntityEnclosingRequest) message).setEntity(entity);
-        } else if (message instanceof HttpResponse) {
-            ((HttpResponse) message).setEntity(entity);
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            httpEntityEnclosingRequest.setEntity(entity);
+        } else if (message instanceof HttpResponse httpResponse) {
+            httpResponse.setEntity(entity);
         }
         Header contentTypeHeader = entity.getContentType();
         if (contentTypeHeader != null) {
             message.setHeader(contentTypeHeader);
         }
-        if (entity instanceof MimeEntity) {
-            Header contentTransferEncodingHeader = ((MimeEntity) entity).getContentTransferEncoding();
+        if (entity instanceof MimeEntity mimeEntity) {
+            Header contentTransferEncodingHeader = mimeEntity.getContentTransferEncoding();
             if (contentTransferEncodingHeader != null) {
                 message.setHeader(contentTransferEncodingHeader);
             }
@@ -259,8 +261,8 @@ public final class EntityUtils {
             String bodyPartContent,
             ContentType contentType,
             String bodyPartTransferEncoding)
-            throws Exception {
-        Args.notNull(bodyPartContent, "bodyPartContent");
+            throws CamelException, DecoderException {
+        ObjectHelper.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();
         if (contentCharset == null) {
             contentCharset = StandardCharsets.US_ASCII;
@@ -275,10 +277,9 @@ public final class EntityUtils {
 
     public static String printEntity(HttpEntity entity) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+             PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             printEntity(ps, entity);
-            String content = baos.toString(StandardCharsets.UTF_8.name());
-            return content;
+            return baos.toString(StandardCharsets.UTF_8);
         }
     }
 

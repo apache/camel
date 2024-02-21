@@ -46,11 +46,6 @@ import org.slf4j.LoggerFactory;
  * <li>Abort - The current exchange will be set with a {@link RejectedExecutionException} exception, and marked to stop
  * continue routing. The {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>failed</b>, due the
  * exception.</li>
- * <li>Discard - The current exchange will be marked to stop continue routing (notice no exception is set). The
- * {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set.</li>
- * <li>DiscardOldest - The oldest exchange will be marked to stop continue routing (notice no exception is set). The
- * {@link org.apache.camel.spi.UnitOfWork} will be regarded as <b>successful</b>, due no exception being set. And the
- * current exchange will be added to the task queue.</li>
  * <li>CallerRuns - The current exchange will be processed by the current thread. Which mean the current thread will not
  * be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
@@ -64,7 +59,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
     private final CamelContext camelContext;
     private final ExecutorService executorService;
     private final ThreadPoolRejectedPolicy rejectedPolicy;
-    private volatile boolean shutdownExecutorService;
+    private final boolean shutdownExecutorService;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
     private final class ProcessCall implements Runnable, Rejectable {
@@ -137,7 +132,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
             executorService.submit(call);
             // tell Camel routing engine we continue routing asynchronous
             return false;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (executorService instanceof ThreadPoolExecutor) {
                 ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
                 // process the call in synchronous mode

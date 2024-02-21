@@ -17,10 +17,11 @@
 package org.apache.camel.component.platform.http;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.http.HttpUtil;
 
 /**
  * A copy of {@code org.apache.camel.http.common.HttpHeaderFilterStrategy}. Keep in sync or refactor
- * {@code camel-http-common} not to depend on {@code javax.servlet-api} and then use the
+ * {@code camel-http-common} not to depend on {@code jakarta.servlet-api} and then use the
  * {@code HttpHeaderFilterStrategy} from there.
  */
 public class PlatformHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
@@ -30,20 +31,7 @@ public class PlatformHttpHeaderFilterStrategy extends DefaultHeaderFilterStrateg
     }
 
     protected void initialize() {
-        getOutFilter().add("content-length");
-        getOutFilter().add("content-type");
-        getOutFilter().add("host");
-        // Add the filter for the Generic Message header
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
-        getOutFilter().add("cache-control");
-        getOutFilter().add("connection");
-        getOutFilter().add("date");
-        getOutFilter().add("pragma");
-        getOutFilter().add("trailer");
-        getOutFilter().add("transfer-encoding");
-        getOutFilter().add("upgrade");
-        getOutFilter().add("via");
-        getOutFilter().add("warning");
+        HttpUtil.addCommonFilters(getOutFilter());
 
         setLowerCase(true);
 

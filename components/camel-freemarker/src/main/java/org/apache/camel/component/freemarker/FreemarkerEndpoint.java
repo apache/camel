@@ -26,7 +26,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
  * Transform messages using FreeMarker templates.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri",
-             producerOnly = true, category = { Category.TRANSFORMATION })
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
+             headersClass = FreemarkerConstants.class)
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
@@ -167,7 +167,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         if (reader != null) {
             log.debug("Freemarker is evaluating template read from header {} using context: {}",
                     FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
-            template = new Template("temp", reader, new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS));
+            template = new Template("temp", reader, new Configuration(Configuration.VERSION_2_3_32));
         } else {
             log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);
             if (getEncoding() != null) {
@@ -180,9 +180,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         template.process(dataModel, buffer);
         buffer.flush();
 
-        // now lets output the results to the exchange
-        Message out = exchange.getOut();
-        out.setBody(buffer.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        // now lets store the result
+        ExchangeHelper.setInOutBodyPatternAware(exchange, buffer.toString());
     }
 }

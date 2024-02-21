@@ -39,7 +39,7 @@ public class SecurityProviderHttpHandlerTest extends AbstractSecurityProviderTes
     }
 
     @Test
-    public void testNullHttpHandler() throws Exception {
+    public void testNullHttpHandler() {
         securityConfiguration.setRoleToAssign("user");
 
         try {

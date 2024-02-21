@@ -1,43 +1,107 @@
-[[unmarshal-eip]]
 = Unmarshal EIP
+:tabs-sync-option:
 
-If you receive a message from one of the Camel xref:components::index.adoc[Components] such as xref:components::file-component.adoc[File], xref:components::http-component.adoc[HTTP] or xref:components::jms-component.adoc[JMS] you often want to unmarshal the payload into some bean so that you can process it using some xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] or perform xref:latest@manual:ROOT:predicate.adoc[Predicate] evaluation and so forth. To do this use the *unmarshal* word in the xref:latest@manual:ROOT:dsl.adoc[DSL] in Java or the xref:latest@manual:ROOT:xml-configuration.adoc[Xml Configuration].
+The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used
+for xref:message-translator.adoc[Message Transformation].
 
-== Options
+image::eip/MessageTranslator.gif[image]
 
-// eip options: START
-The Unmarshal EIP supports 1 options which are listed below:
+Camel has support for message transformation using several techniques.
+One such technique is xref:dataformats:index.adoc[Data Formats],
+where marshal and unmarshal comes from.
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
-|===
-// eip options: END
+So in other words the xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs
+are used with xref:dataformats:index.adoc[Data Formats].
 
-== Samples
+- _Marshal_ - Transforms the message body (such as Java object) into a binary or textual format, ready to be wired over the network.
+- _Unmarshal_ - Transforms data in some binary or textual format (such as received over the network)
+into a Java object; or some other representation according to the data format being used.
 
-For example
+== Example
 
+The following example reads XML files from the inbox/xml directory.
+Each file is then transformed into Java Objects using xref:dataformats:jaxb-dataformat.adoc[JAXB].
+Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
+
+Then the reverse operation happens to transform the Java objects back into XML also via JAXB,
+but using the `marshal` operation. And finally the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-DataFormat jaxb = new JaxbDataFormat("com.acme.model");
-
-from("activemq:My.Queue").
-  unmarshal(jaxb).
-  to("mqseries:Another.Queue");
+from("file:inbox/xml")
+  .unmarshal().jaxb()
+  .to("bean:validateOrder")
+  .marshal().jaxb()
+  .to("jms:queue:order");
 ----
 
-The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your xref:latest@manual:ROOT:registry.adoc[Registry] such as via your xref:components::spring-summary.adoc[Spring] XML file.
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/xml"/>
+  <unmarshal><jaxb/></unmarshal>
+  <to uri="bean:validateOrder"/>
+  <marshal><jaxb/></marshal>
+  <to uri="jms:queue:order"/>
+</route>
+----
 
-You can also use the DSL itself to define the data format as you use it.
-For example the following uses Java serialization to unmarshal a binary
-file then send it as an ObjectMessage to xref:components::activemq-component.adoc[ActiveMQ]
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inbox/xml
+    steps:
+      - unmarshal:
+          jaxb: {}
+      - to:
+          uri: bean:validateOrder
+      - marshal:
+          jaxb: {}
+      - to:
+          uri: jms:queue:order 
+----
+====
 
+== Allow Null Body
+
+Sometimes, there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal. To workaround that, it is possible to allow `null` as value to a body to unmarshall using the option `allowNullBody` as shown in the next code snippets:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://foo/bar").
-  unmarshal().serialization().
-  to("activemq:Some.Queue");
+// Beginning of the route
+  .unmarshal().allowNullBody().jaxb()
+// End of the route
 ----
 
+XML::
++
+[source,xml]
+----
+<!-- Beginning of the route -->
+  <unmarshal allowNullBody="true"><jaxb/></unmarshal>
+<!-- End of the route -->
+----
+
+YAML::
++
+[source,yaml]
+----
+# Beginning of the route
+unmarshal:
+  allowNullBody: true
+  jaxb: {}
+# End of the route
+----
+====

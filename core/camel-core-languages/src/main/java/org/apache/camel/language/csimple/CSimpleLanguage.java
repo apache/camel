@@ -31,12 +31,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("csimple")
-public class CSimpleLanguage extends LanguageSupport implements StaticService {
+public class CSimpleLanguage extends TypedLanguageSupport implements StaticService {
 
     public static final String PRE_COMPILED_FILE = "META-INF/services/org/apache/camel/csimple.properties";
     public static final String CONFIG_FILE = "camel-csimple.properties";
@@ -130,33 +130,33 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             throw new IllegalArgumentException("expression must be specified");
         }
         // text should be single line and trimmed as it can be multi lined
-        String text = expression.replaceAll("\n", "");
+        String text = expression.replace("\n", "");
         text = text.trim();
 
-        Predicate answer = compiledPredicates.get(text);
-        if (answer == null && compilationSupport != null) {
-            CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
-            if (exp != null) {
-                exp.init(getCamelContext());
-                compiledPredicates.put(text, exp);
-                answer = exp;
+        return compiledPredicates.computeIfAbsent(text, key -> {
+            if (compilationSupport != null) {
+                CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
+                if (exp != null) {
+                    exp.init(getCamelContext());
+                    return exp;
+                }
             }
-        }
-        if (answer == null) {
             throw new CSimpleException("Cannot find compiled csimple language for predicate: " + expression, expression);
-        }
-        return answer;
+        });
     }
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> resultType = (Class<?>) (properties != null && properties.length == 1 ? properties[0] : null);
+        Class<?> resultType = property(Class.class, properties, 0, null);
         if (Boolean.class == resultType || boolean.class == resultType) {
             // we want it compiled as a predicate
             return (Expression) createPredicate(expression);
-        } else {
+        } else if (resultType == null || resultType == Object.class) {
+            // No specific result type has been provided
             return createExpression(expression);
         }
+        // A specific result type has been provided
+        return ExpressionBuilder.convertToExpression(createExpression(expression), resultType);
     }
 
     @Override
@@ -165,22 +165,19 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             throw new IllegalArgumentException("expression must be specified");
         }
         // text should be single line and trimmed as it can be multi lined
-        String text = expression.replaceAll("\n", "");
+        String text = expression.replace("\n", "");
         text = text.trim();
 
-        Expression answer = compiledExpressions.get(text);
-        if (answer == null && compilationSupport != null) {
-            CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
-            if (exp != null) {
-                exp.init(getCamelContext());
-                compiledExpressions.put(text, exp);
-                answer = exp;
+        return compiledExpressions.computeIfAbsent(text, key -> {
+            if (compilationSupport != null) {
+                CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
+                if (exp != null) {
+                    exp.init(getCamelContext());
+                    return exp;
+                }
             }
-        }
-        if (answer == null) {
             throw new CSimpleException("Cannot find compiled csimple language for expression: " + expression, expression);
-        }
-        return answer;
+        });
     }
 
     private CompilationSupport compilationSupport() {
@@ -202,11 +199,11 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         public CSimpleLanguage build() {
             final Map<String, CSimpleExpression> predicates = compiledPredicates.isEmpty()
                     ? Collections.emptyMap()
-                    : Collections.unmodifiableMap(compiledPredicates);
+                    : new ConcurrentHashMap<>(compiledPredicates);
             this.compiledPredicates = null; // invalidate the builder to prevent leaking the mutable collection
             final Map<String, CSimpleExpression> expressions = compiledExpressions.isEmpty()
                     ? Collections.emptyMap()
-                    : Collections.unmodifiableMap(compiledExpressions);
+                    : new ConcurrentHashMap<>(compiledExpressions);
             this.compiledExpressions = null; // invalidate the builder to prevent leaking the mutable collection
             return new CSimpleLanguage(predicates, expressions);
         }
@@ -242,8 +239,9 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             loadConfiguration();
 
             // detect custom compiler (camel-csimple-joor)
-            ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-            Optional<Class<?>> clazz = ecc.getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
+            CamelContext ecc = getCamelContext();
+            Optional<Class<?>> clazz
+                    = ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
             if (clazz.isPresent()) {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {
@@ -278,7 +276,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         }
 
         private void loadPreCompiled() {
-            ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            CamelContext ecc = getCamelContext();
             InputStream is = ecc.getClassResolver().loadResourceAsStream(PRE_COMPILED_FILE);
             if (is != null) {
                 try {
@@ -315,25 +313,10 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
         private void loadConfiguration() {
             InputStream is;
-            String loaded;
-            is = getCamelContext().getClassResolver().loadResourceAsStream(CONFIG_FILE);
-            try {
-                if (is == null) {
-                    // load from file system
-                    File file = new File(configResource);
-                    if (file.exists()) {
-                        is = new FileInputStream(file);
-                    }
-                }
-                if (is == null) {
-                    return;
-                }
-                loaded = IOHelper.loadText(is);
-            } catch (IOException e) {
-                throw new RuntimeCamelException("Cannot load " + CONFIG_FILE + " from classpath");
-
+            final String loaded = load(configResource);
+            if (loaded == null) {
+                return;
             }
-            IOHelper.close(is);
 
             int counter1 = 0;
             int counter2 = 0;
@@ -370,6 +353,30 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             }
         }
 
+    }
+
+    private String load(String configResource) {
+        InputStream is;
+        String loaded;
+        is = getCamelContext().getClassResolver().loadResourceAsStream(CONFIG_FILE);
+        try {
+            if (is == null) {
+                // load from file system
+                File file = new File(configResource);
+                if (file.exists()) {
+                    is = new FileInputStream(file);
+                }
+            }
+            if (is == null) {
+                return null;
+            }
+            loaded = IOHelper.loadText(is);
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Cannot load " + CONFIG_FILE + " from classpath");
+
+        }
+        IOHelper.close(is);
+        return loaded;
     }
 
 }

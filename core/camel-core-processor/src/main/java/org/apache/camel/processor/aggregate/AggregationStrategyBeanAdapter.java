@@ -164,7 +164,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
      * @param  method the method
      * @return        true if valid, false to skip the method
      */
-    protected boolean isValidMethod(Method method) {
+    private boolean isValidMethod(Method method) {
         // must not be in the excluded list
         for (Method excluded : EXCLUDED_METHODS) {
             if (method.equals(excluded)) {
@@ -174,6 +174,15 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
 
         // must be a public method
         if (!Modifier.isPublic(method.getModifiers())) {
+            return false;
+        }
+
+        // must not be the groovy meta class and lookup methods
+        if (method.getName().equals("getMetaClass") || method.getName().equals("setMetaClass")
+                || method.getName().equals("$getLookup")) {
+            return false;
+        }
+        if (method.getDeclaringClass().getName().startsWith("groovy.lang")) {
             return false;
         }
 
@@ -231,9 +240,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         mi = bi.createMethodInfo();
 
         // in case the POJO is CamelContextAware
-        if (pojo instanceof CamelContextAware) {
-            ((CamelContextAware) pojo).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(pojo, getCamelContext());
 
         // in case the pojo is a service
         ServiceHelper.startService(pojo);

@@ -28,6 +28,8 @@
 
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/config/pool.properties"/>
 
+        <jmxAgent id="jmx" disabled="true"/>
+
         <!-- define a low profile -->
         <threadPoolProfile id="low"
                            poolSize="{{low.min}}"
@@ -36,7 +38,7 @@
         <!-- define a big profile with many threads -->
         <threadPoolProfile id="big"
                            poolSize="{{big.min}}"
-                           maxPoolSize="{{big.max}}" rejectedPolicy="DiscardOldest"/>
+                           maxPoolSize="{{big.max}}" rejectedPolicy="Abort"/>
 
         <route>
             <from uri="direct:start"/>

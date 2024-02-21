@@ -21,16 +21,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,7 +49,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
             // resolve placeholders (but leave the original uri unchanged)
-            String resolved = getCamelContext().resolvePropertyPlaceholders(uri);
+            String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(getCamelContext(), uri);
             String target = createUri(resolved);
             this.endpoint = getCamelContext().getEndpoint(target);
             if (endpoint == null) {

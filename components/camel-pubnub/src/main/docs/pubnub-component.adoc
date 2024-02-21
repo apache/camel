@@ -1,12 +1,14 @@
-[[pubnub-component]]
 = PubNub Component
-:docTitle: PubNub
-:artifactId: camel-pubnub
+:doctitle: PubNub
+:shortname: pubnub
+:artifactid: camel-pubnub
 :description: Send and receive messages to/from PubNub data stream network for connected devices.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pubnub.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pubnub
 
 *Since Camel {since}*
 
@@ -24,8 +26,6 @@ Use cases include:
 ** Multiplayer games
 ** Interactive media: audience-participating voting system
 
-
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -41,99 +41,46 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------
 pubnub:channel[?options]
 ------------------------
 
 Where *channel* is the PubNub channel to publish or subscribe to.
 
-== Options
+// component-configure options: START
 
+// component-configure options: END
 
 // component options: START
-The PubNub component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The PubNub endpoint is configured using URI syntax:
 
-----
-pubnub:channel
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *channel* | *Required* The channel used for subscribing/publishing events |  | String
-|===
-
-
-=== Query Parameters (14 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *uuid* (common) | UUID to be used as a device identifier, a default UUID is generated if not passed. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *withPresence* (consumer) | Also subscribe to related presence information | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to perform. PUBLISH: Default. Send a message to all subscribers of a channel. FIRE: allows the client to send a message to BLOCKS Event Handlers. These messages will go directly to any Event Handlers registered on the channel. HERENOW: Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count. WHERENOW: Obtain information about the current list of channels to which a uuid is subscribed to. GETSTATE: Used to get key/value pairs specific to a subscriber uuid. State information is supplied as a JSON object of key/value pairs SETSTATE: Used to set key/value pairs specific to a subscriber uuid GETHISTORY: Fetches historical messages of a channel. There are 7 enums and the value can be one of: HERENOW, WHERENOW, GETSTATE, SETSTATE, GETHISTORY, PUBLISH, FIRE |  | String
-| *pubnub* (advanced) | *Autowired* Reference to a Pubnub client in the registry. |  | PubNub
-| *authKey* (security) | If Access Manager is utilized, client will use this authKey in all restricted requests. |  | String
-| *cipherKey* (security) | If cipher is passed, all communications to/from PubNub will be encrypted. |  | String
-| *publishKey* (security) | The publish key obtained from your PubNub account. Required when publishing messages. |  | String
-| *secretKey* (security) | The secret key used for message signing. |  | String
-| *secure* (security) | Use SSL for secure transmission. | true | boolean
-| *subscribeKey* (security) | The subscribe key obtained from your PubNub account. Required when subscribing to channels or listening for presence events |  | String
-|===
 // endpoint options: END
-
-
-== Message headers when subscribing
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Name |Description
-|`CamelPubNubTimeToken` |The Timestamp for the event.
-|`CamelPubNubChannel` |The channel for which the message belongs.
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message body
 
-The message body can contain any JSON serializable data, including: Objects, Arrays, Ints and Strings. Message data should not contain special Java V4 classes or functions as these will not serialize. String content can include any single-byte or multi-byte UTF-8
+The message body can contain any JSON serializable data, including Objects, Arrays, Integers, and Strings.
+Message data should not contain special Java V4 classes or functions as these will not serialize.
+String content can include any single-byte or multibyte UTF-8.
 
-Object serialization when sending is done automatically. Just pass the full object as the message payload. PubNub will takes care of object serialization.
+Object serialization when sending is done automatically.
+Pass the full object as the message payload.
+PubNub will take care of object serialization.
 
-When receiving the message body utilize objects provided by the PubNub API.
+When receiving the message body uses objects provided by the PubNub API.
 
 == Examples
 
 === Publishing events
 
 Default operation when producing.
-The following snippet publish the event generated by PojoBean to the channel iot.
+The following snippet publishes the event generated by PojoBean to the channel iot.
 
 [source,java]
 ----
@@ -145,7 +92,7 @@ from("timer:mytimer")
 
 === Fire events aka BLOCKS Event Handlers
 
-See https://www.pubnub.com/blocks-catalog/ for all kind of serverless functions that can be invoked.
+See https://www.pubnub.com/blocks-catalog/[blocks catalog] for all kinds of serverless functions that can be invoked.
 Example of geolocation lookup 
 
 [source,java]
@@ -174,7 +121,7 @@ from("pubnub:iot?subscribeKey=mySubscribeKey")
 === Performing operations
 
 
-herenow : Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count of the channel
+- `herenow`: obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count of the channel:
 
 [source,java]
 ----
@@ -183,7 +130,7 @@ from("direct:control")
     .to("mock:result");
 ----
 
-wherenow : Obtain information about the current list of channels to which a uuid is subscribed
+- `wherenow`: obtain information about the current list of channels to which a uuid is subscribed:
 
 [source,java]
 ----
@@ -192,7 +139,7 @@ from("direct:control")
     .to("mock:result");
 ----
 
-setstate : Used to set key/value pairs specific to a subscriber uuid.
+- `setstate`: used to set key/value pairs specific to a subscriber uuid:
 
 [source,java]
 ----
@@ -201,7 +148,7 @@ from("direct:control")
     .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=setstate&uuid=myuuid");
 ----
 
-gethistory : Fetches historical messages of a channel.
+- `gethistory`: Fetches historical messages of a channel:
 
 [source,java]
 ----
@@ -209,13 +156,12 @@ from("direct:control")
     .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=gethistory");
 ----
 
-
-There is a couple of examples in test directory that shows some of the PubNub features. 
+There are a couple of examples in the test directory that show some of the PubNub features.
 They require a PubNub account, from where you can obtain a publish- and subscribe key.
  
-The example PubNubSensorExample already contains a subscribe key provided by PubNub, so this is ready to run without a account. 
-The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
+The example PubNubSensorExample already contains a subscribe key provided by PubNub, so this is ready to run without an account.
+The example illustrates the PubNub component subscribing to an infinite stream of sensor data.
 
 
 
-include::camel-spring-boot::page$pubnub-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

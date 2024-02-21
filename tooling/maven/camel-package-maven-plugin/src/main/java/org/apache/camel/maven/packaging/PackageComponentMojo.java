@@ -18,8 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,7 +29,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
@@ -73,7 +74,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         prepareComponent();
     }
 
-    public int prepareComponent() throws MojoExecutionException {
+    public int prepareComponent() {
         Log log = getLog();
 
         File camelMetaDir = new File(componentOutDir, "META-INF/services/org/apache/camel/");
@@ -90,37 +91,32 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
             return 0;
         }
 
-        StringBuilder buffer = new StringBuilder();
+        Set<String> fileNames = new TreeSet<>();
+
         int count = 0;
 
         File f = componentOutDir;
         f = new File(f, "META-INF/services/org/apache/camel/component");
         if (f.exists() && f.isDirectory()) {
-            File[] files = f.listFiles();
+            File[] files = f.listFiles(file -> !file.isDirectory() && !file.isHidden());
             if (files != null) {
                 for (File file : files) {
                     // skip directories as there may be a sub .resolver
                     // directory
-                    if (file.isDirectory()) {
-                        continue;
-                    }
-                    String name = file.getName();
-                    if (name.charAt(0) != '.') {
-                        count++;
-                        if (buffer.length() > 0) {
-                            buffer.append(" ");
-                        }
-                        buffer.append(name);
-                    }
+
+                    count++;
+                    fileNames.add(file.getName());
+
                 }
             }
         }
 
         if (count > 0) {
-            String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
+            final String names = fileNames.stream().collect(Collectors.joining(" "));
+
             String properties = createProperties(project, "components", names);
             updateResource(camelMetaDir.toPath(), "component.properties", properties);
-            log.info("Generated " + "components" + " containing " + count + " Camel "
+            log.info("Generated components containing " + count + " Camel "
                      + (count > 1 ? "components: " : "component: ") + names);
         } else {
             log.debug(

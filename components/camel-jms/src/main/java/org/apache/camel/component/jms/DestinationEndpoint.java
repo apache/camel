@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 
 /**
  * An optional interface that a {@link JmsEndpoint} may implement to return the underlying {@link Destination} object

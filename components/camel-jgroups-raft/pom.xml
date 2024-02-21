@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jgroups-raft</artifactId>
@@ -32,6 +32,7 @@
     <description>Camel jgroups-raft support</description>
 
     <properties>
+        <camel.surefire.fork.additional-vmargs>-Djava.net.preferIPv4Stack=true</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -62,28 +63,32 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-master</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
-                    </systemPropertyVariables>
-                    <argLine>${camel.surefire.fork.vmargs} -Djava.net.preferIPv4Stack=true</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

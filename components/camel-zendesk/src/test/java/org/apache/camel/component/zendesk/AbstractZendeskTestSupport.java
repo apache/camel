@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
@@ -47,22 +48,37 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
     public static final String ENV_ZENDESK_TOKEN = "zendesk.token";
     public static final String ENV_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
 
+    private static Properties loadProperties() {
+        final Properties properties = new Properties();
+        try {
+            properties.load(AbstractZendeskTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Unable to load test properties", e);
+        }
+        return properties;
+    }
+
+    @SuppressWarnings("unused")
+    public static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("username", "").isEmpty() &&
+                !properties.getProperty("password", "").isEmpty();
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
         final ZendeskConfiguration configuration = new ZendeskConfiguration();
-        final Properties properties = new Properties();
-        try {
-            properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-            Map<String, Object> options = new HashMap<>();
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                options.put(entry.getKey().toString(), entry.getValue());
-            }
+        final Properties properties = loadProperties();
 
-            PropertyBindingSupport.bindProperties(context, configuration, options);
-        } catch (Exception e) {
-            // ignore - system property or ENV may be supplied
+        Map<String, Object> options = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            options.put(entry.getKey().toString(), entry.getValue());
         }
+
+        PropertyBindingSupport.bindProperties(context, configuration, options);
+
         configuration.setServerUrl(System.getenv(ENV_ZENDESK_SERVER_URL) != null
                 ? System.getenv(ENV_ZENDESK_SERVER_URL) : configuration.getServerUrl());
         configuration.setUsername(System.getenv(ENV_ZENDESK_USERNAME) != null
@@ -79,8 +95,8 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
         configuration.setToken(System.getProperty(SYSPROP_ZENDESK_TOKEN, configuration.getToken()));
         configuration.setOauthToken(System.getProperty(SYSPROP_ZENDESK_OAUTH_TOKEN, configuration.getOauthToken()));
         if (configuration.getServerUrl() == null || configuration.getUsername() == null
-                || (configuration.getPassword() == null && configuration.getToken() == null
-                        && configuration.getOauthToken() == null)) {
+                || configuration.getPassword() == null && configuration.getToken() == null
+                        && configuration.getOauthToken() == null) {
             throw new IllegalArgumentException("Zendesk configuration is missing");
         }
 

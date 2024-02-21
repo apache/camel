@@ -16,13 +16,13 @@
  */
 package org.apache.camel.generator.openapi;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
 class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
@@ -31,7 +31,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
 
     private Object variable;
 
-    RestDefinitionEmitter(final CamelContext context) {
+    RestDefinitionEmitter() {
         definition = new RestsDefinition();
         variable = definition;
     }
@@ -39,18 +39,14 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
     @Override
     public CodeEmitter<RestsDefinition> emit(final String method, final Object... args) {
         try {
-            final Class<? extends Object> type = variable.getClass();
+            final Class<?> type = variable.getClass();
 
             final Object[] arguments = argumentsFor(args);
 
             final Method declaredMethod = type.getMethod(method, parameterTypesOf(arguments));
 
             variable = declaredMethod.invoke(variable, arguments);
-        } catch (final Throwable e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
 
@@ -73,7 +69,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
             }
         }
 
-        return arguments.toArray(new Object[arguments.size()]);
+        return arguments.toArray(new Object[0]);
     }
 
     static Class<?>[] parameterTypesOf(final Object[] args) {

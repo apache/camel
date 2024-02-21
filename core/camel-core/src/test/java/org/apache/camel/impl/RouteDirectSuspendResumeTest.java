@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteDirectSuspendResumeTest extends ContextTestSupport {
 
@@ -46,12 +46,8 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         // direct consumer supports suspension
         assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
 
-        try {
-            template.sendBody("direct:foo", "B");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:foo", "B"),
+                "Should have thrown an exception");
 
         log.info("Resuming");
 

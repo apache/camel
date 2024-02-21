@@ -36,7 +36,7 @@ public class FreemarkerEndpointTest extends FreemarkerTest {
                 endpoint.setAllowContextMapAll(true);
                 endpoint.setResourceUri("org/apache/camel/component/freemarker/example.ftl");
 
-                Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+                Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
                 configuration.setTemplateLoader(new ClassTemplateLoader(Resource.class, "/"));
                 endpoint.setConfiguration(configuration);
 

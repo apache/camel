@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:cxf="http://camel.apache.org/schema/cxf/jaxws" xmlns:cxf-core="http://cxf.apache.org/core" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:p="http://cxf.apache.org/policy" xsi:schemaLocation="             http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd            http://camel.apache.org/schema/cxf/jaxws http://camel.apache.org/schema/cxf/jaxws/camel-cxf.xsd  http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+       http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd">
+    
+    <cxf-core:bus>
+        <cxf-core:features>
+            <cxf-core:logging/>
+        </cxf-core:features>
+    </cxf-core:bus>
+    
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    
+    <!--import resource="classpath:META-INF/cxf/cxf.xml"/-->
+    
+    <cxf:cxfEndpoint 
+        id="signatureRoute" 
+        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSignaturePort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="CXF_MESSAGE"/>
+        </cxf:properties>
+        <cxf:inInterceptors>
+            <ref bean="wss4jInInterceptor-signature"/>
+        </cxf:inInterceptors>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="signatureService" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="CXF_MESSAGE"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="usernameTokenRoute" 
+        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="CXF_MESSAGE"/>
+        </cxf:properties>
+        <cxf:inInterceptors>
+            <ref bean="wss4jInInterceptor-usernameToken"/>
+        </cxf:inInterceptors>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="usernameTokenService" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="CXF_MESSAGE"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="encryptionRoute" 
+        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="RAW"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="encryptionService" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="RAW"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="securityPolicyRoute" 
+        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="RAW"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <cxf:cxfEndpoint 
+        id="securityPolicyService" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+        <cxf:properties>
+            <entry key="dataFormat" value="RAW"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel">
+        <route errorHandlerRef="noErrorHandler">
+            <from uri="cxf:bean:signatureRoute"/>
+            <to uri="cxf:bean:signatureService"/>
+        </route>
+        <route errorHandlerRef="noErrorHandler">
+            <from uri="cxf:bean:usernameTokenRoute"/>
+            <to uri="cxf:bean:usernameTokenService"/>
+        </route>
+        <route errorHandlerRef="noErrorHandler">
+            <from uri="cxf:bean:encryptionRoute"/>
+            <to uri="cxf:bean:encryptionService?defaultOperationName=greetMe"/>
+        </route>
+        <route errorHandlerRef="noErrorHandler">
+            <from uri="cxf:bean:securityPolicyRoute"/>
+            <to uri="cxf:bean:securityPolicyService?defaultOperationName=greetMe"/>
+        </route>
+    </camelContext>
+    
+    <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+    
+    <bean id="wss4jInInterceptor-signature" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature Timestamp"/>
+                <entry key="signaturePropFile" value="wssecurity/etc/cxfca.properties"/>
+            </map>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="wss4jInInterceptor-usernameToken" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="UsernameToken"/>
+                <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
+            </map>
+        </constructor-arg>
+    </bean>
+    
+</beans>

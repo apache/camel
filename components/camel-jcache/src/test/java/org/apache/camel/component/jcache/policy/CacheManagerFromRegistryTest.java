@@ -38,7 +38,7 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
 
     // Register cacheManager in CamelContext. Set cacheName
     @Test
-    public void testCacheManagerFromContext() throws Exception {
+    public void testCacheManagerFromContext() {
         final String key = randomString();
 
         // Send exchange
@@ -55,10 +55,10 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 JCachePolicy jcachePolicy = new JCachePolicy();
                 jcachePolicy.setCacheName("contextCacheManager");

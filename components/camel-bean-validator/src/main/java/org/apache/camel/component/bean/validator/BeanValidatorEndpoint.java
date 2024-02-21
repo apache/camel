@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.TraversableResolver;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -32,7 +32,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.PlatformHelper;
 
 import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
@@ -42,13 +41,13 @@ import static org.apache.camel.component.bean.validator.ValidatorFactories.build
  * Camel uses the reference implementation, which is Hibernate Validator.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "bean-validator", title = "Bean Validator", syntax = "bean-validator:label",
-             producerOnly = true, category = { Category.VALIDATION })
+             remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class BeanValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")
     @Metadata(required = true)
     private String label;
-    @UriParam(defaultValue = "javax.validation.groups.Default")
+    @UriParam(defaultValue = "jakarta.validation.groups.Default")
     private String group;
     @UriParam
     private boolean ignoreXmlConfiguration;
@@ -76,7 +75,7 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
 
         ValidatorFactory validatorFactory = this.validatorFactory;
         if (validatorFactory == null) {
-            validatorFactory = buildValidatorFactory(isOsgiContext(), isIgnoreXmlConfiguration(),
+            validatorFactory = buildValidatorFactory(getCamelContext(), isIgnoreXmlConfiguration(),
                     validationProviderResolver, messageInterpolator, traversableResolver, constraintValidatorFactory);
         }
 
@@ -87,15 +86,6 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer is not supported");
-    }
-
-    /**
-     * Recognizes if component is executed in the OSGi environment.
-     *
-     * @return true if component is executed in the OSGi environment. False otherwise.
-     */
-    protected boolean isOsgiContext() {
-        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
     public String getLabel() {

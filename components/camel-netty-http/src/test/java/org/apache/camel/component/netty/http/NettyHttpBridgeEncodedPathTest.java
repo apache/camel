@@ -17,62 +17,62 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
-    private int port1;
-    private int port2;
-    private int port3;
-    private int port4;
+    final AvailablePortFinder.Port port1 = port;
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
-    public void testEncodedQuery() throws Exception {
-        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null,
+    public void testEncodedQuery() {
+        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=44777%2B7111222", null,
                 String.class);
-        assertEquals("param1=+447777111222", response, "Get a wrong response");
+        assertEquals("param1=44777+7111222", response, "Get a wrong response");
     }
 
     @Test
     public void testEncodedPath() throws Exception {
-        String path = URLEncoder.encode(" :/?#[]@!$", "UTF-8") + "/" + URLEncoder.encode("&'()+,;=", "UTF-8");
+        String path = URLEncoder.encode(" :/?#[]@!$", StandardCharsets.UTF_8) + "/" + URLEncoder.encode("&'()+,;=",
+                StandardCharsets.UTF_8);
         MockEndpoint mock = getMockEndpoint("mock:encodedPath");
         mock.message(0).header(Exchange.HTTP_PATH).isEqualTo("/" + path);
         mock.message(0).header(Exchange.HTTP_QUERY).isNull();
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isNull();
 
         // cannot use template as it automatically decodes some chars in the path
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
-
-            try (CloseableHttpResponse response = client.execute(httpGet)) {
-                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-                assertMockEndpointsSatisfied();
-            }
+        HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httpGet)) {
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-                port4 = getNextPort();
 
                 errorHandler(noErrorHandler());
 
@@ -80,7 +80,8 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     // %2B becomes decoded to a space
                     Object s = exchange.getIn().getHeader("param1");
                     // can be either + or %2B
-                    assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
+                    assertTrue(s.equals("44777 7111222") || s.equals("44777%207111222") || s.equals("44777+7111222")
+                            || s.equals("44777%2B7111222"));
 
                     // send back the query
                     exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));

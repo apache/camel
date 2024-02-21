@@ -45,18 +45,18 @@ public class GridFsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String operation = endpoint.getOperation();
         if (operation == null) {
-            operation = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_OPERATION, String.class);
+            operation = exchange.getIn().getHeader(GridFsConstants.GRIDFS_OPERATION, String.class);
         }
         if (operation == null || "create".equals(operation)) {
-            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-            Integer chunkSize = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_CHUNKSIZE, Integer.class);
+            final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
+            Integer chunkSize = exchange.getIn().getHeader(GridFsConstants.GRIDFS_CHUNKSIZE, Integer.class);
 
             GridFSUploadOptions options = new GridFSUploadOptions();
             if (chunkSize != null && chunkSize > 0) {
                 options.chunkSizeBytes(chunkSize);
             }
 
-            String metaData = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_METADATA, String.class);
+            String metaData = exchange.getIn().getHeader(GridFsConstants.GRIDFS_METADATA, String.class);
             if (metaData != null) {
                 Document document = Document.parse(metaData);
                 if (document != null) {
@@ -64,7 +64,7 @@ public class GridFsProducer extends DefaultProducer {
                 }
             }
 
-            final String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            final String ct = exchange.getIn().getHeader(GridFsConstants.CONTENT_TYPE, String.class);
             if (ct != null) {
                 Document metadata = options.getMetadata();
                 if (metadata == null) {
@@ -78,38 +78,38 @@ public class GridFsProducer extends DefaultProducer {
             ObjectId objectId = endpoint.getGridFsBucket().uploadFromStream(filename, ins, options);
 
             //add headers with the id and file name produced by the driver.
-            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, filename);
-            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_FILE_ID_PRODUCED, objectId);
-            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
+            exchange.getIn().setHeader(GridFsConstants.FILE_NAME_PRODUCED, filename);
+            exchange.getIn().setHeader(GridFsConstants.GRIDFS_FILE_ID_PRODUCED, objectId);
+            exchange.getIn().setHeader(GridFsConstants.GRIDFS_OBJECT_ID, objectId);
         } else if ("remove".equals(operation)) {
-            final ObjectId objectId = exchange.getIn().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
+            final ObjectId objectId = exchange.getIn().getHeader(GridFsConstants.GRIDFS_OBJECT_ID, ObjectId.class);
             if (objectId != null) {
                 endpoint.getGridFsBucket().delete(objectId);
             } else {
-                final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
                 GridFSFile file = endpoint.getGridFsBucket().find(eq(GRIDFS_FILE_KEY_FILENAME, filename)).first();
                 if (file != null) {
                     endpoint.getGridFsBucket().delete(file.getId());
                 }
             }
         } else if ("findOne".equals(operation)) {
-            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
             GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(filename);
             GridFSFile file = downloadStream.getGridFSFile();
             Document metadata = file.getMetadata();
             if (metadata != null) {
-                exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
+                exchange.getIn().setHeader(GridFsConstants.GRIDFS_METADATA, metadata.toJson());
 
                 Object contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE);
                 if (contentType != null) {
-                    exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
+                    exchange.getIn().setHeader(GridFsConstants.FILE_CONTENT_TYPE, contentType);
                 }
             }
-            exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
-            exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
+            exchange.getIn().setHeader(GridFsConstants.FILE_LENGTH, file.getLength());
+            exchange.getIn().setHeader(GridFsConstants.FILE_LAST_MODIFIED, file.getUploadDate());
             exchange.getIn().setBody(downloadStream, InputStream.class);
         } else if ("listAll".equals(operation)) {
-            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
             MongoCursor<GridFSFile> cursor;
             if (filename == null) {
                 cursor = endpoint.getGridFsBucket().find().cursor();
@@ -119,7 +119,7 @@ public class GridFsProducer extends DefaultProducer {
             exchange.getIn().setBody(new DBCursorFilenameReader(cursor), Reader.class);
         } else if ("count".equals(operation)) {
             long count;
-            final String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            final String filename = exchange.getIn().getHeader(GridFsConstants.FILE_NAME, String.class);
             if (filename == null) {
                 count = endpoint.getFilesCollection().countDocuments();
             } else {
@@ -129,7 +129,7 @@ public class GridFsProducer extends DefaultProducer {
         }
     }
 
-    private class DBCursorFilenameReader extends Reader {
+    private static class DBCursorFilenameReader extends Reader {
         MongoCursor<GridFSFile> cursor;
         StringBuilder current;
         int pos;

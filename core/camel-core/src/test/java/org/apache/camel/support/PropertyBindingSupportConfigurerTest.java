@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.BeanIntrospection;
@@ -59,7 +58,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testProperties() throws Exception {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -87,7 +86,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testPropertiesNested() throws Exception {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -221,7 +220,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testPropertiesNoReflection() throws Exception {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 

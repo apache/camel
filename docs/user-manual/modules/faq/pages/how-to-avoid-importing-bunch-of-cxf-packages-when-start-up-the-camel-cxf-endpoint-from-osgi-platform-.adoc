@@ -1,4 +1,3 @@
-[[HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform-HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform]]
 = How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?
 
 If you are using camel-cxf endpoint in your OSGi bundle and want to get

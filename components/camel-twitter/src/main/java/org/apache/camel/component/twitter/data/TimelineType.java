@@ -23,7 +23,7 @@ public enum TimelineType {
     HOME,
     USER,
     MENTIONS,
-    RETWEETSOFME,
+    LIST,
     UNKNOWN;
 
     private static final TimelineType[] VALUES = values();

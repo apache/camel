@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
 
@@ -34,5 +34,5 @@ public interface DeleteHandler<T> {
      * @param entityBean    the entity bean that has been processed and should be deleted
      * @param exchange      the exchange that could be used to update the entityBean
      */
-    void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange);
+    void deleteObject(EntityManager entityManager, T entityBean, Exchange exchange);
 }

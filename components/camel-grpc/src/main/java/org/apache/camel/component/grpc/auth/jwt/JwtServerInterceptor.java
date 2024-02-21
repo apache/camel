@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -83,8 +81,6 @@ public class JwtServerInterceptor implements ServerInterceptor {
             return JWT.require(algorithm).withIssuer(issuer).withSubject(subject).build();
         } catch (JWTCreationException e) {
             throw new IllegalArgumentException("Unable to create JWT verifier", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("UTF-8 encoding not supported during JWT verifier creation", e);
         }
     }
 }

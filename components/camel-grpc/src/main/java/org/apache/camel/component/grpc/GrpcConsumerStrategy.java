@@ -29,6 +29,8 @@ public enum GrpcConsumerStrategy {
     /**
      * Process each streaming element of a request independently.
      */
-    PROPAGATION;
+    PROPAGATION,
+
+    DELEGATION;
 
 }

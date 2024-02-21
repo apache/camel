@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.couchdb;
 
+import java.time.Duration;
+
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult;
 import org.lightcouch.CouchDbException;
@@ -39,7 +44,6 @@ public class CouchDbChangesetTracker implements Runnable {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.couchClient = couchClient;
-        initChanges(null);
     }
 
     private void initChanges(final String sequence) {
@@ -47,15 +51,14 @@ public class CouchDbChangesetTracker implements Runnable {
         if (null == since) {
             since = couchClient.getLatestUpdateSequence();
         }
-        LOG.debug("Last sequence [{}]", since);
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
                 .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override
     public void run() {
-
         String lastSequence = null;
+        initChanges(null);
 
         try {
             while (!stopped) {
@@ -74,9 +77,9 @@ public class CouchDbChangesetTracker implements Runnable {
                         JsonObject doc = feed.getDoc();
 
                         Exchange exchange = consumer.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
+
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}",
-                                    new Object[] { exchange, feed.getId(), lastSequence });
+                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, feed.getId(), lastSequence);
                         }
 
                         try {
@@ -94,8 +97,12 @@ public class CouchDbChangesetTracker implements Runnable {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("CouchDb Exception encountered waiting for changes!  Attempting to recover...", e);
                     }
-                    if (!waitForStability(lastSequence)) {
-                        throw e;
+                    if (endpoint.isRunAllowed() || !endpoint.isShutdown() || !consumer.isStopped()) {
+                        if (!waitForStability(lastSequence)) {
+                            throw e;
+                        }
+                    } else {
+                        LOG.debug("Skipping the stability check because shutting down or running is not allowed at the moment");
                     }
                 }
             }
@@ -105,40 +112,33 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     private boolean waitForStability(final String lastSequence) {
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(MAX_DB_ERROR_REPEATS)
+                        .withInterval(Duration.ofSeconds(3))
+                        .build())
+                .withName("couchdb-wait-for-stability")
+                .build();
 
-        boolean problems = true;
-        int repeatDbErrorCount = 0;
+        return task.run(this::stabilityCheck, lastSequence);
+    }
 
-        while (problems) {
-            if (++repeatDbErrorCount > MAX_DB_ERROR_REPEATS) {
-                LOG.error("CouchDb change set listener fatal error!  Retry attempts exceeded, listener must exit.");
-                return false;
-            }
+    private boolean stabilityCheck(String lastSequence) {
+        try {
+            // Fail fast operation
+            couchClient.context().serverVersion();
+            // reset change listener
+            initChanges(lastSequence);
 
-            try {
-                Thread.sleep((int) ((Math.random() * 2000) + 5000)); // <2000ms,5000ms)
-            } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("CouchDb change set listener interrupted waiting for stability!!", e);
-                }
-            }
-            try {
-                // Fail fast operation
-                couchClient.context().serverVersion();
-                // reset change listener
-                initChanges(lastSequence);
-                problems = false;
-
-            } catch (Exception e) {
-                LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: {}",
-                        repeatDbErrorCount, e);
-            }
+            return true;
+        } catch (Exception e) {
+            LOG.debug("Failed to get CouchDb server version and/or reset change listener", e);
         }
-        return true;
+
+        return false;
     }
 
     public void stop() {
         changes.stop();
     }
-
 }

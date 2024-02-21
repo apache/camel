@@ -25,7 +25,7 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
   <!-- the embedded persistent storage for quartz -->
-  <jdbc:embedded-database id="quartz-db" type="DERBY">
+  <jdbc:embedded-database id="SpringQuartzTwoAppsClusteredFailoverTest" type="DERBY">
     <jdbc:script location="classpath:tables_derby.sql"/>
   </jdbc:embedded-database>
 

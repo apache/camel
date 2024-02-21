@@ -17,8 +17,11 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,15 +35,15 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
+import org.apache.camel.tooling.model.AnnotationModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
@@ -52,21 +55,34 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
+import org.jboss.forge.roaster.model.source.AnnotationElementSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.mvel2.templates.TemplateRuntime;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip documentation .adoc files in the project src/main/docs
+ * directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
+    //Set to true if you need to move a new manual attribute from text body to header attributes.
+    private static final boolean RELOCATE_MANUAL_ATTRIBUTES = false;
+
     //Header attributes that are preserved through header generation
     private static final Pattern[] MANUAL_ATTRIBUTES = {
             Pattern.compile(":(group): *(.*)"),
-            Pattern.compile(":(summary-group): *(.*)") };
+            Pattern.compile(":(summary-group): *(.*)"),
+            Pattern.compile(":(camel-spring-boot-name): *(.*)"),
+            Pattern.compile(":(starter-artifactid): *(.*)")
+    };
 
     /**
      * The project build directory
@@ -101,7 +117,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     /**
      * The EIP documentation directory
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/docs/modules/eips/pages")
+    @Parameter
     protected File eipDocDir;
 
     /**
@@ -109,6 +125,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected Boolean failFast;
+
+    protected List<Path> sourceRoots;
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -118,7 +136,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
         languageDocDir = new File(project.getBasedir(), "/src/main/docs");
         languageDocDir2 = new File(project.getBasedir(), "/src/main/docs/modules/languages/pages");
-        eipDocDir = new File(project.getBasedir(), "src/main/docs/modules/eips/pages");
+        File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
+        eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
         super.execute(project, projectHelper, buildContext);
     }
 
@@ -142,7 +161,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
         // only if there is components we should update the documentation files
         if (!componentNames.isEmpty()) {
-            getLog().debug("Found " + componentNames.size() + " components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + componentNames.size() + " components");
+            }
+
             for (String componentName : componentNames) {
                 String json = loadJsonFrom(jsonFiles, kind, componentName);
                 if (json != null) {
@@ -156,71 +178,27 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
                     model.setTitle(title);
 
-                    // we only want the first scheme as the alternatives do not
-                    // have their own readme file
-                    if (!Strings.isEmpty(model.getAlternativeSchemes())) {
-                        String first = model.getAlternativeSchemes().split(",")[0];
-                        if (!model.getScheme().equals(first)) {
-                            continue;
-                        }
-                    }
+                    boolean updated = updateHeader(componentName, file, model, " Component");
 
-                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
+                    checkComponentHeader(file);
+                    checkSince(file);
 
-                    checkComponentHeader(file, model);
-                    checkSince(file, model);
-
-                    // resolvePropertyPlaceholders is an option which only make
-                    // sense to use if the component has other options
-                    boolean hasOptions = model.getComponentOptions().stream()
-                            .anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
-                    if (!hasOptions) {
-                        model.getComponentOptions().clear();
-                    }
-
-                    // Fix description in options
-                    Stream.concat(model.getComponentOptions().stream(), model.getEndpointOptions().stream()).forEach(option -> {
-                        String desc = option.getDescription();
-                        desc = desc.replaceAll("\\\\n", "\n");
-                        option.setDescription(desc);
-                    });
-
+                    updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
 
-                    options = evaluateTemplate("endpoint-options.mvel", model);
-                    updated |= updateOptionsIn(file, "endpoint", options);
+                    updated |= updateOptionsIn(file, "endpoint", "");
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No component doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                updateResource(
-                                        root.resolve(
-                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                        file.getName(), text);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/ROOT/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
                     }
                 }
@@ -231,11 +209,17 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private void executeOther() throws MojoExecutionException {
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
-        getLog().debug("UpdateReadmeMojo jsonFiles: " + jsonFiles);
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("UpdateReadmeMojo jsonFiles: " + jsonFiles);
+        }
 
         // only if there is components we should update the documentation files
         if (!jsonFiles.isEmpty()) {
-            getLog().debug("Found " + jsonFiles.size() + "miscellaneous components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + jsonFiles.size() + " miscellaneous components");
+            }
+
             for (File jsonFile : jsonFiles) {
                 final String kind = "other";
                 String json = loadJsonFrom(jsonFile, kind);
@@ -250,40 +234,19 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     File file = new File(componentDocDir, componentName + ".adoc");
                     boolean exists = file.exists();
 
-                    // we only want the first scheme as the alternatives do not
-                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
-                    checkSince(file, model);
+                    boolean updated = updateHeader(componentName, file, model, " Component");
+                    checkSince(file);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No component doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                updateResource(
-                                        root.resolve(
-                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                        file.getName(), text);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/others/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
                     }
                 }
@@ -301,7 +264,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
         // only if there is dataformat we should update the documentation files
         if (!dataFormatNames.isEmpty()) {
-            getLog().debug("Found " + dataFormatNames.size() + " dataformats");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + dataFormatNames.size() + " dataformats");
+            }
+
             for (String dataFormatName : dataFormatNames) {
                 String json = loadJsonFrom(jsonFiles, kind, dataFormatName);
                 if (json != null) {
@@ -323,16 +289,24 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     model.setTitle(title);
 
                     boolean exists = file.exists();
-                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", kind);
-                    checkSince(file, model);
+                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat");
+                    checkSince(file);
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
 
+                    // optional annotation processings
+                    // for now it's only applied to bindy but can be unlocked for other dataformats if needed
+                    if ("bindy".equals(dataFormatName)) {
+                        updated |= updateAnnotationsIn(file);
+                    }
+
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No dataformat doc file: " + file);
                         if (isFailFast()) {
@@ -340,27 +314,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         }
                     }
 
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                updateResource(
-                                        root.resolve(
-                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                        file.getName(), text);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/dataformats/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
-                        }
-                    }
                 }
             }
         }
@@ -368,8 +321,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentName(String name) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
-                || name.equals("smtps")) {
+        if (isMailComponent(name)) {
             return "mail";
         }
 
@@ -386,7 +338,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
         // only if there is language we should update the documentation files
         if (!languageNames.isEmpty()) {
-            getLog().debug("Found " + languageNames.size() + " languages");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + languageNames.size() + " languages");
+            }
+
             for (String languageName : languageNames) {
                 String json = loadJsonFrom(jsonFiles, kind, languageName);
                 if (json != null) {
@@ -398,28 +353,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     }
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
-                    // skip option named id
-                    model.getOptions().removeIf(
-                            opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
-                    // enhanced for autowired
-                    model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
-                        option.setDescription("*Autowired* " + option.getDescription());
-                    });
-                    // enhance description for deprecated options
-                    model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
-                        String desc = "*Deprecated* " + option.getDescription();
-                        if (!Strings.isEmpty(option.getDeprecationNote())) {
-                            desc = option.getDescription();
-                            if (!desc.endsWith(".")) {
-                                desc = desc + ".";
-                            }
-                            desc += " Deprecation note: " + option.getDeprecationNote();
-                        }
-                        option.setDescription(desc);
-                    });
 
-                    boolean updated = updateHeader(languageName, file, model, " Language", kind);
-                    checkSince(file, model);
+                    boolean updated = updateHeader(languageName, file, model, " Language");
+                    checkSince(file);
 
                     String options = evaluateTemplate("language-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -427,33 +363,13 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No language doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                updateResource(
-                                        root.resolve(
-                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                        file.getName(), text);
-                                String rep = "$1\n"
-                                             + "//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n"
-                                             + ":page-source: " + root.relativize(file.toPath());
-                                text = Pattern.compile("^(= .+)$", Pattern.MULTILINE).matcher(text).replaceAll(rep);
-                                updateResource(root.resolve("docs/components/modules/languages/pages"), file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
                     }
                 }
@@ -462,57 +378,32 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private void executeEips() throws MojoExecutionException {
-        // only run if in camel-core-model
-        String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("camel-core-model")) {
+        // only run if in camel-core-engine
+        String currentDir = project.getBasedir().toString();
+        if (!currentDir.endsWith("camel-core-engine")) {
             return;
         }
 
         final Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
-        File coreDir = new File(".");
+        File coreDir = findCamelDirectory(project.getBasedir(), "camel-core-model");
+
         if (coreDir.isDirectory()) {
-            File target = new File(coreDir, "target/classes/org/apache/camel/model");
+            File target = new File(coreDir, "src/generated/resources/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
         // only if there is EIP we should update the documentation files
         if (!jsonFiles.isEmpty()) {
-            getLog().debug("Found " + jsonFiles.size() + " eips");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + jsonFiles.size() + " eips");
+            }
+
             for (File jsonFile : jsonFiles) {
                 String json = loadEipJson(jsonFile);
                 if (json != null) {
                     EipModel model = JsonMapper.generateEipModel(json);
-                    // skip option named id/description/expression/outputs
-                    model.getOptions()
-                            .removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName())
-                                    || "expression".equals(option.getName())
-                                    || "outputs".equals(option.getName()));
-                    // lets put autowired in the description
-                    model.getOptions().stream().filter(EipOptionModel::isAutowired).forEach(option -> {
-                        String desc = "*Autowired* " + option.getDescription();
-                        option.setDescription(desc);
-                    });
-                    // lets put required in the description
-                    model.getOptions().stream().filter(EipOptionModel::isRequired).forEach(option -> {
-                        String desc = "*Required* " + option.getDescription();
-                        option.setDescription(desc);
-                    });
-                    // is the option deprecated then include that as well in the
-                    // description
-                    model.getOptions().stream().filter(EipOptionModel::isDeprecated).forEach(option -> {
-                        String desc = "*Deprecated* " + option.getDescription();
-                        if (!Strings.isEmpty(option.getDeprecationNote())) {
-                            if (!desc.endsWith(".")) {
-                                desc += ".";
-                            }
-                            desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                        }
-                        option.setDescription(desc);
-                    });
-
-                    String eipName = model.getName();
 
                     // we only want actual EIPs from the models
                     final String kind = "eip";
@@ -520,10 +411,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         continue;
                     }
 
+                    String eipName = model.getName();
+
                     File file = new File(eipDocDir, eipName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
 
-                    boolean updated = updateHeader(eipName, file, model, " EIP", kind);
+                    boolean updated = updateHeader(eipName, file, model, " EIP");
 
                     String options = evaluateTemplate("eip-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -531,28 +424,13 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
                     } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No eip doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-
-                    if (updated || exists) {
-                        try {
-                            // if we run in camel-core project then add additional meta-data
-                            File rootFile = findCamelDirectory(project.getBasedir(), "core/camel-core");
-                            if (rootFile != null) {
-                                Path root = rootFile.toPath().getParent().getParent();
-                                String text = PackageHelper.loadText(file);
-                                updateResource(
-                                        root.resolve(
-                                                "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs"),
-                                        file.getName(), text);
-                            }
-                        } catch (IOException e) {
-                            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
                         }
                     }
                 }
@@ -562,12 +440,16 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
-                || name.equals("smtps")) {
+        if (isMailComponent(name)) {
             return "Mail";
         }
 
         return title;
+    }
+
+    private static boolean isMailComponent(String name) {
+        return name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
+                || name.equals("smtps");
     }
 
     private static String asDataFormatName(String name) {
@@ -589,11 +471,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private boolean updateHeader(
-            String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix,
-            String kind)
+            String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix)
             throws MojoExecutionException {
-        getLog().debug("updateHeader " + file);
-        final String linkSuffix = "-" + kind;
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("updateHeader " + file);
+        }
+
         if (model == null || !file.exists()) {
             return false;
         }
@@ -613,7 +496,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             // find manual attributes
             Map<String, String> manualAttributes = new LinkedHashMap<>();
             for (String line : lines) {
-                if (line.length() == 0) {
+                if (!RELOCATE_MANUAL_ATTRIBUTES && line.isEmpty()) {
                     break;
                 }
                 for (Pattern attrName : MANUAL_ATTRIBUTES) {
@@ -627,37 +510,33 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             List<String> newLines = new ArrayList<>(lines.length + 8);
 
-            //link
-            newLines.add("[[" + name + linkSuffix + "]]");
-
             //title
             String title = model.getTitle() + titleSuffix;
             if (model.isDeprecated()) {
                 title += " (deprecated)";
             }
             newLines.add("= " + title);
-            newLines.add(":docTitle: " + model.getTitle());
+            newLines.add(":doctitle: " + model.getTitle());
+            String shortName = "mail".equals(name) ? "imap" : name;
+            newLines.add(":shortname: " + shortName);
 
             if (model instanceof ArtifactModel<?>) {
-                newLines.add(":artifactId: " + ((ArtifactModel<?>) model).getArtifactId());
+                newLines.add(":artifactid: " + ((ArtifactModel<?>) model).getArtifactId());
             }
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
             //TODO put the deprecation into the actual support level.
-            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
+            newLines.add(":supportlevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
             if (model.isDeprecated()) {
                 newLines.add(":deprecated: *deprecated*");
             }
+            newLines.add(":tabs-sync-option:");
             if (model instanceof ComponentModel) {
                 newLines.add(":component-header: " + generateComponentHeader((ComponentModel) model));
                 if (Arrays.asList(model.getLabel().split(",")).contains("core")) {
                     newLines.add(":core:");
                 }
             }
-
-            newLines.add(
-                    "include::{cq-version}@camel-quarkus:ROOT:partial$reference/" + kind + "s/" + name
-                         + ".adoc[opts=optional]");
 
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");
@@ -679,12 +558,23 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             }
 
             boolean copy = false;
-            if (updated) {
-                for (int i = 0; i < lines.length; i++) {
-                    if (!copy && lines[i].isEmpty()) {
+            if (updated || RELOCATE_MANUAL_ATTRIBUTES) {
+                outer: for (String line : lines) {
+                    if (!copy && line.isBlank()) {
                         copy = true;
                     } else if (copy) {
-                        newLines.add(lines[i]);
+
+                        if (RELOCATE_MANUAL_ATTRIBUTES) {
+                            for (Pattern attrName : MANUAL_ATTRIBUTES) {
+                                Matcher m = attrName.matcher(line);
+                                if (m.matches()) {
+                                    updated = true;
+                                    continue outer;
+                                }
+                            }
+                        }
+
+                        newLines.add(line);
                     }
                 }
                 if (!copy) {
@@ -707,7 +597,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return updated;
     }
 
-    private void checkComponentHeader(final File file, final ComponentModel model) throws MojoExecutionException {
+    private void checkComponentHeader(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
@@ -726,7 +616,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void checkSince(final File file, final ArtifactModel<?> model) throws MojoExecutionException {
+    private void checkSince(final File file) throws MojoExecutionException {
         if (!file.exists()) {
             return;
         }
@@ -796,16 +686,69 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private boolean updateAnnotationsIn(final File file) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = PackageHelper.loadText(file);
+            String updated = updateAnnotationRecursivelyIn(text);
+            if (text.equals(updated)) {
+                return false;
+            }
+            PackageHelper.writeText(file, updated);
+            return true;
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private String updateAnnotationRecursivelyIn(String text) throws MojoExecutionException {
+        String annotationInterface = Strings.between(text, "// annotation interface:", "// annotation options: START");
+        if (annotationInterface == null) {
+            return text;
+        }
+        annotationInterface = annotationInterface.trim();
+
+        Class<?> annotation = loadClass(annotationInterface);
+        if (!annotation.isAnnotation()) {
+            throw new MojoExecutionException("Interface " + annotationInterface + " is not an annotation");
+        }
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Processing annotation " + annotationInterface);
+        }
+
+        AnnotationModel model = generateAnnotationModel(annotation);
+        String options = evaluateTemplate("annotation-options.mvel", model);
+        String updated = options.trim();
+
+        String existing = Strings.between(text, "// annotation options: START", "// annotation options: END");
+        if (existing == null) {
+            return text;
+        }
+        // remove leading line breaks etc
+        existing = existing.trim();
+
+        String after = Strings.after(text, "// annotation options: END");
+        // process subsequent annotations
+        String afterUpdated = updateAnnotationRecursivelyIn(after);
+
+        if (existing.equals(updated) && Objects.equals(after, afterUpdated)) {
+            return text;
+        }
+
+        String before = Strings.before(text, "// annotation options: START");
+        return before + "// annotation options: START\n" + updated + "\n// annotation options: END" + afterUpdated;
+    }
+
     private static String loadJsonFrom(Set<File> jsonFiles, String kind, String name) {
         for (File file : jsonFiles) {
             if (file.getName().equals(name + PackageHelper.JSON_SUFIX)) {
-                try {
-                    String json = PackageHelper.loadText(file);
-                    if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
-                        return json;
-                    }
-                } catch (IOException ignored) {
-                    // ignored
+                String json = doLoad(file, kind);
+                if (json != null) {
+                    return json;
                 }
             }
         }
@@ -815,16 +758,24 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private static String loadJsonFrom(File file, String kind) {
         if (file.getName().endsWith(PackageHelper.JSON_SUFIX)) {
-            try {
-                String json = PackageHelper.loadText(file);
-                if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
-                    return json;
-                }
-            } catch (IOException ignored) {
-                // ignored
+            String json = doLoad(file, kind);
+            if (json != null) {
+                return json;
             }
         }
 
+        return null;
+    }
+
+    private static String doLoad(File file, String kind) {
+        try {
+            String json = PackageHelper.loadText(file);
+            if (Objects.equals(kind, PackageHelper.getSchemaKind(json))) {
+                return json;
+            }
+        } catch (IOException ignored) {
+            // ignored
+        }
         return null;
     }
 
@@ -841,76 +792,101 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private ComponentModel generateComponentModel(String json) {
-        ComponentModel component = JsonMapper.generateComponentModel(json);
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isAutowired).forEach(option -> {
-                    String desc = "*Autowired* " + option.getDescription();
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isRequired).forEach(option -> {
-                    String desc = "*Required* " + option.getDescription();
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isDeprecated).forEach(option -> {
-                    String desc = "*Deprecated* " + option.getDescription();
-                    if (!Strings.isEmpty(option.getDeprecationNote())) {
-                        if (!desc.endsWith(".")) {
-                            desc += ".";
-                        }
-                        desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                    }
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
-                .filter(o -> o.getEnums() != null).forEach(option -> {
-                    String desc = option.getDescription();
-                    if (!desc.endsWith(".")) {
-                        desc = desc + ".";
-                    }
-                    desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
-                           + wrapEnumValues(option.getEnums());
-                    option.setDescription(desc);
-                });
-        return component;
+        return JsonMapper.generateComponentModel(json);
     }
 
     private OtherModel generateOtherModel(String json) {
-        OtherModel other = JsonMapper.generateOtherModel(json);
-        return other;
+        return JsonMapper.generateOtherModel(json);
     }
 
     private DataFormatModel generateDataFormatModel(String json) {
-        DataFormatModel model = JsonMapper.generateDataFormatModel(json);
-        // skip option named id
-        model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
-        model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
-            String desc = "*Autowired* " + option.getDescription();
-            option.setDescription(desc);
-        });
-        // enhance description for deprecated options
-        model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
-            String desc = "*Deprecated* " + option.getDescription();
-            if (!Strings.isEmpty(option.getDeprecationNote())) {
-                desc = option.getDescription();
-                if (!desc.endsWith(".")) {
-                    desc = desc + ".";
-                }
-                desc += " Deprecation note: " + option.getDeprecationNote();
+        return JsonMapper.generateDataFormatModel(json);
+    }
+
+    private AnnotationModel generateAnnotationModel(Class<?> annotation) {
+        String source = loadJavaSource(annotation.getName());
+        JavaAnnotationSource annotationSource = parseAnnotationSource(source);
+
+        AnnotationModel model = new AnnotationModel();
+        for (Method method : annotation.getDeclaredMethods()) {
+            AnnotationModel.AnnotationOptionModel option = new AnnotationModel.AnnotationOptionModel();
+            option.setName(method.getName());
+            option.setType(method.getReturnType().getSimpleName());
+            if (method.getDefaultValue() != null) {
+                option.setOptional(true);
+                option.setDefaultValue(method.getDefaultValue().toString());
             }
-            option.setDescription(desc);
-        });
-        model.getOptions().stream().filter(o -> o.getEnums() != null).forEach(option -> {
-            String desc = option.getDescription();
-            if (!desc.endsWith(".")) {
-                desc = desc + ".";
+
+            String javadoc = findJavaDoc(source, annotationSource, method);
+            if (!Strings.isNullOrEmpty(javadoc)) {
+                option.setDescription(javadoc.trim());
             }
-            desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
-                   + wrapEnumValues(option.getEnums());
-            option.setDescription(desc);
-        });
+
+            model.addOption(option);
+        }
         return model;
+    }
+
+    private String loadJavaSource(String className) {
+        try {
+            Path file = getSourceRoots().stream()
+                    .map(d -> d.resolve(className.replace('.', '/') + ".java"))
+                    .filter(Files::isRegularFile)
+                    .findFirst()
+                    .orElse(null);
+
+            if (file == null) {
+                throw new FileNotFoundException("Unable to find source for " + className);
+            }
+            return PackageHelper.loadText(file);
+        } catch (IOException e) {
+            String classpath;
+            try {
+                classpath = project.getCompileClasspathElements().toString();
+            } catch (Exception e2) {
+                classpath = e2.toString();
+            }
+            throw new RuntimeException(
+                    "Unable to load source for class " + className + " in folders " + getSourceRoots()
+                                       + " (classpath: " + classpath + ")");
+        }
+    }
+
+    private JavaAnnotationSource parseAnnotationSource(String source) {
+        return Roaster.parse(JavaAnnotationSource.class, source);
+    }
+
+    private List<Path> getSourceRoots() {
+        if (sourceRoots == null) {
+            sourceRoots = project.getCompileSourceRoots().stream()
+                    .map(Paths::get)
+                    .collect(Collectors.toList());
+        }
+        return sourceRoots;
+    }
+
+    private String findJavaDoc(String source, JavaAnnotationSource annotationSource, Method method) {
+        AnnotationElementSource element = annotationSource.getAnnotationElement(method.getName());
+        if (element == null) {
+            return null;
+        }
+        return getJavaDocText(source, element);
+    }
+
+    static String getJavaDocText(String source, AnnotationElementSource member) {
+        if (member == null) {
+            return null;
+        }
+        AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) member.getInternal();
+        Javadoc jd = decl.getJavadoc();
+        if (source == null || jd.tags().isEmpty()) {
+            return null;
+        }
+        ASTNode n = (ASTNode) jd.tags().get(0);
+        String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
+        return txt
+                .replaceAll(" *\n *\\* *\n", "\n\n")
+                .replaceAll(" *\n *\\* +", "\n");
     }
 
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
@@ -950,10 +926,4 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private boolean isFailFast() {
         return failFast != null && failFast;
     }
-
-    private String wrapEnumValues(List<String> enumValues) {
-        // comma to space so we can wrap words (which uses space)
-        return String.join(", ", enumValues);
-    }
-
 }

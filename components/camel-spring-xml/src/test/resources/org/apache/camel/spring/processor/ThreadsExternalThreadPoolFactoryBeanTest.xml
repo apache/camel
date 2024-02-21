@@ -32,16 +32,17 @@
                 maxQueueSize="2000"
                 threadName="myPool"
                 keepAliveTime="30"
-                rejectedPolicy="DiscardOldest"
+                rejectedPolicy="Abort"
                 timeUnit="SECONDS"
                 xmlns="http://camel.apache.org/schema/spring"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>
             <!-- use the custom thread pool in the camel route -->
-            <threads executorServiceRef="myPool"/>
+            <threads executorService="myPool"/>
             <to uri="mock:result"/>
         </route>
         

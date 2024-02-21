@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <choice>
@@ -47,7 +48,7 @@
                     <to uri="mock:otherwise"/>
                     <multicast streaming="true">
                         <wireTap uri="mock:trapped"/>
-                        <split strategyRef="splitAggregate">
+                        <split aggregationStrategy="splitAggregate">
                             <tokenize token=","/>
                             <filter>
                                 <simple>${in.body} not contains 'bad'</simple>

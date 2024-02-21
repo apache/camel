@@ -70,7 +70,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private FileOutputStream refreshFile(FileOutputStream fos) throws Exception {

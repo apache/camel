@@ -45,8 +45,8 @@ public class MainRouteTemplateTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        assertEquals(1, context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().size());
-        assertEquals("mytemplate", context.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().get(0).getId());
+        assertEquals(1, ((ModelCamelContext) context).getRouteTemplateDefinitions().size());
+        assertEquals("mytemplate", ((ModelCamelContext) context).getRouteTemplateDefinitions().get(0).getId());
 
         MockEndpoint mock = context.getEndpoint("mock:cheese", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Camel", "Hello World");

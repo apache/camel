@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and fixed field length format using Camel Bindy
  */
-@Dataformat("bindy-fixed")
+@Dataformat("bindyFixed")
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
@@ -63,7 +64,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-fixed";
+        return "bindyFixed";
     }
 
     @Override
@@ -80,6 +81,11 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         // the body is not a prepared list so help a bit here and create one for us
         if (!isPreparedList(body)) {
             models = new ArrayList<>();
+            if (body instanceof Map) {
+                // the body is already a map, and we do not want to iterate each element in the map,
+                // but keep the body as a map, so wrap as iterator
+                body = Collections.singleton(body).iterator();
+            }
             for (Object model : ObjectHelper.createIterable(body)) {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<>();
@@ -200,7 +206,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         try {
 
             // Parse the header if it exists
-            if (((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine())) && factory.hasHeader()) {
+            if (headerExists(factory, scanner, isEolSet)) {
 
                 // Read the line (should not trim as its fixed length)
                 String line = getNextNonEmptyLine(scanner, count, isEolSet);
@@ -259,10 +265,17 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     }
 
+    private boolean headerExists(BindyFixedLengthFactory factory, Scanner scanner, boolean isEolSet) {
+        return hasMore(isEolSet, scanner) && factory.hasHeader();
+    }
+
+    private boolean hasMore(boolean isEolSet, Scanner scanner) {
+        return isEolSet && scanner.hasNext() || !isEolSet && scanner.hasNextLine();
+    }
+
     private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count, boolean isEolSet) {
         String line = "";
-        while (org.apache.camel.util.ObjectHelper.isEmpty(line)
-                && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
+        while (org.apache.camel.util.ObjectHelper.isEmpty(line) && hasMore(isEolSet, scanner)) {
             count.incrementAndGet();
             if (!isEolSet) {
                 line = scanner.nextLine();
@@ -290,8 +303,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             if (isTrimmingNeededAndEnabled(factory, myLine)) {
                 myLine = myLine.substring(0, factory.recordLength());
             }
-            if ((myLine.length() < factory.recordLength()
-                    && !factory.isIgnoreMissingChars()) || (myLine.length() > factory.recordLength())) {
+            if (myLine.length() < factory.recordLength()
+                    && !factory.isIgnoreMissingChars() || myLine.length() > factory.recordLength()) {
                 throw new java.lang.IllegalArgumentException(
                         "Size of the record: " + myLine.length()
                                                              + " is not equal to the value provided in the model: "

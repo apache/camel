@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Collection;
+
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -26,6 +28,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
+    @ManagedAttribute(description = "Node Prefix ID")
+    String getNodePrefixId();
+
     @ManagedAttribute(description = "Route Group")
     String getRouteGroup();
 
@@ -34,6 +39,15 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Route Description")
     String getDescription();
+
+    @ManagedAttribute(description = "Route Source Location")
+    String getSourceLocation();
+
+    @ManagedAttribute(description = "Route Source Location (Short)")
+    String getSourceLocationShort();
+
+    @ManagedAttribute(description = "Route Configuration ID")
+    String getRouteConfigurationId();
 
     @ManagedAttribute(description = "Route Endpoint URI", mask = true)
     String getEndpointUri();
@@ -77,11 +91,17 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Average load over the last fifteen minutes")
     String getLoad15();
 
+    @ManagedAttribute(description = "Throughput message/second")
+    String getThroughput();
+
     @ManagedOperation(description = "Start route")
     void start() throws Exception;
 
     @ManagedOperation(description = "Stop route")
     void stop() throws Exception;
+
+    @ManagedOperation(description = "Stop and marks the route as failed (health-check reporting as DOWN)")
+    void stopAndFail() throws Exception;
 
     @ManagedOperation(description = "Stop route (using timeout in seconds)")
     void stop(long timeout) throws Exception;
@@ -105,17 +125,28 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception;
 
     @ManagedOperation(description = "Dumps the route as XML")
-    String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception;
+    String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
 
-    @Deprecated
-    @ManagedOperation(description = "Updates the route from XML")
-    void updateRouteFromXml(String xml) throws Exception;
+    @ManagedOperation(description = "Dumps the route as YAML")
+    String dumpRouteAsYaml() throws Exception;
 
-    @ManagedOperation(description = "Dumps the routes stats as XML")
+    @ManagedOperation(description = "Dumps the route as YAML")
+    String dumpRouteAsYaml(boolean resolvePlaceholders) throws Exception;
+
+    @ManagedOperation(description = "Dumps the route as YAML")
+    String dumpRouteAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception;
+
+    @ManagedOperation(description = "Dumps the route as YAML")
+    String dumpRouteAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds) throws Exception;
+
+    @ManagedOperation(description = "Dumps the route stats as XML")
     String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
 
-    @ManagedOperation(description = "Dumps the routes and steps stats as XML")
+    @ManagedOperation(description = "Dumps the route and steps stats as XML")
     String dumpStepStatsAsXml(boolean fullStats) throws Exception;
+
+    @ManagedOperation(description = "Dumps the route with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
+    String dumpRouteSourceLocationsAsXml() throws Exception;
 
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeProcessors) throws Exception;
@@ -126,9 +157,19 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Oldest inflight exchange id")
     String getOldestInflightExchangeId();
 
-    @ManagedAttribute(description = "Route controller")
+    @ManagedAttribute(description = "Is using route controller")
     Boolean getHasRouteController();
 
     @ManagedAttribute(description = "Last error")
     RouteError getLastError();
+
+    @ManagedOperation(description = "IDs for the processors that are part of this route")
+    Collection<String> processorIds() throws Exception;
+
+    @ManagedOperation(description = "Updates the route from XML")
+    void updateRouteFromXml(String xml) throws Exception;
+
+    @ManagedAttribute(description = "Whether update route from XML is enabled")
+    boolean isUpdateRouteEnabled();
+
 }

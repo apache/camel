@@ -16,63 +16,83 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsRoutingSlipIssueTest extends AbstractJMSTest {
 
-public class JmsRoutingSlipIssueTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testJmsRoutingSlip() throws Exception {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello");
-        getMockEndpoint("mock:b").expectedBodiesReceived("HelloA");
-        getMockEndpoint("mock:c").expectedBodiesReceived("HelloAB");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.a").expectedBodiesReceived("Hello");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.b").expectedBodiesReceived("HelloA");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.c").expectedBodiesReceived("HelloAB");
         getMockEndpoint("mock:result").expectedBodiesReceived("HelloABC");
 
-        String slip = "activemq:queue:a,activemq:queue:b,activemq:queue:c";
+        String slip
+                = "activemq:queue:JmsRoutingSlipIssueTest.a,activemq:queue:JmsRoutingSlipIssueTest.b,activemq:queue:JmsRoutingSlipIssueTest.c";
         template.sendBodyAndHeader("direct:start", "Hello", "mySlip", slip);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // need to use InOut as we do request/reply over JMS
                         .setExchangePattern(ExchangePattern.InOut)
                         .routingSlip(header("mySlip"))
                         .to("mock:result");
 
-                from("activemq:queue:a")
-                        .to("mock:a")
+                from("activemq:queue:JmsRoutingSlipIssueTest.a")
+                        .to("mock:JmsRoutingSlipIssueTest.a")
                         .transform(body().append("A"));
 
-                from("activemq:queue:b")
-                        .to("mock:b")
+                from("activemq:queue:JmsRoutingSlipIssueTest.b")
+                        .to("mock:JmsRoutingSlipIssueTest.b")
                         .transform(body().append("B"));
 
-                from("activemq:queue:c")
-                        .to("mock:c")
+                from("activemq:queue:JmsRoutingSlipIssueTest.c")
+                        .to("mock:JmsRoutingSlipIssueTest.c")
                         .transform(body().append("C"));
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

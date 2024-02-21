@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesClusterEvent;
@@ -30,6 +31,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -46,7 +49,7 @@ public class TimedLeaderNotifierTest {
     private volatile Set<String> currentMembers;
 
     @BeforeEach
-    public void init() throws Exception {
+    public void init() {
         this.context = new DefaultCamelContext();
         this.context.start();
 
@@ -61,65 +64,66 @@ public class TimedLeaderNotifierTest {
     }
 
     @AfterEach
-    public void destroy() throws Exception {
+    public void destroy() {
         this.notifier.stop();
         this.context.stop();
     }
 
     @Test
-    public void testMultipleCalls() throws Exception {
+    public void testMultipleCalls() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 50L, members);
         notifier.refreshLeadership(Optional.of("two"), System.currentTimeMillis(), 50L, members);
         notifier.refreshLeadership(Optional.of("three"), System.currentTimeMillis(), 5000L, members);
-        Thread.sleep(80);
-        assertEquals(Optional.of("three"), currentLeader);
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
         assertEquals(members, currentMembers);
     }
 
     @Test
-    public void testExpiration() throws Exception {
+    public void testExpiration() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 50L, members);
         notifier.refreshLeadership(Optional.of("two"), System.currentTimeMillis(), 50L, members);
-        Thread.sleep(160);
-        assertEquals(Optional.empty(), currentLeader);
+        await().atMost(160, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
         assertEquals(members, currentMembers);
         notifier.refreshLeadership(Optional.of("three"), System.currentTimeMillis(), 5000L, members);
-        Thread.sleep(80);
-        assertEquals(Optional.of("three"), currentLeader);
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.of("three"), currentLeader));
         assertEquals(members, currentMembers);
     }
 
     @Test
-    public void testMemberChanging() throws Exception {
+    public void testMemberChanging() {
         Set<String> members1 = Collections.singleton("one");
         Set<String> members2 = new TreeSet<>(Arrays.asList("one", "two"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 50L, members1);
         notifier.refreshLeadership(Optional.of("two"), System.currentTimeMillis(), 5000L, members2);
-        Thread.sleep(80);
-        assertEquals(Optional.of("two"), currentLeader);
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.of("two"), currentLeader));
         assertEquals(members2, currentMembers);
     }
 
     @Test
-    public void testOldData() throws Exception {
+    public void testOldData() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 1000L, members);
-        Thread.sleep(80);
-        notifier.refreshLeadership(Optional.of("two"), System.currentTimeMillis() - 1000, 900L, members);
-        Thread.sleep(80);
-        assertEquals(Optional.empty(), currentLeader);
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(
+                () -> assertDoesNotThrow(() -> doRefreshLeadership("two", System.currentTimeMillis() - 1000, 900L, members)));
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
+    }
+
+    private void doRefreshLeadership(String two, long timestamp, long lease, Set<String> members) {
+        notifier.refreshLeadership(Optional.of(two), timestamp, lease, members);
     }
 
     @Test
-    public void testNewLeaderEmpty() throws Exception {
+    public void testNewLeaderEmpty() {
         Set<String> members = new TreeSet<>(Arrays.asList("one", "two", "three"));
         notifier.refreshLeadership(Optional.of("one"), System.currentTimeMillis(), 1000L, members);
-        Thread.sleep(80);
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertDoesNotThrow(() -> doRefreshLeadership(members)));
+        await().atMost(101, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(Optional.empty(), currentLeader));
+    }
+
+    private void doRefreshLeadership(Set<String> members) {
         notifier.refreshLeadership(Optional.empty(), null, null, members);
-        Thread.sleep(80);
-        assertEquals(Optional.empty(), currentLeader);
     }
 
 }

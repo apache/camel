@@ -16,10 +16,17 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
+import org.apache.activemq.artemis.core.server.ActiveMQServers;
+import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
+import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,38 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsToJmsTransactedSecurityTest.class);
+
+    private static ActiveMQServer activeMQServer;
+
+    @BeforeAll
+    public static void before() throws Exception {
+        SecurityConfiguration securityConfig = new SecurityConfiguration();
+        securityConfig.addUser("admin", "secret");
+        securityConfig.addUser("scott", "tiger");
+        securityConfig.addRole("scott", "user");
+        securityConfig.addRole("admin", "admin");
+        securityConfig.addRole("admin", "user");
+        ActiveMQJAASSecurityManager securityManager
+                = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfig);
+
+        activeMQServer = ActiveMQServers.newActiveMQServer("org/apache/camel/component/jms/tx/artemis-security.xml", null,
+                securityManager);
+        activeMQServer.start();
+    }
+
+    @AfterAll
+    public static void after() throws Exception {
+        activeMQServer.stop();
+    }
+
+    /**
+     * Used by spring xml configurations
+     *
+     * @return
+     */
+    public static String getServiceAddress() {
+        return "vm://999";
+    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -38,13 +77,13 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
     public void testJmsSecurityFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo")
+            public void configure() {
+                from("activemq:queue:JmsToJmsTransactedSecurityTest")
                         .transacted()
                         .to("log:foo")
-                        .to("activemq:queue:bar");
+                        .to("activemq:queue:JmsToJmsTransactedSecurityTest.reply");
 
-                from("activemq:queue:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedSecurityTest.reply").to("mock:bar");
             }
         });
         context.start();
@@ -52,11 +91,11 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedSecurityTest", "Hello World");
         // get the message that got rolled back
-        Exchange exch = consumer.receive("activemq:queue:foo", 250);
+        Exchange exch = consumer.receive("activemq:queue:JmsToJmsTransactedSecurityTest", 250);
         if (exch != null) {
-            LOG.info("Cleaned up orphaned message: " + exch);
+            LOG.info("Cleaned up orphaned message: {}", exch);
         }
         mock.assertIsSatisfied(3000);
     }
@@ -65,12 +104,12 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
     public void testJmsSecurityOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:start")
-                        .to("activemq:queue:foo");
+                        .to("activemq:queue:JmsToJmsTransactedSecurityTest");
 
-                from("activemq:queue:foo").to("mock:foo");
+                from("activemq:queue:JmsToJmsTransactedSecurityTest").to("mock:foo");
             }
         });
         context.start();
@@ -79,7 +118,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "univocityHeader",
+    "title": "uniVocity Header",
+    "description": "To configure headers for UniVocity data formats.",
+    "deprecated": false,
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.UniVocityHeader",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "value", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header name" },
+    "length": { "index": 1, "kind": "attribute", "displayName": "Length", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header length" }
+  }
+}

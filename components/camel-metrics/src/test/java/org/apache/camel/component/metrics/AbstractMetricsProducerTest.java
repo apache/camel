@@ -62,11 +62,10 @@ public class AbstractMetricsProducerTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         okProducer = new AbstractMetricsProducer(endpoint) {
             @Override
-            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
-                    throws Exception {
+            protected void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) {
             }
         };
         failProducer = new AbstractMetricsProducer(endpoint) {
@@ -110,7 +109,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetMetricsName() throws Exception {
+    public void testGetMetricsName() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn("A");
         assertThat(okProducer.getMetricsName(in, "value"), is("A"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -118,7 +117,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetMetricsNameNotSet() throws Exception {
+    public void testGetMetricsNameNotSet() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn(null);
         assertThat(okProducer.getMetricsName(in, "name"), is("name"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -126,7 +125,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetStringHeader() throws Exception {
+    public void testGetStringHeader() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn("A");
         assertThat(okProducer.getStringHeader(in, HEADER_METRIC_NAME, "value"), is("A"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -134,7 +133,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetStringHeaderWithNullValue() throws Exception {
+    public void testGetStringHeaderWithNullValue() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn(null);
         assertThat(okProducer.getStringHeader(in, HEADER_METRIC_NAME, "value"), is("value"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -142,7 +141,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetStringHeaderWithWhiteSpaces() throws Exception {
+    public void testGetStringHeaderWithWhiteSpaces() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn(" ");
         assertThat(okProducer.getStringHeader(in, HEADER_METRIC_NAME, "value"), is("value"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -150,7 +149,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetStringHeaderWithEmptySrting() throws Exception {
+    public void testGetStringHeaderWithEmptySrting() {
         when(in.getHeader(HEADER_METRIC_NAME, String.class)).thenReturn("");
         assertThat(okProducer.getStringHeader(in, HEADER_METRIC_NAME, "value"), is("value"));
         inOrder.verify(in, times(1)).getHeader(HEADER_METRIC_NAME, String.class);
@@ -158,7 +157,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testGetLongHeader() throws Exception {
+    public void testGetLongHeader() {
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, 19L, Long.class)).thenReturn(201L);
         assertThat(okProducer.getLongHeader(in, HEADER_HISTOGRAM_VALUE, 19L), is(201L));
         inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, 19L, Long.class);
@@ -166,7 +165,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testClearMetricsHeaders() throws Exception {
+    public void testClearMetricsHeaders() {
         when(in.removeHeaders(HEADER_PATTERN)).thenReturn(true);
         assertThat(okProducer.clearMetricsHeaders(in), is(true));
         inOrder.verify(in, times(1)).removeHeaders(HEADER_PATTERN);
@@ -174,7 +173,7 @@ public class AbstractMetricsProducerTest {
     }
 
     @Test
-    public void testClearRealHeaders() throws Exception {
+    public void testClearRealHeaders() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         Object val = new Object();
         msg.setHeader(HEADER_HISTOGRAM_VALUE, 109L);

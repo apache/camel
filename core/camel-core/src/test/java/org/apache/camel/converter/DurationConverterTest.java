@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DurationConverterTest extends ContextTestSupport {
 
@@ -39,14 +39,14 @@ public class DurationConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToMillisOverflow() throws Exception {
+    public void testToMillisOverflow() {
         Duration duration = Duration.parse("P60000000000000D");
-        try {
-            context.getTypeConverter().convertTo(long.class, duration);
-            fail("Should throw exception");
-        } catch (TypeConversionException e) {
-            assertIsInstanceOf(ArithmeticException.class, e.getCause());
-        }
+
+        TypeConversionException e = assertThrows(TypeConversionException.class,
+                () -> context.getTypeConverter().convertTo(long.class, duration),
+                "Should throw exception");
+
+        assertIsInstanceOf(ArithmeticException.class, e.getCause());
     }
 
     @Test

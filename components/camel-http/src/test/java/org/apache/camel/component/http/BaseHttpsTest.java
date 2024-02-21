@@ -20,18 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 
-import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_LENGTH;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class BaseHttpsTest extends HttpsServerTestSupport {
 
     protected void assertExchange(Exchange exchange) {
         assertNotNull(exchange);
-
+        assertNull(exchange.getException());
         Message out = exchange.getMessage();
         assertNotNull(out);
         assertHeaders(out.getHeaders());

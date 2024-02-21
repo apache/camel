@@ -20,22 +20,30 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
     @Test
-    public void testCustomCall() throws Exception {
+    public void testCustomCall() {
         assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
         assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
     }
 
     @Test
-    public void testDefaultSchema() throws Exception {
+    public void testDefaultSchema() {
         try {
             assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
         } catch (RuntimeCamelException e) {
@@ -44,30 +52,30 @@ public class NettyHttpServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:custom")
                         .serviceCall()
                         .name("myService")
                         .component("netty-http")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
                 from("direct:default")
                         .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                        .servers("myService@localhost:8081")
-                        .servers("myService@localhost:8082")
+                        .servers("myService@localhost:" + port1)
+                        .servers("myService@localhost:" + port2)
                         .endParent();
 
-                from("netty-http:http://localhost:8081")
+                from("netty-http:http://localhost:" + port1)
                         .transform().constant("8081");
-                from("netty-http:http://localhost:8082")
+                from("netty-http:http://localhost:" + port2)
                         .transform().constant("8082");
             }
         };

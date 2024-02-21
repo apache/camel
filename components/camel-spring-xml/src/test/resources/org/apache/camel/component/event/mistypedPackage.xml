@@ -30,6 +30,8 @@
         <package>org.apache.camel.component.event
         </package>
 
+        <jmxAgent id="jmx" disabled="true"/>
+
         <route>
             <from uri="spring-event:foo"/>
             <to uri="mock:result"/>

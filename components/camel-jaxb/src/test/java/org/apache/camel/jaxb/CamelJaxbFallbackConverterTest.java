@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
     @Test
-    public void testFallbackConverterWithoutObjectFactory() throws Exception {
+    public void testFallbackConverterWithoutObjectFactory() {
         TypeConverter converter = context.getTypeConverter();
         Foo foo = converter.convertTo(Foo.class, exchange,
                 "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
@@ -59,7 +59,7 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testFallbackConverterUnmarshalWithNonJAXBComplaintValue() throws Exception {
+    public void testFallbackConverterUnmarshalWithNonJAXBComplaintValue() {
         TypeConverter converter = context.getTypeConverter();
 
         try {

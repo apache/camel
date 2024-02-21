@@ -19,7 +19,7 @@ package org.apache.camel.component.jgroups.raft.utils;
 import java.io.DataInput;
 import java.io.DataOutput;
 
-import org.jgroups.protocols.raft.StateMachine;
+import org.jgroups.raft.StateMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +30,8 @@ public class NopStateMachine implements StateMachine {
     private static final transient Logger LOG = LoggerFactory.getLogger(NopStateMachine.class);
 
     @Override
-    public byte[] apply(byte[] bytes, int offset, int length) throws Exception {
-        LOG.trace("Called StateMachine.apply(byte[] {}, int {}, int {}) on {}", bytes, offset, length, this);
+    public byte[] apply(byte[] data, int offset, int length, boolean serialize_response) throws Exception {
+        LOG.trace("Called StateMachine.apply(byte[] {}, int {}, int {}) on {}", data, offset, length, this);
         return new byte[0];
     }
 

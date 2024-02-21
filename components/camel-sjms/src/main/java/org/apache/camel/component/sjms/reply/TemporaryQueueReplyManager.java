@@ -18,12 +18,12 @@ package org.apache.camel.component.sjms.reply;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TemporaryQueue;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
+import jakarta.jms.TemporaryQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.MessageListenerContainer;
@@ -46,6 +46,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             destResolver.destinationReady();
         } catch (InterruptedException e) {
             log.warn("Interrupted while waiting for JMSReplyTo destination refresh", e);
+            Thread.currentThread().interrupt();
         }
         return super.getReplyTo();
     }

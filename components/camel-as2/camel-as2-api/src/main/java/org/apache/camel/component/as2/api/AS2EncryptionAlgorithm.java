@@ -42,7 +42,7 @@ public enum AS2EncryptionAlgorithm {
     RC4(PKCSObjectIdentifiers.rc4),
     SEED_CBC(CMSAlgorithm.SEED_CBC);
 
-    private ASN1ObjectIdentifier algorithmOID;
+    private final ASN1ObjectIdentifier algorithmOID;
 
     private AS2EncryptionAlgorithm(ASN1ObjectIdentifier algorithmOID) {
         this.algorithmOID = algorithmOID;

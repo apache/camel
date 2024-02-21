@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
@@ -27,7 +28,19 @@ public class XmppLocalContainerService implements XmppService, ContainerService<
     private XmppServerContainer container;
 
     public XmppLocalContainerService() {
-        container = new XmppServerContainer();
+        this(LocalPropertyResolver.getProperty(XmppServerContainer.class, XmppProperties.XMPP_CONTAINER));
+    }
+
+    public XmppLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public XmppLocalContainerService(XmppServerContainer container) {
+        this.container = container;
+    }
+
+    protected XmppServerContainer initContainer(String imageName) {
+        return new XmppServerContainer();
     }
 
     @Override

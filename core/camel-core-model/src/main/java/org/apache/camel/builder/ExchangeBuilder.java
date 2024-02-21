@@ -31,11 +31,11 @@ import org.apache.camel.support.DefaultExchange;
  * Use the {@link #build()} method when done setting up the exchange.
  */
 public final class ExchangeBuilder {
-    private CamelContext context;
+    private final CamelContext context;
     private ExchangePattern pattern;
     private Object body;
-    private Map<String, Object> headers = new HashMap<>();
-    private Map<String, Object> properties = new HashMap<>();
+    private final Map<String, Object> headers = new HashMap<>();
+    private final Map<String, Object> properties = new HashMap<>();
 
     public ExchangeBuilder(CamelContext context) {
         this.context = context;
@@ -104,17 +104,19 @@ public final class ExchangeBuilder {
      */
     public Exchange build() {
         Exchange exchange = new DefaultExchange(context);
-        Message message = exchange.getIn();
-        message.setBody(body);
-        if (headers.size() > 0) {
-            message.setHeaders(headers);
+
+        if (pattern != null) {
+            exchange.setPattern(pattern);
+        }
+
+        exchange.getMessage().setBody(body);
+
+        if (!headers.isEmpty()) {
+            exchange.getMessage().setHeaders(headers);
         }
         // setup the properties on the exchange
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             exchange.setProperty(entry.getKey(), entry.getValue());
-        }
-        if (pattern != null) {
-            exchange.setPattern(pattern);
         }
 
         return exchange;

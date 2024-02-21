@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <wireTap uri="direct:tap"/>
@@ -33,7 +34,7 @@
 
         <route>
             <from uri="direct:tap"/>
-            <aggregate completionSize="2" completionTimeout="5000" strategyRef="myStrategy">
+            <aggregate completionSize="2" completionTimeout="5000" aggregationStrategy="myStrategy">
                 <correlationExpression><constant>true</constant></correlationExpression>
                 <to uri="direct:aggregated"/>
             </aggregate>

@@ -57,8 +57,6 @@ public interface SalesforceProcessor extends Service {
                 }
             }
         }
-
         return answer;
     }
-
 }

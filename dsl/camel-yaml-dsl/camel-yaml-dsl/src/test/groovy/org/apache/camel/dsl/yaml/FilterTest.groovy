@@ -22,12 +22,13 @@ import org.apache.camel.model.FilterDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class FilterTest extends YamlTestSupport {
 
     def "filter definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], FilterDefinition) {
                 with(expression, ExpressionDefinition) {
@@ -97,4 +98,33 @@ class FilterTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "filter (flow)"() {
+        setup:
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - filter:
+                          simple: "${body.startsWith(\\"a\\")}"
+                      - to: "mock:filter"
+            '''
+
+            withMock('mock:filter') {
+                expectedMessageCount 1
+                expectedBodiesReceived 'a'
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('a').send()
+                to('direct:route').withBody('b').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
 }

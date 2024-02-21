@@ -39,9 +39,9 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/batch", "100", Exchange.FILE_NAME, "1.txt");
-        template.sendBodyAndHeader("file:target/data/batch", "150", Exchange.FILE_NAME, "2.txt");
-        template.sendBodyAndHeader("file:target/data/batch", "130", Exchange.FILE_NAME, "3.txt");
+        template.sendBodyAndHeader(fileUri(), "100", Exchange.FILE_NAME, "1.txt");
+        template.sendBodyAndHeader(fileUri(), "150", Exchange.FILE_NAME, "2.txt");
+        template.sendBodyAndHeader(fileUri(), "130", Exchange.FILE_NAME, "3.txt");
 
         context.getRouteController().startRoute("foo");
 
@@ -60,7 +60,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10&sortBy=file:name")).routeId("foo").noAutoStartup()
                         .aggregate(new MyListOfNumbersStrategy()).constant(true)
                         .completionFromBatchConsumer().to("mock:result");
             }
@@ -70,7 +70,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
     /**
      * Our strategy just group a list of integers.
      */
-    public final class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
+    public static final class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
 
         @Override
         public Integer getValue(Exchange exchange) {

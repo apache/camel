@@ -22,24 +22,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteNoOutputTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        try {
-            super.setUp();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertEquals("route1", failed.getRouteId());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Route route1 has no output processors. You need to add outputs to the route such as to(\"log:foo\").",
-                    e.getCause().getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class, super::setUp,
+                "Should have thrown exception");
+
+        FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertTrue(failed.getRouteId().matches("route[0-9]+"));
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(e.getCause().getMessage().matches(
+                "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
     }
 
     @Test

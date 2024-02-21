@@ -19,10 +19,10 @@ package org.apache.camel.component.http;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.protocol.HttpExpectationVerifier;
-import org.apache.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
+import org.apache.hc.core5.http.HttpResponseFactory;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
 
 /**
  * Abstract base class for unit testing using a http server. This class contains an empty configuration to be used.
@@ -39,7 +39,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Returns the org.apache.http.ConnectionReuseStrategy which should be used by the server.
+     * Returns the org.apache.hc.core5.http.ConnectionReuseStrategy which should be used by the server.
      *
      * @return connectionReuseStrategy
      */
@@ -48,20 +48,11 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Returns the org.apache.http.HttpResponseFactory which should be used by the server.
+     * Returns the org.apache.hc.core5.http.HttpResponseFactory which should be used by the server.
      *
      * @return httpResponseFactory
      */
-    protected HttpResponseFactory getHttpResponseFactory() {
-        return null;
-    }
-
-    /**
-     * Returns the org.apache.http.protocol.HttpExpectationVerifier which should be used by the server.
-     *
-     * @return httpExpectationVerifier
-     */
-    protected HttpExpectationVerifier getHttpExpectationVerifier() {
+    protected HttpResponseFactory<ClassicHttpResponse> getHttpResponseFactory() {
         return null;
     }
 

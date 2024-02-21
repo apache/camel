@@ -21,13 +21,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * The response of the composite request it contains individual results of each request submitted in a request at the
  * same index.
  */
-@XStreamAlias("compositeResults")
 public final class SObjectCompositeResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,8 +33,7 @@ public final class SObjectCompositeResponse implements Serializable {
     private final List<SObjectCompositeResult> compositeResponse;
 
     @JsonCreator
-    public SObjectCompositeResponse(@JsonProperty("results")
-    final List<SObjectCompositeResult> compositeResponse) {
+    public SObjectCompositeResponse(@JsonProperty("results") final List<SObjectCompositeResult> compositeResponse) {
         this.compositeResponse = compositeResponse;
     }
 

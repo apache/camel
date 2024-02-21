@@ -19,39 +19,42 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
-        props.add("replySubject");
-        props.add("maxMessages");
-        props.add("sslContextParameters");
-        props.add("secure");
-        props.add("flushTimeout");
-        props.add("reconnect");
-        props.add("servers");
+        Set<String> props = new HashSet<>(30);
         props.add("bridgeErrorHandler");
-        props.add("pedantic");
         props.add("connection");
-        props.add("traceConnection");
         props.add("connectionTimeout");
-        props.add("reconnectTimeWait");
-        props.add("requestTimeout");
-        props.add("pingInterval");
-        props.add("noRandomizeServers");
-        props.add("poolSize");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("flushConnection");
-        props.add("verbose");
+        props.add("flushTimeout");
+        props.add("headerFilterStrategy");
         props.add("lazyStartProducer");
-        props.add("requestCleanupInterval");
-        props.add("queueName");
-        props.add("noEcho");
-        props.add("maxReconnectAttempts");
-        props.add("topic");
-        props.add("replyToDisabled");
+        props.add("maxMessages");
         props.add("maxPingsOut");
-        props.add("exceptionHandler");
+        props.add("maxReconnectAttempts");
+        props.add("noEcho");
+        props.add("noRandomizeServers");
+        props.add("pedantic");
+        props.add("pingInterval");
+        props.add("poolSize");
+        props.add("queueName");
+        props.add("reconnect");
+        props.add("reconnectTimeWait");
+        props.add("replySubject");
+        props.add("replyToDisabled");
+        props.add("requestCleanupInterval");
+        props.add("requestTimeout");
+        props.add("secure");
+        props.add("servers");
+        props.add("sslContextParameters");
+        props.add("topic");
+        props.add("traceConnection");
+        props.add("verbose");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -79,6 +82,11 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

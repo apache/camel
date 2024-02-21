@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JAXBConvertTest extends ExchangeTestSupport {
 
     @Test
-    public void testConverter() throws Exception {
+    public void testConverter() {
         PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
                 "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
@@ -44,7 +44,7 @@ public class JAXBConvertTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testConverterTwice() throws Exception {
+    public void testConverterTwice() {
         PurchaseOrder purchaseOrder = context.getTypeConverter().convertTo(PurchaseOrder.class, exchange,
                 "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 

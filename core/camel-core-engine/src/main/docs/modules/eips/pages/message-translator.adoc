@@ -1,78 +1,145 @@
-[[messageTranslator-eip]]
 = Message Translator
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
 Translator] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by using an arbitrary xref:latest@manual:ROOT:processor.adoc[Processor] in the
-routing logic, by using a xref:latest@manual:ROOT:bean-integration.adoc[bean] to perform
-the transformation, or by using transform() in the DSL. You can also use
-a xref:latest@manual:ROOT:data-format.adoc[Data Format] to marshal and unmarshal messages
-in different encodings.
+patterns].
 
 image::eip/MessageTranslator.gif[image]
 
-== Samples
+The Message Translator can be done in different ways in Camel:
 
-You can transform a message using Camel's
-xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to call any method on a
-bean in your xref:latest@manual:ROOT:registry.adoc[Registry] such as your
-xref:latest@manual:ROOT:spring.adoc[Spring] XML configuration file as follows
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
+* Calling a xref:manual::processor.adoc[Processor] or xref:manual::bean-integration.adoc[bean]
+  to perform the transformation
+* Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
+  to marshal and unmarshal messages in different encodings.
 
+== Example
+
+Each of above approaches is documented in the following examples:
+
+=== Message Translator with Transform EIP
+
+You can use a xref:transform-eip.adoc[Transform] which uses an
+xref:manual::expression.adoc[Expression] to do the transformation:
+
+In the example below we prepend Hello to the message body using the
+xref:components:languages:simple-language.adoc[Simple] language:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:SomeQueue")
-  .bean("myTransformerBean", "myMethodName")
-  .to("mqseries:AnotherQueue");
+from("direct:cheese")
+    .setBody(simple("Hello ${body}"))
+    .to("log:hello");
 ----
 
-Where the "myTransformerBean" would be defined in a Spring XML file or
-defined in JNDI etc. You can omit the method name parameter from
-beanRef() and the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] will try
-to deduce the method to invoke from the message exchange.
-
-or you can add your own explicit xref:latest@manual:ROOT:processor.adoc[Processor] to do
-the transformation
-
-or you can use the DSL to explicitly configure the transformation
-
-You can also use xref:latest@manual:ROOT:spring-xml-extensions.adoc[Spring XML Extensions]
-to do a transformation. Basically any xref:latest@manual:ROOT:expression.adoc[Expression]
-language can be substituted inside the transform element as shown below
-
-Or you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to
-invoke a bean
-
+XML::
++
 [source,xml]
 ----
 <route>
-  <from uri="activemq:SomeQueue"/>
-  <bean ref="myTransformerBean" method="myMethodName"/>
-  <to uri="mqseries:AnotherQueue"/>
+    <from uri="activemq:cheese"/>
+    <transform>
+        <simple>Hello ${body}</simple>
+    </transform>
+    <to uri="activemq:wine"/>
 </route>
 ----
+====
 
-You can also use xref:latest@manual:ROOT:templating.adoc[Templating] to consume a message
-from one destination, transform it with something like
-xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery] and then send
-it on to another destination. For example using InOnly (one way
-messaging)
+=== Message Translator with Bean
 
+You can transform a message using Camels
+xref:manual::bean-integration.adoc[Bean Integration] to call any method on a bean
+that performs the message translation:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:My.Queue")
+from("activemq:cheese")
+  .bean("myTransformerBean", "doTransform")
+  .to("activemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <bean ref="myTransformerBean" method="doTransform"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+====
+
+=== Message Translator with Processor
+
+You can also use a xref:manual::processor.adoc[Processor] to do
+the transformation:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
+  .process(new MyTransformerProcessor())
+  .to("activemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <process ref="myTransformerProcessor"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+====
+
+=== Message Translator using Templating Components
+
+You can also consume a message from one destination, transform it with something like
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery] and then send
+it on to another destination.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
     .to("velocity:com/acme/MyResponse.vm")
-    .to("activemq:Another.Queue");
+    .to("activemq:wine");
 ----
 
-If you want to use InOut (request-reply) semantics to process requests
-on the *My.Queue* queue on xref:components::activemq-component.adoc[ActiveMQ] with a template
-generated response, then sending responses back to the JMSReplyTo
-Destination you could use this.
-
-[source,java]
+XML::
++
+[source,xml]
 ----
-from("activemq:My.Queue")
-    .to("velocity:com/acme/MyResponse.vm");
+<route>
+    <from uri="activemq:cheese"/>
+    <to uri="velocity:com/acme/MyResponse.vm"/>
+    <to uri="activemq:wine"/>
+</route>
 ----
+====
 
+=== Message Translator using Data Format
+
+See xref:marshal-eip.adoc[Marshal] EIP for more details and examples.

@@ -22,6 +22,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -224,6 +226,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setEncryptingCertificateChain(encryptingCertificateChain);
     }
 
+    public SSLContext getSslContext() {
+        return configuration.getSslContext();
+    }
+
+    public void setSslContext(SSLContext sslContext) {
+        configuration.setSslContext(sslContext);
+    }
+
     @Override
     protected ApiMethodPropertiesHelper<AS2Configuration> getPropertiesHelper() {
         return AS2PropertiesHelper.getHelper(getCamelContext());
@@ -252,12 +262,12 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         if (apiProxy == null) {
-            createApiProxy(method, args);
+            createApiProxy();
         }
         return apiProxy;
     }
 
-    private void createApiProxy(ApiMethod method, Map<String, Object> args) {
+    private void createApiProxy() {
         switch (apiName) {
             case CLIENT:
                 apiProxy = new AS2ClientManager(getAS2ClientConnection());

@@ -47,16 +47,16 @@ public class MainVetoTest {
         assertEquals(0, main.getExitCode());
     }
 
-    private class MyRoute extends RouteBuilder {
+    private static class MyRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {
             from("timer:foo").to("mock:foo");
         }
     }
 
-    private class MyVetoLifecycle extends LifecycleStrategySupport {
+    private static class MyVetoLifecycle extends LifecycleStrategySupport {
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             throw new VetoCamelContextStartException("We do not like this route", context, false);
         }
     }

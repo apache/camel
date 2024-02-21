@@ -23,9 +23,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stax.StAXSource;
 
-import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -49,11 +47,6 @@ public final class SpringWebserviceHelper {
                 outputProperties.put("omit-xml-declaration", "yes");
 
                 transformer.setOutputProperties(outputProperties);
-                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl")
-                        && source instanceof StAXSource) {
-                    source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
-                }
-
                 transformer.transform(source, result);
             }
         }

@@ -28,13 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class XsltSaxonHelper {
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
 
     private XsltSaxonHelper() {
     }
 
-    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration)
-            throws Exception {
+    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) {
         if (saxonConfiguration != null) {
             factory.setConfiguration(saxonConfiguration);
         }
@@ -42,8 +42,7 @@ final class XsltSaxonHelper {
 
     public static void registerSaxonConfigurationProperties(
             TransformerFactoryImpl factory,
-            Map<String, Object> saxonConfigurationProperties)
-            throws Exception {
+            Map<String, Object> saxonConfigurationProperties) {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
             for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
                 factory.getConfiguration().setConfigurationProperty(entry.getKey(), entry.getValue());
@@ -51,10 +50,13 @@ final class XsltSaxonHelper {
         }
     }
 
-    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions)
+    public static void registerSaxonExtensionFunctions(
+            TransformerFactoryImpl factory,
+            List<Object> saxonExtensionFunctions,
+            boolean secureProcessing)
             throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
             for (Object extensionFunction : saxonExtensionFunctions) {
                 if (extensionFunction instanceof ExtensionFunctionDefinition) {
                     LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);

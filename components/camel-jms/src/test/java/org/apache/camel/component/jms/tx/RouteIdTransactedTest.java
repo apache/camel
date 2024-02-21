@@ -17,13 +17,17 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RouteIdTransactedTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class RouteIdTransactedTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -36,9 +40,9 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
@@ -49,24 +53,24 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Kabom");
+        template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo?transacted=true").id("myCoolRoute")
+            public void configure() {
+                from("activemq:queue:RouteIdTransactedTest?transacted=true").id("myCoolRoute")
                         .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
                         .transacted()
                         .choice()
-                        .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
+                        .when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Damn"))
                         .otherwise()
                         .to("mock:result")
                         .end();

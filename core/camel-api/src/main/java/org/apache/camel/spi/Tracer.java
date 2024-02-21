@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
-import org.apache.camel.Route;
 import org.apache.camel.StaticService;
 
 /**
@@ -38,7 +37,7 @@ public interface Tracer extends StaticService {
     /**
      * Trace before the route (eg input to route)
      *
-     * @param route    the route
+     * @param route    the route EIP
      * @param exchange the exchange
      */
     void traceBeforeRoute(NamedRoute route, Exchange exchange);
@@ -62,10 +61,10 @@ public interface Tracer extends StaticService {
     /**
      * Trace after the route (eg output from route)
      *
-     * @param route    the route
+     * @param route    the route EIP
      * @param exchange the exchange
      */
-    void traceAfterRoute(Route route, Exchange exchange);
+    void traceAfterRoute(NamedRoute route, Exchange exchange);
 
     /**
      * Number of traced messages
@@ -86,6 +85,44 @@ public interface Tracer extends StaticService {
      * Whether the tracer is enabled
      */
     void setEnabled(boolean enabled);
+
+    /**
+     * Whether the tracer is standby.
+     * <p>
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    boolean isStandby();
+
+    /**
+     * Whether the tracer is standby.
+     * <p>
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    void setStandby(boolean standby);
+
+    /**
+     * Whether to trace routes that is created from Rest DSL.
+     */
+    boolean isTraceRests();
+
+    /**
+     * Whether to trace routes that is created from route templates or kamelets.
+     */
+    void setTraceRests(boolean traceRests);
+
+    /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this off can reduce the
+     * verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel routes only.
+     */
+    boolean isTraceTemplates();
+
+    /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this off can reduce the
+     * verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel routes only.
+     */
+    void setTraceTemplates(boolean traceTemplates);
 
     /**
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern

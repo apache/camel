@@ -190,7 +190,7 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     // Helpers
     // ****************************************
 
-    public static final ReactiveStreamsComponent withServiceType(String serviceType) {
+    public static ReactiveStreamsComponent withServiceType(String serviceType) {
         ReactiveStreamsComponent component = new ReactiveStreamsComponent();
         component.setServiceType(serviceType);
 

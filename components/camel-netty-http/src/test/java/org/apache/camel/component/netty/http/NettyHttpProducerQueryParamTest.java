@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
-    private String url = "netty-http:http://localhost:" + getPort() + "/cheese?urlDecodeHeaders=true";
+    private final String url = "netty-http:http://localhost:" + getPort() + "/cheese?urlDecodeHeaders=true";
 
     @Test
-    public void testQueryParameters() throws Exception {
+    public void testQueryParameters() {
         Exchange exchange = template.request(url + "&quote=Camel%20rocks", null);
         assertNotNull(exchange);
 
@@ -42,7 +42,7 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     }
 
     @Test
-    public void testQueryParametersWithHeader() throws Exception {
+    public void testQueryParametersWithHeader() {
         Exchange exchange
                 = template.request(url, exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks"));
         assertNotNull(exchange);
@@ -55,7 +55,7 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     }
 
     @Test
-    public void testQueryParametersWithDynamicPath() throws Exception {
+    public void testQueryParametersWithDynamicPath() {
         // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
         Exchange exchange = template.request(url.replace("/cheese", ""), exchange1 -> {
             exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/cheese");
@@ -71,7 +71,7 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     }
 
     @Test
-    public void testQueryParametersInUriWithDynamicPath() throws Exception {
+    public void testQueryParametersInUriWithDynamicPath() {
         // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
         Exchange exchange = template.request((url + "&quote=Camel%20rocks").replace("/cheese", ""),
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/cheese"));
@@ -85,10 +85,10 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(url).process(exchange -> {
                     String quote = exchange.getIn().getHeader("quote", String.class);
                     assertEquals("Camel rocks", quote);

@@ -1,0 +1,231 @@
+- rest:
+    path: "/v3"
+    put:
+    - id: "updatePet"
+      path: "/pet"
+      description: "Update an existing pet by Id"
+      consumes: "application/json,application/xml,application/x-www-form-urlencoded"
+      produces: "application/xml,application/json"
+      param:
+      - description: "Update an existent pet in the store"
+        name: "body"
+        required: true
+        type: "body"
+      to: "direct:updatePet"
+    - id: "updateUser"
+      path: "/user/{username}"
+      description: "This can only be done by the logged in user."
+      consumes: "application/json,application/xml,application/x-www-form-urlencoded"
+      param:
+      - dataType: "string"
+        description: "name that need to be deleted"
+        name: "username"
+        required: true
+        type: "path"
+      - description: "Update an existent user in the store"
+        name: "body"
+        required: true
+        type: "body"
+      to: "direct:updateUser"
+    post:
+    - id: "addPet"
+      path: "/pet"
+      description: "Add a new pet to the store"
+      consumes: "application/json,application/xml,application/x-www-form-urlencoded"
+      produces: "application/xml,application/json"
+      param:
+      - description: "Create a new pet in the store"
+        name: "body"
+        required: true
+        type: "body"
+      to: "direct:addPet"
+    - id: "updatePetWithForm"
+      path: "/pet/{petId}"
+      param:
+      - dataType: "integer"
+        description: "ID of pet that needs to be updated"
+        name: "petId"
+        required: true
+        type: "path"
+      - dataType: "string"
+        description: "Name of pet that needs to be updated"
+        name: "name"
+        required: false
+        type: "query"
+      - dataType: "string"
+        description: "Status of pet that needs to be updated"
+        name: "status"
+        required: false
+        type: "query"
+      to: "direct:updatePetWithForm"
+    - id: "uploadFile"
+      path: "/pet/{petId}/uploadImage"
+      consumes: "application/octet-stream"
+      produces: "application/json"
+      param:
+      - dataType: "integer"
+        description: "ID of pet to update"
+        name: "petId"
+        required: true
+        type: "path"
+      - dataType: "string"
+        description: "Additional Metadata"
+        name: "additionalMetadata"
+        required: false
+        type: "query"
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:uploadFile"
+    - id: "placeOrder"
+      path: "/store/order"
+      description: "Place a new order in the store"
+      consumes: "application/json,application/xml,application/x-www-form-urlencoded"
+      produces: "application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:placeOrder"
+    - id: "createUser"
+      path: "/user"
+      description: "This can only be done by the logged in user."
+      consumes: "application/json,application/xml,application/x-www-form-urlencoded"
+      produces: "application/json,application/xml"
+      param:
+      - description: "Created user object"
+        name: "body"
+        required: true
+        type: "body"
+      to: "direct:createUser"
+    - id: "createUsersWithListInput"
+      path: "/user/createWithList"
+      description: "Creates list of users with given input array"
+      consumes: "application/json"
+      produces: "application/xml,application/json"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:createUsersWithListInput"
+    get:
+    - id: "findPetsByStatus"
+      path: "/pet/findByStatus"
+      description: "Multiple status values can be provided with comma separated strings"
+      produces: "application/xml,application/json"
+      param:
+      - dataType: "string"
+        defaultValue: "available"
+        description: "Status values that need to be considered for filter"
+        name: "status"
+        required: false
+        type: "query"
+        allowableValues:
+        - "available"
+        - "pending"
+        - "sold"
+      to: "direct:findPetsByStatus"
+    - id: "findPetsByTags"
+      path: "/pet/findByTags"
+      description: "Multiple tags can be provided with comma separated strings. Use\
+        \ tag1, tag2, tag3 for testing."
+      produces: "application/xml,application/json"
+      param:
+      - arrayType: "string"
+        dataType: "array"
+        description: "Tags to filter by"
+        name: "tags"
+        required: false
+        type: "query"
+      to: "direct:findPetsByTags"
+    - id: "getPetById"
+      path: "/pet/{petId}"
+      description: "Returns a single pet"
+      produces: "application/xml,application/json"
+      param:
+      - dataType: "integer"
+        description: "ID of pet to return"
+        name: "petId"
+        required: true
+        type: "path"
+      to: "direct:getPetById"
+    - id: "getInventory"
+      path: "/store/inventory"
+      description: "Returns a map of status codes to quantities"
+      produces: "application/json"
+      to: "direct:getInventory"
+    - id: "getOrderById"
+      path: "/store/order/{orderId}"
+      description: "For valid response try integer IDs with value <= 5 or > 10. Other\
+        \ values will generate exceptions."
+      produces: "application/xml,application/json"
+      param:
+      - dataType: "integer"
+        description: "ID of order that needs to be fetched"
+        name: "orderId"
+        required: true
+        type: "path"
+      to: "direct:getOrderById"
+    - id: "loginUser"
+      path: "/user/login"
+      produces: "application/xml,application/json"
+      param:
+      - dataType: "string"
+        description: "The user name for login"
+        name: "username"
+        required: false
+        type: "query"
+      - dataType: "string"
+        description: "The password for login in clear text"
+        name: "password"
+        required: false
+        type: "query"
+      to: "direct:loginUser"
+    - id: "logoutUser"
+      path: "/user/logout"
+      to: "direct:logoutUser"
+    - id: "getUserByName"
+      path: "/user/{username}"
+      produces: "application/xml,application/json"
+      param:
+      - dataType: "string"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        name: "username"
+        required: true
+        type: "path"
+      to: "direct:getUserByName"
+    delete:
+    - id: "deletePet"
+      path: "/pet/{petId}"
+      param:
+      - dataType: "string"
+        name: "api_key"
+        required: false
+        type: "header"
+      - dataType: "integer"
+        description: "Pet id to delete"
+        name: "petId"
+        required: true
+        type: "path"
+      to: "direct:deletePet"
+    - id: "deleteOrder"
+      path: "/store/order/{orderId}"
+      description: "For valid response try integer IDs with value < 1000. Anything\
+        \ above 1000 or nonintegers will generate API errors"
+      param:
+      - dataType: "integer"
+        description: "ID of the order that needs to be deleted"
+        name: "orderId"
+        required: true
+        type: "path"
+      to: "direct:deleteOrder"
+    - id: "deleteUser"
+      path: "/user/{username}"
+      description: "This can only be done by the logged in user."
+      param:
+      - dataType: "string"
+        description: "The name that needs to be deleted"
+        name: "username"
+        required: true
+        type: "path"
+      to: "direct:deleteUser"

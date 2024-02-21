@@ -24,9 +24,13 @@ import java.util.List;
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxEvent;
+import com.box.sdk.EnterpriseEventsRequest;
 import com.box.sdk.EventLog;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to read Box enterprise (admin) event logs.
@@ -42,7 +46,7 @@ public class BoxEventLogsManager {
 
     /**
      * Create event logs manager to manage the event logs of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventLogsManager(BoxAPIConnection boxConnection) {
@@ -52,34 +56,32 @@ public class BoxEventLogsManager {
     /**
      * Create an event stream with optional starting initial position and add listener that will be notified when an
      * event is received.
-     * 
+     *
      * @param  position - the starting position of the event stream. May be <code>null</code> in which case all events
      *                  within bounds returned.
      * @param  after    - the lower bound on the timestamp of the events returned.
      * @param  before   - the upper bound on the timestamp of the events returned.
      * @param  types    - an optional list of event types to filter by.
-     * 
+     *
      * @return          A list of all the events that met the given criteria.
      */
-    public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
+    public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.EventType... types) {
         try {
             LOG.debug("Getting all enterprise events occurring between {} and {} {}",
                     after == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(after),
                     before == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(before),
                     position == null ? "" : (" starting at " + position));
 
-            if (after == null) {
-                throw new IllegalArgumentException("Parameter 'after' can not be null");
-            }
-            if (before == null) {
-                throw new IllegalArgumentException("Parameter 'before' can not be null");
-            }
+            BoxHelper.notNull(after, "after");
+            BoxHelper.notNull(before, "before");
 
             if (types == null) {
-                types = new BoxEvent.Type[0];
+                types = new BoxEvent.EventType[0];
             }
 
-            EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, position, after, before, types);
+            EnterpriseEventsRequest request = new EnterpriseEventsRequest();
+            request.position(position).after(after).before(before).types(types);
+            EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, request);
 
             List<BoxEvent> results = new ArrayList<>();
             for (BoxEvent event : eventLog) {
@@ -88,9 +90,8 @@ public class BoxEventLogsManager {
 
             return results;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
-
 }

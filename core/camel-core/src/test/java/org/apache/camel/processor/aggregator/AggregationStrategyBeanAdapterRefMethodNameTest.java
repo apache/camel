@@ -46,7 +46,7 @@ public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true)).aggregationStrategyRef("myAppender")
+                from("direct:start").aggregate(constant(true)).aggregationStrategy("myAppender")
                         .aggregationStrategyMethodName("append").completionSize(3).to("mock:result");
             }
         };

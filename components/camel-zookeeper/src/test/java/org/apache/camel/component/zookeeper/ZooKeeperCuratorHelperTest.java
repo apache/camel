@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ZooKeeperCuratorHelperTest {
 
     @Test
-    public void testCreateCuratorRetryPolicy() throws Exception {
+    public void testCreateCuratorRetryPolicy() {
         ZooKeeperCuratorConfiguration configuration = new ZooKeeperCuratorConfiguration();
 
         configuration.setNodes("nodes1,node2,node3");

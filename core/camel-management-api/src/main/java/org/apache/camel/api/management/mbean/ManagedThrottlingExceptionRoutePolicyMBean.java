@@ -21,6 +21,9 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedThrottlingExceptionRoutePolicyMBean extends ManagedServiceMBean {
 
+    @ManagedAttribute(description = "The class of the exception to throttle")
+    String[] getExceptionTypes();
+
     @ManagedAttribute(description = "How long to wait before moving open circuit to half open")
     Long getHalfOpenAfter();
 
@@ -53,4 +56,5 @@ public interface ManagedThrottlingExceptionRoutePolicyMBean extends ManagedServi
 
     @ManagedAttribute(description = "Number ms since the circuit was opened")
     Long getOpenAt();
+
 }

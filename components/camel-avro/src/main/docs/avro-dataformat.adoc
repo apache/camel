@@ -1,11 +1,13 @@
-[[avro-dataformat]]
 = Avro DataFormat
-:docTitle: Avro
-:artifactId: camel-avro
+:doctitle: Avro
+:shortname: avro
+:artifactid: camel-avro
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -31,10 +33,31 @@ You can easily generate classes from a schema, using maven, ant etc.
 More details can be found at the
 http://avro.apache.org/docs/current/[Apache Avro documentation].
 
-== Using the Avro data format
+
+== Avro Dataformat Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Examples
+
+== Avro Data Format usage
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.
+
+[source,java]
+--------------------------------------------------------------------------------
+AvroDataFormat format = new AvroDataFormat(Value.SCHEMA$);
+
+from("direct:in").marshal(format).to("direct:marshal");
+from("direct:back").unmarshal(format).to("direct:unmarshal");
+--------------------------------------------------------------------------------
+
+Where Value is an Avro Maven Plugin Generated class.
+
+or in XML
 
 [source,xml]
 --------------------------------------------------------------------------------
@@ -66,21 +89,7 @@ reference it from your route.
     </camelContext>
 --------------------------------------------------------------------------------------
 
-In the same manner you can umarshal using the avro data format.
+In the same manner, you can unmarshal using the avro data format.
 
 
-== Avro Dataformat Options
-
-// dataformat options: START
-The Avro dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| instanceClassName |  | String | Class name to use for marshal and unmarshalling
-|===
-// dataformat options: END
-
-include::camel-spring-boot::page$avro-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

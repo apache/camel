@@ -18,6 +18,8 @@ package org.apache.camel.component.pubnub;
 
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
+import com.pubnub.api.PubNubException;
+import com.pubnub.api.UserId;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,13 +28,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Send and receive messages to/from PubNub data stream network for connected devices.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
-             category = { Category.CLOUD, Category.IOT, Category.MESSAGING })
+             category = { Category.CLOUD, Category.IOT, Category.MESSAGING }, headersClass = PubNubConstants.class)
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")
@@ -87,18 +88,16 @@ public class PubNubEndpoint extends DefaultEndpoint {
         super.doStart();
     }
 
-    private PubNub getInstance() {
+    private PubNub getInstance() throws PubNubException {
         PubNub answer = null;
-        PNConfiguration pnConfiguration = new PNConfiguration();
+        PNConfiguration pnConfiguration = new PNConfiguration(new UserId(configuration.getUuid()));
         pnConfiguration.setPublishKey(configuration.getPublishKey());
         pnConfiguration.setSubscribeKey(configuration.getSubscribeKey());
         pnConfiguration.setSecretKey(configuration.getSecretKey());
         pnConfiguration.setAuthKey(configuration.getAuthKey());
         pnConfiguration.setCipherKey(configuration.getCipherKey());
         pnConfiguration.setSecure(configuration.isSecure());
-        if (ObjectHelper.isNotEmpty(configuration.getUuid())) {
-            pnConfiguration.setUuid(configuration.getUuid());
-        }
+
         answer = new PubNub(pnConfiguration);
         return answer;
     }

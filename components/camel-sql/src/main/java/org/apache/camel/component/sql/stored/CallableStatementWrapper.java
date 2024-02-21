@@ -37,7 +37,7 @@ public class CallableStatementWrapper implements StatementWrapper {
 
     final String template;
 
-    Map result;
+    Map<String, Object> result;
 
     List<Map<String, ?>> batchItems;
 

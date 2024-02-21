@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesforce.eventbus.protobuf.ReplayPreset;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
 import org.apache.camel.spi.UriParam;
@@ -41,7 +43,7 @@ import org.apache.camel.spi.UriParams;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "50.0";
+    public static final String DEFAULT_VERSION = "56.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";
@@ -52,17 +54,23 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public static final String SOBJECT_NAME = "sObjectName";
     public static final String SOBJECT_ID = "sObjectId";
+    public static final String SOBJECT_IDS = "sObjectIds";
     public static final String SOBJECT_FIELDS = "sObjectFields";
     public static final String SOBJECT_EXT_ID_NAME = "sObjectIdName";
     public static final String SOBJECT_EXT_ID_VALUE = "sObjectIdValue";
     public static final String SOBJECT_BLOB_FIELD_NAME = "sObjectBlobFieldName";
     public static final String SOBJECT_CLASS = "sObjectClass";
     public static final String SOBJECT_QUERY = "sObjectQuery";
+    public static final String STREAM_QUERY_RESULT = "streamQueryResult";
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
     public static final String COMPOSITE_METHOD = "compositeMethod";
     public static final String LIMIT = "limit";
+    public static final String ALL_OR_NONE = "allOrNone";
+    public static final String EVENT_NAME = "eventName";
+    public static final String EVENT_SCHEMA_ID = "eventSchemaId";
+    public static final String EVENT_SCHEMA_FORMAT = "eventSchemaFormat";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -73,6 +81,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
     public static final String QUERY_LOCATOR = "queryLocator";
+    public static final String LOCATOR = "locator";
+    public static final String MAX_RECORDS = "maxRecords";
     public static final String PK_CHUNKING = "pkChunking";
     public static final String PK_CHUNKING_CHUNK_SIZE = "pkChunkingChunkSize";
     public static final String PK_CHUNKING_PARENT = "pkChunkingParent";
@@ -86,11 +96,23 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // parameters for Streaming API
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
+    public static final String FALL_BACK_REPLAY_ID = "fallBackReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
     public static final long REPLAY_FROM_TIP = -1L;
 
+    // parameters for Pub/Sub API
+    public static final String REPLAY_PRESET = "replayPreset";
+    public static final String PUB_SUB_DESERIALIZE_TYPE = "pubSubDeserializeType";
+    public static final String PUB_SUB_POJO_CLASS = "pubSubPojoClass";
+
     // parameters for Approval API
     public static final String APPROVAL = "approval";
+
+    // parameters for the RAW operation
+    public static final String RAW_PATH = "rawPath";
+    public static final String RAW_METHOD = "rawMethod";
+    public static final String RAW_QUERY_PARAMETERS = "rawQueryParameters";
+    public static final String RAW_HTTP_HEADERS = "rawHttpHeaders";
 
     // default maximum authentication retries on failed authentication or
     // expired session
@@ -127,12 +149,23 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectClass;
     @UriParam(displayName = "SObject Query")
     private String sObjectQuery;
+    @UriParam(displayName = "Stream query result", defaultValue = "false")
+    private Boolean streamQueryResult = false;
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
     @UriParam
     private String apexMethod;
+    @UriParam(displayName = "Event Name", label = "producer")
+    private String eventName;
+    @UriParam(displayName = "Event Schema Format", label = "producer")
+    private EventSchemaFormatEnum eventSchemaFormat;
+    @UriParam(displayName = "Event Schema Id", label = "producer")
+    private String eventSchemaId;
     @UriParam(label = "producer")
     private String compositeMethod;
+    @UriParam(label = "producer", defaultValue = "false", description = "Composite API option to indicate" +
+                                                                        " to rollback all records if any are not successful.")
+    private boolean allOrNone;
     @UriParam(label = "producer")
     private String apexUrl;
     @UriParam
@@ -149,6 +182,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String resultId;
     @UriParam
     private String queryLocator;
+    @UriParam
+    private String locator;
+    @UriParam(javaType = "java.lang.Integer")
+    private Integer maxRecords;
     @UriParam
     private Boolean pkChunking;
     @UriParam
@@ -174,6 +211,24 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam
     private Boolean notifyForOperationUndelete;
 
+    // Pub/Sub API properties
+    @UriParam(label = "consumer", defaultValue = "100",
+              description = "Max number of events to receive in a batch from the Pub/Sub API.")
+    private int pubSubBatchSize = 100;
+
+    @UriParam(label = "consumer", defaultValue = "AVRO",
+              description = "How to deserialize events consume from the Pub/Sub API. AVRO will try a " +
+                            "SpecificRecord subclass if found, otherwise GenericRecord.",
+              enums = "AVRO,SPECIFIC_RECORD,GENERIC_RECORD,POJO,JSON")
+    private PubSubDeserializeType pubSubDeserializeType = PubSubDeserializeType.AVRO;
+
+    @UriParam(label = "consumer", description = "Replay preset for Pub/Sub API.", defaultValue = "LATEST",
+              enums = "LATEST,EARLIEST,CUSTOM")
+    private ReplayPreset replayPreset = ReplayPreset.LATEST;
+
+    @UriParam(label = "consumer", description = "Fully qualified class name to deserialize Pub/Sub API event to.")
+    private String pubSubPojoClass;
+
     // Analytics API properties
     @UriParam
     private String reportId;
@@ -188,11 +243,26 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam(description = "Default replayId setting if no value is found in initialReplayIdMap",
               defaultValue = "" + REPLAY_FROM_TIP)
     private Long defaultReplayId = REPLAY_FROM_TIP;
+
+    @UriParam(description = "ReplayId to fall back to after an Invalid Replay Id response",
+              defaultValue = "" + REPLAY_FROM_TIP)
+    private Long fallBackReplayId = REPLAY_FROM_TIP;
+
     @UriParam
     private Map<String, Long> initialReplayIdMap;
 
     // Approval API properties
     private ApprovalRequest approval;
+
+    // RAW operation properties
+    @UriParam(label = "producer")
+    private String rawPath;
+    @UriParam(label = "producer")
+    private String rawMethod;
+    @UriParam(label = "producer")
+    private String rawQueryParameters;
+    @UriParam(label = "producer")
+    private String rawHttpHeaders;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
@@ -218,10 +288,9 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public SalesforceEndpointConfig copy() {
         try {
-            final SalesforceEndpointConfig copy = (SalesforceEndpointConfig) super.clone();
             // nothing to deep copy, getApexQueryParams() is readonly, so no
             // need to deep copy
-            return copy;
+            return (SalesforceEndpointConfig) super.clone();
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -232,7 +301,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON
+     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. As of Camel 3.12, this
+     * option only applies to the Raw operation.
      */
     public void setFormat(PayloadFormat format) {
         this.format = format;
@@ -353,6 +423,18 @@ public class SalesforceEndpointConfig implements Cloneable {
         return sObjectSearch;
     }
 
+    public Boolean getStreamQueryResult() {
+        return streamQueryResult;
+    }
+
+    /**
+     * If true, streams SOQL query result and transparently handles subsequent requests if there are multiple pages.
+     * Otherwise, results are returned one page at a time.
+     */
+    public void setStreamQueryResult(Boolean streamQueryResult) {
+        this.streamQueryResult = streamQueryResult;
+    }
+
     /**
      * Salesforce SOSL search string
      */
@@ -404,6 +486,14 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setCompositeMethod(String compositeMethod) {
         this.compositeMethod = compositeMethod;
+    }
+
+    public boolean isAllOrNone() {
+        return allOrNone;
+    }
+
+    public void setAllOrNone(boolean allOrNone) {
+        this.allOrNone = allOrNone;
     }
 
     public ApprovalRequest getApproval() {
@@ -479,6 +569,32 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.queryLocator = queryLocator;
     }
 
+    public String getLocator() {
+        return locator;
+    }
+
+    /**
+     * Locator provided by salesforce Bulk 2.0 API for use in getting results for a Query job.
+     */
+    public void setLocator(String locator) {
+        this.locator = locator;
+    }
+
+    public Integer getMaxRecords() {
+        return maxRecords;
+    }
+
+    /**
+     * The maximum number of records to retrieve per set of results for a Bulk 2.0 Query. The request is still subject
+     * to the size limits. If you are working with a very large number of query results, you may experience a timeout
+     * before receiving all the data from Salesforce. To prevent a timeout, specify the maximum number of records your
+     * client is expecting to receive in the maxRecords parameter. This splits the results into smaller sets with this
+     * value as the maximum size.
+     */
+    public void setMaxRecords(Integer maxRecords) {
+        this.maxRecords = maxRecords;
+    }
+
     public Boolean getPkChunking() {
         return pkChunking;
     }
@@ -551,7 +667,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0)
+     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version &lt; 29.0)
      */
     public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
         this.notifyForOperations = notifyForOperations;
@@ -562,7 +678,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for create operation, defaults to false (API version >= 29.0)
+     * Notify for create operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
         this.notifyForOperationCreate = notifyForOperationCreate;
@@ -573,7 +689,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for update operation, defaults to false (API version >= 29.0)
+     * Notify for update operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
         this.notifyForOperationUpdate = notifyForOperationUpdate;
@@ -584,7 +700,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for delete operation, defaults to false (API version >= 29.0)
+     * Notify for delete operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
         this.notifyForOperationDelete = notifyForOperationDelete;
@@ -595,7 +711,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for un-delete operation, defaults to false (API version >= 29.0)
+     * Notify for un-delete operation, defaults to false (API version &gt;= 29.0)
      */
     public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
         this.notifyForOperationUndelete = notifyForOperationUndelete;
@@ -703,13 +819,17 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_EXT_ID_VALUE, sObjectIdValue);
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
+        valueMap.put(STREAM_QUERY_RESULT, streamQueryResult);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        // apexQueryParams are handled explicitly in AbstractRestProcessor
         valueMap.put(COMPOSITE_METHOD, compositeMethod);
         valueMap.put(LIMIT, limit);
         valueMap.put(APPROVAL, approval);
-        // apexQueryParams are handled explicitly in AbstractRestProcessor
+        valueMap.put(EVENT_NAME, eventName);
+        valueMap.put(EVENT_SCHEMA_FORMAT, eventSchemaFormat);
+        valueMap.put(EVENT_SCHEMA_ID, eventSchemaId);
 
         // add bulk API properties
         if (contentType != null) {
@@ -727,9 +847,20 @@ public class SalesforceEndpointConfig implements Cloneable {
 
         // add streaming API properties
         valueMap.put(DEFAULT_REPLAY_ID, defaultReplayId);
+        valueMap.put(FALL_BACK_REPLAY_ID, fallBackReplayId);
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
+        // add Pub/Sub API properties
+        valueMap.put(REPLAY_PRESET, initialReplayIdMap);
+        valueMap.put(PUB_SUB_DESERIALIZE_TYPE, pubSubDeserializeType);
+        valueMap.put(PUB_SUB_POJO_CLASS, pubSubPojoClass);
+
         valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
+
+        valueMap.put(RAW_PATH, rawPath);
+        valueMap.put(RAW_METHOD, rawMethod);
+        valueMap.put(RAW_HTTP_HEADERS, rawHttpHeaders);
+        valueMap.put(RAW_QUERY_PARAMETERS, rawQueryParameters);
 
         return Collections.unmodifiableMap(valueMap);
     }
@@ -740,7 +871,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
-     * 
+     *
      * @param defaultReplayId
      */
     public void setDefaultReplayId(Long defaultReplayId) {
@@ -758,13 +889,61 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.initialReplayIdMap = initialReplayIdMap;
     }
 
+    public Long getFallBackReplayId() {
+        return fallBackReplayId;
+    }
+
+    /**
+     * ReplayId to fall back to after an Invalid Replay Id response
+     */
+    public void setFallBackReplayId(Long fallBackReplayId) {
+        this.fallBackReplayId = fallBackReplayId;
+    }
+
+    /**
+     * ReplayPreset for Pub/Sub API
+     */
+    public ReplayPreset getReplayPreset() {
+        return replayPreset;
+    }
+
+    public void setReplayPreset(ReplayPreset replayPreset) {
+        this.replayPreset = replayPreset;
+    }
+
+    /**
+     * Type of deserialization for Pub/Sub API events
+     *
+     * @return
+     */
+    public PubSubDeserializeType getPubSubDeserializeType() {
+        return pubSubDeserializeType;
+    }
+
+    public void setPubSubDeserializeType(PubSubDeserializeType pubSubDeserializeType) {
+        this.pubSubDeserializeType = pubSubDeserializeType;
+    }
+
+    /**
+     * Class to deserialize Pub/Sub API events to
+     *
+     * @return
+     */
+    public String getPubSubPojoClass() {
+        return pubSubPojoClass;
+    }
+
+    public void setPubSubPojoClass(String pubSubPojoClass) {
+        this.pubSubPojoClass = pubSubPojoClass;
+    }
+
     public Integer getLimit() {
         return limit;
     }
 
     /**
      * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
-     * 
+     *
      * @param limit
      */
     public void setLimit(final Integer limit) {
@@ -945,5 +1124,107 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setNotFoundBehaviour(final NotFoundBehaviour notFoundBehaviour) {
         this.notFoundBehaviour = notFoundBehaviour;
+    }
+
+    public String getRawPath() {
+        return rawPath;
+    }
+
+    /**
+     * The portion of the endpoint URL after the domain name. E.g., " + "'/services/data/v52.0/sobjects/Account/'
+     *
+     * @param rawPath the path
+     */
+    public void setRawPath(String rawPath) {
+        this.rawPath = rawPath;
+    }
+
+    public String getRawMethod() {
+        return rawMethod;
+    }
+
+    /**
+     * HTTP method to use for the Raw operation
+     *
+     * @param rawMethod http method
+     */
+    public void setRawMethod(String rawMethod) {
+        this.rawMethod = rawMethod;
+    }
+
+    public String getRawQueryParameters() {
+        return rawQueryParameters;
+    }
+
+    /**
+     * Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode
+     * values as this will be done automatically.
+     *
+     * @param rawQueryParameters
+     */
+    public void setRawQueryParameters(String rawQueryParameters) {
+        this.rawQueryParameters = rawQueryParameters;
+    }
+
+    public String getRawHttpHeaders() {
+        return rawHttpHeaders;
+    }
+
+    /**
+     * Comma separated list of message headers to include as HTTP parameters for Raw operation.
+     *
+     * @param
+     */
+    public void setRawHttpHeaders(String rawHttpHeaders) {
+        this.rawHttpHeaders = rawHttpHeaders;
+    }
+
+    public int getPubSubBatchSize() {
+        return pubSubBatchSize;
+    }
+
+    public void setPubSubBatchSize(int pubSubBatchSize) {
+        this.pubSubBatchSize = pubSubBatchSize;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    /**
+     * Name of Platform Event, Change Data Capture Event, custom event, etc.
+     *
+     * @param eventName
+     */
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public EventSchemaFormatEnum getEventSchemaFormat() {
+        return eventSchemaFormat;
+    }
+
+    /**
+     * EXPANDED: Apache Avro format but doesn’t strictly adhere to the record complex type. COMPACT: Apache Avro,
+     * adheres to the specification for the record complex type. This parameter is available in API version 43.0 and
+     * later.
+     *
+     * @param eventSchemaFormat
+     */
+    public void setEventSchemaFormat(EventSchemaFormatEnum eventSchemaFormat) {
+        this.eventSchemaFormat = eventSchemaFormat;
+    }
+
+    public String getEventSchemaId() {
+        return eventSchemaId;
+    }
+
+    /**
+     * The ID of the event schema.
+     *
+     * @param eventSchemaId
+     */
+    public void setEventSchemaId(String eventSchemaId) {
+        this.eventSchemaId = eventSchemaId;
     }
 }

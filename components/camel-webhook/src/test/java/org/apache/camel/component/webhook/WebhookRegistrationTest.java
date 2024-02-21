@@ -44,7 +44,7 @@ public class WebhookRegistrationTest extends WebhookTestBase {
     public void testContext() throws Exception {
         context().addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .host("0.0.0.0")
                         .port(port);
@@ -76,7 +76,7 @@ public class WebhookRegistrationTest extends WebhookTestBase {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("wb-delegate-component", new TestComponent(endpoint -> {
             endpoint.setWebhookHandler(proc -> ex -> {
                 ex.getMessage().setBody("webhook");

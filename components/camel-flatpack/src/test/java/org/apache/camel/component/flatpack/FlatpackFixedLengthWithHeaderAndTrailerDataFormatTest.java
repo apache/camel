@@ -45,7 +45,7 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(6, list.size());
@@ -65,14 +65,14 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }
 
-    public void testMarshalWithDefinition() throws Exception {
+    public void testMarshalWithDefinition() {
         // TODO: header and trailer not supported for FlatpackWriter
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 FlatpackDataFormat df = new FlatpackDataFormat();
                 df.setDefinition("PEOPLE-HeaderAndTrailer.pzmap.xml");
                 df.setFixed(true);

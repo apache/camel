@@ -1,54 +1,61 @@
-[[PublishSubscribeChannel-PublishSubscribeChannel]]
 = Publish Subscribe Channel
+:tabs-sync-option:
 
 Camel supports the
-http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish
-Subscribe Channel] from the
-xref:enterprise-integration-patterns.adoc[EIP patterns] using for
-example the following components:
+http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish Subscribe Channel]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
 
-* xref:components::jms-component.adoc[JMS] for working with JMS Topics for high performance,
-clustering and load balancing
-* xref:components::xmpp-component.adoc[XMPP] when using rooms for group communication
-* xref:components::seda-component.adoc[SEDA] for working with SEDA in the same
-xref:latest@manual:ROOT:camelcontext.adoc[CamelContext] which can work in pub-sub, but
-allowing multiple consumers.
-* xref:components::vm-component.adoc[VM] as SEDA but for intra-JVM.
+How can the sender broadcast an event to all interested receivers?
 
 image::eip/PublishSubscribeSolution.gif[image]
 
-[[PublishSubscribeChannel-Samples]]
-== Samples
+Send the event on a Publish-Subscribe Channel, which delivers a copy of a particular event to each receiver.
 
-Another option is to explicitly list the publish-subscribe relationship
-in your routing logic; this keeps the producer and consumer decoupled
-but lets you control the fine grained routing configuration using the
-xref:latest@manual:ROOT:dsl.adoc[DSL] or xref:latest@manual:ROOT:xml-configuration.adoc[Xml Configuration].
+The Publish-Subscribe Channel is supported in Camel by messaging based xref:ROOT:index.adoc[Components], such as:
 
-In Java code:
+* xref:ROOT:amqp-component.adoc[AMQP] for working with AMQP Queues
+* xref:ROOT:jms-component.adoc[ActiveMQ], or xref:ROOT:jms-component.adoc[JMS] for working with JMS Queues
+* xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
+* xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
 
+There are also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
+
+TIP: See also the related xref:point-to-point-channel.adoc[Point to Point Channel] EIP
+
+== Example
+
+The following example demonstrates publish sbuscriber messaging using
+the xref:ROOT:jms-component.adoc[JMS] component with JMS topics:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:a")
-    .multicast()
-      .to("direct:b")
-      .to("direct:c")
-      .to("direct:d")
-    .end() // end multicast
+from("direct:start")
+    .to("jms:topic:cheese");
+
+from("jms:topic:cheese")
+    .to("bean:foo");
+
+from("jms:topic:cheese")
+    .to("bean:bar");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
+<routes>
     <route>
-        <from uri="direct:a"/>
-        <multicast>
-            <to uri="direct:b"/>
-            <to uri="direct:c"/>
-            <to uri="direct:d"/>
-        </multicast>
+        <from uri="direct:start"/>
+        <to uri="jms:queue:foo"/>
     </route>
-</camelContext>
+    <route>
+        <from uri="jms:queue:foo"/>
+        <to uri="bean:foo"/>
+    </route>
+</routes>
 ----
+====

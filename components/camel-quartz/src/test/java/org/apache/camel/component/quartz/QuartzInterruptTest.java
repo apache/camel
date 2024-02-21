@@ -43,6 +43,7 @@ public class QuartzInterruptTest extends BaseQuartzTest {
                 quartz.setInterruptJobsOnShutdown(true);
 
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=100").routeId("myRoute")
+                        .delay(constant(1000))
                         .to("mock:result");
             }
         };

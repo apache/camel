@@ -16,27 +16,41 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
 
-public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(JmsInOnlyDisableTimeToLiveTest.class);
 
-    private String urlTimeout = "activemq:queue.in?timeToLive=2000";
-    private String urlTimeToLiveDisabled = "activemq:queue.in?timeToLive=2000&disableTimeToLive=true";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+    private final String urlTimeout = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000";
+    private final String urlTimeToLiveDisabled
+            = "activemq:JmsInOnlyDisableTimeToLiveTest.in?timeToLive=2000&disableTimeToLive=true";
+    private CountDownLatch messageWasExpiredCountDownLatch = new CountDownLatch(2);
 
     @Test
     public void testInOnlyExpired() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOnlyDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("World 1");
 
@@ -44,24 +58,22 @@ public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
         // and that the disableTimeToLive is defaulting to false
         template.sendBody("direct:timeout", "World 1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
-        Thread.sleep(2500);
+        messageWasExpiredCountDownLatch.await(2000, TimeUnit.MILLISECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
         cool.someBusinessLogic();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testInOnlyDisabledTimeToLive() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOnlyDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("World 2");
 
@@ -71,31 +83,28 @@ public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
         //      by the CoolBean
         template.sendBody("direct:disable", "World 2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
-        Thread.sleep(2500);
+        messageWasExpiredCountDownLatch.await(2000, TimeUnit.MILLISECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedBodiesReceived("Hello World 2");
 
         cool.someBusinessLogic();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:timeout")
                         .to(urlTimeout)
                         .to("mock:result");
@@ -104,42 +113,22 @@ public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
                         .to(urlTimeToLiveDisabled)
                         .to("mock:result");
 
-                from("activemq:queue.out")
+                from("activemq:JmsInOnlyDisableTimeToLiveTest.out")
                         .to("mock:end");
             }
         };
     }
 
-    public static class MyCoolBean {
-        private int count;
-        private ConsumerTemplate consumer;
-        private ProducerTemplate producer;
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
 
-        public void setConsumer(ConsumerTemplate consumer) {
-            this.consumer = consumer;
-        }
-
-        public void setProducer(ProducerTemplate producer) {
-            this.producer = producer;
-        }
-
-        public void someBusinessLogic() {
-            // loop to empty queue
-            while (true) {
-                // receive the message from the queue, wait at most 2 sec
-                String msg = consumer.receiveBody("activemq:queue.in", 2000, String.class);
-                if (msg == null) {
-                    // no more messages in queue
-                    break;
-                }
-
-                // do something with body
-                msg = "Hello " + msg;
-
-                // send it to the next queue
-                producer.sendBodyAndHeader("activemq:queue.out", msg, "number", count++);
-            }
-        }
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
 }

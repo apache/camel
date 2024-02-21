@@ -16,15 +16,15 @@
  */
 package org.apache.camel.dsl.yaml.common.exception;
 
+import java.util.Optional;
+
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
 
-public class UnsupportedFieldException extends IllegalArgumentException {
+public class UnsupportedFieldException extends MarkedYamlEngineException {
 
     public UnsupportedFieldException(Node node, String field) {
-        super("Unsupported field (" + field + ") for node: " + node);
+        super(null, Optional.empty(), "Unsupported field: " + field, node.getStartMark());
     }
 
-    public UnsupportedFieldException(String field, String message) {
-        super("Unsupported field (" + field + "): " + message);
-    }
 }

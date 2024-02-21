@@ -20,9 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.awaitility.Awaitility.await;
 
 public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAggregationTestSupport {
 
@@ -36,22 +37,22 @@ public class JdbcAggregateNotLostRemovedWhenConfirmedTest extends AbstractJdbcAg
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         String exchangeId = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
 
-        // the exchange should NOT be in the completed repo as it was confirmed
-        Exchange bf = repo.recover(context, exchangeId);
-
-        // assert the exchange was deleted
-        assertNull(bf);
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            // the exchange should NOT be in the completed repo as it was confirmed
+            Exchange bf = repo.recover(context, exchangeId);
+            return bf == null;
+        });
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)

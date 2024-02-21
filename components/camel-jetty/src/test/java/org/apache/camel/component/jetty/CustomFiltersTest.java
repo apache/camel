@@ -17,28 +17,29 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +59,7 @@ public class CustomFiltersTest extends BaseJettyTest {
         }
 
         @Override
-        public void init(FilterConfig filterConfig) throws ServletException {
+        public void init(FilterConfig filterConfig) {
             keyWord = filterConfig.getInitParameter("keyWord");
         }
 
@@ -69,23 +70,21 @@ public class CustomFiltersTest extends BaseJettyTest {
     }
 
     private void sendRequestAndVerify(String url) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-
         HttpPost httppost = new HttpPost(url);
         httppost.setEntity(new StringEntity("This is a test"));
 
-        HttpResponse response = client.execute(httppost);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
 
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-        assertEquals("This is a test response", responseString, "Get a wrong result");
-        assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals("This is a test response", responseString, "Get a wrong result");
+            assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
 
-        // just make sure the KeyWord header is set
-        assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");
-
-        client.close();
+            // just make sure the KeyWord header is set
+            assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");
+        }
     }
 
     @Test
@@ -94,21 +93,21 @@ public class CustomFiltersTest extends BaseJettyTest {
     }
 
     @BindToRegistry("myFilters")
-    public List<Filter> loadFilter() throws Exception {
+    public List<Filter> loadFilter() {
         List<Filter> filters = new ArrayList<>();
         filters.add(new MyTestFilter());
         return filters;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 // Test the filter list options
                 from("jetty://http://localhost:{{port}}/testFilters?filters=myFilters&filterInit.keyWord=KEY")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Message in = exchange.getIn();
                                 String request = in.getBody(String.class);
                                 // The other form date can be get from the message

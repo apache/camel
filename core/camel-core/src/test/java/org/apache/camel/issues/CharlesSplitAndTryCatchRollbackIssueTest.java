@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport {
 
@@ -71,15 +71,14 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         ile.expectedMessageCount(0);
         exception.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "A,B,Kaboom,C");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 2."));
-            RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
-            assertTrue(re.getMessage().startsWith("Intended rollback"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "A,B,Kaboom,C"),
+                "Should thrown an exception");
+
+        CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 2."));
+        RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
+        assertTrue(re.getMessage().startsWith("Intended rollback"));
 
         assertMockEndpointsSatisfied();
     }
@@ -94,15 +93,14 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         ile.expectedMessageCount(1);
         exception.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "A,Forced,B,Kaboom,C");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 3."));
-            RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
-            assertTrue(re.getMessage().startsWith("Intended rollback"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "A,Forced,B,Kaboom,C"),
+                "Should thrown an exception");
+
+        CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 3."));
+        RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
+        assertTrue(re.getMessage().startsWith("Intended rollback"));
 
         assertMockEndpointsSatisfied();
     }

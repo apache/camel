@@ -24,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.sshd.client.SshClient;
 
+import static org.apache.camel.component.ssh.SshUtils.*;
+
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
     private SshClient client;
@@ -35,7 +37,13 @@ public class SshProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        client = SshClient.setUpDefaultClient();
+        if (this.endpoint.getConfiguration() == null || this.endpoint.getConfiguration().getClientBuilder() == null) {
+            client = SshClient.setUpDefaultClient();
+        } else {
+            client = this.endpoint.getConfiguration().getClientBuilder().build(true);
+        }
+        SshConfiguration configuration = endpoint.getConfiguration();
+        configureAlgorithms(configuration, client);
         client.start();
 
         super.doStart();
@@ -54,7 +62,7 @@ public class SshProducer extends DefaultProducer {
     @Override
     public boolean isSingleton() {
         // SshClient is not thread-safe to be shared
-        return true;
+        return false;
     }
 
     @Override
@@ -73,8 +81,8 @@ public class SshProducer extends DefaultProducer {
             }
             SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);
             exchange.getOut().setBody(result.getStdout());
-            exchange.getOut().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
-            exchange.getOut().setHeader(SshResult.STDERR, result.getStderr());
+            exchange.getOut().setHeader(SshConstants.EXIT_VALUE, result.getExitValue());
+            exchange.getOut().setHeader(SshConstants.STDERR, result.getStderr());
         } catch (Exception e) {
             throw new CamelExchangeException("Cannot execute command: " + command, exchange, e);
         }

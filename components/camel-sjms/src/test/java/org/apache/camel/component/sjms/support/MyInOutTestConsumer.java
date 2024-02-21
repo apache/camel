@@ -18,17 +18,17 @@ package org.apache.camel.component.sjms.support;
 
 import java.security.SecureRandom;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class MyInOutTestConsumer implements MessageListener {
     private MessageProducer producer;
 
     static {
-        clientQueueName = "client.messages";
+        clientQueueName = "client.messages.MyInOutTestConsumer";
         ackMode = Session.AUTO_ACKNOWLEDGE;
     }
 
@@ -105,7 +105,7 @@ public class MyInOutTestConsumer implements MessageListener {
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
                 messageText = textMessage.getText();
-                LOG.info("messageText = " + messageText);
+                LOG.info("messageText = {}", messageText);
             }
         } catch (JMSException e) {
             //Handle the exception appropriately

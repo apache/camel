@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
     @Test
-    void testDisruptorVmInOutChainedTimeout() throws Exception {
+    void testDisruptorVmInOutChainedTimeout() {
         StopWatch watch = new StopWatch();
 
         try {

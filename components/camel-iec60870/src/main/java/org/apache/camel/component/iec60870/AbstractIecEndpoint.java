@@ -71,8 +71,8 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
 
     private final AtomicReference<Handle> connectionHandle = new AtomicReference<>();
 
-    public AbstractIecEndpoint(final String uri, final DefaultComponent component, final T connection,
-                               final ObjectAddress address) {
+    protected AbstractIecEndpoint(final String uri, final DefaultComponent component, final T connection,
+                                  final ObjectAddress address) {
         super(uri, component);
 
         this.connection = requireNonNull(connection);

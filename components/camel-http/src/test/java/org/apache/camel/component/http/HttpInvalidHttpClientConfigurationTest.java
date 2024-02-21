@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
 
+    private FailedToCreateRouteException exception;
+
     @BeforeEach
     @Override
     public void setUp() throws Exception {
@@ -41,18 +43,18 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
             super.setUp();
             fail("Should have thrown ResolveEndpointFailedException");
         } catch (FailedToCreateRouteException e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().endsWith("Unknown parameters=[{xxx=true}]"));
+            exception = e;
         }
     }
 
     @Test
-    public void testInvalidHostConfiguration() throws Exception {
-        // dummy
+    public void testInvalidHostConfiguration() {
+        ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, exception.getCause());
+        assertTrue(cause.getMessage().endsWith("Unknown parameters=[{xxx=true}]"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(Exchange.HTTP_METHOD, POST).to("http://www.google.com?httpClient.xxx=true");

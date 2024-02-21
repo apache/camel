@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
@@ -42,8 +41,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
 
-    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
-                              GenericFileProcessStrategy processStrategy) {
+    protected RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
+                                 GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
@@ -95,6 +94,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             loggedInWarning = false;
         }
 
+        // we are logged in so lets mark the consumer as ready
+        forceConsumerAsReady();
+
         return true;
     }
 
@@ -118,16 +120,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected boolean processExchange(Exchange exchange) {
-        // mark the exchange to be processed synchronously as the ftp client is
-        // not thread safe
-        // and we must execute the callbacks in the same thread as this consumer
-        exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
-
         // defer disconnect til the UoW is complete - but only the last exchange
         // from the batch should do that
-        boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, true, Boolean.class);
+        boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, true, Boolean.class);
         if (isLast && getEndpoint().isDisconnect()) {
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     LOG.trace("processExchange disconnect from: {}", getEndpoint());
@@ -191,10 +188,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 }
                 getOperations().disconnect();
             }
-        } catch (GenericFileOperationFailedException e) {
-            // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                    remoteServer(), e.getMessage());
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
         }
     }
 
@@ -208,14 +206,15 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 LOG.debug("Force disconnecting from: {}", remoteServer());
             }
             getOperations().forceDisconnect();
-        } catch (GenericFileOperationFailedException e) {
-            // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                    remoteServer(), e.getMessage());
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
         }
     }
 
-    protected void connectIfNecessary() throws IOException {
+    protected void connectIfNecessary() {
         // We need to send a noop first to check if the connection is still open
         boolean isConnected = false;
         try {
@@ -232,14 +231,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 LOG.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
-            if (loggedIn) {
+            if (loggedIn && LOG.isDebugEnabled()) {
                 LOG.debug("Connected and logged in to: {}", remoteServer());
             }
         }
     }
 
     /**
-     * Returns human readable server information for logging purpose
+     * Returns human-readable server information for logging purpose
      */
     protected String remoteServer() {
         return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();

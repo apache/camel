@@ -1,0 +1,56 @@
+= Micrometer Prometheus Component
+:doctitle: Micrometer Prometheus
+:shortname: micrometer-prometheus
+:artifactid: camel-micrometer-prometheus
+:description: Camel Micrometer Prometheus for Camel Main
+:since: 4.3
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The camel-micrometer-prometheus is used for running Camel standalone (Camel Main),
+and to integrate with the Micrometer Prometheus Registry.
+
+== Auto-detection from classpath
+
+To use this implementation all you need to do is to add the `camel-micrometer-prometheus` dependency to the classpath,
+and turn on metrics in `application.properties` such as:
+
+[source,properties]
+----
+# enable HTTP server with metrics
+camel.server.enabled=true
+camel.server.metricsEnabled=true
+
+# turn on micrometer metrics
+camel.metrics.enabled=true
+# include more camel details
+camel.metrics.enableMessageHistory=true
+# include additional out-of-the-box micrometer metrics for cpu, jvm and used file descriptors
+camel.metrics.binders=processor,jvm-info,file-descriptor
+----
+
+== List of known binders from Micrometer
+
+The following binders can be configured with `camel.metrics.binders` that comes out of the box from Micrometer:
+
+|====
+|Binder Name | Description
+
+| class-loader | JVM class loading metrics
+| commons-object-pool2 | Apache Commons Pool 2.x metrics
+| file-descriptor | File descriptor metrics gathered by the JVM
+| hystrix-metrics-binder | Hystrix Circuit Breaker metrics
+| jvm-compilation | JVM compilation metrics
+| jvm-gc | Garbage collection and GC pauses
+| jvm-heap-pressure | Provides methods to access measurements of low pool memory and heavy GC overhead
+| jvm-info | JVM information
+| jvm-memory | Utilization of various memory and buffer pools.
+| jvm-thread | JVM threads statistics
+| log4j2 | Apache Log4j 2 statistics
+| logback | Logback logger statistics
+| processor | CPU processing statistics
+| uptime | Uptime statistics
+
+|====

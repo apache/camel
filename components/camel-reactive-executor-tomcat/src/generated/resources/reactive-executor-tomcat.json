@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "reactive-executor-tomcat",
+    "title": "Reactive Executor Tomcat",
+    "description": "Reactive Executor for camel-core using Apache Tomcat",
+    "deprecated": false,
+    "firstVersion": "3.17.0",
+    "label": "reactive",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-reactive-executor-tomcat",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

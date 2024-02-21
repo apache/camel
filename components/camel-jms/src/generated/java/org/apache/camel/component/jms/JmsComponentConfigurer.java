@@ -70,7 +70,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "concurrentConsumers": getOrCreateConfiguration(target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jms.JmsConfiguration.class, value)); return true;
         case "connectionfactory":
-        case "connectionFactory": getOrCreateConfiguration(target).setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionFactory": getOrCreateConfiguration(target).setConnectionFactory(property(camelContext, jakarta.jms.ConnectionFactory.class, value)); return true;
         case "consumertype":
         case "consumerType": getOrCreateConfiguration(target).setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "correlationproperty":
@@ -102,7 +102,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "errorhandlerlogginglevel":
         case "errorHandlerLoggingLevel": getOrCreateConfiguration(target).setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "exceptionlistener":
-        case "exceptionListener": getOrCreateConfiguration(target).setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "exceptionListener": getOrCreateConfiguration(target).setExceptionListener(property(camelContext, jakarta.jms.ExceptionListener.class, value)); return true;
         case "explicitqosenabled":
         case "explicitQosEnabled": getOrCreateConfiguration(target).setExplicitQosEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "exposelistenersession":
@@ -119,6 +119,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": getOrCreateConfiguration(target).setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": getOrCreateConfiguration(target).setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": target.setIncludeCorrelationIDAsBytes(property(camelContext, boolean.class, value)); return true;
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": getOrCreateConfiguration(target).setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
@@ -163,6 +165,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": getOrCreateConfiguration(target).setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": getOrCreateConfiguration(target).setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytoconsumertype":
+        case "replyToConsumerType": getOrCreateConfiguration(target).setReplyToConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": getOrCreateConfiguration(target).setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytodestinationselectorname":
@@ -266,7 +270,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "concurrentConsumers": return int.class;
         case "configuration": return org.apache.camel.component.jms.JmsConfiguration.class;
         case "connectionfactory":
-        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionFactory": return jakarta.jms.ConnectionFactory.class;
         case "consumertype":
         case "consumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "correlationproperty":
@@ -298,7 +302,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "errorhandlerlogginglevel":
         case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "exceptionlistener":
-        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exceptionListener": return jakarta.jms.ExceptionListener.class;
         case "explicitqosenabled":
         case "explicitQosEnabled": return java.lang.Boolean.class;
         case "exposelistenersession":
@@ -315,6 +319,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": return int.class;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return boolean.class;
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": return boolean.class;
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": return boolean.class;
         case "jmskeyformatstrategy":
@@ -359,6 +365,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": return java.lang.String.class;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return int.class;
+        case "replytoconsumertype":
+        case "replyToConsumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytodestinationselectorname":
@@ -512,6 +520,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "idleTaskExecutionLimit": return getOrCreateConfiguration(target).getIdleTaskExecutionLimit();
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return getOrCreateConfiguration(target).isIncludeAllJMSXProperties();
+        case "includecorrelationidasbytes":
+        case "includeCorrelationIDAsBytes": return target.isIncludeCorrelationIDAsBytes();
         case "includesentjmsmessageid":
         case "includeSentJMSMessageID": return getOrCreateConfiguration(target).isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":
@@ -556,6 +566,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replyToCacheLevelName": return getOrCreateConfiguration(target).getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return getOrCreateConfiguration(target).getReplyToConcurrentConsumers();
+        case "replytoconsumertype":
+        case "replyToConsumerType": return getOrCreateConfiguration(target).getReplyToConsumerType();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return getOrCreateConfiguration(target).isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":

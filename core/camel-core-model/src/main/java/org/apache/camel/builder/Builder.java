@@ -21,11 +21,15 @@ import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.VariableExpression;
+import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -43,48 +47,6 @@ public final class Builder {
      * Utility classes should not have a public constructor.
      */
     private Builder() {
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param      beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @return                   the builder
-     * @deprecated               use {@link #method(Object)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(final Object beanOrBeanRef) {
-        return method(beanOrBeanRef, null);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param      beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @param      method        the method name
-     * @return                   the builder
-     * @deprecated               use {@link #method(Class, String)} (Object, String)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(Object beanOrBeanRef, String method) {
-        return method(beanOrBeanRef, method);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder
-     *
-     * @param      beanType the bean class which will be invoked
-     * @param      method   name of method to invoke
-     * @return              the builder
-     * @deprecated          use {@link #method(Class, String)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(Class<?> beanType, String method) {
-        return method(beanType, method);
     }
 
     /**
@@ -146,6 +108,30 @@ public final class Builder {
     /**
      * Returns a constant expression
      */
+    public static ValueBuilder constant(String value, Class<?> resultType) {
+        ConstantExpression exp = new ConstantExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a constant expression
+     */
+    public static ValueBuilder constant(Object value, boolean trim) {
+        Expression exp;
+        if (value instanceof String) {
+            ConstantExpression ce = new ConstantExpression((String) value);
+            ce.setTrim(trim ? "true" : "false");
+            exp = ce;
+        } else {
+            exp = ExpressionBuilder.constantExpression(value);
+        }
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a constant expression
+     */
     public static ValueBuilder language(String language, String expression) {
         Expression exp = new LanguageExpression(language, expression);
         return new ValueBuilder(exp);
@@ -188,6 +174,7 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
+    @Deprecated
     public static ValueBuilder joor(String value) {
         JoorExpression exp = new JoorExpression(value);
         return new ValueBuilder(exp);
@@ -196,8 +183,43 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
+    @Deprecated
     public static ValueBuilder joor(String value, Class<?> resultType) {
         JoorExpression exp = new JoorExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a Java expression value builder
+     */
+    public static ValueBuilder java(String value) {
+        JavaExpression exp = new JavaExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a Java expression value builder
+     */
+    public static ValueBuilder java(String value, Class<?> resultType) {
+        JavaExpression exp = new JavaExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JQ expression value builder
+     */
+    public static ValueBuilder jq(String value) {
+        JqExpression exp = new JqExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JQ expression value builder
+     */
+    public static ValueBuilder jq(String value, Class<?> resultType) {
+        JqExpression exp = new JqExpression(value);
         exp.setResultType(resultType);
         return new ValueBuilder(exp);
     }
@@ -256,6 +278,14 @@ public final class Builder {
     }
 
     /**
+     * Returns a predicate and value builder for variable
+     */
+    public static ValueBuilder variable(String name) {
+        Expression exp = new VariableExpression(name);
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns an expression for the given system property
      */
     public static ValueBuilder systemProperty(final String name) {
@@ -302,4 +332,20 @@ public final class Builder {
         return new ValueBuilder(newExp);
     }
 
+    /**
+     * Wasm TODO.
+     */
+    public static ValueBuilder wasm(String value) {
+        WasmExpression exp = new WasmExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Wasm TODO.
+     */
+    public static ValueBuilder wasm(String value, Class<?> resultType) {
+        WasmExpression exp = new WasmExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
 }

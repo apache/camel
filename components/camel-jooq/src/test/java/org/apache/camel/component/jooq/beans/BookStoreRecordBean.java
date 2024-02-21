@@ -32,7 +32,7 @@ public class BookStoreRecordBean {
         return new BookStoreRecord(name);
     }
 
-    public ResultQuery select() {
+    public ResultQuery<BookStoreRecord> select() {
         return DSL.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(name));
     }
 

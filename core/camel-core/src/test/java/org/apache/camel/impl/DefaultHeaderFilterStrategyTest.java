@@ -35,16 +35,16 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
         comp.setAllowNullValues(true);
-        assertEquals(true, comp.isAllowNullValues());
+        assertTrue(comp.isAllowNullValues());
 
         comp.setLowerCase(true);
-        assertEquals(true, comp.isLowerCase());
+        assertTrue(comp.isLowerCase());
 
         comp.setCaseInsensitive(true);
-        assertEquals(true, comp.isCaseInsensitive());
+        assertTrue(comp.isCaseInsensitive());
 
         comp.setFilterOnMatch(false);
-        assertEquals(false, comp.isFilterOnMatch());
+        assertFalse(comp.isFilterOnMatch());
     }
 
     @Test

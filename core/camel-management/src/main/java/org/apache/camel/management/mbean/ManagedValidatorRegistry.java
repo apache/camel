@@ -30,25 +30,19 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedValidatorRegistryMBean;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 
 @ManagedResource(description = "Managed ValidatorRegistry")
 public class ManagedValidatorRegistry extends ManagedService implements ManagedValidatorRegistryMBean {
-    private final ValidatorRegistry validatorRegistry;
+    private final ValidatorRegistry<?> validatorRegistry;
 
-    public ManagedValidatorRegistry(CamelContext context, ValidatorRegistry validatorRegistry) {
+    public ManagedValidatorRegistry(CamelContext context, ValidatorRegistry<?> validatorRegistry) {
         super(context, validatorRegistry);
         this.validatorRegistry = validatorRegistry;
     }
 
-    @Override
-    public void init(ManagementStrategy strategy) {
-        super.init(strategy);
-    }
-
-    public ValidatorRegistry getValidatorRegistry() {
+    public ValidatorRegistry<?> getValidatorRegistry() {
         return validatorRegistry;
     }
 
@@ -83,7 +77,6 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public TabularData listValidators() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listValidatorsTabularType());

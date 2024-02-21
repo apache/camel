@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpTwoEndpointTest extends BaseJettyTest {
 
     @Test
-    public void testTwoEndpoints() throws Exception {
+    public void testTwoEndpoints() {
         Exchange a = template.request("direct:a", null);
         assertNotNull(a);
 
@@ -44,16 +44,16 @@ public class HttpTwoEndpointTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("http://localhost:{{port}}/myapp?foo=123&bar=cheese");
 
                 from("direct:b").to("http://localhost:{{port}}/myapp?foo=456&bar=cake");
 
                 from("jetty://http://localhost:{{port}}/myapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         int foo = exchange.getIn().getHeader("foo", Integer.class);
                         String bar = exchange.getIn().getHeader("bar", String.class);
 

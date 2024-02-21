@@ -38,6 +38,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Is debugger enabled")
     boolean isEnabled();
 
+    @ManagedAttribute(description = "Is debugger standby")
+    boolean isStandby();
+
     @ManagedOperation(description = "Enable the debugger")
     void enableDebugger();
 
@@ -83,6 +86,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Starts single step debugging from the suspended breakpoint at the given node id")
     void stepBreakpoint(String nodeId);
 
+    @ManagedAttribute(description = "Suspended mode will suspend all exchanges until a remote debugger is attached")
+    boolean isSuspendedMode();
+
     @ManagedAttribute(description = "Whether currently in step mode")
     boolean isSingleStepMode();
 
@@ -90,10 +96,10 @@ public interface ManagedBacklogDebuggerMBean {
     void step();
 
     @ManagedOperation(description = "Return the node ids which has breakpoints")
-    Set<String> getBreakpoints();
+    Set<String> breakpoints();
 
     @ManagedOperation(description = "Return the node ids which is currently suspended")
-    Set<String> getSuspendedBreakpointNodeIds();
+    Set<String> suspendedBreakpointNodeIds();
 
     @ManagedOperation(description = "Disables a breakpoint")
     void disableBreakpoint(String nodeId);
@@ -107,16 +113,16 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     long getFallbackTimeout();
 
-    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel")
     void setFallbackTimeout(long fallbackTimeout);
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     boolean isBodyIncludeStreams();
 
-    @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
+    @ManagedAttribute(description = "Whether to include stream based message body in the trace message")
     void setBodyIncludeStreams(boolean bodyIncludeStreams);
 
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
@@ -125,8 +131,27 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
-    @ManagedOperation(description = "Dumps the messages in xml format from the suspended breakpoint at the given node")
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    boolean isIncludeExchangeProperties();
+
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    boolean isIncludeExchangeVariables();
+
+    @ManagedAttribute(description = "Whether to include exchange variables in the trace message.")
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
+
+    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
     String dumpTracedMessagesAsXml(String nodeId);
+
+    @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
+    @Deprecated
+    String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
+
+    @ManagedOperation(description = "Dumps the messages in JSon format from the suspended breakpoint at the given node.")
+    String dumpTracedMessagesAsJSon(String nodeId);
 
     @ManagedAttribute(description = "Number of total debugged messages")
     long getDebugCounter();
@@ -134,7 +159,30 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resets the debug counter")
     void resetDebugCounter();
 
-    @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
+    @ManagedOperation(description = "Used for validating if a given breakpoint condition (predicate) is valid or not")
     String validateConditionalBreakpoint(String language, String predicate);
 
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id")
+    Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType);
+
+    @ManagedOperation(description = "Evaluates the expression at a given breakpoint node id and returns the result as String")
+    String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression);
+
+    @ManagedOperation(description = "Updates/adds the exchange property (uses same type as old exchange property  value) on the suspended breakpoint at the given node id")
+    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value);
+
+    @ManagedOperation(description = "Removes the exchange property on the suspended breakpoint at the given node id")
+    void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName);
+
+    @ManagedOperation(description = "Updates/adds the exchange property (with a new type) on the suspended breakpoint at the given node id")
+    void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type);
+
+    @ManagedOperation(description = "Returns the message history at the given node id as XML")
+    String messageHistoryOnBreakpointAsXml(String nodeId);
+
+    @ManagedOperation(description = "Attach the debugger")
+    void attach();
+
+    @ManagedOperation(description = "Detach the debugger")
+    void detach();
 }

@@ -22,13 +22,16 @@ import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMXTXUseOriginalBodyTest extends AbstractSpringJMSTestSupport {
 
     @EndpointInject("mock:end")
     protected MockEndpoint endpoint;
@@ -62,7 +65,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
 
         start.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +77,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
 
         broken.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class FooBean {
@@ -87,7 +90,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
     public static class TestRoutes extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             onException(Exception.class)
                     .handled(true)
                     .useOriginalMessage()

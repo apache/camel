@@ -17,11 +17,13 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.List;
+import java.util.Map;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -33,16 +35,24 @@ import org.apache.camel.support.CamelContextHelper;
 public class VertxPlatformHttpRouter implements Router {
     public static final String PLATFORM_HTTP_ROUTER_NAME = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
 
+    private final VertxPlatformHttpServer server;
     private final Vertx vertx;
     private final Router delegate;
+    private AllowForwardHeaders allowForward;
 
-    public VertxPlatformHttpRouter(Vertx vertx, Router delegate) {
+    public VertxPlatformHttpRouter(VertxPlatformHttpServer server, Vertx vertx, Router delegate) {
+        this.server = server;
         this.vertx = vertx;
         this.delegate = delegate;
+        this.allowForward = AllowForwardHeaders.NONE;
     }
 
     public Vertx vertx() {
         return vertx;
+    }
+
+    public VertxPlatformHttpServer getServer() {
+        return server;
     }
 
     @Override
@@ -216,14 +226,13 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
-    public Router mountSubRouter(String s, Router router) {
-        return delegate.mountSubRouter(s, router);
-    }
+    public Route mountSubRouter(String mountPoint, Router subRouter) {
+        if (mountPoint.endsWith("*")) {
+            throw new IllegalArgumentException("Don't include * when mounting a sub router");
+        }
 
-    @Override
-    @Deprecated
-    public Router exceptionHandler(Handler<Throwable> handler) {
-        return delegate.exceptionHandler(handler);
+        return route(mountPoint + "*")
+                .subRouter(subRouter);
     }
 
     @Override
@@ -247,8 +256,24 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
+    public Router allowForward(AllowForwardHeaders allowForwardHeaders) {
+        this.allowForward = allowForwardHeaders;
+        return this;
+    }
+
+    @Override
     public void handle(HttpServerRequest request) {
         delegate.handle(request);
+    }
+
+    @Override
+    public Router putMetadata(String key, Object value) {
+        return delegate.putMetadata(key, value);
+    }
+
+    @Override
+    public Map<String, Object> metadata() {
+        return delegate.metadata();
     }
 
     public Handler<RoutingContext> bodyHandler() {

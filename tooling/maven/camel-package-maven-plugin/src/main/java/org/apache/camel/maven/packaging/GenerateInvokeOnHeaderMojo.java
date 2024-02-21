@@ -18,12 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,6 +28,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
+import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -42,12 +38,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
-import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 /**
- * Abstract class for @InvokeOnHeader factory generator.
+ * Factory for generating code for @InvokeOnHeader.
  */
 @Mojo(name = "generate-invoke-on-header", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
       requiresDependencyCollection = ResolutionScope.COMPILE,
@@ -124,15 +119,9 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
         }
 
-        Path output = Paths.get(project.getBuild().getOutputDirectory());
-        Index index;
-        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-            index = new IndexReader(is).read();
-        } catch (NoSuchFileException e) {
-            // ignore
+        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
+        if (index == null) {
             return;
-        } catch (IOException e) {
-            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
         }
 
         Map<String, Set<InvokeOnHeaderModel>> classes = new HashMap<>();
@@ -152,7 +141,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             } else {
                 model.setReturnType(mi.returnType().toString());
             }
-            for (Type type : mi.parameters()) {
+            for (Type type : mi.parameterTypes()) {
                 String arg = type.name().toString();
                 model.addArgs(arg);
             }

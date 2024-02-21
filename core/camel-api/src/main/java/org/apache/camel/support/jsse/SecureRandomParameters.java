@@ -44,7 +44,7 @@ public class SecureRandomParameters extends JsseParameters {
 
     /**
      * Returns a {@code SecureRandom} instance initialized using the configured algorithm and provider, if specified.
-     * 
+     *
      * @return                          the configured instance
      *
      * @throws GeneralSecurityException if the algorithm is not implemented by any registered provider or if the
@@ -62,7 +62,7 @@ public class SecureRandomParameters extends JsseParameters {
         }
 
         LOG.debug("SecureRandom [{}] is using provider [{}] and algorithm [{}].",
-                new Object[] { secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm() });
+                secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm());
 
         return secureRandom;
     }
@@ -96,10 +96,10 @@ public class SecureRandomParameters extends JsseParameters {
     /**
      * Sets the optional provider identifier for the {@link SecureRandom} factory method used to create the
      * {@link SecureRandom} represented by this object's configuration.
-     * 
+     *
      * @param value the provider identifier or {@code null} to use the highest priority provider implementing the
      *              desired algorithm
-     * 
+     *
      * @see         Security#getProviders()
      */
     public void setProvider(String value) {

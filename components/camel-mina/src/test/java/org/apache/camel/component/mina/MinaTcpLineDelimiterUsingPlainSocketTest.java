@@ -27,7 +27,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -73,12 +73,12 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
-        assertFalse("force-exception".equals(out), "out should not be the same as in when the exchange has failed");
-        assertEquals(out, "java.lang.IllegalArgumentException: Forced exception", "should get the exception here");
+        assertNotEquals("force-exception", out, "out should not be the same as in when the exchange has failed");
+        assertEquals("java.lang.IllegalArgumentException: Forced exception", out, "should get the exception here");
     }
 
     private String sendAndReceive(String input) throws IOException {
-        byte buf[] = new byte[128];
+        byte[] buf = new byte[128];
 
         Socket soc = new Socket();
         soc.connect(new InetSocketAddress("localhost", getPort()));
@@ -125,21 +125,21 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
-                        getPort()))
-                                .process(e -> {
-                                    String in = e.getIn().getBody(String.class);
-                                    if ("force-null-out-body".equals(in)) {
-                                        // forcing a null out body
-                                        e.getMessage().setBody(null);
-                                    } else if ("force-exception".equals(in)) {
-                                        // clear out before throwing exception
-                                        e.getMessage().setBody(null);
-                                        throw new IllegalArgumentException("Forced exception");
-                                    } else {
-                                        e.getMessage().setBody("Hello " + in);
-                                    }
-                                });
+                fromF("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
+                        getPort())
+                        .process(e -> {
+                            String in = e.getIn().getBody(String.class);
+                            if ("force-null-out-body".equals(in)) {
+                                // forcing a null out body
+                                e.getMessage().setBody(null);
+                            } else if ("force-exception".equals(in)) {
+                                // clear out before throwing exception
+                                e.getMessage().setBody(null);
+                                throw new IllegalArgumentException("Forced exception");
+                            } else {
+                                e.getMessage().setBody("Hello " + in);
+                            }
+                        });
             }
         };
     }

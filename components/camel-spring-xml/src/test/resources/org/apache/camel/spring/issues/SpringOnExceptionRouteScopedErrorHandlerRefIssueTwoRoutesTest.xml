@@ -29,6 +29,7 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <errorHandler type="DeadLetterChannel" id="myDLC" deadLetterUri="mock:dead"/>
 

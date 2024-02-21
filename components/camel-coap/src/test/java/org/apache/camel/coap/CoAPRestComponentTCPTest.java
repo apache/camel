@@ -16,13 +16,10 @@
  */
 package org.apache.camel.coap;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
 
 /**
@@ -36,12 +33,9 @@ public class CoAPRestComponentTCPTest extends CoAPRestComponentTestBase {
     }
 
     @Override
-    protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
-        NetworkConfig config = NetworkConfig.createStandardWithoutFile();
-        int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
-        int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
-        int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
-        TcpClientConnector tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+    protected void decorateClient(CoapClient client) {
+        Configuration config = Configuration.createStandardWithoutFile();
+        TcpClientConnector tcpConnector = new TcpClientConnector(config);
         CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
         tcpBuilder.setConnector(tcpConnector);
 

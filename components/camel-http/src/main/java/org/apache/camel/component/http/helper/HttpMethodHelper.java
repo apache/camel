@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -37,9 +38,9 @@ public final class HttpMethodHelper {
     public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        String queryString = exchange.getIn().getHeader(HttpConstants.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
-        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        String uriString = exchange.getIn().getHeader(HttpConstants.HTTP_URI, String.class);
         if (uriString != null) {
             // resolve placeholders in uriString
             try {
@@ -63,7 +64,7 @@ public final class HttpMethodHelper {
             answer = HttpMethods.valueOf(endpoint.getHttpMethod().name());
         } else {
             // compute what method to use either GET or POST (header take precedence)
-            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            HttpMethods m = exchange.getIn().getHeader(HttpConstants.HTTP_METHOD, HttpMethods.class);
             if (m != null) {
                 // always use what end-user provides in a header
                 answer = m;

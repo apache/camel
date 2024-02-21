@@ -16,39 +16,27 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
-import org.apache.camel.component.salesforce.api.TypeReferences;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.InputStreamRequestContent;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
 
@@ -56,79 +44,22 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static final String TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String SERVICES_APEXREST = "/services/apexrest/";
+    private static final String GET_SCHEMA_MINIMUM_VERSION = "40.0";
 
-    protected PayloadFormat format;
-    private ObjectMapper objectMapper;
-    private XStream xStream;
-
-    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version, final PayloadFormat format,
+    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version,
                              final SalesforceSession session,
                              final SalesforceLoginConfig loginConfig) throws SalesforceException {
         super(version, session, httpClient, loginConfig);
-
-        this.format = format;
-
-        // initialize error parsers for JSON and XML
-        this.objectMapper = JsonUtils.createObjectMapper();
-        this.xStream = XStreamUtils.createXStream();
     }
 
     @Override
     protected void doHttpRequest(Request request, ClientResponseCallback callback) {
         // set standard headers for all requests
-        final String contentType = PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;
-        request.header(HttpHeader.ACCEPT, contentType);
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.headers(h -> h.add(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8));
+        request.headers(h -> h.add(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name()));
         // request content type and charset is set by the request entity
 
         super.doHttpRequest(request, callback);
-    }
-
-    @Override
-    protected SalesforceException createRestException(Response response, InputStream responseContent) {
-        // get status code and reason phrase
-        final int statusCode = response.getStatus();
-        String reason = response.getReason();
-        if (reason == null || reason.isEmpty()) {
-            reason = HttpStatus.getMessage(statusCode);
-        }
-        // try parsing response according to format
-        try {
-            if (responseContent != null && responseContent.available() > 0) {
-                final List<String> choices;
-                // return list of choices as error message for 300
-                if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
-                    if (PayloadFormat.JSON.equals(format)) {
-                        choices = objectMapper.readValue(responseContent, TypeReferences.STRING_LIST_TYPE);
-                    } else {
-                        RestChoices restChoices = new RestChoices();
-                        xStream.fromXML(responseContent, restChoices);
-                        choices = restChoices.getUrls();
-                    }
-                    return new SalesforceMultipleChoicesException(reason, statusCode, choices);
-                } else {
-                    final List<RestError> restErrors = readErrorsFrom(responseContent, format, objectMapper, xStream);
-                    if (statusCode == HttpStatus.NOT_FOUND_404) {
-                        return new NoSuchSObjectException(restErrors);
-                    }
-
-                    return new SalesforceException(restErrors, statusCode);
-                }
-            }
-        } catch (IOException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing " + format + " error response body + [" + responseContent + "] : "
-                         + e.getMessage();
-            log.warn(msg, e);
-        } catch (RuntimeException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing " + format + " error response body + [" + responseContent + "] : "
-                         + e.getMessage();
-            log.warn(msg, e);
-        }
-
-        // just report HTTP status info
-        return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent, statusCode);
     }
 
     @Override
@@ -139,8 +70,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(post);
 
         // input stream as entity content
-        post.content(new InputStreamContentProvider(request));
-        post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        post.body(new InputStreamRequestContent(request));
+        post.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -148,6 +79,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void approvals(Map<String, List<String>> headers, final ResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/", headers);
+
+        // authorization
+        setAccessToken(get);
 
         doHttpRequest(get, new DelegatingClientCallback(callback));
     }
@@ -229,8 +163,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(post);
 
         // input stream as entity content
-        post.content(new InputStreamContentProvider(sObject));
-        post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        post.body(new InputStreamRequestContent(sObject));
+        post.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -243,8 +177,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.content(new InputStreamContentProvider(sObject));
-        patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.body(new InputStreamRequestContent(sObject));
+        patch.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -281,9 +215,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         setAccessToken(patch);
 
         // input stream as entity content
-        patch.content(new InputStreamContentProvider(sObject));
+        patch.body(new InputStreamRequestContent(sObject));
         // TODO will the encoding always be UTF-8??
-        patch.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -394,9 +328,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     case "PUT":
                     case "PATCH":
                     case "POST":
-                        request.content(new InputStreamContentProvider(requestDto));
-                        request.header(HttpHeader.CONTENT_TYPE,
-                                PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                        request.body(new InputStreamRequestContent(requestDto));
+                        request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8));
                         break;
                     default:
                         // ignore body for other methods
@@ -407,13 +340,38 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             setAccessToken(request);
 
             doHttpRequest(request, new DelegatingClientCallback(callback));
-        } catch (UnsupportedEncodingException e) {
-            String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
-        } catch (URISyntaxException e) {
+        } catch (UnsupportedEncodingException | URISyntaxException e) {
             String msg = "Unexpected error: " + e.getMessage();
             callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
+    }
+
+    @Override
+    public void getEventSchemaByEventName(
+            String eventName, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
+        validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
+        final Request request;
+        request = getRequest(HttpMethod.GET, sobjectsUrl(eventName) + "/eventSchema" + "?payloadFormat=" + payloadFormat,
+                headers);
+
+        // requires authorization token
+        setAccessToken(request);
+
+        doHttpRequest(request, new DelegatingClientCallback(callback));
+    }
+
+    @Override
+    public void getEventSchemaBySchemaId(
+            String schemaId, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback) {
+        validateMinimumVersion(GET_SCHEMA_MINIMUM_VERSION);
+        final Request request;
+        request = getRequest(HttpMethod.GET, versionUrl() + "event/eventSchema/" + schemaId + "?payloadFormat=" + payloadFormat,
+                headers);
+
+        // requires authorization token
+        setAccessToken(request);
+
+        doHttpRequest(request, new DelegatingClientCallback(callback));
     }
 
     private String apexCallUrl(String apexUrl, Map<String, Object> queryParams)
@@ -440,11 +398,6 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void limits(Map<String, List<String>> headers, final ResponseCallback responseCallback) {
-        if (format != PayloadFormat.JSON) {
-            throw new IllegalArgumentException(
-                    "Using XML format for the Limits API, to use it set the `format` endpoint property to JSON");
-        }
-
         final Request get = getRequest(HttpMethod.GET, versionUrl() + "limits/", headers);
 
         // requires authorization token
@@ -455,6 +408,13 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     private String servicesDataUrl() {
         return instanceUrl + SERVICES_DATA;
+    }
+
+    private void validateMinimumVersion(String minimumVersion) {
+        if (Version.create(version).compareTo(Version.create(minimumVersion)) < 0) {
+            throw new IllegalArgumentException(
+                    "Salesforce API version " + minimumVersion + " or newer is required, version " + version + " was detected");
+        }
     }
 
     private String versionUrl() {
@@ -483,11 +443,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.getHeaders().put(TOKEN_HEADER, TOKEN_PREFIX + accessToken);
+        request.headers(h -> h.add(TOKEN_HEADER, TOKEN_PREFIX + accessToken));
     }
 
     private String urlEncode(String query) throws UnsupportedEncodingException {
-        String encodedQuery = URLEncoder.encode(query, StringUtil.__UTF8);
+        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         // URLEncoder likes to use '+' for spaces
         encodedQuery = encodedQuery.replace("+", "%20");
         return encodedQuery;
@@ -505,5 +465,4 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             callback.onResponse(response, headers, ex);
         }
     }
-
 }

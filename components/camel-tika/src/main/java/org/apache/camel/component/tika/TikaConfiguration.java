@@ -18,6 +18,7 @@ package org.apache.camel.component.tika;
 
 import java.nio.charset.Charset;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,9 +35,9 @@ public class TikaConfiguration {
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
     @UriParam(description = "Tika Parse Output Encoding")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
-    @UriParam(description = "Tika Config")
+    @UriParam(label = "advanced", description = "Tika Config")
     private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
-    @UriParam(description = "Tika Config Url")
+    @UriParam(label = "advanced", description = "Tika Config Url")
     private String tikaConfigUri;
 
     public TikaOperation getOperation() {
@@ -107,7 +108,7 @@ public class TikaConfiguration {
         try {
             this.tikaConfig = new TikaConfig(tikaConfigUri);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

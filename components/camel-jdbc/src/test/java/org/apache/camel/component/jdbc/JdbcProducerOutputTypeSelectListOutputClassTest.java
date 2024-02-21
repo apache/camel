@@ -38,7 +38,7 @@ public class JdbcProducerOutputTypeSelectListOutputClassTest extends AbstractJdb
 
         template.sendBody("direct:start", "select * from customer order by ID");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
         assertNotNull(list);
@@ -56,9 +56,9 @@ public class JdbcProducerOutputTypeSelectListOutputClassTest extends AbstractJdb
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("jdbc:testdb?outputType=SelectList&outputClass=org.apache.camel.component.jdbc.CustomerModel")
                         .to("mock:result");

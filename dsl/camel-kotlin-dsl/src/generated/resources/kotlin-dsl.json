@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "kotlin-dsl",
+    "title": "Kotlin DSL",
+    "description": "Camel DSL with Kotlin",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "dsl",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kotlin-dsl",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

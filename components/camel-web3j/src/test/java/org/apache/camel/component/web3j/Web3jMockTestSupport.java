@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.web3j;
 
+import io.reactivex.Flowable;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.web3j.protocol.Web3j;
-import rx.Subscription;
 
 public class Web3jMockTestSupport extends CamelTestSupport {
 
@@ -43,7 +43,7 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     protected Web3j mockWeb3j;
 
     @Mock
-    protected Subscription subscription;
+    protected Flowable subscription;
 
     @Override
     public boolean isUseAdviceWith() {
@@ -62,17 +62,18 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     }
 
     @BeforeAll
-    public static void startServer() throws Exception {
+    public static void startServer() {
     }
 
     @AfterAll
-    public static void stopServer() throws Exception {
+    public static void stopServer() {
     }
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        super.setUp();
+        try (AutoCloseable closeable = MockitoAnnotations.openMocks(this)) {
+            super.setUp();
+        }
     }
 }

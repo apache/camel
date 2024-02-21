@@ -32,7 +32,7 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
     public void leakNoTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
                 from("netty-http:http://localhost:" + getPort() + "/test")
@@ -54,7 +54,7 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
     public void leakTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
                 from("netty-http:http://localhost:" + getPort() + "/test")

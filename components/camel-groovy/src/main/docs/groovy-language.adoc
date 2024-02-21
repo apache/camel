@@ -1,60 +1,117 @@
-[[groovy-language]]
 = Groovy Language
-:docTitle: Groovy
-:artifactId: camel-groovy
-:description: Evaluate a Groovy script.
+:doctitle: Groovy
+:shortname: groovy
+:artifactid: camel-groovy
+:description: Evaluates a Groovy script.
 :since: 1.3
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
-Camel supports http://groovy.codehaus.org/[Groovy] among other
-Scripting Languages to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration].
+Camel has support for using http://www.groovy-lang.org/[Groovy].
 
-To use a Groovy expression use the following Java code
+For example, you can use Groovy in a xref:manual::predicate.adoc[Predicate]
+with the xref:eips:filter-eip.adoc[Message
+Filter] EIP.
 
 [source,java]
 ---------------------------------------
-... groovy("someGroovyExpression") ...
+groovy("someGroovyExpression")
 ---------------------------------------
-
-For example you could use the *groovy* function to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message Filter] or as an Expression for a
-Recipient List
 
 == Groovy Options
 
-
-
 // language options: START
-The Groovy language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
+== Examples
+
+In the example below, we use a groovy script as predicate in the message filter,
+to determine if any line items are over $100:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+------------------------------------------------------------------------------------------------
+from("queue:foo")
+    .filter(groovy("request.lineItems.any { i -> i.value > 100 }"))
+        .to("queue:bar")
+------------------------------------------------------------------------------------------------
+
+XML DSL::
++
+[source,xml]
+----
+<route>
+    <from uri="queue:foo"/>
+    <filter>
+        <groovy>request.lineItems.any { i -> i.value > 100 }</groovy>
+        <to uri="queue:bar"/>
+    </filter>
+</route>
+----
+
+====
+
+== Groovy Context
+
+Camel will provide exchange information in the Groovy context (just
+a `Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchangeProperties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
 
 
+== How to get the result from multiple statements script
+
+As the Groovy script engine evaluate method just return a `Null` if it runs a
+multiple statements script. Camel now looks up the value of script result
+by using the key of `result` from the value set. If you have multiple
+statements scripts, you need to make sure you set the value of result
+variable as the script return value.
+
+[source,text]
+-------------------------------------------------------------
+bar = "baz";
+# some other statements ...
+# camel take the result value as the script evaluation result
+result = body * 2 + 1
+-------------------------------------------------------------
 
 == Customizing Groovy Shell
 
-Sometimes you may need to use custom `GroovyShell` instance in your
-Groovy expressions. To provide custom `GroovyShell`, add implementation
+For very special use-cases you may need to use a custom `GroovyShell` instance in your
+Groovy expressions. To provide the custom `GroovyShell`, add an implementation
 of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
-interface to your Camel registry. For example after adding the following
-bean to your Spring context...
+interface to the Camel registry.
 
 [source,java]
-----------------------------------------------------------------------
+----
 public class CustomGroovyShellFactory implements GroovyShellFactory {
 
   public GroovyShell createGroovyShell(Exchange exchange) {
@@ -66,95 +123,26 @@ public class CustomGroovyShellFactory implements GroovyShellFactory {
   }
 
 }
-----------------------------------------------------------------------
+----
 
-...Camel will use your custom GroovyShell instance (containing your
+Camel will then use your custom GroovyShell instance (containing your
 custom static imports), instead of the default one.
-
-=== Customizing Groovy class file name
-
-You may rarely in need of customizing generated Groovy class file name for debugging purposes.
-This is also possible by implementing `getFileName` method.
-
-[source,java]
-----------------------------------------------------------------------
-public class CustomGroovyShellFactory implements GroovyShellFactory {
-
-  public GroovyShell createGroovyShell(Exchange exchange) {
-    return new GroovyShell();
-  }
-
-  public String getFileName(Exchange exchange) {
-    return "Foo.groovy";
-  }
-
-}
-----------------------------------------------------------------------
-
-== Example
-
-[source,java]
-------------------------------------------------------------------------------------------------
-// lets route if a line item is over $100
-from("queue:foo").filter(groovy("request.lineItems.any { i -> i.value > 100 }")).to("queue:bar")
-------------------------------------------------------------------------------------------------
-
-And the Spring DSL:
-
-[source,xml]
------------------------------------------------------------------------------
-        <route>
-            <from uri="queue:foo"/>
-            <filter>
-                <groovy>request.lineItems.any { i -> i.value > 100 }</groovy>
-                <to uri="queue:bar"/>
-            </filter>
-        </route>
------------------------------------------------------------------------------
-
-== Additional arguments to ScriptingEngine
-
-*Since Camel 2.8*
-
-You can provide additional arguments to the `ScriptingEngine` using a
-header on the Camel message with the key `CamelScriptArguments`. +
- See this example:
 
 == Loading script from external resource
 
-*Since Camel 2.11*
-
 You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 -------------------------------------------------------------------
 .setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
 -------------------------------------------------------------------
 
-== How to get the result from multiple statements script
-
-*Since Camel 2.14*
-
-As the scripteengine evaluate method just return a Null if it runs a
-multiple statements script. Camel now look up the value of script result
-by using the key of "result" from the value set. If you have multiple
-statements script, you need to make sure you set the value of result
-variable as the script return value.
-
-[source,text]
--------------------------------------------------------------
-bar = "baz";
-# some other statements ...
-# camel take the result value as the script evaluation result
-result = body * 2 + 1
--------------------------------------------------------------
-
 == Dependencies
 
-To use scripting languages in your camel routes you need to add a
+To use scripting languages in your camel routes, you need to add a
 dependency on *camel-groovy*.
 
 If you use Maven you could just add the following to your `pom.xml`,
@@ -170,4 +158,5 @@ the download page for the latest versions).
 </dependency>
 ---------------------------------------
 
-include::camel-spring-boot::page$groovy-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

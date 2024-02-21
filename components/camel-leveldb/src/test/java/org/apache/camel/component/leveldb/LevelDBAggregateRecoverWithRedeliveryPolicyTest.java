@@ -24,11 +24,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTestSupport {
 
     private static Map<SerializerType, AtomicInteger> counters = new ConcurrentHashMap();
@@ -73,33 +77,31 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                // CHECKSTYLE:OFF
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                            .completionSize(5).aggregationRepository(getRepo())
-                            // this is the output from the aggregator
-                            .log("aggregated exchange id ${exchangeId} with ${body}")
-                            .to("mock:aggregated")
-                            // simulate errors the first three times
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    int count = getCounter(getSerializerType()).incrementAndGet();
-                                    if (count <= 3) {
-                                        throw new IllegalArgumentException("Damn");
-                                    }
+                        .completionSize(5).aggregationRepository(getRepo())
+                        // this is the output from the aggregator
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .to("mock:aggregated")
+                        // simulate errors the first three times
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                int count = getCounter(getSerializerType()).incrementAndGet();
+                                if (count <= 3) {
+                                    throw new IllegalArgumentException("Damn");
                                 }
-                            })
-                            .to("mock:result")
+                            }
+                        })
+                        .to("mock:result")
                         .end();
-                // CHECKSTYLE:ON
             }
         };
     }

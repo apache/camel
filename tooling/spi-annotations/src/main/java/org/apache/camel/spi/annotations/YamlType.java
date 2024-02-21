@@ -28,6 +28,12 @@ public @interface YamlType {
 
     String[] nodes() default {};
 
+    String displayName() default "";
+
+    String description() default "";
+
+    boolean deprecated() default false;
+
     int order() default 0;
 
     boolean inline() default false;

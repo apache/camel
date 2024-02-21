@@ -47,7 +47,7 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
@@ -57,7 +57,7 @@ public class OAIPMHComponentConsumerHTTPSTest extends CamelTestSupport {
                      + "delay=1000&"
                      + "verb=Identify&"
                      + "initialDelay=1000")
-                             .to("mock:result");
+                        .to("mock:result");
 
             }
         };

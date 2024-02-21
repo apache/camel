@@ -1,16 +1,12 @@
-[[BrowsableEndpoint-BrowsableEndpoint]]
 = BrowsableEndpoint
 
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/BrowsableEndpoint.html[BrowsableEndpoint]
-is an extension interface an Endpoint may implement
-to support the browsing of the Message exchanges
+The `BrowseableEndpoint` is an extension interface an `Endpoint` may implement
+to support the browsing of the Message xref:exchange.adoc[Exchanges]
 which are pending or have been sent on it.
 
-Some example implementations include
+Some implementations include:
 
-* xref:components::jms-component.adoc[JMS] for queues only (as of 1.3.0)
-* List
+* xref:components::jms-component.adoc[JMS] for queues only
 * xref:components::mock-component.adoc[Mock]
-* xref:components::seda-component.adoc[Seda]
-* xref:components::vm-component.adoc[VM]
+* xref:components::seda-component.adoc[SEDA]
 

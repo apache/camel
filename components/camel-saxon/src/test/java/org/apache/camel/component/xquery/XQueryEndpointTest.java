@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,7 +37,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         template.sendBody("direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -52,7 +52,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/camelContext.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("camelContext.xml");
     }
 }

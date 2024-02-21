@@ -19,24 +19,27 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("period");
-        props.add("synchronous");
-        props.add("exchangePattern");
-        props.add("pattern");
-        props.add("daemon");
-        props.add("includeMetadata");
-        props.add("timer");
+        Set<String> props = new HashSet<>(15);
         props.add("bridgeErrorHandler");
+        props.add("daemon");
         props.add("delay");
-        props.add("fixedRate");
-        props.add("timerName");
-        props.add("time");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fixedRate");
+        props.add("includeMetadata");
+        props.add("pattern");
+        props.add("period");
         props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("synchronous");
+        props.add("time");
+        props.add("timer");
+        props.add("timerName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +67,11 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

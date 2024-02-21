@@ -26,20 +26,20 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.TimeUtils;
+import org.eclipse.angus.mail.imap.SortTerm;
 
 /**
  * JavaMail specific converters.
@@ -249,7 +249,7 @@ public final class MailConverters {
             }
         }
         if (!result.isEmpty()) {
-            return result.toArray(new SortTerm[result.size()]);
+            return result.toArray(new SortTerm[0]);
         } else {
             return null;
         }

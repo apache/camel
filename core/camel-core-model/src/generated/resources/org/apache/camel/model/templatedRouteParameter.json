@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "templatedRouteParameter",
+    "title": "Templated Route Parameter",
+    "description": "An input parameter of a route template.",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.TemplatedRouteParameterDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value of the parameter." }
+  }
+}

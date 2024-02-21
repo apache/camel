@@ -42,7 +42,7 @@ public class HL7NettyRouteTest extends HL7TestSupport {
     MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -50,7 +50,7 @@ public class HL7NettyRouteTest extends HL7TestSupport {
     }
 
     @BindToRegistry("hl7encoder")
-    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addEncoder() {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
@@ -79,7 +79,7 @@ public class HL7NettyRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class HL7NettyRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123", lines[0]);
         assertEquals("PID|||123||Doe^John", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -123,13 +123,13 @@ public class HL7NettyRouteTest extends HL7TestSupport {
         template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder",
                 in.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)

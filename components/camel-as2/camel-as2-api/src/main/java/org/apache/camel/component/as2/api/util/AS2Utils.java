@@ -69,7 +69,7 @@ public final class AS2Utils {
         Matcher matcher = AS_NAME_PATTERN.matcher(name);
         if (!matcher.matches()) {
             // if name does not match, determine where it fails to match.
-            int i = 0;
+            int i;
             for (i = name.length() - 1; i > 0; i--) {
                 Matcher region = matcher.region(0, i);
                 if (region.matches() || region.hitEnd()) {
@@ -82,7 +82,7 @@ public final class AS2Utils {
 
     /**
      * Generates a globally unique message ID which includes <code>fqdn</code>: a fully qualified domain name (FQDN)
-     * 
+     *
      * @param  fqdn - the fully qualified domain name to use in message id.
      * @return      The generated message id.
      */
@@ -93,13 +93,13 @@ public final class AS2Utils {
 
     /**
      * Determines if <code>c</code> is a printable character.
-     * 
+     *
      * @param  c - the character to test
      * @return   <code>true</code> if <code>c</code> is a printable character; <code>false</code> otherwise.
      */
     public static boolean isPrintableChar(char c) {
         Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        return (!Character.isISOControl(c)) && c != KeyEvent.CHAR_UNDEFINED && block != null
+        return !Character.isISOControl(c) && c != KeyEvent.CHAR_UNDEFINED && block != null
                 && block != Character.UnicodeBlock.SPECIALS;
     }
 
@@ -107,8 +107,7 @@ public final class AS2Utils {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              PrintStream ps = new PrintStream(baos, true, "utf-8")) {
             printRequest(ps, request);
-            String content = baos.toString(StandardCharsets.UTF_8.name());
-            return content;
+            return baos.toString(StandardCharsets.UTF_8.name());
         }
     }
 
@@ -116,8 +115,7 @@ public final class AS2Utils {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              PrintStream ps = new PrintStream(baos, true, "utf-8")) {
             printMessage(ps, message);
-            String content = baos.toString(StandardCharsets.UTF_8.name());
-            return content;
+            return baos.toString(StandardCharsets.UTF_8.name());
         }
     }
 

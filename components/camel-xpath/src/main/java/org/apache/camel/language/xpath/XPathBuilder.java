@@ -127,11 +127,7 @@ public class XPathBuilder extends ServiceSupport
     private volatile XPathFunction outHeaderFunction;
     private volatile XPathFunction propertiesFunction;
     private volatile XPathFunction simpleFunction;
-    /**
-     * The name of the header we want to apply the XPath expression to, which when set will cause the xpath to be
-     * evaluated on the required header, otherwise it will be applied to the body
-     */
-    private volatile String headerName;
+    private volatile Expression source;
 
     /**
      * @param text The XPath expression
@@ -163,7 +159,7 @@ public class XPathBuilder extends ServiceSupport
 
     @Override
     public void init(CamelContext context) {
-        if (preCompile) {
+        if (preCompile && pool.isEmpty()) {
             LOG.trace("PreCompiling new XPathExpression and adding to pool during initialization");
             try {
                 XPathExpression xpathExpression = createXPathExpression();
@@ -556,14 +552,6 @@ public class XPathBuilder extends ServiceSupport
         this.resultQName = resultQName;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
     public boolean isThreadSafety() {
         return threadSafety;
     }
@@ -659,8 +647,8 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                        return exchange.get().getIn().getHeader(text);
+                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getIn().getHeader(headerText);
                     }
                 }
                 return null;
@@ -719,8 +707,8 @@ public class XPathBuilder extends ServiceSupport
                 if (exchange.get() != null && !list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                        return exchange.get().getOut().getHeader(text);
+                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getOut().getHeader(headerText);
                     }
                 }
                 return null;
@@ -751,12 +739,11 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String propertyText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         try {
                             // use the property placeholder resolver to lookup
                             // the property for us
-                            Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + text + "}}");
-                            return answer;
+                            return exchange.get().getContext().resolvePropertyPlaceholders("{{" + propertyText + "}}");
                         } catch (Exception e) {
                             throw new XPathFunctionException(e);
                         }
@@ -791,11 +778,10 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String exprText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         Language simple = exchange.get().getContext().resolveLanguage("simple");
-                        Expression exp = simple.createExpression(text);
-                        Object answer = exp.evaluate(exchange.get(), Object.class);
-                        return answer;
+                        Expression exp = simple.createExpression(exprText);
+                        return exp.evaluate(exchange.get(), Object.class);
                     }
                 }
                 return null;
@@ -805,6 +791,14 @@ public class XPathBuilder extends ServiceSupport
 
     public void setSimpleFunction(XPathFunction simpleFunction) {
         this.simpleFunction = simpleFunction;
+    }
+
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     @Override
@@ -989,10 +983,8 @@ public class XPathBuilder extends ServiceSupport
             }
 
             // add to map
-            if (!map.containsKey(prefix)) {
-                map.put(prefix, new HashSet<String>());
-            }
-            map.get(prefix).add(namespaces.item(i).getNodeValue());
+            map.computeIfAbsent(prefix, k -> new HashSet<>())
+                    .add(namespaces.item(i).getNodeValue());
         }
 
         LOG.info("Namespaces discovered in message: {}.", map);
@@ -1006,34 +998,16 @@ public class XPathBuilder extends ServiceSupport
         // set exchange and variable resolver as thread locals for concurrency
         this.exchange.set(exchange);
 
-        // the underlying input stream, which we need to close to avoid locking
-        // files or other resources
+        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Object document;
         InputStream is = null;
+        if (isInputStreamNeededForObject(payload)) {
+            is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, payload);
+            document = getDocument(exchange, is);
+        } else {
+            document = getDocument(exchange, payload);
+        }
         try {
-            Object document;
-
-            // Check if we need to apply the XPath expression to a header
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                String headerName = getHeaderName();
-                // only convert to input stream if really needed
-                if (isInputStreamNeeded(exchange, headerName)) {
-                    is = exchange.getIn().getHeader(headerName, InputStream.class);
-                    document = getDocument(exchange, is);
-                } else {
-                    Object headerObject = exchange.getIn().getHeader(getHeaderName());
-                    document = getDocument(exchange, headerObject);
-                }
-            } else {
-                // only convert to input stream if really needed
-                if (isInputStreamNeeded(exchange)) {
-                    is = exchange.getIn().getBody(InputStream.class);
-                    document = getDocument(exchange, is);
-                } else {
-                    Object body = exchange.getIn().getBody();
-                    document = getDocument(exchange, body);
-                }
-            }
-
             if (resultQName != null) {
                 if (document == null) {
                     document = new XMLConverterHelper().createDocument();
@@ -1060,18 +1034,11 @@ public class XPathBuilder extends ServiceSupport
             }
         } catch (ParserConfigurationException e) {
             String message = getText();
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                message = message + " with headerName " + getHeaderName();
-            }
             throw new RuntimeCamelException(message, e);
         } catch (XPathExpressionException e) {
             String message = getText();
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                message = message + " with headerName " + getHeaderName();
-            }
             throw new InvalidXPathException(message, e);
         } finally {
-            // IOHelper can handle if is is null
             IOHelper.close(is);
         }
 
@@ -1079,7 +1046,7 @@ public class XPathBuilder extends ServiceSupport
             try {
                 NodeList list = (NodeList) answer;
 
-                // when the result is NodeList and it has 1 or more elements then its not thread-safe to use concurrently
+                // when the result is NodeList and has 1 or more elements, then it is not thread-safe to use concurrently,
                 // and we need to clone each node and build a thread-safe list to be used instead
                 boolean threadSafetyNeeded = list.getLength() >= 1;
                 if (threadSafetyNeeded) {
@@ -1219,20 +1186,7 @@ public class XPathBuilder extends ServiceSupport
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        return isInputStreamNeededForObject(exchange, body);
-    }
-
-    /**
-     * Checks whether we need an {@link InputStream} to access the message header.
-     * <p/>
-     * Depending on the content in the message header, we may not need to convert to {@link InputStream}.
-     *
-     * @param  exchange the current exchange
-     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
-     */
-    protected boolean isInputStreamNeeded(Exchange exchange, String headerName) {
-        Object header = exchange.getIn().getHeader(headerName);
-        return isInputStreamNeededForObject(exchange, header);
+        return isInputStreamNeededForObject(body);
     }
 
     /**
@@ -1240,10 +1194,10 @@ public class XPathBuilder extends ServiceSupport
      * <p/>
      * Depending on the content in the object, we may not need to convert to {@link InputStream}.
      *
-     * @param  exchange the current exchange
-     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
+     * @param  obj the object
+     * @return     <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
      */
-    protected boolean isInputStreamNeededForObject(Exchange exchange, Object obj) {
+    protected boolean isInputStreamNeededForObject(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -1371,9 +1325,10 @@ public class XPathBuilder extends ServiceSupport
                             LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
                         }
                     }
-                } catch (Throwable e) {
-                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
-                             + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                } catch (Exception e) {
+                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of {}" +
+                             " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
+                            SAXON_FACTORY_CLASS_NAME);
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
             }

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
 
     @Test
-    public void testDynamicAware() throws Exception {
+    public void testDynamicAware() {
         String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
@@ -34,19 +34,19 @@ public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap()
+        boolean found = context.getEndpointRegistry()
                 .containsKey("netty-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
         assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 2xnetty-http
-        assertEquals(4, context.getEndpointMap().size());
+        assertEquals(4, context.getEndpointRegistry().size());
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .toD("netty-http:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 

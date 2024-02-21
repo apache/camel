@@ -19,12 +19,13 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for Mail using camel headers to set recipeient subject.
  */
 public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser jon = Mailbox.getOrCreateUser("jon", "secret");
 
     @Test
     public void testMailMultipleRecipientUsingHeaders() throws Exception {
@@ -40,26 +43,26 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
 
-        map.put("To", new String[] { "davsclaus@apache.org", "janstey@apache.org" });
+        map.put("To", new String[] { claus.getEmail(), jon.getEmail() });
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
 
         String body = "Hello Riders.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), body, map);
         // END SNIPPET: e1
 
-        Mailbox box = Mailbox.get("davsclaus@apache.org");
+        Mailbox box = claus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
-        assertEquals("janstey@apache.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
+        assertEquals(claus.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(jon.getEmail(), msg.getRecipients(Message.RecipientType.TO)[1].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // no routes
             }
         };

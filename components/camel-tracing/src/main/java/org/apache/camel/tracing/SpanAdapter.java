@@ -23,8 +23,10 @@ public interface SpanAdapter {
 
     void setError(boolean error);
 
+    @Deprecated
     void setTag(Tag key, String value);
 
+    @Deprecated
     void setTag(Tag key, Number value);
 
     void setTag(String key, String value);
@@ -33,5 +35,35 @@ public interface SpanAdapter {
 
     void setTag(String key, Boolean value);
 
+    @Deprecated
+    default void setLowCardinalityTag(Tag key, String value) {
+        setTag(key, value);
+    }
+
+    @Deprecated
+    default void setLowCardinalityTag(Tag key, Number value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, String value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, Number value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, Boolean value) {
+        setTag(key, value);
+    }
+
     void log(Map<String, String> log);
+
+    String traceId();
+
+    String spanId();
+
+    default AutoCloseable makeCurrent() {
+        return Tracer.NOOP_CLOSEABLE;
+    }
 }

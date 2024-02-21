@@ -30,6 +30,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "resulttype":
+        case "resultType": target.setResultType(property(camelContext, java.lang.String.class, value)); return true;
         case "script": target.setScript(property(camelContext, java.lang.String.class, value)); return true;
         case "transform": target.setTransform(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -48,6 +50,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "resulttype":
+        case "resultType": return java.lang.String.class;
         case "script": return java.lang.String.class;
         case "transform": return boolean.class;
         default: return null;
@@ -67,6 +71,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "resulttype":
+        case "resultType": return target.getResultType();
         case "script": return target.getScript();
         case "transform": return target.isTransform();
         default: return null;

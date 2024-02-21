@@ -1,0 +1,58 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: 'install-mvnd'
+description: 'Install the maven daemon'
+inputs:
+  version:
+    description: 'The version of the maven daemon to install'
+    required: true
+    default: '1.0-m6'
+  distribution:
+    description: 'The maven distribution to use'
+    required: true
+    default: 'm39-linux-amd64'
+  dry-run:
+    description: 'Flag to enable to the dry-run mode'
+    required: true
+    default: 'false'
+outputs:
+  mvnd-dir:
+    description: "The directory where the command mvnd is located"
+    value: ${{ steps.mvnd-location.outputs.mvnd-dir }}
+runs:
+  using: "composite"
+  steps:
+    - run: curl -fsSL -o mvnd.zip https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip
+      if: inputs.dry-run == 'false'
+      shell: bash
+    - run: curl -fsSL -o mvnd.zip.sha256 https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip.sha256
+      if: inputs.dry-run == 'false'
+      shell: bash
+    - id: integrity-check
+      run: echo "$(cat mvnd.zip.sha256) mvnd.zip" | sha256sum --check
+      if: inputs.dry-run == 'false'
+      shell: bash
+    - run: unzip mvnd.zip -d /tmp/
+      if: inputs.dry-run == 'false'
+      shell: bash
+    - id: mvnd-location
+      run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
+      shell: bash
+    - id: mvnd-opts
+      run: echo "MVND_OPTS=-V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
+      shell: bash

@@ -1,0 +1,201 @@
+= Camel Console
+
+The `camel-console` is available from *Camel 3.15* and newer versions.
+
+IMPORTANT: The Camel Developer Console is intended assisting developers and can display
+various information about a running Camel application. This is very handy during development and testing.
+However, the Camel Developer Console is not recommended for production use.
+
+Camel comes with a set of consoles out of the box from `camel-console` and `camel-catalog-console` JARs.
+These consoles can display general information about the running JVM and the OS Environment, and of course
+Camel related information such as runtime metrics of the Camel routes, and a lot more.
+
+== Using Camel Console
+
+The `camel-console` must be added to the classpath, and enabled either via
+
+[source,java]
+----
+CamelContext context = ...
+context.setDevConsole(true);
+----
+
+If using Camel Main / Spring Boot / Quarkus etc then the console can be enabled via
+configuration:
+
+[source,properties]
+----
+camel.main.dev-console-enabled = true
+----
+
+=== Dev Console and Camel Spring Boot
+
+The Camel developer console is available in Spring Boot as an _actuator_. To enable the console
+you need to add dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-console-starter</artifactId>
+</dependency>
+----
+
+To include more details such as route metrics you need to include JMX management:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-management-starter</artifactId>
+</dependency>
+----
+
+And finally you **must** enable `camel` in the exposed list of HTTP actuator endpoints in `application.properties` as shown:
+
+[source,properties]
+----
+management.endpoints.web.exposure.include=info,health,camel
+----
+
+The console is then available on HTTP (using default port):
+
+[source,text]
+----
+http://localhost:8080/actuator/camel
+----
+
+This will list the available consoles, and you can then call a console by its id, such as `routes`:
+
+[source,text]
+----
+http://localhost:8080/actuator/camel/routes
+----
+
+=== Dev Console and Camel JBang
+
+The Developer Console is easily available when using xref:camel-jbang.adoc[Camel JBang],
+by the `--console` argument when running Camel JBang.
+
+For example to run a Camel route from `foo.yaml` and additional configurations from `myapp.properties` you can run as follows
+and have the console started and accessible from `http://localhost:8080/q/dev`
+
+[source,bash]
+----
+$ camel run foo.yaml myapp.properties --console
+----
+
+== Writing Custom Dev Consoles
+
+To write a custom console, you need to add `camel-console` as dependency, as it comes with the
+base class `AbstractDevConsole` which we extend for our console.
+
+[source,java]
+----
+@DevConsole("foo")
+public class FooConsole extends AbstractDevConsole {
+
+    public FooConsole() {
+        super("acme", "foo", "Foolish", "A foolish console that outputs something");
+    }
+
+    @Override
+    protected String doCallText(Map<String, Object> options) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hello from my custom console");
+
+        // more stuff here
+
+        return sb.toString();
+    }
+
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+        root.put("message", "Hello from my custom console");
+
+        // more stuff here
+
+        return root;
+    }
+
+}
+----
+
+The class must be annotated with `DevConsole` and the unique id of the console (must be unique across all consoles).
+In the constructor the console specifies which group, id, display title, and description to use.
+
+The `doCallText` and `doCallJson` methods is responsible for gathering the information the console should output.
+
+If the console does not support either text or json output, then the methods can return `null`,
+and override the `supportMediaType` method and return `true` for the media-type that are supported.
+
+=== Supported Media Types
+
+A console can support any of, or all of the following types:
+
+- TEXT
+- JSON
+
+The intention for `TEXT` is to be plain/text based that can be outputted in CLI and other low-level tools.
+
+For `JSON` then the intention is the console outputs a json dataset with key/value pairs that
+holds the information, which can be displayed in a custom fashion such as in a web browser, or IDE tool such as VSCode.
+
+=== Maven Configuration
+
+To make Camel able to discover custom dev consoles, then the xref:camel-component-maven-plugin.adoc[came-component-maven-plugin]
+must be used, such as:
+
+[source,xml]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-component-maven-plugin</artifactId>
+            <version>${camel-version}</version>
+            <executions>
+                <execution>
+                    <id>generate</id>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                    <phase>process-classes</phase>
+                </execution>
+                <execution>
+                    <id>generate-postcompile</id>
+                    <goals>
+                        <goal>generate-postcompile</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                        <goal>add-resource</goal>
+                    </goals>
+                    <configuration>
+                        <sources>
+                            <source>src/generated/java</source>
+                        </sources>
+                        <resources>
+                            <resource>
+                                <directory>src/generated/resources</directory>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+----
+

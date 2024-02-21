@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.jupiter.api.AfterEach;
@@ -74,7 +75,7 @@ public class DelayedMonoPublisherTest {
     @Test
     public void testExceptionAlreadyAvailable() throws Exception {
 
-        Exception ex = new RuntimeException("An exception");
+        Exception ex = new RuntimeCamelException("An exception");
 
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setException(ex);
@@ -202,7 +203,7 @@ public class DelayedMonoPublisherTest {
 
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
 
-        Exception ex = new RuntimeException("An exception");
+        Exception ex = new RuntimeCamelException("An exception");
 
         ConcurrentLinkedDeque<Throwable> exceptions = new ConcurrentLinkedDeque<>();
         CountDownLatch latch = new CountDownLatch(2);
@@ -258,25 +259,25 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testDataOrExceptionAllowed() throws Exception {
+    public void testDataOrExceptionAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
-        Exception ex = new RuntimeException("An exception");
+        Exception ex = new RuntimeCamelException("An exception");
         pub.setException(ex);
         assertThrows(IllegalStateException.class,
                 () -> pub.setData(1));
     }
 
     @Test
-    public void testDataOrExceptionAllowed2() throws Exception {
+    public void testDataOrExceptionAllowed2() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
-        Exception ex = new RuntimeException("An exception");
+        Exception ex = new RuntimeCamelException("An exception");
         assertThrows(IllegalStateException.class,
                 () -> pub.setException(ex));
     }
 
     @Test
-    public void testOnlyOneDataAllowed() throws Exception {
+    public void testOnlyOneDataAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         assertThrows(IllegalStateException.class,
@@ -284,11 +285,12 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testOnlyOneExceptionAllowed() throws Exception {
+    public void testOnlyOneExceptionAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
-        pub.setException(new RuntimeException("An exception"));
+        final RuntimeCamelException runtimeException = new RuntimeCamelException("An exception");
+        pub.setException(runtimeException);
         assertThrows(IllegalStateException.class,
-                () -> pub.setException(new RuntimeException("An exception")));
+                () -> pub.setException(runtimeException));
     }
 
 }

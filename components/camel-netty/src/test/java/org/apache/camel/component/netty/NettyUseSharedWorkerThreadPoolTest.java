@@ -19,21 +19,25 @@ package org.apache.camel.component.netty;
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
+    @RegisterExtension
+    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
     @BindToRegistry("sharedServerPool")
     private EventLoopGroup sharedWorkerServerGroup
             = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
     @BindToRegistry("sharedClientPool")
     private EventLoopGroup sharedWorkerClientGroup
             = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
-    private int port;
-    private int port2;
-    private int port3;
 
     @Override
     protected boolean useJmx() {
@@ -46,51 +50,50 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
         for (int i = 0; i < 10; i++) {
             String reply = template.requestBody(
-                    "netty:tcp://localhost:" + port + "?textline=true&sync=true&workerGroup=#sharedClientPool", "Hello World",
+                    "netty:tcp://localhost:" + port.getPort() + "?textline=true&sync=true&workerGroup=#sharedClientPool",
+                    "Hello World",
                     String.class);
             assertEquals("Bye World", reply);
 
             reply = template.requestBody(
-                    "netty:tcp://localhost:" + port2 + "?textline=true&sync=true&workerGroup=#sharedClientPool", "Hello Camel",
+                    "netty:tcp://localhost:" + port2.getPort() + "?textline=true&sync=true&workerGroup=#sharedClientPool",
+                    "Hello Camel",
                     String.class);
             assertEquals("Hi Camel", reply);
 
             reply = template.requestBody(
-                    "netty:tcp://localhost:" + port3 + "?textline=true&sync=true&workerGroup=#sharedClientPool", "Hello Claus",
+                    "netty:tcp://localhost:" + port3.getPort() + "?textline=true&sync=true&workerGroup=#sharedClientPool",
+                    "Hello Claus",
                     String.class);
             assertEquals("Hej Claus", reply);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         sharedWorkerServerGroup.shutdownGracefully().sync().await();
         sharedWorkerClientGroup.shutdownGracefully().sync().await();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
-                port = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-
-                from("netty:tcp://localhost:" + port
+                from("netty:tcp://localhost:" + port.getPort()
                      + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                             .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
-                             .transform(body().regexReplaceAll("Hello", "Bye"));
+                        .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                        .transform(body().regexReplaceAll("Hello", "Bye"));
 
-                from("netty:tcp://localhost:" + port2
+                from("netty:tcp://localhost:" + port2.getPort()
                      + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                             .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
-                             .transform(body().regexReplaceAll("Hello", "Hi"));
+                        .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                        .transform(body().regexReplaceAll("Hello", "Hi"));
 
-                from("netty:tcp://localhost:" + port3
+                from("netty:tcp://localhost:" + port3.getPort()
                      + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                             .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
-                             .transform(body().regexReplaceAll("Hello", "Hej"));
+                        .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                        .transform(body().regexReplaceAll("Hello", "Hej"));
             }
         };
     }

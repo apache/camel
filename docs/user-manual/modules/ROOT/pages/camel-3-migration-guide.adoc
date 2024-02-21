@@ -161,7 +161,7 @@ We removed `camel-jibx` component which wasn't working on JDK 8.
 
 We removed `camel-boon` dataformat which wasn't working on JDK 9 and later.
 
-We removed the `camel-linkedin` component as the Linkedin API 1.0 is no longer https://engineering.linkedin.com/blog/2018/12/developer-program-updates[supported]. Support for the new 2.0 API is tracked by https://issues.apache.org/jira/browse/CAMEL-13813[CAMEL-13813].
+We removed the `camel-linkedin` component and there is no replacement.
 
 The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
 
@@ -277,6 +277,43 @@ To
 ----
 
 And the same for `<completionTimeout>`.
+
+=== <threads> <delay> <sample> <throttle> EIP in XML
+
+These EIPs have been improved to no longer use children for routing, instead they
+are collapsed as a single element like other EIPs.
+
+So before you may have
+
+[source,xml]
+----
+<route>
+    <from uri="jms:cheese"/>
+    <to uri="log:before"/>
+    <threads poolSize="2">
+        <to uri="bean:foo"/>
+        <to uri="bean:bar"/>
+    </threads>
+    <to uri="log:after"/>
+</route>
+----
+
+And now you would do:
+
+[source,xml]
+----
+<route>
+    <from uri="jms:cheese"/>
+    <to uri="log:before"/>
+    <threads poolSize="2"/>
+    <to uri="bean:foo"/>
+    <to uri="bean:bar"/>
+    <to uri="log:after"/>
+</route>
+----
+
+It is the same for the other EIPs `<delay>`, `<sample>`, and `<throttle>`.
+
 
 ==== camel-cdi
 

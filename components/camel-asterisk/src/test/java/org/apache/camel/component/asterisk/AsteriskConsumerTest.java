@@ -44,7 +44,7 @@ public class AsteriskConsumerTest extends CamelTestSupport {
         List<Exchange> events = mock.getExchanges();
         if (LOG.isInfoEnabled()) {
             for (Exchange e : events) {
-                LOG.info("ASTERISK EVENTS: " + e.getIn().getBody(String.class));
+                LOG.info("ASTERISK EVENTS: {}", e.getIn().getBody(String.class));
             }
         }
     }

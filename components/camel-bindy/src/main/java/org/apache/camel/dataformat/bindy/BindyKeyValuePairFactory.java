@@ -69,7 +69,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      *
      * @throws Exception
      */
-    public void initKeyValuePairModel() throws Exception {
+    public void initKeyValuePairModel() {
 
         // Find annotated KeyValuePairfields declared in the Model classes
         initAnnotatedFields();
@@ -120,11 +120,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         // Map to hold the model @OneToMany classes while binding
         Map<String, List<Object>> lists = new HashMap<>();
 
-        bind(camelContext, data, model, line, lists);
+        bind(data, model, line, lists);
     }
 
     public void bind(
-            CamelContext camelContext, List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists)
+            List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists)
             throws Exception {
 
         Map<Integer, List<String>> results = new HashMap<>();
@@ -320,7 +320,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 for (int i = 0; i < values.size(); i++) {
 
                                     // BigIntegerFormatFactory if object exist
-                                    if ((!l.isEmpty()) && (l.size() > i)) {
+                                    if (!l.isEmpty() && l.size() > i) {
                                         obj = l.get(i);
                                     } else {
                                         obj = clazz.newInstance();
@@ -353,7 +353,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     }
 
                                     // Add object created to the list
-                                    if ((!l.isEmpty()) && (l.size() > i)) {
+                                    if (!l.isEmpty() && l.size() > i) {
                                         l.set(i, obj);
                                     } else {
                                         l.add(i, obj);
@@ -393,7 +393,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 String targetClass = oneToMany.mappedTo();
 
-                if (!targetClass.equals("")) {
+                if (!targetClass.isEmpty()) {
                     // Class cl = Class.forName(targetClass); Does not work in
                     // OSGI when class is defined in another bundle
                     Class<?> cl = null;
@@ -565,7 +565,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     LOG.debug("Value added at the position ({}) : {}{}", posit, value, separator);
                 }
 
-                builder.append(value + separator);
+                builder.append(value).append(separator);
             }
         }
 
@@ -619,7 +619,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      * Get parameters defined in @Message annotation
      */
     private void initMessageParameters() {
-        if ((pairSeparator == null) || (keyValuePairSeparator == null)) {
+        if (pairSeparator == null || keyValuePairSeparator == null) {
             for (Class<?> cl : models) {
                 // Get annotation @Message from the class
                 Message message = cl.getAnnotation(Message.class);

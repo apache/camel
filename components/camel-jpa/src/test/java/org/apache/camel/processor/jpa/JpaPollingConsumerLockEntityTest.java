@@ -19,7 +19,7 @@ package org.apache.camel.processor.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.OptimisticLockException;
+import jakarta.persistence.OptimisticLockException;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
@@ -62,7 +62,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

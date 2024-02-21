@@ -17,8 +17,11 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,7 +29,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class AsyncEndpointJmsTXWireTapTest extends AbstractSpringJMSTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
 
@@ -42,17 +46,17 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:inbox", "Hello Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // the tapped exchange is not transacted
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")

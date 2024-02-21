@@ -25,9 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.Attachment;
@@ -146,6 +146,62 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void roundtripWithMultipleTextAttachmentsButDifferentCharsets() throws IOException {
+        String att1ContentType = "text/plain; charset=ISO-8859-1";
+        String att1Text = new String("empf\u00e4nger1".getBytes("ISO-8859-1"), "ISO-8859-1");
+        String att1FileName = "empf\u00e4nger1";
+        String att2ContentType = "text/plain; charset=ISO-8859-15";
+        String att2Text = new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15");
+        String att2FileName = "empf\u00e4nger15";
+        String att3ContentType = "text/plain; charset=UTF-8";
+        String att3Text = new String("empf\u00e4nger8".getBytes("UTF-8"), "UTF-8");
+        String att3FileName = "empf\u00e4nger8";
+        addAttachment(att1ContentType, att1Text, att1FileName);
+        addAttachment(att2ContentType, att2Text, att2FileName);
+        addAttachment(att3ContentType, att3Text, att3FileName);
+
+        in.setBody(new String("empf\u00e4nger15".getBytes("ISO-8859-15"), "ISO-8859-15"));
+        in.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=ISO-8859-15");
+        in.setHeader(Exchange.CONTENT_ENCODING, "ISO-8859-15");
+
+        Exchange result = template.send("direct:roundtrip", exchange);
+        AttachmentMessage out = result.getMessage(AttachmentMessage.class);
+
+        assertEquals(att2Text, out.getBody(String.class));
+        assertTrue(out.getHeader(Exchange.CONTENT_TYPE, String.class).startsWith("text/plain"));
+        assertEquals("ISO-8859-15", out.getHeader(Exchange.CONTENT_ENCODING));
+        assertTrue(out.hasAttachments());
+        assertEquals(3, out.getAttachmentNames().size());
+
+        assertTrue(out.getAttachmentNames().contains(att1FileName));
+        DataHandler dh = out.getAttachment(att1FileName);
+        assertNotNull(dh);
+        assertEquals(att1ContentType, dh.getContentType());
+        InputStream is = dh.getInputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att1Text, new String(os.toByteArray(), "ISO-8859-1"));
+
+        assertTrue(out.getAttachmentNames().contains(att2FileName));
+        dh = out.getAttachment(att2FileName);
+        assertNotNull(dh);
+        assertEquals(att2ContentType, dh.getContentType());
+        is = dh.getInputStream();
+        os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att2Text, new String(os.toByteArray(), "ISO-8859-15"));
+
+        assertTrue(out.getAttachmentNames().contains(att3FileName));
+        dh = out.getAttachment(att3FileName);
+        assertNotNull(dh);
+        assertEquals(att3ContentType, dh.getContentType());
+        is = dh.getInputStream();
+        os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(att3Text, new String(os.toByteArray(), "UTF-8"));
+    }
+
+    @Test
     public void roundtripWithTextAttachmentsAndBinaryContent() throws IOException {
         String attContentType = "text/plain";
         String attText = "Attachment Text";
@@ -191,6 +247,53 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os);
         assertArrayEquals(attText, os.toByteArray());
+    }
+
+    @Test
+    public void roundtripWithBinaryMultipleAttachments() throws IOException {
+        String attContentType1 = "application/binary";
+        byte[] attText1 = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        String attFileName1 = "Attachment File Name 1";
+
+        String attContentType2 = "application/binary";
+        byte[] attText2 = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        String attFileName2 = "Attachment File Name 2";
+
+        in.setBody("Body text");
+        DataSource ds1 = new ByteArrayDataSource(attText1, attContentType1);
+        DataSource ds2 = new ByteArrayDataSource(attText2, attContentType2);
+        in.addAttachment(attFileName1, new DataHandler(ds1));
+        in.addAttachment(attFileName2, new DataHandler(ds2));
+        addAttachment(ds1, attFileName1, null);
+        addAttachment(ds2, attFileName2, null);
+
+        Exchange result = template.send("direct:roundtrip", exchange);
+        AttachmentMessage out = result.getMessage(AttachmentMessage.class);
+        assertEquals("Body text", out.getBody(String.class));
+        assertTrue(out.hasAttachments());
+        assertEquals(2, out.getAttachmentNames().size());
+
+        assertTrue(out.getAttachmentNames().contains(attFileName1));
+        assertTrue(out.getAttachmentNames().contains(attFileName2));
+
+        DataHandler dh1 = out.getAttachment(attFileName1);
+        assertNotNull(dh1);
+        assertEquals(attContentType1, dh1.getContentType());
+
+        InputStream is1 = dh1.getInputStream();
+        ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is1, os1);
+        assertArrayEquals(attText1, os1.toByteArray());
+
+        DataHandler dh2 = out.getAttachment(attFileName2);
+        assertNotNull(dh2);
+        assertEquals(attContentType2, dh2.getContentType());
+
+        InputStream is2 = dh2.getInputStream();
+        ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is2, os2);
+        assertArrayEquals(attText2, os2.toByteArray());
+
     }
 
     @Test
@@ -354,6 +457,42 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertEquals("This is not a MIME-Multipart", bodyStr);
     }
 
+    @Test
+    public void attachmentReadOnce() throws IOException {
+        String attContentType = "text/plain";
+        String attText = "Attachment Text";
+        InputStream attInputStream = new ByteArrayInputStream(attText.getBytes());
+        String attFileName = "Attachment File Name";
+        in.setBody("Body text");
+        in.setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1;other-parameter=true");
+        in.setHeader("Content-Transfer-Encoding", "UTF8");
+        in.setHeader(Exchange.CONTENT_ENCODING, "UTF8");
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Description", "Sample Attachment Data");
+        headers.put("X-AdditionalData", "additional data");
+        CountingByteArrayDataSource attachmentDs = new CountingByteArrayDataSource(attInputStream, attContentType);
+        addAttachment(attachmentDs, attFileName, headers);
+        Exchange result = template.send("direct:roundtrip", exchange);
+        AttachmentMessage out = result.getMessage(AttachmentMessage.class);
+        assertEquals("Body text", out.getBody(String.class));
+        assertTrue(out.getHeader(Exchange.CONTENT_TYPE, String.class).startsWith("text/plain"));
+        assertEquals("UTF8", out.getHeader(Exchange.CONTENT_ENCODING));
+        assertTrue(out.hasAttachments());
+        assertEquals(1, out.getAttachmentNames().size());
+        assertTrue(out.getAttachmentNames().contains(attFileName));
+        Attachment att = out.getAttachmentObject(attFileName);
+        DataHandler dh = att.getDataHandler();
+        assertNotNull(dh);
+        assertEquals(attContentType, dh.getContentType());
+        InputStream is = dh.getInputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, os);
+        assertEquals(attText, new String(os.toByteArray()));
+        assertEquals("Sample Attachment Data", att.getHeader("content-description"));
+        assertEquals("additional data", att.getHeader("X-AdditionalData"));
+        assertEquals(1, attachmentDs.readCounts); // Fails - input is read twice
+    }
+
     private Attachment unmarshalAndCheckAttachmentName(String matcher) throws IOException {
         Exchange intermediate = template.send("direct:unmarshalonlyinlineheaders", exchange);
         assertNotNull(intermediate.getMessage());
@@ -373,6 +512,16 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         return att;
     }
 
+    private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) {
+        DefaultAttachment attachment = new DefaultAttachment(ds);
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                attachment.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        in.addAttachmentObject(attFileName, attachment);
+    }
+
     private void addAttachment(String attContentType, String attText, String attFileName) throws IOException {
         addAttachment(attContentType, attText, attFileName, null);
     }
@@ -382,8 +531,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
         DefaultAttachment attachment = new DefaultAttachment(ds);
         if (headers != null) {
-            for (String headerName : headers.keySet()) {
-                attachment.addHeader(headerName, headers.get(headerName));
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                attachment.addHeader(entry.getKey(), entry.getValue());
             }
         }
         in.addAttachmentObject(attFileName, attachment);
@@ -400,7 +549,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
                 from("direct:roundtripinlineheaders").marshal().mimeMultipart(false, true, false)
                         .to("log:mime?showHeaders=true").unmarshal().mimeMultipart(false, true, false);
                 from("direct:roundtripbinarycontent").marshal().mimeMultipart(false, false, true)
-                        .to("log:mime?showHeaders=true").to("dataformat:mime-multipart:unmarshal");
+                        .to("log:mime?showHeaders=true").to("dataformat:mimeMultipart:unmarshal");
                 from("direct:marshalonlyrelated").marshal().mimeMultipart("related");
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
                 from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
@@ -409,4 +558,21 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
             }
         };
     }
+
+    private class CountingByteArrayDataSource extends ByteArrayDataSource {
+
+        volatile int readCounts;
+
+        CountingByteArrayDataSource(InputStream is, String attContentType) throws IOException {
+            super(is, attContentType);
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            readCounts++;
+            return super.getInputStream();
+        }
+
+    }
+
 }

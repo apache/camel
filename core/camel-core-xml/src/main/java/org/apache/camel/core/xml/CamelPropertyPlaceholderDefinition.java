@@ -18,11 +18,11 @@ package org.apache.camel.core.xml;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
@@ -42,6 +42,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private Boolean nestedPlaceholder;
     @XmlAttribute
     private String propertiesParserRef;
     @XmlAttribute
@@ -109,6 +112,18 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setIgnoreMissingLocation(Boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
+    }
+
+    public Boolean isNestedPlaceholder() {
+        return nestedPlaceholder;
+    }
+
+    /**
+     * Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a
+     * placeholder, that should be resolved (recursively).
+     */
+    public void setNestedPlaceholder(Boolean nestedPlaceholder) {
+        this.nestedPlaceholder = nestedPlaceholder;
     }
 
     public List<CamelPropertyPlaceholderFunctionDefinition> getFunctions() {

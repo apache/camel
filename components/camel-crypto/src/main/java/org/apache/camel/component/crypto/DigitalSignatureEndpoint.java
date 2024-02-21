@@ -36,7 +36,8 @@ import org.apache.camel.support.DefaultEndpoint;
  * Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name",
-             producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
+             remote = false, producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
+             headersClass = DigitalSignatureConstants.class)
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam
     private DigitalSignatureConfiguration configuration;
@@ -73,7 +74,7 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
-    public PublicKey getPublicKey() throws Exception {
+    public PublicKey getPublicKey() {
         return getConfiguration().getPublicKey();
     }
 
@@ -85,11 +86,11 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         getConfiguration().setPublicKeyName(publicKeyName);
     }
 
-    public Certificate getCertificate() throws Exception {
+    public Certificate getCertificate() {
         return getConfiguration().getCertificate();
     }
 
-    public PrivateKey getPrivateKey() throws Exception {
+    public PrivateKey getPrivateKey() {
         return getConfiguration().getPrivateKey();
     }
 
@@ -129,12 +130,12 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         getConfiguration().setAlgorithm(algorithm);
     }
 
-    public Integer getBuffersize() {
+    public Integer getBufferSize() {
         return getConfiguration().getBufferSize();
     }
 
-    public void setBuffersize(Integer buffersize) {
-        getConfiguration().setBufferSize(buffersize);
+    public void setBufferSize(Integer bufferSize) {
+        getConfiguration().setBufferSize(bufferSize);
     }
 
     public String getProvider() {

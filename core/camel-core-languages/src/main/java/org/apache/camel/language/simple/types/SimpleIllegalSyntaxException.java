@@ -23,6 +23,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
  */
 public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxException {
     private static final long serialVersionUID = 1L;
+    private static final String FORMATTED_NULL = "[null]";
     private final int index;
     private final String message;
 
@@ -53,7 +54,7 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
      */
     public String getShortMessage() {
         if (message == null) {
-            return "[null]";
+            return FORMATTED_NULL;
         }
         return message;
     }
@@ -61,7 +62,7 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
     @Override
     public String getMessage() {
         if (message == null) {
-            return "[null]";
+            return FORMATTED_NULL;
         }
 
         StringBuilder sb = new StringBuilder(message);
@@ -69,9 +70,7 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
             sb.append(" at location ").append(index);
             // create a nice looking message with indicator where the problem is
             sb.append("\n").append(getExpression()).append("\n");
-            for (int i = 0; i < index; i++) {
-                sb.append(" ");
-            }
+            sb.append(" ".repeat(index));
             sb.append("*\n");
         }
         return sb.toString();

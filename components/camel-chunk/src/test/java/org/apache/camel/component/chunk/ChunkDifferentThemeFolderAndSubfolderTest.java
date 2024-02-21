@@ -49,7 +49,7 @@ public class ChunkDifferentThemeFolderAndSubfolderTest extends CamelTestSupport 
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

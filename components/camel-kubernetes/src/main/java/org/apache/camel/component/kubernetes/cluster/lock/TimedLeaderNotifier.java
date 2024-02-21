@@ -109,7 +109,8 @@ public class TimedLeaderNotifier implements Service {
             try {
                 executor.awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                // ignore
+                LOG.info("Interrupted while waiting for thread termination");
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -167,8 +168,8 @@ public class TimedLeaderNotifier implements Service {
             try {
                 handler.onKubernetesClusterEvent(
                         (KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) () -> newLeader);
-            } catch (Throwable t) {
-                LOG.warn("Error while communicating the new leader to the handler", t);
+            } catch (Exception e) {
+                LOG.warn("Error while communicating the new leader to the handler", e);
             }
         }
 
@@ -179,8 +180,8 @@ public class TimedLeaderNotifier implements Service {
             try {
                 handler.onKubernetesClusterEvent(
                         (KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) () -> newMembers);
-            } catch (Throwable t) {
-                LOG.warn("Error while communicating the cluster members to the handler", t);
+            } catch (Exception e) {
+                LOG.warn("Error while communicating the cluster members to the handler", e);
             }
         }
 

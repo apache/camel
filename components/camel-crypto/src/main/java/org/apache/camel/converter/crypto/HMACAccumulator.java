@@ -160,17 +160,6 @@ public class HMACAccumulator {
             return 0;
         }
 
-        public boolean compareTo(byte[] compare, int pos, int len) {
-            boolean equal = false;
-            if (len <= availableForRead()) {
-                int x = 0;
-                while (equal && x < len) {
-                    equal = compare[pos + x] != buffer[read + x % buffer.length];
-                }
-            }
-            return equal;
-        }
-
         public int availableForRead() {
             return buffer.length - available;
         }

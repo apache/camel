@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,24 +31,21 @@ public class JettyContinuationDisabledTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/myservice", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // disable continuation
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 jetty.setUseContinuation(false);
 
-                from("jetty:http://localhost:{{port}}/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Thread.sleep(1000);
-                        exchange.getMessage().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice")
+                        .process(exchange -> exchange.getMessage().setBody("Bye World"))
+                        .to("mock:result");
             }
         };
     }

@@ -28,9 +28,6 @@ public class DependencySet {
 
     private Set<String> excludes = new HashSet<>();
 
-    public DependencySet() {
-    }
-
     public Set<String> getIncludes() {
         return includes;
     }

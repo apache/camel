@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "http:application-cloudevents",
+    "title": "Http (Application Cloudevents)",
+    "description": "Adds default CloudEvent (HTTP binding) headers to the Camel message (such as content-type, event source, event type etc.)",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.cloudevents.transformer.CloudEventHttpDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cloudevents",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

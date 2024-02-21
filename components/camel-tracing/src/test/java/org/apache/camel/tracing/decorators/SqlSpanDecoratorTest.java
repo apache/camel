@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -39,7 +40,7 @@ public class SqlSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("test");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY)).thenReturn(SQL_STATEMENT);
+        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY, String.class)).thenReturn(SQL_STATEMENT);
 
         SpanDecorator decorator = new SqlSpanDecorator();
 
@@ -48,7 +49,9 @@ public class SqlSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals("sql", span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals("sql", span.tags().get(TagConstants.DB_SYSTEM));
         assertEquals(SQL_STATEMENT, span.tags().get(Tag.DB_STATEMENT.name()));
+        assertEquals(SQL_STATEMENT, span.tags().get(TagConstants.DB_STATEMENT));
     }
 
 }

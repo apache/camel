@@ -28,7 +28,7 @@
     <route>
       <from uri="direct:start"/>
       <transform>
-        <xquery type="String">concat(/Envelope/Body/getEmployee/EmpId/text(),"TestConcat")</xquery>
+        <xquery resultType="String">concat(/Envelope/Body/getEmployee/EmpId/text(),"TestConcat")</xquery>
       </transform>
       <to uri="log:info"/>
       <to uri="mock:result"/>

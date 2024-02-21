@@ -33,8 +33,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
@@ -57,11 +59,13 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     @AfterEach
     public void stopGrpcChannels() {
-        syncRequestChannel.shutdown().shutdownNow();
+        if (syncRequestChannel != null) {
+            syncRequestChannel.shutdown().shutdownNow();
+        }
     }
 
     @Test
-    public void testExceptionExpected() throws Exception {
+    public void testExceptionExpected() {
         LOG.info("gRPC expected exception test start");
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
@@ -69,31 +73,35 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExchangeExceptionHandling() throws Exception {
+    public void testExchangeExceptionHandling() {
         LOG.info("gRPC exchange exception handling test start");
+        assertDoesNotThrow(this::runExchangeExceptionHandlingTest);
+    }
+
+    private void runExchangeExceptionHandlingTest() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
-                             .throwException(CamelException.class, "GRPC Camel exception message");
+                        .throwException(CamelException.class, "GRPC Camel exception message");
 
             }
         };
     }
 
-    public class PongResponseStreamObserver implements StreamObserver<PongResponse> {
+    static class PongResponseStreamObserver implements StreamObserver<PongResponse> {
         private PongResponse pongResponse;
         private final CountDownLatch latch;
 
@@ -112,7 +120,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
         @Override
         public void onError(Throwable t) {
-            assertEquals(t.getMessage(), "INTERNAL: GRPC Camel exception message");
+            assertEquals("INTERNAL: GRPC Camel exception message", t.getMessage());
             LOG.info("Exception", t);
             latch.countDown();
         }

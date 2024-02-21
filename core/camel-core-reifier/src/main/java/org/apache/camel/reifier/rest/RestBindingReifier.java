@@ -19,15 +19,16 @@ package org.apache.camel.reifier.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier extends AbstractReifier {
@@ -51,6 +52,10 @@ public class RestBindingReifier extends AbstractReifier {
         if (definition.getEnableCORS() != null) {
             cors = parseBoolean(definition.getEnableCORS(), false);
         }
+        boolean noContentResponse = config.isEnableNoContentResponse();
+        if (definition.getEnableNoContentResponse() != null) {
+            noContentResponse = parseBoolean(definition.getEnableNoContentResponse(), false);
+        }
         boolean skip = config.isSkipBindingOnErrorCode();
         if (definition.getSkipBindingOnErrorCode() != null) {
             skip = parseBoolean(definition.getSkipBindingOnErrorCode(), false);
@@ -64,11 +69,11 @@ public class RestBindingReifier extends AbstractReifier {
         Map<String, String> corsHeaders = config.getCorsHeaders();
 
         if ("off".equals(mode)) {
-            // binding mode is off, so create a off mode binding processor
+            // binding mode is off, so create off mode binding processor
             return new RestBindingAdvice(
                     camelContext, null, null, null, null,
                     parseString(definition.getConsumes()), parseString(definition.getProduces()), mode, skip, validation, cors,
-                    corsHeaders,
+                    noContentResponse, corsHeaders,
                     definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                     definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
         }
@@ -86,7 +91,7 @@ public class RestBindingReifier extends AbstractReifier {
                             "JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }
             } else {
-                name = "json-jackson";
+                name = "jackson";
             }
             // this will create a new instance as the name was not already
             // pre-created
@@ -129,7 +134,7 @@ public class RestBindingReifier extends AbstractReifier {
 
             if (jaxb != null) {
                 // to setup JAXB we need to use camel-jaxb
-                camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory().setupJaxb(
+                PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(
                         camelContext, config,
                         parseString(definition.getType()), definition.getTypeClass(),
                         parseString(definition.getOutType()), definition.getOutTypeClass(),
@@ -140,7 +145,7 @@ public class RestBindingReifier extends AbstractReifier {
         return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 parseString(definition.getConsumes()), parseString(definition.getProduces()),
-                mode, skip, validation, cors, corsHeaders,
+                mode, skip, validation, cors, noContentResponse, corsHeaders,
                 definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                 definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }
@@ -160,10 +165,11 @@ public class RestBindingReifier extends AbstractReifier {
             String typeName = useList ? type.substring(0, type.length() - 2) : type;
             clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
         if (clazz != null) {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json,
+            beanIntrospection.setProperty(camelContext, json,
                     "unmarshalType", clazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "useList",
+            beanIntrospection.setProperty(camelContext, json, "useList",
                     useList);
         }
 
@@ -182,16 +188,16 @@ public class RestBindingReifier extends AbstractReifier {
         }
 
         if (outClazz != null) {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson,
+            beanIntrospection.setProperty(camelContext, outJson,
                     "unmarshalType", outClazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "useList",
+            beanIntrospection.setProperty(camelContext, outJson, "useList",
                     outUseList);
         }
 
         setAdditionalConfiguration(config, outJson, "json.out.");
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties

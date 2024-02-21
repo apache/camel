@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
-    private static SoapJaxbDataFormat soapjaxbModel;
+    private static SoapDataFormat soapjaxbModel;
     private static Map<String, String> namespacePrefixMap;
 
     @BeforeAll
@@ -47,7 +47,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
         namespacePrefixMap.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         namespacePrefixMap.put("http://www.example.com/contact", "cont");
         namespacePrefixMap.put("http://www.example.com/soapheaders", "custom");
-        soapjaxbModel = new SoapJaxbDataFormat("com.example.contact:com.example.soapheaders");
+        soapjaxbModel = new SoapDataFormat("com.example.contact:com.example.soapheaders");
         soapjaxbModel.setNamespacePrefix(namespacePrefixMap);
         soapjaxbModel.setPrettyPrint(true);
         soapjaxbModel.setIgnoreUnmarshalledHeaders(false);
@@ -68,10 +68,10 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
 
         template.sendBody("direct:start", createRequest());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange result = endpoint.assertExchangeReceived(0);
 
-        byte[] body = (byte[]) result.getIn().getBody();
+        byte[] body = result.getIn().getBody(byte[].class);
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
         assertTrue(null != request.getSOAPHeader()

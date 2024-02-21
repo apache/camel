@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class NavigateRouteTest extends ContextTestSupport {
 
-    private static List<Processor> processors = new ArrayList<>();
+    private final List<Processor> processors = new ArrayList<>();
 
     @Test
     public void testNavigateRoute() throws Exception {

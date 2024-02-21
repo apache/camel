@@ -29,7 +29,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 
@@ -138,6 +141,15 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
     }
 
     @Test
+    public void testFileNotSupported() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));
+
+        assertThrows(RuntimeExchangeException.class, () -> DefaultExchangeHolder.marshal(exchange),
+                "Should have thrown exception");
+    }
+
+    @Test
     public void testCaughtException() throws Exception {
         // use a mixed list, the MyFoo is not serializable so the entire list
         // should be skipped
@@ -162,19 +174,6 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertNull(exchange.getIn().getHeader("Foo"));
         assertNotNull(exchange.getProperty(Exchange.EXCEPTION_CAUGHT));
         assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
-    }
-
-    @Test
-    public void testFileNotSupported() throws Exception {
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));
-
-        try {
-            DefaultExchangeHolder.marshal(exchange);
-            fail("Should have thrown exception");
-        } catch (RuntimeExchangeException e) {
-            // expected
-        }
     }
 
     private DefaultExchangeHolder createHolder(boolean includeProperties) {

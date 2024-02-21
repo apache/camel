@@ -45,13 +45,15 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
+import org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum;
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_URL;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_SCHEMA_ID;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
@@ -59,14 +61,20 @@ import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOB
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.STREAM_QUERY_RESULT;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    protected static final String RESPONSE_CLASS_DEFERRED = AbstractRestProcessor.class.getName()
+                                                            + ".responseClassDeferred";
+    protected static final String RESPONSE_CLASS_PREFIX = AbstractRestProcessor.class.getName()
+                                                          + ".responseClassPrefix";
+    protected static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
+
     private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
 
-    private RestClient restClient;
-    private Map<String, Class<?>> classMap;
+    protected RestClient restClient;
     private NotFoundBehaviour notFoundBehaviour;
 
     // used in unit tests
@@ -93,10 +101,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         if (restClient == null) {
             this.restClient = salesforceComponent.createRestClientFor(endpoint);
         }
-        if (classMap == null) {
-            this.classMap = endpoint.getComponent().getClassMap();
-        }
-
         ServiceHelper.startService(restClient);
     }
 
@@ -191,6 +195,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 case APPROVALS:
                     processApprovals(exchange, callback);
                     break;
+                case GET_EVENT_SCHEMA:
+                    processGetEventSchema(exchange, callback);
+                    break;
                 default:
                     throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -211,6 +218,26 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         return false;
     }
 
+    private void processGetEventSchema(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION);
+        final String eventName = getParameter(EVENT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String schemaId = getParameter(EVENT_SCHEMA_ID, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final EventSchemaFormatEnum eventSchemaFormat
+                = getParameter(SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT, exchange, IGNORE_BODY,
+                        IS_OPTIONAL, EventSchemaFormatEnum.class);
+        final String payloadFormat
+                = eventSchemaFormat != null ? eventSchemaFormat.value() : EventSchemaFormatEnum.EXPANDED.value();
+        if (eventName != null) {
+            restClient.getEventSchemaByEventName(eventName, payloadFormat, determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        } else if (schemaId != null) {
+            restClient.getEventSchemaBySchemaId(schemaId, payloadFormat, determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        } else {
+            throw new SalesforceException("Either " + EVENT_NAME + " or " + EVENT_SCHEMA_ID + " is required.", 0);
+        }
+    }
+
     final void processApproval(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final TypeConverter converter = exchange.getContext().getTypeConverter();
 
@@ -228,12 +255,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final boolean requestGivenInParametersInHeader = processApprovalHeaderValues(approvalHeader, incomingHeaders);
 
-        final boolean nothingInheader = !requestGivenInHeader && !requestGivenInParametersInHeader;
+        final boolean nothingInHeader = !requestGivenInHeader && !requestGivenInParametersInHeader;
 
         final Object approvalBody = incomingMessage.getBody();
 
         final boolean bodyIsIterable = approvalBody instanceof Iterable;
-        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable) approvalBody).iterator().hasNext();
+        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable<?>) approvalBody).iterator().hasNext();
 
         // body contains nothing of interest if it's null, holds an empty
         // iterable or cannot be converted to
@@ -241,7 +268,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final boolean nothingInBody = !(approvalBody != null && !bodyIsIterableButEmpty);
 
         // we found nothing in the headers or the body
-        if (nothingInheader && nothingInBody) {
+        if (nothingInHeader && nothingInBody) {
             throw new SalesforceException(
                     "Missing " + SalesforceEndpointConfig.APPROVAL
                                           + " parameter in header or ApprovalRequest or List of ApprovalRequests body",
@@ -282,7 +309,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     final boolean processApprovalHeaderValues(
             final ApprovalRequest approvalRequest, final Map<String, Object> incomingHeaderValues) {
-        // loop trough all header values, find those that start with `approval.`
+        // loop through all header values, find those that start with `approval.`
         // set the property value to the given approvalRequest and return if
         // any value was set
         return incomingHeaderValues.entrySet().stream().filter(kv -> kv.getKey().startsWith("approval.")).map(kv -> {
@@ -331,21 +358,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processGetSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        String sObjectIdValue;
-        // determine parameters from input AbstractSObject
-        final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
+        String sObjectName = determineSObjectName(exchange);
+        final String sObjectId = determineSObjectId(exchange);
 
         // use sObject name to load class
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
 
         // get optional field list
         String fieldsValue = getParameter(SOBJECT_FIELDS, exchange, IGNORE_BODY, IS_OPTIONAL);
@@ -359,33 +376,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processCreateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
-        AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        }
+        String sObjectName = determineSObjectName(exchange);
 
         restClient.createSObject(sObjectName, getRequestStream(exchange), determineHeaders(exchange),
                 processWithResponseCallback(exchange, callback));
     }
 
     private void processUpdateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
+        String sObjectName = determineSObjectName(exchange);
+        String sObjectId = determineSObjectId(exchange);
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectId;
+        // raw payloads will not be AbstractSObjectBase
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            // remember the sObject Id
-            sObjectId = sObjectBase.getId();
-            // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectId = getParameter(SOBJECT_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
+
         }
 
         final String finalsObjectId = sObjectId;
@@ -393,37 +397,28 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
 
     private void processDeleteSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
+        String sObjectName = determineSObjectName(exchange);
+        final String sObjectId = determineSObjectId(exchange);
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectIdValue;
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
 
         restClient.deleteSObject(sObjectName, sObjectId, determineHeaders(exchange), new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                processResponse(exchange, response, headers, exception, callback);
                 restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                processResponse(exchange, response, headers, exception, callback);
             }
         });
     }
 
     private void processGetSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         Object oldValue = null;
         String sObjectExtIdValue;
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
@@ -431,30 +426,28 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         // determine parameters from input AbstractSObject
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
 
         // use sObject name to load class
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
 
         final Object finalOldValue = oldValue;
         restClient.getSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue, determineHeaders(exchange),
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
 
     private void processUpsertSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         String sObjectExtIdValue;
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
@@ -462,13 +455,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         Object oldValue = null;
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, IGNORE_BODY, NOT_OPTIONAL);
         }
 
@@ -477,14 +468,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 getRequestStream(exchange), new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
 
     private void processDeleteSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
         // determine parameters from input AbstractSObject
@@ -492,11 +483,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         String sObjectExtIdValue;
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
 
@@ -512,39 +501,37 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processGetBlobField(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         // get blob field name
         final String sObjectBlobFieldName = getParameter(SOBJECT_BLOB_FIELD_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
         // determine parameters from input AbstractSObject
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectIdValue;
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
+        String sObjectId = determineSObjectId(exchange);
 
         restClient.getBlobField(sObjectName, sObjectId, sObjectBlobFieldName, determineHeaders(exchange),
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+        final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
-        restClient.query(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        if (streamQueryResults) {
+            restClient.query(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
+        } else {
+            restClient.query(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        }
     }
 
     private void processQueryMore(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -552,18 +539,25 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final String nextRecordsUrl = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
         restClient.queryMore(nextRecordsUrl, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
     }
 
     private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+        final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
-        restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        if (streamQueryResults) {
+            restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
+        } else {
+            restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        }
     }
 
     private void processSearch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -585,7 +579,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Map<String, Object> queryParams = getQueryParams(exchange);
 
         // set response class
-        setResponseClass(exchange, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL));
+        setResponseClass(exchange);
 
         // set request stream
         final Object requestBody = exchange.getIn().getBody();
@@ -637,6 +631,34 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     private void processLimits(Exchange exchange, AsyncCallback callback) {
         restClient.limits(determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+    }
+
+    private String determineSObjectName(Exchange exchange) throws SalesforceException {
+        String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+
+        if (sObjectName == null) {
+            // determine parameters from input AbstractSObject
+            AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+            if (sObjectBase != null) {
+                sObjectName = sObjectBase.getClass().getSimpleName();
+            } else {
+                throw new IllegalArgumentException(
+                        "Unable to determine sObject name. Body must be of AbstractSObjectBase " +
+                                                   "(base class of generated DTOs) or sObjectName option must be supplied.");
+            }
+        }
+        return sObjectName;
+    }
+
+    private String determineSObjectId(Exchange exchange) throws SalesforceException {
+        String sObjectIdValue;
+        final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+        if (sObjectBase != null) {
+            sObjectIdValue = sObjectBase.getId();
+        } else {
+            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
+        }
+        return sObjectIdValue;
     }
 
     @SuppressWarnings("unchecked")
@@ -739,37 +761,27 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
      */
     protected abstract InputStream getRequestStream(Message in, Object object) throws SalesforceException;
 
-    private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
+    protected void setResponseClass(Exchange exchange) throws SalesforceException {
 
         // nothing to do if using rawPayload
         if (rawPayload) {
             return;
         }
 
-        Class<?> sObjectClass;
-
-        if (sObjectName != null) {
-            // lookup class from class map
-            sObjectClass = classMap.get(sObjectName);
-            if (null == sObjectClass) {
-                throw new SalesforceException(String.format("No class found for SObject %s", sObjectName), null);
-            }
-
+        Class<?> sObjectClass = getSObjectClass(exchange);
+        if (sObjectClass != null) {
+            exchange.setProperty(RESPONSE_CLASS, sObjectClass);
         } else {
-
-            // use custom response class property
-            final String className = getParameter(SOBJECT_CLASS, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            try {
-                sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
-            } catch (ClassNotFoundException e) {
-                throw new SalesforceException(String.format("SObject class not found %s, %s", className, e.getMessage()), e);
-            }
+            exchange.setProperty(RESPONSE_CLASS_DEFERRED, true);
         }
-        exchange.setProperty(RESPONSE_CLASS, sObjectClass);
     }
 
     final ResponseCallback processWithResponseCallback(final Exchange exchange, final AsyncCallback callback) {
         return (response, headers, exception) -> processResponse(exchange, response, headers, exception, callback);
+    }
+
+    final ResponseCallback processWithStreamResultCallback(final Exchange exchange, final AsyncCallback callback) {
+        return (response, headers, exception) -> processStreamResultResponse(exchange, response, headers, exception, callback);
     }
 
     // process response entity and set out message in exchange
@@ -777,8 +789,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
             AsyncCallback callback);
 
+    protected abstract void processStreamResultResponse(
+            Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
+            AsyncCallback callback);
+
     final boolean shouldReport(SalesforceException ex) {
         return !(ex instanceof NoSuchSObjectException && notFoundBehaviour == NotFoundBehaviour.NULL);
     }
-
 }

@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "google-sheets:application-x-struct",
+    "title": "Google Sheets (Application X Struct)",
+    "description": "Transforms to\/from JSon data and Google Sheets ValueRange object",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.google.sheets.transform.GoogleSheetsJsonStructDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-sheets",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

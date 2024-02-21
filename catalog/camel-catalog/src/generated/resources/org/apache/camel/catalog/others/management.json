@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "management",
+    "title": "Management",
+    "description": "Camel Management",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core,management",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-management",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

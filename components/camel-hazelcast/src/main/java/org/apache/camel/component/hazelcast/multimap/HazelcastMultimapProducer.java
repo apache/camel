@@ -76,7 +76,7 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
                 break;
 
             case CLEAR:
-                this.clear(exchange);
+                this.clear();
                 break;
 
             case VALUE_COUNT:
@@ -114,7 +114,7 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
         exchange.getMessage().setBody(this.cache.valueCount(oid));
     }
 
-    private void clear(Exchange exchange) {
+    private void clear() {
         this.cache.clear();
     }
 

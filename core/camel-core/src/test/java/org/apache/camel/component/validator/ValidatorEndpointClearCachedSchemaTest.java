@@ -137,7 +137,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         }
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
-            LOG.info("Endpoint URI: " + endpoint.getEndpointUri());
+            LOG.info("Endpoint URI: {}", endpoint.getEndpointUri());
             if (endpoint.getEndpointUri().startsWith("validator:")) {
                 ValidatorEndpoint xsltEndpoint = (ValidatorEndpoint) endpoint;
                 xsltEndpoint.clearCachedSchema();

@@ -49,7 +49,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
     private CamelContext camelContext;
     private String routeId;
     private ScheduledExecutorService executorService;
-    private volatile ScheduledFuture task;
+    private volatile ScheduledFuture<?> task;
     private final AtomicInteger doneMessages = new AtomicInteger();
     private final AtomicBoolean actionDone = new AtomicBoolean();
 
@@ -162,7 +162,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
         executorService.submit(createTask(true));
     }
 
-    protected ScheduledFuture performMaxDurationAction() {
+    protected ScheduledFuture<?> performMaxDurationAction() {
         return executorService.schedule(createTask(false), maxSeconds, TimeUnit.SECONDS);
     }
 
@@ -189,7 +189,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
                     LOG.info("Suspending all routes {}", tail);
                     camelContext.suspend();
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.warn("Error performing action: {}", action, e);
             }
         };

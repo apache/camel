@@ -25,11 +25,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_GLANCE;
+
 /**
  * Manage VM images and metadata definitions in OpenStack Glance.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host",
-             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_GLANCE, title = "OpenStack Glance", syntax = "openstack-glance:host",
+             category = { Category.CONTAINER }, producerOnly = true, headersClass = GlanceConstants.class)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

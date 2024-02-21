@@ -18,7 +18,9 @@ package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseModel<O extends BaseOptionModel> {
 
@@ -34,6 +36,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected final List<O> options = new ArrayList<>();
     protected SupportLevel supportLevel;
     protected boolean nativeSupported;
+    protected Map<String, Object> metadata = new LinkedHashMap<>();
 
     public static Comparator<BaseModel<?>> compareTitle() {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
@@ -138,18 +141,29 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     }
 
     /**
-     * @return {@code true} if the part represented by this model supports compilation to native code; {@code false}
-     *         otherwise
+     * True if the part represented by this model supports compilation to native code.
      */
     public boolean isNativeSupported() {
         return nativeSupported;
     }
 
-    /**
-     * @param nativeSupported see {@link #isNativeSupported()}
-     */
     public void setNativeSupported(boolean nativeSupported) {
         this.nativeSupported = nativeSupported;
     }
 
+    /**
+     * A free form map of key value pair representing this {@link BaseModel}'s metadata
+     */
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

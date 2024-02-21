@@ -30,7 +30,7 @@ public interface GitHubEventFetchStrategy {
 
     /**
      * Fetches GitHub events from the {@link EventService}.
-     * 
+     *
      * @param  eventService The {@link EventService} for interacting with the GitHub event APIs
      * @return              {@link PageIterator} of event objects
      */

@@ -146,11 +146,11 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         configuration.setConnectionTimeout(connectionTimeout, connectionTimeotUnit);
     }
 
-    public TimeUnit getConnectionTimeotUnit() {
+    public TimeUnit getConnectionTimeoutUnit() {
         return configuration.getConnectionTimeoutUnit();
     }
 
-    public void setConnectionTimeotUnit(TimeUnit connectionTimeotUnit) {
+    public void setConnectionTimeoutUnit(TimeUnit connectionTimeotUnit) {
         configuration.setConnectionTimeoutUnit(connectionTimeotUnit);
     }
 
@@ -225,16 +225,18 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         }
     }
 
-    private CuratorFramework getOrCreateCurator() throws Exception {
+    private CuratorFramework getOrCreateCurator() {
         if (curator == null) {
             curator = configuration.getCuratorFramework();
 
             if (curator == null) {
                 managedInstance = true;
 
-                LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
-                        configuration.getNamespace(),
-                        String.join(",", configuration.getNodes()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
+                            configuration.getNamespace(),
+                            String.join(",", configuration.getNodes()));
+                }
 
                 curator = ZooKeeperCuratorHelper.createCurator(configuration);
                 curator.start();

@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
@@ -159,6 +159,24 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
+    public void testParseConvertHeaderXml() throws Exception {
+        RouteDefinition route = assertOneRoute("convertHeader.xml");
+        assertFrom(route, "seda:a");
+        ConvertHeaderDefinition node = assertOneProcessorInstanceOf(ConvertHeaderDefinition.class, route);
+        assertEquals("foo", node.getName());
+        assertEquals("java.lang.Integer", node.getType());
+    }
+
+    @Test
+    public void testParseConvertVariableXml() throws Exception {
+        RouteDefinition route = assertOneRoute("convertVariable.xml");
+        assertFrom(route, "seda:a");
+        ConvertVariableDefinition node = assertOneProcessorInstanceOf(ConvertVariableDefinition.class, route);
+        assertEquals("foo", node.getName());
+        assertEquals("java.lang.Integer", node.getType());
+    }
+
+    @Test
     public void testParseRoutingSlipXml() throws Exception {
         RouteDefinition route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
@@ -271,12 +289,6 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
-    public void testParseXStreamDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithXStreamDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
     public void testParseXMLSecurityDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLSecurityDataFormat.xml");
         assertFrom(route, "seda:a");
@@ -286,6 +298,14 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseTidyMarkupDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormat.xml");
         assertFrom(route, "seda:a");
+    }
+
+    @Test
+    public void testParseTidyMarkupDataFormatAndAllowNullBody() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormatAndAllowNullBody.xml");
+        assertFrom(route, "seda:a");
+        UnmarshalDefinition unmarshal = assertNthProcessorInstanceOf(UnmarshalDefinition.class, route, 0);
+        assertEquals("true", unmarshal.getAllowNullBody(), "The unmarshaller should allow null body");
     }
 
     @Test
@@ -363,8 +383,7 @@ public class XmlParseTest extends XmlTestSupport {
 
     protected RouteDefinition assertOneRoute(String uri) throws JAXBException {
         RouteContainer context = assertParseAsJaxb(uri);
-        RouteDefinition route = assertOneElement(context.getRoutes());
-        return route;
+        return assertOneElement(context.getRoutes());
     }
 
     protected void assertFrom(RouteDefinition route, String uri) {

@@ -16,39 +16,32 @@
  */
 package org.apache.camel.component.cron;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CronPatternsTest extends CamelTestSupport {
 
-    @Test
-    void testTooManyParts() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "cron:tab?schedule=0/1 * * * * ? 1 2", "cron:tab?schedule=wrong pattern",
+            "cron://name?schedule=0+0/5+12-18+?+*+MON-FRI+2019+1" })
+    @DisplayName("Test parsing with too many, too little and invalid characters in the pattern")
+    void testParts(String endpointUri) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("cron:tab?schedule=0/1 * * * * ? 1 2")
-                        .to("mock:result");
-            }
-        });
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            context.start();
-        });
-    }
-
-    @Test
-    void testTooLittleParts() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("cron:tab?schedule=wrong pattern")
+                from(endpointUri)
                         .to("mock:result");
             }
         });
@@ -59,7 +52,7 @@ public class CronPatternsTest extends CamelTestSupport {
 
     @Test
     void testPlusInURI() throws Exception {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.INFO);
 
@@ -77,20 +70,6 @@ public class CronPatternsTest extends CamelTestSupport {
         context.stop();
 
         Assertions.assertEquals(0, bi.getInvokedCounter());
-    }
-
-    @Test
-    void testPlusInURINok() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI+2019+1")
-                        .to("mock:result");
-            }
-        });
-        assertThrows(FailedToCreateRouteException.class, () -> {
-            context.start();
-        });
     }
 
     @Override

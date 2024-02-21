@@ -22,6 +22,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 
+/**
+ * A specialized {@link InterceptStrategy} which is used for JMX management for EIPs.
+ */
 public interface ManagementInterceptStrategy {
 
     InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target);

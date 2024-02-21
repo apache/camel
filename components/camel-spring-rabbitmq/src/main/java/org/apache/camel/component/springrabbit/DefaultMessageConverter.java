@@ -25,8 +25,9 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.AbstractMessageConverter;
 import org.springframework.amqp.support.converter.MessageConversionException;
+import org.springframework.amqp.support.converter.MessageConverter;
 
-public class DefaultMessageConverter extends AbstractMessageConverter {
+public class DefaultMessageConverter extends AbstractMessageConverter implements MessageConverter {
 
     private final String defaultCharset = Charset.defaultCharset().name();
     private final CamelContext camelContext;
@@ -37,6 +38,11 @@ public class DefaultMessageConverter extends AbstractMessageConverter {
 
     @Override
     public Message createMessage(Object body, MessageProperties messageProperties) throws MessageConversionException {
+        if (body == null) {
+            throw new MessageConversionException(
+                    "Cannot send message as message body is null, and option allowNullBody is false.");
+        }
+
         boolean text = body instanceof String;
         byte[] data;
         try {

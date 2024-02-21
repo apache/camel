@@ -19,40 +19,41 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(29);
+        props.add("allowDefaultCodec");
+        props.add("bridgeErrorHandler");
+        props.add("cachedAddress");
+        props.add("clientMode");
+        props.add("codec");
+        props.add("decoderMaxLineLength");
         props.add("disconnect");
-        props.add("lazySessionCreation");
         props.add("disconnectOnNoReply");
         props.add("encoderMaxLineLength");
-        props.add("sslContextParameters");
-        props.add("writeTimeout");
-        props.add("timeout");
-        props.add("protocol");
-        props.add("bridgeErrorHandler");
-        props.add("autoStartTls");
+        props.add("encoding");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("filters");
         props.add("host");
+        props.add("lazySessionCreation");
+        props.add("lazyStartProducer");
+        props.add("maximumPoolSize");
+        props.add("minaLogger");
         props.add("noReplyLogLevel");
-        props.add("transferExchange");
+        props.add("orderedThreadPoolExecutor");
+        props.add("port");
+        props.add("protocol");
+        props.add("sslContextParameters");
+        props.add("sync");
         props.add("textline");
         props.add("textlineDelimiter");
-        props.add("exchangePattern");
-        props.add("orderedThreadPoolExecutor");
-        props.add("filters");
-        props.add("encoding");
-        props.add("sync");
-        props.add("minaLogger");
-        props.add("codec");
-        props.add("lazyStartProducer");
-        props.add("port");
-        props.add("cachedAddress");
-        props.add("allowDefaultCodec");
-        props.add("maximumPoolSize");
-        props.add("clientMode");
-        props.add("decoderMaxLineLength");
-        props.add("exceptionHandler");
+        props.add("timeout");
+        props.add("transferExchange");
+        props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -82,6 +83,11 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

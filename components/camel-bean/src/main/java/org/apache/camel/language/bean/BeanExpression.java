@@ -58,7 +58,7 @@ public class BeanExpression implements Expression, Predicate {
     private ParameterMappingStrategy parameterMappingStrategy;
     private BeanComponent beanComponent;
     private Language simple;
-
+    private Class<?> resultType;
     private Object bean;
     private String beanName;
     private Class<?> type;
@@ -66,6 +66,7 @@ public class BeanExpression implements Expression, Predicate {
     private BeanHolder beanHolder;
     private boolean ognlMethod;
     private BeanScope scope = BeanScope.Singleton;
+    private boolean validate = true;
 
     public BeanExpression(Object bean, String method) {
         this.bean = bean;
@@ -112,6 +113,14 @@ public class BeanExpression implements Expression, Predicate {
         this.scope = scope;
     }
 
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
+
     public ParameterMappingStrategy getParameterMappingStrategy() {
         return parameterMappingStrategy;
     }
@@ -134,6 +143,14 @@ public class BeanExpression implements Expression, Predicate {
 
     public void setSimple(Language simple) {
         this.simple = simple;
+    }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
     }
 
     @Override
@@ -161,13 +178,13 @@ public class BeanExpression implements Expression, Predicate {
         // lets see if we can do additional validation that the bean has valid method during creation of the expression
         Object target = beanHolder.getBean(null);
         if (method != null) {
-            validateHasMethod(context, target, type, method);
-
-            // validate OGNL if its invalid syntax
-            if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
-                throw new ExpressionIllegalSyntaxException(method);
+            if (validate) {
+                validateHasMethod(context, target, type, method);
+                // validate OGNL if its invalid syntax
+                if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+                    throw new ExpressionIllegalSyntaxException(method);
+                }
             }
-
             ognlMethod = OgnlHelper.isValidOgnlExpression(method);
         }
     }
@@ -201,10 +218,9 @@ public class BeanExpression implements Expression, Predicate {
                 // regular non ognl invocation
                 return invokeBean(beanHolder, beanName, method, exchange);
             }
+        } catch (RuntimeBeanExpressionException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof RuntimeBeanExpressionException) {
-                throw (RuntimeBeanExpressionException) e;
-            }
             throw new RuntimeBeanExpressionException(exchange, getBeanName(exchange, beanName, beanHolder), method, e);
         }
     }
@@ -214,7 +230,8 @@ public class BeanExpression implements Expression, Predicate {
         Object result = evaluate(exchange);
         if (Object.class == type) {
             // do not use type converter if type is Object (optimize)
-            return (T) result;
+            return (T) (resultType == null
+                    ? result : exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result));
         } else {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
         }

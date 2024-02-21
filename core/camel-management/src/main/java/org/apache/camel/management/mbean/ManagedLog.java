@@ -35,7 +35,11 @@ public class ManagedLog extends ManagedProcessor implements ManagedLogMBean {
 
     @Override
     public String getMessage() {
-        return processor.getExpression().toString();
+        if (processor.getExpression() != null) {
+            return processor.getExpression().toString();
+        } else {
+            return processor.getMessage();
+        }
     }
 
     @Override

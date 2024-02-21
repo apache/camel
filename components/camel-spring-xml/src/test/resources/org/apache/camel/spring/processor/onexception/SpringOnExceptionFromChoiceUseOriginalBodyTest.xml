@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="deadLetter" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:error"/>
     </bean>
 

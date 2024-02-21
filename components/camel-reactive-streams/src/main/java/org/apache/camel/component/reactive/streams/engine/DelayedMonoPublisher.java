@@ -26,16 +26,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Publish a single item as soon as it's available.
  */
 public class DelayedMonoPublisher<T> implements Publisher<T> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DelayedMonoPublisher.class);
-
     private final ExecutorService workerPool;
 
     private final List<MonoSubscription> subscriptions = new CopyOnWriteArrayList<>();

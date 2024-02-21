@@ -61,7 +61,7 @@ public class HistogramProducerTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         producer = new HistogramProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange, in);
         lenient().when(registry.histogram(METRICS_NAME)).thenReturn(histogram);
@@ -69,7 +69,7 @@ public class HistogramProducerTest {
     }
 
     @Test
-    public void testHistogramProducer() throws Exception {
+    public void testHistogramProducer() {
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
 

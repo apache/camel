@@ -29,9 +29,11 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
         case "baseUri": target.setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "client": target.setClient(property(camelContext, org.asynchttpclient.AsyncHttpClient.class, value)); return true;
-        case "clientconfig":
-        case "clientConfig": target.setClientConfig(property(camelContext, org.asynchttpclient.AsyncHttpClientConfig.class, value)); return true;
+        case "client": target.setClient(property(camelContext, java.net.http.HttpClient.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -49,9 +51,11 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
         case "baseUri": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "client": return org.asynchttpclient.AsyncHttpClient.class;
-        case "clientconfig":
-        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "client": return java.net.http.HttpClient.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -71,8 +75,10 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "client": return target.getClient();
-        case "clientconfig":
-        case "clientConfig": return target.getClientConfig();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

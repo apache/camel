@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Bin4;
+import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
@@ -72,7 +74,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
                         "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                        new Object[] { commandStr, iSeries.getSystemName(), iSeries.getUserId() });
+                        commandStr, iSeries.getSystemName(), iSeries.getUserId());
             }
 
             boolean result = pgmCall.run();
@@ -83,10 +85,13 @@ public class Jt400PgmProducer extends DefaultProducer {
             }
 
             if (result) {
-                handlePGMOutput(exchange, pgmCall, parameterList, iSeries);
+                handlePGMOutput(exchange, pgmCall, iSeries);
             } else {
                 throw new Jt400PgmCallException(getOutputMessages(pgmCall));
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new Jt400PgmCallException(e);
         } catch (Exception e) {
             throw new Jt400PgmCallException(e);
         } finally {
@@ -123,9 +128,20 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (input) {
                 if (param != null) {
                     AS400DataType typeConverter;
-                    if (getISeriesEndpoint().getFormat() == Jt400Configuration.Format.binary) {
+                    if (param instanceof CharSequence) {
+                        param = param.toString();
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof char[]) {
+                        param = new String((char[]) param);
+                        typeConverter = new AS400Text(length, iSeries);
+                    } else if (param instanceof Integer) {
+                        typeConverter = new AS400Bin4();
+                    } else if (param instanceof Long) {
+                        typeConverter = new AS400Bin8();
+                    } else if (param instanceof byte[]) {
                         typeConverter = new AS400ByteArray(length);
                     } else {
+                        param = param.toString(); // must be a String for AS400Text class
                         typeConverter = new AS400Text(length, iSeries);
                     }
                     inputData = typeConverter.toBytes(param);
@@ -159,7 +175,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return parameterList;
     }
 
-    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs, AS400 iSeries)
+    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, AS400 iSeries)
             throws InvalidPayloadException {
 
         Object body = exchange.getIn().getMandatoryBody();
@@ -190,7 +206,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         Object[] bodyOUT = new Object[results.size()];
         bodyOUT = results.toArray(bodyOUT);
 
-        exchange.getOut().setBody(bodyOUT);
+        exchange.getMessage().setBody(bodyOUT);
     }
 
     private String getOutputMessages(ProgramCall pgmCall) throws Exception {
@@ -200,11 +216,11 @@ public class Jt400PgmProducer extends DefaultProducer {
         for (int i = 0; i < messageList.length; ++i) {
             // Load additional message information.
             messageList[i].load();
-            outputMsg.append(i + ") ");
+            outputMsg.append(i).append(") ");
             outputMsg.append(messageList[i].getText());
             outputMsg.append(" - ");
             outputMsg.append(messageList[i].getHelp());
-            outputMsg.append("\n");
+            outputMsg.append('\n');
         }
         return outputMsg.toString();
     }
@@ -219,7 +235,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return iSeries;
     }
 
-    private void release(AS400 iSeries) throws Exception {
+    private void release(AS400 iSeries) {
         if (iSeries != null) {
             LOG.debug("Releasing connection to {}", getISeriesEndpoint());
             getISeriesEndpoint().releaseSystem(iSeries);

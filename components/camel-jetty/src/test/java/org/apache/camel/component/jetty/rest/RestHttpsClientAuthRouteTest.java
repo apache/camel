@@ -31,12 +31,15 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
-    static int port = AvailablePortFinder.getNextAvailable();
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
+
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testGETClientRoute() throws Exception {
@@ -44,7 +47,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello some-id");
         sender.sendBody(null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected String getClientURI() {
@@ -90,11 +93,12 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                RestConfigurationDefinition restConfig = restConfiguration().scheme("https").host("localhost").port(port);
+            public void configure() {
+                RestConfigurationDefinition restConfig
+                        = restConfiguration().scheme("https").host("localhost").port(port.getPort());
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
@@ -102,14 +106,14 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                 rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
 
                 from("direct:get1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody("Hello " + id);
                     }
                 });
 
                 from("direct:post1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                         exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
@@ -117,7 +121,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     }
                 });
 
-                from("direct:start").toF(getClientURI(), port).to("mock:result");
+                from("direct:start").toF(getClientURI(), port.getPort()).to("mock:result");
             }
         };
     }

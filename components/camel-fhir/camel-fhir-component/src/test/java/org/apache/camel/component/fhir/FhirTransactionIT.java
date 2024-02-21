@@ -26,11 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirTransactionApiMethod;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirTransactionIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirTransactionIT.class);
@@ -49,17 +52,17 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirTransactionApiMethod.class).getName();
 
     @Test
-    public void testWithBundle() throws Exception {
+    public void testWithBundle() {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://WITH_BUNDLE", createTransactionBundle());
 
         assertNotNull(result, "withBundle result");
         assertTrue(result.getEntry().get(0).getResponse().getStatus().contains("Created"));
-        LOG.debug("withBundle: " + result);
+        LOG.debug("withBundle: {}", result);
     }
 
     @Test
-    public void testWithStringBundle() throws Exception {
+    public void testWithStringBundle() {
         Bundle transactionBundle = createTransactionBundle();
         String stringBundle = fhirContext.newJsonParser().encodeResourceToString(transactionBundle);
 
@@ -68,11 +71,11 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
 
         assertNotNull(result, "withBundle result");
         assertTrue(result.contains("Bundle"));
-        LOG.debug("withBundle: " + result);
+        LOG.debug("withBundle: {}", result);
     }
 
     @Test
-    public void testWithResources() throws Exception {
+    public void testWithResources() {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
         Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
@@ -83,12 +86,12 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         List<IBaseResource> result = requestBody("direct://WITH_RESOURCES", patients);
 
         assertNotNull(result, "withResources result");
-        LOG.debug("withResources: " + result);
+        LOG.debug("withResources: {}", result);
         assertEquals(2, result.size());
     }
 
     @Test
-    public void testWithResourcesSummaryEnum() throws Exception {
+    public void testWithResourcesSummaryEnum() {
         Patient oscar = new Patient().addName(new HumanName().addGiven("Oscar").setFamily("Peterson"));
         Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         List<IBaseResource> patients = new ArrayList<>(2);
@@ -101,12 +104,12 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         List<IBaseResource> result = requestBodyAndHeaders("direct://WITH_RESOURCES", patients, headers);
 
         assertNotNull(result, "withResources result");
-        LOG.debug("withResources: " + result);
+        LOG.debug("withResources: {}", result);
         assertEquals(2, result.size());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for withBundle

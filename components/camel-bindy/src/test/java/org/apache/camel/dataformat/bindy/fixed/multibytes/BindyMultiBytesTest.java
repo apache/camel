@@ -69,11 +69,11 @@ public class BindyMultiBytesTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .setHeader(Exchange.CHARSET_NAME, constant(StandardCharsets.UTF_8.name()))
                         .unmarshal(new BindyFixedLengthDataFormat(TestRecord.class))

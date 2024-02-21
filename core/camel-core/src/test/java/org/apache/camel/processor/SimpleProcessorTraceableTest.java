@@ -44,7 +44,7 @@ public class SimpleProcessorTraceableTest extends ContextTestSupport {
         };
     }
 
-    private class MyProcessor implements Processor, org.apache.camel.Traceable {
+    private static class MyProcessor implements Processor, org.apache.camel.Traceable {
 
         @Override
         public void process(Exchange exchange) throws Exception {

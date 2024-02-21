@@ -33,9 +33,9 @@ import org.junit.jupiter.api.Disabled;
 public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private Connector createSslSocketConnector(CamelContext context, int port) throws Exception {
+    private Connector createSslSocketConnector(CamelContext context, int port) {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource("file://" + this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -45,27 +45,19 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 
-        // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector
-        // instead of SslSocketConnector
-        // SslSelectChannelConnector sslSocketConnector = new
-        // SslSelectChannelConnector();
-        // sslSocketConnector.getSslContextFactory().setSslContext(sslContextParameters.createSSLContext());
-        // sslSocketConnector.setPort(port);
-
-        // return sslSocketConnector;
         return null;
     }
     // END SNIPPET: e2
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
                 Map<Integer, Connector> connectors = new HashMap<>();
-                connectors.put(port1, createSslSocketConnector(getContext(), port1));
-                connectors.put(port2, createSslSocketConnector(getContext(), port2));
+                connectors.put(port1.getPort(), createSslSocketConnector(getContext(), port1.getPort()));
+                connectors.put(port2.getPort(), createSslSocketConnector(getContext(), port2.getPort()));
 
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 jetty.setSslSocketConnectors(connectors);
@@ -74,7 +66,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

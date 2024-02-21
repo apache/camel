@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -29,10 +28,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -80,11 +79,8 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         }
 
         Map<File, Supplier<String>> files;
-        try {
-            files = Files
-                    .find(buildDir.toPath(), Integer.MAX_VALUE,
-                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+        try (Stream<Path> pathStream = Files.find(buildDir.toPath(), Integer.MAX_VALUE, super::isJsonFile)) {
+            files = pathStream.collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -92,14 +88,16 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         executeComponent(files);
     }
 
-    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException {
         // find the component names
         Set<String> componentNames = new TreeSet<>();
         findComponentNames(buildDir, componentNames);
 
         // create auto configuration for the components
         if (!componentNames.isEmpty()) {
-            getLog().debug("Found " + componentNames.size() + " components");
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Found " + componentNames.size() + " components");
+            }
 
             List<ComponentModel> allModels = new LinkedList<>();
             for (String componentName : componentNames) {
@@ -113,8 +111,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
             // Group the models by implementing classes
             Map<String, List<ComponentModel>> grModels
                     = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
-            for (String componentClass : grModels.keySet()) {
-                List<ComponentModel> compModels = grModels.get(componentClass);
+            for (List<ComponentModel> compModels : grModels.values()) {
                 for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
                     try {
@@ -128,10 +125,12 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     }
 
     protected void createEndpointUriFactory(ComponentModel model) throws IOException {
-        getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Generating endpoint-uri-factory: " + model.getScheme());
+        }
 
         String fqn = model.getJavaType();
-        generateEndpointUriFactory(fqn, fqn, model, sourcesOutputDir);
+        generateEndpointUriFactory(fqn, model, sourcesOutputDir);
 
         int pos = fqn.lastIndexOf('.');
         String pn = fqn.substring(0, pos);
@@ -158,23 +157,17 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     }
 
     @Deprecated
-    private void generateEndpointUriFactory(
-            String fqn, String targetFqn, ComponentModel model, File outputDir)
-            throws IOException {
+    private void generateEndpointUriFactory(String targetFqn, ComponentModel model, File outputDir) {
 
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "EndpointUriFactory";
         // remove component from name
         cn = cn.replace("Component", "");
-        String en = fqn;
-        String pfqn = fqn;
+
         String psn = "org.apache.camel.support.component.EndpointUriFactorySupport";
 
-        StringWriter sw = new StringWriter();
-        EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, en, pfqn, psn, model, sw);
-
-        String source = sw.toString();
+        String source = EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, psn, model);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();

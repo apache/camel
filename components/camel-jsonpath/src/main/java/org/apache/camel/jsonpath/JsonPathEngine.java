@@ -27,9 +27,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -40,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
+import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
 import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 
 public class JsonPathEngine {
@@ -51,59 +56,71 @@ public class JsonPathEngine {
     private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
     private final String expression;
     private final boolean writeAsString;
-    private final String headerName;
-    private final JsonPath path;
     private final Configuration configuration;
+    private final boolean hasSimple;
+    private final Expression source;
     private JsonPathAdapter adapter;
     private volatile boolean initJsonAdapter;
 
     @Deprecated
     public JsonPathEngine(String expression) {
-        this(expression, false, false, true, null, null);
+        this(expression, null, false, false, true, null, null);
     }
 
-    public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple,
-                          String headerName, Option[] options) {
+    public JsonPathEngine(String expression, Expression source, boolean writeAsString, boolean suppressExceptions,
+                          boolean allowSimple, Option[] options, CamelContext context) {
         this.expression = expression;
+        this.source = source;
         this.writeAsString = writeAsString;
-        this.headerName = headerName;
 
         Configuration.ConfigurationBuilder builder = Configuration.builder();
         if (options != null) {
             builder.options(options);
         }
+        // Use custom ObjectMapper if provided (CAMEL-17956)
+        ObjectMapper objectMapper = findRegisteredMapper(context);
+        if (objectMapper != null) {
+            builder.jsonProvider(new JacksonJsonProvider(objectMapper));
+            builder.mappingProvider(new JacksonMappingProvider(objectMapper));
+        } else {
+            builder.jsonProvider(new JacksonJsonProvider());
+            builder.mappingProvider(new JacksonMappingProvider());
+        }
+
         if (suppressExceptions) {
             builder.options(SUPPRESS_EXCEPTIONS);
         }
         this.configuration = builder.build();
 
-        boolean hasSimple = false;
+        boolean simpleInUse = false;
         if (allowSimple) {
             // is simple language embedded
             Matcher matcher = SIMPLE_PATTERN.matcher(expression);
             if (matcher.find()) {
-                hasSimple = true;
+                simpleInUse = true;
             }
         }
-        if (hasSimple) {
-            this.path = null;
-        } else {
-            this.path = JsonPath.compile(expression);
-            LOG.debug("Compiled static JsonPath: {}", expression);
+        this.hasSimple = simpleInUse;
+    }
+
+    private ObjectMapper findRegisteredMapper(CamelContext context) {
+        if (context != null) {
+            return context.getRegistry().findSingleByType(ObjectMapper.class);
         }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
     public Object read(Exchange exchange) throws Exception {
         Object answer;
-        if (path == null) {
+        if (hasSimple) {
+            // need to compile every time
             Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
             String text = exp.evaluate(exchange, String.class);
-            JsonPath path = JsonPath.compile(text);
-            LOG.debug("Compiled dynamic JsonPath: {}", expression);
-            answer = doRead(path, exchange);
+            LOG.debug("Compiled dynamic JsonPath: {}", text);
+            answer = doRead(text, exchange);
         } else {
-            answer = doRead(path, exchange);
+            answer = doRead(expression, exchange);
         }
 
         if (writeAsString) {
@@ -121,7 +138,7 @@ public class JsonPathEngine {
             // write each row as a string but keep it as a list/iterable
             if (answer instanceof Iterable) {
                 List<String> list = new ArrayList<>();
-                Iterable it = (Iterable) answer;
+                Iterable<Object> it = (Iterable<Object>) answer;
                 for (Object o : it) {
                     if (adapter != null) {
                         String json = adapter.writeAsString(o, exchange);
@@ -132,13 +149,13 @@ public class JsonPathEngine {
                 }
                 return list;
             } else if (answer instanceof Map) {
-                Map map = (Map) answer;
-                for (Object key : map.keySet()) {
-                    Object value = map.get(key);
+                Map<Object, Object> map = (Map<Object, Object>) answer;
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                    Object value = entry.getValue();
                     if (adapter != null) {
                         String json = adapter.writeAsString(value, exchange);
                         if (json != null) {
-                            map.put(key, json);
+                            map.put(entry.getKey(), json);
                         }
                     }
                 }
@@ -154,8 +171,12 @@ public class JsonPathEngine {
         return answer;
     }
 
-    private Object doRead(JsonPath path, Exchange exchange) throws IOException, CamelExchangeException {
-        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+    private Object getPayload(Exchange exchange) {
+        return source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+    }
+
+    private Object doRead(String path, Exchange exchange) throws IOException, CamelExchangeException {
+        final Object json = getPayload(exchange);
 
         if (json instanceof InputStream) {
             return readWithInputStream(path, exchange);
@@ -165,36 +186,38 @@ public class JsonPathEngine {
             if (genericFile.getCharset() != null) {
                 // special treatment for generic file with charset
                 InputStream inputStream = new FileInputStream((File) genericFile.getFile());
-                return path.read(inputStream, genericFile.getCharset(), configuration);
+                return JsonPath.using(configuration).parse(inputStream, genericFile.getCharset()).read(path);
             }
         }
 
+        Object answer;
         if (json instanceof String) {
             LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
-            return path.read(str, configuration);
+            answer = JsonPath.using(configuration).parse(str).read(path);
         } else if (json instanceof Map) {
             LOG.trace("JSonPath: {} is read as Map: {}", path, json);
             Map map = (Map) json;
-            return path.read(map, configuration);
+            answer = JsonPath.using(configuration).parse(map).read(path);
         } else if (json instanceof List) {
             LOG.trace("JSonPath: {} is read as List: {}", path, json);
             List list = (List) json;
-            return path.read(list, configuration);
+            answer = JsonPath.using(configuration).parse(list).read(path);
         } else {
-            // can we find an adapter which can read the message body/header
-            Object answer = readWithAdapter(path, exchange);
+            //try to auto convert into inputStream
+            answer = readWithInputStream(path, exchange);
             if (answer == null) {
-                // fallback and attempt input stream for any other types
-                answer = readWithInputStream(path, exchange);
+                // fallback and attempt an adapter which can read the message body/header
+                answer = readWithAdapter(path, exchange);
             }
-            if (answer != null) {
-                return answer;
-            }
+        }
+        if (answer != null) {
+            return answer;
         }
 
         // is json path configured to suppress exceptions
-        if (configuration.getOptions().contains(SUPPRESS_EXCEPTIONS)) {
+        if (configuration.getOptions().contains(SUPPRESS_EXCEPTIONS)
+                || configuration.getOptions().contains(DEFAULT_PATH_LEAF_TO_NULL)) {
             if (configuration.getOptions().contains(ALWAYS_RETURN_LIST)) {
                 return Collections.emptyList();
             } else {
@@ -203,15 +226,15 @@ public class JsonPathEngine {
         }
 
         // okay it was not then lets throw a failure
-        if (headerName != null) {
-            throw new CamelExchangeException("Cannot read message header " + headerName + " as supported JSON value", exchange);
+        if (source != null) {
+            throw new CamelExchangeException("Cannot read " + source + " as supported JSON value", exchange);
         } else {
             throw new CamelExchangeException("Cannot read message body as supported JSON value", exchange);
         }
     }
 
-    private Object readWithInputStream(JsonPath path, Exchange exchange) throws IOException {
-        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+    private Object readWithInputStream(String path, Exchange exchange) throws IOException {
+        Object json = getPayload(exchange);
         LOG.trace("JSonPath: {} is read as InputStream: {}", path, json);
 
         InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, json);
@@ -224,20 +247,20 @@ public class JsonPathEngine {
             String jsonEncoding = exchange.getIn().getHeader(JsonPathConstants.HEADER_JSON_ENCODING, String.class);
             if (jsonEncoding != null) {
                 // json encoding specified in header
-                return path.read(is, jsonEncoding, configuration);
+                return JsonPath.using(configuration).parse(is, jsonEncoding).read(path);
             } else {
                 // No json encoding specified --> assume json encoding is unicode and determine the specific unicode encoding according to RFC-4627.
                 // This is a temporary solution, it can be removed as soon as jsonpath offers the encoding detection
                 JsonStream jsonStream = new JsonStream(is);
-                return path.read(jsonStream, jsonStream.getEncoding().name(), configuration);
+                return JsonPath.using(configuration).parse(jsonStream, jsonStream.getEncoding().name()).read(path);
             }
         }
 
         return null;
     }
 
-    private Object readWithAdapter(JsonPath path, Exchange exchange) {
-        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+    private Object readWithAdapter(String path, Exchange exchange) {
+        Object json = getPayload(exchange);
         LOG.trace("JSonPath: {} is read with adapter: {}", path, json);
 
         doInitAdapter(exchange);
@@ -255,7 +278,7 @@ public class JsonPathEngine {
                     LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map",
                             ObjectHelper.classCanonicalName(json));
                 }
-                return path.read(map, configuration);
+                return JsonPath.using(configuration).parse(map).read(path);
             }
         }
 
@@ -276,7 +299,7 @@ public class JsonPathEngine {
                         LOG.debug("JacksonJsonAdapter found on classpath and enabled for camel-jsonpath: {}", adapter);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.debug(
                         "Cannot load {} from classpath to enable JacksonJsonAdapter due {}. JacksonJsonAdapter is not enabled.",
                         JACKSON_JSON_ADAPTER, e.getMessage(),

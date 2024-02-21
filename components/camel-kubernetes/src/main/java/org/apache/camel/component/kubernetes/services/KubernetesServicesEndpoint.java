@@ -22,13 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICES;
 
 /**
  * Perform operations on Kubernetes Services and get notified on Service changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services",
-             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICES, title = "Kubernetes Services",
+             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
+             headersClass = KubernetesConstants.class)
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {

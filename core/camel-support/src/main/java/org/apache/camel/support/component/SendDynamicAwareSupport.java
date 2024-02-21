@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -35,6 +35,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     private CamelContext camelContext;
     private Set<String> knownProperties;
+    private Set<String> knownPrefixes;
     private String scheme;
 
     @Override
@@ -64,13 +65,14 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     @Override
     protected void doInit() throws Exception {
-        if (knownProperties == null) {
-            // optimize to eager load the list of known properties
-            EndpointUriFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme());
+        if (knownProperties == null || knownPrefixes == null) {
+            // optimize to eager load the list of known properties/prefixes
+            EndpointUriFactory factory = getCamelContext().getCamelContextExtension().getEndpointUriFactory(getScheme());
             if (factory == null) {
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }
             knownProperties = factory.propertyNames();
+            knownPrefixes = factory.multiValuePrefixes();
         }
     }
 
@@ -88,7 +90,13 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             // okay so only add the known properties as they are the non lenient properties
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {
-                if (knownProperties.contains(k)) {
+                boolean accept = knownProperties.contains(k);
+                // we should put the key from a multi-value (prefix) in the
+                // properties too, or the property may be lost
+                if (!accept && !knownPrefixes.isEmpty()) {
+                    accept = knownPrefixes.stream().anyMatch(k::startsWith);
+                }
+                if (accept) {
                     properties.put(k, v);
                 }
             });
@@ -112,7 +120,13 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             }
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {
-                if (!knownProperties.contains(k)) {
+                // we only accept if the key is not an existing known property
+                // or that the key is not from a multi-value (prefix)
+                boolean accept = !knownProperties.contains(k);
+                if (accept && !knownPrefixes.isEmpty()) {
+                    accept = knownPrefixes.stream().noneMatch(k::startsWith);
+                }
+                if (accept) {
                     properties.put(k, v.toString());
                 }
             });
@@ -123,15 +137,9 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
     }
 
     public String asEndpointUri(Exchange exchange, String uri, Map<String, Object> properties) throws Exception {
-        String answer;
         String query = URISupport.createQueryString(properties, false);
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            answer = uri.substring(0, pos) + "?" + query;
-        } else {
-            answer = uri + "?" + query;
-        }
-        return answer;
+
+        return StringHelper.before(uri, "?", uri) + "?" + query;
     }
 
 }

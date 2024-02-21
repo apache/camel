@@ -21,41 +21,23 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class AbstractJpaMethodTest extends CamelTestSupport {
+public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
 
-    protected JpaEndpoint endpoint;
-    protected EntityManager entityManager;
-    protected TransactionTemplate transactionTemplate;
-    protected Consumer consumer;
-    protected Exchange receivedExchange;
+    protected Customer receivedCustomer;
 
     abstract boolean usePersist();
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        if (entityManager != null) {
-            entityManager.close();
-        }
-    }
 
     @Test
     public void produceNewEntity() throws Exception {
@@ -123,7 +105,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
 
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                receivedExchange = e;
+                receivedCustomer = e.getIn().getBody(Customer.class);
                 assertNotNull(e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class));
                 latch.countDown();
             }
@@ -135,8 +117,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         consumer.stop();
         Thread.sleep(1000);
 
-        assertNotNull(receivedExchange);
-        Customer receivedCustomer = receivedExchange.getIn().getBody(Customer.class);
+        assertNotNull(receivedCustomer);
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertEquals(customer.getId(), receivedCustomer.getId());
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
@@ -150,47 +131,4 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         assertEntitiesInDatabase(0, Address.class.getName());
     }
 
-    protected void setUp(String endpointUri) throws Exception {
-        endpoint = context.getEndpoint(endpointUri, JpaEndpoint.class);
-
-        transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
-
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
-                return null;
-            }
-        });
-
-        assertEntitiesInDatabase(0, Customer.class.getName());
-        assertEntitiesInDatabase(0, Address.class.getName());
-    }
-
-    protected void save(final Object persistable) {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.persist(persistable);
-                entityManager.flush();
-                return null;
-            }
-        });
-    }
-
-    protected void assertEntitiesInDatabase(int count, String entity) {
-        List<?> results = entityManager.createQuery("select o from " + entity + " o").getResultList();
-        assertEquals(count, results.size());
-    }
-
-    protected Customer createDefaultCustomer() {
-        Customer customer = new Customer();
-        customer.setName("Christian Mueller");
-        Address address = new Address();
-        address.setAddressLine1("Hahnstr. 1");
-        address.setAddressLine2("60313 Frankfurt am Main");
-        customer.setAddress(address);
-        return customer;
-    }
 }

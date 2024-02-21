@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "value",
+    "title": "Value",
+    "description": "A single value",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.ValueDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "value": { "index": 0, "kind": "value", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value" }
+  }
+}

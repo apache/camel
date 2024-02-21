@@ -18,16 +18,17 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
+@Isolated
 public class DefaultAsyncProcessorAwaitManagerTest {
 
     private DefaultAsyncProcessorAwaitManager defaultAsyncProcessorAwaitManager;
@@ -74,7 +75,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithNotNullElements() throws Exception {
         startAsyncProcess();
-        exchange.adapt(ExtendedExchange.class).setHistoryNodeId("nodeId");
+        exchange.getExchangeExtension().setHistoryNodeId("nodeId");
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getNodeId(), is("nodeId"));
         waitForEndOfAsyncProcess();

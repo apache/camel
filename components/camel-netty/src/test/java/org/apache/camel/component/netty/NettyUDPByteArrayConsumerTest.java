@@ -48,7 +48,7 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         byte[] in = fromHexString(toSend);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true", in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
@@ -59,10 +59,10 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true")
                         .to("mock:result");
             }

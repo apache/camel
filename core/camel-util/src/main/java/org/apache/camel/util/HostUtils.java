@@ -76,9 +76,7 @@ public final class HostUtils {
         for (Map.Entry<String, Set<InetAddress>> entry : interfaceAddressMap.entrySet()) {
             Set<InetAddress> addresses = entry.getValue();
             if (!addresses.isEmpty()) {
-                for (InetAddress address : addresses) {
-                    allAddresses.add(address);
-                }
+                allAddresses.addAll(addresses);
             }
         }
         return allAddresses;
@@ -94,7 +92,7 @@ public final class HostUtils {
             return InetAddress.getLocalHost();
         } else if (addresses != null && !addresses.isEmpty()) {
             //else return the first available addrress
-            return addresses.toArray(new InetAddress[addresses.size()])[0];
+            return addresses.toArray(new InetAddress[0])[0];
         } else {
             //else we are forcedt to use the localhost address.
             return InetAddress.getLocalHost();

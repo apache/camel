@@ -16,20 +16,23 @@
  */
 package org.apache.camel.support;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PooledExchange;
+import org.apache.camel.clock.Clock;
 
 /**
  * The default and only implementation of {@link PooledExchange}.
  */
 public final class DefaultPooledExchange extends AbstractExchange implements PooledExchange {
-
+    private final ResetableClock clock;
     private OnDoneTask onDone;
-    private Class originalInClassType;
+    private Class<?> originalInClassType;
     private Message originalOut;
     private final ExchangePattern originalPattern;
     private boolean autoRelease;
@@ -37,26 +40,36 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     public DefaultPooledExchange(CamelContext context) {
         super(context);
         this.originalPattern = getPattern();
-    }
-
-    public DefaultPooledExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);
-        this.originalPattern = pattern;
+        this.properties = new ConcurrentHashMap<>(8);
+        this.clock = new ResetableClock();
     }
 
     public DefaultPooledExchange(Exchange parent) {
         super(parent);
         this.originalPattern = parent.getPattern();
+        this.properties = new ConcurrentHashMap<>(8);
+
+        Clock parentClock = parent.getClock();
+
+        if (parentClock instanceof ResetableClock rs) {
+            this.clock = rs;
+        } else {
+            this.clock = new ResetableClock(parent.getClock());
+        }
     }
 
-    public DefaultPooledExchange(Endpoint fromEndpoint) {
-        super(fromEndpoint);
+    public DefaultPooledExchange(CamelContext context, ExchangePattern pattern) {
+        super(context, pattern);
         this.originalPattern = getPattern();
+        this.properties = new ConcurrentHashMap<>(8);
+
+        this.clock = new ResetableClock();
     }
 
-    public DefaultPooledExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        super(fromEndpoint, pattern);
-        this.originalPattern = pattern;
+    @Override
+    AbstractExchange newCopy() {
+        // NOTE: this is the same behavior as done previously from AbstractExchange when returning a copy.
+        return new DefaultExchange(this);
     }
 
     public boolean isAutoRelease() {
@@ -72,10 +85,16 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         this.onDone = task;
     }
 
-    public void done(boolean forced) {
-        if (created > 0 && (forced || autoRelease)) {
-            this.created = 0; // by setting to 0 we also flag that this exchange is done and needs to be reset to use again
+    public void done() {
+        if (clock.getCreated() > 0) {
+            // by unsetting (setting to 0) we also flag that this exchange is done and needs to be reset to use again
+            clock.unset();
+
             this.properties.clear();
+            internalProperties.clear();
+            if (this.safeCopyProperties != null) {
+                this.safeCopyProperties.clear();
+            }
             this.exchangeId = null;
             if (in != null && in.getClass() == originalInClassType) {
                 // okay we can reuse in
@@ -87,28 +106,15 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
                 out.reset();
                 this.out = null;
             }
-            if (this.unitOfWork != null) {
-                this.unitOfWork.reset();
-            }
             this.exception = null;
             // reset pattern to original
             this.pattern = originalPattern;
-            if (this.onCompletions != null) {
-                this.onCompletions.clear();
-            }
             // do not reset endpoint/fromRouteId as it would be the same consumer/endpoint again
-            this.externalRedelivered = null;
-            this.historyNodeId = null;
-            this.historyNodeLabel = null;
-            this.transacted = false;
             this.routeStop = false;
             this.rollbackOnly = false;
             this.rollbackOnlyLast = false;
-            this.notifyEvent = false;
-            this.interrupted = false;
-            this.interruptable = true;
-            this.redeliveryExhausted = false;
-            this.errorHandlerHandled = null;
+
+            getExchangeExtension().reset();
 
             if (onDone != null) {
                 onDone.onDone(this);
@@ -117,8 +123,9 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     }
 
     @Override
+    @Deprecated
     public void reset(long created) {
-        this.created = created;
+        clock.reset();
     }
 
     @Override
@@ -165,4 +172,18 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         }
     }
 
+    @Override
+    public Clock getClock() {
+        return clock;
+    }
+
+    public static DefaultPooledExchange newFromEndpoint(Endpoint fromEndpoint) {
+        return newFromEndpoint(fromEndpoint, fromEndpoint.getExchangePattern());
+    }
+
+    public static DefaultPooledExchange newFromEndpoint(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
+        DefaultPooledExchange exchange = new DefaultPooledExchange(fromEndpoint.getCamelContext(), exchangePattern);
+        exchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
+        return exchange;
+    }
 }

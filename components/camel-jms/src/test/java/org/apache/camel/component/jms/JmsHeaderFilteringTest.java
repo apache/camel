@@ -19,31 +19,41 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsHeaderFilteringTest extends CamelTestSupport {
+public class JmsHeaderFilteringTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final String IN_FILTER_PATTERN = "(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     private final String componentName = "jms";
-    private final String testQueueEndpointA = componentName + ":queue:test.a";
-    private final String testQueueEndpointB = componentName + ":queue:test.b";
+    private final String testQueueEndpointA = componentName + ":queue:JmsHeaderFilteringTest.test..a";
+    private final String testQueueEndpointB = componentName + ":queue:JmsHeaderFilteringTest.test.b";
     private final String assertionReceiver = "mock:errors";
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testHeaderFilters() throws Exception {
@@ -65,12 +75,13 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
+    public String getComponentName() {
+        return componentName;
+    }
 
-        JmsComponent component = camelContext.getComponent(componentName, JmsComponent.class);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
         JmsHeaderFilterStrategy filter = new JmsHeaderFilterStrategy();
         filter.getInFilter().add("testheader");
@@ -80,13 +91,13 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
 
         component.setHeaderFilterStrategy(filter);
 
-        return camelContext;
+        return component;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 onException(AssertionError.class).to(assertionReceiver);
 
@@ -94,6 +105,18 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
                 from(testQueueEndpointB).process(new InHeaderChecker());
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     class OutHeaderChecker implements Processor {
@@ -125,7 +148,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     class InHeaderChecker implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
 
             // filtered out by "in" filter
             assertNull(exchange.getIn().getHeader("testheader"));

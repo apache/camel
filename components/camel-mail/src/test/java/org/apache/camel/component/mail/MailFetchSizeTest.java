@@ -16,17 +16,21 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
+import java.util.concurrent.TimeUnit;
+
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for fetch size.
  */
 public class MailFetchSizeTest extends CamelTestSupport {
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
     @BeforeEach
@@ -44,34 +49,33 @@ public class MailFetchSizeTest extends CamelTestSupport {
 
     @Test
     public void testFetchSize() throws Exception {
-        Mailbox mailbox = Mailbox.get("jones@localhost");
-        assertEquals(5, mailbox.size());
+        assertEquals(5, jones.getInbox().getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Message 0", "Message 1");
+        mock.expectedBodiesReceived("Message 0\r\n", "Message 1\r\n");
         // should be done within 2 seconds as no delay when started
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        assertEquals(3, mailbox.size());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(3, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the next batch of 2 messages polled
         mock.reset();
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Message 2", "Message 3");
+        mock.expectedBodiesReceived("Message 2\r\n", "Message 3\r\n");
         // should be done within 2 (delay) + 1 seconds (polling)
         mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        assertEquals(1, mailbox.size());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(1, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the last message polled
         mock.reset();
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Message 4");
+        mock.expectedBodiesReceived("Message 4\r\n");
         mock.assertIsSatisfied();
     }
 
@@ -79,8 +83,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "jones", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), jones.getLogin(), jones.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -97,10 +101,10 @@ public class MailFetchSizeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&fetchSize=2&delay=2000"
+            public void configure() {
+                from(jones.uriPrefix(Protocol.pop3) + "&fetchSize=2&delay=2000"
                      + "&delete=true").to("mock:result");
             }
         };

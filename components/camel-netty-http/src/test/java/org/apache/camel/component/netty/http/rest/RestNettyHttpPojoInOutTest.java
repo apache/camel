@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
 
     @Test
-    public void testNettyPojoInOut() throws Exception {
+    public void testNettyPojoInOut() {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         String out = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/lives", body, String.class);
 
@@ -36,7 +36,7 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
     }
 
     @Test
-    public void testNettyGetRequest() throws Exception {
+    public void testNettyGetRequest() {
         String out = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/lives", null, String.class);
 
         assertNotNull(out);
@@ -44,10 +44,10 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty-http on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
@@ -57,7 +57,9 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
                         // just return the default country here
                         .get("lives").to("direct:start")
                         .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
+                        .to("direct:lives");
+
+                from("direct:lives")
                         .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();

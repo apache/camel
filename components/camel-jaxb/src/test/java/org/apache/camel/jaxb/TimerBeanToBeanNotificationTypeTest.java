@@ -17,6 +17,7 @@
 package org.apache.camel.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -30,14 +31,14 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
         getMockEndpoint("mock:notify").expectedMessageCount(1);
         getMockEndpoint("mock:notify").message(0).body().isInstanceOf(NotificationType.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:foo?delay=500&repeatCount=1")
                         .log("Timer triggered")
                         .bean(MyNotificationService.class, "createNotification")

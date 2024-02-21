@@ -9,6 +9,12 @@ via Camel built-in dependency-injection that supports binding via the
 
 Also notice how you can configure Camel in the `application.properties` file.
 
+=== How to build
+
+To build this project use
+
+    mvn install
+
 === How to run
 
 You can run this example using

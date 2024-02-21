@@ -25,14 +25,11 @@ import org.apache.camel.component.nitrite.operation.common.UpsertOperation;
 import org.apache.camel.support.DefaultProducer;
 import org.dizitart.no2.NitriteCollection;
 import org.dizitart.no2.objects.ObjectRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Nitrite producer.
  */
 public class NitriteProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(NitriteProducer.class);
     private NitriteEndpoint endpoint;
     private Consumer<AbstractNitriteOperation> operationValidator = noop -> {
     };

@@ -38,7 +38,7 @@ public final class Predicates {
 
     /**
      * Negates a predicate, useful for method references.
-     * 
+     *
      * <pre>
      * Stream.of("A", "", "B")
      *         .filter(Predicates.negate(String::isEmpty))

@@ -21,6 +21,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class DisruptorWaitForTaskAsPropertyTest extends CamelTestSupport {
         });
         assertEquals("Bye World", out.getMessage().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +51,7 @@ public class DisruptorWaitForTaskAsPropertyTest extends CamelTestSupport {
 
         final Exchange out = template.send("direct:start", new Processor() {
             @Override
-            public void process(final Exchange exchange) throws Exception {
+            public void process(final Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
@@ -62,7 +63,7 @@ public class DisruptorWaitForTaskAsPropertyTest extends CamelTestSupport {
         // Should return the in message as no reply is expected
         assertEquals("Hello World", out.getMessage().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

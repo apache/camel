@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.lang.annotation.Annotation;
-import java.net.URL;
 import java.util.Set;
 
 import org.apache.camel.StaticService;
@@ -86,7 +85,7 @@ public interface PackageScanClassResolver extends StaticService {
 
     /**
      * Add a filter that will be applied to all scan operations
-     * 
+     *
      * @param filter filter to filter desired classes in all scan operations
      */
     void addFilter(PackageScanFilter filter);

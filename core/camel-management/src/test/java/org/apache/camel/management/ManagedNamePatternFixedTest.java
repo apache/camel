@@ -22,10 +22,13 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedNamePatternFixedTest extends ManagementTestSupport {
 
     @Override
@@ -37,17 +40,11 @@ public class ManagedNamePatternFixedTest extends ManagementTestSupport {
 
     @Test
     public void testManagedNamePattern() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         assertEquals("cool", context.getManagementName());
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 

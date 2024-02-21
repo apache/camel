@@ -16,28 +16,29 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthenticatorTest extends CamelTestSupport {
+    private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
+    private static final MailboxUser james4 = Mailbox.getOrCreateUser("james4", "secret");
 
     /**
      * Checks that the authenticator does dynamically return passwords for the smtp endpoint.
@@ -45,11 +46,11 @@ public class AuthenticatorTest extends CamelTestSupport {
     @Test
     public void testSendAndReceiveMails() throws Exception {
         Mailbox.clearAll();
-        // first expect correct result because smtp authenticator does not return wrong password       
+        // first expect correct result because smtp authenticator does not return wrong password
         callAndCheck("mock:result");
-        // second expect exception  because smtp authenticator does return wrong password       
+        // second expect exception  because smtp authenticator does return wrong password
         callAndCheck("mock:exception");
-        // third expect correct result because smtp authenticator does not return wrong password       
+        // third expect correct result because smtp authenticator does not return wrong password
         callAndCheck("mock:result");
     }
 
@@ -58,7 +59,7 @@ public class AuthenticatorTest extends CamelTestSupport {
         resultEndpoint.expectedMinimumMessageCount(1);
         //resultEndpoint.setResultWaitTime(60000);
         String body = "hello world!";
-        execute("james3@localhost", body);
+        execute(james3.getEmail(), body);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -68,17 +69,15 @@ public class AuthenticatorTest extends CamelTestSupport {
         return body;
     }
 
-    private void execute(String mailAddress, String body) throws MessagingException, InterruptedException {
+    private void execute(String mailAddress, String body) throws MessagingException {
 
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "localhost");
-        Session session = Session.getInstance(properties, null);
+        Session session = Mailbox.getSmtpSession();
 
         MimeMessage message = new MimeMessage(session);
         populateMimeMessageBody(message, body);
         message.setRecipients(Message.RecipientType.TO, mailAddress);
 
-        Transport.send(message);
+        Transport.send(message, james3.getLogin(), james3.getPassword());
 
     }
 
@@ -118,9 +117,12 @@ public class AuthenticatorTest extends CamelTestSupport {
 
                 onException(MessagingException.class).handled(true).to("mock:exception");
 
-                from("pop3://localhost?initialDelay=100&delay=100&authenticator=#authPop3").removeHeader("to")
-                        .to("smtp://localhost?authenticator=#authSmtp&to=james4@localhost");
-                from("imap://localhost?initialDelay=200&delay=100&authenticator=#authImap").convertBodyTo(String.class)
+                from("pop3://localhost:" + Mailbox.getPort(Protocol.pop3)
+                     + "?initialDelay=100&delay=100&authenticator=#authPop3").removeHeader("to")
+                        .to("smtp://localhost:" + Mailbox.getPort(Protocol.smtp)
+                            + "?authenticator=#authSmtp&to=james4@localhost");
+                from("imap://localhost:" + Mailbox.getPort(Protocol.imap)
+                     + "?initialDelay=200&delay=100&authenticator=#authImap").convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -137,25 +139,29 @@ public class AuthenticatorTest extends CamelTestSupport {
         @Override
         public PasswordAuthentication getPasswordAuthentication() {
             if ("pop3".equals(protocol)) {
-                return new PasswordAuthentication("james3", "secret");
+                return auth(james3);
             } else if ("smtp".equals(protocol)) {
                 if (counter < 2) {
                     // in the processing of a mail message the mail consumer calls this method twice
                     counter++;
-                    return new PasswordAuthentication("james4", "secret");
+                    return auth(james4);
                 } else if (counter < 4) {
                     // return in the second call the wrongPassword which will throw an MessagingException, see MyMockTransport
                     counter++;
                     return new PasswordAuthentication("james4", "wrongPassword");
                 } else {
-                    return new PasswordAuthentication("james4", "secret");
+                    return auth(james4);
                 }
             } else if ("imap".equals(protocol)) {
-                return new PasswordAuthentication("james4", "secret");
+                return auth(james4);
             } else {
                 throw new IllegalStateException("not supported protocol " + protocol);
             }
 
+        }
+
+        private static PasswordAuthentication auth(MailboxUser user) {
+            return new PasswordAuthentication(user.getLogin(), user.getPassword());
         }
     }
 }

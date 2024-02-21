@@ -23,19 +23,18 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedChoiceTest extends ManagementTestSupport {
 
     @Test
     public void testManageChoice() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
@@ -48,22 +47,30 @@ public class ManagedChoiceTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
-        // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mysend\"");
+        // get the object name for choice
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mysend");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", camelId);
+        assertEquals(context.getManagementName(), camelId);
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "choiceStatistics", null, null);
+        int level = (Integer) mbeanServer.getAttribute(on, "Level");
+        assertEquals(1, level);
+
+        TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
+
+        // get the object name for mock:bar
+        on = getCamelObjectName(TYPE_PROCESSOR, "bar");
+        level = (Integer) mbeanServer.getAttribute(on, "Level");
+        assertEquals(2, level);
     }
 
     @Override
@@ -76,7 +83,7 @@ public class ManagedChoiceTest extends ManagementTestSupport {
                         .when(header("foo"))
                         .to("mock:foo")
                         .otherwise()
-                        .to("mock:bar");
+                        .to("mock:bar").id("bar");
             }
         };
     }

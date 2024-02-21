@@ -1,0 +1,81 @@
+= Google Drive Component
+:doctitle: Google Drive
+:shortname: google-drive
+:artifactid: camel-google-drive
+:description: Manage files in Google Drive.
+:since: 2.14
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-drive
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Drive component provides access to the
+http://drive.google.com[Google Drive file storage service] via the
+https://developers.google.com/drive/v2/reference[Google Drive Web APIs].
+
+Google Drive uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need to
+https://developers.google.com/drive/web/auth/web-server[create an
+account and generate OAuth credentials]. Credentials consist of a
+`clientId`, `clientSecret`, and a `refreshToken`. A handy resource for
+generating a long-lived `refreshToken` is the
+https://developers.google.com/oauthplayground[OAuth playground].
+
+In the case of a https://developers.google.com/identity/protocols/oauth2#serviceaccount[service account],
+credentials consist of a JSON-file (serviceAccountKey). You can also use
+https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority[delegation domain-wide authority]
+(delegate) and one, several, or all possible
+https://developers.google.com/drive/api/v2/about-auth[Drive API (V2) Auth Scopes].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-drive</artifactId>
+        <!-- use the same version as your Camel core version -->
+        <version>x.x.x</version>
+</dependency>
+----
+
+== URI Format
+
+The GoogleDrive Component uses the following URI format:
+
+----
+google-drive://endpoint-prefix/endpoint?[options]
+----
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== More Information
+
+For more information on the endpoints and options see API documentation
+at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
+
+
+
+include::spring-boot:partial$starter.adoc[]

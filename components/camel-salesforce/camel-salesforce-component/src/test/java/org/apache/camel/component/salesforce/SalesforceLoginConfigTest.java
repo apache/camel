@@ -30,6 +30,8 @@ public class SalesforceLoginConfigTest {
 
     final SalesforceLoginConfig usernamePassword;
 
+    final SalesforceLoginConfig clientCredentials;
+
     public SalesforceLoginConfigTest() {
         usernamePassword = new SalesforceLoginConfig();
         usernamePassword.setUserName("userName");
@@ -49,6 +51,10 @@ public class SalesforceLoginConfigTest {
         keystore.setResource("keystore.jks");
         jwt.setKeystore(keystore);
         jwt.setClientId("clientId");
+
+        clientCredentials = new SalesforceLoginConfig();
+        clientCredentials.setClientId("clientId");
+        clientCredentials.setClientSecret("clientSecret");
     }
 
     @Test
@@ -73,6 +79,11 @@ public class SalesforceLoginConfigTest {
     @Test
     public void shouldValidateUsernamePasswordParameters() {
         usernamePassword.validate();
+    }
+
+    @Test
+    public void shouldValidateClientCredentials() {
+        clientCredentials.validate();
     }
 
     @Test

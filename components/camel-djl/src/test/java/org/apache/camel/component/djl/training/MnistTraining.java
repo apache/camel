@@ -20,10 +20,10 @@ package org.apache.camel.component.djl.training;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import ai.djl.Device;
 import ai.djl.Model;
-import ai.djl.basicdataset.Mnist;
+import ai.djl.basicdataset.cv.classification.Mnist;
 import ai.djl.basicmodelzoo.basic.Mlp;
+import ai.djl.engine.Engine;
 import ai.djl.metric.Metrics;
 import ai.djl.ndarray.types.Shape;
 import ai.djl.nn.Block;
@@ -37,13 +37,9 @@ import ai.djl.training.listener.TrainingListener;
 import ai.djl.training.loss.Loss;
 import ai.djl.training.util.ProgressBar;
 import ai.djl.translate.TranslateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // Helper to train mnist model for tests
 public final class MnistTraining {
-    private static final Logger LOG = LoggerFactory.getLogger(MnistTraining.class);
-
     private static final String MODEL_DIR = "src/test/resources/models/mnist";
     private static final String MODEL_NAME = "mlp";
 
@@ -62,9 +58,10 @@ public final class MnistTraining {
             RandomAccessDataset trainingSet = prepareDataset(Dataset.Usage.TRAIN, 64, Long.MAX_VALUE);
             RandomAccessDataset validateSet = prepareDataset(Dataset.Usage.TEST, 64, Long.MAX_VALUE);
 
+            final Engine engine = Engine.getInstance();
             // setup training configuration
             DefaultTrainingConfig config = new DefaultTrainingConfig(Loss.softmaxCrossEntropyLoss())
-                    .addEvaluator(new Accuracy()).optDevices(Device.getDevices(Device.getGpuCount()))
+                    .addEvaluator(new Accuracy()).optDevices(engine.getDevices(engine.getGpuCount()))
                     .addTrainingListeners(TrainingListener.Defaults.logging());
 
             try (Trainer trainer = model.newTrainer(config)) {

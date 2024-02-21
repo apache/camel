@@ -6,9 +6,7 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import jakarta.annotation.Generated;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
@@ -21,12 +19,15 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
  * Salesforce DTO for SObject With_Reference__c
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("With_Reference__c")
 public class With_Reference__c extends AbstractDescribedSObjectBase {
 
     public With_Reference__c() {
@@ -35,6 +36,44 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
+    @JsonTypeResolver(AsNestedPropertyResolver.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "attributes.type",
+        defaultImpl = AbstractDescribedSObjectBase.class)
+    @JsonSubTypes({
+    })
+    private AbstractDescribedSObjectBase Owner;
+
+    @JsonProperty("Owner")
+    public AbstractDescribedSObjectBase getOwner() {
+        return this.Owner;
+    }
+
+    @JsonProperty("Owner")
+    public void setOwner(AbstractDescribedSObjectBase Owner) {
+        this.Owner = Owner;
+    }
+    private AbstractDescribedSObjectBase CreatedBy;
+
+    @JsonProperty("CreatedBy")
+    public AbstractDescribedSObjectBase getCreatedBy() {
+        return this.CreatedBy;
+    }
+
+    @JsonProperty("CreatedBy")
+    public void setCreatedBy(AbstractDescribedSObjectBase CreatedBy) {
+        this.CreatedBy = CreatedBy;
+    }
+    private AbstractDescribedSObjectBase LastModifiedBy;
+
+    @JsonProperty("LastModifiedBy")
+    public AbstractDescribedSObjectBase getLastModifiedBy() {
+        return this.LastModifiedBy;
+    }
+
+    @JsonProperty("LastModifiedBy")
+    public void setLastModifiedBy(AbstractDescribedSObjectBase LastModifiedBy) {
+        this.LastModifiedBy = LastModifiedBy;
+    }
     private String account_ref__c;
 
     @JsonProperty("account_ref__c")
@@ -47,7 +86,6 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.account_ref__c = account_ref__c;
     }
 
-     @XStreamAlias("account_ref__r")
     private Account account_ref__r;
 
     @JsonProperty("account_ref__r")
@@ -71,6 +109,17 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.ProductId__c = ProductId__c;
     }
 
+    private AbstractDescribedSObjectBase ProductId__r;
+
+    @JsonProperty("ProductId__r")
+    public AbstractDescribedSObjectBase getProductId__r() {
+        return this.ProductId__r;
+    }
+
+    @JsonProperty("ProductId__r")
+    public void setProductId__r(AbstractDescribedSObjectBase ProductId__r) {
+        this.ProductId__r = ProductId__r;
+    }
     private String External__c;
 
     @JsonProperty("External__c")
@@ -83,7 +132,18 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.External__c = External__c;
     }
 
- 
+    private AbstractDescribedSObjectBase External__r;
+
+    @JsonProperty("External__r")
+    public AbstractDescribedSObjectBase getExternal__r() {
+        return this.External__r;
+    }
+
+    @JsonProperty("External__r")
+    public void setExternal__r(AbstractDescribedSObjectBase External__r) {
+        this.External__r = External__r;
+    }
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

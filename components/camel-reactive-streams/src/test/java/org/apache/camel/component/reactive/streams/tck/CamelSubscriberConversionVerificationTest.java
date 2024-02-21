@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -52,7 +53,7 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
             builder.addRoutesToCamelContext(context);
             context.start();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
         return sub;
@@ -79,7 +80,7 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
                 this.context.stop();
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeCamelException(ex);
         }
     }
 

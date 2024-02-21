@@ -24,10 +24,13 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class TwoManagedNamePatternTest extends TestSupport {
 
     private CamelContext camel1;
@@ -42,11 +45,6 @@ public class TwoManagedNamePatternTest extends TestSupport {
 
     @Test
     public void testManagedNamePattern() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext("foo", "aaa-#name#");
         camel2 = createCamelContext("bar", "bbb-#name#");
 

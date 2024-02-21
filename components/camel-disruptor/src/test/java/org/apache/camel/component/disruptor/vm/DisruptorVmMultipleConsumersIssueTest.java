@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ public class DisruptorVmMultipleConsumersIssueTest extends CamelTestSupport {
 
         template.sendBody("direct:inbox", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

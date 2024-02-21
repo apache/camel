@@ -22,16 +22,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.DataHandler;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.attachment.Attachment;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -65,4 +66,21 @@ public class MailBindingAttachmentFileTest {
     public static Iterable<String> fileNames() {
         return Arrays.asList("file.txt", "../file.txt", "..\\file.txt", "/absolute/file.txt", "c:\\absolute\\file.txt");
     }
+
+    @Test
+    public void testSkipEmptyName() throws MessagingException, IOException {
+        final Session session = Session.getInstance(new Properties());
+        final Message message = new MimeMessage(session);
+
+        final Multipart multipart = new MimeMultipart();
+        final MimeBodyPart part = new MimeBodyPart();
+        part.attachFile("");
+        multipart.addBodyPart(part);
+        message.setContent(multipart);
+
+        final Map<String, Attachment> attachments = new HashMap<>();
+        binding.extractAttachmentsFromMail(message, attachments);
+        assertThat(attachments).isEmpty();
+    }
+
 }

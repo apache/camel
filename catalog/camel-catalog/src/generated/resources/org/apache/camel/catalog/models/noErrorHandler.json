@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "noErrorHandler",
+    "title": "No Error Handler",
+    "description": "To not use an error handler.",
+    "deprecated": false,
+    "label": "configuration,error",
+    "javaType": "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

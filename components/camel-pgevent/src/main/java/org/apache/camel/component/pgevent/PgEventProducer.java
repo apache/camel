@@ -30,7 +30,7 @@ public class PgEventProducer extends DefaultProducer {
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
 
-    public PgEventProducer(PgEventEndpoint endpoint) throws Exception {
+    public PgEventProducer(PgEventEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }

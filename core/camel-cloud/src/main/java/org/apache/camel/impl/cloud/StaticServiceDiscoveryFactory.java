@@ -21,9 +21,11 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("static-service-discovery")
+@Configurer
 public class StaticServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
     private List<String> servers;

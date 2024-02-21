@@ -29,17 +29,18 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <rest id="hello" path="/say/hello">
-      <description>Hello Service</description>
-      <get id="get-say">
-        <description>Says hello to you</description>
+    <propertyPlaceholder id="properties" location="custom.properties" ignoreMissingLocation="true">
+    </propertyPlaceholder>
+
+      <jmxAgent id="jmx" disabled="true"/>
+
+    <rest id="hello" description="Hello Service" path="/say/hello">
+      <get id="get-say" description="Says hello to you">
         <to uri="direct:hello"/>
       </get>
     </rest>
-    <rest id="bye" path="/say/bye">
-      <description lang="en">Bye Service</description>
-      <get consumes="application/json">
-        <description>Says bye to you</description>
+    <rest id="bye" path="/say/bye" description="Bye Service">
+      <get consumes="application/json" id="{{mySpecialId}}" description="Says bye to you">
           <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">
               <allowableValues>
                   <value>1</value>
@@ -62,8 +63,7 @@
           <responseMessage code="error" message="does not work"/>
         <to uri="direct:bye"/>
       </get>
-      <post>
-        <description>Updates the bye message</description>
+      <post description="Updates the bye message">
         <to uri="mock:update"/>
       </post>
     </rest>

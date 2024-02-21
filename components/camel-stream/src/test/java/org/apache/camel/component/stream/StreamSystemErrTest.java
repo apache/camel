@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class StreamSystemErrTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() throws Exception {
+    public void testStringContent() {
         template.sendBody("direct:in", "Hello Text World\n");
     }
 

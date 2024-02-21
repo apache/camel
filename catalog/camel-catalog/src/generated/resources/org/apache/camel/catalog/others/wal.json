@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "wal",
+    "title": "Write Ahead Log Strategy for Resume API",
+    "description": "Write Ahead Log Strategy for Resume API",
+    "deprecated": false,
+    "firstVersion": "3.20.0",
+    "label": "java",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-wal",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

@@ -16,26 +16,20 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a compile simple expression language.
+ * Evaluate a compiled simple expression.
  */
-@Metadata(firstVersion = "3.7.0", label = "language", title = "CSimple")
+@Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CSimpleExpression extends ExpressionDefinition {
-
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
+public class CSimpleExpression extends TypedExpressionDefinition {
 
     public CSimpleExpression() {
     }
@@ -44,31 +38,24 @@ public class CSimpleExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private CSimpleExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "csimple";
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
     /**
-     * Sets the class of the result type (type from output)
+     * {@code Builder} is a specific builder for {@link CSimpleExpression}.
      */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, CSimpleExpression> {
 
-    public String getResultTypeName() {
-        return resultTypeName;
+        @Override
+        public CSimpleExpression end() {
+            return new CSimpleExpression(this);
+        }
     }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
 }

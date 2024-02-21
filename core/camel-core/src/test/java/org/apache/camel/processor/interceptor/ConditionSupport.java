@@ -28,7 +28,7 @@ import org.apache.camel.spi.Condition;
 public class ConditionSupport implements Condition {
 
     @Override
-    public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
+    public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
         return false;
     }
 

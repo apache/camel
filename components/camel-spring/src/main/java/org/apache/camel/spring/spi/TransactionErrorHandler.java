@@ -158,7 +158,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         } catch (TransactionRollbackException e) {
             // do not set as exception, as its just a dummy exception to force spring TX to rollback
             logTransactionRollback(redelivered, ids, null, true);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             logTransactionRollback(redelivered, ids, e, false);
         } finally {
@@ -207,7 +207,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 processByErrorHandler(exchange);
 
                 // after handling and still an exception or marked as rollback only then rollback
-                if (exchange.getException() != null || exchange.isRollbackOnly()) {
+                if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
 
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {

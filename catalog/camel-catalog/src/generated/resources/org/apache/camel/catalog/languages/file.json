@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "file",
     "title": "File",
-    "description": "For expressions and predicates using the file\/simple language.",
+    "description": "File related capabilities for the Simple language",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "language,core,java",
@@ -11,14 +11,14 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "3.9.0-SNAPSHOT",
+    "version": "4.5.0-SNAPSHOT",
     "modelName": "simple",
     "modelJavaType": "org.apache.camel.model.language.SimpleExpression"
   },
   "properties": {
-    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
-    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class name of the result type (type from output)" },
-    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "expression": { "index": 1, "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "resultType": { "index": 2, "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
+    "trim": { "index": 3, "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" }
   }
 }

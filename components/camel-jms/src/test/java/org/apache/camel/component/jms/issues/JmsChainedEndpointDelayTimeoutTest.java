@@ -16,71 +16,91 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit test to assert that timeouts don't trigger twice when JMS InOut endpoints are chained, and the second endpoint
  * takes longer to respond than the timeout set for the first endpoint.
  */
-public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
+public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testTimeoutNotTriggeredTempQueue() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
-        template.requestBody("activemq:test", "<hello />");
-        assertMockEndpointsSatisfied();
+        template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.test", "<hello />");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testTimeoutNotTriggeredFixedQueue() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
-        template.requestBody("activemq:testReplyFixedQueue", "<hello />");
-        assertMockEndpointsSatisfied();
+        template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.fixed", "<hello />");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 onException(ExchangeTimedOutException.class)
                         .handled(true)
                         .to("mock:exception");
 
-                from("activemq:test")
-                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.test")
+                        .to(ExchangePattern.InOut, "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500")
                         .delay(constant(1000));
 
-                from("activemq:testReplyFixedQueue")
-                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.fixed")
+                        .to(ExchangePattern.InOut,
+                                "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500&replyToType=Exclusive&replyTo=JmsChainedEndpointDelayTimeoutTest.reply")
                         .delay(constant(1000));
 
-                from("activemq:ping")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.ping")
                         .to("mock:ping")
                         .log("pong");
 
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

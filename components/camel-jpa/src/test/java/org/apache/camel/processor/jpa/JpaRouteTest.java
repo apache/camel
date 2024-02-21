@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.jpa;
 
-import javax.persistence.EntityManager;
+import java.util.HashMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
@@ -35,16 +35,16 @@ public class JpaRouteTest extends AbstractJpaTest {
         // should auto setup transaction manager and entity factory
         JpaComponent jpa = context.getComponent("jpa", JpaComponent.class);
         assertNotNull(jpa.getEntityManagerFactory(), "Should have been auto assigned");
-        assertNotNull(jpa.getTransactionManager(), "Should have been auto assigned");
+        assertNotNull(jpa.getTransactionStrategy(), "Should have been auto assigned");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isNotNull();
-        mock.message(0).header(JpaConstants.ENTITY_MANAGER).isInstanceOf(EntityManager.class);
+        mock.message(0).exchangeProperty(JpaConstants.ENTITY_MANAGER).isNotNull();
+        mock.message(0).exchangeProperty(JpaConstants.ENTITY_MANAGER).isInstanceOf(HashMap.class);
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(1);
     }
 

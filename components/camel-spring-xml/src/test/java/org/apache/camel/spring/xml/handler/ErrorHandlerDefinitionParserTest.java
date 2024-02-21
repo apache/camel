@@ -17,10 +17,10 @@
 package org.apache.camel.spring.xml.handler;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
+import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,8 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testDefaultErrorHandler() {
-        DefaultErrorHandlerBuilder errorHandler = ctx.getBean("defaultErrorHandler", DefaultErrorHandlerBuilder.class);
+        LegacyDefaultErrorHandlerBuilder errorHandler
+                = ctx.getBean("defaultErrorHandler", LegacyDefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
@@ -54,14 +55,14 @@ public class ErrorHandlerDefinitionParserTest {
         assertEquals(0, policy.getRedeliveryDelay(), "Wrong redeliveryDelay");
         assertEquals(false, policy.isLogStackTrace(), "Wrong logStackTrace");
 
-        errorHandler = ctx.getBean("errorHandler", DefaultErrorHandlerBuilder.class);
+        errorHandler = ctx.getBean("errorHandler", LegacyDefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
     }
 
     @Test
     public void testTransactionErrorHandler() {
-        TransactionErrorHandlerBuilder errorHandler
-                = ctx.getBean("transactionErrorHandler", TransactionErrorHandlerBuilder.class);
+        LegacyTransactionErrorHandlerBuilder errorHandler
+                = ctx.getBean("transactionErrorHandler", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
         Processor processor = errorHandler.getOnRedelivery();
@@ -70,14 +71,15 @@ public class ErrorHandlerDefinitionParserTest {
 
     @Test
     public void testTXErrorHandler() {
-        TransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", TransactionErrorHandlerBuilder.class);
+        LegacyTransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", LegacyTransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
     }
 
     @Test
     public void testDeadLetterErrorHandler() {
-        DeadLetterChannelBuilder errorHandler = ctx.getBean("deadLetterErrorHandler", DeadLetterChannelBuilder.class);
+        LegacyDeadLetterChannelBuilder errorHandler
+                = ctx.getBean("deadLetterErrorHandler", LegacyDeadLetterChannelBuilder.class);
         assertNotNull(errorHandler);
         assertEquals("log:dead", errorHandler.getDeadLetterUri(), "Get wrong deadletteruri");
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();

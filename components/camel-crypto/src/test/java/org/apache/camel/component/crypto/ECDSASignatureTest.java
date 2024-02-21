@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class ECDSASignatureTest extends CamelTestSupport {
 
@@ -61,8 +62,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
             keyStore.load(in, "security".toCharArray());
             privateKey = (PrivateKey) keyStore.getKey("ECDSA", "security".toCharArray());
             x509 = (X509Certificate) keyStore.getCertificate("ECDSA");
-        } catch (Throwable e) {
-            LOG.warn("Cannot setup keystore for running this test due " + e.getMessage() + ". This test is skipped.", e);
+        } catch (Exception e) {
+            LOG.warn("Cannot setup keystore for running this test due {}. This test is skipped.", e.getMessage(), e);
             canRun = false;
         }
     }
@@ -94,13 +95,11 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     void testECDSASHA1() throws Exception {
-        if (ibmJDK || !canRun) {
-            return;
-        }
+        assumeFalse(ibmJDK || !canRun, "Test preconditions failed: ibmJDK=" + ibmJDK + ", canRun=" + canRun);
 
         setupMock();
         sendBody("direct:ecdsa-sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private MockEndpoint setupMock() {
@@ -127,7 +126,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(ECDSASignatureTest.this.context);
             return mock.getReceivedExchanges().get(0);
         } finally {
             context.stop();

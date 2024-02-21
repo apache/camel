@@ -20,20 +20,19 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.distribution.HistogramSnapshot;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
@@ -41,10 +40,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
-@ContextConfiguration(
-                      classes = { DistributionSummaryRouteTest.TestConfig.class })
-@MockEndpoints
-public class DistributionSummaryRouteTest {
+public class DistributionSummaryRouteTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:out")
     private MockEndpoint endpoint;
@@ -55,37 +51,27 @@ public class DistributionSummaryRouteTest {
     @Produce("direct:in-2")
     private ProducerTemplate producer2;
 
-    private MeterRegistry registry;
+    @BindToRegistry(METRICS_REGISTRY_NAME)
+    private MeterRegistry registry = new SimpleMeterRegistry();
 
-    @Configuration
-    public static class TestConfig extends SingleRouteCamelConfiguration {
-
-        @Bean
-        @Override
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-
-                @Override
-                public void configure() {
-                    from("direct:in-1")
-                            .to("micrometer:summary:A?value=332491")
-                            .to("mock:out");
-                    from("direct:in-2")
-                            .to("micrometer:summary:${body}?value=${header.nextValue}")
-                            .to("mock:out");
-                }
-            };
-        }
-
-        @Bean(name = METRICS_REGISTRY_NAME)
-        public MeterRegistry getMetricRegistry() {
-            return new SimpleMeterRegistry();
-        }
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
     }
 
-    @BeforeEach
-    public void setup() {
-        registry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRICS_REGISTRY_NAME, MeterRegistry.class);
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:in-1")
+                        .to("micrometer:summary:A?value=332491")
+                        .to("mock:out");
+                from("direct:in-2")
+                        .to("micrometer:summary:${body}?value=${header.nextValue}")
+                        .to("mock:out");
+            }
+        };
     }
 
     @AfterEach

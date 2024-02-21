@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt.saxon;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,6 +40,7 @@ import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
+import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.xslt.XsltBuilder;
@@ -57,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
-             producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
+             remote = false, producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
@@ -72,6 +75,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean secureProcessing = true;
 
     public XsltSaxonEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -146,6 +151,18 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         this.allowStAX = allowStAX;
     }
 
+    public boolean isSecureProcessing() {
+        return secureProcessing;
+    }
+
+    /**
+     * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
+     */
+    public void setSecureProcessing(boolean secureProcessing) {
+        this.secureProcessing = secureProcessing;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -155,7 +172,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         // load resource from classpath otherwise load in doStart()
-        if (ResourceHelper.isClasspathUri(getResourceUri())) {
+        if (isContentCache() && ResourceHelper.isClasspathUri(getResourceUri())) {
             loadResource(getResourceUri(), getXslt());
         }
 
@@ -166,11 +183,12 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (!ResourceHelper.isClasspathUri(getResourceUri())) {
+        if (isContentCache() && !ResourceHelper.isClasspathUri(getResourceUri())) {
             loadResource(getResourceUri(), getXslt());
         }
     }
 
+    @Override
     protected XsltSaxonBuilder createXsltBuilder() throws Exception {
         final CamelContext ctx = getCamelContext();
         final ClassResolver resolver = ctx.getClassResolver();
@@ -198,7 +216,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             TransformerFactoryImpl tf = (TransformerFactoryImpl) factory;
             XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
             XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
-            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
+            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions, secureProcessing);
         }
 
         if (factory != null) {
@@ -218,15 +236,33 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setAllowStAX(allowStAX);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
 
+        if (getXsltMessageLogger() != null) {
+            xslt.setXsltMessageLogger(getXsltMessageLogger());
+        }
+
         configureOutput(xslt, getOutput().name());
 
-        // any additional transformer parameters then make a copy to avoid side-effects
+        // any additional transformer parameters then make a copy to avoid side effects
         if (getParameters() != null) {
             Map<String, Object> copy = new HashMap<>(getParameters());
             xslt.setParameters(copy);
         }
 
         return xslt;
+    }
+
+    @Override
+    protected XsltBuilder createBuilderForCustomStylesheet(String template, Exchange exchange) throws Exception {
+        InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, template);
+        XsltBuilder builder = createXsltBuilder();
+        Source source = new StreamSource(is);
+        if (this.saxonReaderProperties != null) {
+            //for Saxon we need to create XMLReader for the coming source
+            //so that the features configuration can take effect
+            source = createReaderForSource(source);
+        }
+        builder.setTransformerSource(source);
+        return builder;
     }
 
     /**
@@ -236,6 +272,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException          is thrown if error loading resource
      */
+    @Override
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);

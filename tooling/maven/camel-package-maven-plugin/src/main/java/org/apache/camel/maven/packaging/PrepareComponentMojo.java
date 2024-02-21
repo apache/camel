@@ -24,15 +24,17 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.Strings;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -49,6 +51,12 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  */
 @Mojo(name = "prepare-components", threadSafe = true)
 public class PrepareComponentMojo extends AbstractGeneratorMojo {
+
+    /**
+     * The base directory
+     */
+    @Parameter(defaultValue = "${project.basedir}")
+    protected File baseDir;
 
     /**
      * The output directory for generated components file
@@ -142,38 +150,67 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             new PackageOtherMojo(
                     getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
-            // skip maven plugins or from core as core is maintained manually
-            boolean skip = project.getArtifactId().endsWith("-maven-plugin");
-            if (!skip) {
-                count = 1;
-            }
+            count = 1;
+        } else if (count == 0 && new File(project.getBasedir(), "src/main/kotlin").isDirectory()) {
+            // camel-kotlin-dsl is not java based so check for kotlin source
+            new PackageOtherMojo(
+                    getLog(), project, projectHelper, otherOutDir,
+                    schemaOutDir, buildContext).prepareOthers();
+            count = 1;
         }
 
-        // whether to sync pom
-        Object val = project.getContextValue("syncPomFile");
-        if (val != null) {
-            File parent = project.getBasedir().getParentFile();
-            File components = findCamelDirectory(project.getBasedir(), "components");
-            if (Objects.equals(parent, components)) {
-                val = false;
+        // whether to sync pom in allcomponents/parent
+        Object syncComponents = project.getContextValue("syncPomFile");
+        Object syncParent = syncComponents;
+        if (!"false".equals(syncComponents)) {
+            boolean components = isParentArtifact(project, "components");
+            if (components) {
+                syncComponents = "true";
+            } else {
+                syncComponents = "false";
+            }
+            // do not sync parent for core as its handled manual
+            boolean core = isParentArtifact(project, "core");
+            if (core) {
+                syncParent = "false";
+            } else {
+                syncParent = "true";
             }
         }
-
-        // skip from core folder as they are manitained manually in parent and should not be in all-components
-        boolean core = project.getParentArtifact() != null && project.getParentArtifact().getArtifactId().equals("core");
-        if (!core && count > 0 && (val == null || val.equals("true"))) {
-            // Update all component pom sync point
-            syncParentPomFile();
-            syncAllComponentsPomFile();
+        if (count > 0) {
+            if ("true".equals(syncParent)) {
+                // we can sync either components or dsl in parent
+                boolean dsl = isParentArtifact(project, "dsl");
+                String token = dsl ? "dsl" : "components";
+                syncParentPomFile(token);
+            }
+            if ("true".equals(syncComponents)) {
+                syncAllComponentsPomFile();
+            }
         }
     }
 
-    private void syncParentPomFile() throws MojoExecutionException {
+    private static boolean isParentArtifact(MavenProject project, String name) {
+        if (project != null) {
+            Artifact artifact = project.getParentArtifact();
+            if (artifact != null) {
+                if (name.equals(artifact.getArtifactId())) {
+                    return true;
+                } else {
+                    MavenProject parent = project.getParent();
+                    return isParentArtifact(parent, name);
+                }
+            }
+        }
+        return false;
+    }
+
+    private void syncParentPomFile(String token) throws MojoExecutionException {
         Path root = findCamelDirectory(project.getBasedir(), "parent").toPath();
         Path pomFile = root.resolve("pom.xml");
 
-        final String startDependenciesMarker = "<!-- camel components: START -->";
-        final String endDependenciesMarker = "<!-- camel components: END -->";
+        final String startDependenciesMarker = "<!-- camel " + token + ": START -->";
+        final String endDependenciesMarker = "<!-- camel " + token + ": END -->";
 
         if (!Files.isRegularFile(pomFile)) {
             throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
@@ -188,21 +225,26 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
             Pattern pattern = Pattern.compile(
-                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>\\$\\{project\\.version}</version>\\s*</dependency>");
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>(?<version>.*)</version>");
             Matcher matcher = pattern.matcher(between);
-            TreeSet<String> dependencies = new TreeSet<>();
-            while (matcher.find()) {
-                dependencies.add(matcher.group());
-            }
-            dependencies.add("<dependency>\n"
-                             + "\t\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                             + "\t\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                             + "\t\t\t\t<version>${project.version}</version>\n"
-                             + "\t\t\t</dependency>");
 
-            final String updatedPom = before + startDependenciesMarker + "\n\t\t\t"
-                                      + String.join("\n\t\t\t", dependencies) + "\n\t\t\t"
-                                      + endDependenciesMarker + after;
+            TreeSet<MavenGav> dependencies = new TreeSet<>();
+            while (matcher.find()) {
+                String v = matcher.groupCount() > 2 ? matcher.group(3) : project.getVersion();
+                MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), v, null);
+                dependencies.add(gav);
+            }
+            // add ourselves
+            dependencies.add(new MavenGav(
+                    project.getGroupId(), project.getArtifactId(), "${project.version}", project.getArtifact().getType()));
+
+            // generate string output of all dependencies
+            String s = dependencies.stream()
+                    .map(g -> g.asString("            "))
+                    .collect(Collectors.joining("\n"));
+            final String updatedPom = before + startDependenciesMarker
+                                      + "\n" + s + "\n"
+                                      + "        " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
@@ -211,7 +253,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     }
 
     private void syncAllComponentsPomFile() throws MojoExecutionException {
-        Path root = findCamelDirectory(project.getBasedir(), "core/camel-allcomponents").toPath();
+        Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 
         final String startDependenciesMarker = "<dependencies>";
@@ -229,25 +271,102 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
+            // load existing dependencies
             Pattern pattern = Pattern.compile(
-                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>");
             Matcher matcher = pattern.matcher(between);
-            TreeSet<String> dependencies = new TreeSet<>();
+            TreeSet<MavenGav> dependencies = new TreeSet<>();
             while (matcher.find()) {
-                dependencies.add(matcher.group());
+                MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), "${project.version}", null);
+                dependencies.add(gav);
             }
-            dependencies.add("<dependency>\n"
-                             + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                             + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                             + "\t\t</dependency>");
+            // add ourselves
+            dependencies.add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
 
-            final String updatedPom = before + startDependenciesMarker + "\n\t\t"
-                                      + String.join("\n\t\t", dependencies) + "\n\t"
-                                      + endDependenciesMarker + after;
+            // generate string output of all dependencies
+            String s = dependencies.stream()
+                    // skip maven plugins
+                    .filter(g -> !g.artifactId.contains("-maven-plugin"))
+                    .map(g -> g.asString("        "))
+                    .collect(Collectors.joining("\n"));
+            final String updatedPom = before + startDependenciesMarker
+                                      + "\n" + s + "\n"
+                                      + "    " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
+        }
+    }
+
+    private static class MavenGav implements Comparable<MavenGav> {
+        private final String groupId;
+        private final String artifactId;
+        private final String version;
+        private final String type;
+
+        public MavenGav(String groupId, String artifactId, String version, String type) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            MavenGav mavenGav = (MavenGav) o;
+
+            if (!groupId.equals(mavenGav.groupId)) {
+                return false;
+            }
+            if (!artifactId.equals(mavenGav.artifactId)) {
+                return false;
+            }
+            if (!version.equals(mavenGav.version)) {
+                return false;
+            }
+            return Objects.equals(type, mavenGav.type);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = groupId.hashCode();
+            result = 31 * result + artifactId.hashCode();
+            result = 31 * result + version.hashCode();
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            return result;
+        }
+
+        public String asString(String pad) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(pad).append("<dependency>\n");
+            sb.append(pad).append("    <groupId>").append(groupId).append("</groupId>\n");
+            sb.append(pad).append("    <artifactId>").append(artifactId).append("</artifactId>\n");
+            sb.append(pad).append("    <version>").append(version).append("</version>\n");
+            if (type != null) {
+                sb.append(pad).append("    <type>").append(type).append("</type>\n");
+            }
+            sb.append(pad).append("</dependency>");
+            return sb.toString();
+        }
+
+        @Override
+        public int compareTo(MavenGav o) {
+            int n = groupId.compareTo(o.groupId);
+            if (n == 0) {
+                n = artifactId.compareTo(o.artifactId);
+            }
+            if (n == 0) {
+                n = version.compareTo(o.version);
+            }
+            return n;
         }
     }
 

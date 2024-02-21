@@ -19,6 +19,7 @@ package org.apache.camel.impl.event;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Event for <b>after</b> an {@link Exchange} has been sent to an {@link Endpoint}. The {@link ExchangeSentEvent} is an
@@ -53,9 +54,9 @@ public class ExchangeSentEvent extends AbstractExchangeEvent implements CamelEve
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken
-               + " ms.";
+    public final String toString() {
+        return getExchange().getExchangeId() + " exchange sent to: " + endpoint
+               + " took: " + TimeUtils.printDuration(timeTaken, true);
     }
 
 }

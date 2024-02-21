@@ -1,0 +1,179 @@
+= AWS Lambda Component
+:doctitle: AWS Lambda
+:shortname: aws2-lambda
+:artifactid: camel-aws2-lambda
+:description: Manage and invoke AWS Lambda functions.
+:since: 3.2
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-lambda
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Lambda component supports create, get, list, delete, and invoke
+https://aws.amazon.com/lambda/[AWS Lambda] functions.
+
+*Prerequisites*
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Lambda. More information is available at
+https://aws.amazon.com/lambda/[AWS Lambda].
+
+When creating a Lambda function, you need to specify an IAM role which has at least the AWSLambdaBasicExecuteRole policy attached.
+
+== URI Format
+
+-------------------------
+aws2-lambda://functionName[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+Required Lambda component options
+
+You have to provide the awsLambdaClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/lambda/[Amazon Lambda] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== List of Available Operations
+
+- listFunctions
+- getFunction
+- createFunction
+- deleteFunction
+- invokeFunction
+- updateFunction
+- createEventSourceMapping
+- deleteEventSourceMapping
+- listEventSourceMapping
+- listTags
+- tagResource
+- untagResource
+- publishVersion
+- listVersions
+- createAlias
+- deleteAlias
+- getAlias
+- listAliases
+
+== Examples
+
+=== Producer Example
+
+To have a full understanding of how the component works, you may have a look at these https://github.com/apache/camel/tree/main/components/camel-aws/camel-aws2-lambda/src/test/java/org/apache/camel/component/aws2/lambda/integration[integration tests]
+
+=== Producer Examples
+
+- CreateFunction: this operation will create a function for you in AWS Lambda
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:createFunction").to("aws2-lambda://GetHelloWithName?operation=createFunction").to("mock:result");
+--------------------------------------------------------------------------------
+
+and by sending
+
+[source,java]
+--------------------------------------------------------------------------------
+        template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs6.10");
+                exchange.getIn().setHeader(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
+                exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Hello with node.js on Lambda");
+                exchange.getIn().setHeader(Lambda2Constants.ROLE,
+                        "arn:aws:iam::643534317684:role/lambda-execution-role");
+
+                ClassLoader classLoader = getClass().getClassLoader();
+                File file = new File(
+                        classLoader
+                                .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                                .getFile());
+                FileInputStream inputStream = new FileInputStream(file);
+                exchange.getIn().setBody(inputStream);
+            }
+        });
+--------------------------------------------------------------------------------
+
+== Using a POJO as body
+
+Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
+In AWS Lambda there are multiple operations you can submit, as an example for Get Function request, you can do something like:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:getFunction")
+     .setBody(GetFunctionRequest.builder().functionName("test").build())
+     .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-lambda</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+
+include::spring-boot:partial$starter.adoc[]

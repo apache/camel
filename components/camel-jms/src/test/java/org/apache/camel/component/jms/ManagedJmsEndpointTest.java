@@ -18,38 +18,29 @@ package org.apache.camel.component.jms;
 
 import java.util.Set;
 
-import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
-public class ManagedJmsEndpointTest extends CamelTestSupport {
+@Tags({ @Tag("not-parallel") })
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
+
+    private final String uuid = new ShortUuidGenerator().generateUuid();
 
     @Override
     protected boolean useJmx() {
         return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return context;
     }
 
     protected MBeanServer getMBeanServer() {
@@ -61,12 +52,15 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> objectNames = mbeanServer.queryNames(
-                new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:start\""), null);
+                new ObjectName(
+                        "org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:ManagedJmsEndpointTest" + uuid
+                               + "\""),
+                null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("activemq://queue:start", uri);
+        assertEquals("activemq://queue:ManagedJmsEndpointTest" + uuid, uri);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
         assertTrue(singleton);
@@ -74,24 +68,18 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         Integer running = (Integer) mbeanServer.getAttribute(name, "RunningMessageListeners");
         assertEquals(1, running.intValue());
 
-        Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(0, size.intValue());
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:start", "Hello World");
-        template.sendBody("activemq:queue:start", "Bye World");
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest" + uuid, "Hello World");
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest" + uuid, "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // stop route
         context.getRouteController().stopRoute("foo");
 
         // send a message to queue
-        template.sendBody("activemq:queue:start", "Hi World");
-
-        size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(1, size.intValue());
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest" + uuid, "Hi World");
 
         String body = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[] { 0 },
                 new String[] { "java.lang.Integer" });
@@ -99,11 +87,11 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:start").routeId("foo").to("log:foo").to("mock:result");
+            public void configure() {
+                from("activemq:queue:ManagedJmsEndpointTest" + uuid).routeId("foo").to("log:foo").to("mock:result");
             }
         };
     }

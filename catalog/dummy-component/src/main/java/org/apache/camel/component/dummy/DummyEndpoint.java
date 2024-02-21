@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dummy;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,7 +27,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(scheme = "dummy", syntax = "dummy:drink", title = "Dummy", label = "bar", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "dummy", syntax = "dummy:drink", title = "Dummy",
+             category = { Category.TESTING },
+             producerOnly = true)
 public class DummyEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -44,12 +47,12 @@ public class DummyEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new DummyProducer(this, drink, amount, celebrity);
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException();
     }
 

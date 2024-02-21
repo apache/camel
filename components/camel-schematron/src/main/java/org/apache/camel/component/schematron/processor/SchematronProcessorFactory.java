@@ -25,16 +25,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Schematron Engine Factory
  *
  */
 public final class SchematronProcessorFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SchematronProcessorFactory.class);
 
     /**
      * Private constructor.
@@ -53,30 +49,22 @@ public final class SchematronProcessorFactory {
         try {
             return new SchematronProcessor(getXMLReader(), rules);
         } catch (Exception e) {
-            LOG.error("Failed to parse the configuration file");
             throw new SchematronConfigException(e);
         }
     }
 
     /**
      * Gets XMLReader.
-     *
-     * @return                              instance of XMLReader
-     * @throws ParserConfigurationException
-     * @throws SAXException
      */
     private static XMLReader getXMLReader() throws ParserConfigurationException, SAXException {
         final SAXParserFactory fac = SAXParserFactory.newInstance();
-        try {
-            fac.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
-            fac.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            fac.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            fac.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        } catch (ParserConfigurationException | SAXException ex) {
-            // LOG.debug("Error setting feature on parser: " +
-            // ex.getMessage());
-        }
+        fac.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        fac.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        fac.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        fac.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        fac.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         fac.setValidating(false);
+
         final SAXParser parser = fac.newSAXParser();
         XMLReader reader = parser.getXMLReader();
         return reader;

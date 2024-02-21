@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.sjms2.producer;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,9 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InOnlyQueueProducerTest extends Jms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test";
-
-    public InOnlyQueueProducerTest() {
-    }
 
     @Test
     public void testInOnlyQueueProducer() throws Exception {
@@ -58,15 +56,41 @@ public class InOnlyQueueProducerTest extends Jms2TestSupport {
 
         mock.assertIsSatisfied();
         mc.close();
+    }
 
+    @Test
+    public void testInOnlyQueueProducerHeader() throws Exception {
+        MessageConsumer mc = createQueueConsumer("foo");
+        assertNotNull(mc);
+
+        final String expectedBody = "Hello World!";
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(expectedBody);
+
+        template.sendBodyAndHeader("direct:start", expectedBody, SjmsConstants.JMS_DESTINATION_NAME, "foo");
+        Message message = mc.receive(5000);
+        assertNotNull(message);
+        assertTrue(message instanceof TextMessage);
+
+        TextMessage tm = (TextMessage) message;
+        String text = tm.getText();
+        assertNotNull(text);
+
+        template.sendBody("direct:finish", text);
+
+        mock.assertIsSatisfied();
+        mc.close();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("sjms2:queue:" + TEST_DESTINATION_NAME);
+                        //                        .setHeader("JMSDeliveryMode", constant(1))
+                        .to("sjms2:queue:" + TEST_DESTINATION_NAME + "?deliveryMode=1");
 
                 from("direct:finish")
                         .to("log:test.log.1?showBody=true", "mock:result");

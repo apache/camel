@@ -1,40 +1,60 @@
-[[PointtoPointChannel-PointtoPointChannel]]
 = Point to Point Channel
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
-to Point Channel] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] using the following components
+to Point Channel] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
 
-* xref:components::seda-component.adoc[SEDA] for in-VM seda based messaging
-* xref:components::jms-component.adoc[JMS] for working with JMS Queues for high performance,
-clustering and load balancing
-* xref:components::jpa-component.adoc[JPA] for using a database as a simple message queue
-* xref:components::xmpp-component.adoc[XMPP] for point-to-point communication over XMPP
-(Jabber)
-* and others
+An application is using Messaging to make remote procedure calls (RPC’s) or transfer documents.
+
+How can the caller be sure that exactly one receiver will receive the document or perform the call?
 
 image::eip/PointToPointSolution.gif[image]
 
+Send the message on a Point-to-Point Channel, which ensures that only one receiver will receive a particular message.
+
+The Point to Point Channel is supported in Camel by messaging based xref:ROOT:index.adoc[Components], such as:
+
+* xref:ROOT:amqp-component.adoc[AMQP] for working with AMQP Queues
+* xref:ROOT:jms-component.adoc[ActiveMQ], or xref:ROOT:jms-component.adoc[JMS] for working with JMS Queues
+* xref:ROOT:seda-component.adoc[SEDA] for internal Camel seda queue based messaging
+* xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] for working with AMQP Queues (RabbitMQ)
+
+There are also messaging based in the cloud from cloud providers such as Amazon, Google and Azure.
+
+TIP: See also the related xref:publish-subscribe-channel.adoc[Publish Scribe Channel] EIP
+
+== Example
+
 The following example demonstrates point to point messaging using
-the xref:components::jms-component.adoc[JMS] component 
+the xref:ROOT:jms-component.adoc[JMS] component:
 
-[[PointtoPointChannel-Samples]]
-== Samples
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("jms:queue:foo");
+
+from("jms:queue:foo")
+    .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
-<route>
-    <from uri="direct:start"/>
-    <to uri="jms:queue:foo"/>
-</route>
+<routes>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="jms:queue:foo"/>
+    </route>
+    <route>
+        <from uri="jms:queue:foo"/>
+        <to uri="bean:foo"/>
+    </route>
+</routes>
 ----
-
+====

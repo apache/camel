@@ -29,11 +29,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_NEUTRON;
+
 /**
  * Access OpenStack Neutron for network services.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-neutron", title = "OpenStack Neutron",
-             syntax = "openstack-neutron:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NEUTRON, title = "OpenStack Neutron",
+             syntax = "openstack-neutron:host", category = { Category.CONTAINER }, producerOnly = true,
+             headersClass = NeutronConstants.class)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")

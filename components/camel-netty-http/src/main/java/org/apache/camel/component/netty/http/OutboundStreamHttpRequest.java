@@ -27,7 +27,7 @@ import io.netty.handler.stream.ChunkedInput;
 import io.netty.handler.stream.ChunkedStream;
 
 public class OutboundStreamHttpRequest extends DefaultHttpRequest implements ChunkedInput<HttpContent> {
-    private HttpChunkedInput input;
+    private final HttpChunkedInput input;
 
     public OutboundStreamHttpRequest(InputStream in, DefaultHttpRequest request) {
         super(request.protocolVersion(), request.method(), request.uri());

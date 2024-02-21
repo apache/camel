@@ -1,0 +1,9 @@
+{
+	"catalogs": {},
+	"aliases": {
+	  "camel": {
+		"script-ref": "dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java",
+		"description": "Run Apache Camel routes easily"
+	  }
+	}
+}

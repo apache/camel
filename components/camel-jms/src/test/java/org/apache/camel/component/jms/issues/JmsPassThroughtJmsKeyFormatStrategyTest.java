@@ -18,23 +18,33 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
+public class JmsPassThroughtJmsKeyFormatStrategyTest extends AbstractJMSTest {
 
-    private String uri = "activemq:queue:hello";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+    private final String uri = "activemq:queue:JmsPassThroughtJmsKeyFormatStrategyTest";
 
     @Test
     public void testSendWithHeaders() throws Exception {
@@ -46,7 +56,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(uri, "Hello World", "HEADER_1", "VALUE_1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_1"));
         assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_2"));
@@ -56,24 +66,25 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-
-        // configure to use passthrough
-        JmsComponent activemq = jmsComponentAutoAcknowledge(connectionFactory);
-        activemq.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
-
-        camelContext.addComponent("activemq", activemq);
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
+        // configure to use passthrough
+        component.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
+
+        return component;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri)
                         .process(exchange -> {
                             Map<String, Object> headers = exchange.getIn().getHeaders();
@@ -84,5 +95,17 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

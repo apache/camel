@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -30,19 +30,18 @@ import org.apache.camel.spi.Metadata;
  * qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}. It's also possible to specify
  * only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's
  * handy to add only one transformer/validator for all the transformation from/to XML.
- * 
- * @see {@link OutputTypeDefinition} {@link Transformer} {@link Validator}
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
+
     @XmlAttribute
     @Metadata(required = true)
     private String urn;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    private String validate = "false";
+    private String validate;
 
     public InputTypeDefinition() {
     }
@@ -62,19 +61,12 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
         return this;
     }
 
-    /**
-     * Get input type URN.
-     * 
-     * @return input type URN
-     */
     public String getUrn() {
         return urn;
     }
 
     /**
-     * Set input type URN.
-     * 
-     * @param urn input type URN
+     * The input type URN.
      */
     public void setUrn(String urn) {
         this.urn = urn;
@@ -82,26 +74,17 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     /**
      * Set input type via Java Class.
-     * 
-     * @param clazz Java Class
      */
     public void setJavaClass(Class<?> clazz) {
         this.urn = "java:" + clazz.getName();
     }
 
-    /**
-     * Get if validation is required for this input type.
-     * 
-     * @return true if validate
-     */
     public String getValidate() {
         return this.validate;
     }
 
     /**
-     * Set if validation is required for this input type.
-     * 
-     * @param validate true if validate
+     * Whether if validation is required for this input type.
      */
     public void setValidate(String validate) {
         this.validate = validate;

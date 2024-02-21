@@ -72,7 +72,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void stopThriftClient() throws Exception {
+    public void stopThriftClient() {
         if (transport != null) {
             transport.close();
             transport = null;
@@ -237,7 +237,7 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

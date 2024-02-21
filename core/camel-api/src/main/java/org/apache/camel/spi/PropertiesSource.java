@@ -22,7 +22,7 @@ import org.apache.camel.Ordered;
  * A source for properties.
  * <p/>
  * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
- * component. The source with the highest precedence (lowest number) will be used first.
+ * component. The source with the highest precedence (the lowest number) will be used first.
  */
 public interface PropertiesSource {
 
@@ -38,5 +38,16 @@ public interface PropertiesSource {
      * @return      the property value, or <tt>null</tt> if no property exists
      */
     String getProperty(String name);
+
+    /**
+     * Gets the property with the name
+     *
+     * @param  name         name of property
+     * @param  defaultValue default value to use as fallback
+     * @return              the property value, or <tt>null</tt> if no property exists
+     */
+    default String getProperty(String name, String defaultValue) {
+        return getProperty(name);
+    }
 
 }

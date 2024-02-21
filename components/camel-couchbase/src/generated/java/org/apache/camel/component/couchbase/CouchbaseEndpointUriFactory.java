@@ -19,61 +19,65 @@ public class CouchbaseEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(48);
-        props.add("backoffMultiplier");
-        props.add("queryTimeout");
-        props.add("consumerProcessedStrategy");
-        props.add("skip");
-        props.add("initialDelay");
-        props.add("descending");
-        props.add("scheduler");
-        props.add("protocol");
-        props.add("hostname");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("viewName");
-        props.add("fullDocument");
         props.add("additionalHosts");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("scope");
-        props.add("limit");
-        props.add("connectTimeout");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
-        props.add("rangeEndKey");
-        props.add("key");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sendEmptyMessageWhenIdle");
         props.add("autoStartIdForInserts");
-        props.add("persistTo");
-        props.add("producerRetryPause");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("rangeStartKey");
-        props.add("collection");
-        props.add("designDocumentName");
-        props.add("startingIdForInsertsFrom");
+        props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
-        props.add("replicateTo");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
         props.add("bucket");
-        props.add("lazyStartProducer");
+        props.add("collection");
+        props.add("connectTimeout");
+        props.add("consumerProcessedStrategy");
         props.add("delay");
+        props.add("descending");
+        props.add("designDocumentName");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fullDocument");
+        props.add("greedy");
+        props.add("hostname");
+        props.add("initialDelay");
+        props.add("key");
+        props.add("lazyStartProducer");
+        props.add("limit");
+        props.add("operation");
+        props.add("password");
+        props.add("persistTo");
         props.add("pollStrategy");
         props.add("port");
         props.add("producerRetryAttempts");
+        props.add("producerRetryPause");
+        props.add("protocol");
+        props.add("queryTimeout");
+        props.add("rangeEndKey");
+        props.add("rangeStartKey");
+        props.add("repeatCount");
+        props.add("replicateTo");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("scope");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("skip");
         props.add("startScheduler");
-        props.add("exceptionHandler");
-        props.add("operation");
+        props.add("startingIdForInsertsFrom");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         props.add("username");
+        props.add("viewName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -103,6 +107,11 @@ public class CouchbaseEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

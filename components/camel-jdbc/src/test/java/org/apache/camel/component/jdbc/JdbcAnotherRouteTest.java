@@ -33,13 +33,13 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     public void testTimerInvoked() throws Exception {
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // trigger every second
                 from("timer://kickoff?period=1000").setBody(constant("select * from customer")).to("jdbc:testdb")
                         .to("mock:result");

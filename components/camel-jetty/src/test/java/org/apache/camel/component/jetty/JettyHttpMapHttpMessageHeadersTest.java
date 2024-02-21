@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 
 public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
-    private String serverUriFiltered = "http://localhost:" + getPort() + "/myservice";
-    private String serverUriNotFiltered = "http://localhost:" + getPort() + "/myservice1";
+    private final String serverUriFiltered = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUriNotFiltered = "http://localhost:" + getPort() + "/myservice1";
 
     @Test
     public void testHttpGetWithParamsViaURIFiltered() throws Exception {
@@ -36,7 +36,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBody(serverUriFiltered + "?one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBody(serverUriNotFiltered + "?one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriFiltered, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriNotFiltered, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriNotFiltered, "Hello World", "header1", "pippo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -101,13 +101,13 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriFiltered, "Hello World", "header1", "pippo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + serverUriFiltered + "?mapHttpMessageHeaders=false").to("mock:result");
                 from("jetty:" + serverUriNotFiltered).to("mock:result1");
             }

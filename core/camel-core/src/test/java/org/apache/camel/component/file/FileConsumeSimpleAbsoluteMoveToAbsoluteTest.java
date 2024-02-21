@@ -16,28 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/move";
     private String base;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/move");
-        // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/data/move";
-        super.setUp();
-    }
 
     @Test
     public void testMoveToSubDir() throws Exception {
@@ -49,15 +36,16 @@ public class FileConsumeSimpleAbsoluteMoveToAbsoluteTest extends ContextTestSupp
         mock.expectedFileExists(base + "/.done/hello.txt");
         mock.expectedFileExists(base + "/.done/goodday.txt");
 
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        base = testDirectory().toAbsolutePath().toString();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

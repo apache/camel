@@ -16,13 +16,40 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants
  */
 public final class FtpConstants {
 
+    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long")
+    public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
+    @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
+              javaType = "long")
+    public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
+    @Metadata(description = "Specifies the output file name (relative to the endpoint directory) to\n" +
+                            "be used for the output message when sending to the endpoint. If this is\n" +
+                            "not present and no expression either, then a generated message ID is\n" +
+                            "used as the filename instead.",
+              javaType = "String")
+    public static final String FILE_NAME = Exchange.FILE_NAME;
+    @Metadata(description = "Only the file name (the name with no leading paths).", javaType = "String")
+    public static final String FILE_NAME_ONLY = Exchange.FILE_NAME_ONLY;
+    @Metadata(description = "The parent path.", javaType = "String")
+    public static final String FILE_PARENT = Exchange.FILE_PARENT;
+    @Metadata(description = "The remote file input stream.", javaType = "java.io.InputStream")
+    public static final String REMOTE_FILE_INPUT_STREAM = RemoteFileComponent.REMOTE_FILE_INPUT_STREAM;
+    @Metadata(description = "Path to the local work file, if local work directory is used.", javaType = "String")
+    public static final String FILE_LOCAL_WORK_PATH = Exchange.FILE_LOCAL_WORK_PATH;
+
+    @Metadata(description = "The FTP client reply code", javaType = "int")
     public static final String FTP_REPLY_CODE = "CamelFtpReplyCode";
+    @Metadata(description = "The FTP client reply string", javaType = "String")
     public static final String FTP_REPLY_STRING = "CamelFtpReplyString";
+    @Metadata(description = "The remote hostname.", javaType = "String")
+    public static final String FILE_HOST = "CamelFileHost";
 
     private FtpConstants() {
     }

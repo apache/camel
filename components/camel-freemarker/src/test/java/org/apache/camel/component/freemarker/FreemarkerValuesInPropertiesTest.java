@@ -35,7 +35,7 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
 
         template.send("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE,
                         "Dear ${exchange.properties.name}. You ordered item ${exchange.properties.item}.");
                 exchange.setProperty("name", "Christian");
@@ -47,9 +47,9 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 FreemarkerComponent fc = context.getComponent("freemarker", FreemarkerComponent.class);
                 fc.setAllowTemplateFromHeader(true);
                 fc.setAllowContextMapAll(true);

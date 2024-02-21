@@ -133,7 +133,7 @@ public class MDCAsyncTest extends ContextTestSupport {
             }
 
             if (threadId != null) {
-                Long currId = Thread.currentThread().getId();
+                long currId = Thread.currentThread().getId();
                 assertNotEquals(threadId, (Object) currId);
             } else {
                 threadId = Thread.currentThread().getId();

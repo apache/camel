@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -56,20 +57,18 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
         assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
 
         sendSoManyOverCapacity(DEFAULT_URI, QUEUE_SIZE, 20);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testDisruptorExceptionWhenFull() throws Exception {
-        assertThrows(CamelExecutionException.class, () -> {
-            getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
+        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 20);
 
-            final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
-            assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
+        final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
+        assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
 
-            sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20);
-            assertMockEndpointsSatisfied();
-        });
+        assertThrows(CamelExecutionException.class,
+                () -> sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20));
     }
 
     /**

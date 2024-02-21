@@ -25,13 +25,13 @@ package org.apache.camel.util.function;
  */
 @FunctionalInterface
 public interface TriConsumer<I1, I2, I3> {
+
     /**
-     * Applies this function to the given arguments..
+     * Applies this function to the given arguments.
      *
-     * @param  i1 the first argument
-     * @param  i2 the second argument
-     * @param  i3 the third argument
-     * @return    the function result
+     * @param i1 the first argument
+     * @param i2 the second argument
+     * @param i3 the third argument
      */
     void accept(I1 i1, I2 i2, I3 i3);
 }

@@ -21,7 +21,9 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
+import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +32,24 @@ import software.amazon.awssdk.regions.Region;
 
 public abstract class AWSLocalContainerService implements AWSService, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
-    private AWSContainer container;
+    private final AWSContainer container;
 
     public AWSLocalContainerService(Service... services) {
-        container = new AWSContainer(services);
+        this(LocalPropertyResolver.getProperty(AWSContainer.class, AWSProperties.AWS_CONTAINER), services);
     }
 
-    public AWSLocalContainerService(String containerName, Service... services) {
-        container = new AWSContainer(containerName, services);
+    public AWSLocalContainerService(AWSContainer container) {
+        this.container = container;
+    }
+
+    public AWSLocalContainerService(String imageName, Service... services) {
+        container = initContainer(imageName);
+
+        container.setupServices(services);
+    }
+
+    protected AWSContainer initContainer(String imageName, Service... services) {
+        return new AWSContainer(imageName, services);
     }
 
     private String getAmazonHost() {
@@ -91,6 +103,7 @@ public abstract class AWSLocalContainerService implements AWSService, ContainerS
     @Override
     public void initialize() {
         LOG.debug("Trying to start the container");
+        container.withStartupAttempts(5);
         container.start();
 
         registerProperties();

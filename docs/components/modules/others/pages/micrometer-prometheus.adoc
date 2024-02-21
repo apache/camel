@@ -1,0 +1,1 @@
+../../../../../components/camel-micrometer-prometheus/src/main/docs/micrometer-prometheus.adoc

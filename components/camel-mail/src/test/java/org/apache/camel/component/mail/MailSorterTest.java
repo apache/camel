@@ -18,13 +18,13 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.eclipse.angus.mail.imap.SortTerm;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -93,7 +93,7 @@ public class MailSorterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSortMessagesReverse() throws Exception {
+    public void testSortMessagesReverse() {
         Message[] expected = new Message[] { MESSAGES[2], MESSAGES[1], MESSAGES[0] };
 
         // Sort using all the terms. Message order should be the same no matter what term is used
@@ -109,7 +109,7 @@ public class MailSorterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSortMessagesMulti() throws Exception {
+    public void testSortMessagesMulti() {
         Message[] expected = new Message[] { MESSAGES[0], MESSAGES[1], MESSAGES[2] };
 
         // Sort using all the terms. Message order should be the same no matter what term is used. The second term
@@ -129,7 +129,7 @@ public class MailSorterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSortMessagesWithTie() throws Exception {
+    public void testSortMessagesWithTie() {
         Message[] given = new Message[] { MESSAGES[2], TIE_BREAKER };
 
         // Sort according to the whole list. Only the last element breaks the tie

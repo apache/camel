@@ -29,9 +29,14 @@ import org.apache.camel.Expression;
  */
 public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
     /**
-     * Builds the url of this endpoint. This API is only intended for Camel internally.
+     * Builds the encoded url of this endpoint. This API is only intended for Camel internally.
      */
     String getUri();
+
+    /**
+     * Builds the raw url of this endpoint. This API is only intended for Camel internally.
+     */
+    String getRawUri();
 
     /**
      * Adds an option to this endpoint. This API is only intended for Camel internally.
@@ -47,11 +52,6 @@ public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
      * Adds multi-value options to this endpoint. This API is only intended for Camel internally.
      */
     void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values);
-
-    /**
-     * Builds an expression of this endpoint url. This API is only intended for Camel internally.
-     */
-    Expression expr();
 
     /**
      * Builds a dynamic expression of this endpoint url. This API is only intended for Camel internally.

@@ -19,31 +19,33 @@ public class ClientEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(21);
-        props.add("dataModuleOptions");
-        props.add("exchangePattern");
-        props.add("timeout3");
-        props.add("timeZone");
-        props.add("maxUnacknowledged");
-        props.add("timeout1");
-        props.add("timeout2");
-        props.add("causeSourceAddress");
-        props.add("protocolOptions");
+        props.add("acknowledgeWindow");
         props.add("adsuAddressType");
+        props.add("bridgeErrorHandler");
+        props.add("causeOfTransmissionType");
+        props.add("causeSourceAddress");
+        props.add("connectionId");
+        props.add("connectionTimeout");
+        props.add("dataModuleOptions");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("ignoreBackgroundScan");
+        props.add("ignoreDaylightSavingTime");
         props.add("informationObjectAddressType");
         props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
-        props.add("ignoreDaylightSavingTime");
-        props.add("acknowledgeWindow");
-        props.add("causeOfTransmissionType");
-        props.add("connectionId");
-        props.add("ignoreBackgroundScan");
-        props.add("exceptionHandler");
-        props.add("connectionTimeout");
+        props.add("maxUnacknowledged");
+        props.add("protocolOptions");
+        props.add("timeZone");
+        props.add("timeout1");
+        props.add("timeout2");
+        props.add("timeout3");
         props.add("uriPath");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +73,11 @@ public class ClientEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

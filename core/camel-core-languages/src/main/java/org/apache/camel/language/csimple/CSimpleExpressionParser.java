@@ -26,8 +26,7 @@ public class CSimpleExpressionParser {
     public String parseExpression(String expression) {
         // reuse simple language parser but output the result as java code
         SimpleExpressionParser parser = new SimpleExpressionParser(null, expression, true, null);
-        String code = parser.parseCode();
-        return code;
+        return parser.parseCode();
     }
 
 }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -40,6 +40,20 @@
         <remoteresources.skip>true</remoteresources.skip>
         <tarLongFileMode>gnu</tarLongFileMode>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -114,19 +128,19 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-console</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-health</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-headersmap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-caffeine-lrucache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-jaxp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxp-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -146,7 +160,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-io-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-io</artifactId>
         </dependency>
 
         <!-- all components, languages and dataformats -->
@@ -156,10 +178,14 @@
             <type>pom</type>
         </dependency>
 
-        <!-- camel catalog and commands -->
+        <!-- camel catalog -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-console</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -176,53 +202,32 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <!-- skip remote resources in assembly is a bit cumbersome to turn off -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>${maven-remote-resources-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>process-remote-resources</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <skip>true</skip>
-                            <attachToTest>false</attachToTest>
-                            <excludeTransitive>true</excludeTransitive>
-                            <includeGroupIds>org.apache.camel</includeGroupIds>
-                            <includeScope>compile</includeScope>
-                            <resourceBundles>
-                                <resourceBundle>org.apache.camel:*:${project.version}</resourceBundle>
-                            </resourceBundles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>src</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/descriptors/src.xml</descriptor>
-                            </descriptors>
-                            <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>src</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/descriptors/src.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

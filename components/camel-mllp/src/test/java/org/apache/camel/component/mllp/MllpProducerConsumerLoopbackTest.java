@@ -51,7 +51,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     MockEndpoint acknowledged;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         assumeTrue(System.getenv("BUILD_ID") == null,
                 "Skipping test running in CI server - Fails sometimes on CI server with address already in use");
     }
@@ -67,7 +67,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         RouteBuilder[] builders = new RouteBuilder[2];
 
         builders[0] = new RouteBuilder() {
@@ -103,9 +103,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
         assertThat("Should be acknowledgment for message 1", acknowledgement,
-                CoreMatchers.containsString(String.format("MSA|AA|00001")));
+                CoreMatchers.containsString("MSA|AA|00001"));
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
 
     @Test
@@ -122,6 +122,6 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
                     CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
 }

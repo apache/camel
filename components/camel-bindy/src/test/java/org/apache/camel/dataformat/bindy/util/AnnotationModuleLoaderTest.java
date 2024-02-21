@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AnnotationModuleLoaderTest {
 
     @Test
-    public void testLoadModels() throws Exception {
+    public void testLoadModels() {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
         Set<Class<?>> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
         assertNotNull(classes, "The findForFormattingOptions classes should not be null");

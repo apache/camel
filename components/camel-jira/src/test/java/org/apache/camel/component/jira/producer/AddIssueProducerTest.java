@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.jira.producer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicPriority;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -39,6 +43,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
+import org.apache.camel.component.jira.Utils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -47,15 +52,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PROJECT_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_ID;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraConstants.*;
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.Utils.createIssue;
@@ -118,7 +115,10 @@ public class AddIssueProducerTest extends CamelTestSupport {
             String description = (String) issueInput.getField("description").getValue();
             Integer priorityId = Integer.parseInt(getValue(issueInput, "priority", "id"));
             BasicPriority priority = issuePriorities.get(priorityId);
-            backendIssue = createIssue(11L, summary, project, issueType, description, priority, userAssignee, null, null);
+            Collection<BasicComponent> components = new ArrayList<>(2);
+            components.add(Utils.createBasicComponent(1L, "ux"));
+            components.add(Utils.createBasicComponent(2L, "plugins"));
+            backendIssue = createIssue(11L, summary, project, issueType, description, priority, userAssignee, components, null);
             BasicIssue basicIssue = new BasicIssue(backendIssue.getSelf(), backendIssue.getKey(), backendIssue.getId());
             return Promises.promise(basicIssue);
         });
@@ -155,22 +155,32 @@ public class AddIssueProducerTest extends CamelTestSupport {
     @Test
     public void verifyIssueAdded() throws InterruptedException {
 
+        String type = "Task";
+        String priority = "Low";
+        String summary = "Demo Bug jira " + new Date();
+        String assignee = "tom";
+        String components = "ux,plugins";
+        String description = "My jira description" + new Date();
+
         Map<String, Object> headers = new HashMap<>();
         headers.put(ISSUE_PROJECT_KEY, KEY);
-        headers.put(ISSUE_TYPE_NAME, "Task");
-        headers.put(ISSUE_SUMMARY, "Demo Bug jira " + (new Date()));
-        headers.put(ISSUE_PRIORITY_NAME, "Low");
-        headers.put(ISSUE_ASSIGNEE, "tom");
+        headers.put(ISSUE_TYPE_NAME, type);
+        headers.put(ISSUE_SUMMARY, summary);
+        headers.put(ISSUE_PRIORITY_NAME, priority);
+        headers.put(ISSUE_ASSIGNEE, assignee);
+        headers.put(ISSUE_COMPONENTS, components);
 
-        template.sendBodyAndHeaders("Minha descrição jira " + (new Date()), headers);
+        template.sendBodyAndHeaders(description, headers);
 
         Issue issue = issueRestClient.getIssue(backendIssue.getKey()).claim();
         assertEquals(backendIssue, issue);
-        assertEquals(backendIssue.getIssueType(), issue.getIssueType());
-        assertEquals(backendIssue.getPriority(), issue.getPriority());
-        assertEquals(backendIssue.getSummary(), issue.getSummary());
-        assertEquals(backendIssue.getProject(), issue.getProject());
-        assertEquals(backendIssue.getDescription(), issue.getDescription());
+        assertEquals(type, issue.getIssueType().getName());
+        assertEquals(priority, issue.getPriority().getName());
+        assertEquals(summary, issue.getSummary());
+        assertEquals(description, issue.getDescription());
+        StringJoiner comps = new StringJoiner(",");
+        issue.getComponents().forEach(c -> comps.add(c.getName()));
+        assertEquals(comps.toString(), components);
         mockResult.expectedMessageCount(1);
         mockResult.assertIsSatisfied();
     }
@@ -178,21 +188,25 @@ public class AddIssueProducerTest extends CamelTestSupport {
     @Test
     public void verifyIssueAddedWithIds() throws InterruptedException {
 
+        int typeId = 2;
+        String summary = "Demo Bug jira " + new Date();
+        int priority = 1;
+        String description = "My jira description" + new Date();
+
         Map<String, Object> headers = new HashMap<>();
         headers.put(ISSUE_PROJECT_KEY, KEY);
-        headers.put(ISSUE_TYPE_ID, 2);
-        headers.put(ISSUE_SUMMARY, "Demo Bug jira " + (new Date()));
-        headers.put(ISSUE_PRIORITY_ID, 1);
+        headers.put(ISSUE_TYPE_ID, typeId);
+        headers.put(ISSUE_SUMMARY, summary);
+        headers.put(ISSUE_PRIORITY_ID, priority);
 
-        template.sendBodyAndHeaders("Minha descrição jira " + (new Date()), headers);
+        template.sendBodyAndHeaders(description, headers);
 
         Issue issue = issueRestClient.getIssue(backendIssue.getKey()).claim();
         assertEquals(backendIssue, issue);
-        assertEquals(backendIssue.getIssueType(), issue.getIssueType());
-        assertEquals(backendIssue.getPriority(), issue.getPriority());
-        assertEquals(backendIssue.getSummary(), issue.getSummary());
-        assertEquals(backendIssue.getProject(), issue.getProject());
-        assertEquals(backendIssue.getDescription(), issue.getDescription());
+        assertEquals(typeId, issue.getIssueType().getId());
+        assertEquals(priority, issue.getPriority().getId());
+        assertEquals(summary, issue.getSummary());
+        assertEquals(description, issue.getDescription());
         mockResult.expectedMessageCount(1);
         mockResult.assertIsSatisfied();
     }

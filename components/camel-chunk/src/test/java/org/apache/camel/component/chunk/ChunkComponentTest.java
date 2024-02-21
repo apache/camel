@@ -49,7 +49,7 @@ public class ChunkComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     /**
@@ -66,7 +66,7 @@ public class ChunkComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ChunkComponentTest extends CamelTestSupport {
         for (int i = 0; i < messageCount; i++) {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         LoggerFactory.getLogger(getClass())
                 .info("Chunk performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
 

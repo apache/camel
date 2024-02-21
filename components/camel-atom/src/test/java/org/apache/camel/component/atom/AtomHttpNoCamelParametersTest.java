@@ -18,10 +18,14 @@ package org.apache.camel.component.atom;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
@@ -31,8 +35,8 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
         assertNotNull(atom);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", atom.getFeedUri());
-        assertEquals(true, atom.isFeedHeader());
-        assertEquals(true, atom.isSortEntries());
+        assertTrue(atom.isFeedHeader());
+        assertTrue(atom.isSortEntries());
     }
 
     @Test
@@ -43,8 +47,8 @@ public class AtomHttpNoCamelParametersTest extends CamelTestSupport {
         assertNotNull(atom);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml?foo=bar", atom.getFeedUri());
-        assertEquals(true, atom.isFeedHeader());
-        assertEquals(true, atom.isSortEntries());
+        assertTrue(atom.isFeedHeader());
+        assertTrue(atom.isSortEntries());
     }
 
 }

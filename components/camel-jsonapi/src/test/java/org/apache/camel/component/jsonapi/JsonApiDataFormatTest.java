@@ -51,7 +51,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJsonApiMarshalNoAnnotationOnType() throws Exception {
+    public void testJsonApiMarshalNoAnnotationOnType() {
         Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
 
@@ -62,7 +62,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJsonApiMarshalWrongType() throws Exception {
+    public void testJsonApiMarshalWrongType() {
         Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat(formats);
 
@@ -89,17 +89,19 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJsonApiUnmarshalWrongType() throws Exception {
+    public void testJsonApiUnmarshalWrongType() {
         Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat();
-        jsonApiDataFormat.setDataFormatTypes(formats);
-        jsonApiDataFormat.setMainFormatType(MyBook.class);
+        jsonApiDataFormat.setDataFormatTypeClasses(formats);
+        jsonApiDataFormat.setMainFormatTypeClass(MyBook.class);
 
         String jsonApiInput = "{\"data\":{\"type\":\"animal\",\"id\":\"camel\",\"attributes\":{\"humps\":\"2\"}}}";
 
         Exchange exchange = new DefaultExchange(context);
+        final ByteArrayInputStream stream = new ByteArrayInputStream(jsonApiInput.getBytes());
+
         assertThrows(UnregisteredTypeException.class,
-                () -> jsonApiDataFormat.unmarshal(exchange, new ByteArrayInputStream(jsonApiInput.getBytes())));
+                () -> jsonApiDataFormat.unmarshal(exchange, stream));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         assertNotNull(outBody);
         assertEquals(this.generateAuthorString(), outBody);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 
@@ -130,7 +132,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         Exchange exchange = this.createExchangeWithBody(this.generateAuthorString());
         Exchange outExchange = template.send("direct:startUnmarshal", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MyAuthor author = outExchange.getIn().getBody(MyAuthor.class);
         assertNotNull(author);
@@ -140,10 +142,10 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Class<?>[] formats = { MyAuthor.class };
                 JsonApiDataFormat jsonApi = new JsonApiDataFormat(MyAuthor.class, formats);
 

@@ -24,11 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.jsmpp.bean.Alphabet;
-import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.ReplaceIfPresentFlag;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.*;
 import org.jsmpp.session.SessionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +94,8 @@ public class SmppConfiguration implements Cloneable {
     private int maxReconnect = Integer.MAX_VALUE;
     @UriParam(label = "producer")
     private boolean lazySessionCreation;
+    @UriParam(label = "producer")
+    private String messageReceiverRouteId;
     @UriParam(label = "proxy")
     private String httpProxyHost;
     @UriParam(label = "proxy", defaultValue = "3128")
@@ -112,6 +110,14 @@ public class SmppConfiguration implements Cloneable {
     private SessionStateListener sessionStateListener;
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
+    @UriParam(label = "advanced", defaultValue = "3")
+    private Integer pduProcessorDegree = 3;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private Integer pduProcessorQueueCapacity = 100;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean singleDLR;
+    @UriParam(label = "advanced", enums = "legacy,3.3,3.4,5.0", defaultValue = "3.4")
+    private String interfaceVersion = "3.4";
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -574,6 +580,21 @@ public class SmppConfiguration implements Cloneable {
         this.lazySessionCreation = lazySessionCreation;
     }
 
+    public String getMessageReceiverRouteId() {
+        return messageReceiverRouteId;
+    }
+
+    /**
+     * Set this on producer in order to benefit from transceiver (TRX) binding type. So once set, you don't need to
+     * define an 'SMTPP consumer' endpoint anymore. You would set this to a 'Direct consumer' endpoint instead.
+     *
+     * DISCALIMER: This feature is only tested with 'Direct consumer' endpoint. The behavior with any other consumer
+     * type is unknown and not tested.
+     */
+    public void setMessageReceiverRouteId(String messageReceiverRouteId) {
+        this.messageReceiverRouteId = messageReceiverRouteId;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -676,6 +697,63 @@ public class SmppConfiguration implements Cloneable {
         return proxyHeaders;
     }
 
+    public Integer getPduProcessorDegree() {
+        return pduProcessorDegree;
+    }
+
+    /**
+     * Sets the number of threads which can read PDU and process them in parallel.
+     */
+    public void setPduProcessorDegree(Integer pduProcessorDegree) {
+        this.pduProcessorDegree = pduProcessorDegree;
+    }
+
+    public Integer getPduProcessorQueueCapacity() {
+        return pduProcessorQueueCapacity;
+    }
+
+    /**
+     * Sets the capacity of the working queue for PDU processing.
+     */
+    public void setPduProcessorQueueCapacity(Integer pduProcessorQueueCapacity) {
+        this.pduProcessorQueueCapacity = pduProcessorQueueCapacity;
+    }
+
+    public boolean isSingleDLR() {
+        return singleDLR;
+    }
+
+    /**
+     * When true, the SMSC delivery receipt would be requested only for the last segment of a multi-segment (long)
+     * message. For short messages, with only 1 segment the behaviour is unchanged.
+     */
+    public void setSingleDLR(boolean singleDLR) {
+        this.singleDLR = singleDLR;
+    }
+
+    public String getInterfaceVersion() {
+        return interfaceVersion;
+    }
+
+    /**
+     * Defines the interface version to be used in the binding request with the SMSC. The following values are allowed,
+     * as defined in the SMPP protocol (and the underlying implementation using the jSMPP library, respectively):
+     * "legacy" (0x00), "3.3" (0x33), "3.4" (0x34), and "5.0" (0x50). The default (fallback) value is version 3.4.
+     */
+    public void setInterfaceVersion(String interfaceVersion) {
+        this.interfaceVersion = interfaceVersion;
+    }
+
+    public InterfaceVersion getInterfaceVersionByte() {
+        return switch (interfaceVersion) {
+            case "legacy" -> InterfaceVersion.IF_00;
+            case "3.3" -> InterfaceVersion.IF_33;
+            case "3.4" -> InterfaceVersion.IF_34;
+            case "5.0" -> InterfaceVersion.IF_50;
+            default -> InterfaceVersion.IF_34;
+        };
+    }
+
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
@@ -689,7 +767,10 @@ public class SmppConfiguration implements Cloneable {
                + ", alphabet=" + alphabet
                + ", encoding=" + encoding
                + ", transactionTimer=" + transactionTimer
+               + ", pduProcessorQueueCapacity=" + pduProcessorQueueCapacity
+               + ", pduProcessorDegree=" + pduProcessorDegree
                + ", registeredDelivery=" + registeredDelivery
+               + ", singleDLR=" + singleDLR
                + ", serviceType=" + serviceType
                + ", sourceAddrTon=" + sourceAddrTon
                + ", destAddrTon=" + destAddrTon
@@ -707,12 +788,14 @@ public class SmppConfiguration implements Cloneable {
                + ", reconnectDelay=" + reconnectDelay
                + ", maxReconnect=" + maxReconnect
                + ", lazySessionCreation=" + lazySessionCreation
+               + ", messageReceiverRouteId=" + messageReceiverRouteId
                + ", httpProxyHost=" + httpProxyHost
                + ", httpProxyPort=" + httpProxyPort
                + ", httpProxyUsername=" + httpProxyUsername
                + ", httpProxyPassword=" + httpProxyPassword
                + ", splittingPolicy=" + splittingPolicy
                + ", proxyHeaders=" + proxyHeaders
+               + ", interfaceVersion=" + interfaceVersion
                + "]";
     }
 }

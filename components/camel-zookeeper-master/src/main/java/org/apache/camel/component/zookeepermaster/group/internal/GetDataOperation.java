@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.zookeepermaster.group.internal;
 
-class GetDataOperation implements Operation {
+import org.apache.camel.component.zookeepermaster.group.NodeState;
 
-    private final ZooKeeperGroup cache;
+class GetDataOperation<T extends NodeState> implements Operation {
+
+    private final ZooKeeperGroup<T> cache;
     private final String fullPath;
 
-    GetDataOperation(ZooKeeperGroup cache, String fullPath) {
+    GetDataOperation(ZooKeeperGroup<T> cache, String fullPath) {
         this.cache = cache;
         this.fullPath = fullPath;
     }
@@ -40,7 +42,7 @@ class GetDataOperation implements Operation {
             return false;
         }
 
-        GetDataOperation that = (GetDataOperation) o;
+        GetDataOperation<T> that = (GetDataOperation<T>) o;
 
         if (!fullPath.equals(that.fullPath)) {
             return false;

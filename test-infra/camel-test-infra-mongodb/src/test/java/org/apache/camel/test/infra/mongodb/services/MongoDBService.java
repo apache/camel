@@ -18,33 +18,20 @@
 package org.apache.camel.test.infra.mongodb.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface MongoDBService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface MongoDBService extends TestService {
 
     /**
      * The replica set URL in the format mongodb://host:port
-     * 
+     *
      * @return the replica set URL
      */
     String getReplicaSetUrl();
 
     /**
      * The connection address in the format host:port
-     * 
+     *
      * @return the connection address
      */
     String getConnectionAddress();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-    }
 }

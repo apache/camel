@@ -54,7 +54,7 @@ public class BeanRouteTest extends SpringTestSupport {
             Object value = template.requestBody("bean:myBean", body);
             fail("We should have failed to invoke an ambiguous method but instead got: " + value);
         } catch (Exception e) {
-            log.info("Caught expected failure: " + e, e);
+            log.info("Caught expected failure: {}", e.getMessage(), e);
         }
     }
 

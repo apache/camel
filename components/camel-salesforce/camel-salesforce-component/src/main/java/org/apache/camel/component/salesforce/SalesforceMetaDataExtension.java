@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
 import org.apache.camel.component.extension.metadata.MetaDataBuilder;
@@ -97,7 +97,10 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
         try {
             return ret.get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }

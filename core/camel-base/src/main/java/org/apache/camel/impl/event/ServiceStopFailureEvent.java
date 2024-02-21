@@ -24,9 +24,10 @@ import org.apache.camel.spi.CamelEvent;
 public class ServiceStopFailureEvent extends EventObject implements CamelEvent.ServiceStopFailureEvent {
     private static final long serialVersionUID = 4139591666998762617L;
 
-    private CamelContext context;
-    private Object service;
-    private Throwable cause;
+    private final CamelContext context;
+    private final Object service;
+    private final Throwable cause;
+    private long timestamp;
 
     public ServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
         super(service);
@@ -50,7 +51,17 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
     }
 
     @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override
     public String toString() {
-        return "Failure to stop service: " + service + " due to " + cause.getMessage();
+        return "Service stop failure: " + service + " due to " + cause.getMessage();
     }
 }

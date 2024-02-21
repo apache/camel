@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.robotframework;
 
-import java.io.File;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,97 +25,66 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
 
     @UriParam
     private String name;
-
     @UriParam
     private String document;
-
     @UriParam
     private String metadata;
-
     @UriParam
     private String tags;
-
     @UriParam
     private String tests;
-
     @UriParam
     private String suites;
-
     @UriParam
     private String includes;
-
     @UriParam
     private String excludes;
-
     @UriParam
     private String criticalTags;
-
     @UriParam
     private String nonCriticalTags;
-
     @UriParam
     private String runMode;
-
     @UriParam(defaultValue = "false")
     private boolean dryrun;
-
     @UriParam(defaultValue = "false")
     private boolean skipTeardownOnExit;
-
     @UriParam(defaultValue = "false")
     private boolean exitOnFailure;
-
     @UriParam
     private String randomize;
-
     @UriParam
     private String variables;
-
     @UriParam
     private String variableFiles;
-
     @UriParam
-    private File outputDirectory;
-
+    private String outputDirectory;
     @UriParam
-    private File output;
-
+    private String output;
     @UriParam
-    private File log;
-
+    private String log;
     @UriParam
-    private File report;
-
+    private String report;
     @UriParam
-    private File xunitFile;
-
+    private String xunitFile;
     @UriParam
-    private File debugFile;
-
+    private String debugFile;
     @UriParam
     private boolean timestampOutputs;
-
     @UriParam
     private String splitOutputs;
-
     @UriParam
     private String logTitle;
-
     @UriParam
     private String reportTitle;
-
     @UriParam
     private String summaryTitle;
-
     @UriParam
     private String reportBackground;
-
     @UriParam
     private String logLevel;
-
     @UriParam
     private String suiteStatLevel;
-
     @UriParam
     private String tagStatIncludes;
 
@@ -149,13 +116,13 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     private String monitorColors;
 
     @UriParam
-    private File argumentFile;
+    private String argumentFiles;
 
     @UriParam(defaultValue = "false")
     private boolean runEmptySuite;
 
     @UriParam
-    private File runFailed;
+    private String runFailed;
 
     @UriParam(defaultValue = "false")
     private boolean noStatusReturnCode;
@@ -234,27 +201,27 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
         return variableFiles;
     }
 
-    public File getOutputDirectory() {
+    public String getOutputDirectory() {
         return outputDirectory;
     }
 
-    public File getOutput() {
+    public String getOutput() {
         return output;
     }
 
-    public File getLog() {
+    public String getLog() {
         return log;
     }
 
-    public File getReport() {
+    public String getReport() {
         return report;
     }
 
-    public File getXunitFile() {
+    public String getXunitFile() {
         return xunitFile;
     }
 
-    public File getDebugFile() {
+    public String getDebugFile() {
         return debugFile;
     }
 
@@ -330,15 +297,15 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
         return monitorColors;
     }
 
-    public File getArgumentFile() {
-        return argumentFile;
+    public String getArgumentFiles() {
+        return argumentFiles;
     }
 
     public boolean isRunEmptySuite() {
         return runEmptySuite;
     }
 
-    public File getRunFailed() {
+    public String getRunFailed() {
         return runFailed;
     }
 
@@ -470,45 +437,45 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     /**
      * Configures where generated reports are to be placed.
      */
-    public void setOutputDirectory(File outputDirectory) {
+    public void setOutputDirectory(String outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
     /**
-     * Sets the path to the generated output file.
+     * Sets the path to the generated output String.
      */
-    public void setOutput(File output) {
+    public void setOutput(String output) {
         this.output = output;
     }
 
     /**
-     * Sets the path to the generated log file.
+     * Sets the path to the generated log String.
      */
-    public void setLog(File log) {
+    public void setLog(String log) {
         this.log = log;
     }
 
     /**
-     * Sets the path to the generated report file.
+     * Sets the path to the generated report String.
      */
-    public void setReport(File report) {
+    public void setReport(String report) {
         this.report = report;
     }
 
     /**
-     * Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml
-     * format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the
+     * Sets the path to the generated XUnit compatible result String, relative to outputDirectory. The String is in xml
+     * format. By default, the String name is derived from the testCasesDirectory parameter, replacing blanks in the
      * directory name by underscores.
      */
-    public void setXunitFile(File xunitFile) {
+    public void setXunitFile(String xunitFile) {
         this.xunitFile = xunitFile;
     }
 
     /**
-     * A debug file that is written during execution.
+     * A debug String that is written during execution.
      */
-    public void setDebugFile(File debugFile) {
-        this.debugFile = debugFile;
+    public void setDebugFile(String debugString) {
+        this.debugFile = debugString;
     }
 
     /**
@@ -618,7 +585,7 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Show a warning when an invalid file is skipped.
+     * Show a warning when an invalid String is skipped.
      */
     public void setWarnOnSkippedFiles(boolean warnOnSkippedFiles) {
         this.warnOnSkippedFiles = warnOnSkippedFiles;
@@ -644,10 +611,10 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * A text file to read more arguments from.
+     * A text String to read more arguments from.
      */
-    public void setArgumentFile(File argumentFile) {
-        this.argumentFile = argumentFile;
+    public void setArgumentFiles(String argumentFiles) {
+        this.argumentFiles = argumentFiles;
     }
 
     /**
@@ -659,9 +626,9 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Re-run failed tests, based on output.xml file.
+     * Re-run failed tests, based on output.xml String.
      */
-    public void setRunFailed(File runFailed) {
+    public void setRunFailed(String runFailed) {
         this.runFailed = runFailed;
     }
 

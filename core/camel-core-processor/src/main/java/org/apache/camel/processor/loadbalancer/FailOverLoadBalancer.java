@@ -25,7 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -156,7 +155,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean isRunAllowed() {
         // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
+        boolean forceShutdown = camelContext.getShutdownStrategy().isForceShutdown();
         if (forceShutdown) {
             LOG.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
         }
@@ -166,7 +165,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor()
+        exchange.getContext().getCamelContextExtension().getReactiveExecutor()
                 .schedule(new State(exchange, callback, processors)::run);
         return false;
     }
@@ -256,7 +255,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             // process the exchange
             LOG.debug("Processing failover at attempt {} for {}", attempts, copy);
-            processor.process(copy, doneSync -> exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor()
+            processor.process(copy, doneSync -> exchange.getContext().getCamelContextExtension().getReactiveExecutor()
                     .schedule(this::run));
         }
 
@@ -295,12 +294,6 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
         // reset state
         reset();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // noop
     }
 
 }

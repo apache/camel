@@ -49,7 +49,7 @@ public class LdifProducer extends DefaultProducer {
     // properties
     private String ldapConnectionName;
 
-    public LdifProducer(LdifEndpoint endpoint, String ldapConnectionName) throws Exception {
+    public LdifProducer(LdifEndpoint endpoint, String ldapConnectionName) {
         super(endpoint);
         this.ldapConnectionName = ldapConnectionName;
     }
@@ -67,11 +67,11 @@ public class LdifProducer extends DefaultProducer {
         List<String> result = null;
 
         // Pass through everything
-        exchange.setOut(exchange.getIn());
+        exchange.setMessage(exchange.getIn());
 
         // If nothing to do, then return an empty body
         if (ObjectHelper.isEmpty(body)) {
-            exchange.getOut().setBody("");
+            exchange.getMessage().setBody("");
         } else if (body.startsWith(LDIF_HEADER)) {
             LOG.debug("Reading from LDIF body");
             result = processLdif(new StringReader(body));
@@ -89,7 +89,7 @@ public class LdifProducer extends DefaultProducer {
             }
         }
 
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     /**
@@ -98,7 +98,7 @@ public class LdifProducer extends DefaultProducer {
      *
      * @return The created LDAP connection.
      */
-    protected LdapConnection getLdapConnection() throws CamelException {
+    protected LdapConnection getLdapConnection() {
         return (LdapConnection) getEndpoint().getCamelContext().getRegistry().lookupByName(ldapConnectionName);
     }
 

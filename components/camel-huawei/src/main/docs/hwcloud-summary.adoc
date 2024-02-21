@@ -1,0 +1,10 @@
+= Huawei Cloud Component
+:doctitle: Huawei Cloud
+
+The Camel components for https://www.huaweicloud.com/intl/en-us/[Huawei Cloud Services] which provides connectivity to Huawei Cloud services from Camel.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]

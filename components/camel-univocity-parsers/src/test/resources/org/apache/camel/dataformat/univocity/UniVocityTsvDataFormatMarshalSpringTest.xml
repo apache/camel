@@ -28,7 +28,7 @@
         <route>
             <from uri="direct:default"/>
             <marshal>
-                <univocity-tsv/>
+                <univocityTsv/>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>
@@ -38,10 +38,10 @@
         <route>
             <from uri="direct:header"/>
             <marshal>
-                <univocity-tsv>
-                    <univocity-header>A</univocity-header>
-                    <univocity-header>C</univocity-header>
-                </univocity-tsv>
+                <univocityTsv>
+                    <univocityHeader>A</univocityHeader>
+                    <univocityHeader>C</univocityHeader>
+                </univocityTsv>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>
@@ -51,7 +51,7 @@
         <route>
             <from uri="direct:advanced"/>
             <marshal>
-                <univocity-tsv nullValue="N/A" emptyValue="empty"/>
+                <univocityTsv nullValue="N/A" emptyValue="empty"/>
             </marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>

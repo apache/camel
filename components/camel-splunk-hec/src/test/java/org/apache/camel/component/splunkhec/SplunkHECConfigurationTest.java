@@ -19,7 +19,10 @@ package org.apache.camel.component.splunkhec;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplunkHECConfigurationTest {
 
@@ -34,6 +37,12 @@ public class SplunkHECConfigurationTest {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
         config.setHost("mine");
         assertEquals("mine", config.getHost());
+    }
+
+    @Test
+    public void testDefaultEndpoint() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertEquals("/services/collector/event", config.getSplunkEndpoint());
     }
 
     @Test
@@ -55,14 +64,38 @@ public class SplunkHECConfigurationTest {
     }
 
     @Test
+    public void testDefaultToken() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertNull(config.getToken());
+    }
+
+    @Test
     public void testDefaultSkipTlsVerifyIsFalse() {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
-        assertEquals(false, config.isSkipTlsVerify());
+        assertFalse(config.isSkipTlsVerify());
     }
 
     @Test
     public void testDefaultHttps() {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
-        assertEquals(true, config.isHttps());
+        assertTrue(config.isHttps());
+    }
+
+    @Test
+    public void testDefaultBodyOnly() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertFalse(config.isBodyOnly());
+    }
+
+    @Test
+    public void testDefaultHeadersOnly() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertFalse(config.isHeadersOnly());
+    }
+
+    @Test
+    public void testDefaultTime() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertNull(config.getTime());
     }
 }

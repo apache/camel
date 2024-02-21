@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addCodec() throws Exception {
+    public HL7MLLPCodec addCodec() {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
@@ -46,9 +46,9 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
                     Message input = exchange.getIn().getBody(Message.class);
 
@@ -64,7 +64,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
     }
 
     @Test
-    public void testSendHL7Message() throws Exception {
+    public void testSendHL7Message() {
         String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 

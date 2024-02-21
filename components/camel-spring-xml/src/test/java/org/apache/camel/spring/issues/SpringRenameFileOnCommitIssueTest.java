@@ -16,40 +16,33 @@
  */
 package org.apache.camel.spring.issues;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/renameissue");
-        super.setUp();
-    }
+public class SpringRenameFileOnCommitIssueTest extends ContextTestSupport {
 
     @Test
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/renameissue/.camel/hello.xml");
+        mock.expectedFileExists(testFile(".camel/hello.xml"));
 
         String body
                 = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
 
-        template.sendBodyAndHeader("file://target/renameissue", body, Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringRenameFileOnCommitIssueTest.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringRenameFileOnCommitIssueTest.xml");
     }
 
 }

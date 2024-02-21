@@ -1,40 +1,61 @@
-[[from-eip]]
 = From EIP
-:docTitle: From
+:doctitle: From
+:shortname: from
 :description: Act as a message source as input to a route
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
+
+Every Camel xref:manual::routes.adoc[route] starts from an xref:manual::endpoint.adoc[Endpoint]
+as the input (source) to the route.
+
+The From EIP is the input.
 
 == Options
 
 // eip options: START
-The From EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *uri* | *Required* Sets the URI of the endpoint to use |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Exchange properties
 
-Start a route with the File endpoint. Each file in the directory creates an exchange that is put into the camel route.
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
-A camel route is started using from inside the configure method of the class *RouteBuilder*
+== Example
 
+In the route below the route starts from
+a xref:ROOT:file-component.adoc[File] endpoint.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file:c:/in")
+from("file:inbox")
+  .to("log:inbox");
 ----
 
-And examples in Spring XML Schema:
-
-The route is defined inside a CamelContext.
-
+XML::
++
 [source,xml]
 ----
 <route>
-  <from uri="file:c:/in" />
+  <from uri="file:inbox"/>
+  <to uri="log:inbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from: 
+    uri: file:inbox
+    steps:
+      - to:
+          uri: log:inbox
+----
+====

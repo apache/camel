@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -106,6 +105,26 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     }
 
     @Override
+    public boolean isUnhealthyOnExhausted() {
+        return controller.isUnhealthyOnExhausted();
+    }
+
+    @Override
+    public boolean isUnhealthyOnRestarting() {
+        return controller.isUnhealthyOnRestarting();
+    }
+
+    @Override
+    public boolean isStartingRoutes() {
+        return controller.isStartingRoutes();
+    }
+
+    @Override
+    public boolean isHasUnhealthyRoutes() {
+        return controller.hasUnhealthyRoutes();
+    }
+
+    @Override
     public int getNumberOfControlledRoutes() {
         return controller.getControlledRoutes().size();
     }
@@ -125,7 +144,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getControlledRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
@@ -145,7 +164,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getRestartingRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
@@ -156,7 +175,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getExhaustedRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
@@ -192,12 +211,12 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                         ? state.getFirstAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
-                    elapsed = TimeUtils.printDuration(delta);
+                    elapsed = TimeUtils.printDuration(delta, true);
                 }
                 time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
-                    last = TimeUtils.printDuration(delta);
+                    last = TimeUtils.printDuration(delta, true);
                 }
                 String error = "";
                 String stacktrace = "";

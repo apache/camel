@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
+import org.junit.jupiter.api.Assertions
 
 class BeanTest extends YamlTestSupport {
 
@@ -29,7 +30,7 @@ class BeanTest extends YamlTestSupport {
                    uri: "direct:route"
                    steps:
                      - bean:
-                         bean-type: ${MyUppercaseProcessor.name}
+                         beanType: ${MyUppercaseProcessor.name}
                      - to: "mock:route"
             """
 
@@ -46,4 +47,23 @@ class BeanTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
-}
+
+    def "Error: kebab-case: bean-type"() {
+        when:
+        var route = """
+                - from:
+                   uri: "direct:route"
+                   steps:
+                     - bean:
+                         bean-type: ${MyUppercaseProcessor.name}
+                     - to: "mock:route"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
+    }
+ }

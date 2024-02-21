@@ -21,4 +21,6 @@ public interface ConsulAgentActions {
     String SERVICES = "SERVICES";
     String MEMBERS = "MEMBERS";
     String AGENT = "AGENT";
+    String REGISTER = "REGISTER";
+    String DEREGISTER = "DEREGISTER";
 }

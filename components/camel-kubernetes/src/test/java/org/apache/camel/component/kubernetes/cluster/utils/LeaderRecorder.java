@@ -25,9 +25,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +69,9 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     }
 
     public void waitForLeader(Predicate<String> as, long time, TimeUnit unit) {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         while (!as.test(getCurrentLeader())) {
-            assertFalse(System.currentTimeMillis() - start > TimeUnit.MILLISECONDS.convert(time, unit),
+            assertFalse(watch.taken() > TimeUnit.MILLISECONDS.convert(time, unit),
                     "Timeout while waiting for condition");
             doWait(50);
         }
@@ -79,7 +81,7 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

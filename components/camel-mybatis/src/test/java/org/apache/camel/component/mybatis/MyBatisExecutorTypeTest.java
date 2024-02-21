@@ -45,7 +45,7 @@ public class MyBatisExecutorTypeTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", Arrays.asList(account1, account2));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -63,10 +63,10 @@ public class MyBatisExecutorTypeTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .to("mybatis:updateAccount?statementType=Update&executorType=batch")

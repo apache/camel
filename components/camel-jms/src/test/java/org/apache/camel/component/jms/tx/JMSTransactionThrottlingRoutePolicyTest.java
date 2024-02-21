@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupport {
-
-    private int size = 200;
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMSTransactionThrottlingRoutePolicyTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -44,13 +45,14 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     @Test
     public void testJmsTransactedThrottlingRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        int size = 200;
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq-sender:queue:foo", "Message " + i);
+            template.sendBody("activemq-sender:queue:JMSTransactionThrottlingRoutePolicyTest", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -43,13 +43,13 @@ public class LdapProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(LdapProducer.class);
 
-    private String remaining;
-    private SearchControls searchControls;
-    private String searchBase;
-    private Integer pageSize;
+    private final String remaining;
+    private final SearchControls searchControls;
+    private final String searchBase;
+    private final Integer pageSize;
 
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
-                        String returnedAttributes) throws Exception {
+                        String returnedAttributes) {
         super(endpoint);
 
         this.remaining = remaining;
@@ -59,11 +59,11 @@ public class LdapProducer extends DefaultProducer {
         this.searchControls = new SearchControls();
         this.searchControls.setSearchScope(scope);
         if (returnedAttributes != null) {
-            String returnedAtts[] = returnedAttributes.split(",");
+            String[] atts = returnedAttributes.split(",");
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(returnedAtts));
+                LOG.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(atts));
             }
-            searchControls.setReturningAttributes(returnedAtts);
+            searchControls.setReturningAttributes(atts);
         }
     }
 
@@ -84,8 +84,8 @@ public class LdapProducer extends DefaultProducer {
                 }
                 data = pagedSearch((LdapContext) dirContext, filter);
             }
-            exchange.getOut().setBody(data);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(data);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         } finally {
             if (dirContext != null) {
                 dirContext.close();

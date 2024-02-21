@@ -25,7 +25,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class MockProducerInterceptor implements ProducerInterceptor<String, String> {
 
-    public static ArrayList<ProducerRecord<String, String>> recordsCaptured = new ArrayList<>();
+    public static final ArrayList<ProducerRecord<String, String>> recordsCaptured = new ArrayList<>();
 
     @Override
     public ProducerRecord<String, String> onSend(ProducerRecord<String, String> producerRecord) {

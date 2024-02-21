@@ -19,24 +19,28 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("remotePath");
-        props.add("exchangePattern");
-        props.add("branchName");
-        props.add("type");
-        props.add("tagName");
+        Set<String> props = new HashSet<>(16);
         props.add("allowEmpty");
-        props.add("lazyStartProducer");
-        props.add("password");
+        props.add("branchName");
         props.add("bridgeErrorHandler");
-        props.add("localPath");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("gitConfigFile");
+        props.add("lazyStartProducer");
+        props.add("localPath");
         props.add("operation");
+        props.add("password");
         props.add("remoteName");
+        props.add("remotePath");
+        props.add("tagName");
+        props.add("targetBranchName");
+        props.add("type");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +68,11 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

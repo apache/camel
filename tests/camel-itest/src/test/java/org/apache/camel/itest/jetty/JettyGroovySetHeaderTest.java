@@ -40,7 +40,7 @@ public class JettyGroovySetHeaderTest extends CamelTestSupport {
         String reply = template.requestBody("http://localhost:" + port + "/beer", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

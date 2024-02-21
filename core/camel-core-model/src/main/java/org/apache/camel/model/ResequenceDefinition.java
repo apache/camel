@@ -19,13 +19,13 @@ package org.apache.camel.model;
 import java.time.Duration;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -43,15 +43,16 @@ import org.apache.camel.util.TimeUtils;
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {
-    @Metadata(required = false)
-    @XmlElements({
-            @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
-            @XmlElement(name = "stream-config", type = StreamResequencerConfig.class) })
-    private ResequencerConfig resequencerConfig;
+
     @XmlTransient
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
+
+    @XmlElements({
+            @XmlElement(name = "batchConfig", type = BatchResequencerConfig.class),
+            @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class) })
+    private ResequencerConfig resequencerConfig;
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
@@ -137,7 +138,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
      * @return         the builder
      */
     public ResequenceDefinition timeout(Duration timeout) {
-        return timeout(TimeUtils.printDuration(timeout));
+        return timeout(TimeUtils.printDuration(timeout, true));
     }
 
     /**
@@ -176,7 +177,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Sets the rejectOld flag to throw an error when a message older than the last delivered message is processed
-     * 
+     *
      * @return the builder
      */
     public ResequenceDefinition rejectOld() {
@@ -189,7 +190,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Sets the in batch size for number of exchanges received
-     * 
+     *
      * @param  batchSize the batch size
      * @return           the builder
      */
@@ -222,7 +223,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Enables duplicates for the batch resequencer mode
-     * 
+     *
      * @return the builder
      */
     public ResequenceDefinition allowDuplicates() {
@@ -285,7 +286,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         if (streamConfig == null) {
             throw new IllegalStateException("comparator() only supported for stream resequencer");
         }
-        streamConfig.setComparator(comparator);
+        streamConfig.setComparatorBean(comparator);
         return this;
     }
 

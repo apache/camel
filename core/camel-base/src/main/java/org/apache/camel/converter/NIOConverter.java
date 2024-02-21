@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,13 @@ public final class NIOConverter {
 
     @Converter(order = 5)
     public static ByteBuffer toByteBuffer(File file) throws IOException {
+        if (file.length() > Integer.MAX_VALUE) {
+            // very big file we cannot load into memory
+            throw new IOException(
+                    "Cannot convert file: " + file.getName() + " to ByteBuffer. The file length is too large: "
+                                  + file.length());
+        }
+
         InputStream in = null;
         try {
             byte[] buf = new byte[(int) file.length()];
@@ -91,7 +99,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(String value, Exchange exchange) {
         byte[] bytes = null;
         if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            String charsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             if (charsetName != null) {
                 try {
                     bytes = value.getBytes(charsetName);

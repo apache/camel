@@ -45,14 +45,14 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     private TestServerChannelPipelineFactory testServerFactory = new TestServerChannelPipelineFactory(null);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&sync=true&textline=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(
                                         "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
                             }
                         });
@@ -61,7 +61,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     }
 
     @Test
-    public void testCustomClientPipelineFactory() throws Exception {
+    public void testCustomClientPipelineFactory() {
         String response = (String) template.requestBody(
                 "netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&sync=true&textline=true",
                 "Forest Gump describing Vietnam...");
@@ -81,7 +81,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        protected void initChannel(Channel ch) throws Exception {
+        protected void initChannel(Channel ch) {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
@@ -108,7 +108,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        protected void initChannel(Channel ch) throws Exception {
+        protected void initChannel(Channel ch) {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;

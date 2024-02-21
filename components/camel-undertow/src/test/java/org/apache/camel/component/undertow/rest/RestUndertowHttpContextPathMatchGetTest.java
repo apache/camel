@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestUndertowHttpContextPathMatchGetTest extends BaseUndertowTest {
 
     @Test
-    public void testProducerGet() throws Exception {
+    public void testProducerGet() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123", null, String.class);
         assertEquals("123;Donald Duck", out);
 
@@ -34,27 +34,28 @@ public class RestUndertowHttpContextPathMatchGetTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}")
-                        .route()
+                        .get("{id}").to("direct:id")
+                        .get("list").to("direct:list");
+
+                from("direct:id")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Donald Duck");
-                        })
-                        .endRest()
-                        .get("list")
-                        .route()
+                        });
+                from("direct:list")
                         .to("mock:input")
                         .process(exchange -> exchange.getMessage().setBody("123;Donald Duck\n456;John Doe"));
+
             }
         };
     }

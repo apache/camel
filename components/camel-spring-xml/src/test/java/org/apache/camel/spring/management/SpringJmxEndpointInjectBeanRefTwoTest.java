@@ -21,12 +21,17 @@ import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
 
     @Override
@@ -48,10 +53,10 @@ public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
     public void testJmxEndpointInjectBean() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"seda\"");
+        ObjectName on = getCamelObjectName(TYPE_COMPONENT, "seda");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://foo\"");
+        on = getCamelObjectName(TYPE_ENDPOINT, "seda://foo");
         assertTrue(mbeanServer.isRegistered(on));
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("seda://foo", uri);

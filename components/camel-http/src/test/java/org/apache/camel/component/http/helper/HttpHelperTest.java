@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HttpHelperTest {
 
     @Test
-    public void testAppendHeader() throws Exception {
+    public void testAppendHeader() {
         Map<String, Object> headers = new HashMap<>();
         HttpHelper.appendHeader(headers, "foo", "a");
         HttpHelper.appendHeader(headers, "bar", "b");
@@ -53,7 +53,7 @@ public class HttpHelperTest {
     }
 
     @Test
-    public void testAppendHeaderMultipleValues() throws Exception {
+    public void testAppendHeaderMultipleValues() {
         Map<String, Object> headers = new HashMap<>();
         HttpHelper.appendHeader(headers, "foo", "a");
         HttpHelper.appendHeader(headers, "bar", "b");
@@ -85,6 +85,44 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://camel.apache.org"));
 
         assertEquals("http://camel.apache.org", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithOneSlashOnly() throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/"),
+                createHttpEndpoint(true, "http://camel.apache.org/"));
+
+        assertEquals("http://camel.apache.org/", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithSubPathAndOneSlashOnly() throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/somePath/"),
+                createHttpEndpoint(true, "http://camel.apache.org/"));
+
+        assertEquals("http://camel.apache.org/somePath/", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithQueryParameterSubPathAndOneSlashOnly()
+            throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/"),
+                createHttpEndpoint(true, "http://camel.apache.org/?foo=bar"));
+
+        assertEquals("http://camel.apache.org/?foo=bar", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithQueryParameterAndOneSlashOnly()
+            throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/somePath/"),
+                createHttpEndpoint(true, "http://camel.apache.org/?foo=bar"));
+
+        assertEquals("http://camel.apache.org/somePath/?foo=bar", url);
     }
 
     @Test
@@ -189,7 +227,7 @@ public class HttpHelperTest {
     }
 
     @Test
-    public void testIsStatusCodeOkSimpleRange() throws Exception {
+    public void testIsStatusCodeOkSimpleRange() {
         assertFalse(HttpHelper.isStatusCodeOk(199, "200-299"));
         assertTrue(HttpHelper.isStatusCodeOk(200, "200-299"));
         assertTrue(HttpHelper.isStatusCodeOk(299, "200-299"));
@@ -201,7 +239,7 @@ public class HttpHelperTest {
     }
 
     @Test
-    public void testIsStatusCodeOkComplexRange() throws Exception {
+    public void testIsStatusCodeOkComplexRange() {
         assertFalse(HttpHelper.isStatusCodeOk(199, "200-299,404,301-304"));
         assertTrue(HttpHelper.isStatusCodeOk(200, "200-299,404,301-304"));
         assertTrue(HttpHelper.isStatusCodeOk(299, "200-299,404,301-304"));
@@ -226,8 +264,7 @@ public class HttpHelperTest {
         return exchange;
     }
 
-    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath)
-            throws URISyntaxException {
+    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath) {
         CamelContext context = new DefaultCamelContext();
         DefaultExchange exchange = new DefaultExchange(context);
         Message inMsg = exchange.getIn();

@@ -43,15 +43,15 @@ public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggre
         mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABC");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, mock.getReceivedCounter());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())

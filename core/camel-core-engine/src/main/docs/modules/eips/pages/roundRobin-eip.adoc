@@ -1,39 +1,55 @@
-[[roundRobin-eip]]
 = Round Robin EIP
-:docTitle: Round Robin
-:description: Round robin load balancer The round robin load balancer will use the next endpoint for each message. This load balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.
+:doctitle: Round Robin
+:shortname: roundRobin
+:description: The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
+Round Robin mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
+
+The exchanges are selected in a round-robin fashion.
+This is a well known and classic policy, which spreads the load evenly.
 
 == Options
 
 // eip options: START
-The Round Robin EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Examples
+== Exchange properties
 
-In this case we are using the header test as correlation expression:
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+We want to load balance between three endpoints in round-robin mode.
+
+This is done as follows in Java DSL:
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .roundRobin()
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().roundRobin()
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
-<from uri="direct:start"/>
+<route>
+    <from uri="direct:start"/>
     <loadBalance>
        <roundRobin/>
-       <to uri="seda:x"/>      
-       <to uri="seda:y"/>      
-       <to uri="seda:z"/>       
-    </loadBalance> 
+       <to uri="seda:x"/>
+       <to uri="seda:y"/>
+       <to uri="seda:z"/>
+    </loadBalance>
+</route>
 ----

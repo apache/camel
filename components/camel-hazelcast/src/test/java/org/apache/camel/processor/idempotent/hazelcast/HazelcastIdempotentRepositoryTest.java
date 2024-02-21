@@ -16,20 +16,24 @@
  */
 package org.apache.camel.processor.idempotent.hazelcast;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
     private IMap<String, Boolean> cache;
@@ -39,24 +43,24 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     private String key01 = "123";
     private String key02 = "456";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    @BeforeAll
+    void setupHazelcast() throws Exception {
+        Config config = new Config();
+        config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+        config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
         hazelcastInstance = Hazelcast.newHazelcastInstance(null);
         cache = hazelcastInstance.getMap("myRepo");
         repo = new HazelcastIdempotentRepository(hazelcastInstance, "myRepo");
-        super.setUp();
-        cache.clear();
-        repo.start();
     }
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        repo.stop();
-        super.tearDown();
+    @AfterAll
+    void teardownHazelcast() {
+        hazelcastInstance.getLifecycleService().terminate();
+    }
+
+    @BeforeEach
+    void clearCache() {
         cache.clear();
-        hazelcastInstance.getLifecycleService().shutdown();
     }
 
     @Test
@@ -134,7 +138,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct://in", "b", "messageId", key02);
         template.sendBodyAndHeader("direct://in", "c", "messageId", key01);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

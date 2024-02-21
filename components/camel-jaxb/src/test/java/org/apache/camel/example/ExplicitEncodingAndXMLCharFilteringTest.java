@@ -20,28 +20,25 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/charset");
-        super.setUp();
-    }
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testIsoAndCharacterFiltering() throws Exception {
@@ -54,31 +51,31 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
         order.setPrice(2.22);
 
         MockEndpoint result = getMockEndpoint("mock:file");
-        result.expectedFileExists("target/charset/output.xml");
+        result.expectedFileExists(testDirectory.resolve("output.xml"));
 
         template.sendBody("direct:start", order);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        InputStream inputStream = new FileInputStream("target/charset/output.xml");
-        Reader reader = new InputStreamReader(inputStream, "ISO-8859-1");
+        InputStream inputStream = new FileInputStream(testDirectory.resolve("output.xml").toFile());
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1);
         PurchaseOrder obj = (PurchaseOrder) unmarshaller.unmarshal(reader);
         assertEquals(expected, obj.getName());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
                 jaxb.setFilterNonXmlChars(true);
                 jaxb.setEncoding("iso-8859-1");
 
                 from("direct:start")
                         .marshal(jaxb)
-                        .to("file:target/charset/?fileName=output.xml&charset=iso-8859-1");
+                        .to(TestSupport.fileUri(testDirectory, "?fileName=output.xml&charset=iso-8859-1"));
             }
         };
     }

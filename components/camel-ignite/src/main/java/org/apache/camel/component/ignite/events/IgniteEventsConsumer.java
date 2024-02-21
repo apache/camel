@@ -53,12 +53,9 @@ public class IgniteEventsConsumer extends DefaultConsumer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing Ignite Event: {}.", event);
                 }
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        // do nothing
-                    }
-                });
+                // use default consumer callback
+                AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                getAsyncProcessor().process(exchange, cb);
             } catch (Exception e) {
                 LOG.error(String.format("Exception while processing Ignite Event: %s.", event), e);
             }

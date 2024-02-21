@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.consumer.common.DeploymentEvent;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -68,15 +68,11 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
 
         LOG.debug("Stopping Kubernetes Deployments Consumer");
         if (executor != null) {
+            KubernetesHelper.close(deploymentsWatcher, deploymentsWatcher::getWatch);
+
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                if (deploymentsWatcher != null) {
-                    deploymentsWatcher.getWatch().close();
-                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
-                if (deploymentsWatcher != null) {
-                    deploymentsWatcher.getWatch().close();
-                }
                 executor.shutdownNow();
             }
         }
@@ -97,17 +93,16 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
-            }
+
+            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
+
             watch = w.watch(new Watcher<Deployment>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Deployment resource) {
-                    DeploymentEvent de = new DeploymentEvent(action, resource);
                     Exchange exchange = createExchange(false);
-                    exchange.getIn().setBody(de.getDeployment());
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, de.getAction());
+                    exchange.getIn().setBody(resource);
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);

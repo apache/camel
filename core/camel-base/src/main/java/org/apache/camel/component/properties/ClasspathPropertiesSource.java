@@ -24,11 +24,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
 
+import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 
-public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource {
+public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource implements Ordered {
 
     public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         super(propertiesComponent, location);
@@ -40,7 +41,7 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
     }
 
     @Override
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+    public Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
@@ -68,4 +69,8 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
         return answer;
     }
 
+    @Override
+    public int getOrder() {
+        return 300;
+    }
 }

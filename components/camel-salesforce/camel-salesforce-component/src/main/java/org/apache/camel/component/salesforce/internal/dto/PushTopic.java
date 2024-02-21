@@ -17,16 +17,11 @@
 package org.apache.camel.component.salesforce.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
-//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject PushTopic
  */
-@XStreamAlias("PushTopic")
 public class PushTopic extends AbstractSObjectBase {
 
     // WARNING: these fields have case sensitive names,
@@ -38,10 +33,8 @@ public class PushTopic extends AbstractSObjectBase {
 
     private Boolean IsActive;
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private NotifyForFieldsEnum NotifyForFields;
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private NotifyForOperationsEnum NotifyForOperations;
 
     private String Description;
@@ -154,4 +147,3 @@ public class PushTopic extends AbstractSObjectBase {
         this.NotifyForOperationUndelete = notifyForOperationUndelete;
     }
 }
-//CHECKSTYLE:ON

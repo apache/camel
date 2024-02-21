@@ -17,7 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mongodb")
 public class MongoDbComponent extends DefaultComponent {
 
-    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = EnumSet.copyOf(
             Arrays.asList(
                     MongoDbOperation.insert,
                     MongoDbOperation.save,

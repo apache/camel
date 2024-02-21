@@ -31,7 +31,7 @@ public class BeanWithXQueryInjectionTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         String expectedBody = "<foo id='bar'>hellow</foo>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
@@ -41,7 +41,7 @@ public class BeanWithXQueryInjectionTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("myBean", myBean);
     }
 
@@ -66,7 +66,7 @@ public class BeanWithXQueryInjectionTest extends CamelTestSupport {
         public void read(String body, @XQuery("/foo/@id") String foo) {
             this.foo = foo;
             this.body = body;
-            LOG.info("read() method called on " + this);
+            LOG.info("read() method called on {}", this);
         }
     }
 }

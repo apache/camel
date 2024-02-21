@@ -24,11 +24,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
+import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -38,9 +41,10 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.codehaus.plexus.build.BuildContext;
 
 public abstract class AbstractGenerateMojo extends AbstractMojo {
+    private static final String INCREMENTAL_DATA = "";
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -61,17 +65,34 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 writeIncrementalInfo(project);
             }
         } catch (Exception e) {
-            throw new MojoFailureException("Error generating data " + e.toString(), e);
+            throw new MojoFailureException("Error generating data " + e, e);
         }
     }
 
     protected abstract void doExecute() throws MojoFailureException, MojoExecutionException;
 
     protected void invoke(Class<? extends AbstractMojo> mojoClass) throws MojoExecutionException, MojoFailureException {
+        invoke(mojoClass, null);
+    }
+
+    protected void invoke(Class<? extends AbstractMojo> mojoClass, Map<String, Object> parameters)
+            throws MojoExecutionException, MojoFailureException {
         try {
-            AbstractMojo mojo = mojoClass.newInstance();
+            AbstractMojo mojo = mojoClass.getDeclaredConstructor().newInstance();
             mojo.setLog(getLog());
             mojo.setPluginContext(getPluginContext());
+
+            // set options using reflections
+            if (parameters != null && !parameters.isEmpty()) {
+                ReflectionHelper.doWithFields(mojoClass, field -> {
+                    for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                        if (field.getName().equals(entry.getKey())) {
+                            ReflectionHelper.setField(field, mojo, entry.getValue());
+                        }
+                    }
+                });
+            }
+
             ((AbstractGeneratorMojo) mojo).execute(project, projectHelper, buildContext);
 
         } catch (MojoExecutionException | MojoFailureException e) {
@@ -84,10 +105,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private void writeIncrementalInfo(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String curdata = getIncrementalData();
             Files.createDirectories(cacheData.getParent());
             try (Writer w = Files.newBufferedWriter(cacheData)) {
-                w.append(curdata);
+                w.append(INCREMENTAL_DATA);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error checking manifest uptodate status", e);
@@ -97,14 +117,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private boolean isUpToDate(MavenProject project) throws MojoExecutionException {
         try {
             Path cacheData = getIncrementalDataPath(project);
-            String prvdata;
-            if (Files.isRegularFile(cacheData)) {
-                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
-            } else {
-                prvdata = null;
-            }
-            String curdata = getIncrementalData();
-            if (curdata.equals(prvdata)) {
+            final String prvdata = getPreviousRunData(cacheData);
+            if (INCREMENTAL_DATA.equals(prvdata)) {
                 long lastmod = Files.getLastModifiedTime(cacheData).toMillis();
                 Set<String> stale = Stream.concat(Stream.concat(
                         project.getCompileSourceRoots().stream().map(File::new),
@@ -114,9 +128,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating.");
                     if (showStaleFiles) {
-                        getLog().info("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
+                        getLog().info("Stale files: " + String.join(", ", stale));
                     } else if (getLog().isDebugEnabled()) {
-                        getLog().debug("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
+                        getLog().debug("Stale files: " + String.join(", ", stale));
                     }
                 } else {
                     // everything is in order, skip
@@ -136,8 +150,12 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         return false;
     }
 
-    private String getIncrementalData() {
-        return "";
+    private String getPreviousRunData(Path cacheData) throws IOException {
+        if (Files.isRegularFile(cacheData)) {
+            return new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+        } else {
+            return null;
+        }
     }
 
     private Path getIncrementalDataPath(MavenProject project) {
@@ -145,9 +163,16 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 "org.apache.camel_camel-package-maven-plugin_info_xx");
     }
 
-    private long lastmod(Path p) {
+    private long isRecentlyModifiedFile(Path p) {
         try {
-            return Files.getLastModifiedTime(p).toMillis();
+            BasicFileAttributes fileAttributes = Files.readAttributes(p, BasicFileAttributes.class);
+
+            // if it's a directory, we don't care
+            if (fileAttributes.isDirectory()) {
+                return 0;
+            }
+
+            return fileAttributes.lastModifiedTime().toMillis();
         } catch (IOException e) {
             return 0;
         }
@@ -155,16 +180,22 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
 
     private Stream<String> newer(long lastmod, File file) {
         try {
-            if (file.isDirectory()) {
-                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod)
+            if (!file.exists()) {
+                return Stream.empty();
+            }
+
+            BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+
+            if (fileAttributes.isDirectory()) {
+                return Files.walk(file.toPath()).filter(p -> isRecentlyModifiedFile(p) > lastmod)
                         .map(Path::toString);
-            } else if (file.isFile()) {
-                if (lastmod(file.toPath()) > lastmod) {
+            } else if (fileAttributes.isRegularFile()) {
+                if (fileAttributes.lastModifiedTime().toMillis() > lastmod) {
                     if (file.getName().endsWith(".jar")) {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                                    .map(ze -> file + "!" + ze.getName()).toList().stream();
                         } catch (IOException e) {
                             throw new IOException("Error reading zip file: " + file, e);
                         }

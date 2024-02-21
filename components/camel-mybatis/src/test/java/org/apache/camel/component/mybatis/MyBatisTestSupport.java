@@ -31,7 +31,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     /**
      * Gets the name of the database table handling the test data.
-     * 
+     *
      * @return The name of the database table handling the test data.
      */
     protected String getTableName() {
@@ -40,7 +40,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     /**
      * Gets the SQL query dropping the test data table.
-     * 
+     *
      * @return The SQL query dropping the test data table.
      */
     protected String getDropStatement() {
@@ -49,7 +49,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     /**
      * Gets the SQL query creating the test data table.
-     * 
+     *
      * @return The SQL query creating the test data table.
      */
     protected String getCreateStatement() {
@@ -95,7 +95,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     protected Connection createConnection() throws Exception {
         MyBatisComponent component = context.getComponent("mybatis", MyBatisComponent.class);
-        return component.getSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
+        return component.createSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
     }
 
 }

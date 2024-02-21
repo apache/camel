@@ -1,0 +1,22 @@
+{
+  "id" : "f57e2ac3-7897-424f-bde5-85bf1f961bcb",
+  "name" : "ports_external.json",
+  "request" : {
+    "url" : "/v2.0/ports",
+    "method" : "GET"
+  },
+  "response" : {
+    "body" : "{\"ports\":[{\"admin_state_up\":false,\"data_plane_status\":null,\"description\":\"\",\"device_id\":\"\",\"device_owner\":\"\",\"fixed_ips\":[{\"ip_address\":\"10.0.0.5\",\"subnet_id\":\"a0304c3a-4f08-4c43-88af-d796509c97d2\"}],\"allowed_address_pairs\":[{\"ip_address\":\"192.168.0.100\",\"mac_address\":\"00:60:2f:38:62:8d\"}],\"id\":\"94225baa-9d3f-4b93-bf12-b41e7ce49cdb\",\"mac_address\":\"fa:16:3e:48:b8:9f\",\"name\":\"sample_port_1\",\"network_id\":\"a87cc70a-3e15-4acf-8205-9b711a3531b7\",\"project_id\":\"d6700c0c9ffa4f1cb322cd4a1f3906fa\",\"security_groups\":[\"f0ac4394-7e4a-4409-9701-ba8be283dbc3\"],\"status\":\"DOWN\",\"tenant_id\":\"d6700c0c9ffa4f1cb322cd4a1f3906fa\",\"created_at\":\"2020-10-30T22:16:01Z\",\"updated_at\":\"2020-10-30T22:16:01Z\"},{\"admin_state_up\":false,\"data_plane_status\":null,\"description\":\"\",\"device_id\":\"\",\"device_owner\":\"\",\"fixed_ips\":[{\"ip_address\":\"10.0.0.6\",\"subnet_id\":\"a0304c3a-4f08-4c43-88af-d796509c97d2\"}],\"allowed_address_pairs\":[{\"ip_address\":\"192.168.0.101\",\"mac_address\":\"fa:16:3e:f4:73:df\"}],\"id\":\"235b09e0-63c4-47f1-b221-66ba54c21760\",\"mac_address\":\"fa:16:3e:f4:73:df\",\"name\":\"sample_port_2\",\"network_id\":\"a87cc70a-3e15-4acf-8205-9b711a3531b7\",\"project_id\":\"d6700c0c9ffa4f1cb322cd4a1f3906fa\",\"security_groups\":[\"f0ac4394-7e4a-4409-9701-ba8be283dbc3\"],\"status\":\"DOWN\",\"tenant_id\":\"d6700c0c9ffa4f1cb322cd4a1f3906fa\",\"created_at\":\"2020-10-30T22:16:01Z\",\"updated_at\":\"2020-10-30T22:16:01Z\"}]}",
+    "headers" : {
+        "Content-Type": "application/json",
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-55376b13-eb5b-47cc-baac-7b8fe7bc00a3"
+    },
+    "status" : 200
+  },
+  "uuid" : "f57e2ac3-7897-424f-bde5-85bf1f961bcb",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

@@ -47,7 +47,7 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
         String answer = response.getText();
         assertTrue(answer.contains("\"active\":true"), "Unexpected response: " + answer);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
@@ -68,8 +68,9 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
-                        .post("new").type(UserPojo.class)
-                        .route()
+                        .post("new").type(UserPojo.class).to("direct:new");
+
+                from("direct:new")
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

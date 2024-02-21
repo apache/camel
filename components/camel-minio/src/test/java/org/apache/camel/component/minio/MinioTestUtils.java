@@ -18,8 +18,12 @@ package org.apache.camel.component.minio;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Properties;
+
+import io.minio.ListObjectsArgs;
+import io.minio.MinioClient;
 
 public final class MinioTestUtils {
 
@@ -38,16 +42,17 @@ public final class MinioTestUtils {
         return properties;
     }
 
-    static Properties loadMinioAccessFromJvmEnv() throws Exception {
-        final Properties properties = new Properties();
-        if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null
-                || System.getProperty("secretKey") == null) {
-            throw new Exception("Make sure to supply minio endpoint and credentials");
-        }
-        properties.setProperty("endpoint", System.getProperty("endpoint"));
-        properties.setProperty("access_key", System.getProperty("accessKey"));
-        properties.setProperty("secret_key", System.getProperty("secretKey"));
-        properties.setProperty("region", System.getProperty("region"));
-        return properties;
+    /**
+     * Counts the objects stored in a bucket
+     *
+     * @param  client the MinioClient
+     * @param  bucket the bucket name
+     * @return        objects count of the specified bucket
+     */
+    public static int countObjectsInBucket(MinioClient client, String bucket) {
+        Iterable result = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
+        ArrayList arrayList = new ArrayList<>();
+        result.forEach(arrayList::add);
+        return arrayList.size();
     }
 }

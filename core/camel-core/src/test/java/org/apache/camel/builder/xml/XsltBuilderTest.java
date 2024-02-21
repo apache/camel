@@ -33,7 +33,6 @@ import org.xml.sax.InputSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.xslt.StreamResultHandlerFactory;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -43,16 +42,18 @@ import org.apache.camel.support.UnitOfWorkHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class XsltBuilderTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/xslt");
-        createDirectory("target/data/xslt");
         super.setUp();
+        Files.createDirectories(testDirectory());
     }
 
     @Test
@@ -229,13 +230,12 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
-        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltout.xml");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, testFile("xsltout.xml").toString());
 
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getMessage().getBody());
 
-        File file = new File("target/data/xslt/xsltout.xml");
-        assertTrue(file.exists(), "Output file should exist");
+        assertFileExists(testFile("xsltout.xml"));
 
         String body = exchange.getMessage().getBody(String.class);
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
@@ -249,23 +249,22 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
-        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltout.xml");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, testFile("xsltout.xml").toString());
 
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getMessage().getBody());
 
-        File file = new File("target/data/xslt/xsltout.xml");
-        assertTrue(file.exists(), "Output file should exist");
+        assertFileExists(testFile("xsltout.xml"));
 
         String body = exchange.getMessage().getBody(String.class);
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
 
         // now done the exchange
-        List<Synchronization> onCompletions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
-        UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
+        List<Synchronization> onCompletions = exchange.getExchangeExtension().handoverCompletions();
+        UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions);
 
         // the file should be deleted
-        assertFalse(file.exists(), "Output file should be deleted");
+        assertFileNotExists(testFile("xsltout.xml"));
     }
 
     @Test

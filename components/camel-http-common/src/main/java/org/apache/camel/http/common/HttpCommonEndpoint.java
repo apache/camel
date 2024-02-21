@@ -17,7 +17,6 @@
 package org.apache.camel.http.common;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.cloud.DiscoverableService;
@@ -40,7 +39,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriPath(label = "common", description = "The url of the HTTP endpoint to call.")
     @Metadata(required = true)
     URI httpUri;
-    @UriParam(label = "common",
+    @UriParam(label = "common,advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam(label = "common,advanced",
@@ -54,7 +53,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
               description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
                             + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,advanced",
               description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
                             + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
                             + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
@@ -78,7 +77,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                             + " The http producer will by default cache the response body stream. If setting this option to true,"
                             + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
-    @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
+    @UriParam(label = "common",
+              description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
                             + " in the response as a application/x-java-serialized-object content type."
                             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
                             + " The caused exception is required to be serialized."
@@ -88,6 +88,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     boolean muteException;
+    @UriParam(label = "consumer",
+              description = "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
+                            + " when the exception stack trace is not sent in the response's body.")
+    boolean logException;
     @UriParam(label = "producer", defaultValue = "false",
               description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
@@ -101,12 +105,12 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
               description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
     @UriParam(label = "consumer",
-              description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
+              description = "To use a custom buffer size on the jakarta.servlet.ServletResponse.")
     Integer responseBufferSize;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,advanced",
               description = "If this option is true, The http producer won't read response body and cache the input stream")
     boolean ignoreResponseBody;
-    @UriParam(label = "producer", defaultValue = "true",
+    @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
@@ -149,6 +153,12 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private String authUsername;
     @UriParam(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
+    private String oauth2ClientId;
+    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client secret")
+    private String oauth2ClientSecret;
+    @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
+    private String oauth2TokenEndpoint;
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
@@ -174,10 +184,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
     private String proxyAuthNtHost;
 
-    public HttpCommonEndpoint() {
+    protected HttpCommonEndpoint() {
     }
 
-    public HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) throws URISyntaxException {
+    protected HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
@@ -228,14 +238,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return httpBinding;
     }
 
-    /**
-     * @deprecated use {@link #setHttpBinding(HttpBinding)}
-     */
-    @Deprecated
-    public void setBinding(HttpBinding httpBinding) {
-        setHttpBinding(httpBinding);
-    }
-
     public HttpBinding getHttpBinding() {
         if (httpBinding == null) {
             // create a new binding and use the options from this endpoint
@@ -263,7 +265,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     public String getPath() {
         //if the path is empty, we just return the default path here
-        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
+        return httpUri.getPath().isEmpty() ? "/" : httpUri.getPath();
     }
 
     public int getPort() {
@@ -397,6 +399,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return muteException;
     }
 
+    public boolean isLogException() {
+        return logException;
+    }
+
     public boolean isConnectionClose() {
         return connectionClose;
     }
@@ -427,6 +433,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged when
+     * the exception stack trace is not sent in the response's body.
+     */
+    public void setLogException(boolean logException) {
+        this.logException = logException;
     }
 
     public boolean isTraceEnabled() {
@@ -468,7 +482,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * To use a custom buffer size on the javax.servlet.ServletResponse.
+     * To use a custom buffer size on the jakarta.servlet.ServletResponse.
      */
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
@@ -766,4 +780,38 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setProxyAuthNtHost(String proxyAuthNtHost) {
         this.proxyAuthNtHost = proxyAuthNtHost;
     }
+
+    public String getOauth2ClientId() {
+        return this.oauth2ClientId;
+    }
+
+    /**
+     * OAuth2 Client id
+     */
+    public void setOauth2ClientId(String oauth2ClientId) {
+        this.oauth2ClientId = oauth2ClientId;
+    }
+
+    public String getOauth2ClientSecret() {
+        return this.oauth2ClientSecret;
+    }
+
+    /**
+     * OAuth2 Client secret
+     */
+    public void setOauth2ClientSecret(String oauth2ClientSecret) {
+        this.oauth2ClientSecret = oauth2ClientSecret;
+    }
+
+    public String getOauth2TokenEndpoint() {
+        return this.oauth2TokenEndpoint;
+    }
+
+    /**
+     * OAuth2 token endpoint
+     */
+    public void setOauth2TokenEndpoint(String oauth2TokenEndpoint) {
+        this.oauth2TokenEndpoint = oauth2TokenEndpoint;
+    }
+
 }

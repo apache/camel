@@ -86,7 +86,6 @@ public class CamelSSLIRCConnection extends SSLIRCConnection {
                     if (s != null) {
                         s.close();
                     }
-                    s = null;
                     throw exc;
                 } catch (IOException exc) {
                     if (s != null) {

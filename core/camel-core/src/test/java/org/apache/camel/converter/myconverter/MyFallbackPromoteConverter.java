@@ -27,7 +27,7 @@ public class MyFallbackPromoteConverter {
     @Converter(fallback = true, fallbackCanPromote = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (MyCoolBean.class.isAssignableFrom(value.getClass())) {
-            return "This is cool: " + value.toString();
+            return "This is cool: " + value;
         }
         return null;
     }

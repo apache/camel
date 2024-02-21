@@ -27,7 +27,7 @@ import io.undertow.util.URLUtils;
  * @see RestRootHandler
  */
 public class CamelRootHandler implements HttpHandler {
-    private CamelPathHandler pathHandler;
+    private final CamelPathHandler pathHandler;
 
     public CamelRootHandler(HttpHandler defaultHandler) {
         pathHandler = new CamelPathHandler(defaultHandler);
@@ -54,18 +54,7 @@ public class CamelRootHandler implements HttpHandler {
                     templateHandler.add(relativePath, targetHandler);
                 }
             } else {
-                CamelPathTemplateHandler templateHandler;
-                if (basePathHandler instanceof CamelMethodHandler) {
-                    // A static path handler is already set for the base path. Use it as a default handler
-                    templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler);
-                } else if (basePathHandler == null) {
-                    templateHandler = new CamelPathTemplateHandler(new CamelMethodHandler());
-                } else {
-                    throw new IllegalArgumentException(String.format("Unsupported handler '%s' was found", basePathHandler));
-                }
-                targetHandler = new CamelMethodHandler();
-                templateHandler.add(relativePath, targetHandler);
-                pathHandler.addPrefixPath(basePath, templateHandler);
+                targetHandler = add(basePathHandler, relativePath, basePath);
             }
 
         } else {
@@ -93,6 +82,23 @@ public class CamelRootHandler implements HttpHandler {
             }
         }
         return targetHandler.add(methods, handler);
+    }
+
+    private CamelMethodHandler add(HttpHandler basePathHandler, String relativePath, String basePath) {
+        CamelMethodHandler targetHandler;
+        CamelPathTemplateHandler templateHandler;
+        if (basePathHandler instanceof CamelMethodHandler) {
+            // A static path handler is already set for the base path. Use it as a default handler
+            templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler);
+        } else if (basePathHandler == null) {
+            templateHandler = new CamelPathTemplateHandler(new CamelMethodHandler());
+        } else {
+            throw new IllegalArgumentException(String.format("Unsupported handler '%s' was found", basePathHandler));
+        }
+        targetHandler = new CamelMethodHandler();
+        templateHandler.add(relativePath, targetHandler);
+        pathHandler.addPrefixPath(basePath, templateHandler);
+        return targetHandler;
     }
 
     public synchronized void remove(String path, String methods, boolean prefixMatch) {

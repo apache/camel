@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "streamConfig",
+    "title": "Stream Config",
+    "description": "Configures stream-processing resequence eip.",
+    "deprecated": false,
+    "label": "configuration,eip",
+    "javaType": "org.apache.camel.model.config.StreamResequencerConfig",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "capacity": { "index": 0, "kind": "attribute", "displayName": "Capacity", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the capacity of the resequencer inbound queue." },
+    "timeout": { "index": 1, "kind": "attribute", "displayName": "Timeout", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets minimum time (milliseconds) to wait for missing elements (messages)." },
+    "deliveryAttemptInterval": { "index": 2, "kind": "attribute", "displayName": "Delivery Attempt Interval", "label": "advanced", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the interval in milliseconds the stream resequencer will at most wait while waiting for condition of being able to deliver." },
+    "ignoreInvalidExchanges": { "index": 3, "kind": "attribute", "displayName": "Ignore Invalid Exchanges", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to ignore invalid exchanges" },
+    "rejectOld": { "index": 4, "kind": "attribute", "displayName": "Reject Old", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If true, throws an exception when messages older than the last delivered message are processed" },
+    "comparator": { "index": 5, "kind": "attribute", "displayName": "Comparator", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.processor.resequencer.ExpressionResultComparator", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom comparator as a org.apache.camel.processor.resequencer.ExpressionResultComparator type." }
+  }
+}

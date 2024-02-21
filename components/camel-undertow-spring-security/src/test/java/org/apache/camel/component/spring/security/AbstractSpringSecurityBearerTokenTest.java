@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
@@ -48,7 +48,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     }
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     }
 
     @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
@@ -90,7 +90,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
         PlainJWT plainJWT = new PlainJWT(claimsSet.build());
 
-        Map<String, Object> headers = new HashMap();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("type", "JWT");
         headers.put("alg", "RS256");
         Map<String, Object> claims = new KeycloakUsernameSubClaimAdapter("preffered_name").convert(claimsSet.getClaims());

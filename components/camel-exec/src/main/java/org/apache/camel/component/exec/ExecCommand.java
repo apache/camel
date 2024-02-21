@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.LoggingLevel;
 
@@ -38,6 +40,11 @@ public class ExecCommand implements Serializable {
      * @see ExecBinding#EXEC_COMMAND_EXECUTABLE
      */
     private final String executable;
+
+    /**
+     * @see ExecBinding#EXEC_COMMAND_EXIT_VALUES
+     */
+    private final Set<Integer> exitValues;
 
     /**
      * @see ExecBinding#EXEC_COMMAND_ARGS
@@ -71,10 +78,11 @@ public class ExecCommand implements Serializable {
 
     private final boolean useStderrOnEmptyStdout;
 
-    public ExecCommand(String executable, List<String> args, String workingDir, Long timeout,
+    public ExecCommand(String executable, List<String> args, String workingDir, Long timeout, Set<Integer> exitValues,
                        InputStream input, File outFile, boolean useStderrOnEmptyStdout, LoggingLevel commandLogLevel) {
         notNull(executable, "command executable");
         this.executable = executable;
+        this.exitValues = exitValues;
         this.args = unmodifiableOrEmptyList(args);
         this.workingDir = workingDir;
         this.timeout = timeout;
@@ -90,6 +98,10 @@ public class ExecCommand implements Serializable {
 
     public String getExecutable() {
         return executable;
+    }
+
+    public Set<Integer> getExitValues() {
+        return exitValues;
     }
 
     public InputStream getInput() {
@@ -120,7 +132,10 @@ public class ExecCommand implements Serializable {
     public String toString() {
         String dirToPrint = workingDir == null ? "null" : workingDir;
         String outFileToPrint = outFile == null ? "null" : outFile.getPath();
-        return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout + ", outFile="
+        String exitValuesString = exitValues.stream().map(Object::toString)
+                .collect(Collectors.joining(","));
+        return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout
+               + ", exitValues=" + exitValuesString + ", outFile="
                + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel
                + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
     }

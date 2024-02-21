@@ -51,6 +51,8 @@ public class JaxbDataFormatConfigurer extends PropertyConfigurerSupport implemen
         case "jaxbProviderProperties": dataformat.setJaxbProviderProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
+        case "accessexternalschemaprotocols":
+        case "accessExternalSchemaProtocols": dataformat.setAccessExternalSchemaProtocols(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

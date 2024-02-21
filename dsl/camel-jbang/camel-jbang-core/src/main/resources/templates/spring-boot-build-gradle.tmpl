@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '{{ .SpringBootVersion }}'
+    id 'io.spring.dependency-management' version '1.1.2'
+}
+
+group = '{{ .GroupId }}'
+version = '{{ .Version }}'
+
+java {
+    sourceCompatibility = '{{ .JavaVersion }}'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+{{ .MavenRepositories }}
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.apache.camel.springboot:camel-spring-boot-engine-starter:{{ .CamelVersion }}'
+{{ .CamelDependencies }}
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.apache.camel:camel-test-spring-junit5:{{ .CamelVersion }}'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

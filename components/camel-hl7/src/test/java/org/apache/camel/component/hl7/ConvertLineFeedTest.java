@@ -26,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConvertLineFeedTest extends CamelTestSupport {
 
     @Test
-    public void testConvertLineFeed() throws Exception {
+    public void testConvertLineFeed() {
         String s = "line1\nline2\rline3";
         String result = template.requestBody("direct:test1", s, String.class);
         assertEquals("line1\rline2\rline3", result);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").transform(convertLFToCR());
             }
         };

@@ -19,9 +19,9 @@ public class JsonApiDataFormatConfigurer extends PropertyConfigurerSupport imple
         JsonApiDataFormat dataformat = (JsonApiDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "dataformattypes":
-        case "dataFormatTypes": dataformat.setDataFormatTypes(property(camelContext, java.lang.Class[].class, value)); return true;
+        case "dataFormatTypes": dataformat.setDataFormatTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "mainformattype":
-        case "mainFormatType": dataformat.setMainFormatType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "mainFormatType": dataformat.setMainFormatType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

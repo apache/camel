@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.PredicateExceptionFactory;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -28,15 +30,27 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which validates the content of the inbound message body against a {@link Predicate}.
  */
-public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable {
+public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PredicateValidatingProcessor.class);
 
     private final Predicate predicate;
+    private PredicateExceptionFactory predicateExceptionFactory;
+    private String id;
 
     public PredicateValidatingProcessor(Predicate predicate) {
         ObjectHelper.notNull(predicate, "predicate", this);
         this.predicate = predicate;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -48,12 +62,33 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
         }
 
         if (!matches) {
-            throw new PredicateValidationException(exchange, predicate);
+            Exception cause = null;
+            if (predicateExceptionFactory != null) {
+                cause = predicateExceptionFactory.newPredicateException(exchange, predicate, getId());
+            }
+            if (cause == null) {
+                cause = new PredicateValidationException(exchange, predicate);
+            }
+            throw cause;
         }
     }
 
     public Predicate getPredicate() {
         return predicate;
+    }
+
+    /**
+     * To use a custom factory for creating the exception to throw if predicate does not match
+     */
+    public PredicateExceptionFactory getPredicateExceptionFactory() {
+        return predicateExceptionFactory;
+    }
+
+    /**
+     * To use a custom factory for creating the exception to throw if predicate does not match
+     */
+    public void setPredicateExceptionFactory(PredicateExceptionFactory predicateExceptionFactory) {
+        this.predicateExceptionFactory = predicateExceptionFactory;
     }
 
     @Override
@@ -64,15 +99,5 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
     @Override
     public String getTraceLabel() {
         return "validate[" + predicate + "]";
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 }

@@ -56,7 +56,7 @@ public class ExecEndpointTest {
     private Component component;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         component = camelContext.getComponent("exec");
     }
 
@@ -108,9 +108,11 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointWithArgs() throws Exception {
         String args = "arg1 arg2 arg3";
-        // Need to properly encode the URI
-        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
+        // can use space or %20
+        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "%20"));
         assertEquals(args, e.getArgs());
+        ExecEndpoint e2 = createExecEndpoint("exec:test?args=" + args);
+        assertEquals(args, e2.getArgs());
     }
 
     @Test
@@ -136,6 +138,20 @@ public class ExecEndpointTest {
         long timeout = 1999999L;
         ExecEndpoint e = createExecEndpoint("exec:test?timeout=" + timeout);
         assertEquals(timeout, e.getTimeout());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateEndpointWithExitValues() throws Exception {
+        ExecEndpoint e = createExecEndpoint("exec:test?exitValues=1,2,3");
+        assertEquals("1,2,3", e.getExitValues());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateEndpointWithEmptyExitValues() throws Exception {
+        ExecEndpoint e = createExecEndpoint("exec:test?exitValues=");
+        assertEquals("", e.getExitValues());
     }
 
     @Test

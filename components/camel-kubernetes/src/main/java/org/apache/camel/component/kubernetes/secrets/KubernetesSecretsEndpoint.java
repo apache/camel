@@ -22,14 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SECRETS;
 
 /**
  * Perform operations on Kubernetes Secrets.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SECRETS, title = "Kubernetes Secrets",
              syntax = "kubernetes-secrets:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {

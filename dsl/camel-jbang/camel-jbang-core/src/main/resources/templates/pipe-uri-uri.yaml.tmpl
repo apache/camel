@@ -1,0 +1,14 @@
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: {{ .Name }}
+spec:
+  source:
+    uri: {{ .Source }}
+    #properties:
+      #key: "value"
+{{ .Steps }}
+  sink:
+    uri: {{ .Sink }}
+    #properties:
+      #key: "value"

@@ -80,7 +80,7 @@ public class FileDataSet extends ListDataSet {
             try (Scanner scanner = new Scanner(sourceFile, null, delimiter)) {
                 while (scanner.hasNext()) {
                     String nextPayload = scanner.next();
-                    if ((nextPayload != null) && (nextPayload.length() > 0)) {
+                    if (nextPayload != null && nextPayload.length() > 0) {
                         bodies.add(nextPayload);
                     }
                 }

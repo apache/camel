@@ -35,7 +35,7 @@ public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 SchedulerComponent comp = context.getComponent("scheduler", SchedulerComponent.class);
-                comp.setConcurrentTasks(2);
+                comp.setPoolSize(2);
 
                 from("scheduler://foo?delay=100").to("log:a").to("mock:a");
 

@@ -19,33 +19,27 @@ package org.apache.camel.jsonpath;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("jsonpath")
-public class JsonPathLanguage extends LanguageSupport implements PropertyConfigurer {
+public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
-    private Class<?> resultType;
     private boolean suppressExceptions;
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
-    private String headerName;
+    private boolean unpackArray;
     private Option[] options;
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
 
     public boolean isSuppressExceptions() {
         return suppressExceptions;
@@ -79,12 +73,12 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         this.writeAsString = writeAsString;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public boolean isUnpackArray() {
+        return unpackArray;
     }
 
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setUnpackArray(boolean unpackArray) {
+        this.unpackArray = unpackArray;
     }
 
     public Option[] getOptions() {
@@ -96,53 +90,58 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
     }
 
     @Override
-    public Predicate createPredicate(String expression) {
-        JsonPathExpression answer = (JsonPathExpression) createExpression(expression);
-        answer.setPredicate(true);
-        return answer;
+    public Predicate createPredicate(Expression source, String expression, Object[] properties) {
+        return doCreateJsonPathExpression(source, expression, properties, true);
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
+        return doCreateJsonPathExpression(source, expression, properties, false);
+    }
+
+    protected ExpressionAdapter doCreateJsonPathExpression(
+            Expression source, String expression, Object[] properties, boolean predicate) {
         JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setResultType(resultType);
-        answer.setSuppressExceptions(suppressExceptions);
-        answer.setAllowSimple(allowSimple);
-        answer.setAllowEasyPredicate(allowEasyPredicate);
-        answer.setHeaderName(headerName);
-        answer.setWriteAsString(writeAsString);
-        answer.setHeaderName(headerName);
-        answer.setOptions(options);
-        answer.init(getCamelContext());
-        return answer;
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Object[] properties) {
-        JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
-        json.setPredicate(true);
-        return json;
-    }
-
-    @Override
-    public Expression createExpression(String expression, Object[] properties) {
-        JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, resultType));
-        answer.setSuppressExceptions(property(boolean.class, properties, 1, suppressExceptions));
-        answer.setAllowSimple(property(boolean.class, properties, 2, allowSimple));
-        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, allowEasyPredicate));
-        answer.setWriteAsString(property(boolean.class, properties, 4, writeAsString));
-        answer.setHeaderName(property(String.class, properties, 5, headerName));
-        String option = (String) properties[6];
+        answer.setSource(source);
+        answer.setPredicate(predicate);
+        answer.setResultType(property(Class.class, properties, 0, null));
+        answer.setSuppressExceptions(property(boolean.class, properties, 2, isSuppressExceptions()));
+        answer.setAllowSimple(property(boolean.class, properties, 3, isAllowSimple()));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, 4, isAllowEasyPredicate()));
+        answer.setWriteAsString(property(boolean.class, properties, 5, isWriteAsString()));
+        answer.setUnpackArray(property(boolean.class, properties, 6, isUnpackArray()));
+        Object option = property(Object.class, properties, 7, null);
         if (option != null) {
             List<Option> list = new ArrayList<>();
-            for (String s : option.split(",")) {
-                list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+            if (option instanceof String str) {
+                for (String s : str.split(",")) {
+                    list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+                }
+            } else if (option instanceof Option opt) {
+                list.add(opt);
             }
-            answer.setOptions(list.toArray(new Option[list.size()]));
+            answer.setOptions(list.toArray(new Option[0]));
+        } else if (options != null) {
+            answer.setOptions(options);
         }
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
+    }
+
+    // use by tooling
+    public boolean validateExpression(String expression) {
+        JsonPath.compile(expression);
+        return true;
+    }
+
+    // use by tooling
+    public boolean validatePredicate(String expression) {
+        EasyPredicateParser parser = new EasyPredicateParser();
+        String exp = parser.parse(expression);
+        JsonPath.compile(exp);
+        return true;
     }
 
     @Override
@@ -152,10 +151,6 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         }
 
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
             case "suppressexceptions":
             case "suppressExceptions":
                 setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
@@ -168,13 +163,13 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
             case "allowEasyPredicate":
                 setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
                 return true;
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
             case "writeasstring":
             case "writeAsString":
                 setWriteAsString(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
+                return true;
+            case "unpackarray":
+            case "unpackArray":
+                setUnpackArray(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
                 return true;
             case "options":
                 setOptions(PropertyConfigurerSupport.property(camelContext, Option[].class, value));

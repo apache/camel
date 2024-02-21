@@ -24,6 +24,8 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "async": target.getConfiguration().setAsync(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configfile":
+        case "configFile": target.getConfiguration().setConfigFile(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -34,10 +36,10 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": target.getConfiguration().setProblemId(property(camelContext, java.lang.Long.class, value)); return true;
         case "solverid":
         case "solverId": target.getConfiguration().setSolverId(property(camelContext, java.lang.String.class, value)); return true;
+        case "solvermanager":
+        case "solverManager": target.getConfiguration().setSolverManager(property(camelContext, org.optaplanner.core.api.solver.SolverManager.class, value)); return true;
         case "threadpoolsize":
         case "threadPoolSize": target.getConfiguration().setThreadPoolSize(property(camelContext, int.class, value)); return true;
-        case "usesolvermanager":
-        case "useSolverManager": target.getConfiguration().setUseSolverManager(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -48,6 +50,8 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "async": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "configfile":
+        case "configFile": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -58,10 +62,10 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": return java.lang.Long.class;
         case "solverid":
         case "solverId": return java.lang.String.class;
+        case "solvermanager":
+        case "solverManager": return org.optaplanner.core.api.solver.SolverManager.class;
         case "threadpoolsize":
         case "threadPoolSize": return int.class;
-        case "usesolvermanager":
-        case "useSolverManager": return boolean.class;
         default: return null;
         }
     }
@@ -73,6 +77,8 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "async": return target.getConfiguration().isAsync();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configfile":
+        case "configFile": return target.getConfiguration().getConfigFile();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -83,10 +89,10 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "problemId": return target.getConfiguration().getProblemId();
         case "solverid":
         case "solverId": return target.getConfiguration().getSolverId();
+        case "solvermanager":
+        case "solverManager": return target.getConfiguration().getSolverManager();
         case "threadpoolsize":
         case "threadPoolSize": return target.getConfiguration().getThreadPoolSize();
-        case "usesolvermanager":
-        case "useSolverManager": return target.getConfiguration().isUseSolverManager();
         default: return null;
         }
     }

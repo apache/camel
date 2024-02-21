@@ -40,14 +40,14 @@ public class JpaBatchConsumerTest extends AbstractJpaTest {
         mock.message(1).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jpa://" + SendEmail.class.getName() + "?delay=2000").to("mock:result");
             }
         };

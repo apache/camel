@@ -19,19 +19,22 @@ package org.apache.camel.model.cloud;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "cachingServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
+@Deprecated
 public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     @Metadata(defaultValue = "60", javaType = "java.lang.Integer")
@@ -43,7 +46,6 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     @XmlElements({
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class) })
@@ -157,13 +159,6 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
 
     public DnsServiceCallServiceDiscoveryConfiguration dnsServiceDiscovery() {
         DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
-        setServiceDiscoveryConfiguration(conf);
-
-        return conf;
-    }
-
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;

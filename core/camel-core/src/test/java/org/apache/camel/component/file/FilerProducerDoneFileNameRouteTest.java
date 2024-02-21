@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -36,13 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
 
     private Properties myProp = new Properties();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        super.setUp();
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -61,11 +51,8 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
 
         assertTrue(oneExchangeDone.matches(5, TimeUnit.SECONDS));
 
-        File file = new File("target/data/done/hello.txt");
-        assertEquals(true, file.exists(), "File should exists");
-
-        File done = new File("target/data/done/done-hello.txt");
-        assertEquals(true, done.exists(), "Done file should exists");
+        assertFileExists(testFile("hello.txt"));
+        assertFileExists(testFile("done-hello.txt"));
     }
 
     @Override
@@ -73,7 +60,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myProp.put("myDir", "target/data/done");
+                myProp.put("myDir", testDirectory().toString());
 
                 context.getPropertiesComponent().setLocation("ref:myProp");
 

@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
@@ -44,7 +45,12 @@ public class GenericFile<T> implements WrappedFile<T> {
     private String relativeFilePath;
     private String absoluteFilePath;
     private long fileLength;
+    // file length in case of lazy-loading
+    private LongSupplier fileLengthSupplier;
     private long lastModified;
+    // last modified in case of lazy-loading
+    private LongSupplier lastModifiedSupplier;
+    private long lastOffsetValue;
     private T file;
     private GenericFileBinding<T> binding;
     private boolean absolute;
@@ -70,9 +76,7 @@ public class GenericFile<T> implements WrappedFile<T> {
      * @param source the source
      * @param result the result
      */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void copyFrom(GenericFile source, GenericFile result) {
+    public void copyFrom(GenericFile<T> source, GenericFile<T> result) {
         result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
@@ -124,12 +128,12 @@ public class GenericFile<T> implements WrappedFile<T> {
 
         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
         GenericFileMessage<T> msg = new GenericFileMessage<>(exchange, this);
+
+        headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;
+        // force storing on IN as that is what Camel expects
+        exchange.setIn(msg);
         if (exchange.hasOut()) {
-            headers = exchange.getOut().hasHeaders() ? exchange.getOut().getHeaders() : null;
-            exchange.setOut(msg);
-        } else {
-            headers = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
-            exchange.setIn(msg);
+            exchange.setOut(null);
         }
 
         // preserve any existing (non file) headers, before we re-populate
@@ -150,43 +154,44 @@ public class GenericFile<T> implements WrappedFile<T> {
      */
     public void populateHeaders(GenericFileMessage<T> message, boolean isProbeContentTypeFromEndpoint) {
         if (message != null) {
-            message.setHeader(Exchange.FILE_NAME_ONLY, getFileNameOnly());
-            message.setHeader(Exchange.FILE_NAME, getFileName());
-            message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
-            message.setHeader("CamelFileAbsolute", isAbsolute());
-            message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+            message.setHeader(FileConstants.FILE_NAME_ONLY, getFileNameOnly());
+            message.setHeader(FileConstants.FILE_NAME, getFileName());
+            message.setHeader(FileConstants.FILE_NAME_CONSUMED, getFileName());
+            message.setHeader(FileConstants.FILE_ABSOLUTE, isAbsolute());
+            message.setHeader(FileConstants.FILE_ABSOLUTE_PATH, getAbsoluteFilePath());
 
             if (extendedAttributes != null) {
-                message.setHeader("CamelFileExtendedAttributes", extendedAttributes);
+                message.setHeader(FileConstants.FILE_EXTENDED_ATTRIBUTES, extendedAttributes);
             }
 
             if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
                 File f = (File) file;
                 Path path = f.toPath();
                 try {
-                    message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
+                    message.setHeader(FileConstants.FILE_CONTENT_TYPE, Files.probeContentType(path));
                 } catch (Exception e) {
                     // just ignore the exception
                 }
             }
 
             if (isAbsolute()) {
-                message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());
+                message.setHeader(FileConstants.FILE_PATH, getAbsoluteFilePath());
             } else {
                 // we must normalize path according to protocol if we build our
                 // own paths
                 String path = normalizePathToProtocol(getEndpointPath() + File.separator + getRelativeFilePath());
-                message.setHeader(Exchange.FILE_PATH, path);
+                message.setHeader(FileConstants.FILE_PATH, path);
             }
 
-            message.setHeader("CamelFileRelativePath", getRelativeFilePath());
-            message.setHeader(Exchange.FILE_PARENT, getParent());
+            message.setHeader(FileConstants.FILE_RELATIVE_PATH, getRelativeFilePath());
+            message.setHeader(FileConstants.FILE_PARENT, getParent());
 
             if (getFileLength() >= 0) {
-                message.setHeader(Exchange.FILE_LENGTH, getFileLength());
+                message.setHeader(FileConstants.FILE_LENGTH, getFileLength());
             }
             if (getLastModified() > 0) {
-                message.setHeader(Exchange.FILE_LAST_MODIFIED, getLastModified());
+                message.setHeader(FileConstants.FILE_LAST_MODIFIED, getLastModified());
+                message.setHeader(Exchange.MESSAGE_TIMESTAMP, getLastModified());
             }
         }
     }
@@ -210,7 +215,7 @@ public class GenericFile<T> implements WrappedFile<T> {
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
         String newEndpointPath = FileUtil.normalizePath(
-                endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
+                endpointPath.endsWith(String.valueOf(File.separatorChar)) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: {}", newFileName);
@@ -224,7 +229,7 @@ public class GenericFile<T> implements WrappedFile<T> {
                 // use File.separatorChar as the normalizePath uses this as path
                 // separator so we should use the same
                 // in this logic here
-                if (newEndpointPath.endsWith("" + File.separatorChar)) {
+                if (newEndpointPath.endsWith(String.valueOf(File.separatorChar))) {
                     newFileName = StringHelper.after(newFileName, newEndpointPath);
                 } else {
                     newFileName = StringHelper.after(newFileName, newEndpointPath + File.separatorChar);
@@ -285,6 +290,10 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     public long getFileLength() {
+        if (fileLength == 0 && fileLengthSupplier != null) {
+            // file length not set, try lazy-loading
+            fileLength = fileLengthSupplier.getAsLong();
+        }
         return fileLength;
     }
 
@@ -292,12 +301,24 @@ public class GenericFile<T> implements WrappedFile<T> {
         this.fileLength = fileLength;
     }
 
+    void setFileLengthSupplier(LongSupplier supplier) {
+        fileLengthSupplier = supplier;
+    }
+
     public long getLastModified() {
+        if (lastModified == 0 && lastModifiedSupplier != null) {
+            // last modified not set, try lazy-loading
+            lastModified = lastModifiedSupplier.getAsLong();
+        }
         return lastModified;
     }
 
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    void setLastModifiedSupplier(LongSupplier supplier) {
+        lastModifiedSupplier = supplier;
     }
 
     public String getCharset() {
@@ -410,6 +431,14 @@ public class GenericFile<T> implements WrappedFile<T> {
 
     public void setCopyFromAbsoluteFilePath(String copyFromAbsoluteFilePath) {
         this.copyFromAbsoluteFilePath = copyFromAbsoluteFilePath;
+    }
+
+    public void updateLastOffsetValue(Long offset) {
+        this.lastOffsetValue = offset;
+    }
+
+    public Long getLastOffsetValue() {
+        return lastOffsetValue;
     }
 
     /**

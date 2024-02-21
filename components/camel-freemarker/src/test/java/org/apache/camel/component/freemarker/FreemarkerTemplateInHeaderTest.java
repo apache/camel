@@ -56,7 +56,7 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
     protected void assertRespondsWith(final String headerName, final String headerValue, String expectedBody)
             throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE, "<hello>${headers." + headerName + "}</hello>");
                 in.setHeader(headerName, headerValue);
@@ -72,6 +72,7 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
         for (Entry<String, Object> entry : entrySet) {
             if (entry.getKey().equals(headerName)) {
                 keyFound = true;
+                break;
             }
         }
         assertTrue(keyFound, "Header should been found");

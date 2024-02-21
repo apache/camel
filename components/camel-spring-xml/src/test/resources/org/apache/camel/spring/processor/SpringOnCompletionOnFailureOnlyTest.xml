@@ -27,6 +27,7 @@
     <bean id="myProcessor" class="org.apache.camel.processor.OnCompletionTest$MyProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:start"/>

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.amqp;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.spi.UriParam;

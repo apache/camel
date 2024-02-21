@@ -24,15 +24,16 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="myBean" class="org.apache.camel.spring.processor.SpringThrottlerMethodCallTest"/>
+  <bean id="myBean" class="org.apache.camel.spring.processor.throttle.SpringThrottlerMethodCallTest"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <route>
       <from uri="direct:expressionMethod"/>
-      <throttle timePeriodMillis="100">
-        <!-- use a java  bean method call to determine how many messages to throttle per 0.1 sec -->
-        <method ref="myBean" method="getMessagesPerInterval"/>
+      <throttle>
+        <!-- use a java bean method call to determine the max number of concurrent messages to set on the throttle -->
+        <method ref="myBean" method="getConcurrentMessages"/>
       </throttle>
       <to uri="mock:result"/>
     </route>

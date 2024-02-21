@@ -27,11 +27,12 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:in"/>
             <choice>
                 <when>
-                    <xpath headerName="cheeseDetails" resultType="java.lang.Integer">/c:number = 55</xpath>
+                    <xpath source="header:cheeseDetails" resultType="java.lang.Integer">/c:number = 55</xpath>
                     <to uri="mock:55"/>
                 </when>
                 <otherwise>

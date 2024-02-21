@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -78,11 +79,9 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     @Test
     public void testEndpointURIParametrizedNotResolvableLogger() {
         context.getRegistry().bind("logger1", LoggerFactory.getLogger("provided.logger1.name"));
-        try {
-            template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
-        }
+        Assertions.assertThrows(ResolveEndpointFailedException.class,
+                () -> template.requestBody("log:irrelevant.logger.name?logger=#logger2", "hello"),
+                "Endpoint cannot be resolved via URI");
     }
 
     @Test

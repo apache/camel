@@ -33,6 +33,7 @@ import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +68,7 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
         final Message<String> msg = new Message<>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.RECEIVED);
     }
@@ -90,7 +91,7 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
     private void checkHeaders(Map<String, Object> headers, String action) {
         assertEquals(action, headers.get(HazelcastConstants.LISTENER_ACTION));
         assertEquals(HazelcastConstants.CACHE_LISTENER, headers.get(HazelcastConstants.LISTENER_TYPE));
-        assertEquals(null, headers.get(HazelcastConstants.OBJECT_ID));
+        assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
 

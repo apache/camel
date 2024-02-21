@@ -25,6 +25,7 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- this route has no from -->
     <route id="myRoute">
       <to uri="mock:result"/>

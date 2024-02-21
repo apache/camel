@@ -162,7 +162,7 @@ public final class DSAnnotationProcessor {
                 try {
                     isLoaded = schemaManager.load(schemaName);
                 } catch (LdapUnwillingToPerformException lutpe) {
-                    // Cannot load the schema, it does not exists
+                    // Cannot load the schema, it does not exist
                     LOG.error(lutpe.getMessage());
                     continue;
                 }
@@ -173,13 +173,13 @@ public final class DSAnnotationProcessor {
                     schemaManager.enable(schemaName);
 
                     if (schemaManager.isDisabled(schemaName)) {
-                        LOG.error("Cannot enable " + schemaName);
+                        LOG.error("Cannot enable {}", schemaName);
                     }
                 } else {
                     schemaManager.disable(schemaName);
 
                     if (schemaManager.isEnabled(schemaName)) {
-                        LOG.error("Cannot disable " + schemaName);
+                        LOG.error("Cannot disable {}", schemaName);
                     }
                 }
             }
@@ -238,19 +238,19 @@ public final class DSAnnotationProcessor {
                     for (CreateIndex createIndex : indexes) {
                         if (createIndex.type() == JdbmIndex.class) {
                             // JDBM index
-                            JdbmIndex index = new JdbmIndex(createIndex.attribute(), false);
+                            JdbmIndex index = new JdbmIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         } else if (createIndex.type() == MavibotIndex.class) {
                             // Mavibot index
-                            MavibotIndex index = new MavibotIndex(createIndex.attribute(), false);
+                            MavibotIndex index = new MavibotIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         } else {
                             // The annotation does not specify a specific index
                             // type.
                             // We use the generic index implementation.
-                            JdbmIndex index = new JdbmIndex(createIndex.attribute(), false);
+                            JdbmIndex index = new JdbmIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         }
@@ -350,7 +350,7 @@ public final class DSAnnotationProcessor {
             Class<?> clazz,
             DirectoryService service, String[] ldifFiles)
             throws Exception {
-        if ((ldifFiles != null) && (ldifFiles.length > 0)) {
+        if (ldifFiles != null && ldifFiles.length > 0) {
             for (String ldifFile : ldifFiles) {
                 InputStream is = clazz.getClassLoader().getResourceAsStream(
                         ldifFile);
@@ -438,7 +438,7 @@ public final class DSAnnotationProcessor {
 
         ApplyLdifs applyLdifs = desc.getAnnotation(ApplyLdifs.class);
 
-        if ((applyLdifs != null) && (applyLdifs.value() != null)) {
+        if (applyLdifs != null && applyLdifs.value() != null) {
             String[] ldifs = applyLdifs.value();
 
             String dnStart = "dn:";

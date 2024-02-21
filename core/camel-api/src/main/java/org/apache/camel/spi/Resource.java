@@ -18,21 +18,31 @@ package org.apache.camel.spi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Describe a resource, such as a file or class path resource.
  */
 public interface Resource {
+
+    /**
+     * The scheme of the resource such as file, classpath, http
+     */
+    String getScheme();
+
     /**
      * The location of the resource.
      */
     String getLocation();
 
     /**
-     * Whether this resource exists..
+     * Whether this resource exists.
      */
     boolean exists();
 
@@ -56,9 +66,31 @@ public interface Resource {
     }
 
     /**
-     * Returns an input stream that reads from the underlying resource.
+     * Returns an {@link InputStream} that reads from the underlying resource.
      * </p>
      * Each invocation must return a new {@link InputStream} instance.
      */
     InputStream getInputStream() throws IOException;
+
+    /**
+     * Returns a {@link Reader} that reads from the underlying resource using UTF-8 as charset.
+     * </p>
+     * Each invocation must return a new {@link Reader}.
+     *
+     * @see #getInputStream()
+     */
+    default Reader getReader() throws Exception {
+        return getReader(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Returns a {@link Reader} that reads from the underlying resource using the given {@link Charset}
+     * </p>
+     * Each invocation must return a new {@link Reader}.
+     *
+     * @see #getInputStream()
+     */
+    default Reader getReader(Charset charset) throws Exception {
+        return new InputStreamReader(getInputStream(), charset);
+    }
 }

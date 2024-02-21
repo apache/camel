@@ -1,13 +1,15 @@
-[[ref-component]]
 = Ref Component
-:docTitle: Ref
-:artifactId: camel-ref
+:doctitle: Ref
+:shortname: ref
+:artifactid: camel-ref
 :description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/ref.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: ref
 
 *Since Camel {since}*
 
@@ -18,7 +20,6 @@ the Registry.
 
 == URI format
 
-[source]
 ----
 ref:someName[?options]
 ----
@@ -28,53 +29,17 @@ Registry (usually, but not always, the Spring
 registry). If you are using the Spring registry, `someName` would be the
 bean ID of an endpoint in the Spring registry.
 
-== Ref Options
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Ref component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
 // endpoint options: START
-The Ref endpoint is configured using URI syntax:
 
-----
-ref:name
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *name* | *Required* Name of endpoint to lookup in the registry. |  | String
-|===
-
-
-=== Query Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
 
 
@@ -97,10 +62,10 @@ exchange.getIn().setBody(payloadToSend);
 producer.process(exchange);
 ----
 
-And you could have a list of endpoints defined in the
+With Spring XML, you could have a list of endpoints defined in the
 Registry such as:
 
-[source,xml]
+[source,java]
 ----
 <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <endpoint id="normalOrder" uri="activemq:order.slow"/>
@@ -110,16 +75,25 @@ Registry such as:
 
 == Sample
 
-In the sample below we use the `ref:` in the URI to reference the
-endpoint with the spring ID, `endpoint2`:
-
-You could, of course, have used the `ref` attribute instead:
-
-[source,xml]
+Bind endpoints to the Camel registry:
+[source,java]
 ----
-<to uri="ref:endpoint2"/>
+context.getRegistry().bind("endpoint1", context.getEndpoint("direct:start"));
+context.getRegistry().bind("endpoint2", context.getEndpoint("log:end"));
 ----
 
-Which is the more common way to write it.
+Use the `ref` URI scheme to refer to endpoint's bond to the Camel registry:
+[source,java]
+----
+public class MyRefRoutes extends RouteBuilder {
+    @Override
+    public void configure() {
+        // direct:start -> log:end
+        from("ref:endpoint1")
+            .to("ref:endpoint2");
+    }
+}
+----
 
-include::camel-spring-boot::page$ref-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

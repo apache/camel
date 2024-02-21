@@ -20,13 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * Couchbase component.
  */
 @Component("couchbase")
-public class CouchbaseComponent extends DefaultComponent {
+public class CouchbaseComponent extends HealthCheckComponent {
 
     public CouchbaseComponent() {
     }

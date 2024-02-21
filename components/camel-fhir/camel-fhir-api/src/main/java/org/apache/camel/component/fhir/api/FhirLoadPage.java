@@ -37,7 +37,7 @@ public class FhirLoadPage {
     /**
      * Load the next page of results using the link with relation "next" in the bundle. This method accepts a DSTU2
      * Bundle resource
-     * 
+     *
      * @param  <T>             extends {@link IBaseBundle}
      * @param  bundle          the {@link IBaseBundle}
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
@@ -52,7 +52,7 @@ public class FhirLoadPage {
     /**
      * Load the previous page of results using the link with relation "prev" in the bundle. This method accepts a DSTU2+
      * Bundle resource
-     * 
+     *
      * @param  <T>             extends {@link IBaseBundle}
      * @param  bundle          the {@link IBaseBundle}
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
@@ -66,7 +66,7 @@ public class FhirLoadPage {
 
     /**
      * Load a page of results using the given URL and bundle type and return a DSTU1 Atom bundle
-     * 
+     *
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @param  <T>             extends {@link IBaseBundle}
      * @param  url             the search url

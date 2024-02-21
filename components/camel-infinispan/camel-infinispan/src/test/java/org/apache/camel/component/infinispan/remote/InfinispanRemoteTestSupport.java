@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.util.Properties;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.infinispan.InfinispanTestSupport;
 import org.apache.camel.spi.ComponentCustomizer;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
@@ -92,6 +95,11 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
                 .saslMechanism("DIGEST-MD5")
                 .realm("default");
 
+        if (SystemUtils.IS_OS_MAC) {
+            Properties properties = new Properties();
+            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+            clientBuilder.withProperties(properties);
+        }
         return clientBuilder;
     }
 

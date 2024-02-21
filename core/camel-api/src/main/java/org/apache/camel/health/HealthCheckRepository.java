@@ -16,15 +16,15 @@
  */
 package org.apache.camel.health;
 
-import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import org.apache.camel.spi.HasId;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A repository for health checks.
  */
-public interface HealthCheckRepository extends HasId {
+public interface HealthCheckRepository extends HasId, HasHealthChecks {
 
     /**
      * Set if the checks associated to this repository is enabled or not.
@@ -37,25 +37,13 @@ public interface HealthCheckRepository extends HasId {
     void setEnabled(boolean enabled);
 
     /**
-     * Configurations for health checks based on their ids
+     * Returns the check identified by the given <code>id</code> if available.
      */
-    void setConfigurations(Map<String, HealthCheckConfiguration> configurations);
-
-    /**
-     * Configurations for health checks based on their ids
-     */
-    Map<String, HealthCheckConfiguration> getConfigurations();
-
-    /**
-     * Adds a health check configuration
-     *
-     * @param id            the health check id (can use patterns)
-     * @param configuration the configuration
-     */
-    void addConfiguration(String id, HealthCheckConfiguration configuration);
-
-    /**
-     * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
-     */
-    Stream<HealthCheck> stream();
+    default Optional<HealthCheck> getCheck(String id) {
+        return stream()
+                .filter(r -> ObjectHelper.equal(r.getId(), id)
+                        || ObjectHelper.equal(r.getId().replace("-health-check", ""), id)
+                        || ObjectHelper.equal(r.getId().replace("route:", ""), id))
+                .findFirst();
+    }
 }

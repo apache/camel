@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,24 +30,24 @@ public class InOutConsumerQueueAsyncTest extends JmsTestSupport {
     public void testAsync() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
 
-        template.sendBody("sjms:start", "Hello Camel");
-        template.sendBody("sjms:start", "Hello World");
+        template.sendBody("sjms:start.queue.InOutConsumerQueueAsyncTest", "Hello Camel");
+        template.sendBody("sjms:start.queue.InOutConsumerQueueAsyncTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("sjms:queue:start?asyncConsumer=true")
+            public void configure() {
+                from("sjms:queue:start.queue.InOutConsumerQueueAsyncTest?asyncConsumer=true")
                         .log("Requesting ${body} with thread ${threadName}")
                         .to(ExchangePattern.InOut,
-                                "sjms:queue:in.out.queue?replyToConcurrentConsumers=2&replyTo=in.out.queue.response")
+                                "sjms:queue:in.out.queue.InOutConsumerQueueAsyncTest?replyToConcurrentConsumers=2&replyTo=in.out.queue.response")
                         .log("Result ${body} with thread ${threadName}")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.queue?concurrentConsumers=2").to("log:before")
+                from("sjms:queue:in.out.queue.InOutConsumerQueueAsyncTest?concurrentConsumers=2").to("log:before")
                         .log("Replying ${body} with thread ${threadName}")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

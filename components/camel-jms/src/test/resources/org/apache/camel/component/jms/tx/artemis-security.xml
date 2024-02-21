@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:activemq" xsi:schemaLocation="urn:activemq /schema/artemis-server.xsd">
+
+	<core xmlns="urn:activemq:core">
+
+		<persistence-enabled>false</persistence-enabled>
+		<journal-directory>target/tx/data</journal-directory>
+		<bindings-directory>target/tx/data/bindings</bindings-directory>
+		<paging-directory>target/tx/data/paging</paging-directory>
+		<large-messages-directory>target/tx/data/large-messages</large-messages-directory>
+
+		<acceptors>
+			<acceptor name="in-vm">vm://999</acceptor>
+		</acceptors>
+
+		<security-settings>
+			<!-- any user can have full control of generic topics -->
+			<security-setting match="#">
+				<permission type="createDurableQueue" roles="admin"/>
+				<permission type="deleteDurableQueue" roles="admin"/>
+				<permission type="createNonDurableQueue" roles="admin"/>
+				<permission type="deleteNonDurableQueue" roles="admin"/>
+				<permission type="send" roles="admin"/>
+				<permission type="consume" roles="admin"/>
+				<permission type="createAddress" roles="admin"/>
+				<permission type="deleteAddress" roles="admin"/>
+				<permission type="browse" roles="admin"/>
+			</security-setting>
+			<security-setting match="JmsToJmsTransactedSecurityTest">
+				<permission type="createDurableQueue" roles="admin,user"/>
+				<permission type="deleteDurableQueue" roles="admin,user"/>
+				<permission type="createNonDurableQueue" roles="admin,user"/>
+				<permission type="deleteNonDurableQueue" roles="admin,user"/>
+				<permission type="send" roles="admin,user"/>
+				<permission type="consume" roles="admin,user"/>
+				<permission type="createAddress" roles="admin,user"/>
+				<permission type="deleteAddress" roles="admin,user"/>
+				<permission type="browse" roles="admin,user"/>
+			</security-setting>
+			<security-setting match="JmsToJmsTransactedSecurityTest.reply">
+				<permission type="createDurableQueue" roles="admin,user"/>
+				<permission type="deleteDurableQueue" roles="admin,user"/>
+				<permission type="createNonDurableQueue" roles="admin,user"/>
+				<permission type="deleteNonDurableQueue" roles="admin,user"/>
+				<permission type="send" roles="admin"/>
+				<permission type="consume" roles="admin,user"/>
+				<permission type="createAddress" roles="admin,user"/>
+				<permission type="deleteAddress" roles="admin,user"/>
+				<permission type="browse" roles="admin,user"/>
+			</security-setting>
+			<security-setting match="DLQ">
+				<permission type="createDurableQueue" roles="admin,user"/>
+				<permission type="deleteDurableQueue" roles="admin,user"/>
+				<permission type="createNonDurableQueue" roles="admin,user"/>
+				<permission type="deleteNonDurableQueue" roles="admin,user"/>
+				<permission type="send" roles="admin,user"/>
+				<permission type="consume" roles="admin,user"/>
+				<permission type="createAddress" roles="admin,user"/>
+				<permission type="deleteAddress" roles="admin,user"/>
+				<permission type="browse" roles="admin,user"/>
+			</security-setting>
+		</security-settings>
+
+	</core>
+
+</configuration>

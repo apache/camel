@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 
 /**
  * Send SMS messages via <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
@@ -41,6 +44,7 @@ public class CMEndpoint extends DefaultEndpoint {
     private String host;
     @UriParam
     private CMConfiguration configuration = new CMConfiguration();
+    private final CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
     public CMEndpoint(final String uri, final CMComponent component) {
         super(uri, component);
@@ -70,7 +74,7 @@ public class CMEndpoint extends DefaultEndpoint {
         StringHelper.notEmpty(token, "productToken");
 
         UUID uuid = UUID.fromString(token);
-        return new CMProducer(this, new CMSenderOneMessageImpl(getCMUrl(), uuid));
+        return new CMProducer(this, new CMSenderOneMessageImpl(httpClient, getCMUrl(), uuid));
     }
 
     @Override
@@ -93,6 +97,15 @@ public class CMEndpoint extends DefaultEndpoint {
     @Override
     public CMComponent getComponent() {
         return (CMComponent) super.getComponent();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        httpClient.close();
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
     }
 
     public String getHost() {

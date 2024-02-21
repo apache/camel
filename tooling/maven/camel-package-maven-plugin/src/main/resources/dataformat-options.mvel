@@ -1,13 +1,17 @@
-@if{options.isEmpty()}
-The @{title} dataformat has no options.
-@else{}
-The @{title} dataformat supports @{options.size()} options, which are listed below.
-@end{}
+@comment{
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
 
-@if{!options.isEmpty()}
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
-| Name | Default | Java Type | Description
-@foreach{row : options}| @{row.name} | @{row.getShortDefaultValue(20)} | @{row.shortJavaType} @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)}
-@end{}|===
-@end{}
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+}
+include::partial$dataformat-options.adoc[]

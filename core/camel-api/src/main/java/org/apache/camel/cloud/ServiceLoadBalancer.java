@@ -16,6 +16,8 @@
  */
 package org.apache.camel.cloud;
 
+import org.apache.camel.Exchange;
+
 /**
  * Represents a Load Balancer.
  *
@@ -25,5 +27,5 @@ package org.apache.camel.cloud;
  */
 @FunctionalInterface
 public interface ServiceLoadBalancer {
-    <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception;
+    <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception;
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerManager;
@@ -44,6 +44,7 @@ import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -77,21 +78,32 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
-    private AS2SignatureAlgorithm signingAlgorithm;
-    private Certificate[] signingCertificateChain;
-    private PrivateKey signingPrivateKey;
-    private PrivateKey decryptingPrivateKey;
+    private final AS2SignatureAlgorithm signingAlgorithm;
+    private final Certificate[] signingCertificateChain;
+    private final PrivateKey signingPrivateKey;
+    private final PrivateKey decryptingPrivateKey;
+    private final String mdnMessageTemplate;
+    private final Certificate[] validateSigningCertificateChain;
 
     private VelocityEngine velocityEngine;
 
     public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
-                       Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
+                       Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey,
+                       String mdnMessageTemplate, Certificate[] validateSigningCertificateChain) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
         this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
         this.decryptingPrivateKey = decryptingPrivateKey;
+        // MDN response is to be sent anyway, so empty or null value will be treated as if
+        // the user doesn't know how to compose their own template and/or is satisfied with default one.
+        if (!StringUtils.isBlank(mdnMessageTemplate)) {
+            this.mdnMessageTemplate = mdnMessageTemplate;
+        } else {
+            this.mdnMessageTemplate = DEFAULT_MDN_MESSAGE_TEMPLATE;
+        }
+        this.validateSigningCertificateChain = validateSigningCertificateChain;
     }
 
     @Override
@@ -109,12 +121,11 @@ public class ResponseMDN implements HttpResponseInterceptor {
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
-        if (request == null || !(request instanceof HttpEntityEnclosingRequest)) {
+        if (request == null || !(request instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest)) {
             // Not an enclosing request so nothing to do.
             return;
         }
 
-        HttpEntityEnclosingRequest httpEntityEnclosingRequest = (HttpEntityEnclosingRequest) request;
         LOG.debug("Processing MDN for request: {}", httpEntityEnclosingRequest);
 
         if (HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
@@ -126,26 +137,26 @@ public class ResponseMDN implements HttpResponseInterceptor {
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null
-                || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE)
-                   == AS2DispositionType.FAILED.getType()) {
+        if (AS2DispositionType.FAILED.getType()
+                .equals(HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE))) {
             // Return a failed Message Disposition Notification Receipt in response body
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
+                    AS2DispositionType.FAILED, null, null, null, null, null, mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
-                    decryptingPrivateKey, mdnMessage);
+                    AS2DispositionType.FAILED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
+                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         } else {
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII,
-                    DEFAULT_MDN_MESSAGE_TEMPLATE);
+                    AS2DispositionType.PROCESSED, null, null, null, null, null,
+                    mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
-                    decryptingPrivateKey, mdnMessage);
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary,
+                    true,
+                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         }
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
@@ -220,7 +231,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     multipartReportEntity.setMainBody(false);
                     MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                             multipartReportEntity, gen,
-                            AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                            StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
                     response.setHeader(multipartSignedEntity.getContentType());
                     EntityUtils.setMessageEntity(response, multipartSignedEntity);
                 } catch (Exception e) {
@@ -233,7 +244,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
             }
         }
 
-        LOG.debug(AS2Utils.printMessage(response));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(AS2Utils.printMessage(response));
+        }
     }
 
     private String createMdnDescription(
@@ -246,7 +259,6 @@ public class ResponseMDN implements HttpResponseInterceptor {
             String[] errorFields,
             String[] warningFields,
             Map<String, String> extensionFields,
-            String charset,
             String mdnMessageTemplate)
             throws HttpException {
 
@@ -283,7 +295,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
     }
 
-    private synchronized VelocityEngine getVelocityEngine() throws Exception {
+    private synchronized VelocityEngine getVelocityEngine() {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
 

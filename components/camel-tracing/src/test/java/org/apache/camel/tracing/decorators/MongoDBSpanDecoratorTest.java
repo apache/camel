@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -65,8 +66,11 @@ public class MongoDBSpanDecoratorTest {
         decorator.pre(span, null, endpoint);
 
         assertEquals("mongodb", span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals("mongodb", span.tags().get(TagConstants.DB_SYSTEM));
         assertEquals("flights", span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals("flights", span.tags().get(TagConstants.DB_NAME));
         assertTrue(span.tags().containsKey(Tag.DB_STATEMENT.name()));
+        assertTrue(span.tags().containsKey(TagConstants.DB_STATEMENT));
     }
 
 }

@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
-    protected static AtomicInteger invoked = new AtomicInteger();
+    private AtomicInteger invoked = new AtomicInteger();
+
+    @BeforeEach
+    public void resetInvoked() {
+        invoked.set(0);
+    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -104,8 +110,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientListOkOnly() throws Exception {
-        invoked.set(0);
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -120,8 +124,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientListOkNotFail() throws Exception {
-        invoked.set(0);
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -136,8 +138,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientListFailOnly() throws Exception {
-        invoked.set(0);
-
         NotifyBuilder event = event().whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -158,8 +158,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
-        invoked.set(0);
-
         NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -180,8 +178,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
-        invoked.set(0);
-
         NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -202,8 +198,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientNotFail() throws Exception {
-        invoked.set(0);
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
 
@@ -218,8 +212,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
-        invoked.set(0);
-
         NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -240,8 +232,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
     @Test
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
-        invoked.set(0);
-
         NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);

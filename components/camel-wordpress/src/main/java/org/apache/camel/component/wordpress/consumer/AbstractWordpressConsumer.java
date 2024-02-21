@@ -60,7 +60,7 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
 
     /**
      * Should be implemented to configure the endpoint calls. Called during consumer initialization
-     * 
+     *
      * @param configuration the endpoint configuration
      */
     protected void configureService(WordpressConfiguration configuration) {

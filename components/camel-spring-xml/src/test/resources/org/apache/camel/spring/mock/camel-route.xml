@@ -28,6 +28,7 @@
     <!-- tag::e1[] -->
     <!-- this camel route is in the camel-route.xml file -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.servicenow.releases.helsinki;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,7 +31,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_S
 
 class HelsinkiServiceNowScorecardProcessor extends AbstractServiceNowProcessor {
 
-    HelsinkiServiceNowScorecardProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    HelsinkiServiceNowScorecardProcessor(ServiceNowEndpoint endpoint) {
         super(endpoint);
 
         addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_PERFORMANCE_ANALYTICS, this::retrievePerformanceAnalytics);

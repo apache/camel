@@ -19,6 +19,7 @@ package org.apache.camel.component.iec60870;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public abstract class AbstractConnectionMultiplexor {
         try {
             performStop();
         } catch (final Exception e) {
-            throw new RuntimeException("Failed to stop on dispose", e);
+            throw new RuntimeCamelException("Failed to stop on dispose", e);
         }
     }
 

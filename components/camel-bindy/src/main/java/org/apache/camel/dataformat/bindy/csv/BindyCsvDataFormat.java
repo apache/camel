@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy
  */
-@Dataformat("bindy-csv")
+@Dataformat("bindyCsv")
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
@@ -63,7 +64,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     @Override
     public String getDataFormatName() {
-        return "bindy-csv";
+        return "bindyCsv";
     }
 
     @Override
@@ -90,6 +91,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         // the body is not a prepared list of map that bindy expects so help a
         // bit here and create one for us
+        if (body instanceof Map) {
+            // the body is already a map, and we do not want to iterate each element in the map,
+            // but keep the body as a map, so wrap as iterator
+            body = Collections.singleton(body).iterator();
+        }
         for (Object model : ObjectHelper.createIterable(body)) {
             if (model instanceof Map) {
                 models.add((Map<String, Object>) model);
@@ -200,15 +206,20 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
         return line -> {
             try {
-                // Trim the line coming in to remove any trailing whitespace
                 String trimmedLine;
 
-                // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
-                if (separator.equals("\t")) {
-                    // trim only trailing whitespaces (remove new lines etc but keep tab character)
-                    trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
+                // Trim the line coming in to remove any trailing whitespace
+                if (factory.isTrimLine()) {
+                    // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
+                    if (separator.equals("\t")) {
+                        // trim only trailing whitespaces (remove new lines etc but keep tab character)
+                        trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
+                    } else {
+                        trimmedLine = line.trim();
+                    }
                 } else {
-                    trimmedLine = line.trim();
+                    // no trim
+                    trimmedLine = line;
                 }
 
                 // Increment counter
@@ -229,7 +240,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     separators.add(matcher.group());
                 }
                 // Add terminal separator
-                if (separators.size() > 0) {
+                if (!separators.isEmpty()) {
                     separators.add(separators.get(separators.size() - 1));
                 }
 
@@ -238,7 +249,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 List<String> result = Arrays.asList(tokens);
 
                 // must unquote tokens before use
-                if (removeQuotes) {
+                if (Boolean.TRUE.equals(removeQuotes)) {
                     result = unquoteTokens(result, separators, quote);
                 }
 

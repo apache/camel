@@ -31,13 +31,14 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // ensure we overflow and spool to disk
+        context.getStreamCachingStrategy().setSpoolEnabled(true);
         context.getStreamCachingStrategy().setSpoolThreshold(5000);
         context.setStreamCaching(true);
         return context;
     }
 
     @Test
-    public void testStreamCache() throws Exception {
+    public void testStreamCache() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append("0123456789");
@@ -49,15 +50,15 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input").to("http://localhost:" + getPort() + "/input");
 
                 from("jetty:http://localhost:" + getPort() + "/input").process(new Processor() {
                     @Override
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         // Get message returns the in message if an out one is not present, which is the expectation here
                         assertEquals(input, exchange.getMessage().getBody(String.class));
                     }

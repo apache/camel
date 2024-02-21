@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SpringJacksonEnableFeatureTest extends CamelSpringTestSupport {
 
     @Test
-    public void testMarshal() throws Exception {
+    public void testMarshal() {
         TestPojoView in = new TestPojoView();
 
         Object marshalled = template.requestBody("direct:in", in);

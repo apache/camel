@@ -1,4 +1,3 @@
-[[Normalizer]]
 = Normalizer
 
 Camel supports the
@@ -10,14 +9,14 @@ but arrive in different formats. The normalizer transforms the incoming messages
 
 image::eip/NormalizerDetail.gif[image]
 
-In Apache Camel, you can implement the normalizer pattern by combining a xref:content-based-router-eip.adoc[Content Based Router],
+In Apache Camel, you can implement the normalizer pattern by combining a xref:choice-eip.adoc[Content Based Router],
 which detects the incoming message's format, with a collection of different xref:message-translator.adoc[Message Translator]'s,
 which transform the different incoming formats into a common format.
 
-== Sample
+== Example
 
 This example shows a Message Normalizer that converts two types of XML messages into a common format.
-Messages in this common format are then filtered.
+Messages in this common format are then routed.
 
 [source,java]
 ----
@@ -30,18 +29,21 @@ from("direct:start")
     .to("mock:result");
 ----
 
-In this case we're using a Java bean as the normalizer. The class looks like this
+In this case we're using a Java xref:ROOT:bean-component.adoc[Bean] as the normalizer.
+
+The class looks like this:
 
 [source,java]
 ----
 // Java
 public class MyNormalizer {
+
     public void employeeToPerson(Exchange exchange, @XPath("/employee/name/text()") String name) {
-        exchange.getOut().setBody(createPerson(name));
+        exchange.getMessage().setBody(createPerson(name));
     }
 
     public void customerToPerson(Exchange exchange, @XPath("/customer/@name") String name) {
-        exchange.getOut().setBody(createPerson(name));
+        exchange.getMessage().setBody(createPerson(name));
     }
 
     private String createPerson(String name) {
@@ -50,7 +52,7 @@ public class MyNormalizer {
 }
 ----
 
-The same example in the XML DSL
+The same example in XML:
 
 [source,xml]
 ----
@@ -73,3 +75,8 @@ The same example in the XML DSL
 
 <bean id="normalizer" class="org.apache.camel.processor.MyNormalizer"/>
 ----
+
+In case there are many incoming formats, then the xref:choice-eip.adoc[Content Based Router]
+may end up with too many choices. In this situation then an alternative is to use xref:toD-eip.adoc[Dynamic to]
+that computes a xref:ROOT:bean-component.adoc[Bean] endpoint, to be called that acts as
+xref:message-translator.adoc[Message Translator].

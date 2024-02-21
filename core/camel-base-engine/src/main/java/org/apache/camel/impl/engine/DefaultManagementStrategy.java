@@ -21,7 +21,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.impl.event.DefaultEventFactory;
 import org.apache.camel.spi.CamelEvent;
@@ -50,6 +49,7 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
     private final List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
+    private final List<EventNotifier> startedEventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementObjectNameStrategy managementObjectNameStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
@@ -74,18 +74,30 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     @Override
+    public List<EventNotifier> getStartedEventNotifiers() {
+        return startedEventNotifiers;
+    }
+
+    @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
+        if (isStarted()) {
+            // already started
+            this.startedEventNotifiers.add(eventNotifier);
+        }
         if (getCamelContext() != null) {
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(eventNotifier, getCamelContext());
             // okay we have an event notifier that accepts exchange events so its applicable
             if (!eventNotifier.isIgnoreExchangeEvents()) {
-                getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+                getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
             }
         }
     }
 
     @Override
     public boolean removeEventNotifier(EventNotifier eventNotifier) {
+        startedEventNotifiers.remove(eventNotifier);
         return eventNotifiers.remove(eventNotifier);
     }
 
@@ -181,41 +193,36 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
         if (!getEventNotifiers().isEmpty()) {
-            // TODO: only for exchange event notifiers
-            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+            getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
         }
         for (EventNotifier notifier : eventNotifiers) {
             // inject CamelContext if the service is aware
-            if (notifier instanceof CamelContextAware) {
-                CamelContextAware aware = (CamelContextAware) notifier;
-                aware.setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(notifier, camelContext);
         }
         ServiceHelper.initService(eventNotifiers, managementAgent);
 
         if (managementObjectStrategy == null) {
             managementObjectStrategy = createManagementObjectStrategy();
         }
-        if (managementObjectStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) managementObjectStrategy).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(managementObjectStrategy, getCamelContext());
 
         if (managementObjectNameStrategy == null) {
             managementObjectNameStrategy = createManagementObjectNameStrategy();
         }
-        if (managementObjectNameStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) managementObjectNameStrategy).setCamelContext(getCamelContext());
-        }
+        CamelContextAware.trySetCamelContext(managementObjectNameStrategy, getCamelContext());
+
         ServiceHelper.initService(managementObjectStrategy, managementObjectNameStrategy);
     }
 
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
+        startedEventNotifiers.addAll(eventNotifiers);
     }
 
     @Override
     protected void doStop() throws Exception {
+        startedEventNotifiers.clear();
         ServiceHelper.stopService(managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
     }
 

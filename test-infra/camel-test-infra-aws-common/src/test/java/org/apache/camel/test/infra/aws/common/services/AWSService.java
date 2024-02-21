@@ -20,21 +20,8 @@ package org.apache.camel.test.infra.aws.common.services;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface AWSService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface AWSService extends TestService {
 
     Properties getConnectionProperties();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-    }
 }

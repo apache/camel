@@ -19,19 +19,23 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("headerName");
-        props.add("failOnNullHeader");
-        props.add("contentCache");
+        Set<String> props = new HashSet<>(11);
         props.add("allowContextMapAll");
-        props.add("failOnNullBody");
+        props.add("contentCache");
+        props.add("disabledDeserializationFeatures");
+        props.add("enabledDeserializationFeatures");
         props.add("errorHandler");
+        props.add("failOnNullBody");
+        props.add("failOnNullHeader");
+        props.add("headerName");
+        props.add("lazyStartProducer");
         props.add("resourceUri");
-        props.add("schemaLoader");
+        props.add("uriSchemaLoader");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -59,6 +63,11 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

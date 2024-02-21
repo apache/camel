@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-couchbase</artifactId>
@@ -32,10 +32,12 @@
     <description>Camel Couchbase component</description>
 
     <properties>
+        <!-- Couchbase container is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.couchbase.client</groupId>
             <artifactId>java-client</artifactId>
@@ -48,17 +50,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
@@ -67,17 +58,18 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- test infra -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-couchbase</artifactId>
@@ -85,55 +77,53 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-    <profiles>
-    <!-- activate test if the docker socket file is accessible -->
-    <profile>
-        <id>couchbase-tests-docker-file</id>
-        <activation>
-            <file>
-                <exists>/var/run/docker.sock</exists>
-            </file>
-        </activation>
-        <build>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <skipTests>${skipTests}</skipTests>
-                        <forkCount>1</forkCount>
-                        <systemPropertyVariables>
-                            <visibleassertions.silence>true</visibleassertions.silence>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
 
-    <!-- activate test if the DOCKER_HOST env var is set -->
-    <profile>
-        <id>couchbase-tests-docker-env</id>
-        <activation>
-            <property>
-                <name>env.DOCKER_HOST</name>
-            </property>
-        </activation>
-        <build>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <skipTests>${skipTests}</skipTests>
-                        <forkCount>1</forkCount>
-                        <systemPropertyVariables>
-                            <visibleassertions.silence>true</visibleassertions.silence>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>true</reuseForks>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                    <excludedGroups>couchbase-7</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>couchbase-7</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>couchbase-7</groups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                    <systemPropertyVariables>
+                                        <couchbase.container>couchbase/server:7.1.5</couchbase.container>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

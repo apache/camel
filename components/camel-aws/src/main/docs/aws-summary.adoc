@@ -1,0 +1,14 @@
+= AWS Component
+:doctitle: AWS
+
+The *aws-* component allows you to work with the
+https://aws.amazon.com/[AWS].
+AWS offers a great palette of different components like cloudwatch, DynamoDB streams, 
+storage service, email and queue services. The main reason to use AWS is its cloud computing platform.
+
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]

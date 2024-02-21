@@ -28,11 +28,11 @@ class SortTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                       - sort:  
-                          comparator-ref: "myComparator"
+                          comparator: "myComparator"
             '''
         then:
             with(context.routeDefinitions[0].outputs[0], SortDefinition) {
-                comparatorRef == 'myComparator'
+                comparator == 'myComparator'
             }
     }
 }

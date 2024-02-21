@@ -41,7 +41,9 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -53,7 +55,9 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -61,7 +65,7 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("The project is Camel", "The project is AMQ", "The project is Linux");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // some servers may be a bit slow for this
         for (int i = 0; i < 5; i++) {
@@ -77,10 +81,10 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 // even if we transform the exchange we can still do onConsume as we have the original data at

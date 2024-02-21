@@ -25,6 +25,8 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "eagerstopengines":
+        case "eagerStopEngines": target.setEagerStopEngines(property(camelContext, boolean.class, value)); return true;
         case "lazycreateengines":
         case "lazyCreateEngines": target.setLazyCreateEngines(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -46,6 +48,8 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "eagerstopengines":
+        case "eagerStopEngines": return boolean.class;
         case "lazycreateengines":
         case "lazyCreateEngines": return boolean.class;
         case "lazystartproducer":
@@ -68,6 +72,8 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "eagerstopengines":
+        case "eagerStopEngines": return target.isEagerStopEngines();
         case "lazycreateengines":
         case "lazyCreateEngines": return target.isLazyCreateEngines();
         case "lazystartproducer":

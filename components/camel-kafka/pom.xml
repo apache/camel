@@ -23,16 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kafka</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Kafka</name>
     <description>Camel Kafka support</description>
-
-    <properties>
-    </properties>
 
     <dependencies>
 
@@ -41,11 +38,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+        </dependency>
 
         <!-- kafka java client -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
+            <version>${kafka-version}</version>
         </dependency>
 
         <dependency>
@@ -55,11 +57,25 @@
 
         <!-- test -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
 
         <dependency>
@@ -70,10 +86,37 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Required by the admin client-->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-direct</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-resilience4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+        It does not really have a dependency on camel-test-junit5, but it brings a lot of dependencies that are needed for
+        running the tests
+        -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -84,90 +127,109 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3-version}</version>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <profiles>
         <profile>
-            <id>kafka-skip-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the docker socket file is accessible -->
-        <profile>
-            <id>kafka-tests-docker-file</id>
-            <activation>
-                <file>
-                    <exists>/var/run/docker.sock</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the DOCKER_HOST env var is set -->
-        <profile>
-            <id>kafka-tests-docker-env</id>
+            <!-- This is needed only for camel-kafka to skip itests selected in the backwards-compatibility profile -->
+            <id>quickly</id>
             <activation>
                 <property>
-                    <name>env.DOCKER_HOST</name>
+                    <name>quickly</name>
+                </property>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>backwards-compatibility</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>${skipITs}</skipITs>
+                            <reuseForks>true</reuseForks>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>kafka-2</id>
+                                <configuration>
+                                    <skipITs>${skipITs}</skipITs>
+                                    <systemPropertyVariables>
+                                        <kafka.instance.type>local-kafka2-container</kafka.instance.type>
+                                    </systemPropertyVariables>
+                                    <reuseForks>true</reuseForks>
+                                    <reportNameSuffix>kafka-2</reportNameSuffix>
+                                    <excludedGroups>non-abstract,health,idempotent</excludedGroups>
+                                </configuration>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
                 </property>
             </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <skipITs>${skipITs}</skipITs>
                             <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
+                            <reuseForks>true</reuseForks>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <skipITs>${skipITs}</skipITs>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                    <excludedGroups>health,idempotent,breakOnFirstError</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>serials-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <reuseForks>false</reuseForks>
+                                    <groups>health,idempotent,breakOnFirstError</groups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-
 </project>

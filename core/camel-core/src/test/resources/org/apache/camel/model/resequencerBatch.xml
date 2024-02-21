@@ -22,9 +22,9 @@
     	<from uri="direct:start" />
     	<resequence>
             <!--
-                batch-config can be ommitted for default resequence settings
+                batchConfig can be ommitted for default resequence settings
             -->
-            <batch-config batchTimeout="2000" batchSize="500"/>
+            <batchConfig batchTimeout="2000" batchSize="500"/>
     		<simple>body</simple>
     		<to uri="mock:result" />
     	</resequence>

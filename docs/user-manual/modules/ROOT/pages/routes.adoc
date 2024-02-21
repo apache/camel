@@ -1,123 +1,87 @@
-[[Routes-Routes]]
 = Routes
 
-Camel supports the definition of routing rules using a Java DSL (domain specific language) which avoids the need for cumbersome XML using a RouteBuilder.
+In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
 
-For example a simple route can be created as follows.
+A Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. You can also specify how the data can be manipulated, routed, or mediated between the systems.
+
+The routes are typically defined using a simple, declarative syntax that is easy to read and understand.
+
+For instance, you could write a _route_ to consume files from an FTP server and send them to an http://activemq.apache.org[ActiveMQ] messaging system. A _route_ to do so, using xref:java-dsl.adoc[Java DSL], would look like this:
+
+[source,java]
+----
+from("ftp:myserver/folder")
+  .to("activemq:queue:cheese");
+----
+
+Camel _routes_ can be defined using a variety of xref:dsl.adoc[domain-specific languages (DSLs)], such as Java, Spring XML, or YAML. For example, you could write the _route_ described above using XML:
+
+[source,xml]
+----
+<route>
+  <from uri="ftp:myserver/folder"/>
+  <to uri="activemq:queue:cheese"/>
+</route>
+----
+
+
+== Writing Routes in Java using the Java DSL
+
+You can create a route using the Java language by extending the xref:manual::route-builder.adoc[`RouteBuilder` class], and implementing the `configure` method.
+
+Here's an example:
+
 [source,java]
 ------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
-
         from("direct:a").to("direct:b");
     }
 };
 ------------------------------------------------------
 
-As you can see from the above Camel uses URIs to wire endpoints together.
+As you can see from the code snippet above, Camel uses xref:manual::uris.adoc[URIs] to wire endpoints together.
 
-[[Routes-URI-String-Formatting]]
-== URI String formatting
+We refer to this way of writing route as using the xref:manual::java-dsl.adoc[Java DSL].
 
-If you have endpoint URIs that accept options and you want to be able to substitute the value, e.g. build the URI by concat the strings together, then you can use the java.lang.String.format method. But in Camel 2.0 we have added two convenient methods in the Java DSL so you can do fromF and toF that uses String formatting to build the URI.
+== Route Precondition
 
-[source,java]
---------------------------------------------------------------------
-from("direct:start").toF("file://%s?fileName=%s", path, name);
+The routes can be included or not according to the result of a test. You can express the condition for the tests using the simple language. Camel evaluates this condition only once during the initialization phase.
 
-fromF("file://%s?include=%s", path, pattern).toF("mock:%s", result);
---------------------------------------------------------------------
+Here's an example that includes the route only if the parameter `format` has been set to `xml`:
 
-[[Routes-Filters]]
-== Filters
-You can combine simple routes with filters which can be arbitrary Predicate implementations.
-
-[source,java]
--------------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
-
-        from("direct:a")
-            .filter(header("foo").isEqualTo("bar"))
-                .to("direct:b");
-    }
-};
--------------------------------------------------------------
-
-[[Routes-Lambda]]
-== Routes using Java lambda style
-
-*Since Camel 3.5*
-
-Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
-you may want to quickly define a few routes.
-
-For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
 [source,java]
 ----
-rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+from("direct:in").precondition("'{{format}}' == 'xml'")
+   .unmarshal().jaxb()
+   .to("direct:out");
 ----
 
-There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
-See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
+You can write the same route described above using the xref:components:others:java-xml-io-dsl.adoc[XML DSL]:
 
-[[Routes-Choices]]
-== Choices
-With a choice you provide a list of predicates and outcomes along with an optional default otherwise clause which is invoked if none of the conditions are met.
+[source,xml]
+----
+<route precondition="'{{format}}' == 'xml'">
+  <from uri="direct:in"/>
+  <unmarshal><jaxb/></unmarshal>
+  <to uri="direct:out"/>
+</route>
+----
 
-[source,java]
--------------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
+You can also write the same route described above using the xref:components:others:yaml-dsl.adoc[YAML DSL]:
 
-        from("direct:a")
-            .choice()
-                .when(header("foo").isEqualTo("bar"))
-                    .to("direct:b")
-                .when(header("foo").isEqualTo("cheese"))
-                    .to("direct:c")
-                .otherwise()
-                    .to("direct:d");
-    }
-};
--------------------------------------------------------------
+[source,yaml]
+----
+- route:
+    precondition: "'{{format}}' == 'xml'"
+    from:
+      uri: "direct:in"
+      steps:
+        - unmarshal:
+            jaxb: {}
+        - to: "direct:out"
+----
 
-[[Routes-Using-a-custom-processor]]
-== Using a custom processor
+== More Information
 
-Here is an example of using a custom Processor
-[source,java]
-----------------------------------------------------------
-myProcessor = new Processor() {
-    public void process(Exchange exchange) {
-        log.debug("Called with exchange: " + exchange);
-    }
-};
-
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
-
-        from("direct:a")
-            .process(myProcessor);
-    }
-};
-----------------------------------------------------------
-
-You can mix and match custom processors with filters and choices.
-
-[source,java]
-----------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
-
-        from("direct:a")
-            .filter(header("foo").isEqualTo("bar"))
-                .process(myProcessor);
-    }
-};
-----------------------------------------------------------
+Check the xref:dsl.adoc[list of supported languages] that you can use for writing Camel routes.

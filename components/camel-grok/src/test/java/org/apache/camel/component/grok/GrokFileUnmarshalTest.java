@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GrokFileUnmarshalTest extends CamelTestSupport {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("file:src/test/resources/org/apache/camel/component/grok/data?fileName=access_log&noop=true")
+            public void configure() {
+                from("file:src/test/resources/org/apache/camel/component/grok/data?fileName=access_log.txt&noop=true")
                         .unmarshal().grok("%{COMMONAPACHELOG}")
                         .to("mock:apachelog");
             }

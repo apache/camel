@@ -28,7 +28,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,28 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
 
-    private static final String TARGET_MULTICAST_PARALLEL_TIMEOUT_STREAM_CACHING_TEST_CACHE
-            = "target/MulticastParallelTimeoutStreamCachingTestCache";
     private static final String BODY_STRING = "message body";
     private static final byte[] BODY = BODY_STRING.getBytes(StandardCharsets.UTF_8);
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
-        deleteDirectory(new File(TARGET_MULTICAST_PARALLEL_TIMEOUT_STREAM_CACHING_TEST_CACHE));
-    }
-
-    public static void deleteDirectory(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (File child : files) {
-                deleteDirectory(child);
-            }
-        }
-
-        file.delete();
-    }
 
     @Test
     public void testCreateOutputStreamCacheAfterTimeout() throws Exception {
@@ -69,7 +48,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         template.sendBody("direct:a", "testMessage");
         assertMockEndpointsSatisfied();
 
-        File f = new File(TARGET_MULTICAST_PARALLEL_TIMEOUT_STREAM_CACHING_TEST_CACHE);
+        File f = testDirectory().toFile();
         assertTrue(f.isDirectory());
         Thread.sleep(500L); // deletion happens asynchron
         File[] files = f.listFiles();
@@ -123,8 +102,8 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // enable stream caching
-                context.getStreamCachingStrategy()
-                        .setSpoolDirectory(TARGET_MULTICAST_PARALLEL_TIMEOUT_STREAM_CACHING_TEST_CACHE);
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setEnabled(true);
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);

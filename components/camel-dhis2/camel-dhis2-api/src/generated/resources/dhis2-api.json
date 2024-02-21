@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "dhis2-api",
+    "title": "Dhis2 Api",
+    "description": "Camel DHIS2 API",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-dhis2-api",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

@@ -37,7 +37,7 @@ public @interface PropertyInject {
     String value();
 
     /**
-     * Default value to use if the property does not exists or has no value
+     * Default value to use if the property does not exist or has no value
      */
     String defaultValue() default "";
 

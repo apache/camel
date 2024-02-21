@@ -24,9 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateConcurrentSameGroupTest extends LevelDBTestSupport {
 
     @Override
@@ -69,14 +72,14 @@ public class LevelDBAggregateConcurrentSameGroupTest extends LevelDBTestSupport 
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")

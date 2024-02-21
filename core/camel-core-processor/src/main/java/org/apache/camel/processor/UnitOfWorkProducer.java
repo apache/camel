@@ -18,11 +18,12 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
@@ -42,8 +43,9 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         super(producer.getEndpoint());
         this.producer = producer;
         // wrap in unit of work
-        ExtendedCamelContext ecc = producer.getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class);
-        this.processor = ecc.getInternalProcessorFactory().addUnitOfWorkProcessorAdvice(ecc, producer, null);
+        CamelContext ecc = producer.getEndpoint().getCamelContext();
+        this.processor = PluginHelper.getInternalProcessorFactory(ecc)
+                .addUnitOfWorkProcessorAdvice(ecc, producer, null);
     }
 
     @Override

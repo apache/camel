@@ -43,7 +43,7 @@ public class MessageValidatorTest extends CamelTestSupport {
     private HapiContext customContext;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         defaultValidationContext = ValidationContextFactory.defaultValidation();
         defaultContext = new DefaultHapiContext(defaultValidationContext);
         // we validate separately, not during parsing or rendering
@@ -71,7 +71,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Message msg = createADT01Message();
         template.sendBody("direct:test4", msg);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         Message msg = createADT01Message();
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:test5", msg));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Message msg = createADT01Message();
         template.sendBody("direct:test1", msg);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         Message msg = createADT01Message();
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:test2", msg));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Message msg = createADT01Message();
         template.sendBodyAndHeader("direct:test3", msg, "validator", defaultValidationContext);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         Message msg = createADT01Message();
         msg.setParser(defaultContext.getPipeParser());
         template.sendBody("direct:test6", msg);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -130,13 +130,13 @@ public class MessageValidatorTest extends CamelTestSupport {
         msg.setParser(customContext.getPipeParser());
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:test6", msg));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").validate(messageConformsTo(defaultValidationContext)).to("mock:test1");
                 from("direct:test2").validate(messageConformsTo(customValidationContext)).to("mock:test2");
                 from("direct:test3").validate(messageConformsTo(header("validator"))).to("mock:test3");

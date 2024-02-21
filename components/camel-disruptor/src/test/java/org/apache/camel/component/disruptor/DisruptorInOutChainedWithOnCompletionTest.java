@@ -17,9 +17,9 @@
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport 
         final String reply = template.requestBody("disruptor:a", "start", String.class);
         assertEquals("start-a-b-c", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport 
                     @Override
                     public void process(final Exchange exchange) {
                         // should come in last
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(final Exchange exchange) {
                                 template.sendBody("mock:c", "onCustomCompletion");

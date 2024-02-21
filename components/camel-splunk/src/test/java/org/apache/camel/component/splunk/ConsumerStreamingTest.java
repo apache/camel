@@ -55,7 +55,7 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
         InputStream stream = ConsumerTest.class.getResourceAsStream("/resultsreader_test_data.json");
         when(jobMock.getResults(any())).thenReturn(stream);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
         assertNotNull(received);
         Map<String, String> data = received.getEventData();
@@ -64,7 +64,7 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("splunk://normal?delay=5000&username=foo&password=bar&initEarliestTime=-10s&latestTime=now&search=search index=myindex&sourceType=testSource&streaming=true")

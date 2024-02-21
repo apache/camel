@@ -1,40 +1,21 @@
 = SimpleScheduledRoutePolicy
-~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-SimpleScheduledRoutePolicy is a
-xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] that facilitates
-route activation, de-activation, suspension and resumption of routes
-based on a xref:components::quartz-component.adoc[Quartz] SimpleTrigger.
+`SimpleScheduledRoutePolicy` is a xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy]
+that facilitates route activation, de-activation, suspension and resumption of routes
+based on the xref:components::quartz-component.adoc[Quartz] simple trigger.
 
-Maven users will need to add a `camel-quartz` dependency to their
-`pom.xml` to avail this capability.
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-quartz</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-**Relationship to the [Quartz] component**
-
-All Scheduled route policies share the scheduler created by the Quartz
-component. In this way, scheduler, jobs and triggers can be managed in a
-common and consistent way.
-
-**Relationship to the [Quartz] component**
-
-From Camel 2.12.2 onwards you can also make use of the
-xref:components::quartz-component.adoc[Quartz] based implementation of this route policy.
 
 == How it works
 
-In order to use a SimpleScheduledRoutePolicy it is necessary to
+In order to use a `SimpleScheduledRoutePolicy` it is necessary to
 instantiate an object of the type
 `org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy`.
+
+NOTE: All Scheduled route policies share the scheduler created by the Quartz
+component. In this way, scheduler, jobs and triggers can be managed in a
+common and consistent way.
+
+=== Configuration options
 
 In order to perform a route operation at a given time the following
 information must be provided.
@@ -103,15 +84,14 @@ to trigger the next attempt to resume the route
 
 Once the
 `org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy` is
-created it can be wired into the camel route as follows
+created it can be wired into the camel route as follows.
 
-== Configuring the policy
+== Using the SimpleScheduledRoutePolicy
 
-* In Java
+The `SimpleScheduledRoutePolicy` can be used in Java DSL as show:
 
 [source,java]
 ----
- 
 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
 long startTime = System.currentTimeMillis() + 3000L;
 policy.setRouteStartDate(new Date(startTime));
@@ -124,7 +104,7 @@ from("direct:start")
    .to("mock:success");
 ----
 
-* Using Spring
+And in Spring XML:
 
 [source,xml]
 ----
@@ -144,3 +124,17 @@ from("direct:start")
 </camelContext>
 ----
 
+== Dependency
+
+Maven users will need to add a `camel-quartz` dependency to their
+`pom.xml` to avail this capability.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-quartz</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

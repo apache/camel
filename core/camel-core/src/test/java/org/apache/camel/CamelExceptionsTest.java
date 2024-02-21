@@ -223,22 +223,16 @@ public class CamelExceptionsTest extends ContextTestSupport {
     @Test
     public void testExchangePattern() {
         assertTrue(ExchangePattern.InOnly.isInCapable());
-        assertTrue(ExchangePattern.InOptionalOut.isInCapable());
         assertTrue(ExchangePattern.InOut.isInCapable());
 
         assertFalse(ExchangePattern.InOnly.isOutCapable());
-        assertTrue(ExchangePattern.InOptionalOut.isOutCapable());
         assertTrue(ExchangePattern.InOut.isOutCapable());
 
         assertEquals(ExchangePattern.InOnly, ExchangePattern.asEnum("InOnly"));
         assertEquals(ExchangePattern.InOut, ExchangePattern.asEnum("InOut"));
 
-        try {
-            ExchangePattern.asEnum("foo");
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> ExchangePattern.asEnum("foo"),
+                "Should have thrown an exception");
     }
 
     @Test

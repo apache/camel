@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,18 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/fpc");
-        super.setUp();
-    }
-
     @Test
     public void testFilePollingConsumer() throws Exception {
-        template.sendBodyAndHeader("file://target/data/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Endpoint endpoint = context.getEndpoint("file://target/data/fpc?initialDelay=0&delay=10&fileName=hello.txt");
+        Endpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10&fileName=hello.txt"));
         PollingConsumer consumer = endpoint.createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);

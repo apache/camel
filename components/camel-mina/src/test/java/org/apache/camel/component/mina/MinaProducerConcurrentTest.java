@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,16 +51,14 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
-                    return template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()), index,
-                            String.class);
-                }
+            Future<String> out = executor.submit(() -> {
+                final String uri = String.format("mina:tcp://localhost:%1$s?sync=true", getPort());
+                return template.requestBody(uri, index, String.class);
             });
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(files, responses.size());
 
         // get all responses
@@ -75,11 +73,11 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true", getPort()).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);
                 }).to("mock:result");

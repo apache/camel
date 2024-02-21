@@ -24,16 +24,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Execute commands on remote hosts using SSH.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
-             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE })
+             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE },
+             headersClass = SshConstants.class)
 public class SshEndpoint extends ScheduledPollEndpoint {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @UriParam
     private SshConfiguration configuration;
@@ -51,12 +49,6 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    public boolean isSingletonProducer() {
-        // SshClient is not thread-safe to be shared
-        return false;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         return new SshProducer(this);
     }
@@ -66,6 +58,13 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         SshConsumer consumer = new SshConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public boolean isSingletonProducer() {
+        // this producer is stateful because the ssh client is not
+        // thread safe
+        return false;
     }
 
     public SshConfiguration getConfiguration() {

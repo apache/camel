@@ -34,7 +34,7 @@ import org.lightcouch.CouchDbClient;
  * documents from a CouchDB database.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database",
-             category = { Category.DATABASE, Category.NOSQL })
+             category = { Category.DATABASE }, headersClass = CouchDbConstants.class)
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -69,8 +69,6 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private boolean deletes = true;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
-    @UriParam(label = "consumer")
-    private String since;
 
     public CouchDbEndpoint() {
     }
@@ -87,7 +85,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
         port = uri.getPort() == -1 ? DEFAULT_PORT : uri.getPort();
 
-        if (uri.getPath() == null || uri.getPath().trim().length() == 0) {
+        if (uri.getPath() == null || uri.getPath().isBlank()) {
             throw new IllegalArgumentException(URI_ERROR);
         }
         database = uri.getPath().substring(1);
@@ -236,17 +234,5 @@ public class CouchDbEndpoint extends DefaultEndpoint {
      */
     public void setUpdates(boolean updates) {
         this.updates = updates;
-    }
-
-    public String getSince() {
-        return since;
-    }
-
-    /**
-     * Start tracking changes immediately after the given update sequence. The default, null, will start monitoring from
-     * the latest sequence.
-     */
-    public void setSince(String since) {
-        this.since = since;
     }
 }

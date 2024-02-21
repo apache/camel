@@ -1,12 +1,14 @@
-[[xj-component]]
 = XJ Component
-:docTitle: XJ
-:artifactId: camel-xj
+:doctitle: XJ
+:shortname: xj
+:artifactid: camel-xj
 :description: Transform JSON and XML message using a XSLT.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/xj.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: xj
 
 *Since Camel {since}*
 
@@ -39,82 +41,32 @@ xj:templateName?transformDirection=XML2JSON|JSON2XML[&options]
 ====
 *More documentation*
 
-The XJ component extends the XSLT component and therefore it supports all options provided by the XSLT
+The XJ component extends the XSLT component, and therefore it supports all options provided by the XSLT
 component as well. At least look at the XSLT component documentation how to configure the xsl template.
 ====
 
 The *transformDirection* option is mandatory and must be either XML2JSON or JSON2XML.
 
-The *templateName* parameter allows to use _identify transforma_ by specifying the name `identity`.
+The *templateName* parameter allows using _identify transforma_ by specifying the name `identity`.
 
-== Component options
+
+
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The XJ component supports 10 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
-| *saxonConfigurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
-| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
-| *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
-| *transformerFactory{zwsp}ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
-| *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
-| *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-The XJ endpoint is configured using URI syntax:
 
-----
-xj:resourceUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resourceUri* | *Required* Path to the template. The following is supported by the default URIResolver. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod |  | String
-|===
-
-
-=== Query Parameters (17 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | true | boolean
-| *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
-| *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
-| *failOnNullBody* (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *output* (producer) | Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime. There are 4 enums and the value can be one of: string, bytes, DOM, file | string | XsltOutput
-| *transformDirection* (producer) | *Required* Transform direction. Either XML2JSON or JSON2XML. There are 2 enums and the value can be one of: XML2JSON, JSON2XML |  | TransformDirection
-| *transformerCacheSize* (producer) | The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer(). | 0 | int
-| *entityResolver* (advanced) | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource. |  | EntityResolver
-| *errorListener* (advanced) | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases. |  | ErrorListener
-| *resultHandlerFactory* (advanced) | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types. |  | ResultHandlerFactory
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
-| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
-| *transformerFactory* (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
-| *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
-| *transformerFactory{zwsp}ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
-| *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
-|===
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Using XJ endpoints
 
@@ -122,7 +74,7 @@ with the following path and query parameters:
 
 The following route does an "identity" transform of the message because no xslt stylesheet is given. In the context of
 xml to xml transformations, "Identity" transform means that the output document is just a copy of the input document.
-In case of XJ it means it transforms the json document to an equivalent xml representation.
+In the case of XJ, it means it transforms the json document to an equivalent xml representation.
 
 [source,java]
 ----
@@ -154,7 +106,7 @@ The input:
 }
 ----
 
-will output
+Will output:
 
 [source,xml]
 ----
@@ -179,7 +131,7 @@ will output
 
 As can be seen in the output above, XJ writes some metadata in the resulting xml that can be used in further processing:
 
-* XJ metadata nodes are always in the "http://camel.apache.org/component/xj" namespace.
+* XJ metadata nodes are always in the `http://camel.apache.org/component/xj` namespace.
 * JSON key names are placed in the xj:name attribute.
 * The parsed JSON type can be found in the xj:type attribute. The above example already contains all possible types.
 * Generated XML elements are always named "object".
@@ -213,7 +165,7 @@ Now we can apply a stylesheet, e.g.:
 </xsl:stylesheet>
 ----
 
-to the above sample by specifying the template on the endpoint:
+To the above sample by specifying the template on the endpoint:
 
 [source,java]
 ----
@@ -221,7 +173,7 @@ from("direct:start").
   to("xj:com/example/json2xml.xsl?transformDirection=JSON2XML");
 ----
 
-and get the following output:
+And get the following output:
 
 [source,xml]
 ----
@@ -240,7 +192,7 @@ and get the following output:
 
 === Converting XML to JSON
 
-Based on the explanations above an "identity" transform will be performed when no stylesheet is given:
+Based on the explanations above, an _identity_ transform will be performed when no stylesheet is given:
 
 [source,java]
 ----
@@ -293,15 +245,15 @@ will result in
 }
 ----
 
-You may have noted that the input xml and output json is very similar to the examples above when converting from json to xml
-altough nothing special is done here. We only transformed an arbitrary XML document to json.
+You may have noted that the input xml and output json are very similar to the examples above when converting from json to xml,
+although nothing special is done here. We only transformed an arbitrary XML document to json.
 XJ uses the following rules by default:
 
-* The XML root element can be named somehow, it will always end in a json root object declaration '{}'
+* The XML root element can be named somehow, it will always end in a json root object declaration `{}`
 * The json key name is the name of the xml element
-* If there is an name clash as in "<roles>" above where two "<entry>" elements exists a json array will be generated.
+* If there is a name clash as in `<roles>` above where two `<entry>` elements exist a json array will be generated.
 * XML elements with text-only-child-nodes will result in the usual key/string-value pair. Mixed content elements
-results in key/child-object pair as seen in "<state>" above.
+result in a key/child-object pair as seen in `<state>` above.
 
 Now we can apply again a stylesheet, e.g.:
 
@@ -402,7 +354,7 @@ and get the following output:
 }
 ----
 
-Note, this transformation resulted in exactly the same json document as we used as input to the json2xml convertion.
+Note, this transformation resulted in exactly the same json document as we used as input to the _json2xml_ conversion.
 What did the stylesheet do? We just gave some hints to XJ on how to write the json document. The following XML
 document is that what is passed to XJ after xsl transformation:
 
@@ -430,7 +382,7 @@ document is that what is passed to XJ after xsl transformation:
 In the stylesheet we just provided the minimal required type hints to get the same result.
 The supported type hints are exactly the same as XJ writes to a XML document when converting from json to xml.
 
-In the end that means that we can feed back in the result document from the json to xml transformation sample above:
+In the end, that means that we can feed back in the result document from the json to xml transformation sample above:
 
 [source,xml]
 ----
@@ -476,9 +428,11 @@ and get the same output again:
 ----
 
 As seen in the example above:
+
 * xj:type lets you specify exactly the desired output type
-* xj:name lets you overrule the json key name. This is required when you want to generate key names which contains chars
-that aren't allowed in XML element names.
+* xj:name lets you overrule the json key name.
+
+This is required when you want to generate key names that contain chars that aren't allowed in XML element names.
 
 === Available type hints
 
@@ -491,7 +445,8 @@ that aren't allowed in XML element names.
 | int | Generate a json number without fractional part
 | float | Generate a json number with fractional part
 | boolean | Generate a json boolean
-| null | Generate an empty value, using the word null
+| null | Generate an empty value using the word null
 |===
 
-include::camel-spring-boot::page$xj-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -19,16 +19,17 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathTransformResultTypeTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().jsonpath("$.store.book[0].price", Float.class)
                         .to("mock:price");
@@ -53,7 +54,7 @@ public class JsonPathTransformResultTypeTest extends CamelTestSupport {
         template.sendBody("direct:start", new File("src/test/resources/books.json"));
         template.sendBody("direct:second", new File("src/test/resources/books.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

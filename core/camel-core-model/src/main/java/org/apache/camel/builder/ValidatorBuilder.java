@@ -66,7 +66,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the URI to be used for the endpoint {@link Validator}.
-     * 
+     *
      * @see       EndpointValidatorDefinition, ProcessorValidator
      * @param uri endpoint URI
      */
@@ -78,7 +78,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the {@link Expression} to be used for the predicate {@link Validator}.
-     * 
+     *
      * @see              PredicateValidatorDefinition, ProcessorValidator
      * @param expression validation expression
      */
@@ -90,7 +90,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the {@link Predicate} to be used for the predicate {@link Validator}.
-     * 
+     *
      * @see             PredicateValidatorDefinition, ProcessorValidator
      * @param predicate validation predicate
      */
@@ -102,7 +102,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the Java {@code Class} represents a custom {@code Validator} implementation class.
-     * 
+     *
      * @see         CustomValidatorDefinition
      * @param clazz {@code Class} object represents custom validator implementation
      */
@@ -114,7 +114,7 @@ public class ValidatorBuilder {
 
     /**
      * Set the Java Bean name to be used for custom {@code Validator}.
-     * 
+     *
      * @see       CustomValidatorDefinition
      * @param ref bean name for the custom {@code Validator}
      */
@@ -134,7 +134,7 @@ public class ValidatorBuilder {
     /**
      * Configures a new Validator according to the configurations built on this builder and register it into the given
      * {@code CamelContext}.
-     * 
+     *
      * @param camelContext the given CamelContext
      */
     public void configure(CamelContext camelContext) {
@@ -163,6 +163,6 @@ public class ValidatorBuilder {
         camelContext.getValidatorRegistry();
 
         validator.setType(type);
-        camelContext.adapt(ModelCamelContext.class).registerValidator(validator);
+        ((ModelCamelContext) camelContext).registerValidator(validator);
     }
 }

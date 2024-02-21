@@ -53,11 +53,11 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
     }
 
     @Test
-    public void testMarshalAndUnmarshalWithDSL3() throws Exception {
+    public void testMarshalAndUnmarshalWithDSL3() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance")).to("mock:reverse");
                 }
             });

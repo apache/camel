@@ -24,7 +24,7 @@ public enum TelegramParseMode {
     HTML("HTML"),
     MARKDOWN("Markdown");
 
-    private String code;
+    private final String code;
 
     TelegramParseMode(String code) {
         this.code = code;

@@ -19,49 +19,41 @@ package org.apache.camel.component.jetty;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.time.Duration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
+    @TempDir
+    File testDirectory;
 
-    private String body = "12345678901234567890123456789012345678901234567890";
-    private String body2 = "Bye " + body;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/cachedir");
-        createDirectory("target/cachedir");
-        super.setUp();
-    }
+    private final String body = "12345678901234567890123456789012345678901234567890";
+    private final String body2 = "Bye " + body;
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
 
-        // give time for file to be deleted
-        Thread.sleep(500);
-        // the temporary files should have been deleted
-        File file = new File("target/cachedir");
-        String[] files = file.list();
-        assertEquals(0, files.length, "There should be no files");
+        await()
+                .atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals(0, testDirectory.list().length, "There should be no files"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.setStreamCaching(true);
 

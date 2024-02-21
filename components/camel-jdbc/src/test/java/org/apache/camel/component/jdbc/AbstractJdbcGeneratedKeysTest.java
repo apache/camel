@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupport {
 
     @SuppressWarnings("unchecked")
-    protected void testRetrieveGeneratedKeys(String query, Map<String, Object> parameters) throws Exception {
+    protected void testRetrieveGeneratedKeys(String query, Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -61,15 +61,14 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeys(String query) throws Exception {
+    protected void testRetrieveGeneratedKeys(String query) {
         testRetrieveGeneratedKeys(query, null);
     }
 
     @SuppressWarnings("unchecked")
     protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -100,15 +99,14 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) throws Exception {
+    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) {
         testRetrieveGeneratedKeysWithStringGeneratedColumns(query, null);
     }
 
     @SuppressWarnings("unchecked")
     protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -139,14 +137,13 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) throws Exception {
+    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) {
         testRetrieveGeneratedKeysWithIntGeneratedColumns(query, null);
     }
 
     protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -165,7 +162,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertTrue(exchange.isFailed());
     }
 
-    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(String query) throws Exception {
+    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(String query) {
         testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(query, null);
     }
 
@@ -178,6 +175,6 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     }
 
     @Override
-    protected abstract RouteBuilder createRouteBuilder() throws Exception;
+    protected abstract RouteBuilder createRouteBuilder();
 
 }

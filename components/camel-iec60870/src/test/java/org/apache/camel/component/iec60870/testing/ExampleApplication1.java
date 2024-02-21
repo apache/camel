@@ -32,7 +32,7 @@ public class ExampleApplication1 {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("timer:foo") //
                         .setBody(simple("${random(10)}"))//

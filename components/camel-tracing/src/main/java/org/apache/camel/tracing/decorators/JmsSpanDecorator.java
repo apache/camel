@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tracing.decorators;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
@@ -28,13 +29,23 @@ public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    protected String getDestination(Exchange exchange, Endpoint endpoint) {
+        // when using toD for dynamic destination then extract from header
+        String destination = exchange.getMessage().getHeader("CamelJmsDestinationName", String.class);
+        if (destination == null) {
+            destination = super.getDestination(exchange, endpoint);
+        }
+        return destination;
+    }
+
+    @Override
     public String getComponentClassName() {
         return "org.apache.camel.component.jms.JmsComponent";
     }
 
     @Override
     protected String getMessageId(Exchange exchange) {
-        return (String) exchange.getIn().getHeader(JMS_MESSAGE_ID);
+        return exchange.getIn().getHeader(JMS_MESSAGE_ID, String.class);
     }
 
 }

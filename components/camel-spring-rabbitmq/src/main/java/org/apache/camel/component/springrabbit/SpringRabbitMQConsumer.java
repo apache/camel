@@ -139,7 +139,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         }
     }
 
-    protected void createMessageListenerContainer() throws Exception {
+    protected void createMessageListenerContainer() {
         listenerContainer = getEndpoint().createMessageListenerContainer();
         listenerContainer.setMessageListener(getEndpointMessageListener());
     }

@@ -19,8 +19,8 @@ package org.apache.camel.component.servlet;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
@@ -113,10 +114,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testCreateSerlvetEndpointProducer() throws Exception {
-        if (!startCamelContext) {
-            // don't test it with web.xml configure
-            return;
-        }
+        assumeTrue(startCamelContext, "don't test it with web.xml configure");
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -146,7 +144,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 assertEquals(CONTENT_TYPE, contentType, "Get a wrong content type");
                 // assert camel http header
                 String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-                assertEquals(charsetEncoding, "UTF-8", "Get a wrong charset name from the message header");
+                assertEquals("UTF-8", charsetEncoding, "Get a wrong charset name from the message header");
                 // assert exchange charset
                 assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME),
                         "Get a wrong charset naem from the exchange property");

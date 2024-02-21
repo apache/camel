@@ -19,44 +19,49 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(35);
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("beanRef");
-        props.add("session");
-        props.add("initialDelay");
-        props.add("scheduler");
-        props.add("prepareStatements");
-        props.add("password");
         props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
         props.add("clusterName");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("resultSetConversionStrategy");
-        props.add("hosts");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("loadBalancingPolicyClass");
-        props.add("exchangePattern");
+        props.add("consistencyLevel");
+        props.add("cql");
         props.add("datacenter");
-        props.add("backoffIdleThreshold");
+        props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("extraTypeCodecs");
+        props.add("greedy");
+        props.add("hosts");
+        props.add("initialDelay");
         props.add("keyspace");
         props.add("lazyStartProducer");
-        props.add("delay");
+        props.add("loadBalancingPolicyClass");
+        props.add("password");
         props.add("pollStrategy");
         props.add("port");
+        props.add("prepareStatements");
+        props.add("repeatCount");
+        props.add("resultSetConversionStrategy");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("session");
         props.add("startScheduler");
-        props.add("consistencyLevel");
-        props.add("exceptionHandler");
-        props.add("cql");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -87,6 +92,11 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

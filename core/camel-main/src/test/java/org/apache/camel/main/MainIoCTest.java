@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +39,7 @@ public class MainIoCTest {
         // use configuration class
         Main main = new Main();
         // add the configuration
-        main.configure().addConfigurationClass(MyConfiguration.class);
+        main.configure().withConfigurations(MyConfiguration.class);
         // add as class so we get IoC
         main.configure().addRoutesBuilder(MyRouteBuilder.class);
         // manually bind
@@ -51,7 +52,7 @@ public class MainIoCTest {
         // and now its created
         assertNotNull(main.getCamelContext());
         // should be 1 route model
-        assertEquals(1, main.getCamelContext().adapt(ModelCamelContext.class).getRouteDefinitions().size());
+        assertEquals(1, ((ModelCamelContext) main.getCamelContext()).getRouteDefinitions().size());
         // and the configuration should have registered beans
         assertNotNull(main.getCamelContext().getRegistry().lookupByName("MyCoolBean"));
         assertEquals("Tiger", main.getCamelContext().getRegistry().lookupByName("coolStuff"));
@@ -101,7 +102,7 @@ public class MainIoCTest {
         // noop
     }
 
-    public static class MyConfiguration {
+    public static class MyConfiguration implements CamelConfiguration {
 
         @BeanInject
         private CamelContext camel;
@@ -146,7 +147,8 @@ public class MainIoCTest {
             return cool.getName();
         }
 
-        public void configure() {
+        @Override
+        public void configure(CamelContext context) {
             camel.getGlobalOptions().put("foo", "123");
         }
     }

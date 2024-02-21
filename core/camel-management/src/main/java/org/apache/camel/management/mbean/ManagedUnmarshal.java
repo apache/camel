@@ -44,4 +44,19 @@ public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarsh
         }
         return name;
     }
+
+    @Override
+    public String getVariableSend() {
+        return processor.getVariableSend();
+    }
+
+    @Override
+    public String getVariableReceive() {
+        return processor.getVariableReceive();
+    }
+
+    @Override
+    public boolean isAllowNullBody() {
+        return processor.isAllowNullBody();
+    }
 }

@@ -29,7 +29,7 @@ public final class Strings {
      * Returns true if the given text is null or empty string or has <tt>null</tt> as the value
      */
     public static boolean isNullOrEmpty(String text) {
-        return text == null || text.length() == 0 || "null".equals(text);
+        return text == null || text.isEmpty() || "null".equals(text);
     }
 
     public static String cutLastZeroDigit(String version) {
@@ -57,7 +57,7 @@ public final class Strings {
 
     /**
      * To wrap a big line by words.
-     * 
+     *
      * @param line          the big line
      * @param wordSep       the word separator
      * @param lineSep       the new line to use when breaking into a new line
@@ -116,40 +116,6 @@ public final class Strings {
                     offset = next + 1;
                 }
             }
-            /*
-            while (inputLineLength - offset > watermark) {
-                if (line.charAt(offset) == ' ') {
-                    ++offset;
-                } else {
-                    int spaceToWrapAt = line.lastIndexOf(' ', watermark + offset);
-                    int spaces = 0;
-                    for (int i = offset; i < spaceToWrapAt; i++) {
-                        spaces += line.charAt(i) == ' ' ? 1 : 0;
-                    }
-                    if (spaceToWrapAt >= offset) {
-                        sb.append(line, offset, spaceToWrapAt);
-                        sb.append(newLine);
-                        offset = spaceToWrapAt + 1;
-                    } else if (wrapLongWords) {
-                        sb.append(line, offset, watermark + offset);
-                        sb.append(newLine);
-                        offset += watermark;
-                    } else {
-                        spaceToWrapAt = line.indexOf(' ', watermark + offset);
-                        if (spaceToWrapAt >= 0) {
-                            sb.append(line, offset, spaceToWrapAt);
-                            sb.append(newLine);
-                            offset = spaceToWrapAt + 1;
-                        } else {
-                            sb.append(line, offset, line.length());
-                            offset = inputLineLength;
-                        }
-                    }
-                }
-            }
-            
-            sb.append(line, offset, line.length());
-            */
             return sb.toString();
         }
     }

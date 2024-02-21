@@ -22,10 +22,8 @@ import java.util.function.BiFunction;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.StatefulService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public final class EventHelper {
 
     // This implementation has been optimized to be as fast and not create unnecessary objects or lambdas.
-    // So therefore there is some code that seems duplicated. But this code is used frequently during routing and should
+    // Therefore there is some code that seems duplicated. But this code is used frequently during routing and should
     // be left as-is.
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHelper.class);
@@ -75,39 +73,39 @@ public final class EventHelper {
     }
 
     public static boolean notifyCamelContextInitializing(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextInitializingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextInitializingEvent, true);
     }
 
     public static boolean notifyCamelContextInitialized(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextInitializedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextInitializedEvent, true);
     }
 
     public static boolean notifyCamelContextStarting(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStartingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStartingEvent, false);
     }
 
     public static boolean notifyCamelContextStarted(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStartedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStartedEvent, false);
     }
 
     public static boolean notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
-        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStartupFailureEvent(ctx, cause));
+        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStartupFailureEvent(ctx, cause), false);
     }
 
     public static boolean notifyCamelContextStopping(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStoppingEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStoppingEvent, false);
     }
 
     public static boolean notifyCamelContextStopped(CamelContext context) {
-        return notifyCamelContext(context, EventFactory::createCamelContextStoppedEvent);
+        return notifyCamelContext(context, EventFactory::createCamelContextStoppedEvent, false);
     }
 
     public static boolean notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
-        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause));
+        return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause), false);
     }
 
     private static boolean notifyCamelContext(
-            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
+            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier, boolean init) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -118,7 +116,9 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        // init camel context events are triggered before event notifiers is started so get those pre-started notifiers
+        // so we can emit those special init events
+        List<EventNotifier> notifiers = init ? management.getEventNotifiers() : management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -130,6 +130,9 @@ public final class EventHelper {
                 continue;
             }
             if (notifier.isIgnoreCamelContextEvents()) {
+                continue;
+            }
+            if (init && notifier.isIgnoreCamelContextInitEvents()) {
                 continue;
             }
 
@@ -157,7 +160,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -196,7 +199,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -235,7 +238,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -274,7 +277,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -313,7 +316,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -352,7 +355,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -391,7 +394,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -430,7 +433,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -458,6 +461,162 @@ public final class EventHelper {
         return answer;
     }
 
+    public static boolean notifyRouteReloaded(CamelContext context, Route route, int index, int total) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createRouteReloaded(route, index, total);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    public static boolean notifyContextReloading(CamelContext context, Object source) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createCamelContextReloading(context, source);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    public static boolean notifyContextReloaded(CamelContext context, Object source) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createCamelContextReloaded(context, source);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    public static boolean notifyContextReloadFailure(CamelContext context, Object source, Throwable cause) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createCamelContextReloadFailure(context, source, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
     public static boolean notifyExchangeCreated(CamelContext context, Exchange exchange) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
@@ -469,12 +628,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -515,12 +674,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -530,10 +689,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeCompletedEvent()) {
                 continue;
             }
 
@@ -561,12 +717,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -576,10 +732,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -609,12 +763,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -624,10 +778,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -657,12 +809,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -672,10 +824,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -703,12 +852,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -718,10 +867,8 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
+
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
@@ -749,12 +896,12 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -764,10 +911,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSendingEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeSendingEvents()) {
                 continue;
             }
 
@@ -795,13 +939,13 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
 
-        if (((ExtendedExchange) exchange).isNotifyEvent()) {
-            // do not generate events for an notify event
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
+            // do not generate events for notify event
             return false;
         }
 
@@ -810,10 +954,7 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled()) {
-                continue;
-            }
-            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
 
@@ -841,7 +982,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -880,7 +1021,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -919,7 +1060,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -958,7 +1099,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -997,7 +1138,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1036,7 +1177,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1075,7 +1216,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1114,7 +1255,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1153,7 +1294,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1192,7 +1333,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1231,7 +1372,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1270,7 +1411,7 @@ public final class EventHelper {
             return false;
         }
 
-        List<EventNotifier> notifiers = management.getEventNotifiers();
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
@@ -1298,29 +1439,64 @@ public final class EventHelper {
         return answer;
     }
 
-    private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
-        // only notify if notifier is started
-        boolean started = true;
-        if (notifier instanceof StatefulService) {
-            started = ((StatefulService) notifier).isStarted();
-        }
-        if (!started) {
-            LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
+    public static boolean notifyExchangeAsyncProcessingStartedEvent(CamelContext context, Exchange exchange) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
             return false;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getExchangeExtension().isNotifyEvent()) {
+            // do not generate events for an notify event
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeAsyncProcessingStartedEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createCamelExchangeAsyncProcessingStartedEvent(exchange);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    private static boolean isDisabledOrIgnored(EventNotifier notifier) {
+        return notifier.isDisabled() || notifier.isIgnoreExchangeEvents();
+    }
+
+    private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
         if (!notifier.isEnabled(event)) {
-            LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
             return false;
         }
 
         try {
             notifier.notify(event);
         } catch (Throwable e) {
-            LOG.warn("Error notifying event " + event + ". This exception will be ignored.", e);
+            LOG.warn("Error notifying event {}. This exception will be ignored.", event, e);
         }
 
         return true;
     }
-
 }

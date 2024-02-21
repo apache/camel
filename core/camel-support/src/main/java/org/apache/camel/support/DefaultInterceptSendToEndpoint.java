@@ -20,11 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -93,6 +93,11 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     @Override
+    public ExchangePattern getExchangePattern() {
+        return delegate.getExchangePattern();
+    }
+
+    @Override
     public String getEndpointBaseUri() {
         return delegate.getEndpointBaseUri();
     }
@@ -123,6 +128,16 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     @Override
+    public void setComponent(Component component) {
+        delegate.setComponent(component);
+    }
+
+    @Override
+    public Component getComponent() {
+        return delegate.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return createAsyncProducer();
     }
@@ -130,7 +145,7 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
         AsyncProducer producer = delegate.createAsyncProducer();
-        return camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        return PluginHelper.getInternalProcessorFactory(camelContext)
                 .createInterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 

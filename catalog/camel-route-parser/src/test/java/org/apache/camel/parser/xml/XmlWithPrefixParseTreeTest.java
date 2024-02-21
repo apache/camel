@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlWithPrefixParseTreeTest {
@@ -52,11 +53,11 @@ public class XmlWithPrefixParseTreeTest {
         assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/mycamel-withNamespacePrefix.xml",
                 details.getFileName());
         assertEquals("myRoute", details.getRouteId());
-        assertEquals(null, details.getMethodName());
-        assertEquals(null, details.getClassName());
+        assertNull(details.getMethodName());
+        assertNull(details.getClassName());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("34\tfrom"));
         assertTrue(tree.contains("36\t  transform"));

@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define a thread pool profile -->
         <threadPoolProfile id="myProfile" poolSize="2" maxQueueSize="8" rejectedPolicy="Abort"/>
@@ -33,7 +34,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- use the custom thread pool profile in this aggregate EIP, by referring to it -->
-            <aggregate strategyRef="aggregatorStrategy" completionSize="3" executorServiceRef="myProfile">
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="3" executorService="myProfile">
                 <correlationExpression>
                     <simple>header.id</simple>
                 </correlationExpression>      

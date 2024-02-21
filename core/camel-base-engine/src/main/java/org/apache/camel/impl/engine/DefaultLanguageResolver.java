@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
@@ -68,9 +67,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
         Class<?> type = null;
         try {
             type = findLanguageResolver("default", context);
-        } catch (NoFactoryAvailableException e) {
-            // ignore
-        } catch (ClassNotFoundException e) {
+        } catch (NoFactoryAvailableException | ClassNotFoundException e) {
             // ignore
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no LanguageResolver registered for scheme: " + name, e);
@@ -91,14 +88,14 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
     protected Class<?> findLanguage(String name, CamelContext context) throws Exception {
         if (languageFactory == null) {
-            languageFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOURCE_PATH);
+            languageFactory = context.getCamelContextExtension().getFactoryFinder(LANGUAGE_RESOURCE_PATH);
         }
         return languageFactory.findClass(name).orElse(null);
     }
 
     protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
         if (languageResolver == null) {
-            languageResolver = context.adapt(ExtendedCamelContext.class).getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
+            languageResolver = context.getCamelContextExtension().getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
         }
         return languageResolver.findClass(name).orElse(null);
     }

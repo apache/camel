@@ -84,8 +84,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         @Override
         public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, stream);
-            String body = reverseBytes(bytes);
-            return body;
+            return reverseBytes(bytes);
         }
 
         private String reverseBytes(byte[] data) {

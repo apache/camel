@@ -29,12 +29,12 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(msg);
-        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
+        mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
 
         template.sendBody("direct:ssh", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
         template.sendBody("direct:sshInvalid", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -56,12 +56,12 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(msg);
-        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
+        mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
 
         template.sendBody("direct:sshInvalidWarnOnly", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -69,16 +69,16 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("test");
-        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
-        assertMockEndpointsSatisfied();
+        mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testPollingConsumerWithInvalidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalid");
         mock.expectedMessageCount(0);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -86,9 +86,9 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalidWarnOnly");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("test");
-        mock.expectedHeaderReceived(SshResult.EXIT_VALUE, 0);
-        mock.expectedHeaderReceived(SshResult.STDERR, "Error:test");
-        assertMockEndpointsSatisfied();
+        mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
+        mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -100,15 +100,15 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
-                             .to("mock:result");
+                        .to("mock:result");
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
-                             .to("mock:resultInvalid");
+                        .to("mock:resultInvalid");
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid")
-                             .to("mock:resultInvalidWarnOnly");
+                        .to("mock:resultInvalidWarnOnly");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port

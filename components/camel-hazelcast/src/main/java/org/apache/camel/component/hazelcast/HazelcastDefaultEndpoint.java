@@ -41,13 +41,16 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected String hazelcastInstanceName;
     @UriParam
     private HazelcastOperation defaultOperation;
+    @UriParam
+    @Metadata(supportFileReference = true)
+    private String hazelcastConfigUri;
 
-    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
+    protected HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
     }
 
-    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                    String cacheName) {
+    protected HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                       String cacheName) {
         super(endpointUri, component);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;
@@ -115,4 +118,14 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         return defaultOperation;
     }
 
+    public String getHazelcastConfigUri() {
+        return hazelcastConfigUri;
+    }
+
+    /**
+     * Hazelcast configuration file.
+     */
+    public void setHazelcastConfigUri(String hazelcastConfigUri) {
+        this.hazelcastConfigUri = hazelcastConfigUri;
+    }
 }

@@ -45,7 +45,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
 
         template.send("direct:add", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
             }
         });
@@ -57,7 +57,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
 
         template.send("direct:commit", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
             }
         });
@@ -68,10 +68,10 @@ public class GitRemoteProducerTest extends GitTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:push")

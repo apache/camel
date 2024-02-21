@@ -37,7 +37,7 @@ class ChoiceTest extends YamlTestSupport {
                             - expression:
                                 simple: "${body.size()} == 2"
                               steps:
-                                   - to: "log:when-b"
+                                - to: "log:when-b"
                           otherwise:
                             steps:
                               - to: "log:otherwise"
@@ -64,5 +64,48 @@ class ChoiceTest extends YamlTestSupport {
                     endpointUri == 'log:otherwise'
                 }
             }
+    }
+
+    def "choice in precondition mode"() {
+        when:
+        loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - choice:
+                          precondition: true
+                          when:
+                            - simple: "{{?red}}"
+                              steps:
+                                - to: "mock:red"
+                            - simple: "{{?blue}}"
+                              steps:
+                                - to: "mock:blue"
+                          otherwise:
+                            steps:
+                              - to: "mock:other"    
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].outputs[0], ChoiceDefinition) {
+            with(whenClauses[0], WhenDefinition) {
+                expression.language == 'simple'
+                expression.expression == '{{?red}}'
+                with(outputs[0], ToDefinition) {
+                    endpointUri == 'mock:red'
+                }
+            }
+            with(whenClauses[1], WhenDefinition) {
+                expression.language == 'simple'
+                expression.expression == '{{?blue}}'
+                with(outputs[0], ToDefinition) {
+                    endpointUri == 'mock:blue'
+                }
+            }
+            with(otherwise.outputs[0], ToDefinition) {
+                endpointUri == 'mock:other'
+            }
+        }
     }
 }

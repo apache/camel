@@ -50,7 +50,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
                 .channel(NioDatagramChannel.class)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
-                    protected void initChannel(Channel channel) throws Exception {
+                    protected void initChannel(Channel channel) {
                         channel.pipeline().addLast(new UdpHandler());
                         channel.pipeline().addLast(new ContentHandler());
                     }
@@ -66,7 +66,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     }
 
     @Test
-    public void sendConnectionlessUdp() throws Exception {
+    public void sendConnectionlessUdp() {
         createNettyUdpReceiver();
         bind();
         for (int i = 0; i < SEND_COUNT; ++i) {
@@ -78,7 +78,7 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     }
 
     @Test
-    public void sendWithoutReceiver() throws Exception {
+    public void sendWithoutReceiver() {
         int exceptionCount = 0;
         for (int i = 0; i < SEND_COUNT; ++i) {
             try {
@@ -91,10 +91,10 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("netty:udp://localhost:{{port}}?sync=false&textline=true&udpConnectionlessSending=true");
             }
         };
@@ -102,15 +102,15 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
 
     public class UdpHandler extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects)
-                throws Exception {
+        protected void decode(
+                ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects) {
             objects.add(datagramPacket.content().toString(CharsetUtil.UTF_8));
         }
     }
 
     public class ContentHandler extends SimpleChannelInboundHandler<String> {
         @Override
-        protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+        protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) {
             ++receivedCount;
         }
     }

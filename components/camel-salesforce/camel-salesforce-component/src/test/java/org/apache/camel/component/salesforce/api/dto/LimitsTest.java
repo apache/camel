@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -48,7 +47,7 @@ public class LimitsTest {
     }
 
     @Test
-    public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
+    public void shouldDeserializeFromSalesforceGeneratedJSON() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Limits.class)
@@ -66,7 +65,7 @@ public class LimitsTest {
     }
 
     @Test
-    public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
+    public void shouldDeserializeWithUnsupportedKeys() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Limits withUnsupported

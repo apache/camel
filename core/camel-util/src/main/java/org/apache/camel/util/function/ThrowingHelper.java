@@ -33,7 +33,7 @@ public final class ThrowingHelper {
      * an exception is thrown by the delegated supplier.
      */
     public static <V, T extends Throwable> Supplier<V> wrapAsSupplier(ThrowingSupplier<V, T> supplier) {
-        return new Supplier<V>() {
+        return new Supplier<>() {
             @Override
             public V get() {
                 try {
@@ -50,7 +50,7 @@ public final class ThrowingHelper {
      * an exception is thrown by the delegated consumer.
      */
     public static <I, T extends Throwable> Consumer<I> wrapAsConsumer(ThrowingConsumer<I, T> consumer) {
-        return new Consumer<I>() {
+        return new Consumer<>() {
             @Override
             public void accept(I in) {
                 try {
@@ -67,7 +67,7 @@ public final class ThrowingHelper {
      * of an exception is thrown by the delegated consumer.
      */
     public static <I1, I2, T extends Throwable> BiConsumer<I1, I2> wrapAsBiConsumer(ThrowingBiConsumer<I1, I2, T> consumer) {
-        return new BiConsumer<I1, I2>() {
+        return new BiConsumer<>() {
             @Override
             public void accept(I1 i1, I2 i2) {
                 try {
@@ -84,7 +84,7 @@ public final class ThrowingHelper {
      * an exception is thrown by the delegated function.
      */
     public static <I, R, T extends Throwable> Function<I, R> wrapAsFunction(ThrowingFunction<I, R, T> function) {
-        return new Function<I, R>() {
+        return new Function<>() {
             @Override
             public R apply(I in) {
                 try {

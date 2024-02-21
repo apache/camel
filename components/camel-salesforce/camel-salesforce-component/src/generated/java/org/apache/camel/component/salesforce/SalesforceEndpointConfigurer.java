@@ -21,6 +21,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": target.getConfiguration().setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
         case "apexMethod": target.getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
@@ -41,10 +43,18 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": target.getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "eventname":
+        case "eventName": target.getConfiguration().setEventName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventschemaformat":
+        case "eventSchemaFormat": target.getConfiguration().setEventSchemaFormat(property(camelContext, org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class, value)); return true;
+        case "eventschemaid":
+        case "eventSchemaId": target.getConfiguration().setEventSchemaId(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fallbackreplayid":
+        case "fallBackReplayId": target.getConfiguration().setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "format": target.getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -59,8 +69,11 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": target.getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "locator": target.getConfiguration().setLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbackoff":
         case "maxBackoff": target.getConfiguration().setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "maxrecords":
+        case "maxRecords": target.getConfiguration().setMaxRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "notfoundbehaviour":
         case "notFoundBehaviour": target.getConfiguration().setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":
@@ -85,12 +98,30 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingParent": target.getConfiguration().setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": target.getConfiguration().setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": target.getConfiguration().setPubSubBatchSize(property(camelContext, int.class, value)); return true;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": target.getConfiguration().setPubSubDeserializeType(property(camelContext, org.apache.camel.component.salesforce.PubSubDeserializeType.class, value)); return true;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": target.getConfiguration().setPubSubPojoClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubreplayid":
+        case "pubSubReplayId": target.setPubSubReplayId(property(camelContext, java.lang.String.class, value)); return true;
         case "querylocator":
         case "queryLocator": target.getConfiguration().setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": target.getConfiguration().setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": target.getConfiguration().setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": target.getConfiguration().setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": target.getConfiguration().setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "replayid":
         case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "replaypreset":
+        case "replayPreset": target.getConfiguration().setReplayPreset(property(camelContext, com.salesforce.eventbus.protobuf.ReplayPreset.class, value)); return true;
         case "reportid":
         case "reportId": target.getConfiguration().setReportId(property(camelContext, java.lang.String.class, value)); return true;
         case "reportmetadata":
@@ -115,6 +146,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": target.getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectsearch":
         case "sObjectSearch": target.getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamqueryresult":
+        case "streamQueryResult": target.getConfiguration().setStreamQueryResult(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -124,6 +157,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return boolean.class;
         case "apexmethod":
         case "apexMethod": return java.lang.String.class;
         case "apexqueryparams":
@@ -144,10 +179,18 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
         case "defaultReplayId": return java.lang.Long.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "eventschemaformat":
+        case "eventSchemaFormat": return org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class;
+        case "eventschemaid":
+        case "eventSchemaId": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fallbackreplayid":
+        case "fallBackReplayId": return java.lang.Long.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
         case "httpclient":
         case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
@@ -162,8 +205,11 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "limit": return java.lang.Integer.class;
+        case "locator": return java.lang.String.class;
         case "maxbackoff":
         case "maxBackoff": return long.class;
+        case "maxrecords":
+        case "maxRecords": return java.lang.Integer.class;
         case "notfoundbehaviour":
         case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
         case "notifyforfields":
@@ -188,12 +234,30 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingParent": return java.lang.String.class;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return java.lang.String.class;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return int.class;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return org.apache.camel.component.salesforce.PubSubDeserializeType.class;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return java.lang.String.class;
+        case "pubsubreplayid":
+        case "pubSubReplayId": return java.lang.String.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "replayid":
         case "replayId": return java.lang.Long.class;
+        case "replaypreset":
+        case "replayPreset": return com.salesforce.eventbus.protobuf.ReplayPreset.class;
         case "reportid":
         case "reportId": return java.lang.String.class;
         case "reportmetadata":
@@ -218,6 +282,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": return java.lang.String.class;
         case "sobjectsearch":
         case "sObjectSearch": return java.lang.String.class;
+        case "streamqueryresult":
+        case "streamQueryResult": return java.lang.Boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
         default: return null;
@@ -228,6 +294,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceEndpoint target = (SalesforceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return target.getConfiguration().isAllOrNone();
         case "apexmethod":
         case "apexMethod": return target.getConfiguration().getApexMethod();
         case "apexqueryparams":
@@ -248,10 +316,18 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "contentType": return target.getConfiguration().getContentType();
         case "defaultreplayid":
         case "defaultReplayId": return target.getConfiguration().getDefaultReplayId();
+        case "eventname":
+        case "eventName": return target.getConfiguration().getEventName();
+        case "eventschemaformat":
+        case "eventSchemaFormat": return target.getConfiguration().getEventSchemaFormat();
+        case "eventschemaid":
+        case "eventSchemaId": return target.getConfiguration().getEventSchemaId();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fallbackreplayid":
+        case "fallBackReplayId": return target.getConfiguration().getFallBackReplayId();
         case "format": return target.getConfiguration().getFormat();
         case "httpclient":
         case "httpClient": return target.getConfiguration().getHttpClient();
@@ -266,8 +342,11 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "limit": return target.getConfiguration().getLimit();
+        case "locator": return target.getConfiguration().getLocator();
         case "maxbackoff":
         case "maxBackoff": return target.getConfiguration().getMaxBackoff();
+        case "maxrecords":
+        case "maxRecords": return target.getConfiguration().getMaxRecords();
         case "notfoundbehaviour":
         case "notFoundBehaviour": return target.getConfiguration().getNotFoundBehaviour();
         case "notifyforfields":
@@ -292,12 +371,30 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "pkChunkingParent": return target.getConfiguration().getPkChunkingParent();
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return target.getConfiguration().getPkChunkingStartRow();
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return target.getConfiguration().getPubSubBatchSize();
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return target.getConfiguration().getPubSubDeserializeType();
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return target.getConfiguration().getPubSubPojoClass();
+        case "pubsubreplayid":
+        case "pubSubReplayId": return target.getPubSubReplayId();
         case "querylocator":
         case "queryLocator": return target.getConfiguration().getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return target.getConfiguration().getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return target.getConfiguration().getRawMethod();
+        case "rawpath":
+        case "rawPath": return target.getConfiguration().getRawPath();
         case "rawpayload":
         case "rawPayload": return target.getConfiguration().isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return target.getConfiguration().getRawQueryParameters();
         case "replayid":
         case "replayId": return target.getReplayId();
+        case "replaypreset":
+        case "replayPreset": return target.getConfiguration().getReplayPreset();
         case "reportid":
         case "reportId": return target.getConfiguration().getReportId();
         case "reportmetadata":
@@ -322,6 +419,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": return target.getConfiguration().getSObjectQuery();
         case "sobjectsearch":
         case "sObjectSearch": return target.getConfiguration().getSObjectSearch();
+        case "streamqueryresult":
+        case "streamQueryResult": return target.getConfiguration().getStreamQueryResult();
         case "updatetopic":
         case "updateTopic": return target.getConfiguration().isUpdateTopic();
         default: return null;

@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VelocityTest extends CamelTestSupport {
 
     @Test
-    public void testVelocityLetter() throws Exception {
+    public void testVelocityLetter() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Monday");
                 exchange.getIn().setHeader("name", "Christian");
                 exchange.setProperty("item", "7");
@@ -46,10 +46,10 @@ public class VelocityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testVelocityContext() throws Exception {
+    public void testVelocityContext() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader("name", "Christian");
                 Map<String, Object> variableMap = new HashMap<>();

@@ -26,6 +26,7 @@ public class LoopExceptionTest extends ContextTestSupport {
     public void testLoopException() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:loop").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 

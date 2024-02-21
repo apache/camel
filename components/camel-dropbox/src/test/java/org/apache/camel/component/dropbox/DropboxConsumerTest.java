@@ -31,10 +31,18 @@ public class DropboxConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("dropbox://get?accessToken=accessToken&remotePath=/path").to("mock:test1");
+            public void configure() {
+                from("dropbox://get?accessToken=accessToken" +
+                     "&expireIn=1000" +
+                     "&refreshToken=refreshToken" +
+                     "&apiKey=apiKey&apiSecret=apiSecret" +
+                     "&remotePath=/path").to("mock:test1");
 
-                from("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file").to("mock:test2");
+                from("dropbox://get?accessToken=accessToken" +
+                     "&expireIn=1000" +
+                     "&refreshToken=refreshToken" +
+                     "&apiKey=apiKey&apiSecret=apiSecret" +
+                     "&remotePath=/path with spaces/file").to("mock:test2");
             }
         };
     }
@@ -42,7 +50,11 @@ public class DropboxConsumerTest extends CamelTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        Endpoint dropboxEndpoint1 = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path");
+        Endpoint dropboxEndpoint1 = context.getEndpoint("dropbox://get?accessToken=accessToken" +
+                                                        "&expireIn=1000" +
+                                                        "&refreshToken=refreshToken" +
+                                                        "&apiKey=apiKey&apiSecret=apiSecret" +
+                                                        "&remotePath=/path");
 
         // When
         Consumer consumer1 = dropboxEndpoint1.createConsumer(null);
@@ -52,7 +64,11 @@ public class DropboxConsumerTest extends CamelTestSupport {
 
         // Given
         Endpoint dropboxEndpoint2
-                = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file");
+                = context.getEndpoint("dropbox://get?accessToken=accessToken" +
+                                      "&expireIn=1000" +
+                                      "&refreshToken=refreshToken" +
+                                      "&apiKey=apiKey&apiSecret=apiSecret" +
+                                      "&remotePath=/path with spaces/file");
 
         // When
         Consumer consumer2 = dropboxEndpoint2.createConsumer(null);

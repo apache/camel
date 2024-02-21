@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.cassandra.services;
 
 import org.apache.camel.test.infra.cassandra.common.CassandraProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,24 @@ import org.testcontainers.containers.CassandraContainer;
 public class CassandraLocalContainerService implements CassandraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerService.class);
 
-    private CassandraContainer container;
+    private final CassandraContainer container;
 
     public CassandraLocalContainerService() {
-        container = new CassandraContainer();
+        this(LocalPropertyResolver.getProperty(
+                CassandraLocalContainerService.class,
+                CassandraProperties.CASSANDRA_CONTAINER));
+    }
+
+    public CassandraLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public CassandraLocalContainerService(CassandraContainer container) {
+        this.container = container;
+    }
+
+    protected CassandraContainer initContainer(String imageName) {
+        return new CassandraContainer(imageName);
     }
 
     @Override

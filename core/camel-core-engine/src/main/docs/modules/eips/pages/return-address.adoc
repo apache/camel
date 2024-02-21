@@ -1,58 +1,72 @@
 = Return Address
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
 Address] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by using the `JMSReplyTo` header.
+patterns].
+
+How does a replier know where to send the reply?
 
 image::eip/ReturnAddressSolution.gif[image]
 
-For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
-by default return to the address given in `JMSReplyTo`.
+The request message should contain a Return Address that indicates where to send the reply message.
 
-*Requestor Code*
+Camel supports Return Address by messaging xref:ROOT:index.adoc[Components]
+that provides this functionality such as the xref:ROOT:jms-component.adoc[JMS]
+component via the `JMSReplyTo` header.
 
+== Example
+
+In the example below we send a message to the JMS cheese queue using `InOut` mode, this means
+that Camel will automatically configure the `JMSReplyTo` header with a temporary queue as the Return Address.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-getMockEndpoint("queue:bar").expectedBodiesReceived("Bye World");
-
-template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
+from("direct:foo")
+  .to(ExchangePattern.InOut, "jms:queue:cheese");
 ----
 
-*Route Using the Fluent Builders*
-
-[source,java]
-----
-from("direct:start").to("activemq:queue:foo?preserveMessageQos=true");
-
-from("activemq:queue:foo").transform(body().prepend("Bye "));
-
-from("activemq:queue:bar?disableReplyTo=true").to("mock:bar");
-----
-
-*Route Using the Spring XML Extensions*
-
+XML::
++
 [source,xml]
 ----
 <route>
-  <from uri="direct:start"/>
-  <to uri="activemq:queue:foo?preserveMessageQos=true"/>
-</route>
-
-<route>
-  <from uri="activemq:queue:foo"/>
-  <transform>
-      <simple>Bye ${in.body}</simple>
-  </transform>
-</route>
-
-<route>
-  <from uri="activemq:queue:bar?disableReplyTo=true"/>
-  <to uri="mock:bar"/>
+    <from uri="direct:foo"/>
+    <to pattern="InOut" uri="jms:queue:cheese"/>
 </route>
 ----
+====
 
-For a complete example of this pattern, see this
-https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/JmsInOnlyWithReplyToAsHeaderTest.java[junit
-test case]
+You can also specify a named reply queue with the `replyTo` option (instead of a temporary queue).
+When doing so then `InOut` mode is implied:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:foo")
+  .to("jms:queue:cheese?replyTo=myReplyQueue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:foo"/>
+    <to uri="jms:queue:cheese?replyTo=myReplyQueue"/>
+</route>
+----
+====
+
+== See Also
+
+See the related xref:requestReply-eip.adoc[Request Reply] EIP.
 

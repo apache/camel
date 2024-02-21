@@ -19,6 +19,7 @@ package org.apache.camel.component.scp;
 import java.net.URI;
 
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -33,6 +34,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
     @UriParam(label = "security", secret = true)
+    @Metadata(supportFileReference = true)
     private String knownHostsFile;
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
@@ -41,10 +43,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", secret = true)
     private String privateKeyFilePassphrase;
     @UriParam(enums = "no,yes", defaultValue = "no")
-    private String strictHostKeyChecking;
+    private String strictHostKeyChecking = "no";
     @UriParam(defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
-    // comma separated list of ciphers. 
+    // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security,advanced")
     private String ciphers;

@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for CAMEL-1249
  */
 public class MailUsingOwnComponentTest extends CamelTestSupport {
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -36,10 +39,10 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
 
         MailConfiguration config = new MailConfiguration();
         config.configureProtocol("smtp");
-        config.setUsername("james");
+        config.setUsername(james.getLogin());
         config.setHost("localhost");
-        config.setPort(25);
-        config.setPassword("admin");
+        config.setPort(Mailbox.getPort(Protocol.smtp));
+        config.setPassword(james.getPassword());
         config.setIgnoreUriScheme(true);
 
         MailComponent myMailbox = new MailComponent();
@@ -54,11 +57,11 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
     public void testUsingOwnMailComponent() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("mailbox:foo", "Hello Mailbox", "to", "davsclaus@apache.org");
+        template.sendBodyAndHeader("mailbox:localhost", "Hello Mailbox", "to", davsclaus.getEmail());
 
-        Mailbox box = Mailbox.get("davsclaus@apache.org");
+        Mailbox box = davsclaus.getInbox();
         Message msg = box.get(0);
-        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(davsclaus.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
     }
 
 }

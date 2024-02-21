@@ -18,16 +18,19 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,9 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
  */
-public class JmsRouteToFileTest extends CamelTestSupport {
+public class JmsRouteToFileTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testRouteToFile() throws Exception {
@@ -46,7 +55,7 @@ public class JmsRouteToFileTest extends CamelTestSupport {
 
         deleteDirectory("target/routetofile");
 
-        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:JmsRouteToFileTest", "Hello World");
 
         // pause to let file producer save the file
         result.assertIsSatisfied();
@@ -61,23 +70,30 @@ public class JmsRouteToFileTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // using mock endpoint here purely for testing. You would normally write this route as
                 // from("activemq:queue:hello").to("file://target/routetofile");
-                from("activemq:queue:hello").to("file://target/routetofile").to("mock:result");
+                from("activemq:queue:JmsRouteToFileTest").to("file://target/routetofile").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

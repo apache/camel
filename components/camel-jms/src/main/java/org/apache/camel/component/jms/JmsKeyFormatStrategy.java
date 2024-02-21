@@ -22,7 +22,7 @@ package org.apache.camel.component.jms;
 public interface JmsKeyFormatStrategy {
 
     /**
-     * Encodes the key before its sent as a {@link javax.jms.Message} message.
+     * Encodes the key before its sent as a {@link jakarta.jms.Message} message.
      *
      * @param  key the original key
      * @return     the encoded key
@@ -30,7 +30,7 @@ public interface JmsKeyFormatStrategy {
     String encodeKey(String key);
 
     /**
-     * Decodes the key after its received from a {@link javax.jms.Message} message.
+     * Decodes the key after its received from a {@link jakarta.jms.Message} message.
      *
      * @param  key the encoded key
      * @return     the decoded key as the original key

@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Body;
@@ -55,7 +56,7 @@ public class SplitterPojoTest extends ContextTestSupport {
 
     @Test
     public void testSplitMessageWithPojoBean() throws Exception {
-        String users[] = { "James", "Jonathan", "Hadrian", "Claus", "Willem" };
+        String[] users = { "James", "Jonathan", "Hadrian", "Claus", "Willem" };
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mock.expectedMessageCount(5);
@@ -89,13 +90,13 @@ public class SplitterPojoTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e2
-    public class MySplitterBean {
+    public static class MySplitterBean {
 
         /**
          * The split body method returns something that is iteratable such as a java.util.List.
          *
          * @param  body the payload of the incoming message
-         * @return      a list containing each part splitted
+         * @return      a list containing each part split
          */
         public List<String> splitBody(String body) {
             // since this is based on an unit test you can of cause
@@ -103,11 +104,8 @@ public class SplitterPojoTest extends ContextTestSupport {
             // of the box support for splitting a String based on comma
             // but this is for show and tell, since this is java code
             // you have the full power how you like to split your messages
-            List<String> answer = new ArrayList<>();
             String[] parts = body.split(",");
-            for (String part : parts) {
-                answer.add(part);
-            }
+            List<String> answer = new ArrayList<>(Arrays.asList(parts));
             return answer;
         }
 
@@ -116,7 +114,7 @@ public class SplitterPojoTest extends ContextTestSupport {
          *
          * @param  header the header of the incoming message with the name user
          * @param  body   the payload of the incoming message
-         * @return        a list containing each part splitted
+         * @return        a list containing each part split
          */
         public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations

@@ -29,7 +29,7 @@ public class MyPersonService {
         person.setFirstName("Homer");
         person.setLastName("Simpson");
 
-        exchange.getOut().setBody(person);
+        exchange.getMessage().setBody(person);
     }
 
     public void sendPerson(Exchange exchange) {

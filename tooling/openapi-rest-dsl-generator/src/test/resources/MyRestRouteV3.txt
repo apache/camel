@@ -1,6 +1,6 @@
 package com.example;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -17,6 +17,7 @@ public final class MyRestRoute extends RouteBuilder {
 	 * Defines Apache Camel routes using REST DSL fluent API.
 	 */
 	public void configure() {
+
 		rest("/api/v3")
 			.put("/pet")
 				.id("updatePet")
@@ -45,7 +46,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Pet object that needs to be added to the store")
 				.endParam()
-				.to("direct:rest-addPet")
+				.to("direct:rest-addPet");
+
+		rest("/api/v3")
 			.get("/pet/findByStatus")
 				.id("findPetsByStatus")
 				.description("Multiple status values can be provided with comma separated strings")
@@ -59,7 +62,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Status values that need to be considered for filter")
 				.endParam()
-				.to("direct:rest-findPetsByStatus")
+				.to("direct:rest-findPetsByStatus");
+
+		rest("/api/v3")
 			.get("/pet/findByTags")
 				.id("findPetsByTags")
 				.description("Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
@@ -73,7 +78,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Tags to filter by")
 				.endParam()
-				.to("direct:rest-findPetsByTags")
+				.to("direct:rest-findPetsByTags");
+
+		rest("/api/v3")
 			.get("/pet/{petId}")
 				.id("getPetById")
 				.description("Returns a single pet")
@@ -126,7 +133,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Pet id to delete")
 				.endParam()
-				.to("direct:rest-deletePet")
+				.to("direct:rest-deletePet");
+
+		rest("/api/v3")
 			.post("/pet/{petId}/uploadImage")
 				.id("uploadFile")
 				.consumes("multipart/form-data")
@@ -152,12 +161,16 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("file to upload")
 				.endParam()
-				.to("direct:rest-uploadFile")
+				.to("direct:rest-uploadFile");
+
+		rest("/api/v3")
 			.get("/store/inventory")
 				.id("getInventory")
 				.description("Returns a map of status codes to quantities")
 				.produces("application/json")
-				.to("direct:rest-getInventory")
+				.to("direct:rest-getInventory");
+
+		rest("/api/v3")
 			.post("/store/order")
 				.id("placeOrder")
 				.consumes("*/*")
@@ -168,7 +181,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("order placed for purchasing the pet")
 				.endParam()
-				.to("direct:rest-placeOrder")
+				.to("direct:rest-placeOrder");
+
+		rest("/api/v3")
 			.get("/store/order/{orderId}")
 				.id("getOrderById")
 				.description("For valid response try integer IDs with value >= 1 and <= 10. Other values will generated exceptions")
@@ -191,7 +206,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("ID of the order that needs to be deleted")
 				.endParam()
-				.to("direct:rest-deleteOrder")
+				.to("direct:rest-deleteOrder");
+
+		rest("/api/v3")
 			.post("/user")
 				.id("createUser")
 				.description("This can only be done by the logged in user.")
@@ -202,7 +219,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Created user object")
 				.endParam()
-				.to("direct:rest-createUser")
+				.to("direct:rest-createUser");
+
+		rest("/api/v3")
 			.post("/user/createWithArray")
 				.id("createUsersWithArrayInput")
 				.consumes("*/*")
@@ -212,7 +231,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("List of user object")
 				.endParam()
-				.to("direct:rest-createUsersWithArrayInput")
+				.to("direct:rest-createUsersWithArrayInput");
+
+		rest("/api/v3")
 			.post("/user/createWithList")
 				.id("createUsersWithListInput")
 				.consumes("*/*")
@@ -222,7 +243,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("List of user object")
 				.endParam()
-				.to("direct:rest-createUsersWithListInput")
+				.to("direct:rest-createUsersWithListInput");
+
+		rest("/api/v3")
 			.get("/user/login")
 				.id("loginUser")
 				.produces("application/xml,application/json")
@@ -240,10 +263,14 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("The password for login in clear text")
 				.endParam()
-				.to("direct:rest-loginUser")
+				.to("direct:rest-loginUser");
+
+		rest("/api/v3")
 			.get("/user/logout")
 				.id("logoutUser")
-				.to("direct:rest-logoutUser")
+				.to("direct:rest-logoutUser");
+
+		rest("/api/v3")
 			.get("/user/{username}")
 				.id("getUserByName")
 				.produces("application/xml,application/json")
@@ -284,5 +311,6 @@ public final class MyRestRoute extends RouteBuilder {
 					.description("The name that needs to be deleted")
 				.endParam()
 				.to("direct:rest-deleteUser");
+
 	}
 }

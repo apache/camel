@@ -24,7 +24,7 @@ import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 
 /**
  * Common interface for services performing CRUD operations
- * 
+ *
  * @param <T> model type
  * @param <S> {@link SearchCriteria} used for this model
  */

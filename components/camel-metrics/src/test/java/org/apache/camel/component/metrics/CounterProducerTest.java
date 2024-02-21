@@ -66,7 +66,7 @@ public class CounterProducerTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         producer = new CounterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, counter, in);
         lenient().when(registry.counter(METRICS_NAME)).thenReturn(counter);
@@ -74,7 +74,7 @@ public class CounterProducerTest {
     }
 
     @Test
-    public void testCounterProducer() throws Exception {
+    public void testCounterProducer() {
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
 

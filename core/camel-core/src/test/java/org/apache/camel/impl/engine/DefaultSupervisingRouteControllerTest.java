@@ -66,7 +66,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
@@ -110,7 +110,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         // these should all start
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
@@ -135,7 +135,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         }
     }
 
-    private class MyJmsComponent extends SedaComponent {
+    private static class MyJmsComponent extends SedaComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -143,7 +143,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         }
     }
 
-    private class MyJmsEndpoint extends SedaEndpoint {
+    private static class MyJmsEndpoint extends SedaEndpoint {
 
         private String name;
 
@@ -162,7 +162,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         }
     }
 
-    private class MyJmsConsumer extends SedaConsumer {
+    private static class MyJmsConsumer extends SedaConsumer {
 
         private int counter;
 

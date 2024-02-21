@@ -16,34 +16,41 @@
  */
 package org.apache.camel.opentelemetry;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class TwoServiceTest extends CamelOpenTelemetryTestSupport {
+class TwoServiceTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("ServiceB")
                     .setParentId(1),
+            new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("ServiceB")
+                    .setParentId(2)
+                    .setKind(SpanKind.CLIENT),
             new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setParentId(3),
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setKind(SpanKind.CLIENT)
     };
 
-    public TwoServiceTest() {
+    TwoServiceTest() {
         super(testdata);
     }
 
     @Test
-    public void testRoute() throws Exception {
+    void testRoute() {
         template.requestBody("direct:ServiceA", "Hello");
 
         verify();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:ServiceA")
                         .log("ServiceA has been called")
                         .delay(simple("${random(1000,2000)}"))

@@ -20,13 +20,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 
 /**
  * URI utilities.
@@ -37,11 +43,15 @@ public final class URISupport {
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
 
+    // Java 17 text blocks have new lines with optional white space
+    private static final String TEXT_BLOCK_MARKER = System.lineSeparator();
+    private static final Pattern TEXT_BLOCK_PATTERN = Pattern.compile("\n\\s*");
+
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile(
-            "([?&][^=]*(?:passphrase|password|secretKey|accessToken|clientSecret|authorizationToken|saslJaasConfig)[^=]*)=(RAW[({].*[)}]|[^&]*)",
+    private static final Pattern ALL_SECRETS = Pattern.compile(
+            "([?&][^=]*(?:" + SensitiveUtils.getSensitivePattern() + ")[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)",
             Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
@@ -54,7 +64,9 @@ public final class URISupport {
     // form "user:password").
     private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*?:)(.*)(@)");
 
-    private static final String CHARSET = "UTF-8";
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    private static final String EMPTY_QUERY_STRING = "";
 
     private URISupport() {
         // Helper class
@@ -64,18 +76,27 @@ public final class URISupport {
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
      * @param  uri The uri to sanitize.
-     * @see        #SECRETS and #USERINFO_PASSWORD for the matched pattern
      * @return     Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
      *             sanitized.
+     * @see        #ALL_SECRETS and #USERINFO_PASSWORD for the matched pattern
      */
     public static String sanitizeUri(String uri) {
         // use xxxxx as replacement as that works well with JMX also
         String sanitized = uri;
         if (uri != null) {
-            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=xxxxxx");
+            sanitized = ALL_SECRETS.matcher(sanitized).replaceAll("$1=xxxxxx");
             sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;
+    }
+
+    public static String textBlockToSingleLine(String uri) {
+        // text blocks
+        if (uri != null && uri.contains(TEXT_BLOCK_MARKER)) {
+            uri = TEXT_BLOCK_PATTERN.matcher(uri).replaceAll("");
+            uri = uri.trim();
+        }
+        return uri;
     }
 
     /**
@@ -107,12 +128,8 @@ public final class URISupport {
         if (path.startsWith("//")) {
             path = path.substring(2);
         }
-        int idx = path.indexOf('?');
-        if (idx > -1) {
-            path = path.substring(0, idx);
-        }
 
-        return path;
+        return StringHelper.before(path, "?", path);
     }
 
     /**
@@ -125,12 +142,18 @@ public final class URISupport {
         if (uri == null) {
             return null;
         }
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            return uri.substring(pos + 1);
-        } else {
-            return null;
-        }
+
+        return StringHelper.after(uri, "?");
+    }
+
+    /**
+     * Strips the query parameters from the uri
+     *
+     * @param  uri the uri
+     * @return     the uri without the query parameter
+     */
+    public static String stripQuery(String uri) {
+        return StringHelper.before(uri, "?", uri);
     }
 
     /**
@@ -190,7 +213,7 @@ public final class URISupport {
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
         if (uri == null || uri.isEmpty()) {
             // return an empty map
-            return new LinkedHashMap<>(0);
+            return Collections.emptyMap();
         }
 
         // must check for trailing & as the uri.split("&") will ignore those
@@ -272,12 +295,7 @@ public final class URISupport {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
-            int idx = schemeSpecificPart.indexOf('?');
-            if (idx < 0) {
-                return null;
-            } else {
-                query = schemeSpecificPart.substring(idx + 1);
-            }
+            query = StringHelper.after(schemeSpecificPart, "?");
         } else if (query.indexOf('?') == 0) {
             // skip leading query
             query = query.substring(1);
@@ -296,7 +314,6 @@ public final class URISupport {
      * @see              #RAW_TOKEN_START
      * @see              #RAW_TOKEN_END
      */
-    @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getValue() == null) {
@@ -315,14 +332,20 @@ public final class URISupport {
                     String raw = URIScanner.resolveRaw(str);
                     if (raw != null) {
                         // update the string in the list
-                        list.set(i, raw);
+                        // do not encode RAW parameters unless it has %
+                        // need to reverse: replace % with %25 to avoid losing "%" when decoding
+                        String s = raw.replace("%25", "%");
+                        list.set(i, s);
                     }
                 }
             } else {
                 String str = entry.getValue().toString();
                 String raw = URIScanner.resolveRaw(str);
                 if (raw != null) {
-                    entry.setValue(raw);
+                    // do not encode RAW parameters unless it has %
+                    // need to reverse: replace % with %25 to avoid losing "%" when decoding
+                    String s = raw.replace("%25", "%");
+                    entry.setValue(s);
                 }
             }
         }
@@ -352,7 +375,7 @@ public final class URISupport {
         if (query != null) {
             s = s + "?" + query;
         }
-        if ((!s.contains("#")) && (uri.getFragment() != null)) {
+        if (!s.contains("#") && uri.getFragment() != null) {
             s = s + "#" + uri.getFragment();
         }
 
@@ -404,80 +427,107 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param  options            the map with the options (eg key/value pairs)
-     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     *                            is no options.
-     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @param  options the map with the options (eg key/value pairs)
+     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
+     *                 options.
      */
-    @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
-        return createQueryString(options.keySet(), options, true);
+    public static String createQueryString(Map<String, Object> options) {
+        final Set<String> keySet = options.keySet();
+        return createQueryString(keySet.toArray(new String[0]), options, true);
+    }
+
+    /**
+     * Assembles a query from the given map.
+     *
+     * @param  options the map with the options (eg key/value pairs)
+     * @param  encode  whether to URL encode the query string
+     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
+     *                 options.
+     */
+    public static String createQueryString(Map<String, Object> options, boolean encode) {
+        return createQueryString(options.keySet(), options, encode);
+    }
+
+    private static String createQueryString(String[] sortedKeys, Map<String, Object> options, boolean encode) {
+        if (options.isEmpty()) {
+            return EMPTY_QUERY_STRING;
+        }
+
+        StringBuilder rc = new StringBuilder(128);
+        boolean first = true;
+        for (String key : sortedKeys) {
+            if (first) {
+                first = false;
+            } else {
+                rc.append("&");
+            }
+
+            Object value = options.get(key);
+
+            // the value may be a list since the same key has multiple
+            // values
+            if (value instanceof List) {
+                List<String> list = (List<String>) value;
+                for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                    String s = it.next();
+                    appendQueryStringParameter(key, s, rc, encode);
+                    // append & separator if there is more in the list
+                    // to append
+                    if (it.hasNext()) {
+                        rc.append("&");
+                    }
+                }
+            } else {
+                // use the value as a String
+                String s = value != null ? value.toString() : null;
+                appendQueryStringParameter(key, s, rc, encode);
+            }
+        }
+        return rc.toString();
     }
 
     /**
      * Assembles a query from the given map.
      *
      * @param  options            the map with the options (eg key/value pairs)
-     * @param  encode             whether to URL encode the query string
+     * @param  ampersand          to use & for Java code, and &amp; for XML
      * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
      *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<String, Object> options, boolean encode) throws URISyntaxException {
-        return createQueryString(options.keySet(), options, encode);
-    }
-
-    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode)
-            throws URISyntaxException {
-        try {
-            if (options.size() > 0) {
-                StringBuilder rc = new StringBuilder();
-                boolean first = true;
-                for (Object o : sortedKeys) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        rc.append("&");
-                    }
-
-                    String key = (String) o;
-                    Object value = options.get(key);
-
-                    // the value may be a list since the same key has multiple
-                    // values
-                    if (value instanceof List) {
-                        List<String> list = (List<String>) value;
-                        for (Iterator<String> it = list.iterator(); it.hasNext();) {
-                            String s = it.next();
-                            appendQueryStringParameter(key, s, rc, encode);
-                            // append & separator if there is more in the list
-                            // to append
-                            if (it.hasNext()) {
-                                rc.append("&");
-                            }
-                        }
-                    } else {
-                        // use the value as a String
-                        String s = value != null ? value.toString() : null;
-                        appendQueryStringParameter(key, s, rc, encode);
-                    }
+    @Deprecated
+    public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) {
+        if (!options.isEmpty()) {
+            StringBuilder rc = new StringBuilder();
+            boolean first = true;
+            for (String key : options.keySet()) {
+                if (first) {
+                    first = false;
+                } else {
+                    rc.append(ampersand);
                 }
-                return rc.toString();
-            } else {
-                return "";
+
+                Object value = options.get(key);
+
+                // use the value as a String
+                String s = value != null ? value.toString() : null;
+                appendQueryStringParameter(key, s, rc, encode);
             }
-        } catch (UnsupportedEncodingException e) {
-            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
-            se.initCause(e);
-            throw se;
+            return rc.toString();
+        } else {
+            return "";
         }
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
-            throws UnsupportedEncodingException {
+    @Deprecated
+    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
+        return createQueryString(sortedKeys.toArray(new String[0]), options, encode);
+    }
+
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) {
         if (encode) {
-            rc.append(URLEncoder.encode(key, CHARSET));
+            String encoded = URLEncoder.encode(key, CHARSET);
+            rc.append(encoded);
         } else {
             rc.append(key);
         }
@@ -490,11 +540,12 @@ public final class URISupport {
         if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = StringHelper.replaceAll(value, "%", "%25");
+            final String s = URIScanner.replacePercent(value);
             rc.append(s);
         } else {
             if (encode) {
-                rc.append(URLEncoder.encode(value, CHARSET));
+                String encoded = URLEncoder.encode(value, CHARSET);
+                rc.append(encoded);
             } else {
                 rc.append(value);
             }
@@ -508,7 +559,7 @@ public final class URISupport {
      */
     public static URI createRemainingURI(URI originalURI, Map<String, Object> params) throws URISyntaxException {
         String s = createQueryString(params);
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             s = null;
         }
         return createURIWithQuery(originalURI, s);
@@ -527,7 +578,7 @@ public final class URISupport {
      * @throws UnsupportedEncodingException is thrown if encoding error
      */
     public static String appendParametersToURI(String originalURI, Map<String, Object> newParameters)
-            throws URISyntaxException, UnsupportedEncodingException {
+            throws URISyntaxException {
         URI uri = new URI(normalizeUri(originalURI));
         Map<String, Object> parameters = parseParameters(uri);
         parameters.putAll(newParameters);
@@ -542,18 +593,22 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param  uri                          the uri
-     * @return                              the normalized uri
-     * @throws URISyntaxException           in thrown if the uri syntax is invalid
-     * @throws UnsupportedEncodingException is thrown if encoding error
-     * @see                                 #RAW_TOKEN_PREFIX
-     * @see                                 #RAW_TOKEN_START
-     * @see                                 #RAW_TOKEN_END
+     * @param  uri                the uri
+     * @return                    the normalized uri
+     * @throws URISyntaxException in thrown if the uri syntax is invalid
+     *
+     * @see                       #RAW_TOKEN_PREFIX
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
-    public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
+    public static String normalizeUri(String uri) throws URISyntaxException {
         // try to parse using the simpler and faster Camel URI parser
-        String[] parts = CamelURIParser.parseUri(uri);
+        String[] parts = CamelURIParser.fastParseUri(uri);
         if (parts != null) {
+            // we optimized specially if an empty array is returned
+            if (parts == URI_ALREADY_NORMALIZED) {
+                return uri;
+            }
             // use the faster and more simple normalizer
             return doFastNormalizeUri(parts);
         } else {
@@ -563,10 +618,26 @@ public final class URISupport {
     }
 
     /**
+     * Normalizes the URI so unsafe characters are encoded
+     *
+     * @param  uri                the input uri
+     * @return                    as URI instance
+     * @throws URISyntaxException is thrown if syntax error in the input uri
+     */
+    public static URI normalizeUriAsURI(String uri) throws URISyntaxException {
+        // java 17 text blocks to single line uri
+        uri = URISupport.textBlockToSingleLine(uri);
+        return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+    }
+
+    /**
      * The complex (and Camel 2.x) compatible URI normalizer when the URI is more complex such as having percent encoded
      * values, or other unsafe URL characters, or have authority user/password, etc.
      */
     private static String doComplexNormalizeUri(String uri) throws URISyntaxException {
+        // java 17 text blocks to single line uri
+        uri = URISupport.textBlockToSingleLine(uri);
+
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String scheme = u.getScheme();
         String path = u.getSchemeSpecificPart();
@@ -609,7 +680,7 @@ public final class URISupport {
             String after = path.substring(max);
 
             // replace the @ with %40
-            before = StringHelper.replaceAll(before, "@", "%40");
+            before = before.replace("@", "%40");
             path = before + after;
         }
 
@@ -626,11 +697,12 @@ public final class URISupport {
                 return buildUri(scheme, path, query);
             } else {
                 // reorder parameters a..z
-                List<String> keys = new ArrayList<>(parameters.keySet());
-                keys.sort(null);
+                final Set<String> keySet = parameters.keySet();
+                final String[] parametersArray = keySet.toArray(new String[0]);
+                Arrays.sort(parametersArray);
 
                 // build uri object with sorted parameters
-                query = URISupport.createQueryString(keys, parameters, true);
+                query = URISupport.createQueryString(parametersArray, parameters, true);
                 return buildUri(scheme, path, query);
             }
         }
@@ -650,39 +722,46 @@ public final class URISupport {
             // no parameters then just return
             return buildUri(scheme, path, null);
         } else {
-            Map<String, Object> parameters = null;
-            if (query.indexOf('&') != -1) {
-                // only parse if there is parameters
-                parameters = URISupport.parseQuery(query, false, false);
-            }
-            if (parameters == null || parameters.size() == 1) {
-                return buildUri(scheme, path, query);
-            } else {
-                // reorder parameters a..z
-                // optimize and only build new query if the keys was resorted
-                boolean sort = false;
-                String prev = null;
-                for (String key : parameters.keySet()) {
-                    if (prev == null) {
-                        prev = key;
-                    } else {
-                        int comp = key.compareTo(prev);
-                        if (comp < 0) {
-                            sort = true;
-                            break;
-                        }
-                        prev = key;
-                    }
-                }
-                if (sort) {
-                    List<String> keys = new ArrayList<>(parameters.keySet());
-                    keys.sort(null);
-                    // rebuild query with sorted parameters
-                    query = URISupport.createQueryString(keys, parameters, true);
-                }
+            return buildReorderingParameters(scheme, path, query);
+        }
+    }
 
-                return buildUri(scheme, path, query);
+    private static String buildReorderingParameters(String scheme, String path, String query) throws URISyntaxException {
+        Map<String, Object> parameters = null;
+        if (query.indexOf('&') != -1) {
+            // only parse if there are parameters
+            parameters = URISupport.parseQuery(query, false, false);
+        }
+
+        if (parameters == null || parameters.size() == 1) {
+            return buildUri(scheme, path, query);
+        } else {
+            final Set<String> entries = parameters.keySet();
+
+            // reorder parameters a..z
+            // optimize and only build new query if the keys was resorted
+            boolean sort = false;
+            String prev = null;
+            for (String key : entries) {
+                if (prev == null) {
+                    prev = key;
+                } else {
+                    int comp = key.compareTo(prev);
+                    if (comp < 0) {
+                        sort = true;
+                        break;
+                    }
+                    prev = key;
+                }
             }
+            if (sort) {
+                final String[] array = entries.toArray(new String[entries.size()]);
+                Arrays.sort(array);
+
+                query = URISupport.createQueryString(array, parameters, true);
+            }
+
+            return buildUri(scheme, path, query);
         }
     }
 
@@ -716,6 +795,49 @@ public final class URISupport {
         }
 
         return rc;
+    }
+
+    private static String makeUri(String uriWithoutQuery, String query) {
+        int len = uriWithoutQuery.length();
+        if (query != null) {
+            len += 1 + query.length();
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(uriWithoutQuery).append('?').append(query);
+            return sb.toString();
+        } else {
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(uriWithoutQuery);
+            return sb.toString();
+        }
+    }
+
+    public static String getDecodeQuery(final String uri) {
+        try {
+            URI u = new URI(uri);
+            String query = URISupport.prepareQuery(u);
+            String uriWithoutQuery = URISupport.stripQuery(uri);
+            if (query == null) {
+                return uriWithoutQuery;
+            } else {
+                Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
+                if (parameters.size() == 1) {
+                    // only 1 parameter need to create new query string
+                    query = URISupport.createQueryString(parameters);
+                    return makeUri(uriWithoutQuery, query);
+                } else {
+                    // reorder parameters a..z
+                    final Set<String> keySet = parameters.keySet();
+                    final String[] parametersArray = keySet.toArray(new String[0]);
+                    Arrays.sort(parametersArray);
+
+                    // build uri object with sorted parameters
+                    query = URISupport.createQueryString(parametersArray, parameters, true);
+                    return makeUri(uriWithoutQuery, query);
+                }
+            }
+        } catch (URISyntaxException ex) {
+            return null;
+        }
     }
 
     public static String pathAndQueryOf(final URI uri) {
@@ -765,4 +887,36 @@ public final class URISupport {
 
         return joined.toString();
     }
+
+    public static String buildMultiValueQuery(String key, Iterable<Object> values) {
+        StringBuilder sb = new StringBuilder();
+        for (Object v : values) {
+            if (!sb.isEmpty()) {
+                sb.append("&");
+            }
+            sb.append(key);
+            sb.append("=");
+            sb.append(v);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Remove white-space noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to
+     * format their Camel routes in more human-readable format, but at runtime those attributes must be trimmed. The
+     * parser removes most of the noise, but keeps spaces in the attribute values
+     */
+    public static String removeNoiseFromUri(String uri) {
+        String before = StringHelper.before(uri, "?");
+        String after = StringHelper.after(uri, "?");
+
+        if (before != null && after != null) {
+            String changed = after.replaceAll("&\\s+", "&").trim();
+            if (!after.equals(changed)) {
+                return before.trim() + "?" + changed;
+            }
+        }
+        return uri;
+    }
+
 }

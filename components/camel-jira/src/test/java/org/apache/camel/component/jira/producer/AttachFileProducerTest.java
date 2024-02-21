@@ -142,14 +142,17 @@ public class AttachFileProducerTest extends CamelTestSupport {
 
     @Test
     public void verifyAttachment() throws InterruptedException, IOException {
+        mockResult.expectedMessageCount(1);
+
         template.sendBody(generateSampleFile());
+
+        mockResult.assertIsSatisfied();
+
         Issue retrievedIssue = issueRestClient.getIssue(issue.getKey()).claim();
         assertEquals(issue, retrievedIssue);
         // there is only one attachment
         Attachment attachFile = retrievedIssue.getAttachments().iterator().next();
         assertEquals(attachFile.getFilename(), attachedFile.getName());
         assertEquals(attachFile.getSize(), attachedFile.length());
-        mockResult.expectedMessageCount(1);
-        mockResult.assertIsSatisfied();
     }
 }

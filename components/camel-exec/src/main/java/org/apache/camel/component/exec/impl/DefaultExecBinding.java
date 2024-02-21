@@ -18,7 +18,9 @@ package org.apache.camel.component.exec.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -31,11 +33,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.exec.impl.ExecParseUtils.splitCommaSeparatedToListOfInts;
 import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
 
 /**
  * Default implementation of {@link ExecBinding}.
- * 
+ *
  * @see DefaultExecBinding#writeOutputInMessage(Message, ExecResult)
  */
 public class DefaultExecBinding implements ExecBinding {
@@ -53,6 +56,8 @@ public class DefaultExecBinding implements ExecBinding {
         String cmd = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
         String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
+        String exitValuesString
+                = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXIT_VALUES, endpoint.getExitValues(), String.class);
         String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
         boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT,
                 endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
@@ -77,8 +82,14 @@ public class DefaultExecBinding implements ExecBinding {
             argsList = splitToWhiteSpaceSeparatedTokens(s);
         }
 
+        Set<Integer> exitValues = new HashSet<>();
+        if (exitValuesString != null && exitValuesString.length() > 0) {
+            exitValues = new HashSet<>(splitCommaSeparatedToListOfInts(exitValuesString));
+        }
+
         File outFile = outFilePath == null ? null : new File(outFilePath);
-        return new ExecCommand(cmd, argsList, dir, timeout, input, outFile, useStderrOnEmptyStdout, commandLogLevel);
+        return new ExecCommand(
+                cmd, argsList, dir, timeout, exitValues, input, outFile, useStderrOnEmptyStdout, commandLogLevel);
     }
 
     private boolean isListOfStrings(Object o) {
@@ -115,7 +126,7 @@ public class DefaultExecBinding implements ExecBinding {
      * Write the {@link ExecResult} in the message body. Write the stderr and the exit value for convenience in the
      * message headers. <br>
      * The stdout and/or resultFile should be accessible using a converter or using the result object directly.
-     * 
+     *
      * @param message a Camel message
      * @param result  an {@link ExecResult} instance
      */

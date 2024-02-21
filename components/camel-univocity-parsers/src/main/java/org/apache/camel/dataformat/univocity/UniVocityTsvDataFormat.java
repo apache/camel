@@ -28,7 +28,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 /**
  * This class is the data format that uses the TSV uniVocity parser.
  */
-@Dataformat("univocity-tsv")
+@Dataformat("univocityTsv")
 public class UniVocityTsvDataFormat
         extends
         AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
@@ -102,6 +102,6 @@ public class UniVocityTsvDataFormat
 
     @Override
     public String getDataFormatName() {
-        return "univocity-tsv";
+        return "univocityTsv";
     }
 }

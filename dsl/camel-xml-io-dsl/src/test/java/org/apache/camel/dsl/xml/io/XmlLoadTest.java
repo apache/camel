@@ -16,11 +16,12 @@
  */
 package org.apache.camel.dsl.xml.io;
 
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,11 +53,10 @@ public class XmlLoadTest {
 
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-            Resource resource = ecc.getResourceLoader().resolveResource(
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/barRoute.xml");
 
-            ecc.getRoutesLoader().loadRoutes(resource);
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             // END SNIPPET: e1
             assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
@@ -66,6 +66,56 @@ public class XmlLoadTest {
             MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
             bar.expectedBodiesReceived("Bye World");
             context.createProducerTemplate().sendBody("direct:bar", "Bye World");
+            bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadRoutesBuilderFromXmlNoNamespace() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            // load route from XML and add them to the existing camel context
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/bar2.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            assertNotNull(context.getRoute("bar2"), "Loaded bar2 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:bar2", MockEndpoint.class);
+            bar.expectedBodiesReceived("Hi World");
+            context.createProducerTemplate().sendBody("direct:bar2", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadRoutesAndConfig() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            // Load routeConfiguration from XML
+            Resource configResource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/routeConfig.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(configResource);
+            // load route from XML and add them to the existing camel context
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/routeWithRouteConfig.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            Route routewithConfig = context.getRoute("routeWithConfig");
+            assertNotNull(routewithConfig, "Loaded routeWithConfig route should be there");
+            assertEquals(1, routewithConfig.getOnExceptions().size(), "Loaded route should have onException");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:afterException", MockEndpoint.class);
+            bar.expectedBodiesReceived("Hi World");
+            context.createProducerTemplate().sendBody("direct:throwException", "Hi World");
             bar.assertIsSatisfied();
         }
     }

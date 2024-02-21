@@ -26,9 +26,10 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="aggregatorStrategy" completionSize="3"
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="3"
                        completionTimeout="200" completionTimeoutCheckerInterval="10" discardOnCompletionTimeout="true">
                 <correlationExpression>
                     <simple>header.id</simple>

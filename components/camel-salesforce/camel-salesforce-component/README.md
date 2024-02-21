@@ -1,71 +1,7 @@
 # Camel Salesforce component #
 
 This component supports producer and consumer endpoints to communicate with Salesforce using Java DTOs. 
-There is a companion maven plugin [camel-salesforce-plugin](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin) that generates these DTOs. 
-
-The component supports the following Salesforce APIs
-
-## REST API ##
-
-Producer endpoints can use the following APIs. Most of the APIs process one record at a time, the Query API can retrieve multiple Records. 
-
-* getVersions - Gets supported Salesforce REST API versions
-* getResources - Gets available Salesforce REST Resource endpoints
-* getGlobalObjects - Gets metadata for all available SObject types
-* getBasicInfo - Gets basic metadata for a specific SObject type
-* getDescription - Gets comprehensive metadata for a specific SObject type
-* getSObject - Gets an SObject using its Salesforce Id
-* createSObject - Creates an SObject
-* updateSObject - Updates an SObject using Id
-* deleteSObject - Deletes an SObject using Id
-* getSObjectWithId - Gets an SObject using an external (user defined) id field
-* upsertSObject - Updates or inserts an SObject using an external id
-* deleteSObjectWithId - Deletes an SObject using an external id
-* query - Runs a Salesforce SOQL query
-* queryMore - Retrieves more results (in case of large number of results) using result link returned from the 'query' API
-* search - Runs a Salesforce SOSL query
-
-For example, the following producer endpoint uses the upsertSObject API, with the sObjectIdName parameter specifying 'Name' as the external id field. 
-The request message body should be an SObject DTO generated using the maven plugin. 
-The response message will either be NULL if an existing record was updated, or [CreateSObjectResult] with an id of the new record, or a list of errors while creating the new object.
-
-	...to("salesforce:upsertSObject?sObjectIdName=Name")...
-
-## Bulk API ##
-
-Producer endpoints can use the following APIs. All Job data formats, i.e. xml, csv, zip/xml, and zip/csv are supported. 
-The request and response have to be marshalled/unmarshalled by the route. Usually the request will be some stream source like a CSV file, 
-and the response may also be saved to a file to be correlated with the request. 
-
-* createJob - Creates a Salesforce Bulk Job
-* getJob - Gets a Job using its Salesforce Id
-* closeJob - Closes a Job
-* abortJob - Aborts a Job
-* createBatch - Submits a Batch within a Bulk Job
-* getBatch - Gets a Batch using Id
-* getAllBatches - Gets all Batches for a Bulk Job Id
-* getRequest - Gets Request data (XML/CSV) for a Batch
-* getResults - Gets the results of the Batch when its complete
-* createBatchQuery - Creates a Batch from an SOQL query
-* getQueryResultIds - Gets a list of Result Ids for a Batch Query
-* getQueryResult - Gets results for a Result Id
-
-For example, the following producer endpoint uses the createBatch API to create a Job Batch. 
-The in message must contain a body that can be converted into an InputStream (usually UTF-8 CSV or XML content from a file, etc.) and header fields 'jobId' for the Job and 'contentType' for the Job content type, which can be XML, CSV, ZIP\_XML or ZIP\_CSV. The put message body will contain [BatchInfo] on success, or throw a [SalesforceException] on error.
-
-	...to("salesforce:createBatchJob")..
-
-## Streaming API ##
-
-Consumer endpoints can use the following syntax for streaming endpoints to receive Salesforce notifications on create/update. 
-
-To create and subscribe to a topic
-
-	from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
-
-To subscribe to an existing topic
-
-	from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+There is a companion maven plugin [camel-salesforce-plugin](https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin) that generates these DTOs.
 
 ## Developing the Camel Salesforce component
 
@@ -73,13 +9,13 @@ To subscribe to an existing topic
 
 **Note:** These instructions are only for running integration tests, they use permissions and IP restrictions that should be reconsidered for production use. 
 
-**Note:** Running the tests you will quickly use up your API allowance, 15000 requests/day in the free developer account, make sure that you won't deny your other applications/users access by running them.
+**Note:** Running the tests you will quickly use up your API allowance, 15,000 requests/day in the free developer account. Make sure that you won't deny your other applications/users access by running them. Scratch orgs are preferable as they have a more generous limit of 5,000,000 requests/day.
 
 In order to run the integration tests you need a Salesforce Developer account. You can get a Salesforce Developer account by visiting [developer.salesforce.com](https://developer.salesforce.com/) and sign up for one.
 
 As of 2.19 we maintain any Salesforce setup needed to run the integration tests in the `it/resources/salesforce` directory, the files there are generated by the _Salesforce Migration Tool_ that you can freely download from [Force.com Migration Tool](https://developer.salesforce.com/page/Force.com_Migration_Tool). This is an Apache Ant extension, by which you get additional Ant tasks to retrieve and to upload configuration, classes, schema changes and such. Download it and place the `ant-salesforce.jar` from the downloaded ZIP file into `components/camel-salesforce/it/resources/migration-tool/`.
 
-We have integrated _Salesforce Migration Tool_ into the Maven _integration-test_ lifecycle phase and it should run and update your Salesforce instance to a state capable of running integration tests. Start by creating `test-salesforce-login.properties` in the parent Maven module (`camel-salesforce`), you can use `test-salesforce-login.properties.sample` as reference.
+We have integrated _Salesforce Migration Tool_ into the Maven _integration-test_ lifecycle phase and it should run and update your Salesforce instance to a state capable of running integration tests. Start by creating `test-salesforce-login.properties` in the parent Maven module (`camel-salesforce`), you can use `test-salesforce-login.sample.properties` as reference.
 
 **Note:** Remember that if you do not relax IP restrictions, by default you'll need to append the security token on the password you place in the `test-salesforce-login.properties` file.
 
@@ -88,13 +24,25 @@ Before running the tests for the first time run the migration by invoking Maven 
     $ mvn -Pintegration resources:copy-resources@copy-test-salesforce-login-properties \
       resources:copy-resources@set-connected-app-client-id antrun:run@setup-salesforce-instance
 
-This will create a _Connected App_ with predefined Consumer Key (the one mentioned in the comment one in `test-salesforce-login.properties.sample`) and _Consumer Secret_ (`clientSecret`) with the name of `CamelSalesforceIntegrationTests`.
+This will create a _Connected App_ with predefined Consumer Key (the one mentioned in the comment one in `test-salesforce-login.sample.properties`) and _Consumer Secret_ (`clientSecret`) with the name of `CamelSalesforceIntegrationTests`.
 
-This however is run every time when you run the integration tests by issuing from the `camel-salesforce-component` Maven module directory:
+Note that this deployment is run every time you run the integration tests by issuing from the `camel-salesforce-component` Maven module directory:
 
     $ mvn -Pintegration verify
+                                                     
+However, once the deployment is successful, subsequent deployments are redundant, but harmless as it is an idempotent operation.
 
 If you need any custom fields, Apex classes or other configuration changes done, make sure to download them using the _Salesforce Migration Tool_ and include them in `it/resources/salesforce` directory.
+
+After the initial successful deployment, in salesforce go to Setup > App Manager, find the CamelSalesforceIntegrationTests app and click View. Copy the Consumer Key and Consumer Secret values into salesforce.client.id and salesforce.client.secret respectively.
+
+The deployment includes a permission set called `Hard Delete Permission Set` which contains the Hard Delete
+permission as well as field-level permissions needed to run the integration tests. You can assign this 
+permissions set to the user you use to run tests.
+
+It's also recommended to set email deliverability to `System Email Only` so you don't receive loads of approval emails when the tests run. This can be found in Setup > Email > Deliverability. 
+
+If your org contains Duplicate Rules for Objects the integration tests use, they could cause the tests to fail. If this is the case, deactivating the rules is recommended. 
 
 If your tests cannot be run alongside other tests you can use `@Standalone` to mark them as such.
 
@@ -102,7 +50,7 @@ If your tests cannot be run alongside other tests you can use `@Standalone` to m
 
 This is included for those that wish to setup the Salesforce instance manually for integration tests. It could also help to double-check your setup.
 
-Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
+Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission set. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
 
 Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can be installed from the [https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s](https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s), and make the following modifications manually:
  - add custom field `Description` of type `Text` with maximum length of `100` on the `Merchandise` object

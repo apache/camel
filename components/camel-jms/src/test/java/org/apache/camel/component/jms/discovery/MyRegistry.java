@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 public class MyRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
 
-    private Map<String, Map<String, Object>> services = new HashMap<>();
+    private final Map<String, Map<String, Object>> services = new HashMap<>();
 
     public void onEvent(Map<String, Object> heartbeat) {
         String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
+        LOG.debug(">>> event for: {} details: {}", key, heartbeat);
         services.put(key, heartbeat);
     }
 

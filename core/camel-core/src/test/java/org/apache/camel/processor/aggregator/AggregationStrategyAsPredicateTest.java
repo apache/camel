@@ -53,7 +53,7 @@ public class AggregationStrategyAsPredicateTest extends ContextTestSupport {
         };
     }
 
-    private final class MyCompletionStrategy implements AggregationStrategy, Predicate {
+    private static final class MyCompletionStrategy implements AggregationStrategy, Predicate {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

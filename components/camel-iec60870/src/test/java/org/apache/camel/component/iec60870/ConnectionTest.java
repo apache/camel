@@ -65,13 +65,13 @@ public class ConnectionTest extends CamelTestSupport {
     protected MockEndpoint testServer1Endpoint;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
 
         final int port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_SEND_S_1).toF("iec60870-server:localhost:%s/00-00-00-00-01", port);
                 fromF("iec60870-client:localhost:%s/00-00-00-00-01", port).to(MOCK_CLIENT_1);
                 fromF("iec60870-client:localhost:%s/00-00-00-00-02", port).to(MOCK_CLIENT_2);
@@ -97,7 +97,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(1_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1_000, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(1_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1_000, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(2_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2_000, TimeUnit.MILLISECONDS);
         System.out.println(testServer1Endpoint.getExchanges().get(0).getIn().getBody());
 
     }

@@ -49,7 +49,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
-    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorService> EXECUTOR_SERVICE_MAP = new ConcurrentHashMap<>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -79,6 +79,8 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     // cached property names and values
     private Set<String> endpointPropertyNames;
     private Map<String, Object> endpointProperties;
+    private Set<String> configurationPropertyNames;
+    private Map<String, Object> configurationProperties;
 
     public AbstractApiEndpoint(String endpointUri, Component component,
                                E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper,
@@ -93,7 +95,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns generated helper that extends {@link ApiMethodPropertiesHelper} to work with API properties.
-     * 
+     *
      * @return properties helper.
      */
     protected abstract ApiMethodPropertiesHelper<T> getPropertiesHelper();
@@ -146,13 +148,18 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
      */
     private void initState() {
 
-        // compute endpoint property names and values
-        final HashMap<String, Object> properties = new HashMap<>();
+        // compute configuration & endpoint property names and values
+        HashMap<String, Object> properties = new HashMap<>();
+        getPropertiesHelper().getConfigurationProperties(getCamelContext(), configuration, properties);
+        this.configurationProperties = Collections.unmodifiableMap(properties);
+        this.configurationPropertyNames = Collections.unmodifiableSet(properties.keySet());
+
+        properties = new HashMap<>();
         getPropertiesHelper().getEndpointProperties(getCamelContext(), configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
         this.endpointPropertyNames = Collections.unmodifiableSet(properties.keySet());
 
-        // get endpoint property names
+        // use only endpoint property names when looking for candidate methods
         final Set<String> arguments = new HashSet<>(endpointPropertyNames);
         // add inBody argument for producers
         if (inBody != null) {
@@ -213,7 +220,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns API name.
-     * 
+     *
      * @return apiName property.
      */
     public final E getApiName() {
@@ -222,7 +229,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns method name.
-     * 
+     *
      * @return methodName property.
      */
     public final String getMethodName() {
@@ -231,7 +238,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns method helper.
-     * 
+     *
      * @return methodHelper property.
      */
     public final ApiMethodHelper<? extends ApiMethod> getMethodHelper() {
@@ -240,7 +247,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns candidate methods for this endpoint.
-     * 
+     *
      * @return list of candidate methods.
      */
     public final List<ApiMethod> getCandidates() {
@@ -249,7 +256,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns name of parameter passed in the exchange In Body.
-     * 
+     *
      * @return inBody property.
      */
     public final String getInBody() {
@@ -258,7 +265,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Sets the name of a parameter to be passed in the exchange In Body.
-     * 
+     *
      * @param  inBody                   parameter name
      * @throws IllegalArgumentException for invalid parameter name.
      */
@@ -279,6 +286,14 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         return endpointProperties;
     }
 
+    public Set<String> getConfigurationPropertyNames() {
+        return configurationPropertyNames;
+    }
+
+    public final Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
     /**
      * Returns an instance of an API Proxy based on apiName, method and args. Called by {@link AbstractApiConsumer} or
      * {@link AbstractApiProducer}.
@@ -296,7 +311,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
         // lookup executorService for extending class name
         final String endpointClassName = endpointClass.getName();
-        ExecutorService executorService = executorServiceMap.get(endpointClassName);
+        ExecutorService executorService = EXECUTOR_SERVICE_MAP.get(endpointClassName);
 
         // CamelContext will shutdown thread pool when it shutdown so we can
         // lazy create it on demand
@@ -315,7 +330,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             // create a new pool using the custom or default profile
             executorService = manager.newScheduledThreadPool(endpointClass, threadProfileName, poolProfile);
 
-            executorServiceMap.put(endpointClassName, executorService);
+            EXECUTOR_SERVICE_MAP.put(endpointClassName, executorService);
         }
 
         return executorService;
@@ -333,7 +348,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns Thread profile name. Generated as a constant THREAD_PROFILE_NAME in *Constants.
-     * 
+     *
      * @return thread profile name to use.
      */
     protected abstract String getThreadProfileName();

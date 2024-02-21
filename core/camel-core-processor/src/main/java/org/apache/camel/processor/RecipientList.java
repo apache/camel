@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
@@ -34,7 +33,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -52,17 +50,16 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
 
-    private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private String id;
     private String routeId;
     private Processor errorHandler;
     private ProducerCache producerCache;
-    private Expression expression;
+    private final Expression expression;
     private final String delimiter;
     private boolean parallelProcessing;
+    private boolean synchronous;
     private boolean parallelAggregate;
-    private boolean stopOnAggregateException;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
@@ -74,6 +71,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private boolean shutdownExecutorService;
     private volatile ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
+    private RecipientListProcessor recipientListProcessor;
 
     public RecipientList(CamelContext camelContext) {
         // use comma by default as delimiter
@@ -85,6 +83,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.delimiter = delimiter;
+        this.expression = null;
     }
 
     public RecipientList(CamelContext camelContext, Expression expression) {
@@ -104,7 +103,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     /**
      * Wrap {@link RecipientList} in {@link Pipeline}.
      */
-    private final class RecipientListPipeline extends Pipeline {
+    private static final class RecipientListPipeline extends Pipeline {
 
         private final RecipientList recipientList;
 
@@ -174,52 +173,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         if (!isStarted()) {
             throw new IllegalStateException("RecipientList has not been started: " + this);
         }
-
-        // use the evaluate expression result if exists
-        Object recipientList = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
-        if (recipientList == null && expression != null) {
-            // fallback and evaluate the expression
-            recipientList = expression.evaluate(exchange, Object.class);
-        }
-
-        return sendToRecipientList(exchange, recipientList, callback);
-    }
-
-    /**
-     * Sends the given exchange to the recipient list
-     */
-    public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<?> iter;
-
-        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
-            iter = ObjectHelper.createIterator(recipientList, null);
-        } else {
-            iter = ObjectHelper.createIterator(recipientList, delimiter);
-        }
-
-        RecipientListProcessor rlp = new RecipientListProcessor(
-                exchange.getContext(), null, producerCache, iter, getAggregationStrategy(),
-                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
-                isStopOnAggregateException());
-        rlp.setErrorHandler(errorHandler);
-        rlp.setAggregateExecutorService(aggregateExecutorService);
-        rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
-        rlp.setCacheSize(getCacheSize());
-        rlp.setId(getId());
-        rlp.setRouteId(getRouteId());
-
-        // start ourselves
-        try {
-            ServiceHelper.startService(rlp);
-        } catch (Exception e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
-
-        // now let the multicast process the exchange
-        return rlp.process(exchange, callback);
+        return recipientListProcessor.process(exchange, callback);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
@@ -227,15 +181,12 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doStart() throws Exception {
         if (errorHandler == null) {
             // NoErrorHandler is the default base error handler if none has been configured
             errorHandler = new NoErrorHandler(null);
         }
-    }
 
-    @Override
-    protected void doStart() throws Exception {
         if (producerCache == null) {
             if (cacheSize < 0) {
                 producerCache = new EmptyProducerCache(this, camelContext);
@@ -250,17 +201,30 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             aggregateExecutorService
                     = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
         }
-        ServiceHelper.startService(aggregationStrategy, producerCache);
+
+        recipientListProcessor = new RecipientListProcessor(
+                camelContext, null, expression, delimiter, producerCache, getAggregationStrategy(),
+                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate());
+        recipientListProcessor.setSynchronous(synchronous);
+        recipientListProcessor.setErrorHandler(errorHandler);
+        recipientListProcessor.setAggregateExecutorService(aggregateExecutorService);
+        recipientListProcessor.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        recipientListProcessor.setCacheSize(getCacheSize());
+        recipientListProcessor.setId(getId());
+        recipientListProcessor.setRouteId(getRouteId());
+
+        ServiceHelper.startService(aggregationStrategy, producerCache, recipientListProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache, aggregationStrategy);
+        ServiceHelper.stopService(producerCache, aggregationStrategy, recipientListProcessor);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
+        ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy, recipientListProcessor);
 
         if (aggregateExecutorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(aggregateExecutorService);
@@ -302,20 +266,20 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         this.parallelProcessing = parallelProcessing;
     }
 
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
     public boolean isParallelAggregate() {
         return parallelAggregate;
     }
 
     public void setParallelAggregate(boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
-    }
-
-    public boolean isStopOnAggregateException() {
-        return stopOnAggregateException;
-    }
-
-    public void setStopOnAggregateException(boolean stopOnAggregateException) {
-        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     public boolean isStopOnException() {

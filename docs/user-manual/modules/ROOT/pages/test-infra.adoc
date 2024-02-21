@@ -1,0 +1,336 @@
+= Test Infrastructure
+
+The components in the Camel Test Infra provide utilities to simplify testing with Camel and other systems may interact with it. They work as JUnit 5 extensions.
+
+== Working with the Camel Context in Tests
+
+When testing Camel or a Camel-based integration, you almost certainly need to use the `CamelContext` to configure the registry, add routes and execute other operations. The test infra comes with a module that provides a JUnit 5 extension that allows you to inject a Camel context into your tests.
+
+Adding it to your test code is as simple as adding the following lines of code to your test class:
+
+[source,java]
+----
+@RegisterExtension
+protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+----
+
+Then, via the extension, you can access the context (ie.: ```contextExtension.getContext()`) to manipulate it as need in the tests.
+
+The extension comes with a few utilities to simplify configuring the context, and adding routes at the appropriate time.
+
+=== Configuring the Camel Context
+
+To create a method that configures the context, you can declare a method receiving an instance of `CamelContext` and annotate it with `@ContextFixture`.
+
+[source,java]
+----
+@ContextFixture
+public void configureContext(CamelContext context) {
+   // context configuration code here
+}
+----
+
+Additionally, you can simplify the class hierarchy, and ensure consistency you may also implement the `ConfigurableContext` interface.
+
+=== Configuring the Routes
+
+You can configure the routes using a similar process as the one described for configuring the Camel context. You can create a method that receives an instance of `CamelContext` and annotate it with `@RouteFixture`.
+
+[source,java]
+----
+@RouteFixture
+public void createRouteBuilder(CamelContext context) throws Exception {
+    context.addRoutes(new RouteBuilder() {
+        @Override
+        public void configure() {
+           from(fromUri).to(destUri);
+        }
+    });
+}
+----
+
+=== Use the Camel Context Extension
+
+To start using the Camel Context extension on your code, add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-infra-core</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+    <type>test-jar</type>
+</dependency>
+----
+
+For simplicity and consistency, you may also declare the route as implementing the `ConfigurableRoute`.
+
+== Simulating the Test Infrastructure
+
+One of the first steps when implementing a new test, is to identify how to simulate infrastructure required for it to 
+run. The test-infra module provides a reusable library of infrastructure that can be used for that purpose. 
+
+In general, the integration test leverages the features provided by the project https://www.testcontainers.org/[TestContainers]
+and uses container images to simulate the environments. Additionally, it may also support running the tests against remote 
+environments as well as, when available, embeddable components. This varies by each component, and it is recommended to 
+check the code for additional details.
+
+=== Writing A New Test Infrastructure Module
+
+
+[NOTE]
+====
+This section is aimed at Camel maintainers that need to write new test infra components. End users can skip this section.
+====
+
+The test code abstracts the provisioning of test environments behind service classes (i.e.: JMSService, JDBCService,
+etc). The purpose of the service class is to abstract the both the type service (i.e.: Kafka, Strimzi, etc) and
+the location of the service (i.e.: remote, local, embedded, etc). This provides flexibility to test the code under 
+different circumstances (i.e.: using a remote JMS broker or using a local JMS broker running in a container managed by
+TestContainers). It makes it easier to hit edge cases as well as try different operating scenarios (i.e.: higher
+latency, slow backends, etc).
+
+JUnit 5 manages the lifecycle of the services, therefore each service must be a JUnit 5 compliant extension. The exact
+extension point that a service must extend is specific to each service. The JUnit 5
+https://junit.org/junit5/docs/current/user-guide[documentation] is the reference for the extension points.
+
+When a container image is not available via TestContainers, tests can provide their own implementation using officially
+available images. The license must be compatible with Apache 2.0. If an official image is not available, a Dockerfile
+to build the service can be provided. The Dockerfile should try to minimize the container size and resource usage
+whenever possible.
+
+It is also possible to use embeddable components when required, although this usually lead to more code and higher 
+maintenance.
+
+==== Recommended Structure for Test Infrastructure Modules
+
+The service should provide an interface, named after the infrastructure being implemented, and this interface should 
+extend the https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
+interface. The services should try to minimize the test execution time and resource usage when running. As such,
+the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html[BeforeAllCallback]
+and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html[AfterAllCallback]
+should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
+throughout the test execution.
+
+[NOTE]
+====
+Bear in mind that, according to the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[JUnit 5 extension]
+model, the time of initialization of the service may differ depending on whether the service instance is declared as 
+static or not in the test class. As such, the code should make no assumptions as to its time of initialization.
+====
+
+Ideally, there should be two concrete implementations of the services: one of the remote service (if applicable) and 
+another for the container service: 
+
+```
+              MyService
+                 / \
+                /   \
+               /     \
+ MyRemoteService    MyContainerService
+```
+                     
+
+In most cases a specialized service factory class is responsible for creating the service according to runtime
+parameters and/or other test scenarios constraints. When a service allows different service types or locations to be
+selected, this should be done via command line properties (`-D<property.name>=<value>`). For example, when allowing a
+service to choose between running as a local container or as remote instance, a property in the format
+`<name>.instance.type` should be handled. Additional runtime parameters used in different scenarios, should be handled
+as `<name>.<parameter>`. More complex services may use the builder available through the factory classes to compose 
+the service accordingly.
+
+
+==== Registering Properties
+
+All services should register the properties, via `System.setProperty` that allow access to the services. This is required
+in order to resolve those properties when running tests using the Spring framework. This registration allows the properties
+to be resolved in Spring's XML files. 
+
+This registration is done in the `registerProperties` methods during the service initialization. 
+
+==== Registering Properties Example:
+
+Registering the properties in the concrete service implementation:
+
+[source,java]
+----
+    public void registerProperties() {
+        // MyServiceProperties.MY_SERVICE_HOST is a string with value "my.service.host"
+        System.setProperty(MyServiceProperties.MY_SERVICE_HOST, container.getHost());
+        
+        // MyServiceProperties.MY_SERVICE_PORT is a string with value "my.service.port"
+        System.setProperty(MyServiceProperties.MY_SERVICE_PORT, String.valueOf(container.getServicePort()));
+        
+        // MyServiceProperties.MY_SERVICE_ADDRESS is a string with value "my.service.address"
+        System.setProperty(MyServiceProperties.MY_SERVICE_ADDRESS, getServiceAddress());
+    }
+    
+    public void initialize() {
+        LOG.info("Trying to start the MyService container");
+        container.start();
+
+        registerProperties();
+        LOG.info("MyService instance running at {}", getServiceAddress());
+    }
+----
+
+Then, when referring these properties in Camel routes or Spring XML properties, you may use `{{my.service.host}}`,
+`{{my.service.port}}` and `{{my.service.address}}`.
+
+
+==== Packaging Recommendations
+
+This is test infrastructure code, therefore it should be package as test type artifacts. The 
+https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-parent[parent pom] should provide all the necessary bits for packaging the test infrastructure.
+
+=== Using The New Test Infrastructure
+
+Using the test infra in a new component test is rather straightforward, similar to using any other reusable component.
+You start by declaring the test infra dependencies in your pom file. 
+
+This should be similar to:
+
+[source,xml]
+----
+<!-- test infra -->
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-infra-myservice</artifactId>
+    <version>${project.version}</version>
+    <type>test-jar</type>
+    <scope>test</scope>
+</dependency>
+----
+
+[NOTE]
+====
+On the dependencies above, the dependency version is set to `${project.version}`. This should be adjusted to the
+Camel version when used outside the Camel Core project.
+====
+
+On the test class, add a member variable for the service and annotate it with the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[@RegisterExtension],
+in order to let JUnit 5 manage its lifecycle.
+
+[source,java]
+----
+@RegisterExtension
+static MyService service = MyServiceServiceFactory.createService();
+----
+
+More complex test services can be created using something similar to:
+
+[source,java]
+----
+@RegisterExtension
+static MyService service = MyServiceServiceFactory
+    .builder()
+        .addRemoveMapping(MyTestClass::myCustomRemoteService) // this is rarely needed
+        .addLocalMapping(MyTestClass::staticMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-myservice-local-container
+        .addMapping("local-alternative-service", MyTestClass::anotherMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-alternative-service
+    .createService();
+----
+
+You can use the methods as well as the registered properties to access the test infrastructure services available. 
+When using these properties in Spring XML files, you may use those properties.
+
+[source,xml]
+----
+<someSpringXmlElement httpHost="{{my.service.host}}" port="{{my.service.port}}" />
+----
+
+It's also possible to use these properties in the test code itself. For example, when setting up the test url for the
+Camel component:
+
+[source,java]
+----
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:put")
+                    .to("mycomponent:someoption?host={{my.service.host}}&port={{my.service.port}}");
+            }
+        };
+    }
+----
+
+==== Execution Ordering
+
+When combining the different modules of the test infra, you may need to ensure that they execute in the proper order. You can do so by using JUnit's `@Order` annotation.
+
+For instance:
+
+[source,java]
+----
+    @Order(1)
+    @RegisterExtension
+    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
+
+    @Order(2)
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+----
+
+
+== Converting Camel TestContainers Code To The New Test Infrastructure
+
+
+[NOTE]
+====
+This section is aimed at Camel maintainers that need to write new test infra components. End users can skip this section.
+====
+
+Using the camel-nats as an example, we can compare how the base test class for nats changed between https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.6.x]
+and https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.7.x].
+
+The first conversion step is to remove the https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/pom.xml#L59-L63[camel-testcontainer dependencies]
+and replace them with the ones from the https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/pom.xml#L61-L75[test-infra module].
+Then, it's necessary to replace the https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java#L24-L45[container handling code and the old base class]
+with the https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java#L26-L27[service provided in the module].
+Then, we replace the base class. The `ContainerAwareTestSupport` class and other similar classes from other 
+`camel-testcontainer` modules are not necessary and can be replaced with `CamelTestSupport` or the spring based one 
+`CamelSpringTestSupport`.
+
+With the base changes in place, the next step is to make sure that addresses (URLs, hostnames, ports, etc) and 
+resources (usernames, passwords, tokens, etc) referenced during the test execution, use the test-infra services. This
+may differ according to each service. Replacing the call to get the https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsAuthConsumerLoadTest.java#L38[service URL]
+with the one provided by the new https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsAuthConsumerLoadTest.java#L38[test infra service]
+is a good example of this type of changes that may be necessary.
+
+In some cases, it may be necessary to adjust the variables used in https://github.com/apache/camel/blob/camel-3.6.0/components/camel-consul/src/test/resources/org/apache/camel/component/consul/cloud/SpringConsulRibbonServiceCallRouteTest.xml#L36[simple language]
+so that they match the https://github.com/apache/camel/blob/camel-3.7.0/components/camel-consul/src/test/resources/org/apache/camel/component/consul/cloud/SpringConsulRibbonServiceCallRouteTest.xml#L36[new property format] used in the test infra service.
+
+
+There are some cases where the container instance requires https://github.com/apache/camel/blob/camel-3.6.0/components/camel-pg-replication-slot/src/test/java/org/apache/camel/component/pg/replication/slot/integration/PgReplicationTestSupport.java#L31[extra customization].
+Nonetheless, the migrated code still benefits from the https://github.com/apache/camel/blob/camel-3.7.0/components/camel-pg-replication-slot/src/test/java/org/apache/camel/component/pg/replication/slot/integration/PgReplicationTestSupport.java#L31[test-infra approach],
+but this may be very specific to the test scenario.
+
+
+== Running With Podman
+
+Most of the test infrastructure in this module is based on containers. Therefore, they will require a container runtime to run. Although the tests have been written and tested using Docker, they should also work with https://podman.io/[Podman] (another popular container runtime on Linux operating systems).
+
+Assuming Podman is properly installed and configured to behave like docker (i.e.: short name resolution, resolving docker.io registry, etc), the only requirement for using Podman is to export the DOCKER_HOST variable before running the tests.
+
+=== Linux
+
+On most systems that should be similar to the following command: 
+
+```
+export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
+```
+
+=== OS X and Windows
+
+Running the test-infra with Podman on OS X and Windows should work on many cases. However, it requires additional steps and has a few issues. Therefore, it is not recommended at this time.
+
+== Known Issues and/or Tips
+
+=== Multi-architecture support: ARM
+
+Some containers don't have images available for ARM. In this case, it is recommended to use an alternative image or build your own. The list below contains some tips for specific components:
+
+* camel-test-infra-kafka: use the Strimzi images `-Dkafka.instance.type=local-strimzi-container`
+
+
+

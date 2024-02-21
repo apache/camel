@@ -7,14 +7,15 @@
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.SamplingDefinition",
+    "abstract": false,
     "input": true,
     "output": false
   },
   "properties": {
-    "samplePeriod": { "kind": "attribute", "displayName": "Sample Period", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1s", "description": "Sets the sample period during which only a single Exchange will pass through." },
-    "messageFrequency": { "kind": "attribute", "displayName": "Message Frequency", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the sample message count which only a single Exchange will pass through after this many received." },
-    "units": { "kind": "attribute", "displayName": "Units", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ], "deprecated": true, "deprecationNote": "Use samplePeriod extended syntax instead", "autowired": false, "secret": false, "defaultValue": "SECONDS", "description": "Sets the time units for the sample period, defaulting to seconds." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "index": 1, "kind": "element", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "samplePeriod": { "index": 3, "kind": "attribute", "displayName": "Sample Period", "required": false, "type": "duration", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the sample period during which only a single Exchange will pass through." },
+    "messageFrequency": { "index": 4, "kind": "attribute", "displayName": "Message Frequency", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the sample message count which only a single Exchange will pass through after this many received." }
   }
 }

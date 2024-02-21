@@ -25,21 +25,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
@@ -47,9 +44,9 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaPollingConsumer.class);
 
-    private transient ExecutorService executorService;
+    private volatile ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionStrategy transactionStrategy;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -61,7 +58,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     public JpaPollingConsumer(JpaEndpoint endpoint) {
         super(endpoint);
         this.entityManagerFactory = endpoint.getEntityManagerFactory();
-        this.transactionTemplate = endpoint.createTransactionTemplate();
+        this.transactionStrategy = endpoint.getTransactionStrategy();
     }
 
     @Override
@@ -131,25 +128,28 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
 
-        Object out = transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
+        Exchange exchange = getEndpoint().createExchange();
+        exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
+        transactionStrategy.executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
                 if (getEndpoint().isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
 
-                Query query = getQueryFactory().createQuery(entityManager);
-                configureParameters(query);
+                Query innerQuery = getQueryFactory().createQuery(entityManager);
+                configureParameters(innerQuery);
 
                 if (getEndpoint().isConsumeLockEntity()) {
-                    query.setLockMode(getLockModeType());
+                    innerQuery.setLockMode(getLockModeType());
                 }
 
-                LOG.trace("Created query {}", query);
+                LOG.trace("Created query {}", innerQuery);
 
                 Object answer;
 
                 try {
-                    List<?> results = query.getResultList();
+                    List<?> results = innerQuery.getResultList();
 
                     if (results != null && results.size() == 1) {
                         // we only have 1 entity so return that
@@ -174,13 +174,11 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     throw e;
                 }
 
-                return answer;
+                exchange.getIn().setBody(answer);
             }
 
         });
 
-        Exchange exchange = createExchange(out, entityManager);
-        exchange.getIn().setBody(out);
         return exchange;
     }
 
@@ -201,7 +199,10 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         Future<Exchange> future = executorService.submit((Callable<Exchange>) this::receive);
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (TimeoutException e) {
             // ignore as we hit timeout then return null
@@ -282,7 +283,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         Entity entity = clazz.getAnnotation(Entity.class);
 
         // Check if the property name has been defined for Entity annotation
-        if (entity != null && !entity.name().equals("")) {
+        if (entity != null && !entity.name().isEmpty()) {
             return entity.name();
         } else {
             return null;

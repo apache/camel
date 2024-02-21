@@ -37,7 +37,7 @@ public class RestJettyPostJsonPojoDisableFeatureTest extends BaseJettyTest {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\", \"donotexists\": \"foo\"}";
         template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
         assertNotNull(user);
@@ -46,10 +46,10 @@ public class RestJettyPostJsonPojoDisableFeatureTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure json to not fail on unknown properties
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
                         .dataFormatProperty("json.in.disableFeatures",

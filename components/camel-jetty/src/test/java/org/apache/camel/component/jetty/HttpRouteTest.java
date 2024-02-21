@@ -18,13 +18,12 @@ package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,19 +32,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.eclipse.jetty.ee10.servlet.HttpInput;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,12 +59,12 @@ public class HttpRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRouteTest.class);
 
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
-    private int port1;
-    private int port2;
-    private int port3;
-    private int port4;
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
     public void testEndpoint() throws Exception {
@@ -80,9 +83,9 @@ public class HttpRouteTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -99,13 +102,13 @@ public class HttpRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEchoEndpoint() throws Exception {
+    public void testEchoEndpoint() {
         String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
         assertEquals("HelloWorld", out, "Get a wrong output ");
     }
 
     @Test
-    public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
+    public void testEchoEndpointWithIgnoreResponseBody() {
         String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld",
                 String.class);
         assertNull(out, "Get a wrong output ");
@@ -113,59 +116,51 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testPostParameter() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/parameter");
         post.addHeader("request", "PostParameter");
         post.addHeader("others", "bloggs");
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PostParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PostParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPostXMLMessage() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/postxml");
         post.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("OK", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("OK", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPostParameterInURI() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/parameter?request=PostParameter&others=bloggs");
         post.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PostParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PostParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPutParameterInURI() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPut put = new HttpPut("http://localhost:" + port1 + "/parameter?request=PutParameter&others=bloggs");
         put.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(put);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PutParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(put)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PutParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
-    public void testDisableStreamCache() throws Exception {
+    public void testDisableStreamCache() {
         String response = template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
                 "application/xml", String.class);
@@ -184,36 +179,29 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testResponseCode() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet("http://localhost:" + port1 + "/responseCode");
-
-        HttpResponse response = client.execute(get);
-        // just make sure we get the right
-        assertEquals(400, response.getStatusLine().getStatusCode(), "Get a wrong status code.");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(get)) {
+            // just make sure we get the right
+            assertEquals(400, response.getCode(), "Get a wrong status code.");
+        }
     }
 
-    protected void invokeHttpEndpoint() throws IOException {
+    protected void invokeHttpEndpoint() {
         template.requestBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-                port3 = getNextPort();
-                port4 = getNextPort();
-
                 // enable stream cache
                 context.setStreamCaching(true);
 
                 from("jetty:http://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             HttpMessage message = (HttpMessage) exchange.getIn();
                             HttpSession session = message.getRequest().getSession();
@@ -228,11 +216,11 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/responseCode").setHeader(Exchange.HTTP_RESPONSE_CODE, simple("400"));
 
                 Processor printProcessor = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message out = exchange.getMessage();
                         out.copyFrom(exchange.getIn());
-                        log.info("The body's object is " + exchange.getIn().getBody());
-                        log.info("Process body = " + exchange.getIn().getBody(String.class));
+                        log.info("The body's object is {}", exchange.getIn().getBody());
+                        log.info("Process body = {}", exchange.getIn().getBody(String.class));
                         InputStreamCache cache = out.getBody(InputStreamCache.class);
                         cache.reset();
                     }
@@ -242,7 +230,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/echo").process(printProcessor).process(printProcessor);
 
                 Processor procParameters = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // As the request input stream is cached by
                         // DefaultHttpBinding,
                         // HttpServletRequest can't get the parameters of post
@@ -260,7 +248,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/parameter").process(procParameters);
 
                 from("jetty:http://localhost:" + port1 + "/postxml").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String value = exchange.getIn().getBody(String.class);
                         assertEquals(POST_MESSAGE, value, "The response message is wrong");
                         exchange.getMessage().setBody("OK");
@@ -269,9 +257,9 @@ public class HttpRouteTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching()
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 InputStream is = (InputStream) exchange.getIn().getBody();
-                                assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
+                                assertTrue(is instanceof HttpInput, "It should be a raw inputstream");
                                 String request = exchange.getIn().getBody(String.class);
                                 assertEquals("This is a test", request, "Got a wrong request");
                                 exchange.getMessage().setBody("OK");
@@ -279,7 +267,7 @@ public class HttpRouteTest extends BaseJettyTest {
                         });
 
                 from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String string = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody(string);
                     }

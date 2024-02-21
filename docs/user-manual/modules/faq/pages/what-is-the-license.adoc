@@ -1,4 +1,3 @@
-[[Whatisthelicense-Whatisthelicense]]
 = What is the license?
 
 This software is open source using the

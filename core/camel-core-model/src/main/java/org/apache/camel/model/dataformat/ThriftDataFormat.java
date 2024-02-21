@@ -16,12 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -32,6 +33,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "thrift")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThriftDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
+    @XmlTransient
+    private Object defaultInstance;
+
     @XmlAttribute
     private String instanceClass;
     @XmlAttribute
@@ -42,8 +47,6 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
-    @XmlTransient
-    private Object defaultInstance;
 
     public ThriftDataFormat() {
         super("thrift");
@@ -58,6 +61,14 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         this();
         setInstanceClass(instanceClass);
         setContentTypeFormat(contentTypeFormat);
+    }
+
+    private ThriftDataFormat(Builder builder) {
+        this();
+        this.defaultInstance = builder.defaultInstance;
+        this.instanceClass = builder.instanceClass;
+        this.contentTypeFormat = builder.contentTypeFormat;
+        this.contentTypeHeader = builder.contentTypeHeader;
     }
 
     public String getInstanceClass() {
@@ -100,4 +111,53 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         this.defaultInstance = defaultInstance;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link ThriftDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<ThriftDataFormat> {
+
+        private Object defaultInstance;
+        private String instanceClass;
+        private String contentTypeFormat;
+        private String contentTypeHeader;
+
+        /**
+         * Name of class to use when unmarshalling
+         */
+        public Builder instanceClass(String instanceClass) {
+            this.instanceClass = instanceClass;
+            return this;
+        }
+
+        /**
+         * Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been.
+         * The format can either be native or json for either native binary thrift, json or simple json fields
+         * representation. The default value is binary.
+         */
+        public Builder contentTypeFormat(String contentTypeFormat) {
+            this.contentTypeFormat = contentTypeFormat;
+            return this;
+        }
+
+        public Builder contentTypeHeader(String contentTypeHeader) {
+            this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
+        public Builder defaultInstance(Object defaultInstance) {
+            this.defaultInstance = defaultInstance;
+            return this;
+        }
+
+        @Override
+        public ThriftDataFormat end() {
+            return new ThriftDataFormat(this);
+        }
+    }
 }

@@ -24,4 +24,8 @@ public interface ManagedGroupFactory extends GroupFactory {
 
     void close();
 
+    default void setClassLoader(ClassLoader classLoader) {
+        // noop
+    }
+
 }

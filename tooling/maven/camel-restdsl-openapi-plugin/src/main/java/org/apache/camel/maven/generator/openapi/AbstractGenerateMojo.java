@@ -21,7 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,10 +41,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,7 +57,11 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
@@ -72,14 +77,16 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     // this list should be in priority order
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[] {
-            "servlet", "undertow", "jetty",
-            "netty-http", "spark-java", "coap" };
+            "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" };
 
     @Parameter
     String apiContextPath;
 
     @Parameter
     String destinationGenerator;
+
+    @Parameter
+    String destinationToSyntax;
 
     @Parameter
     String filterOperation;
@@ -106,6 +113,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     boolean restConfiguration;
 
     @Parameter(defaultValue = "false")
+    boolean clientRequestValidation;
+
+    @Parameter(defaultValue = "false")
     boolean skip;
 
     @Parameter(defaultValue = "${project.basedir}/src/spec/openapi.json", required = true)
@@ -114,7 +124,10 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(name = "auth")
     String auth;
 
-    @Parameter(defaultValue = "3.0.19")
+    @Parameter
+    String basePath;
+
+    @Parameter(defaultValue = "3.0.46")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -162,8 +175,8 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
         final DestinationGenerator destinationGeneratorObject;
         try {
-            destinationGeneratorObject = destinationGeneratorClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            destinationGeneratorObject = destinationGeneratorClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new MojoExecutionException(
                     "The given destinationGenerator class (" + destinationGenerator
                                              + ") cannot be instantiated, make sure that it is declared as public and that all dependencies are present on the COMPILE classpath scope of the project",
@@ -202,12 +215,18 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         if (modelWithXml != null) {
             elements.add(new MojoExecutor.Element("withXml", modelWithXml));
         }
-        if (configOptions != null) {
-            elements.add(new MojoExecutor.Element(
-                    "configOptions", configOptions.entrySet().stream()
-                            .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
-                            .toArray(MojoExecutor.Element[]::new)));
+        if (configOptions == null) {
+            configOptions = new HashMap<>(1);
         }
+        /* workaround for https://github.com/swagger-api/swagger-codegen/issues/11797
+         * with the next release jakarta=true should be used
+         * https://github.com/swagger-api/swagger-codegen-generators/pull/1131
+         */
+        configOptions.put("hideGenerationTimestamp", "true");
+        elements.add(new MojoExecutor.Element(
+                "configOptions", configOptions.entrySet().stream()
+                        .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
+                        .toArray(MojoExecutor.Element[]::new)));
 
         executeMojo(
                 plugin(
@@ -216,7 +235,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
                         version(swaggerCodegenMavenPluginVersion)),
                 goal("generate"),
                 configuration(
-                        elements.toArray(new MojoExecutor.Element[elements.size()])),
+                        elements.toArray(new MojoExecutor.Element[0])),
                 executionEnvironment(
                         mavenProject,
                         mavenSession,
@@ -233,7 +252,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         for (final Dependency dep : mavenProject.getDependencies()) {
             if ("org.apache.camel".equals(dep.getGroupId()) || "org.apache.camel.springboot".equals(dep.getGroupId())) {
                 final String aid = dep.getArtifactId();
-                final Optional<String> comp = Arrays.asList(DEFAULT_REST_CONSUMER_COMPONENTS).stream()
+                final Optional<String> comp = Arrays.stream(DEFAULT_REST_CONSUMER_COMPONENTS)
                         .filter(c -> aid.startsWith("camel-" + c)).findFirst();
                 if (comp.isPresent()) {
                     return comp.get();
@@ -295,7 +314,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         return null;
     }
 
-    OasDocument readOpenApiDoc(String specificationUri) throws Exception {
+    OpenApiDocument readOpenApiDoc(String specificationUri) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         URL inputSpecRemoteUrl = inputSpecRemoteUrl(specificationUri);
@@ -330,13 +349,15 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
         String suffix = ".yaml";
         if (specificationUri.regionMatches(true, specificationUri.length() - suffix.length(), suffix, 0, suffix.length())) {
-            Yaml loader = new Yaml();
-            Map map = loader.load(is);
-            JsonNode node = mapper.convertValue(map, JsonNode.class);
-            return (OasDocument) Library.readDocument(node);
+            LoaderOptions options = new LoaderOptions();
+            options.setTagInspector(new TrustedTagInspector());
+            Yaml loader = new Yaml(new SafeConstructor(options));
+            Map<?, ?> map = loader.load(is);
+            ObjectNode node = mapper.convertValue(map, ObjectNode.class);
+            return (OpenApiDocument) Library.readDocument(node);
         } else {
-            JsonNode node = mapper.readTree(is);
-            return (OasDocument) Library.readDocument(node);
+            ObjectNode node = (ObjectNode) mapper.readTree(is);
+            return (OpenApiDocument) Library.readDocument(node);
         }
     }
 
@@ -345,15 +366,15 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         if (comp != null) {
             getLog().info("Detected Camel Rest component from classpath: " + comp);
         } else {
-            comp = "servlet";
+            comp = "platform-http";
 
             String gid = "org.apache.camel";
-            String aid = "camel-servlet";
+            String aid = "camel-platform-http";
 
             // is it spring boot?
             if (detectSpringBootFromClasspath()) {
                 gid = "org.apache.camel.springboot";
-                aid = "camel-servlet-starter";
+                aid = "camel-platform-http-starter";
             }
 
             String dep = "\n\t\t<dependency>"
@@ -365,7 +386,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             }
             dep += "\n\t\t</dependency>\n";
 
-            getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
+            getLog().info("Cannot detect Rest component from classpath. Will use platform-http as Rest component.");
             getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
         }
 
@@ -381,21 +402,24 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     }
 
     private Map<String, String> parse(String urlEncodedAuthStr) {
-        Map<String, String> auths = new HashMap<String, String>();
+        Map<String, String> auths = new HashMap<>();
         if (isNotEmpty(urlEncodedAuthStr)) {
             String[] parts = urlEncodedAuthStr.split(",");
             for (String part : parts) {
                 String[] kvPair = part.split(":");
                 if (kvPair.length == 2) {
-                    try {
-                        auths.put(URLDecoder.decode(kvPair[0], "UTF-8"), URLDecoder.decode(kvPair[1], "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        getLog().warn(e.getMessage());
-                    }
+                    auths.put(URLDecoder.decode(kvPair[0], StandardCharsets.UTF_8),
+                            URLDecoder.decode(kvPair[1], StandardCharsets.UTF_8));
                 }
             }
         }
         return auths;
     }
 
+    final class TrustedTagInspector implements TagInspector {
+        @Override
+        public boolean isGlobalTagAllowed(Tag tag) {
+            return true;
+        }
+    }
 }

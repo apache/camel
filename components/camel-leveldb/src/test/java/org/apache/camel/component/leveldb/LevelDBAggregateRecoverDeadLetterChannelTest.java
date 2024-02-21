@@ -20,11 +20,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSupport {
 
     @Override
@@ -71,14 +75,14 @@ public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSup
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
                         .completionSize(5).aggregationRepository(getRepo())

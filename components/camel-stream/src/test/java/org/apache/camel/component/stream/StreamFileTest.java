@@ -71,13 +71,13 @@ public class StreamFileTest extends CamelTestSupport {
             // can not use route builder as we need to have the file created in the setup before route builder starts
             Endpoint endpoint = context.getEndpoint("stream:file?fileName=target/stream/streamfile.txt&delay=100");
             Consumer consumer = endpoint.createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
+                public void process(Exchange exchange) {
                     template.send("mock:result", exchange);
                 }
             });
             consumer.start();
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             consumer.stop();
         } finally {
@@ -92,7 +92,7 @@ public class StreamFileTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("produce")
                         .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
                 from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
@@ -106,7 +106,7 @@ public class StreamFileTest extends CamelTestSupport {
         template.sendBody("direct:start", "Camel");
 
         context.getRouteController().startRoute("consume");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         context.stop();
     }
 }

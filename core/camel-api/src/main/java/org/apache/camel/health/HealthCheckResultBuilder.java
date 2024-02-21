@@ -28,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
  * A builder helper to create a {@link HealthCheck} result.
  */
 public final class HealthCheckResultBuilder implements Builder<HealthCheck.Result> {
-    private HealthCheck check;
+
+    private final HealthCheck check;
     private String message;
     private Throwable error;
     private Map<String, Object> details;
@@ -106,8 +107,8 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         final HealthCheck.State responseState = this.state;
         final Optional<String> responseMessage = Optional.ofNullable(this.message);
         final Optional<Throwable> responseError = Optional.ofNullable(this.error);
-        final Map<String, Object> responseDetails = HealthCheckResultBuilder.this.details != null
-                ? Collections.unmodifiableMap(new HashMap<>(HealthCheckResultBuilder.this.details))
+        final Map<String, Object> responseDetails = ObjectHelper.isNotEmpty(this.details)
+                ? Collections.unmodifiableMap(new HashMap<>(this.details))
                 : Collections.emptyMap();
 
         return new HealthCheck.Result() {
@@ -144,6 +145,6 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
 
     @Override
     public String toString() {
-        return "HealthCheck[" + check.getGroup() + "," + check.getId() + "]";
+        return "HealthCheck[" + check.getGroup() + "/" + check.getId() + "]";
     }
 }

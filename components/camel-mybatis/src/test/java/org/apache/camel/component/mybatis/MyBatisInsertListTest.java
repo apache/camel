@@ -52,7 +52,7 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
         // insert 2 new rows
         template.sendBody("direct:start", accountList);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 4 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -60,10 +60,10 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .to("mybatis:batchInsertAccount?statementType=InsertList")

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SequenceBuffer<E> implements SequenceSender<E> {
 
-    private BlockingQueue<E> queue;
+    private final BlockingQueue<E> queue;
 
     public SequenceBuffer() {
         this.queue = new LinkedBlockingQueue<>();

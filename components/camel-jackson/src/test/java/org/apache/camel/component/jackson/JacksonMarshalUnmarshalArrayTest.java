@@ -36,7 +36,7 @@ public class JacksonMarshalUnmarshalArrayTest extends CamelTestSupport {
         String json = "[\"Camel\", \"World\"]";
         template.sendBody("direct:beginArray", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String[] array = mock.getReceivedExchanges().get(0).getIn().getBody(String[].class);
         assertNotNull(array);
@@ -49,10 +49,10 @@ public class JacksonMarshalUnmarshalArrayTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:beginArray").unmarshal().json(JsonLibrary.Jackson, String[].class).to("mock:endArray");
             }
         };

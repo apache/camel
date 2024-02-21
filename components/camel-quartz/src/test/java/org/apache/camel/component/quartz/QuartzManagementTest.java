@@ -20,13 +20,15 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.AIX)
 public class QuartzManagementTest extends BaseQuartzTest {
 
     protected MBeanServer getMBeanServer() {
@@ -35,12 +37,9 @@ public class QuartzManagementTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -55,10 +54,10 @@ public class QuartzManagementTest extends BaseQuartzTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
                         .to("mock:result");
             }

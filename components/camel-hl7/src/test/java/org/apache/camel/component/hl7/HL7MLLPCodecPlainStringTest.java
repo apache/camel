@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addCodec() throws Exception {
+    public HL7MLLPCodec addCodec() {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
@@ -48,7 +48,7 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         Object out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World",
                 String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // and the response is also just plain String
         assertEquals("Bye World", out);
@@ -56,9 +56,9 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e2
                 from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
                     // use plain String as message format

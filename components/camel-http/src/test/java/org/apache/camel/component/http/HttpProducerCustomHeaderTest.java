@@ -21,13 +21,12 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.http.HttpHeaders.HOST;
 
 public class HttpProducerCustomHeaderTest extends BaseHttpTest {
 
@@ -39,18 +38,19 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put(HOST, CUSTOM_HOST);
+        expectedHeaders.put(HttpHeaders.HOST, CUSTOM_HOST);
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).registerHandler("*",
+                .setSslContext(getSSLContext())
+                .registerVirtual(CUSTOM_HOST, "*",
                         new HeaderValidationHandler(
                                 "GET",
-                                "customHostHeader=" + CUSTOM_HOST,
+                                null,
                                 null,
                                 getExpectedContent(),
                                 expectedHeaders))
-                .registerHandler("*",
+                .register("*",
                         new HeaderValidationHandler(
                                 "GET",
                                 null,
@@ -81,8 +81,8 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint = (HttpEndpoint) component
-                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                                + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
+                .createEndpoint(
+                        "http://localhost:" + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();
@@ -102,7 +102,7 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint
-                = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                = (HttpEndpoint) component.createEndpoint("http://localhost:"
                                                           + localServer.getLocalPort() + "/myget");
         HttpProducer producer = new HttpProducer(endpoint);
 

@@ -16,48 +16,51 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  *
  */
-public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestSupport {
+public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends AbstractJMSTest {
 
-    @Override
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
-        super.setUp();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue1")
                         .setHeader("HEADER1", constant("header1"))
                         .dynamicRouter(method(DynamicRouter.class, "dynamicRoute"))
@@ -79,8 +82,8 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestS
 
         template.sendBody("direct:foo", "A");
 
-        assertMockEndpointsSatisfied();
-        resetMocks();
+        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.resetMocks(context);
 
         // actvivemq
         getMockEndpoint("mock:checkHeader").expectedMessageCount(1);
@@ -88,7 +91,19 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestS
 
         template.sendBody("activemq:queue1", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public static class DynamicRouter {

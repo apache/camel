@@ -56,11 +56,12 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
 
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2).build();
         reg.bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
@@ -80,18 +81,20 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
     public void testCommit() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("commit")
                         .transacted("required")
                         .to(sqlEndpoint)
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getIn().setHeader(SqlConstants.SQL_QUERY,
                                         "insert into customer values('cust2','muellerc')");
                             }
@@ -102,7 +105,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
 
         Exchange exchange = template.send(startEndpoint, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SqlConstants.SQL_QUERY, "insert into customer values('cust1','cmueller')");
             }
         });
@@ -126,12 +129,12 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     @Test
     public void testRollbackAfterExceptionInSecondStatement() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("rollback")
                         .transacted("required")
                         .to(sqlEndpoint)
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // primary key violation
                                 exchange.getIn().setHeader(SqlConstants.SQL_QUERY,
                                         "insert into customer values('cust1','muellerc')");
@@ -143,7 +146,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
 
         Exchange exchange = template.send(startEndpoint, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SqlConstants.SQL_QUERY, "insert into customer values('cust1','cmueller')");
             }
         });
@@ -157,7 +160,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     @Test
     public void testRollbackAfterAnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("rollback2")
                         .transacted("required")
                         .to(sqlEndpoint)
@@ -172,7 +175,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
 
         Exchange exchange = template.send(startEndpoint, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SqlConstants.SQL_QUERY, "insert into customer values('cust1','cmueller')");
             }
         });

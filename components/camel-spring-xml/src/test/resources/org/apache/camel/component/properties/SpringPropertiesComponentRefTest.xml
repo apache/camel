@@ -30,6 +30,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="ref:coolProperties"/>
+        <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <to uri="{{cool.end}}"/>

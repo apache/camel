@@ -24,8 +24,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 public class SpringRabbitPollingConsumer extends PollingConsumerSupport {
 
-    private RabbitTemplate template;
-    private SpringRabbitMQEndpoint jmsEndpoint;
+    private final RabbitTemplate template;
+    private final SpringRabbitMQEndpoint jmsEndpoint;
 
     public SpringRabbitPollingConsumer(SpringRabbitMQEndpoint endpoint, RabbitTemplate template) {
         super(endpoint);

@@ -61,8 +61,7 @@ public class PgEventProducerTest {
 
     @Test
     public void testPgEventProducerStop() throws Exception {
-        when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(dataSource.getConnection()).thenReturn(connection);
+        when(endpoint.initJdbc()).thenReturn(connection);
 
         PgEventProducer producer = new PgEventProducer(endpoint);
         producer.start();
@@ -74,8 +73,7 @@ public class PgEventProducerTest {
 
     @Test
     public void testPgEventProducerProcessDbThrowsInvalidStateException() throws Exception {
-        when(endpoint.getDatasource()).thenReturn(dataSource);
-        when(dataSource.getConnection()).thenReturn(connection);
+        when(endpoint.initJdbc()).thenReturn(connection);
         when(connection.isClosed()).thenThrow(new SQLException("DB problem occurred"));
 
         PgEventProducer producer = new PgEventProducer(endpoint);
@@ -88,13 +86,14 @@ public class PgEventProducerTest {
     public void testPgEventProducerProcessDbConnectionClosed() throws Exception {
         PGConnection connectionNew = mock(PGConnection.class);
 
+        when(endpoint.initJdbc()).thenReturn(connection);
         when(endpoint.getDatasource()).thenReturn(dataSource);
         when(dataSource.getConnection()).thenReturn(connection, connectionNew);
         when(connection.isClosed()).thenReturn(true);
         when(exchange.getIn()).thenReturn(message);
         when(message.getBody(String.class)).thenReturn("pgevent");
         when(endpoint.getChannel()).thenReturn("camel");
-        when(connectionNew.prepareStatement("NOTIFY camel, 'pgevent'")).thenReturn(statement);
+        when(connection.prepareStatement(ArgumentMatchers.anyString())).thenReturn(statement);
 
         PgEventProducer producer = new PgEventProducer(endpoint);
         producer.start();
@@ -107,6 +106,7 @@ public class PgEventProducerTest {
     public void testPgEventProducerProcessServerMinimumVersionMatched() throws Exception {
         CallableStatement statement = mock(CallableStatement.class);
 
+        when(endpoint.initJdbc()).thenReturn(connection);
         when(endpoint.getDatasource()).thenReturn(dataSource);
         when(connection.isClosed()).thenReturn(false);
         when(dataSource.getConnection()).thenReturn(connection);
@@ -125,6 +125,7 @@ public class PgEventProducerTest {
 
     @Test
     public void testPgEventProducerProcessServerMinimumVersionNotMatched() throws Exception {
+        when(endpoint.initJdbc()).thenReturn(connection);
         when(endpoint.getDatasource()).thenReturn(dataSource);
         when(connection.isClosed()).thenReturn(false);
         when(dataSource.getConnection()).thenReturn(connection);

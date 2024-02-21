@@ -37,8 +37,8 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
     private final MicrometerMessageHistoryNamingStrategy namingStrategy;
 
     public MicrometerMessageHistory(MeterRegistry meterRegistry, Route route, NamedNode namedNode,
-                                    MicrometerMessageHistoryNamingStrategy namingStrategy, long timestamp, Message message) {
-        super(route.getId(), namedNode, timestamp, message);
+                                    MicrometerMessageHistoryNamingStrategy namingStrategy, Message message) {
+        super(route.getId(), namedNode, message);
         this.meterRegistry = meterRegistry;
         this.route = route;
         this.namingStrategy = namingStrategy;
@@ -50,7 +50,7 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
         super.nodeProcessingDone();
         Timer timer = Timer.builder(namingStrategy.getName(route, getNode()))
                 .tags(namingStrategy.getTags(route, getNode()))
-                .description(getNode().getDescriptionText())
+                .description("Node performance metrics")
                 .register(meterRegistry);
         sample.stop(timer);
     }

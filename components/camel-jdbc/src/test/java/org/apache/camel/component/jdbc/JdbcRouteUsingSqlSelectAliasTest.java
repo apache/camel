@@ -31,7 +31,7 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testJdbcRoutes() throws Exception {
+    public void testJdbcRoutes() {
         // START SNIPPET: invoke
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
@@ -57,11 +57,11 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             // START SNIPPET: route
             // lets add simple route
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:hello").to("jdbc:testdb?readSize=100");
             }
             // END SNIPPET: route

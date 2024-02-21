@@ -31,7 +31,7 @@ public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
 
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
-        log.info("Got reply " + out);
+        log.info("Got reply {}", out);
 
         assertMockEndpointsSatisfied();
     }

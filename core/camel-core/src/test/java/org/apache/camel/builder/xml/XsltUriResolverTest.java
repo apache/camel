@@ -16,24 +16,48 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.xslt.XsltUriResolver;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltUriResolverTest {
 
     @Test
-    public void testResolveUri() throws Exception {
+    public void testResolveUriUsingClasspath() throws Exception {
         CamelContext context = new DefaultCamelContext();
         XsltUriResolver xsltUriResolver = new XsltUriResolver(context, "classpath:xslt/staff/staff.xsl");
         Source source = xsltUriResolver.resolve("../../xslt/common/staff_template.xsl", "classpath:xslt/staff/staff.xsl");
         assertNotNull(source);
         assertEquals("classpath:xslt/common/staff_template.xsl", source.getSystemId());
+    }
+
+    @Test
+    public void testResolveUriUsingRef() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String staffTemplateXsl = readFileFromClasspathAsString("xslt/common/staff_template.xsl");
+        context.getRegistry().bind("staffTemplateXsl", staffTemplateXsl);
+        XsltUriResolver xsltUriResolver = new XsltUriResolver(context, "classpath:xslt/staff/staff.xsl");
+        Source source = xsltUriResolver.resolve("ref:staffTemplateXsl", "classpath:xslt/staff/staff.xsl");
+        assertNotNull(source);
+        assertEquals("ref:staffTemplateXsl", source.getSystemId());
+        assertArrayEquals(((StreamSource) source).getInputStream().readAllBytes(), staffTemplateXsl.getBytes());
+    }
+
+    private static String readFileFromClasspathAsString(String path) throws IOException {
+        try (InputStream is = XsltUriResolverTest.class.getClassLoader().getResourceAsStream(path)) {
+            ObjectHelper.notNull(is, "is");
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 }

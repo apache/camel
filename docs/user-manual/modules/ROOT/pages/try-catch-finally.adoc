@@ -1,92 +1,177 @@
-[[TryCatchFinally-TryCatchFinally]]
 = Try ... Catch ... Finally
 
-Camel supports the Java equivalent of try .. catch and finally directly
-in the DSL.
+Camel supports the Java equivalent of try ... catch ... finally directly in the DSL.
 It aims to work like its Java sisters but with more power.
 
-In Camel we prefix the keywords with `do` to avoid having same keyword
-as Java. So we have:
+In Camel we prefix the keywords with `do` to avoid having same keyword as Java.
+So we have:
 
-* `doTry`
-* `doCatch`
-* `doFinally`
-* `end` to end the block in Java DSL
+- `doTry`
+- `doCatch`
+- `doFinally`
+- `end` to end the block in Java DSL
 
-== Camel error handling is disabled
+When using `doTry ... doCatch ... doFinally` then the regular Camel
+xref:error-handler.adoc[Error Handler] is not in use; meaning any
+`onException` or the likes does not trigger.
+The reason is that
+`doTry ... doCatch ... doFinally` is in fact its own error handler and mimics how try/catch/finally works in Java.
 
-When using `doTry .. doCatch .. doFinally` then the regular Camel
-xref:error-handler.adoc[Error Handler] does not apply. That means any
-`onException` or the likes does not trigger. The reason is that
-`doTry .. doCatch .. doFinally` is in fact its own error handler and
-that it aims to mimic and work like how try/catch/finally works in Java.
+== Using doTry ... doCatch ... doFinally
 
-[[TryCatchFinally-AboutdoCatchanditspoweroverJava]]
-== About `doCatch` and its power over Java
+In the route below we have all of them in action:
 
-The `doCatch` in Camel is empowered over its Java sister.
+[source,java]
+----
+from("direct:start")
+    .doTry()
+        .process(new ProcessorFail())
+        .to("mock:result")
+    .doCatch(IOException.class, IllegalStateException.class)
+        .to("mock:catch")
+    .doFinally()
+        .to("mock:finally")
+    .end();
+----
 
-First of all you can define multiple exceptions to catch in a single
-block.
+And in XML DSL
 
-And second of all an important aspect over the regular Java counter
-parts is that Camel will check in the exception hierarchy when it
-matches a thrown exception against the `doCatch` blocks. The reason is
-that many times the original caused exceptions is wrapped by other
-wrapper exceptions, typically transposing the exception from a checked
-to a runtime exception.
-Camel for instance does this by wrapping it in a `RuntimeCamelException`.
-So if the original caused exception is an `java.io.IOException` then
-Camel will still match a `doCatch` block defined with an
-`java.io.IOException`. And just like Java the order in which you have
-multiple `doCatch` blocks matters. Camel will iterate from the top going
-down and use the first `doCatch` that matches the exception. The reason
-is to keep it similar to the regular java and how it selects a catch
-block. This differs from the xref:exception-clause.adoc[Exception
-Clause] that has a more intelligent exception selection strategy among
-multiple `onException` definitions, where it also considers the delta in
-the exception hierarchy to select the best definition.
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <doTry>
+    <process ref="processorFail"/>
+    <to uri="mock:result"/>
+    <doCatch>
+      <exception>java.io.IOException</exception>
+      <exception>java.lang.IllegalStateException</exception>
+      <to uri="mock:catch"/>
+    </doCatch>
+    <doFinally>
+       <to uri="mock:finally"/>
+    </doFinally>
+  </doTry>
+</route>
+----
 
-A third feature is that you can attach a `onWhen` predicate to signal if
-the catch should trigger or not at runtime.
+=== Using onWhen with doCatch
 
-[[TryCatchFinally-UsingtrycatchfinallyinJavaDSL]]
-== Using try .. catch .. finally in Java DSL
+You can use xref:predicate.adoc[Predicate]s with `doCatch` to make it runtime determine if the block should be triggered or not.
+In our case we only want to trigger if the caused exception message contains the *damn* word.
 
-In the route below we have all keywords in action. As the code is based
-on a unit test we route using xref:components::mock-component.adoc[Mock].
+[source,java]
+----
+from("direct:start")
+    .doTry()
+        .process(new ProcessorFail())
+        .to("mock:result")
+    .doCatch(IOException.class, IllegalStateException.class).onWhen(exceptionMessage().contains("Damn"))
+        .to("mock:catch")
+    .doCatch(CamelExchangeException.class)
+        .to("mock:catchCamel")
+    .doFinally()
+        .to("mock:finally")
+    .end();
+----
 
-https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorMultipleExceptionTest.java[TryProcessorMultipleExceptionTest.java]
+And in XML DSL
 
-And finally we have an example of the `onWhen` predicate in action. We
-can attach it to a `doCatch` block and at runtime determine if the block
-should be triggered or not.
-In our case we only want to trigger if the caused exception message
-contains the *damn* word.
-
-https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel/processor/TryProcessorOnWhenTest.java[TryProcessorOnWhenTest.java]
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <doTry>
+    <process ref="processorFail"/>
+    <to uri="mock:result"/>
+    <doCatch>
+      <exception>java.io.IOException</exception>
+      <exception>java.lang.IllegalStateException</exception>
+      <onWhen>
+        <simple>${exception.message} contains 'Damn'</simple>
+      </onWhen>
+      <to uri="mock:catch"/>
+    </doCatch>
+    <doCatch>
+      <exception>org.apache.camel.CamelExchangeException</exception>
+      <to uri="mock:catchCamel"/>
+    </doCatch>
+    <doFinally>
+       <to uri="mock:finally"/>
+    </doFinally>
+  </doTry>
+</route>
+----
 
 === Use end() to end the block
 
-Notice when using Java DSL we must use `end()` to indicate where the try
-.. catch .. finally block ends. As the example above has a finally, then
-the `end()` should be at the end of the finally block. If we are not
-using a finally, then the `end()` should be at the end of the `doCatch`
+Notice when using Java DSL we must use `end()` to indicate where the try ... catch ... finally block ends.
+As the example above has a finally, then the `end()` should be at the end of the finally block.
+If we are not using a finally, then the `end()` should be at the end of the `doCatch`
 to indicate the end there.
 
-[[TryCatchFinally-Usingtry..catch..finallyinSpringDSL]]
-== Using try .. catch .. finally in Spring DSL
+TIP: Instead of `end()` you can use `endDoTry()` to end and _return back_ to the try ... catch scope.
 
-In the route below we have all keywords in action. As the code is based
-on a unit test we route using xref:components::mock-component.adoc[Mock].
+=== Using nested doTry ... doCatch EIPs
 
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorMultipleExceptionTest.xml[SpringTryProcessorMultipleExceptionTest.xml]
+When nesting doTry ... doCatch from an outer doTry ... doCatch EIP, then pay extra attention when using Java DSL as the Java programming language is not _indent aware_ so you may write Java code that are indented in a way where you think that a catch block is associated with the other doTry but it is not.
 
-And finally we have an example of the `onWhen` predicate in action. We
-can attach it to a `doCatch` block and at runtime determine if the block
-should be triggered or not.
-In our case we only want to trigger if the caused exception message
-contains the *damn* word.
+Given the following Java DSL:
 
-https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorOnWhenTest.xml[SpringTryProcessorOnWhenTest.xml]
+[source,java]
+----
+from("direct:test").routeId("myroute")
+    .doTry().
+        doTry().
+            throwException(new IllegalArgumentException("Forced by me"))
+        .doCatch(Exception.class)
+            .log("docatch 1")
+            .throwException(new IllegalArgumentException("Second forced by me"))
+    .doCatch(Exception.class)
+        .log("docatch 2")
+    .end();
+----
 
+Then you may think that _docatch2_ is associated on the outer doTry because of how the code is formatted.
+But it is **not**, both __docatch1__ and __docatch2__ are in the inner doTry, and the outer doTry has no catch blocks.
+
+So in this example the route will throw the 1st exception which is then handled in __docatch1__ which then throw a 2nd exception, that is not caught.
+
+So what you must do is to end the doCatch block correct (notice how we use `endDoTry()` two times) as shown below:
+
+[source,java]
+----
+from("direct:test").routeId("myroute")
+    .doTry().
+        doTry().
+            throwException(new IllegalArgumentException("Forced by me"))
+        .doCatch(Exception.class)
+            .log("docatch 1")
+            .throwException(new IllegalArgumentException("Second forced by me"))
+         .endDoTry() // end this doCatch block
+     .endDoTry() // end the inner doTry
+    .doCatch(Exception.class)
+        .log("docatch 2")
+    .end();
+----
+
+And by using the `endDoTry()` we can end the block correctly, and an XML representation of the route would be as follows:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:test"/>
+    <doTry>
+        <doTry>
+            <throwException id="throwException1"/>
+            <doCatch id="doCatch1">
+                <log id="log1" message="docatch 1"/>
+                <throwException id="throwException2"/>
+            </doCatch>
+        </doTry>
+        <doCatch id="doCatch2">
+            <log id="log2" message="docatch 2"/>
+        </doCatch>
+    </doTry>
+</route>
+----

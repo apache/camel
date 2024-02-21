@@ -42,6 +42,8 @@ import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.netty.http.InitializerHelper.logConfiguration;
+
 /**
  * {@link ServerInitializerFactory} for the Netty HTTP server.
  */
@@ -94,8 +96,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
-        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        pipeline.addLast("decoder", new HttpRequestDecoder(
+                configuration.getMaxInitialLineLength(), configuration.getMaxHeaderSize(), configuration.getMaxChunkSize()));
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {
@@ -105,7 +108,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             pipeline.addLast("decoder-" + x, decoder);
         }
         pipeline.addLast("encoder", new HttpResponseEncoder());
-        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {
@@ -146,15 +149,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase() == null) {
-                LOG.debug("passphrase is null");
-            }
+            logConfiguration(configuration);
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
@@ -180,7 +175,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand() throws Exception {
+    private SslHandler configureServerSSLOnDemand() {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
         }

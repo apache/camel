@@ -30,7 +30,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     private final String contentType = "application/pkcs7-mime; smime-type=enveloped-data; name=\"smime.p7m\"";
 
     @Test
-    public void testDetermineContentTypeNoChange() throws Exception {
+    public void testDetermineContentTypeNoChange() {
         MailConfiguration configuration = new MailConfiguration();
         MailBinding binding = new MailBinding();
 
@@ -42,7 +42,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testDetermineContentTypeCharSetFromExchange() throws Exception {
+    public void testDetermineContentTypeCharSetFromExchange() {
         MailConfiguration configuration = new MailConfiguration();
         MailBinding binding = new MailBinding();
 
@@ -58,7 +58,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testDetermineContentTypeFallbackCharSetFromExchange() throws Exception {
+    public void testDetermineContentTypeFallbackCharSetFromExchange() {
         MailConfiguration configuration = new MailConfiguration();
         MailBinding binding = new MailBinding();
 
@@ -73,7 +73,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testDetermineContentTypeIgnoreUnsupportedExchangeAsFallback() throws Exception {
+    public void testDetermineContentTypeIgnoreUnsupportedExchangeAsFallback() {
         MailConfiguration configuration = new MailConfiguration();
         // ignore unsupported
         configuration.setIgnoreUnsupportedCharset(true);
@@ -90,7 +90,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testDetermineContentTypeInvalidCharset() throws Exception {
+    public void testDetermineContentTypeInvalidCharset() {
         MailConfiguration configuration = new MailConfiguration();
         MailBinding binding = new MailBinding();
 
@@ -104,7 +104,7 @@ public class DetermineContentTypeIssueTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testDetermineContentTypeWithCharsetInMiddle() throws Exception {
+    public void testDetermineContentTypeWithCharsetInMiddle() {
         MailConfiguration configuration = new MailConfiguration();
         MailBinding binding = new MailBinding();
 

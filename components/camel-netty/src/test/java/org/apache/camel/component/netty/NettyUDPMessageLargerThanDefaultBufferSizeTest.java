@@ -20,6 +20,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +43,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
 
         getMockEndpoint("mock:result").expectedBodiesReceived(message);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false", message);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -52,16 +53,16 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
     }
 
     @BindToRegistry("RCVBUF_ALLOCATOR")
-    public FixedRecvByteBufAllocator loadRecv() throws Exception {
+    public FixedRecvByteBufAllocator loadRecv() {
         FixedRecvByteBufAllocator fixedRecvByteBufAllocator = new FixedRecvByteBufAllocator(4096);
         return fixedRecvByteBufAllocator;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#"
                      + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
             }

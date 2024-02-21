@@ -96,7 +96,7 @@ public class AntPathMatcherFileFilter implements FileFilter {
      * Sets Whether or not pattern matching should be case sensitive
      * <p/>
      * Is by default turned on <tt>true</tt>.
-     * 
+     *
      * @param caseSensitive <tt>false</tt> to disable case sensitive pattern matching
      */
     public void setCaseSensitive(boolean caseSensitive) {

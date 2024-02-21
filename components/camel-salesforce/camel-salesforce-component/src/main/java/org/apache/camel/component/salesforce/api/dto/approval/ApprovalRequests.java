@@ -20,15 +20,10 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-@XStreamAlias("ProcessApprovalRequest")
 public final class ApprovalRequests implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamImplicit
     private final List<ApprovalRequest> requests;
 
     public ApprovalRequests(final ApprovalRequest singleRequest) {

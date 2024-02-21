@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.csv;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.StringJoiner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -45,7 +45,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean escapeDisabled;
     private Character escape;
     private boolean headerDisabled;
-    private String[] header;
+    private String header;
     private Boolean allowMissingColumnNames;
     private Boolean ignoreEmptyLines;
     private Boolean ignoreSurroundingSpaces;
@@ -62,6 +62,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private Boolean trailingDelimiter;
 
     // Unmarshal options
+    private boolean captureHeaderRecord;
     private boolean lazyLoad;
     private boolean useMaps;
     private boolean useOrderedMaps;
@@ -91,7 +92,12 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        return unmarshaller.unmarshal(exchange, inputStream);
+        return unmarshal(exchange, (Object) inputStream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
+        return unmarshaller.unmarshal(exchange, body);
     }
 
     @Override
@@ -128,7 +134,11 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         if (headerDisabled) {
             answer = answer.withHeader((String[]) null); // null disables the header
         } else if (header != null) {
-            answer = answer.withHeader(header);
+            if (header.indexOf(',') != -1) {
+                answer = answer.withHeader(header.split(","));
+            } else {
+                answer = answer.withHeader(header);
+            }
         }
 
         if (allowMissingColumnNames != null) {
@@ -385,25 +395,36 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Gets the header. If {@code null} then the default one of the format used. If empty then it will be automatically
-     * handled.
+     * Gets the header. Multiple values can be separated by comma.
+     *
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
      *
      * @return Header
      */
-    public String[] getHeader() {
+    public String getHeader() {
         return header;
     }
 
     /**
-     * Gets the header. If {@code null} then the default one of the format used. If empty then it will be automatically
-     * handled.
+     * Gets the header. Multiple values can be separated by comma.
+     *
+     * If {@code null} then the default one of the format used. If empty then it will be automatically handled.
      *
      * @param  header Header
      * @return        Current {@code CsvDataFormat}, fluent API
      * @see           org.apache.commons.csv.CSVFormat#withHeader(String...)
      */
+    public CsvDataFormat setHeader(String header) {
+        this.header = header;
+        return this;
+    }
+
     public CsvDataFormat setHeader(String[] header) {
-        this.header = Arrays.copyOf(header, header.length);
+        StringJoiner sj = new StringJoiner(",");
+        for (String s : header) {
+            sj.add(s);
+        }
+        this.header = sj.toString();
         return this;
     }
 
@@ -643,6 +664,26 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
+     * Indicates whether or not the unmarshalling should capture the header record.
+     *
+     * @return {@code true} for capture header record, {@code false} otherwise
+     */
+    public boolean isCaptureHeaderRecord() {
+        return captureHeaderRecord;
+    }
+
+    /**
+     * Indicates whether or not the unmarshalling should capture the header record.
+     *
+     * @param  captureHeaderRecord {@code true} for capture header record, {@code false} otherwise
+     * @return                     Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setCaptureHeaderRecord(boolean captureHeaderRecord) {
+        this.captureHeaderRecord = captureHeaderRecord;
+        return this;
+    }
+
+    /**
      * Indicates whether or not the unmarshalling should lazily load the records.
      *
      * @return {@code true} for lazy loading, {@code false} otherwise
@@ -730,7 +771,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param  trim whether or not to trim leading and trailing blanks. <code>null</code> value allowed.
      * @return      Current {@code CsvDataFormat}, fluent API.
      */
@@ -741,7 +782,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to trim leading and trailing blanks.
-     * 
+     *
      * @return {@link Boolean#TRUE} if leading and trailing blanks should be trimmed. {@link Boolean#FALSE} otherwise.
      *         Could return <code>null</code> if value has NOT been set.
      */
@@ -754,7 +795,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param  ignoreHeaderCase whether or not to ignore case when accessing header names. <code>null</code> value
      *                          allowed.
      * @return                  Current {@code CsvDataFormat}, fluent API.
@@ -766,7 +807,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to ignore case when accessing header names.
-     * 
+     *
      * @return {@link Boolean#TRUE} if case should be ignored when accessing header name. {@link Boolean#FALSE}
      *         otherwise. Could return <code>null</code> if value has NOT been set.
      */
@@ -779,7 +820,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param  trailingDelimiter whether or not to add a trailing delimiter.
      * @return                   Current {@code CsvDataFormat}, fluent API.
      */
@@ -790,7 +831,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to add a trailing delimiter.
-     * 
+     *
      * @return {@link Boolean#TRUE} if a trailing delimiter should be added. {@link Boolean#FALSE} otherwise. Could
      *         return <code>null</code> if value has NOT been set.
      */

@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -35,9 +36,10 @@ import org.apache.camel.support.DefaultEndpoint;
  * printer using the javax printing API under the covers.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername",
-             producerOnly = true, category = { Category.PRINTING })
+             producerOnly = true, category = { Category.DOCUMENT }, headersClass = PrinterEndpoint.class)
 public class PrinterEndpoint extends DefaultEndpoint {
 
+    @Metadata(label = "producer", description = "The name of the job", javaType = "String")
     public static final String JOB_NAME = "PrinterJobName";
 
     @UriParam

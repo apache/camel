@@ -21,10 +21,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Unit test for consuming from a http feed
  */
+@DisabledOnOs(OS.AIX)
 public class AtomHttpConsumerTest extends CamelTestSupport {
 
     @Disabled("requires to be online for testing")

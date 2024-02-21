@@ -33,6 +33,10 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
         case "consumerKey": target.setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
         case "consumersecret":
         case "consumerSecret": target.setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "httpproxyhost":
         case "httpProxyHost": target.setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "httpproxypassword":
@@ -62,6 +66,10 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
         case "consumerKey": return java.lang.String.class;
         case "consumersecret":
         case "consumerSecret": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "httpproxyhost":
         case "httpProxyHost": return java.lang.String.class;
         case "httpproxypassword":
@@ -92,6 +100,10 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
         case "consumerKey": return target.getConsumerKey();
         case "consumersecret":
         case "consumerSecret": return target.getConsumerSecret();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "httpproxyhost":
         case "httpProxyHost": return target.getHttpProxyHost();
         case "httpproxypassword":

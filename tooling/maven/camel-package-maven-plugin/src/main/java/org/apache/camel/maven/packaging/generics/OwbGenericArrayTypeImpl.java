@@ -21,7 +21,7 @@ import java.lang.reflect.Type;
 
 public class OwbGenericArrayTypeImpl implements GenericArrayType {
 
-    private Type componentType;
+    private final Type componentType;
 
     public OwbGenericArrayTypeImpl(Type componentType) {
         this.componentType = componentType;

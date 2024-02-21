@@ -22,7 +22,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FromRestDuplicateTest extends ContextTestSupport {
 
@@ -39,30 +39,28 @@ public class FromRestDuplicateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDuplicateGet() throws Exception {
-        try {
+    public void testDuplicateGet() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration().host("localhost");
 
                     rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").get("{id}")
                             .to("log:foo");
-
                 }
             });
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Duplicate verb detected in rest-dsl: get:{id}", e.getMessage());
-        }
+        }, "Should throw exception");
+
+        assertEquals("Duplicate verb detected in rest-dsl: get:{id}", e.getMessage());
     }
 
     @Test
-    public void testDuplicatePost() throws Exception {
-        try {
+    public void testDuplicatePost() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration().host("localhost");
 
                     rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").put().to("log:foo")
@@ -70,10 +68,9 @@ public class FromRestDuplicateTest extends ContextTestSupport {
 
                 }
             });
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Duplicate verb detected in rest-dsl: post", e.getMessage());
-        }
+        }, "Should throw exception");
+
+        assertEquals("Duplicate verb detected in rest-dsl: post", e.getMessage());
     }
 
 }

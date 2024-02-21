@@ -95,7 +95,7 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()))
+                fromF("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())
                         .process(e -> {
                             assertNotNull(e.getIn().getBody());
                             assertNotNull(e.getIn().getHeaders());

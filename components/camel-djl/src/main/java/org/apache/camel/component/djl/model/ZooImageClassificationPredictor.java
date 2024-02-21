@@ -22,16 +22,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ai.djl.Application;
+import ai.djl.MalformedModelException;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Classifications;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
 import ai.djl.repository.zoo.Criteria;
+import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import ai.djl.training.util.ProgressBar;
 import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,8 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
 
     private final ZooModel<Image, Classifications> model;
 
-    public ZooImageClassificationPredictor(String artifactId) throws Exception {
+    public ZooImageClassificationPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
+                                                              IOException {
         Criteria<Image, Classifications> criteria = Criteria.builder()
                 .optApplication(Application.CV.IMAGE_CLASSIFICATION)
                 .setTypes(Image.class, Classifications.class)
@@ -48,11 +52,10 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
                 .optProgress(new ProgressBar())
                 .build();
         this.model = ModelZoo.loadModel(criteria);
-        //        model.save(Paths.get("src/test/resources/models/mnist"), "mlp");
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         if (exchange.getIn().getBody() instanceof byte[]) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             Map<String, Float> result = classify(new ByteArrayInputStream(bytes));
@@ -64,31 +67,31 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
             Map<String, Float> result = classify(exchange.getIn().getBody(InputStream.class));
             exchange.getIn().setBody(result);
         } else {
-            throw new RuntimeException("Data type is not supported. Body should be byte[], InputStream or File");
+            throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
         }
     }
 
-    public Map<String, Float> classify(File input) throws Exception {
-        try {
-            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+    public Map<String, Float> classify(File input) {
+        try (InputStream fileInputStream = new FileInputStream(input)) {
+            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(image);
         } catch (IOException e) {
-            LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
+            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 
-    public Map<String, Float> classify(InputStream input) throws Exception {
+    public Map<String, Float> classify(InputStream input) {
         try {
             Image image = ImageFactory.getInstance().fromInputStream(input);
             return classify(image);
         } catch (IOException e) {
-            LOG.error("Couldn't transform input into a BufferedImage");
-            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
+            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
+            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 
-    public Map<String, Float> classify(Image image) throws Exception {
+    public Map<String, Float> classify(Image image) {
         try (Predictor<Image, Classifications> predictor = model.newPredictor()) {
             Classifications classifications = predictor.predict(image);
             List<Classifications.Classification> list = classifications.items();
@@ -96,7 +99,7 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
                     .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
-            throw new RuntimeException("Could not process input or output", e);
+            throw new RuntimeCamelException("Could not process input or output", e);
         }
     }
 }

@@ -28,26 +28,12 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ErrorHandlerTest extends TestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // make SEDA testing faster
-        System.setProperty("CamelSedaPollTimeout", "10");
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        System.clearProperty("CamelSedaPollTimeout");
-    }
 
     @Test
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
@@ -160,7 +146,7 @@ public class ErrorHandlerTest extends TestSupport {
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals(2, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
-            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
+            assertTrue(redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

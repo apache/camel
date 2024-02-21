@@ -123,7 +123,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange")
+              enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink,createUploadLink")
     private MinioOperations operation;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean pojoRequest;
@@ -489,7 +489,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Source bucket name.
+     * Destination bucket name.
      */
     public void setDestinationBucketName(String destinationBucketName) {
         this.destinationBucketName = destinationBucketName;
@@ -500,7 +500,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Source object name.
+     * Destination object name.
      */
     public void setDestinationObjectName(String destinationObjectName) {
         this.destinationObjectName = destinationObjectName;

@@ -32,11 +32,21 @@ public final class TelegramMessageHelper {
             if (update.getMessage().getChat() != null) {
                 exchange.getMessage().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
             }
+            if (update.getMessage().getDate() != null) {
+                // convert seconds to millis
+                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
+                        update.getMessage().getDate().getEpochSecond() * 1000);
+            }
         } else if (update.getChannelPost() != null) {
             exchange.getMessage().setBody(update.getChannelPost());
 
             if (update.getChannelPost().getChat() != null) {
                 exchange.getMessage().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
+            }
+            if (update.getChannelPost().getDate() != null) {
+                // convert seconds to millis
+                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
+                        update.getChannelPost().getDate().getEpochSecond() * 1000);
             }
         } else if (update.getCallbackQuery() != null) {
             exchange.getMessage().setBody(update.getCallbackQuery());

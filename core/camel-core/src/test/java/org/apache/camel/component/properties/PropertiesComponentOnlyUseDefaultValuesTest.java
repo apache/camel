@@ -18,9 +18,10 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupport {
 
@@ -56,12 +57,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
             }
         });
 
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
     }
 
     @Test
@@ -73,12 +69,6 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
             }
         });
 
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        Assertions.assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
     }
-
 }

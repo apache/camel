@@ -1,0 +1,178 @@
+= Huawei Distributed Message Service (DMS) Component
+:doctitle: Huawei Distributed Message Service (DMS)
+:shortname: hwcloud-dms
+:artifactid: camel-huaweicloud-dms
+:description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
+:since: 3.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Huawei Cloud
+:camel-spring-boot-name: huaweicloud-dms
+
+*Since Camel {since}*
+
+*{component-header}*
+
+
+Huawei Cloud Distributed Message Service (DMS) component allows you to integrate with https://www.huaweicloud.com/intl/en-us/product/dms.html[DMS] provided by Huawei Cloud.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-huaweicloud-dms</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+----
+hwcloud-dms:operation[?options]
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== Usage
+
+=== Message properties evaluated by the DMS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudDmsOperation` |`String` | Name of operation to invoke
+
+|`CamelHwCloudDmsEngine` |`String` | The message engine. Either kafka or rabbitmq
+
+|`CamelHwCloudDmsInstanceId` |`String` | Instance ID to invoke operation on
+
+|`CamelHwCloudDmsName` |`String` | The name of the instance for creating and updating an instance
+
+|`CamelHwCloudDmsEngineVersion` |`String` | The version of the message engine
+
+|`CamelHwCloudDmsSpecification` |`String` | The baseline bandwidth of a Kafka instance
+
+|`CamelHwCloudDmsStorageSpace` |`int` | The message storage space
+
+|`CamelHwCloudDmsPartitionNum` |`int` | The maximum number of partitions in a Kafka instance
+
+|`CamelHwCloudDmsAccessUser` |`String` | The username of a RabbitMQ instance
+
+|`CamelHwCloudDmsPassword` |`String` | The password of a RabbitMQ instance
+
+|`CamelHwCloudDmsVpcId` |`String` | The VPC ID
+
+|`CamelHwCloudDmsSecurityGroupId` |`String` | The security group which the instance belongs to
+
+|`CamelHwCloudDmsSubnetId` |`String` | The subnet ID
+
+|`CamelHwCloudDmsAvailableZones` |`List<String>` | The ID of an available zone
+
+|`CamelHwCloudDmsProductId` |`String` | The product ID
+
+|`CamelHwCloudDmsKafkaManagerUser` |`String` | The username for logging in to the Kafka Manager
+
+|`CamelHwCloudDmsKafkaManagerPassword` |`String` | The password for logging in to the Kafka Manager
+
+|`CamelHwCloudDmsStorageSpecCode` |`String` | The storage I/O specification
+
+|=======================================================================
+
+If any of the above properties are set, they will override their corresponding query parameter.
+
+=== Message properties set by the DMS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelHwCloudDmsInstanceDeleted` |`boolean` | Set as `true` when the deleteInstance operation is successful
+
+|`CamelHwCloudDmsInstanceUpdated` |`boolean` | Set as `true` when the updateInstance operation is successful
+
+|=======================================================================
+
+
+== List of Supported DMS Operations
+
+- createInstance
+- deleteInstance
+- listInstances
+- queryInstance
+- updateInstance
+
+=== Create Instance
+To create an instance, you can pass the parameters through the endpoint, the exchange properties, and the exchange body as a CreateInstanceRequestBody object or a valid JSON String representation of it. Refer to this for the https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html[Kafka parameters] and the https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html[RabbitMQ parameters]. If you choose to pass these parameters through the endpoint or through exchange properties, you can only input the mandatory parameters shown in those links. If you would like to have access to all the parameters, you must pass a CreateInstanceRequestBody object or a valid JSON String representation of it through the exchange body, as shown below:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new CreateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
+ .to("hwcloud-dms:createInstance?region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
+ .to("hwcloud-dms:createInstance?region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
+----
+
+=== Update Instance
+To update an instance, you must pass the parameters through the exchange body as an UpdateInstanceRequestBody or a valid JSON String representation of it. Refer to this for the https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514004.html[Kafka parameters] and the https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514004.html[RabbitMQ parameters]. An example of how to do this is shown below:
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody(new UpdateInstanceRequestBody().withName("new-instance").withDescription("description").with*) // add remaining options
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
+----
+
+[source,java]
+----
+from("direct:triggerRoute")
+ .setBody("{\"name\":\"new-instance\",\"description\":\"description\"}") // add remaining options
+ .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
+----
+
+== Using ServiceKey Configuration Bean
+
+Access key and secret keys are required to authenticate against cloud DMS service. You can avoid having them being exposed
+and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.common.models.ServiceKeys`.
+Add it to the registry and let Camel look it up by referring the object via endpoint query parameter `serviceKeys`.
+
+Check the following code snippets:
+
+[source,xml]
+----
+<bean id="myServiceKeyConfig" class="org.apache.camel.component.huaweicloud.common.models.ServiceKeys">
+   <property name="accessKey" value="your_access_key" />
+   <property name="secretKey" value="your_secret_key" />
+</bean>
+----
+[source,java]
+----
+from("direct:triggerRoute")
+ .to("hwcloud-dms:listInstances?region=cn-north-4&serviceKeys=#myServiceKeyConfig")
+----
+
+
+include::spring-boot:partial$starter.adoc[]

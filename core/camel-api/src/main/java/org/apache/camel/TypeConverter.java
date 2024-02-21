@@ -106,5 +106,4 @@ public interface TypeConverter {
      * @return          the converted value, or <tt>null</tt> if not possible to convert
      */
     <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value);
-
 }

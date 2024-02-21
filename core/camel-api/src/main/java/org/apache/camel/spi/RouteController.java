@@ -77,13 +77,46 @@ public interface RouteController extends CamelContextAware, StaticService {
     void startAllRoutes() throws Exception;
 
     /**
-     * Indicates whether current thread is starting route(s).
+     * Stops all the routes
+     *
+     * @throws Exception is thrown if a route could not be stopped for whatever reason
+     */
+    void stopAllRoutes() throws Exception;
+
+    /**
+     * Stops and removes all the routes
+     *
+     * @throws Exception is thrown if a route could not be stopped or removed for whatever reason
+     */
+    void removeAllRoutes() throws Exception;
+
+    /**
+     * Indicates whether the route controller is doing initial starting of the routes.
+     */
+    boolean isStartingRoutes();
+
+    /**
+     * Indicates if the route controller has routes that are currently unhealthy such as they have not yet been
+     * successfully started, and if being supervised then the route can either be pending restarts or failed all restart
+     * attempts and are exhausted.
+     */
+    boolean hasUnhealthyRoutes();
+
+    /**
+     * Reloads all the routes
+     *
+     * @throws Exception is thrown if a route could not be reloaded for whatever reason
+     */
+    void reloadAllRoutes() throws Exception;
+
+    /**
+     * Indicates whether current thread is reloading route(s).
      * <p/>
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      *
-     * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
+     * @return <tt>true</tt> if current thread is reloading route(s), or <tt>false</tt> if not.
      */
-    boolean isStartingRoutes();
+    boolean isReloadingRoutes();
 
     /**
      * Returns the current status of the given route
@@ -109,6 +142,16 @@ public interface RouteController extends CamelContextAware, StaticService {
      * @see              #suspendRoute(String)
      */
     void stopRoute(String routeId) throws Exception;
+
+    /**
+     * Stops and marks the given route as failed (health check is DOWN) due to a caused exception.
+     *
+     * @param  routeId   the route id
+     * @param  cause     the exception that is causing this route to be stopped and marked as failed
+     * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @see              #suspendRoute(String)
+     */
+    void stopRoute(String routeId, Throwable cause) throws Exception;
 
     /**
      * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.

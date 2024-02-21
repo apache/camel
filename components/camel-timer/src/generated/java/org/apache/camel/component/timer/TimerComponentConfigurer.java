@@ -25,6 +25,8 @@ public class TimerComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "includemetadata":
+        case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -36,6 +38,8 @@ public class TimerComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
         default: return null;
         }
     }
@@ -48,6 +52,8 @@ public class TimerComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "includemetadata":
+        case "includeMetadata": return target.isIncludeMetadata();
         default: return null;
         }
     }

@@ -36,18 +36,18 @@ public class MockAS400ConnectionPool extends AS400ConnectionPool {
 
     @Deprecated
     @Override
-    public AS400 getConnection(String systemName, String userID) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID) {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Override
-    public AS400 getConnection(String systemName, String userID, int service) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, int service) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password) {
         return new AS400(systemName, userID, password);
     }
 

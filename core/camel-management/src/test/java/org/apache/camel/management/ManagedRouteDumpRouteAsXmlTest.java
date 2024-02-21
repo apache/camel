@@ -26,20 +26,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -67,11 +65,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXmlResolvePlaceholder() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
@@ -93,39 +86,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("route"));
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("ref:bar"));
-        assertTrue(xml.contains("mock:result"));
-        assertTrue(xml.contains("java.lang.Exception"));
-    }
-
-    @Test
-    public void testDumpAsXmlResolvePlaceholderDelegateEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getRouteObjectName(mbeanServer);
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        // should be started
-        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals("myRoute", routeId);
-
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true, true },
-                new String[] { "boolean", "boolean" });
-        assertNotNull(xml);
-        log.info(xml);
-
-        assertTrue(xml.contains("route"));
-        assertTrue(xml.contains("myRoute"));
-        assertTrue(xml.contains("mock://bar"));
         assertTrue(xml.contains("mock:result"));
         assertTrue(xml.contains("java.lang.Exception"));
     }

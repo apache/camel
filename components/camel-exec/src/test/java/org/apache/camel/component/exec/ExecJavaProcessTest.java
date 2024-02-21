@@ -220,7 +220,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidWorkingDir() throws Exception {
+    public void testInvalidWorkingDir() {
         context.start();
 
         String commandArgument = PRINT_IN_STDOUT;
@@ -228,7 +228,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
         Exchange e = producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
                 exchange.getIn().setHeader(EXEC_COMMAND_WORKING_DIR, "\\cdd:///invalidWWorkginDir");
                 exchange.getIn().setHeader(EXEC_COMMAND_ARGS, args);
@@ -267,7 +267,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
 
         Exchange exchange = producerTemplate.send("direct:input", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 final String javaAbsolutePath = buildJavaExecutablePath();
 
                 // use string for args
@@ -300,7 +300,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
 
         Exchange exchange = producerTemplate.send("direct:input", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 final String javaAbsolutePath = buildJavaExecutablePath();
 
                 // use string for args
@@ -334,7 +334,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
 
         Exchange exchange = producerTemplate.send("direct:input", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 final String javaAbsolutePath = buildJavaExecutablePath();
 
                 // use string for args
@@ -403,7 +403,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     public void testExecJavaProcessWithThrownExecException() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveByToString(".*java.*").replace().to("exec:java?commandExecutor=#executorMock");
             }
         });
@@ -440,7 +440,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
         return producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, timeout);

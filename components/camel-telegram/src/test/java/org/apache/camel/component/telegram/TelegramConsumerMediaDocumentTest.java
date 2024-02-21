@@ -62,12 +62,12 @@ public class TelegramConsumerMediaDocumentTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("telegram:bots?authorizationToken=mock-token")
                                 .to("mock:telegram");
                     }

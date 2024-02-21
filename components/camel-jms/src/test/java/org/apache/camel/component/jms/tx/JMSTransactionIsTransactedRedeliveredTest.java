@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,8 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.awaitility.Awaitility;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,10 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
-public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMSTransactionIsTransactedRedeliveredTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -58,7 +61,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     public void testTransactionSuccess() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(AssertionError.class).to("log:error", "mock:error");
             }
         });
@@ -74,17 +77,18 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionIsTransactedRedeliveredTest", "Hello World");
 
         mock.assertIsSatisfied();
         error.assertIsSatisfied();
 
         // check JMX stats
         // need a little sleep to ensure JMX is updated
-        Thread.sleep(500);
+        final Set<ObjectName> objectNames = Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS)
+                .until(() -> getMBeanServer()
+                        .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null),
+                        Matchers.hasSize(1));
 
-        Set<ObjectName> objectNames = getMBeanServer()
-                .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
@@ -111,7 +115,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         private int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             ++count;
 
             // the first is not redelivered

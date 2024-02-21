@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
 
     @Test
-    public void testUndertowProducerOk() throws Exception {
+    public void testUndertowProducerOk() {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Test
-    public void testUndertowProducerFail() throws Exception {
+    public void testUndertowProducerFail() {
         Exchange out = fluentTemplate.withHeader("id", "777").to("direct:start").request(Exchange.class);
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not have thrown exception");
@@ -42,10 +42,10 @@ public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort())
                         .endpointProperty("throwExceptionOnFailure", "false");
@@ -55,8 +55,9 @@ public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);

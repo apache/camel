@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <intercept>
             <to uri="mock:intercepted"/>
             <!-- stop continue routing -->

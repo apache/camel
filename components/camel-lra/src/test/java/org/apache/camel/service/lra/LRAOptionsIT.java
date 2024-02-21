@@ -56,17 +56,17 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
     }
 
     @Test
-    public void testRouteDoesNotHangOnOptionError() throws Exception {
+    public void testRouteDoesNotHangOnOptionError() {
         assertThrows(RuntimeCamelException.class,
                 () -> template.sendBody("direct:wrong-expression", "Hello"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:workflow")
                         .saga()
@@ -77,7 +77,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
                         .choice()
                         .when(body().isEqualTo("compensate"))
                         .process(ex -> {
-                            throw new RuntimeException("forced compensate");
+                            throw new RuntimeCamelException("forced compensate");
                         })
                         .end()
                         .setHeader("myname", constant("TryToOverride"))
@@ -86,7 +86,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
 
                 from("direct:wrong-expression")
                         .saga()
-                        .option("id", simple("${10 / 0}"))
+                        .option("id", simple("${body.pippo.pluto}"))
                         .to("log:info");
 
             }

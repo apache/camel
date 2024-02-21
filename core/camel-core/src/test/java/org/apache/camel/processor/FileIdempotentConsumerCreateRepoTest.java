@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.File;
 
+import org.apache.camel.TestSupport;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -27,13 +28,13 @@ import static java.util.UUID.randomUUID;
 import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileIdempotentConsumerCreateRepoTest {
+public class FileIdempotentConsumerCreateRepoTest extends TestSupport {
 
     File store;
 
     @Test
     public void shouldCreateParentOfRepositoryFileStore() throws Exception {
-        File parentDirectory = new File("target/data/repositoryParent_" + randomUUID());
+        File parentDirectory = testDirectory("repositoryParent_" + randomUUID()).toFile();
         store = new File(parentDirectory, "store");
         assertStoreExists(store);
     }

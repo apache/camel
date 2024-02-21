@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,9 +26,9 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws URISyntaxException {
+            public void configure() {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
 
                 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -50,7 +48,7 @@ public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTes
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

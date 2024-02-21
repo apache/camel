@@ -38,8 +38,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "datasourceref":
-        case "dataSourceRef": target.setDataSourceRef(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -80,6 +78,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "routeemptyresultset":
         case "routeEmptyResultSet": target.setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
+        case "rowmapperfactory":
+        case "rowMapperFactory": target.setRowMapperFactory(property(camelContext, org.apache.camel.component.sql.RowMapperFactory.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -110,6 +110,11 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"dataSource"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
@@ -129,8 +134,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": return boolean.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
-        case "datasourceref":
-        case "dataSourceRef": return java.lang.String.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -171,6 +174,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": return long.class;
         case "routeemptyresultset":
         case "routeEmptyResultSet": return boolean.class;
+        case "rowmapperfactory":
+        case "rowMapperFactory": return org.apache.camel.component.sql.RowMapperFactory.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -221,8 +226,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
         case "dataSource": return target.getDataSource();
-        case "datasourceref":
-        case "dataSourceRef": return target.getDataSourceRef();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -263,6 +266,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": return target.getRepeatCount();
         case "routeemptyresultset":
         case "routeEmptyResultSet": return target.isRouteEmptyResultSet();
+        case "rowmapperfactory":
+        case "rowMapperFactory": return target.getRowMapperFactory();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":

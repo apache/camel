@@ -88,7 +88,7 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // shutdown during processing
         context.stop();
@@ -98,10 +98,10 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("mybatis:selectAllAccounts").routeId("route1")
                         // let it complete only current task so we shutdown faster
                         .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)

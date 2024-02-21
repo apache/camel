@@ -1,0 +1,145 @@
+= Google Pubsub Component
+:doctitle: Google Pubsub
+:shortname: google-pubsub
+:artifactid: camel-google-pubsub
+:description: Send and receive messages to/from Google Cloud Platform PubSub Service.
+:since: 2.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-pubsub
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Pubsub component provides access
+to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
+the https://github.com/googleapis/java-pubsub[Google Cloud Java Client for Google Cloud Pub/Sub].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-pubsub</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+------------------------------------------------------
+
+== URI Format
+
+The Google Pubsub Component uses the following URI format:
+
+----
+google-pubsub://project-id:destinationName?[options]
+----
+
+Destination Name can be either a topic or a subscription name.
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Producer Endpoints
+
+Producer endpoints can accept and deliver to PubSub individual and grouped
+exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
+
+Google PubSub expects the payload to be byte[] array, Producer endpoints will send:
+
+* String body as `byte[]` encoded as UTF-8
+* `byte[]` body as is
+* Everything else will be serialised into a `byte[]` array
+
+A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
+
+Google PubSub supports ordered message delivery.
+
+To enable this, set the options `messageOrderingEnabled` to true, and the `pubsubEndpoint` to a GCP region.
+
+When producing messages set the message header `GooglePubsubConstants.ORDERING_KEY` . This will be set as the PubSub orderingKey for the message.
+
+For more information, see https://cloud.google.com/pubsub/docs/ordering[Ordering messages].
+
+Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
+the header `GooglePubsubConstants.MESSAGE_ID`.
+
+== Consumer Endpoints
+Google PubSub will redeliver the message if it has not been acknowledged within the time period set
+as a configuration option on the subscription.
+
+The component will acknowledge the message once exchange processing has been completed.
+
+If the route throws an exception, the exchange is marked as failed, and the component will NACK the message.
+It will be redelivered immediately.
+
+To ack/nack the message the component uses Acknowledgement ID stored as header `GooglePubsubConstants.ACK_ID`.
+If the header is removed or tampered with, the ack will fail and the message will be redelivered
+again after the ack deadline.
+
+== Message Body
+
+The consumer endpoint returns the content of the message as `byte[]`. Exactly as the underlying system sends it.
+It is up for the route to convert/unmarshall the contents.
+
+== Authentication Configuration
+
+By default, this component acquires credentials using `GoogleCredentials.getApplicationDefault()`.
+This behavior can be disabled by setting _authenticate_ option to `false`, in which case requests to Google API will be made without authentication details. This is only desirable when developing against an emulator.
+This behavior can be altered by supplying a path to a service account key file.
+
+== Rollback and Redelivery
+
+The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
+If the acknowledgement has not been received, the message is redelivered.
+
+Google provides an API to extend the deadline for a message.
+
+More information in https://cloud.google.com/pubsub/docs/subscriber#ack_deadline[Google PubSub Documentation]
+
+So, rollback is effectively a deadline extension API call with zero value - i.e., deadline is reached now, and the message can
+be redelivered to the next consumer.
+
+It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
+setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in seconds.
+
+
+include::spring-boot:partial$starter.adoc[]
+
+== Manual Acknowledgement
+
+By default, the PubSub consumer will acknowledge messages once the exchange has been processed, or negative-acknowledge them if the exchange has failed.
+
+If the _ackMode_ option is set to `NONE`, the component will not acknowledge messages, and it is up to the route to do so.
+In this case, a `GooglePubsubAcknowledge` object is stored in the header `GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE` and can be used to acknowledge messages:
+
+[source,java]
+----
+from("google-pubsub:{{project.name}}:{{subscription.name}}?ackMode=NONE")
+    .process(exchange -> {
+        GooglePubsubAcknowledge acknowledge = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE, GooglePubsubAcknowledge.class);
+        acknowledge.ack(exchange); // or .nack(exchange)
+    });
+----
+
+Manual acknowledgement works with both the asynchronous and synchronous consumers and will use the acknowledgement id which is stored in `GooglePubsubConstants.ACK_ID`.

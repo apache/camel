@@ -37,7 +37,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:one",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:two",
                 "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -63,13 +63,13 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:three",
                 "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:one")
                         .to("xquery:org/apache/camel/component/xquery/transform_with_headers.xquery")
                         .to("mock:result");

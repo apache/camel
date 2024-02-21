@@ -1,0 +1,46 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "jte",
+    "title": "JTE",
+    "description": "Transform messages using a Java based template engine (JTE).",
+    "deprecated": false,
+    "firstVersion": "4.4.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.jte.JteComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jte",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "jte",
+    "extendsScheme": "",
+    "syntax": "jte:resourceUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "allowContextMapAll": { "index": 0, "kind": "property", "displayName": "Allow Context Map All", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API." },
+    "allowTemplateFromHeader": { "index": 1, "kind": "property", "displayName": "Allow Template From Header", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care." },
+    "contentType": { "index": 2, "kind": "property", "displayName": "Content Type", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "gg.jte.ContentType", "enum": [ "Plain", "Html" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Plain", "description": "Content type the JTE engine should use." },
+    "lazyStartProducer": { "index": 3, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "preCompile": { "index": 4, "kind": "property", "displayName": "Pre Compile", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To speed up startup and rendering on your production server, it is possible to precompile all templates during the build. This way, the template engine can load each template's .class file directly without first compiling it." },
+    "workDir": { "index": 5, "kind": "property", "displayName": "Work Dir", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "jte-classes", "description": "Work directory where JTE will store compiled templates." },
+    "autowiredEnabled": { "index": 6, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelJteResourceUri": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_RESOURCE_URI" },
+    "CamelJteTemplate": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured.", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_TEMPLATE" },
+    "CamelJteDataModel": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data model", "constantName": "org.apache.camel.component.jte.JteConstants#JTE_DATA_MODEL" }
+  },
+  "properties": {
+    "resourceUri": { "index": 0, "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },
+    "allowContextMapAll": { "index": 1, "kind": "parameter", "displayName": "Allow Context Map All", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API." },
+    "allowTemplateFromHeader": { "index": 2, "kind": "parameter", "displayName": "Allow Template From Header", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care." },
+    "contentCache": { "index": 3, "kind": "parameter", "displayName": "Content Cache", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether to use resource content cache or not" },
+    "lazyStartProducer": { "index": 4, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

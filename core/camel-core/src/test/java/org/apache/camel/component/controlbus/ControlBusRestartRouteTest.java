@@ -53,7 +53,7 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
         };
     }
 
-    private final class MyRoutePolicy extends RoutePolicySupport {
+    private static final class MyRoutePolicy extends RoutePolicySupport {
 
         private int start;
         private int stop;

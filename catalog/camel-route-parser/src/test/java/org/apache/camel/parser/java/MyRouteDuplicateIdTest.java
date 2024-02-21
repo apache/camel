@@ -28,7 +28,7 @@ public class MyRouteDuplicateIdTest extends CamelTestSupport {
     }
 
     @Test
-    void testFoo() throws Exception {
+    void testFoo() {
         // noop
     }
 

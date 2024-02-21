@@ -24,16 +24,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @org.apache.camel.spi.annotations.Component("scheduler")
-public class SchedulerComponent extends DefaultComponent {
+public class SchedulerComponent extends HealthCheckComponent {
 
     private final Map<String, ScheduledExecutorService> executors = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
+    @Metadata
+    private boolean includeMetadata;
     @Metadata(defaultValue = "1", label = "scheduler")
-    private int concurrentTasks = 1;
+    private int poolSize = 1;
 
     public SchedulerComponent() {
     }
@@ -41,34 +43,46 @@ public class SchedulerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SchedulerEndpoint answer = new SchedulerEndpoint(uri, this, remaining);
-        answer.setConcurrentTasks(getConcurrentTasks());
+        answer.setIncludeMetadata(isIncludeMetadata());
+        answer.setPoolSize(getPoolSize());
         setProperties(answer, parameters);
         return answer;
     }
 
-    public int getConcurrentTasks() {
-        return concurrentTasks;
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
     }
 
     /**
-     * Number of threads used by the scheduling thread pool.
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     */
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * Number of core threads in the thread pool used by the scheduling thread pool.
      * <p/>
      * Is by default using a single thread
      */
-    public void setConcurrentTasks(int concurrentTasks) {
-        this.concurrentTasks = concurrentTasks;
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 
     protected ScheduledExecutorService addConsumer(SchedulerConsumer consumer) {
         String name = consumer.getEndpoint().getName();
-        int concurrentTasks = consumer.getEndpoint().getConcurrentTasks();
+        int poolSize = consumer.getEndpoint().getPoolSize();
 
         ScheduledExecutorService answer;
         synchronized (executors) {
             answer = executors.get(name);
             if (answer == null) {
                 answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name,
-                        concurrentTasks);
+                        poolSize);
                 executors.put(name, answer);
                 // store new reference counter
                 refCounts.put(name, new AtomicInteger(1));

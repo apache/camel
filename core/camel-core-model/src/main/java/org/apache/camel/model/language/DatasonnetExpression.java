@@ -16,34 +16,27 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use DataSonnet scripts in Camel expressions or predicates.
+ * To use DataSonnet scripts for message transformations.
  */
-@Metadata(firstVersion = "3.7.0", label = "language,script", title = "DataSonnet")
+@Metadata(firstVersion = "3.7.0", label = "language,transformation", title = "DataSonnet")
 @XmlRootElement(name = "datasonnet")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DatasonnetExpression extends ExpressionDefinition {
+public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
     private String bodyMediaType;
-
     @XmlAttribute(name = "outputMediaType")
     private String outputMediaType;
-
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-
-    @XmlTransient
-    private Class<?> resultType;
 
     public DatasonnetExpression() {
     }
@@ -54,6 +47,12 @@ public class DatasonnetExpression extends ExpressionDefinition {
 
     public DatasonnetExpression(Expression expression) {
         super(expression);
+    }
+
+    private DatasonnetExpression(Builder builder) {
+        super(builder);
+        this.bodyMediaType = builder.bodyMediaType;
+        this.outputMediaType = builder.outputMediaType;
     }
 
     @Override
@@ -83,29 +82,34 @@ public class DatasonnetExpression extends ExpressionDefinition {
         this.outputMediaType = outputMediaType;
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
     /**
-     * Sets the class of the result type (type from output).
-     * <p/>
-     * The default result type is com.datasonnet.document.Document
+     * {@code Builder} is a specific builder for {@link DatasonnetExpression}.
      */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, DatasonnetExpression> {
 
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
+        private String bodyMediaType;
+        private String outputMediaType;
 
-    /**
-     * Sets the class name of the result type (type from output)
-     * <p/>
-     * The default result type is com.datasonnet.document.Document
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
+        /**
+         * The String representation of the message's body MediaType
+         */
+        public Builder bodyMediaType(String bodyMediaType) {
+            this.bodyMediaType = bodyMediaType;
+            return this;
+        }
+
+        /**
+         * The String representation of the MediaType to output
+         */
+        public Builder outputMediaType(String outputMediaType) {
+            this.outputMediaType = outputMediaType;
+            return this;
+        }
+
+        @Override
+        public DatasonnetExpression end() {
+            return new DatasonnetExpression(this);
+        }
     }
 }

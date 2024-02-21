@@ -43,9 +43,16 @@ public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
                 }
             }
             if (!answer && queryParameters != null) {
-                String token = "=%7B" + headerName + "%7D"; // encoded values for { }
-                if (queryParameters.contains(token)) {
-                    answer = true;
+                String[] tokens = new String[4];
+                tokens[0] = "={" + headerName + "}";
+                tokens[1] = "={" + headerName + "?}";
+                tokens[2] = "=%7B" + headerName + "%7D";
+                tokens[3] = "=%7B" + headerName + "%3F%7D";
+                for (String token : tokens) {
+                    if (queryParameters.contains(token)) {
+                        answer = true;
+                        break;
+                    }
                 }
             }
         }

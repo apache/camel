@@ -42,7 +42,7 @@ public class ContainerWideInterceptor implements InterceptStrategy {
             public void process(Exchange exchange) throws Exception {
                 // we just count number of interceptions
                 count++;
-                LOG.info("I am the container wide interceptor. Intercepted total count: " + count);
+                LOG.info("I am the container wide interceptor. Intercepted total count: {}", count);
                 // its important that we delegate to the real target so we let target process the exchange
                 target.process(exchange);
             }

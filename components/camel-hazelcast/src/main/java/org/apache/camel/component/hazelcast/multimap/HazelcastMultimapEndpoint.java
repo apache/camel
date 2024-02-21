@@ -22,15 +22,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MULTIMAP;
+
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap",
-             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MULTIMAP, title = "Hazelcast Multimap",
+             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
+             headersClass = HazelcastConstants.class)
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,

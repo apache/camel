@@ -78,10 +78,10 @@ public class FileValidatorRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/validator?noop=true")
                         .doTry()
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")

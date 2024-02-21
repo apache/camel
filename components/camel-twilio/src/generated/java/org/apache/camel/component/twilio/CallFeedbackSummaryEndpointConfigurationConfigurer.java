@@ -21,11 +21,11 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        map.put("EndDate", org.joda.time.LocalDate.class);
+        map.put("EndDate", java.time.LocalDate.class);
         map.put("MethodName", java.lang.String.class);
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PathSid", java.lang.String.class);
-        map.put("StartDate", org.joda.time.LocalDate.class);
+        map.put("StartDate", java.time.LocalDate.class);
         ALL_OPTIONS = map;
     }
 
@@ -36,7 +36,7 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
         case "apiname":
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "enddate":
-        case "EndDate": target.setEndDate(property(camelContext, org.joda.time.LocalDate.class, value)); return true;
+        case "EndDate": target.setEndDate(property(camelContext, java.time.LocalDate.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
@@ -44,7 +44,7 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
         case "pathsid":
         case "PathSid": target.setPathSid(property(camelContext, java.lang.String.class, value)); return true;
         case "startdate":
-        case "StartDate": target.setStartDate(property(camelContext, org.joda.time.LocalDate.class, value)); return true;
+        case "StartDate": target.setStartDate(property(camelContext, java.time.LocalDate.class, value)); return true;
         default: return false;
         }
     }
@@ -60,7 +60,7 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
         case "apiname":
         case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "enddate":
-        case "EndDate": return org.joda.time.LocalDate.class;
+        case "EndDate": return java.time.LocalDate.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "pathaccountsid":
@@ -68,7 +68,7 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
         case "pathsid":
         case "PathSid": return java.lang.String.class;
         case "startdate":
-        case "StartDate": return org.joda.time.LocalDate.class;
+        case "StartDate": return java.time.LocalDate.class;
         default: return null;
         }
     }

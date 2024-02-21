@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-leveldb</artifactId>
@@ -36,14 +36,6 @@
         <label>database</label>
         <title>LevelDB</title>
 
-        <camel.osgi.import.pkg>
-            org.apache.camel*,
-            org.fusesource.hawtbuf*,
-            org.slf4j,
-            org.fusesource.leveldbjni;resolution:=optional,
-            org.iq80.leveldb;resolution:=optional,
-            org.iq80.leveldb.impl;resolution:=optional
-        </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>
@@ -75,40 +67,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-    <!-- skip tests on AIX and HP-UX -->
-    <profiles>
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <family>AIX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-        <profile>
-            <id>hpux</id>
-            <activation>
-                <os>
-                    <family>HP-UX</family>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
-        </profile>
-    </profiles>
 </project>

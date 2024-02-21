@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>3.9.0-SNAPSHOT</version>
+    <version>4.5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-nitrite</artifactId>
@@ -33,21 +33,16 @@
   <description>Camel Nitrite component</description>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-engine</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.dizitart</groupId>
       <artifactId>nitrite</artifactId>
-    </dependency>
-
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
+      <version>${nitrite-version}</version>
     </dependency>
 
     <!-- testing -->

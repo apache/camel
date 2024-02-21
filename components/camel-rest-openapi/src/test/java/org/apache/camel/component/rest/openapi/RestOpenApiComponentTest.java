@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -73,7 +74,7 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @BeforeEach
@@ -92,16 +93,39 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
         doSetUp(componentName);
 
         final Pet pet = new Pet();
-        pet.name = "Jean-Luc Picard";
+        pet.setName("Jean-Luc Picard");
 
         final Pet created = template.requestBody("direct:addPet", pet, Pet.class);
 
         assertNotNull(created);
 
-        assertEquals(Integer.valueOf(14), created.id);
+        assertEquals(14, created.getId());
 
         petstore.verify(
-                postRequestedFor(urlEqualTo("/v2/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
+                postRequestedFor(urlEqualTo("/v2/pet"))
+                        // Swagger V2 converted to V3 ignores "produces" if there is no associated response schema
+                        //.withHeader("Accept", equalTo("application/xml, application/json"))
+                        .withHeader("Content-Type", equalTo("application/xml")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Classpath", "Bean", "File" })
+    public void shouldBeAddingPetsDifferentLookup(String startPath) throws Exception {
+        doSetUp("http");
+
+        final Pet pet = new Pet();
+        pet.setName("Jean-Luc Picard");
+
+        final Pet created = template.requestBody("direct:addPetVia" + startPath, pet, Pet.class);
+
+        assertNotNull(created);
+
+        assertEquals(14, created.getId());
+
+        petstore.verify(
+                postRequestedFor(urlEqualTo("/v2/pet"))
+                        // Swagger V2 converted to V3 ignores "produces" if there is no associated response schema
+                        //.withHeader("Accept", equalTo("application/xml, application/json"))
                         .withHeader("Content-Type", equalTo("application/xml")));
     }
 
@@ -114,8 +138,8 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -130,8 +154,8 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -149,8 +173,8 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(
                 getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
@@ -169,8 +193,8 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14?api_key=dolphins")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -210,11 +234,13 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         camelContext.addComponent("altPetStore", altPetStore);
 
+        camelContext.getRegistry().bind("openapiBean", new RestOpenApiBean());
+
         return camelContext;
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -228,7 +254,14 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
                 from("direct:getPetByIdWithEndpointParams").to("petStore:getPetById?petId=14").unmarshal(jaxb);
 
-                from("direct:addPet").marshal(jaxb).to("petStore:addPet").unmarshal(jaxb);
+                from("direct:addPet").marshal(jaxb).to("petStore:addPet?specificationUri=classpath:openapi.json")
+                        .unmarshal(jaxb);
+                from("direct:addPetViaClasspath").marshal(jaxb).to("petStore:addPet?specificationUri=classpath:openapi.json")
+                        .unmarshal(jaxb);
+                from("direct:addPetViaBean").marshal(jaxb)
+                        .to("petStore:addPet?specificationUri=bean:openapiBean.getOpenApiJson").unmarshal(jaxb);
+                from("direct:addPetViaFile").marshal(jaxb)
+                        .to("petStore:addPet?specificationUri=file:target/test-classes/openapi.json").unmarshal(jaxb);
 
                 from("direct:findPetsByStatus").to("petStore:findPetsByStatus").unmarshal(jaxb);
             }

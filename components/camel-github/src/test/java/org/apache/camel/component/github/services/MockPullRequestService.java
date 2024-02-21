@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.github.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +66,7 @@ public class MockPullRequestService extends PullRequestService {
 
         User author = createAuthor();
         commitComment.setUser(author);
-        commitComment.setCommitId("" + pullRequestId);
+        commitComment.setCommitId(Long.toString(pullRequestId));
         commitComment.setId(commentId.getAndIncrement());
         commitComment.setBody(bodyText);
         commitComment.setBodyText(bodyText);
@@ -101,13 +100,13 @@ public class MockPullRequestService extends PullRequestService {
     }
 
     @Override
-    public PullRequest getPullRequest(IRepositoryIdProvider repository, int id) throws IOException {
+    public PullRequest getPullRequest(IRepositoryIdProvider repository, int id) {
         PullRequest pullRequest = pullRequests.get((long) id);
         return pullRequest;
     }
 
     @Override
-    public PullRequest editPullRequest(IRepositoryIdProvider repository, PullRequest request) throws IOException {
+    public PullRequest editPullRequest(IRepositoryIdProvider repository, PullRequest request) {
         pullRequests.put(request.getId(), request);
         return request;
     }
@@ -116,14 +115,13 @@ public class MockPullRequestService extends PullRequestService {
     public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
         List<PullRequest> result = new ArrayList<>();
 
-        for (Long id : pullRequests.keySet()) {
-            PullRequest pr = pullRequests.get(id);
+        for (PullRequest pr : pullRequests.values()) {
             if (pr.getState().equals(state)) {
                 result.add(pr);
             }
         }
 
-        LOG.debug("Returning list of " + result.size() + " pull requests with state " + state);
+        LOG.debug("Returning list of {} pull requests with state {}", result.size(), state);
         return result;
     }
 
@@ -132,7 +130,7 @@ public class MockPullRequestService extends PullRequestService {
     }
 
     @Override
-    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id) throws IOException {
+    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id) {
         return files.get(id);
     }
 }

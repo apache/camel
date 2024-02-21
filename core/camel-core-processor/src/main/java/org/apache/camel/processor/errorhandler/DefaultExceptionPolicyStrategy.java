@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * for more fine grained matching, so you can e.g. define multiple sets of exception types with the same exception
  * class(es) but have a predicate attached to select which to select at runtime.
  */
-public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
+public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     // thread safe so we can use a shared instance
     public static final DefaultExceptionPolicyStrategy INSTANCE = new DefaultExceptionPolicyStrategy();
@@ -114,7 +114,7 @@ public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStra
         }
     }
 
-    private static boolean findMatchedExceptionPolicy(
+    private boolean findMatchedExceptionPolicy(
             Iterable<ExceptionPolicyKey> exceptionPolicies,
             Exchange exchange, Throwable exception,
             Map<Integer, ExceptionPolicyKey> candidates) {
@@ -204,7 +204,7 @@ public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStra
      * @param  exception      the thrown exception
      * @return                <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
      */
-    protected static boolean filter(ExceptionPolicyKey type, Class<?> exceptionClass, Throwable exception) {
+    protected boolean filter(ExceptionPolicyKey type, Class<?> exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
         return exceptionClass.isInstance(exception);
     }
@@ -222,7 +222,7 @@ public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStra
      * @param  exchange   the current {@link Exchange}
      * @return            <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
-    protected static boolean matchesWhen(ExceptionPolicyKey definition, Exchange exchange) {
+    protected boolean matchesWhen(ExceptionPolicyKey definition, Exchange exchange) {
         if (definition.getWhen() == null) {
             // if no predicate then it's always a match
             return true;
@@ -239,7 +239,7 @@ public final class DefaultExceptionPolicyStrategy implements ExceptionPolicyStra
      * @param  exception the exception
      * @return           the list to iterate
      */
-    protected static Iterable<Throwable> createExceptionIterable(Throwable exception) {
+    protected Iterable<Throwable> createExceptionIterable(Throwable exception) {
         return ObjectHelper.createExceptionIterable(exception);
     }
 

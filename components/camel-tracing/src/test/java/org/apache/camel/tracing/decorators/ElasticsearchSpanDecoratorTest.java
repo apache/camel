@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -62,8 +63,11 @@ public class ElasticsearchSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(ElasticsearchSpanDecorator.ELASTICSEARCH_DB_TYPE, span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals(ElasticsearchSpanDecorator.ELASTICSEARCH_DB_TYPE, span.tags().get(TagConstants.DB_SYSTEM));
         assertEquals(indexName, span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals(indexName, span.tags().get(TagConstants.DB_NAME));
         assertEquals(cluster, span.tags().get(ElasticsearchSpanDecorator.ELASTICSEARCH_CLUSTER_TAG));
+        assertEquals(cluster, span.tags().get(TagConstants.SERVER_ADDRESS));
     }
 
 }

@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 
 /**
- * An extended {@link org.apache.camel.spi.Synchronization} which is route aware.
+ * An extension to {@link org.apache.camel.spi.Synchronization} which provides route awareness capabilities.
  */
-public interface SynchronizationRouteAware extends Synchronization {
+public interface SynchronizationRouteAware {
 
     /**
      * Invoked before the {@link org.apache.camel.Exchange} is being routed by the given route.
@@ -45,8 +45,8 @@ public interface SynchronizationRouteAware extends Synchronization {
      * This invocation happens before these callbacks:
      * <ul>
      * <li>The consumer of the route writes any response back to the caller (if in InOut mode)</li>
-     * <li>The UoW is done calling either {@link #onComplete(org.apache.camel.Exchange)} or
-     * {@link #onFailure(org.apache.camel.Exchange)}</li>
+     * <li>The UoW is done calling either {@link Synchronization#onComplete(org.apache.camel.Exchange)} or
+     * {@link Synchronization#onFailure(org.apache.camel.Exchange)}</li>
      * </ul>
      * This allows custom logic to be executed after all routing is done, but before the
      * {@link org.apache.camel.Consumer} prepares and writes any data back to the caller (if in InOut mode).

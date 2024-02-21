@@ -18,6 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -40,11 +41,11 @@ public class DelayerInterceptorTest extends SpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
         }
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
 
         assertMockEndpointsSatisfied();
 

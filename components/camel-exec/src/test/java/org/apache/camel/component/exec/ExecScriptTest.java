@@ -58,13 +58,12 @@ public class ExecScriptTest {
      * TODO <b>the test is Disabledd for now to prevent accidental build failures.</b> Java 1.5 does not offer a method
      * to check if a file is executable there is only a canRead method, which is not enough to guarantee that the script
      * can be executed. <br>
-     * 
-     * @throws Exception
+     *
      */
     @Test
     @DirtiesContext
     @Disabled
-    public void testExecuteScript() throws Exception {
+    public void testExecuteScript() {
         File scriptFile = getExecScriptFileOrNull("exec-test-script");
         if (scriptFile != null) {
             String classpathArg = getClasspathArg();
@@ -91,7 +90,7 @@ public class ExecScriptTest {
         final String whiteSpaceSeparatedArgs = argsBuilder.toString().trim();
 
         return producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(PRINT_IN_STDOUT);
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, NO_TIMEOUT);
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, scriptFile.getAbsolutePath());

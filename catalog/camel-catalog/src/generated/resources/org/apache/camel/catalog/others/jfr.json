@@ -2,14 +2,14 @@
   "other": {
     "kind": "other",
     "name": "jfr",
-    "title": "Jfr",
+    "title": "JFR",
     "description": "Diagnose Camel applications with Java Flight Recorder",
     "deprecated": false,
     "firstVersion": "3.8.0",
     "label": "monitoring",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jfr",
-    "version": "3.9.0-SNAPSHOT"
+    "version": "4.5.0-SNAPSHOT"
   }
 }

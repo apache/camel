@@ -23,7 +23,6 @@ import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
@@ -44,7 +43,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     private final DisruptorEndpoint endpoint;
     private boolean blockWhenFull;
 
-    public DisruptorProducer(final DisruptorEndpoint endpoint,
+    public DisruptorProducer(
+                             final DisruptorEndpoint endpoint,
                              final WaitForTaskToComplete waitForTaskToComplete,
                              final long timeout, boolean blockWhenFull) {
         super(endpoint);
@@ -77,7 +77,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         }
 
         if (wait == WaitForTaskToComplete.Always
-                || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+                || wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange)) {
 
             // do not handover the completion as we wait for the copy to complete, and copy its result back when it done
             final Exchange copy = prepareCopy(exchange, false);
@@ -86,41 +86,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(final Exchange response) {
-                    // check for timeout, which then already would have invoked the latch
-                    if (latch.getCount() == 0) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("{}. Timeout occurred so response will be ignored: {}", this,
-                                    response.getMessage());
-                        }
-                    } else {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("{} with response: {}", this,
-                                    response.getMessage());
-                        }
-                        try {
-                            ExchangeHelper.copyResults(exchange, response);
-                        } finally {
-                            // always ensure latch is triggered
-                            latch.countDown();
-                        }
-                    }
-                }
-
-                @Override
-                public boolean allowHandover() {
-                    // do not allow handover as we want to seda producer to have its completion triggered
-                    // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
-                    return false;
-                }
-
-                @Override
-                public String toString() {
-                    return "onDone at endpoint: " + endpoint;
-                }
-            });
+            copy.getExchangeExtension().addOnCompletion(newOnCompletion(exchange, latch));
 
             doPublish(copy);
 
@@ -134,7 +100,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 try {
                     done = latch.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.info("Interrupted while waiting for the task to complete");
+                    Thread.currentThread().interrupt();
                 }
                 if (!done) {
                     // Remove timed out Exchange from disruptor endpoint.
@@ -161,7 +128,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    // ignore
+                    LOG.info("Interrupted while waiting for the task to complete");
+                    Thread.currentThread().interrupt();
                 }
             }
         } else {
@@ -175,6 +143,42 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // so we should just signal the callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    private SynchronizationAdapter newOnCompletion(Exchange exchange, CountDownLatch latch) {
+        return new SynchronizationAdapter() {
+            @Override
+            public void onDone(final Exchange response) {
+                // check for timeout, which then already would have invoked the latch
+                if (latch.getCount() == 0) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
+                    }
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("{} with response: {}", this, response.getMessage());
+                    }
+                    try {
+                        ExchangeHelper.copyResults(exchange, response);
+                    } finally {
+                        // always ensure latch is triggered
+                        latch.countDown();
+                    }
+                }
+            }
+
+            @Override
+            public boolean allowHandover() {
+                // do not allow handover as we want to seda producer to have its completion triggered
+                // at this point in the routing (at this leg), instead of at the very last (this ensure timeout is honored)
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return "onDone at endpoint: " + endpoint;
+            }
+        };
     }
 
     private void doPublish(Exchange exchange) {
@@ -197,7 +201,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // use a new copy of the exchange to route async
         final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);
         // set a new from endpoint to be the disruptor
-        copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
+        copy.getExchangeExtension().setFromEndpoint(endpoint);
         return copy;
     }
 }

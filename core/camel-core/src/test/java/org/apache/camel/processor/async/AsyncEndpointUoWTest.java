@@ -20,13 +20,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointUoWTest extends ContextTestSupport {
 
@@ -63,7 +64,7 @@ public class AsyncEndpointUoWTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(sync);
+                        exchange.getExchangeExtension().addOnCompletion(sync);
                     }
                 }).to("mock:before").to("log:before").to("async:bye:camel").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

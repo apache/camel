@@ -26,7 +26,6 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     private final int maxCapacity;
     private final Map<String, Long> map;
 
-    @SuppressWarnings("unchecked")
     public DefaultEndpointUtilizationStatistics(int maxCapacity) {
         this.map = LRUCacheFactory.newLRUCache(16, maxCapacity, false);
         this.maxCapacity = maxCapacity;
@@ -43,7 +42,7 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     }
 
     @Override
-    public void onHit(String uri) {
+    public synchronized void onHit(String uri) {
         map.compute(uri, (key, current) -> {
             if (current == null) {
                 return 1L;

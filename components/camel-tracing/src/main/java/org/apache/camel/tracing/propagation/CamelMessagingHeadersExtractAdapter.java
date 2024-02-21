@@ -17,16 +17,16 @@
 package org.apache.camel.tracing.propagation;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.tracing.ExtractAdapter;
+import org.apache.camel.util.CaseInsensitiveMap;
 
 public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter {
 
-    private final Map<String, String> map = new HashMap<>();
+    private final Map<String, Object> map = new CaseInsensitiveMap();
     private final boolean jmsEncoding;
 
     public CamelMessagingHeadersExtractAdapter(final Map<String, Object> map, boolean jmsEncoding) {
@@ -42,7 +42,7 @@ public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter
     }
 
     @Override
-    public Iterator<Map.Entry<String, String>> iterator() {
+    public Iterator<Map.Entry<String, Object>> iterator() {
         return map.entrySet().iterator();
     }
 

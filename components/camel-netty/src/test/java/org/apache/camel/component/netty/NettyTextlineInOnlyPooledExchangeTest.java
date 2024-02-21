@@ -17,8 +17,8 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+        camelContext.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
         return camelContext;
     }
 
@@ -37,7 +37,7 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -47,14 +47,14 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
                         .to("mock:result");
             }

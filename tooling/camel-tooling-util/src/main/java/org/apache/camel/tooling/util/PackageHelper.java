@@ -16,17 +16,15 @@
  */
 package org.apache.camel.tooling.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -42,29 +40,10 @@ public final class PackageHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    builder.append(line);
-                    builder.append("\n");
-                } else {
-                    break;
-                }
-            }
-            return builder.toString();
-        } finally {
-            isr.close();
-            in.close();
-        }
+        return new String(in.readAllBytes());
     }
 
     public static String loadText(File file) throws IOException {
@@ -88,7 +67,7 @@ public final class PackageHelper {
 
     /**
      * Parses the text as a map (eg key=value)
-     * 
+     *
      * @param  data the data
      * @return      the map
      */
@@ -111,7 +90,13 @@ public final class PackageHelper {
     }
 
     public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
-        findJsonFiles(rootDir.toPath()).forEach(p -> files.add(p.toFile()));
+        return findJsonFiles(rootDir, files, (f) -> true);
+    }
+
+    public static Set<File> findJsonFiles(File rootDir, Set<File> files, Predicate<File> filter) {
+        try (Stream<Path> stream = findJsonFiles(rootDir.toPath())) {
+            stream.map(Path::toFile).filter(filter).forEach(files::add);
+        }
         return files;
     }
 

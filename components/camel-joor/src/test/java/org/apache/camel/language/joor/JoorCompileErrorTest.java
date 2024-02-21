@@ -30,7 +30,7 @@ public class JoorCompileErrorTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testCompileError() throws Exception {
+    public void testCompileError() {
         try {
             assertExpression("'Hello World", null);
             fail("Should fail");

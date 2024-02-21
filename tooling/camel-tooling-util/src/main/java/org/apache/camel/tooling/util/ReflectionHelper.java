@@ -73,7 +73,7 @@ public final class ReflectionHelper {
          *
          * @param clazz the class to operate on
          */
-        void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException;
+        void doWith(Class<?> clazz) throws IllegalArgumentException, IllegalAccessException;
     }
 
     /**
@@ -84,8 +84,8 @@ public final class ReflectionHelper {
      */
     public static void doWithClasses(Class<?> clazz, ClassCallback cc) throws IllegalArgumentException {
         // and then nested classes
-        Class[] classes = clazz.getDeclaredClasses();
-        for (Class aClazz : classes) {
+        Class<?>[] classes = clazz.getDeclaredClasses();
+        for (Class<?> aClazz : classes) {
             try {
                 cc.doWith(aClazz);
             } catch (IllegalAccessException ex) {
@@ -97,7 +97,7 @@ public final class ReflectionHelper {
     /**
      * Invoke the given callback on all fields in the target class, going up the class hierarchy to get all declared
      * fields.
-     * 
+     *
      * @param clazz the target class to analyze
      * @param fc    the callback to invoke for each field
      */
@@ -156,10 +156,10 @@ public final class ReflectionHelper {
      * superclasses up to {@code Object}.
      * <p>
      * Returns {@code null} if no {@link Method} can be found.
-     * 
+     *
      * @param  clazz      the class to introspect
      * @param  name       the name of the method
-     * @param  paramTypes the parameter types of the method (may be {@code null} to indicate any signature)
+     * @param  paramTypes the parameter types of the method (maybe {@code null} to indicate any signature)
      * @return            the Method object, or {@code null} if none found
      */
     public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
@@ -184,7 +184,7 @@ public final class ReflectionHelper {
      * {@code Object}.
      * <p>
      * Returns {@code null} if no {@link Method} can be found.
-     * 
+     *
      * @param  clazz the class to introspect
      * @param  name  the name of the field
      * @return       the field object, or {@code null} if none found
@@ -207,7 +207,7 @@ public final class ReflectionHelper {
 
     public static void setField(Field f, Object instance, Object value) {
         try {
-            boolean oldAccessible = f.isAccessible();
+            boolean oldAccessible = f.canAccess(instance);
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);
@@ -223,7 +223,7 @@ public final class ReflectionHelper {
 
     public static Object getField(Field f, Object instance) {
         try {
-            boolean oldAccessible = f.isAccessible();
+            boolean oldAccessible = f.canAccess(instance);
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);

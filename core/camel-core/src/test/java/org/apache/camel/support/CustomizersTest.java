@@ -25,13 +25,10 @@ import java.util.stream.Stream;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -136,7 +133,7 @@ public class CustomizersTest {
     @Test
     public void testComponentCustomization() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "log-customizer",
                 ComponentCustomizer.forType(
                         LogComponent.class,
@@ -148,10 +145,10 @@ public class CustomizersTest {
     @Test
     public void testComponentCustomizationWithFilter() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 ComponentCustomizer.Policy.none());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "log-customizer",
                 ComponentCustomizer.forType(
                         LogComponent.class,
@@ -163,7 +160,7 @@ public class CustomizersTest {
     @Test
     public void testComponentCustomizationWithFluentBuilder() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "log-customizer",
                 ComponentCustomizer.forType(
                         LogComponent.class,
@@ -178,10 +175,10 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 new CustomizersSupport.ComponentCustomizationEnabledPolicy());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "log-customizer",
                 ComponentCustomizer.forType(
                         LogComponent.class,
@@ -196,10 +193,10 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 new CustomizersSupport.ComponentCustomizationEnabledPolicy());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "log-customizer",
                 ComponentCustomizer.forType(
                         LogComponent.class,
@@ -219,10 +216,10 @@ public class CustomizersTest {
         AtomicInteger counter = new AtomicInteger();
 
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df",
                 (DataFormatFactory) MyDataFormat::new);
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df-customizer",
                 DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
@@ -242,13 +239,13 @@ public class CustomizersTest {
         AtomicInteger counter = new AtomicInteger();
 
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 DataFormatCustomizer.Policy.none());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df",
                 (DataFormatFactory) MyDataFormat::new);
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df-customizer",
                 DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
@@ -271,13 +268,13 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df",
                 (DataFormatFactory) MyDataFormat::new);
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df-customizer",
                 DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
@@ -291,126 +288,18 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "customizer-filter",
                 new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df",
                 (DataFormatFactory) MyDataFormat::new);
-        context.getRegistry().bind(
+        context.getCamelContextExtension().getRegistry().bind(
                 "my-df-customizer",
                 DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(1)));
 
         DataFormat df1 = context.resolveDataFormat("my-df");
         assertEquals(1, ((MyDataFormat) df1).getId());
-    }
-
-    // *****************************
-    //
-    // Language
-    //
-    // *****************************
-
-    @Test
-    public void testLanguageCustomizationFromRegistry() {
-        AtomicInteger counter = new AtomicInteger();
-
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
-                "tokenize",
-                new TokenizeLanguage());
-        context.getRegistry().bind(
-                "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
-
-        Language l1 = context.resolveLanguage("tokenize");
-        assertTrue(l1 instanceof TokenizeLanguage);
-        assertEquals("1", ((TokenizeLanguage) l1).getGroup());
-
-        Language l2 = context.resolveLanguage("tokenize");
-        assertTrue(l2 instanceof TokenizeLanguage);
-        assertEquals("1", ((TokenizeLanguage) l2).getGroup());
-
-        // as the language is resolved via the registry, then the instance is the same
-        // even if it is not a singleton
-        assertSame(l1, l2);
-    }
-
-    @Test
-    public void testLanguageCustomizationFromResource() {
-        AtomicInteger counter = new AtomicInteger();
-
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
-                "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
-
-        // singleton language so its customized once
-        Language l1 = context.resolveLanguage("tokenize");
-        assertTrue(l1 instanceof TokenizeLanguage);
-        assertEquals("1", ((TokenizeLanguage) l1).getGroup());
-
-        Language l2 = context.resolveLanguage("tokenize");
-        assertTrue(l2 instanceof TokenizeLanguage);
-        assertEquals("1", ((TokenizeLanguage) l2).getGroup());
-
-        assertSame(l1, l2);
-    }
-
-    @Test
-    public void testLanguageCustomizationFromResourceWithFilter() {
-        AtomicInteger counter = new AtomicInteger();
-
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind(
-                "customizer-filter",
-                LanguageCustomizer.Policy.none());
-        context.getRegistry().bind(
-                "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
-
-        // singleton language so its customized once
-        Language l1 = context.resolveLanguage("tokenize");
-        assertTrue(l1 instanceof TokenizeLanguage);
-        assertNull(((TokenizeLanguage) l1).getGroup());
-
-        Language l2 = context.resolveLanguage("tokenize");
-        assertTrue(l2 instanceof TokenizeLanguage);
-        assertNull(((TokenizeLanguage) l2).getGroup());
-
-        assertSame(l1, l2);
-    }
-
-    @ParameterizedTest
-    @MethodSource("disableLanguageCustomizationProperties")
-    public void testLanguageCustomizationDisabledByProperty(Properties initialProperties) {
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getPropertiesComponent().setInitialProperties(initialProperties);
-
-        context.getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.LanguageCustomizationEnabledPolicy());
-        context.getRegistry().bind(
-                "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("something")));
-
-        assertNotEquals("something", ((TokenizeLanguage) context.resolveLanguage("tokenize")).getGroup());
-    }
-
-    @ParameterizedTest
-    @MethodSource("enableLanguageCustomizationProperties")
-    public void testLanguageCustomizationEnabledByProperty(Properties initialProperties) {
-        DefaultCamelContext context = new DefaultCamelContext();
-        context.getPropertiesComponent().setInitialProperties(initialProperties);
-
-        context.getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.LanguageCustomizationEnabledPolicy());
-        context.getRegistry().bind(
-                "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("something")));
-
-        assertEquals("something", ((TokenizeLanguage) context.resolveLanguage("tokenize")).getGroup());
     }
 
     // *****************************

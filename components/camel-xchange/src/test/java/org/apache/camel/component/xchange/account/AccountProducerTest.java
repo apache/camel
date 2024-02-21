@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.xchange.XChangeTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
@@ -29,14 +31,14 @@ import org.knowm.xchange.dto.account.Wallet;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class AccountProducerTest extends CamelTestSupport {
+@Disabled("See CAMEL-19751 before enabling")
+public class AccountProducerTest extends XChangeTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-
                 from("direct:balances")
                         .to("xchange:binance?service=account&method=balances");
 
@@ -50,30 +52,25 @@ public class AccountProducerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testBalances() {
-
-        assumeTrue(hasAPICredentials());
+    public void testBalances() {
+        assumeTrue(useMockedBackend() || hasAPICredentials());
 
         List<Balance> balances = template.requestBody("direct:balances", null, List.class);
         assertNotNull(balances, "Balances not null");
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testWallets() {
-
-        assumeTrue(hasAPICredentials());
+    public void testWallets() {
+        assumeTrue(useMockedBackend() || hasAPICredentials());
 
         List<Wallet> wallets = template.requestBody("direct:wallets", null, List.class);
         assertNotNull(wallets, "Wallets not null");
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testFundingHistory() {
-
-        assumeTrue(hasAPICredentials());
+    public void testFundingHistory() {
+        //disabled with mocked backend, see https://issues.apache.org/jira/browse/CAMEL-18486 for more details
+        assumeTrue(/*useMockedBackend() ||*/ hasAPICredentials());
 
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
         assertNotNull(records, "Funding records not null");
@@ -81,6 +78,7 @@ public class AccountProducerTest extends CamelTestSupport {
 
     private boolean hasAPICredentials() {
         XChangeComponent component = context().getComponent("xchange", XChangeComponent.class);
-        return component.getXChange().getExchangeSpecification().getApiKey() != null;
+        ExchangeSpecification exchangeSpecification = component.getXChange("binance").getExchangeSpecification();
+        return exchangeSpecification.getApiKey() != null;
     }
 }

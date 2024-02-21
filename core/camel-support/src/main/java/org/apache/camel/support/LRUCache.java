@@ -18,18 +18,39 @@ package org.apache.camel.support;
 
 import java.util.Map;
 
+/**
+ * A least-recently-used cache.
+ */
 public interface LRUCache<K, V> extends Map<K, V> {
 
+    /**
+     * Clears the cache
+     */
     void cleanUp();
 
+    /**
+     * Reset usage statistics
+     */
     void resetStatistics();
 
+    /**
+     * Gets the number of evicted elements
+     */
     long getEvicted();
 
+    /**
+     * Gets the number of cache misses.
+     */
     long getMisses();
 
+    /**
+     * Gets the number of cache hits.
+     */
     long getHits();
 
+    /**
+     * Maximum cache capacity.
+     */
     int getMaxCacheSize();
 
 }

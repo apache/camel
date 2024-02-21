@@ -42,7 +42,7 @@ public class JdbcGetNotFoundTest extends AbstractJdbcAggregationTestSupport {
     public void testPutAndGetNotFound() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
-        LOG.info("Created " + exchange.getExchangeId());
+        LOG.info("Created {}", exchange.getExchangeId());
 
         repo.add(context, exchange.getExchangeId(), exchange);
         Exchange out = repo.get(context, exchange.getExchangeId());
@@ -50,7 +50,7 @@ public class JdbcGetNotFoundTest extends AbstractJdbcAggregationTestSupport {
 
         Exchange exchange2 = new DefaultExchange(context);
         exchange2.getIn().setBody("Bye World");
-        LOG.info("Created " + exchange2.getExchangeId());
+        LOG.info("Created {}", exchange2.getExchangeId());
 
         Exchange out2 = repo.get(context, exchange2.getExchangeId());
         assertNull(out2, "Should not find exchange");

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.cm.client;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import org.apache.camel.component.cm.validation.constraints.E164;
 
@@ -103,12 +103,12 @@ public class SMSMessage {
 
     @Override
     public String toString() {
-        StringBuffer toS = new StringBuffer("{phoneNumber: " + phoneNumber + ", message: " + message);
+        StringBuilder toS = new StringBuilder("{phoneNumber: " + phoneNumber + ", message: " + message);
         if (from != null && !from.isEmpty()) {
-            toS.append(", from: " + from);
+            toS.append(", from: ").append(from);
         }
         if (id != null && !id.isEmpty()) {
-            toS.append(", id: " + id);
+            toS.append(", id: ").append(id);
         }
         toS.append(" }");
         return toS.toString();

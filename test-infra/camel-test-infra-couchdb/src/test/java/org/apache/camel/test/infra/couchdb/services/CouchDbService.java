@@ -17,14 +17,11 @@
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for CouchDb
  */
-public interface CouchDbService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface CouchDbService extends TestService {
 
     String host();
 
@@ -32,15 +29,5 @@ public interface CouchDbService extends BeforeAllCallback, AfterAllCallback, Tes
 
     default String getServiceAddress() {
         return String.format("%s:%d", host(), port());
-    }
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
     }
 }

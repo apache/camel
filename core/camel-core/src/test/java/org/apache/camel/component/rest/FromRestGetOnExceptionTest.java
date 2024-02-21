@@ -50,7 +50,10 @@ public class FromRestGetOnExceptionTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 onException(IllegalArgumentException.class).handled(true).transform().constant("Handled the error");
 
-                rest("/say/hello").get().route().to("mock:hello").throwException(new IllegalArgumentException("Forced"));
+                rest("/say/hello").get().to("direct:hello");
+
+                from("direct:hello")
+                        .to("mock:hello").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

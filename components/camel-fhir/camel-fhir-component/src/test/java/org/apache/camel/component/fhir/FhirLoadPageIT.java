@@ -26,13 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirLoadPageApiMethod;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirLoadPageIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirLoadPageIT.class);
@@ -50,7 +53,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirLoadPageApiMethod.class).getName();
 
     @Test
-    public void testByUrl() throws Exception {
+    public void testByUrl() {
         String url = "Patient?_count=2";
         Bundle bundle = this.fhirClient.search()
                 .byUrl(url)
@@ -67,12 +70,12 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
 
         IBaseBundle result = requestBodyAndHeaders("direct://BY_URL", null, headers);
 
-        LOG.debug("byUrl: " + result);
+        LOG.debug("byUrl: {}", result);
         assertNotNull(result, "byUrl result");
     }
 
     @Test
-    public void testNext() throws Exception {
+    public void testNext() {
         String url = "Patient?_count=2";
         Bundle bundle = this.fhirClient.search()
                 .byUrl(url)
@@ -83,11 +86,11 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         Bundle result = requestBody("direct://NEXT", bundle);
 
         assertNotNull(result, "next result");
-        LOG.debug("next: " + result);
+        LOG.debug("next: {}", result);
     }
 
     @Test
-    public void testPrevious() throws Exception {
+    public void testPrevious() {
         String url = "Patient?_count=2";
         Bundle bundle = this.fhirClient.search()
                 .byUrl(url)
@@ -101,12 +104,12 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://PREVIOUS", bundle);
 
-        LOG.debug("previous: " + result);
+        LOG.debug("previous: {}", result);
         assertNotNull(result, "previous result");
     }
 
     @Test
-    public void testPreviousWithEncodingEnum() throws Exception {
+    public void testPreviousWithEncodingEnum() {
         String url = "Patient?_count=2";
         Bundle bundle = this.fhirClient.search()
                 .byUrl(url)
@@ -122,7 +125,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBodyAndHeaders("direct://PREVIOUS", bundle, headers);
 
-        LOG.debug("previous: " + result);
+        LOG.debug("previous: {}", result);
         assertNotNull(result, "previous result");
     }
 
@@ -148,7 +151,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for byUrl

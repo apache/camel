@@ -16,7 +16,6 @@
  */
 package org.apache.camel.catalog;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,25 +24,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.catalog.impl.AbstractCamelCatalog;
 import org.apache.camel.catalog.impl.CatalogHelper;
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -52,7 +43,11 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.model.TransformerModel;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Default {@link CamelCatalog}.
@@ -60,10 +55,17 @@ import org.apache.camel.util.json.JsonObject;
 public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
-    private static final String DOC_DIR = "org/apache/camel/catalog/docs";
-    private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
+    private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
+    public static final String FIND_COMPONENT_NAMES = "findComponentNames";
+    public static final String LIST_COMPONENTS_AS_JSON = "listComponentsAsJson";
+    public static final String FIND_DATA_FORMAT_NAMES = "findDataFormatNames";
+    public static final String LIST_DATA_FORMATS_AS_JSON = "listDataFormatsAsJson";
+    public static final String FIND_LANGUAGE_NAMES = "findLanguageNames";
+    public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
+    public static final String LIST_LANGUAGES_AS_JSON = "listLanguagesAsJson";
+    public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -109,12 +111,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         // inject CamelCatalog to the provider
         this.runtimeProvider.setCamelCatalog(this);
         // invalidate the cache
-        cache.remove("findComponentNames");
-        cache.remove("listComponentsAsJson");
-        cache.remove("findDataFormatNames");
-        cache.remove("listDataFormatsAsJson");
-        cache.remove("findLanguageNames");
-        cache.remove("listLanguagesAsJson");
+        cache.remove(FIND_COMPONENT_NAMES);
+        cache.remove(LIST_COMPONENTS_AS_JSON);
+        cache.remove(FIND_DATA_FORMAT_NAMES);
+        cache.remove(LIST_DATA_FORMATS_AS_JSON);
+        cache.remove(FIND_LANGUAGE_NAMES);
+        cache.remove(LIST_LANGUAGES_AS_JSON);
     }
 
     @Override
@@ -141,9 +143,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addComponent(String name, String className) {
         extraComponents.put(name, className);
         // invalidate the cache
-        cache.remove("findComponentNames");
+        cache.remove(FIND_COMPONENT_NAMES);
         cache.remove("findComponentLabels");
-        cache.remove("listComponentsAsJson");
+        cache.remove(LIST_COMPONENTS_AS_JSON);
     }
 
     @Override
@@ -158,9 +160,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     public void addDataFormat(String name, String className) {
         extraDataFormats.put(name, className);
         // invalidate the cache
-        cache.remove("findDataFormatNames");
+        cache.remove(FIND_DATA_FORMAT_NAMES);
         cache.remove("findDataFormatLabels");
-        cache.remove("listDataFormatsAsJson");
+        cache.remove(LIST_DATA_FORMATS_AS_JSON);
     }
 
     @Override
@@ -205,23 +207,28 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findComponentNames() {
-        return cache("findComponentNames", () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+        return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache("findDataFormatNames", () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+        return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
     public List<String> findLanguageNames() {
-        return cache("findLanguageNames", runtimeProvider::findLanguageNames);
+        return cache(FIND_LANGUAGE_NAMES, runtimeProvider::findLanguageNames);
+    }
+
+    @Override
+    public List<String> findTransformerNames() {
+        return cache(FIND_TRANSFORMER_NAMES, runtimeProvider::findTransformerNames);
     }
 
     @Override
@@ -330,8 +337,18 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
+    public String transformerJSonSchema(String name) {
+        return cache("transformer-" + name, name, super::transformerJSonSchema);
+    }
+
+    @Override
     public LanguageModel languageModel(String name) {
         return cache("language-model-" + name, name, super::languageModel);
+    }
+
+    @Override
+    public TransformerModel transformerModel(String name) {
+        return cache("transformer-model-" + name, name, super::transformerModel);
     }
 
     @Override
@@ -344,6 +361,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return cache("other-model-" + name, name, super::otherModel);
     }
 
+    @Override
     public String mainJSonSchema() {
         return cache("main", "main", k -> super.mainJSonSchema());
     }
@@ -351,193 +369,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
-    }
-
-    @Override
-    public String componentAsciiDoc(String name) {
-        String answer = doComponentAsciiDoc(name);
-        if (answer == null) {
-            // maybe the name is an alternative scheme name, and then we need to find the component that
-            // has the name as alternative, and use the first scheme as the name to find the documentation
-            List<String> names = findComponentNames();
-            for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative, name);
-                if (schemes != null && schemes.contains(name)) {
-                    String first = schemes.split(",")[0];
-                    if (Objects.equals(first, name)) {
-                        continue;
-                    }
-                    return componentAsciiDoc(first);
-                }
-            }
-        }
-        return answer;
-    }
-
-    @Override
-    public String componentHtmlDoc(String name) {
-        String answer = doComponentHtmlDoc(name);
-        if (answer == null) {
-            // maybe the name is an alternative scheme name, and then we need to find the component that
-            // has the name as alternative, and use the first scheme as the name to find the documentation
-            List<String> names = findComponentNames();
-            for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative, name);
-                if (schemes != null && schemes.contains(name)) {
-                    String first = schemes.split(",")[0];
-                    return componentHtmlDoc(first);
-                }
-            }
-        }
-        return answer;
-    }
-
-    private String getAlternativeComponentName(String componentName, String alternativeTo) {
-        // optimize for this very call to avoid loading all schemas
-        String json = componentJSonSchema(componentName);
-        if (json.contains("alternativeSchemes") && json.contains(alternativeTo)) {
-            ComponentModel model = componentModel(componentName);
-            if (model != null) {
-                return model.getAlternativeSchemes();
-            }
-        }
-        return null;
-    }
-
-    private String doComponentAsciiDoc(String componentName) {
-        // special for mail component
-        String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
-                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
-            name = "mail";
-        } else {
-            name = componentName;
-        }
-        String file = DOC_DIR + "/" + name + "-component.adoc";
-        return cache(file, () -> {
-            if (findComponentNames().contains(componentName)) {
-                return loadResource(file);
-            } else if (extraComponents.containsKey(name)) {
-                String className = extraComponents.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-component.adoc";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    private String doComponentHtmlDoc(String componentName) {
-        // special for mail component
-        String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
-                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
-            name = "mail";
-        } else {
-            name = componentName;
-        }
-        String file = DOC_DIR + "/" + name + "-component.html";
-        return cache(file, () -> {
-            if (findComponentNames().contains(name)) {
-                return loadResource(file);
-            } else if (extraComponents.containsKey(name)) {
-                String className = extraComponents.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-component.html";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String dataFormatAsciiDoc(String dataformatName) {
-        // special for some name data formats
-        String name;
-        if (dataformatName.startsWith("bindy")) {
-            name = "bindy";
-        } else if (dataformatName.startsWith("univocity")) {
-            name = "univocity";
-        } else {
-            name = dataformatName;
-        }
-        String file = DOC_DIR + "/" + name + "-dataformat.adoc";
-        return cache(file, () -> {
-            if (findDataFormatNames().contains(dataformatName)) {
-                return loadResource(file);
-            } else if (extraDataFormats.containsKey(name)) {
-                String className = extraDataFormats.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-dataformat.adoc";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String dataFormatHtmlDoc(String dataformatName) {
-        // special for some name data formats
-        String name;
-        if (dataformatName.startsWith("bindy")) {
-            name = "bindy";
-        } else if (dataformatName.startsWith("univocity")) {
-            name = "univocity";
-        } else {
-            name = dataformatName;
-        }
-        String file = DOC_DIR + "/" + name + "-dataformat.html";
-        return cache(file, () -> {
-            if (findDataFormatNames().contains(name)) {
-                return loadResource(file);
-            } else if (extraDataFormats.containsKey(name)) {
-                String className = extraDataFormats.get(name);
-                String packageName = className.substring(0, className.lastIndexOf('.'));
-                packageName = packageName.replace('.', '/');
-                String path = packageName + "/" + name + "-dataformat.html";
-                return loadResource(path);
-            } else {
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public String languageAsciiDoc(String name) {
-        // if we try to look method then its in the bean.adoc file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
-        String file = DOC_DIR + "/" + name + "-language.adoc";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String languageHtmlDoc(String name) {
-        // if we try to look method then its in the bean.html file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
-        String file = DOC_DIR + "/" + name + "-language.html";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String otherAsciiDoc(String name) {
-        String file = DOC_DIR + "/" + name + ".adoc";
-        return cache(file, this::loadResource);
-    }
-
-    @Override
-    public String otherHtmlDoc(String name) {
-        String file = DOC_DIR + "/" + name + "-other.html";
-        return cache(file, this::loadResource);
     }
 
     @Override
@@ -580,11 +411,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
-    public String archetypeCatalogAsXml() {
-        return cache(ARCHETYPES_CATALOG, this::loadResource);
-    }
-
-    @Override
     public String springSchemaAsXml() {
         return cache(SCHEMAS_XML + "/camel-spring.xsd", this::loadResource);
     }
@@ -596,29 +422,38 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listComponentsAsJson() {
-        return cache("listComponentsAsJson", () -> JsonMapper.serialize(findComponentNames().stream()
+        return cache(LIST_COMPONENTS_AS_JSON, () -> JsonMapper.serialize(findComponentNames().stream()
                 .map(this::componentJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("component"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
     public String listDataFormatsAsJson() {
-        return cache("listDataFormatsAsJson", () -> JsonMapper.serialize(findDataFormatNames().stream()
+        return cache(LIST_DATA_FORMATS_AS_JSON, () -> JsonMapper.serialize(findDataFormatNames().stream()
                 .map(this::dataFormatJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("dataformat"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
     public String listLanguagesAsJson() {
-        return cache("listLanguagesAsJson", () -> JsonMapper.serialize(findLanguageNames().stream()
+        return cache(LIST_LANGUAGES_AS_JSON, () -> JsonMapper.serialize(findLanguageNames().stream()
                 .map(this::languageJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("language"))
-                .collect(Collectors.toList())));
+                .toList()));
+    }
+
+    @Override
+    public String listTransformersAsJson() {
+        return cache(LIST_TRANSFORMERS_AS_JSON, () -> JsonMapper.serialize(findTransformerNames().stream()
+                .map(this::transformerJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("transformer"))
+                .toList()));
     }
 
     @Override
@@ -627,7 +462,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::modelJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("model"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -636,7 +471,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::otherJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("other"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -644,31 +479,89 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return cache("summaryAsJson", () -> {
             Map<String, Object> obj = new JsonObject();
             obj.put("version", getCatalogVersion());
-            obj.put("eips", findModelNames().size());
+            obj.put("models", findModelNames().size());
             obj.put("components", findComponentNames().size());
             obj.put("dataformats", findDataFormatNames().size());
             obj.put("languages", findLanguageNames().size());
-            obj.put("archetypes", getArchetypesCount());
+            obj.put("others", findOtherNames().size());
             return JsonMapper.serialize(obj);
         });
     }
 
-    private int getArchetypesCount() {
-        int archetypes = 0;
-        try {
-            String xml = archetypeCatalogAsXml();
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
-            Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
-            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom,
-                    XPathConstants.NUMBER);
-            double num = (double) val;
-            archetypes = (int) num;
-        } catch (Exception e) {
-            // ignore
+    @Override
+    public ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version) {
+        for (String name : findComponentNames()) {
+            ArtifactModel<?> am = componentModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
         }
-        return archetypes;
+        for (String name : findDataFormatNames()) {
+            ArtifactModel<?> am = dataFormatModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findLanguageNames()) {
+            ArtifactModel<?> am = languageModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findOtherNames()) {
+            ArtifactModel<?> am = otherModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findTransformerNames()) {
+            ArtifactModel<?> am = transformerModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public InputStream loadResource(String kind, String name) {
+        return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + "/" + kind + "/" + name);
+    }
+
+    @Override
+    public List<ReleaseModel> camelReleases() {
+        return camelReleases("camel-releases.json");
+    }
+
+    @Override
+    public List<ReleaseModel> camelQuarkusReleases() {
+        return camelReleases("camel-quarkus-releases.json");
+    }
+
+    private List<ReleaseModel> camelReleases(String file) {
+        return cache(file, () -> {
+            try {
+                List<ReleaseModel> answer = new ArrayList<>();
+                InputStream is = loadResource("releases", file);
+                String json = CatalogHelper.loadText(is);
+                JsonArray arr = (JsonArray) Jsoner.deserialize(json);
+                for (Object o : arr) {
+                    JsonObject jo = (JsonObject) o;
+                    answer.add(JsonMapper.generateReleaseModel(jo));
+                }
+                return answer;
+            } catch (Exception e) {
+                return Collections.emptyList();
+            }
+        });
+    }
+
+    private static boolean matchArtifact(ArtifactModel<?> am, String groupId, String artifactId, String version) {
+        if (am == null) {
+            return false;
+        }
+        return groupId.equals(am.getGroupId()) && artifactId.equals(am.getArtifactId())
+                && (version == null || version.isBlank() || version.equals(am.getVersion()));
     }
 
     @SuppressWarnings("unchecked")
@@ -689,6 +582,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @SuppressWarnings("unchecked")
     private <T> T cache(String key, String name, Function<String, T> loader) {
+        return doGetCache(key, name, loader);
+    }
+
+    private <T> T doGetCache(String key, String name, Function<String, T> loader) {
         if (caching) {
             T t = (T) cache.get(key);
             if (t == null) {
@@ -705,18 +602,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @SuppressWarnings("unchecked")
     private <T> T cache(String name, Function<String, T> loader) {
-        if (caching) {
-            T t = (T) cache.get(name);
-            if (t == null) {
-                t = loader.apply(name);
-                if (t != null) {
-                    cache.put(name, t);
-                }
-            }
-            return t;
-        } else {
-            return loader.apply(name);
-        }
+        return doGetCache(name, name, loader);
     }
 
     private String loadResource(String file) {
@@ -726,7 +612,5 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             return null;
         }
     }
-
-    // CHECKSTYLE:ON
 
 }

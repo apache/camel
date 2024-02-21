@@ -19,9 +19,9 @@ package org.apache.camel.component.jms.reply;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

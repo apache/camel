@@ -1,14 +1,15 @@
-[[openstack-nova-component]]
 = OpenStack Nova Component
-:docTitle: OpenStack Nova
-:artifactId: camel-openstack
+:doctitle: OpenStack Nova
+:shortname: openstack-nova
+:artifactid: camel-openstack
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/openstack-nova.adoc[opts=optional]
 //Manually maintained attributes
 :group: OpenStack
+:camel-spring-boot-name: openstack
 
 *Since Camel {since}*
 
@@ -36,70 +37,30 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI Format
 
-[source,java]
 ----------------------------
 openstack-nova://hosturl[?options]
 ----------------------------
 
-You can append query options to the URI in the following format
-`?options=value&option2=value&...`
+// component-configure options: START
 
-== URI Options
+// component-configure options: END
 
 // component options: START
-The OpenStack Nova component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-The OpenStack Nova endpoint is configured using URI syntax:
 
-----
-openstack-nova:host
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *host* | *Required* OpenStack host url |  | String
-|===
-
-
-=== Query Parameters (9 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apiVersion* (producer) | OpenStack API version. There are 2 enums and the value can be one of: V2, V3 | V3 | String
-| *config* (producer) | OpenStack configuration |  | Config
-| *domain* (producer) | Authentication domain | default | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to do |  | String
-| *password* (producer) | *Required* OpenStack password |  | String
-| *project* (producer) | *Required* The project ID |  | String
-| *subsystem* (producer) | *Required* OpenStack Nova subsystem. There are 3 enums and the value can be one of: flavors, servers, keypairs |  | String
-| *username* (producer) | *Required* OpenStack username |  | String
-|===
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
-You can use following settings for each subsystem:
+
+You can use the following settings for each subsystem:
 
 == flavors
 
@@ -117,30 +78,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the flavor.
 |=========================================================================
 
-=== Message headers evaluated by the Flavor producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the flavor.
-
-|`name` |`String` |The flavor name.
-
-|`VCPU` |`Integer` |The number of flavor VCPU.
-
-|`ram` |`Integer` |Size of RAM.
-
-|`disk` |`Integer` |Size of disk.
-
-|`swap` |`Integer` |Size of swap.
-
-|`rxtxFactor` |`Integer` |Rxtx Factor.
-|=========================================================================
-
-If you need more precise flavor settings you can create new object of the type *org.openstack4j.model.compute.Flavor* and send in the message body.
+If you need more precise flavor settings, you can create a new object of the type *org.openstack4j.model.compute.Flavor* and send in the message body.
 
 == servers
 
@@ -149,7 +87,7 @@ If you need more precise flavor settings you can create new object of the type *
 |=========================================================================
 |Operation | Description
 
-|`create` | Create new server.
+|`create` | Create a new server.
 
 |`createSnapshot` | Create snapshot of the server.
 
@@ -162,32 +100,7 @@ If you need more precise flavor settings you can create new object of the type *
 |`action` | Perform an action on the server.
 |=========================================================================
 
-=== Message headers evaluated by the Server producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the server.
-
-|`name` |`String` |The server name.
-
-|`ImageId` |`String` | The Image ID.
-
-|`FlavorId` |`String` |The ID of flavor which will be used.
-
-|`KeypairName` |`String` | The Keypair name.
-
-|`NetworkId` |`String` | The network ID.
-
-|`AdminPassword` |`String` | Admin password of the new server.
-
-|`action` | `org.openstack4j.model.compute.Action` | An action to perform.
-|=========================================================================
-
-If you need more precise server settings you can create new object of the type *org.openstack4j.model.compute.ServerCreate* and send in the message body.
+If you need more precise server settings, you can create a new object of the type *org.openstack4j.model.compute.ServerCreate* and send in the message body.
 
 == keypairs
 
@@ -206,17 +119,4 @@ If you need more precise server settings you can create new object of the type *
 
 |=========================================================================
 
-=== Message headers evaluated by the Keypair producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`name` |`String` |The keypair name.
-
-|=========================================================================
-
-
-include::camel-spring-boot::page$openstack-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

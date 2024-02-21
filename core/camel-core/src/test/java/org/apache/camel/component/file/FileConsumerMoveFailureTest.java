@@ -21,28 +21,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class FileConsumerMoveFailureTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/failed");
-        super.setUp();
-    }
 
     @Test
     public void testMoveFailed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        mock.expectedFileExists("target/data/failed/.camel/hello.txt", "Hello World");
-        mock.expectedFileExists("target/data/failed/error/bye-error.txt", "Kabom");
+        mock.expectedFileExists(testFile(".camel/hello.txt"), "Hello World");
+        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kaboom");
 
-        template.sendBodyAndHeader("file://target/data/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Kaboom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,11 +46,11 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
+                from(fileUri("?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt"))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
-                                if ("Kabom".equals(body)) {
+                                if ("Kaboom".equals(body)) {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }

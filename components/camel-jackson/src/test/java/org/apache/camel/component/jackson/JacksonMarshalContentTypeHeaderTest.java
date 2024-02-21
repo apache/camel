@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
     @Test
-    public void testYes() throws Exception {
+    public void testYes() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -45,7 +45,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testYes2() throws Exception {
+    public void testYes2() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -57,7 +57,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNo() throws Exception {
+    public void testNo() {
         final Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -69,11 +69,11 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonDataFormat format = new JacksonDataFormat();
                 from("direct:yes").marshal(format);
 

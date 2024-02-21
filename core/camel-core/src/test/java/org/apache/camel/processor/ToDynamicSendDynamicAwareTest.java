@@ -52,7 +52,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // there should only be a bar:order endpoint
-        boolean found = context.getEndpointMap().containsKey("bar://order");
+        boolean found = context.getEndpointRegistry().containsKey("bar://order");
         assertTrue(found, "There should only be one bar endpoint");
     }
 
@@ -68,7 +68,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         };
     }
 
-    private class BarEndpointUriFactory extends EndpointUriFactorySupport {
+    private static class BarEndpointUriFactory extends EndpointUriFactorySupport {
 
         @Override
         public boolean isEnabled(String scheme) {
@@ -91,6 +91,11 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 
         @Override
         public Set<String> secretPropertyNames() {
+            return null;
+        }
+
+        @Override
+        public Set<String> multiValuePrefixes() {
             return null;
         }
 

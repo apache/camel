@@ -19,7 +19,7 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.maven.packaging.AbstractGeneratorMojo;
 import org.apache.camel.maven.packaging.ComponentDslMojo;
@@ -38,7 +38,7 @@ public final class ComponentsBuilderFactoryGenerator {
 
     private final String packageName;
     private final Set<ComponentModel> componentModels;
-    private JavaClass javaClass;
+    private final JavaClass javaClass;
 
     private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader,
                                               final String packageName) {

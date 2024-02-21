@@ -1,36 +1,31 @@
-[[ref-language]]
 = Ref Language
-:docTitle: Ref
-:artifactId: camel-core-languages
-:description: Look up an expression in the Camel Registry and evaluate it.
+:doctitle: Ref
+:shortname: ref
+:artifactid: camel-core-languages
+:description: Uses an existing expression from the registry.
 :since: 2.8
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/ref.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
 The Ref Expression Language is really just a way to lookup a custom
-Expression or Predicate from the Registry.
+`Expression` or `Predicate` from the xref:manual:ROOT:registry.adoc[Registry].
 
 This is particular useable in XML DSLs.
 
 == Ref Language options
 
 // language options: START
-The Ref language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 == Example usage
 
-The Splitter in XML DSL can utilize a custom
+The Splitter EIP in XML DSL can utilize a custom
 expression using `<ref>` like:
 
 [source,xml]
@@ -46,10 +41,10 @@ expression using `<ref>` like:
 </route>
 ----
 
-in this case, the Message coming from the seda:a
-Endpoint will be splitted using a custom
-Expression which has the id `myExpression` in the
-Registry.
+in this case, the message coming from the seda:a
+endpoint will be split using a custom
+`Expression` which has the id `myExpression` in the
+xref:manual:ROOT:registry.adoc[Registry].
 
 And the same example using Java DSL:
 
@@ -61,3 +56,5 @@ from("seda:a").split().ref("myExpression").to("seda:b");
 == Dependencies
 
 The Ref language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

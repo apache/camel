@@ -219,13 +219,13 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
     /**
      * Creates a new cached thread pool.
      * <p/>
-     * <b>Important:</b> Using cached thread pool is discouraged as they have no upper bound and can overload the JVM.
+     * <b>Important:</b> Using cached thread pool should be used by care as they have no upper bound on created threads,
+     * and have no task backlog, and can therefore overload the JVM.
      *
      * @param  source the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param  name   name which is appended to the thread name
      * @return        the created thread pool
      */
-    @Deprecated
     ExecutorService newCachedThreadPool(Object source, String name);
 
     /**
@@ -280,7 +280,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
     /**
      * Shutdown the given executor service (<b>not</b> graceful).
      * <p/>
-     * This implementation will issues a regular shutdown of the executor service, ie calling
+     * This implementation will issue a regular shutdown of the executor service, ie calling
      * {@link java.util.concurrent.ExecutorService#shutdown()} and return.
      *
      * @param executorService the executor service to shutdown

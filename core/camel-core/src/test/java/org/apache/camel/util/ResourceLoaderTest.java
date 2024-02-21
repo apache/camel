@@ -17,19 +17,26 @@
 package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultResourceLoader;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ResourceResolverSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
 import static org.apache.camel.util.FileUtil.copyFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,7 +48,8 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadFile() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("file:src/test/resources/log4j2.properties");
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -54,11 +62,12 @@ public class ResourceLoaderTest extends TestSupport {
 
     @Test
     public void testLoadFileWithSpace() throws Exception {
-        createDirectory("target/data/my space");
-        copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
+        testDirectory("target/data/my space", true);
+        copyFile(new File("src/test/resources/log4j2.properties"), testFile("target/data/my space/log4j2.properties").toFile());
 
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("file:target/data/my%20space/log4j2.properties");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                "file:" + testDirectory().toString() + "/target/data/my%20space/log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -72,7 +81,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadClasspath() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("classpath:log4j2.properties");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -86,7 +95,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadClasspathDefault() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource("log4j2.properties");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("log4j2.properties");
 
             // need to be started as it triggers the fallback
             // resolver
@@ -113,14 +122,14 @@ public class ResourceLoaderTest extends TestSupport {
                 }
 
                 @Override
-                protected Resource createResource(String location) {
+                protected Resource createResource(String location, String remaining) {
                     throw new UnsupportedOperationException();
                 }
             });
 
-            context.setResourceLoader(loader);
+            context.getCamelContextExtension().addContextPlugin(ResourceLoader.class, loader);
 
-            Resource resource = context.getResourceLoader().resolveResource("log4j2.properties");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("log4j2.properties");
 
             // need to be started as it triggers the fallback
             // resolver
@@ -131,7 +140,7 @@ public class ResourceLoaderTest extends TestSupport {
 
                 String text = context.getTypeConverter().convertTo(String.class, is);
                 assertNotNull(text);
-                assertTrue(text.equals("fallback"));
+                assertEquals("fallback", text);
             }
         }
     }
@@ -139,9 +148,9 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadRegistry() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", "This is a log4j logging configuration file");
+        context.getCamelContextExtension().getRegistry().bind("myBean", "This is a log4j logging configuration file");
 
-        Resource resource = context.getResourceLoader().resolveResource("ref:myBean");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("ref:myBean");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -155,9 +164,10 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDoubleColon() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        context.getCamelContextExtension().getRegistry().bind("myBean",
+                new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
-        Resource resource = context.getResourceLoader().resolveResource("bean:myBean::get");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("bean:myBean::get");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -171,10 +181,10 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDoubleColonLong() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("my.company.MyClass",
+        context.getCamelContextExtension().getRegistry().bind("my.company.MyClass",
                 new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
-        Resource resource = context.getResourceLoader().resolveResource("bean:my.company.MyClass::get");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("bean:my.company.MyClass::get");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -188,9 +198,10 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDot() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        context.getCamelContextExtension().getRegistry().bind("myBean",
+                new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
-        Resource resource = context.getResourceLoader().resolveResource("bean:myBean.get");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("bean:myBean.get");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -204,7 +215,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadFileNotFound() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("file:src/test/resources/notfound.txt");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/notfound.txt");
 
         assertFalse(resource.exists());
     }
@@ -212,7 +223,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadClasspathNotFound() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("classpath:notfound.txt");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:notfound.txt");
 
         assertFalse(resource.exists());
     }
@@ -220,7 +231,8 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadFileAsUrl() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("file:src/test/resources/log4j2.properties");
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
 
         URL url = resource.getURI().toURL();
         assertNotNull(url);
@@ -235,7 +247,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadClasspathAsUrl() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = context.getResourceLoader().resolveResource("classpath:log4j2.properties");
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("classpath:log4j2.properties");
 
         URL url = resource.getURI().toURL();
         assertNotNull(url);
@@ -245,5 +257,81 @@ public class ResourceLoaderTest extends TestSupport {
         assertTrue(text.contains("rootLogger"));
 
         context.stop();
+    }
+
+    @Test
+    public void testLoadMem() throws Exception {
+        final String raw = "to-be-encoded";
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("mem:" + raw);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadBase64() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded = Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("base64:" + encoded);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadBase64WithPlaceholders() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded = Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.getPropertiesComponent().setInitialProperties(propertiesOf("my.encoded", encoded));
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("base64:{{my.encoded}}");
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
+    }
+
+    @Test
+    public void testLoadGzip() throws Exception {
+        final String raw = "to-be-encoded";
+        final String encoded;
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+                gzip.write(raw.getBytes(StandardCharsets.UTF_8));
+            }
+
+            encoded = Base64.getEncoder().encodeToString(out.toByteArray());
+        }
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("gzip:" + encoded);
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertEquals(raw, content);
+        }
     }
 }

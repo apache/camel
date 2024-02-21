@@ -21,10 +21,12 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.util.ObjectHelper;
 
 @CloudServiceFactory("combined-service-filter")
+@Configurer
 public class CombinedServiceFilterFactory implements ServiceFilterFactory {
     private List<ServiceFilter> serviceFilterList;
 

@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.redis.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class RedisServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(RedisServiceFactory.class);
-
     private RedisServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<RedisService> builder() {
+        return new SimpleTestServiceBuilder<>("redis");
+    }
+
     public static RedisService createService() {
-        String instanceType = System.getProperty("redis.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-redis-container")) {
-            return new RedisLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new RedisRemoteService();
-        }
-
-        LOG.error("The property \"redis.instance.type\" must be one of 'local-redis-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Redis instance type");
+        return builder()
+                .addLocalMapping(RedisLocalContainerService::new)
+                .addRemoteMapping(RedisRemoteService::new)
+                .build();
     }
 }

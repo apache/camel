@@ -31,13 +31,6 @@ public final class ClusterGroupExpressions {
         }
     };
 
-    public static final ClusterGroupExpression FOR_DAEMONS = new ClusterGroupExpression() {
-        @Override
-        public ClusterGroup getClusterGroup(Ignite ignite) {
-            return ignite.cluster().forDaemons();
-        }
-    };
-
     public static final ClusterGroupExpression FOR_LOCAL = new ClusterGroupExpression() {
         @Override
         public ClusterGroup getClusterGroup(Ignite ignite) {

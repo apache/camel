@@ -25,10 +25,11 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- START SNIPPET: e1 -->
     <route>
       <from uri="direct:enricher-test-1"/>
-      <pollEnrich strategyRef="sampleAggregator">
+      <pollEnrich aggregationStrategy="sampleAggregator">
         <constant>seda:foo1</constant>
       </pollEnrich>
       <to uri="mock:mock"/>
@@ -37,7 +38,7 @@
 
     <route>
       <from uri="direct:enricher-test-2"/>
-      <pollEnrich timeout="1000" strategyRef="sampleAggregator">
+      <pollEnrich timeout="1000" aggregationStrategy="sampleAggregator">
         <constant>seda:foo2</constant>
       </pollEnrich>
       <to uri="mock:mock"/>
@@ -45,7 +46,7 @@
 
     <route>
       <from uri="direct:enricher-test-3"/>
-      <pollEnrich timeout="-1" strategyRef="sampleAggregator">
+      <pollEnrich timeout="-1" aggregationStrategy="sampleAggregator">
         <constant>seda:foo3</constant>
       </pollEnrich>
       <to uri="mock:mock"/>
@@ -53,7 +54,7 @@
 
     <route>
       <from uri="direct:enricher-test-4"/>
-      <pollEnrich strategyRef="sampleAggregator">
+      <pollEnrich aggregationStrategy="sampleAggregator">
         <constant>seda:foo4</constant>
       </pollEnrich>
       <to uri="mock:mock"/>

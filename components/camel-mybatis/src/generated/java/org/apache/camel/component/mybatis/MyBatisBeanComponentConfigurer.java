@@ -25,6 +25,10 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sqlsessionfactory":
@@ -34,12 +38,21 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"sqlSessionFactory"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configurationuri":
         case "configurationUri": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "sqlsessionfactory":
@@ -56,6 +69,10 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configurationuri":
         case "configurationUri": return target.getConfigurationUri();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sqlsessionfactory":

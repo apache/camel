@@ -29,10 +29,10 @@ import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificati
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils.Field.Element;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.ParseException;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
-import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public final class DispositionNotificationContentUtils {
@@ -78,12 +78,12 @@ public final class DispositionNotificationContentUtils {
         private Element[] elements;
 
         public Field(String name, Element[] elements) {
-            this.name = Args.notNull(name, "name");
+            this.name = ObjectHelper.notNull(name, "name");
             this.elements = (elements == null) ? new Element[] {} : elements;
         }
 
         public Field(String name, String value) {
-            this.name = Args.notNull(name, "name");
+            this.name = ObjectHelper.notNull(name, "name");
             this.elements = new Element[] { new Element(value, null) };
         }
 
@@ -101,7 +101,7 @@ public final class DispositionNotificationContentUtils {
             for (int i = 0; i < elements.length; i++) {
                 Element element = elements[i];
                 if (i > 0) {
-                    builder.append("; " + element);
+                    builder.append("; ").append(element);
                 } else {
                     builder.append(element);
                 }
@@ -113,11 +113,11 @@ public final class DispositionNotificationContentUtils {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(name + ": ");
+            sb.append(name).append(": ");
             for (int i = 0; i < elements.length; i++) {
                 Element element = elements[i];
                 if (i > 0) {
-                    sb.append("; " + element);
+                    sb.append("; ").append(element);
                 } else {
                     sb.append(element);
                 }
@@ -198,7 +198,7 @@ public final class DispositionNotificationContentUtils {
                     }
 
                     String dispositionTypeString = elements[1].getValue();
-                    int slash = dispositionTypeString.indexOf('/');
+                    int slash = dispositionTypeString.indexOf("/");
                     if (slash == -1) {
                         dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
                     } else {
@@ -246,9 +246,9 @@ public final class DispositionNotificationContentUtils {
                 dispositionMode,
                 dispositionType,
                 dispositionModifier,
-                failures.toArray(new String[failures.size()]),
-                errors.toArray(new String[errors.size()]),
-                warnings.toArray(new String[warnings.size()]),
+                failures.toArray(new String[0]),
+                errors.toArray(new String[0]),
+                warnings.toArray(new String[0]),
                 extensionFields,
                 receivedContentMic);
     }
@@ -270,7 +270,7 @@ public final class DispositionNotificationContentUtils {
             }
         }
 
-        return new Field(fieldName, elements.toArray(new Element[elements.size()]));
+        return new Field(fieldName, elements.toArray(new Element[0]));
     }
 
     public static Element parseDispositionFieldElement(CharArrayBuffer fieldLine, ParserCursor cursor) {
@@ -302,6 +302,6 @@ public final class DispositionNotificationContentUtils {
             }
         }
 
-        return new Element(value, parameters.toArray(new String[parameters.size()]));
+        return new Element(value, parameters.toArray(new String[0]));
     }
 }

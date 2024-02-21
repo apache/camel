@@ -48,8 +48,7 @@ public class SmppMessage extends DefaultMessage {
 
     @Override
     public SmppMessage newInstance() {
-        SmppMessage answer = new SmppMessage(getCamelContext(), null, this.configuration);
-        return answer;
+        return new SmppMessage(getCamelContext(), null, this.configuration);
     }
 
     public boolean isAlertNotification() {
@@ -107,7 +106,7 @@ public class SmppMessage extends DefaultMessage {
 
     /**
      * Returns the underlying jSMPP command
-     * 
+     *
      * @return command
      */
     public Command getCommand() {

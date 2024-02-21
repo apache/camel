@@ -1,0 +1,1 @@
+../../../../../dsl/camel-java-joor-dsl/src/main/docs/java-joor-dsl.adoc

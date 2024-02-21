@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.consul.cloud;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.NotRegisteredException;
-import com.orbitz.consul.model.agent.ImmutableRegCheck;
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.agent.Registration;
-import com.orbitz.consul.model.health.Service;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.AbstractServiceRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.NotRegisteredException;
+import org.kiwiproject.consul.model.agent.ImmutableRegCheck;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.agent.Registration;
+import org.kiwiproject.consul.model.health.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,28 +115,28 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
         configuration.setPassword(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return configuration.getConnectTimeoutMillis();
+    public Duration getConnectTimeout() {
+        return configuration.getConnectTimeout();
     }
 
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        configuration.setConnectTimeoutMillis(connectTimeoutMillis);
+    public void setConnectTimeout(Duration connectTimeout) {
+        configuration.setConnectTimeout(connectTimeout);
     }
 
-    public Long getReadTimeoutMillis() {
-        return configuration.getReadTimeoutMillis();
+    public Duration getReadTimeout() {
+        return configuration.getReadTimeout();
     }
 
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        configuration.setReadTimeoutMillis(readTimeoutMillis);
+    public void setReadTimeout(Duration readTimeout) {
+        configuration.setReadTimeout(readTimeout);
     }
 
-    public Long getWriteTimeoutMillis() {
-        return configuration.getWriteTimeoutMillis();
+    public Duration getWriteTimeout() {
+        return configuration.getWriteTimeout();
     }
 
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        configuration.setWriteTimeoutMillis(writeTimeoutMillis);
+    public void setWriteTimeout(Duration writeTimeout) {
+        configuration.setWriteTimeout(writeTimeout);
     }
 
     public Integer getBlockSeconds() {
@@ -246,7 +246,7 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
                 .port(definition.getPort()).name(definition.getName())
                 .id(definition.getId()).check(computeCheck(definition))
                 .tags(definition.getMetadata().entrySet().stream().filter(e -> e.getValue() != null)
-                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList()))
+                        .map(e -> e.getKey() + "=" + e.getValue()).toList())
                 .addTags("_consul.service.registry.id=" + getId()).build();
 
         // perform service registration against consul

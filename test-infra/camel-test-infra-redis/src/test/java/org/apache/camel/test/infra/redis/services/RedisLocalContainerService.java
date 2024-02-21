@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.redis.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
@@ -25,26 +26,27 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class RedisLocalContainerService implements RedisService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "redis:6.0.9";
     public static final String CONTAINER_NAME = "redis";
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public RedisLocalContainerService() {
-        String containerName = System.getProperty("redis.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(LocalPropertyResolver.getProperty(RedisLocalContainerService.class, RedisProperties.REDIS_CONTAINER));
     }
 
     public RedisLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(CONTAINER_NAME)
+    public RedisLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    public GenericContainer initContainer(String imageName, String networkAlias) {
+        return new GenericContainer<>(DockerImageName.parse(imageName))
+                .withNetworkAliases(networkAlias)
                 .withExposedPorts(RedisProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());
     }
@@ -78,7 +80,7 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
 
     @Override
     public String host() {
-        return container.getContainerIpAddress();
+        return container.getHost();
     }
 
     @Override

@@ -94,12 +94,9 @@ public class PahoConsumer extends DefaultConsumer {
                 LOG.debug("Message arrived on topic: {} -> {}", topic, message);
                 Exchange exchange = createExchange(message, topic);
 
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        // noop
-                    }
-                });
+                // use default consumer callback
+                AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                getAsyncProcessor().process(exchange, cb);
             }
 
             @Override

@@ -16,29 +16,50 @@
  */
 package org.apache.camel.component.infinispan.remote.cluster;
 
+import java.util.Properties;
+
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.configuration.cache.CacheMode;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 public final class InfinispanRemoteClusteredTestSupport {
     private InfinispanRemoteClusteredTestSupport() {
     }
 
     public static Configuration createConfiguration(InfinispanService service) {
-        return new ConfigurationBuilder()
-                .addServer()
-                .host(service.host())
-                .port(service.port())
-                .security()
-                .authentication()
-                .username(service.username())
-                .password(service.password())
-                .serverName("infinispan")
-                .saslMechanism("DIGEST-MD5")
-                .realm("default")
-                .build();
+        if (SystemUtils.IS_OS_MAC) {
+            Properties properties = new Properties();
+            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+            return new ConfigurationBuilder()
+                    .withProperties(properties)
+                    .addServer()
+                    .host(service.host())
+                    .port(service.port())
+                    .security()
+                    .authentication()
+                    .username(service.username())
+                    .password(service.password())
+                    .serverName("infinispan")
+                    .saslMechanism("DIGEST-MD5")
+                    .realm("default")
+                    .build();
+        } else {
+            return new ConfigurationBuilder()
+                    .addServer()
+                    .host(service.host())
+                    .port(service.port())
+                    .security()
+                    .authentication()
+                    .username(service.username())
+                    .password(service.password())
+                    .serverName("infinispan")
+                    .saslMechanism("DIGEST-MD5")
+                    .realm("default")
+                    .build();
+        }
 
     }
 

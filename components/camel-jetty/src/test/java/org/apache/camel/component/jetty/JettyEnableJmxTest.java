@@ -27,13 +27,21 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEnableJmxTest extends BaseJettyTest {
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     private String serverUri0;
     private String serverUri1;
@@ -71,7 +79,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         template.requestBody(serverUri2 + "&x=foo", null, Object.class);
         template.requestBody(serverUri3 + "&x=foo", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals(2, s.size(), "Could not find 2 Jetty Server: " + s);
@@ -116,13 +124,13 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                serverUri0 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=true";
-                serverUri1 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=true";
-                serverUri2 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
-                serverUri3 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
+            public void configure() {
+                serverUri0 = "http://localhost:" + port1 + "/myservice?enableJmx=true";
+                serverUri1 = "http://localhost:" + port2 + "/myservice?enableJmx=true";
+                serverUri2 = "http://localhost:" + port3 + "/myservice?enableJmx=false";
+                serverUri3 = "http://localhost:" + port4 + "/myservice?enableJmx=false";
 
                 from("jetty:" + serverUri0).routeId("route0").setBody().simple("<html><body>${in.header.x}</body></html>")
                         .to("mock:result");
@@ -147,7 +155,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         }
     }
 
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
+    protected MBeanServerConnection getMBeanConnection() {
         if (mbsc == null) {
             mbsc = ManagementFactory.getPlatformMBeanServer();
         }

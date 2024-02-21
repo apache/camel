@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.github.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class MockIssueService extends IssueService {
     }
 
     @Override
-    public Comment createComment(IRepositoryIdProvider repository, int issueNumber, String commentText) throws IOException {
+    public Comment createComment(IRepositoryIdProvider repository, int issueNumber, String commentText) {
         Comment addedComment = mockPullRequestService.addComment((long) issueNumber, commentText);
         return addedComment;
     }

@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -69,7 +68,7 @@ public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
         context.start();
 
         // should be 0 inflight
-        assertEquals(0, context.adapt(ExtendedCamelContext.class).getInflightRepository().size());
+        assertEquals(0, context.getInflightRepository().size());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -85,14 +84,14 @@ public class EventDrivenPollingConsumerCopyTest extends ContextTestSupport {
         assertNotEquals(polled.getExchangeId(), original.getExchangeId());
 
         // should be 1 inflight
-        assertEquals(1, context.adapt(ExtendedCamelContext.class).getInflightRepository().size());
+        assertEquals(1, context.getInflightRepository().size());
 
         // done uow
         polled.getUnitOfWork().done(polled);
         assertTrue(done.get(), "UoW should be done now");
 
         // should be 0 inflight
-        assertEquals(0, context.adapt(ExtendedCamelContext.class).getInflightRepository().size());
+        assertEquals(0, context.getInflightRepository().size());
 
         pc.stop();
         context.stop();

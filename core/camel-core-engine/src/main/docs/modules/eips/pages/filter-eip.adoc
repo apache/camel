@@ -1,38 +1,76 @@
-[[filter-eip]]
 = Filter EIP
-:docTitle: Filter
+:doctitle: Filter
+:shortname: filter
 :description: Filter out messages based using a predicate
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
-allows you to filter messages
+allows you to filter messages.
+
+How can a component avoid receiving uninteresting messages?
 
 image::eip/MessageFilter.gif[image]
 
-The following example shows how to create a Message Filter route
-consuming messages from an endpoint called *queue:a*, which if the
-xref:latest@manual:ROOT:predicate.adoc[Predicate] is true will be dispatched to *queue:b*
+Use a special kind of Message Router, a Message Filter, to eliminate undesired messages from a channel based on a set of criteria.
+
+The message filter implemented in Camel is similar to `if (predicate) { block }`
+in Java. The filter will *include* the message if the predicate evaluated to `true`.
 
 == EIP options
 
 // eip options: START
-The Filter EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Exchange properties
 
-Here is a little example in Java DSL:
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
+== Example
+
+The Camel xref:languages:simple-language.adoc[Simple] language
+is great to use with the Filter EIP when routing is based on the content of the message,
+such as checking message headers.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
     .filter(simple("${header.foo} == 'bar'"))
-        .to("direct:b");
+        .to("direct:bar")
+    .end()
+    .to("direct:b")
 ----
 
-You can use many different languages as the predicate, such as XPath:
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <filter>
+        <simple>${header.foo} == 'bar'</simple>
+        <to uri="direct:bar"/>
+    </filter>
+    <to uri="direct:b"/>
+</route>
+----
+====
+
+You can use many languages as the predicate, such as xref:languages:xpath-language.adoc[XPath]:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").
@@ -40,7 +78,22 @@ from("direct:start").
         to("mock:result");
 ----
 
-Here is another example of using a bean to define the filter behavior
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <filter>
+        <xpath>/person[@name='James']</xpath>
+        <to uri="mock:result"/>
+    </filter>
+</route>
+----
+====
+
+Here is another example of calling a xref:languages:bean-language.adoc[method on a bean]
+to define the filter behavior:
 
 [source,java]
 ----
@@ -49,56 +102,106 @@ from("direct:start")
       .to("mock:gold")
     .end()
     .to("mock:all");
+----
 
+And then bean can have a method that returns a `boolean` as the predicate:
+
+[source,java]
+----
 public static class MyBean {
-    public boolean isGoldCustomer(@Header("level") String level) { 
-        return level.equals("gold"); 
+
+    public boolean isGoldCustomer(@Header("level") String level) {
+        return level.equals("gold");
     }
+
 }
 ----
 
-And the example in XML:
+And in XML we can call the bean in `<method>` where we can specify the FQN classname
+of the bean as shown:
 
 [source,xml]
 ----
-<bean id="myBean" class="com.foo.MyBean"/>
-
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:a"/>
-        <filter>
-            <method ref="myBean" method="isGoldCustomer"/>
-            <to uri="direct:b"/>
-        </filter>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <filter>
+        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <to uri="mock:gold"/>
+    </filter>
+    <to uri="mock:all"/>
+</route>
 ----
 
+=== Filtering with status property
 
-== Using stop
+To know whether an `Exchange` was filtered or not, then you can choose to specify a name of a property
+to store on the exchange with the result (boolean), using `statusPropertyName` as shown below:
 
-Stop is a bit different than a message filter as it will filter out all
-messages and end the route entirely (filter only applies to its child
-processor). Stop is convenient to use in a
-xref:content-based-router-eip.adoc[Content Based Router] when you for
-example need to stop further processing in one of the predicates.
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .filter().method(MyBean.class, "isGoldCustomer").statusPropertyName("gold")
+      .to("mock:gold")
+    .end()
+    .to("mock:all");
+----
 
-In the example below we do not want to route messages any further that
-has the word `Bye` in the message body. Notice how we prevent this in
-the when predicate by using the `.stop()`.
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <filter statusPropertyName="gold">
+        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <to uri="mock:gold"/>
+    </filter>
+    <to uri="mock:all"/>
+</route>
+----
+====
 
-== Knowing if Exchange was filtered or not
+In the example above then Camel will store an exchange property with key `gold` with the result of the filtering,
+whether it was `true` or `false`.
 
-The xref:filter-eip.adoc[Message Filter] EIP will add a property on
-the xref:latest@manual:ROOT:exchange.adoc[Exchange] that states if it was filtered or not.
+=== Filtering and stopping
 
-The property has the key `Exchange.FILTER_MATCHED`, which has the String
-value of `CamelFilterMatched`. Its value is a boolean indicating `true`
-or `false`. If the value is `true` then the xref:latest@manual:ROOT:exchange.adoc[Exchange]
-was routed in the filter block. This property will be visible within the
-xref:filter-eip.adoc[Message Filter] block who's
-xref:latest@manual:ROOT:predicate.adoc[Predicate] matches (value set to `true`), and to the
-steps immediately following the xref:filter-eip.adoc[Message Filter]
-with the value set based on the results of the last
-xref:filter-eip.adoc[Message Filter] xref:latest@manual:ROOT:predicate.adoc[Predicate]
-evaluated.
+When using the Message Filter EIP, then it only applies to its children.
+
+For example in the previous example:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <filter>
+        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <to uri="mock:gold"/>
+    </filter>
+    <to uri="mock:all"/>
+</route>
+----
+
+Then for a message that is a gold customer will be routed to both mock:gold and mock:all (predicate is true).
+However, for a non-gold message (predicate is false) then the message will not be routed in the filter block,
+but will be routed to mock:all.
+
+Sometimes you may want to stop continue routing for messages that was filtered.
+To do this, you can use the xref:stop-eip.adoc[Stop] EIP as shown:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <filter>
+        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <to uri="mock:gold"/>
+        <stop/>
+    </filter>
+    <to uri="mock:all"/>
+</route>
+----

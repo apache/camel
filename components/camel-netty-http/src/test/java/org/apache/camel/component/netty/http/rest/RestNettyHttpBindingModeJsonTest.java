@@ -37,7 +37,7 @@ public class RestNettyHttpBindingModeJsonTest extends BaseNettyTest {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -59,14 +59,14 @@ public class RestNettyHttpBindingModeJsonTest extends BaseNettyTest {
             // expected
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services

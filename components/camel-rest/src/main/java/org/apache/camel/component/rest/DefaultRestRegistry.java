@@ -51,8 +51,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
             String consumes, String produces, String inType, String outType, String routeId, String description) {
         RestServiceEntry entry = new RestServiceEntry(
-                consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId,
-                description);
+                consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, description);
         registry.put(consumer, entry);
     }
 
@@ -156,7 +155,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     /**
      * Represents a rest service
      */
-    private final class RestServiceEntry implements RestService {
+    private static final class RestServiceEntry implements RestService {
 
         private final Consumer consumer;
         private final String url;
@@ -168,12 +167,11 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String produces;
         private final String inType;
         private final String outType;
-        private final String routeId;
         private final String description;
 
         private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
                                  String method,
-                                 String consumes, String produces, String inType, String outType, String routeId,
+                                 String consumes, String produces, String inType, String outType,
                                  String description) {
             this.consumer = consumer;
             this.url = url;
@@ -185,7 +183,6 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             this.produces = produces;
             this.inType = inType;
             this.outType = outType;
-            this.routeId = routeId;
             this.description = description;
         }
 
@@ -251,11 +248,6 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 status = ServiceStatus.Stopped;
             }
             return status.name();
-        }
-
-        @Override
-        public String getRouteId() {
-            return routeId;
         }
 
         @Override

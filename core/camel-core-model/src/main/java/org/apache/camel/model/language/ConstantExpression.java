@@ -16,9 +16,10 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -28,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.5.0", label = "language,core", title = "Constant")
 @XmlRootElement(name = "constant")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConstantExpression extends ExpressionDefinition {
+public class ConstantExpression extends TypedExpressionDefinition {
 
     public ConstantExpression() {
     }
@@ -37,8 +38,24 @@ public class ConstantExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private ConstantExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "constant";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link ConstantExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, ConstantExpression> {
+
+        @Override
+        public ConstantExpression end() {
+            return new ConstantExpression(this);
+        }
     }
 }

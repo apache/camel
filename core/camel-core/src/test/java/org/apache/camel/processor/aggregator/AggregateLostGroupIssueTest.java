@@ -26,10 +26,12 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * Based on user forum issue
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;
@@ -91,7 +93,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).aggregationRepository(AggregateLostGroupIssueTest.this::getAggregationRepository)
+                }).aggregationRepository(getAggregationRepository())
                         .completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated")
                         .to("mock:result");
             }

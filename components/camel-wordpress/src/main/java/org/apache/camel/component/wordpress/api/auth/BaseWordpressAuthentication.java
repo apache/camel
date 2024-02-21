@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.wordpress.api.auth;
 
-import com.google.common.base.Strings;
-
 abstract class BaseWordpressAuthentication implements WordpressAuthentication {
 
     protected String username;
@@ -52,6 +50,6 @@ abstract class BaseWordpressAuthentication implements WordpressAuthentication {
     }
 
     protected final boolean isCredentialsSet() {
-        return !Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password);
+        return username != null && !username.isEmpty() && password != null && !password.isEmpty();
     }
 }

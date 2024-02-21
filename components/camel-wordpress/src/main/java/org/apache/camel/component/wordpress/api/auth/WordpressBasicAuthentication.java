@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseWordpressAuthentication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordpressBasicAuthentication.class);
 
     public WordpressBasicAuthentication() {
     }
@@ -44,7 +44,7 @@ public class WordpressBasicAuthentication extends BaseWordpressAuthentication {
 
     /**
      * HTTP Basic Authentication configuration over CXF {@link ClientConfiguration}.
-     * 
+     *
      * @see <a href= "http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-ClientsandAuthentication">CXF
      *      Clients and Authentication</a>
      */

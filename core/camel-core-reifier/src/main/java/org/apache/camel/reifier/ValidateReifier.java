@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ValidateDefinition;
+import org.apache.camel.spi.PredicateExceptionFactory;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
@@ -32,7 +34,16 @@ public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Predicate pred = createPredicate(definition.getExpression());
-        return new PredicateValidatingProcessor(pred);
+        PredicateValidatingProcessor answer = new PredicateValidatingProcessor(pred);
+
+        PredicateExceptionFactory factory = definition.getFactory();
+        if (factory == null && definition.getPredicateExceptionFactory() != null) {
+            factory = lookupByNameAndType(definition.getPredicateExceptionFactory(), PredicateExceptionFactory.class);
+        } else if (factory == null) {
+            factory = CamelContextHelper.findSingleByType(camelContext, PredicateExceptionFactory.class);
+        }
+        answer.setPredicateExceptionFactory(factory);
+        return answer;
     }
 
 }

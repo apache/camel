@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -37,15 +36,21 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ResourceLock(SSL_SYSPROPS)
+@DisabledOnOs(OS.WINDOWS)
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
@@ -53,9 +58,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        port1 = getNextPort();
-        port2 = getNextPort();
-
         super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
@@ -81,8 +83,9 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     @Override
     protected void restoreSystemProperties() {
-        for (Object key : originalValues.keySet()) {
-            Object value = originalValues.get(key);
+        for (Map.Entry<Object, Object> entry : originalValues.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.clearProperty((String) key);
             } else {
@@ -94,11 +97,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpointA.expectedBodiesReceived(expectedBody);
         MockEndpoint mockEndpointB = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
@@ -117,19 +115,14 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Override
     @Test
-    public void testEndpointWithoutHttps() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
+    public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
             template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
@@ -142,15 +135,10 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testHelloEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        SSLContext ssl = SSLContext.getInstance("TLSv1.2");
+        SSLContext ssl = SSLContext.getInstance("TLSv1.3");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
         InputStream is = connection.getInputStream();
@@ -166,11 +154,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         try {
             new URL("http://localhost:" + port1 + "/hello").openStream();
             fail("expected SocketException on use ot http");
@@ -179,7 +162,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    protected void invokeHttpEndpoint() throws IOException {
+    protected void invokeHttpEndpoint() {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
                 "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
@@ -187,19 +170,19 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-                componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
+                componentJetty.setKeystore("file://" + keyStoreUrl.toURI().getPath());
 
                 from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

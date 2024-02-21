@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Objects;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.Test;
 

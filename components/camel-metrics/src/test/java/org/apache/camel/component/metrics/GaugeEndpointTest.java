@@ -42,12 +42,12 @@ public class GaugeEndpointTest {
     private MetricsEndpoint endpoint;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.GAUGE, METRICS_NAME);
     }
 
     @Test
-    public void testGaugeEndpoint() throws Exception {
+    public void testGaugeEndpoint() {
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getSubject(), is(nullValue()));
@@ -61,12 +61,12 @@ public class GaugeEndpointTest {
     }
 
     @Test
-    public void testGetSubject() throws Exception {
+    public void testGetSubject() {
         assertThat(endpoint.getSubject(), is(nullValue()));
     }
 
     @Test
-    public void testSetSubject() throws Exception {
+    public void testSetSubject() {
         endpoint.setSubject(VALUE);
         assertThat(endpoint.getSubject(), is(VALUE));
     }

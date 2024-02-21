@@ -79,20 +79,21 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // mock server
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 rest()
-                    .get("/req1").route()
+                    .get("/req1").to("direct:r1")
+                    .get("/req2").to("direct:r2");
+                from("direct:r1")
                         .log("Got req1")
-                        .setBody(constant(new Resp1("1")))
-                    .endRest()
-                    .get("/req2").route()
+                        .setBody(constant(new Resp1("1")));
+                from("direct:r2")
                         .log("Got req2")
                         .setBody(constant(new Resp2(null, "2")))
                     .end();

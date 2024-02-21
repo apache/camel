@@ -24,40 +24,32 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
+    @TempDir
+    File testDirectory;
+
     private final String responseBody = "12345678901234567890123456789012345678901234567890";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/cachedir");
-        createDirectory("target/cachedir");
-        super.setUp();
-    }
-
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         // the temporary files should have been deleted
-        File file = new File("target/cachedir");
-        String[] files = file.list();
+        String[] files = testDirectory.list();
         assertEquals(0, files.length, "There should be no files");
     }
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfException() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfException() {
         try {
             template.requestBody("direct:start", null, String.class);
             fail("Should have thrown an exception");
@@ -68,27 +60,27 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         }
 
         // the temporary files should have been deleted
-        File file = new File("target/cachedir");
-        String[] files = file.list();
+        String[] files = testDirectory.list();
         assertEquals(0, files.length, "There should be no files");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory);
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
                 from("direct:start").to("http://localhost:{{port}}/myserver");
 
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if (ObjectHelper.isEmpty(body)) {
                             exchange.getMessage().setBody(responseBody);

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
@@ -36,7 +36,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Default {@link ResourceLoader}.
  */
-public class DefaultResourceLoader extends ServiceSupport implements ResourceLoader {
+public class DefaultResourceLoader extends ServiceSupport implements ResourceLoader, StaticService {
     /**
      * Prefix to use for looking up existing {@link ResourceLoader} from the {@link org.apache.camel.spi.Registry}.
      */
@@ -121,6 +121,23 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
     }
 
     /**
+     * Is there an existing resource resolver that can load from the given scheme
+     *
+     * @param scheme the scheme
+     */
+    protected boolean hasResourceResolver(String scheme) {
+        ResourceResolver answer = getCamelContext().getRegistry().lookupByNameAndType(
+                RESOURCE_LOADER_KEY_PREFIX + scheme,
+                ResourceResolver.class);
+
+        if (answer == null) {
+            answer = resolvers.get(scheme);
+        }
+
+        return answer != null;
+    }
+
+    /**
      * Looks up a {@link ResourceResolver} for the given scheme in the registry or fallback to a factory finder
      * mechanism if none found.
      *
@@ -146,10 +163,11 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      * @return        a {@link RoutesBuilderLoader} or <code>null</code> if none found.
      */
     private ResourceResolver resolveService(String scheme) {
-        final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-        final FactoryFinder finder = ecc.getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
+        final CamelContext context = getCamelContext();
+        final FactoryFinder finder
+                = context.getCamelContextExtension().getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
 
-        ResourceResolver rr = ResolverHelper.resolveService(ecc, finder, scheme, ResourceResolver.class).orElse(null);
+        ResourceResolver rr = ResolverHelper.resolveService(context, finder, scheme, ResourceResolver.class).orElse(null);
         if (rr != null) {
             CamelContextAware.trySetCamelContext(rr, getCamelContext());
             ServiceHelper.startService(rr);

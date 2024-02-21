@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.Security;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -53,6 +54,12 @@ public class KeyStoreParameters extends JsseParameters {
     protected String provider;
 
     /**
+     * The optional key store, which has higher priority then value in resource below. If keyStore is non-null, resource
+     * isn't taken into account. This is helpful say for in-memory KeyStore composed by the user "on the fly".
+     */
+    protected KeyStore keyStore;
+
+    /**
      * The optional file path, class path resource, or URL of the resource used to load the key store.
      */
     protected String resource;
@@ -68,7 +75,7 @@ public class KeyStoreParameters extends JsseParameters {
      * Sets the type of the key store to create and load. See Appendix A in the
      * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore" >Java
      * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
-     * 
+     *
      * @param value the key store type identifier (may be {@code null})
      */
     public void setType(String value) {
@@ -84,7 +91,7 @@ public class KeyStoreParameters extends JsseParameters {
 
     /**
      * Set the optional password for reading/opening/verifying the key store.
-     * 
+     *
      * @param value the password value (may be {@code null})
      */
     public void setPassword(String value) {
@@ -118,11 +125,21 @@ public class KeyStoreParameters extends JsseParameters {
 
     /**
      * Sets the optional file path, class path resource, or URL of the resource used to load the key store.
-     * 
+     *
      * @param value the resource (may be {@code null})
      */
     public void setResource(String value) {
         this.resource = value;
+    }
+
+    /**
+     * Sets the optional key store, which has higher priority then value in resource. NB Don't forget to call
+     * setPassword() for password of this KeyStore.
+     *
+     * @param keyStore the KeyStore (may be {@code null})
+     */
+    public void setKeyStore(KeyStore keyStore) {
+        this.keyStore = keyStore;
     }
 
     /**
@@ -134,12 +151,22 @@ public class KeyStoreParameters extends JsseParameters {
      * returns {@code null}, the instance will be empty. The loading of the resource, if not {@code null}, is attempted
      * by treating the resource as a file path, a class path resource, and a URL in that order. An exception is thrown
      * if the resource cannot be resolved to readable input stream using any of the above methods.
-     * 
+     *
      * @return                          a configured and loaded key store
      * @throws GeneralSecurityException if there is an error creating an instance with the given configuration
      * @throws IOException              if there is an error resolving the configured resource to an input stream
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
+        if (keyStore != null) {
+            if (LOG.isDebugEnabled()) {
+                List<String> aliases = extractAliases(keyStore);
+                LOG.debug(
+                        "KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
+                        keyStore, this, keyStore.getProvider(), keyStore.getType(), aliases);
+            }
+            return keyStore;
+        }
+
         LOG.trace("Creating KeyStore instance from KeyStoreParameters [{}].", this);
 
         String ksType = this.parsePropertyValue(this.type);
@@ -163,22 +190,39 @@ public class KeyStoreParameters extends JsseParameters {
             ks.load(null, ksPassword);
         } else {
             InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
-            ks.load(is, ksPassword);
+            if (is == null) {
+                LOG.warn("No keystore could be found at {}.", this.resource);
+            } else {
+                try (is) {
+                    ks.load(is, ksPassword);
+                }
+            }
         }
 
         if (LOG.isDebugEnabled()) {
-            List<String> aliases = new LinkedList<>();
-
-            Enumeration<String> aliasEnum = ks.aliases();
-            while (aliasEnum.hasMoreElements()) {
-                aliases.add(aliasEnum.nextElement());
-            }
-
+            List<String> aliases = extractAliases(ks);
             LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                    new Object[] { ks, this, ks.getProvider(), ks.getType(), aliases });
+                    ks, this, ks.getProvider(), ks.getType(), aliases);
         }
 
         return ks;
+    }
+
+    private List<String> extractAliases(KeyStore ks) {
+        List<String> aliases = new LinkedList<>();
+
+        Enumeration<String> aliasEnum = null;
+        try {
+            aliasEnum = ks.aliases();
+        } catch (KeyStoreException e) {
+            // ignore - only used for logging purposes
+        }
+        if (aliasEnum != null) {
+            while (aliasEnum.hasMoreElements()) {
+                aliases.add(aliasEnum.nextElement());
+            }
+        }
+        return aliases;
     }
 
     @Override

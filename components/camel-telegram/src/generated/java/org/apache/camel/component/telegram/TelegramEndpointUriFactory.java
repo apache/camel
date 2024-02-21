@@ -19,43 +19,47 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(31);
-        props.add("backoffMultiplier");
-        props.add("chatId");
-        props.add("initialDelay");
-        props.add("type");
-        props.add("timeout");
-        props.add("scheduler");
         props.add("authorizationToken");
-        props.add("proxyPort");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
-        props.add("limit");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("proxyType");
-        props.add("clientConfig");
-        props.add("proxyHost");
         props.add("backoffIdleThreshold");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
+        props.add("backoffMultiplier");
         props.add("baseUri");
-        props.add("exceptionHandler");
+        props.add("bridgeErrorHandler");
         props.add("bufferSize");
+        props.add("chatId");
+        props.add("client");
+        props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
+        props.add("limit");
+        props.add("pollStrategy");
+        props.add("proxyHost");
+        props.add("proxyPort");
+        props.add("proxyType");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("timeout");
+        props.add("type");
+        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("authorizationToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -83,6 +87,11 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

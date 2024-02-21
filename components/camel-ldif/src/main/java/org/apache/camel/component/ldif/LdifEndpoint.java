@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ldif;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,13 +29,13 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform updates on an LDAP server from an LDIF body content.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true,
-             category = { Category.LDAP })
+             category = { Category.DATABASE, Category.SECURITY })
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String ldapConnectionName;
 
-    protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) throws URISyntaxException {
+    protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) {
         super(endpointUri, component);
         this.ldapConnectionName = remaining;
     }

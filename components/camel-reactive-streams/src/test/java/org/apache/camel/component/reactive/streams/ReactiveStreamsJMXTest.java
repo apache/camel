@@ -34,7 +34,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test exposed services on JMX.
  */
-public class ReactiveStreamsJMXTest extends CamelTestSupport {
+public class ReactiveStreamsJMXTest extends BaseReactiveTest {
 
     @Test
     public void testJmxExposedService() throws Exception {
@@ -113,7 +112,7 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -121,7 +120,7 @@ public class ReactiveStreamsJMXTest extends CamelTestSupport {
                         .delayer(1)
                         .to("mock:unbounded-endpoint");
 
-                from("timer:tick")
+                from("timer:tick?includeMetadata=true")
                         .setBody().simple("Hello world ${header.CamelTimerCounter}")
                         .to("reactive-streams:strings");
 

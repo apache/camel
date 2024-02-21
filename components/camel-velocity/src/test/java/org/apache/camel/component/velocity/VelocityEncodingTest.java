@@ -21,9 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class VelocityEncodingTest extends VelocityLetterTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("velocity:org/apache/camel/component/velocity/letter-utf16.vm?encoding=UTF-16")
                         .to("mock:result");
             }

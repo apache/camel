@@ -23,17 +23,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ExchangeRequestTest extends CamelTestSupport {
+public class ExchangeRequestTest extends BaseReactiveTest {
 
     @Test
-    public void testStreamRequest() throws Exception {
+    public void testStreamRequest() {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
@@ -49,7 +48,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInteraction() throws Exception {
+    public void testInteraction() {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
@@ -61,7 +60,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMultipleInteractions() throws Exception {
+    public void testMultipleInteractions() {
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
         Integer sum = Flowable.just(1, 2, 3)
@@ -74,7 +73,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

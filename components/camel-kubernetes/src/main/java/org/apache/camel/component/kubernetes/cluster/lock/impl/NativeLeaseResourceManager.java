@@ -45,8 +45,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         Lease updatedLease = getLeaseWithoutLeader(leaseResource);
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
-                .withName(leaseResource.getMetadata().getName())
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace(updatedLease);
+                .resource(updatedLease)
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override
@@ -54,8 +54,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         Lease updatedLease = getLeaseWithNewLeader(leaseResource, newLeaderInfo);
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
-                .withName(leaseResource.getMetadata().getName())
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace(updatedLease);
+                .resource(updatedLease)
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override
@@ -69,8 +69,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
                     .build();
             return client.leases()
                     .inNamespace(leaseResource.getMetadata().getNamespace())
-                    .withName(leaseResource.getMetadata().getName())
-                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace(updatedLease);
+                    .resource(updatedLease)
+                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
         }
         return leaseResource;
     }
@@ -83,7 +83,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
                 .addToLabels("provider", "camel")
                 .endMetadata()
                 .withNewSpec()
-                .withNewHolderIdentity(leaderInfo.getLeader())
+                .withHolderIdentity(leaderInfo.getLeader())
                 .withAcquireTime(now)
                 .withLeaseDurationSeconds(leaderInfo.getLeaseDurationSeconds())
                 .withRenewTime(now)
@@ -92,7 +92,8 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
 
         return client.leases()
                 .inNamespace(namespace)
-                .create(newLease);
+                .resource(newLease)
+                .create();
     }
 
     private static Lease getLeaseWithNewLeader(Lease lease, LeaderInfo leaderInfo) {
@@ -103,7 +104,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         ZonedDateTime now = ZonedDateTime.now();
         return new LeaseBuilder(lease)
                 .editOrNewSpec()
-                .withNewHolderIdentity(leaderInfo.getLeader())
+                .withHolderIdentity(leaderInfo.getLeader())
                 .withAcquireTime(now)
                 .withLeaseDurationSeconds(leaderInfo.getLeaseDurationSeconds())
                 .withRenewTime(now)

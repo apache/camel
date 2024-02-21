@@ -16,6 +16,9 @@
  */
 package org.apache.camel.openapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,13 +38,13 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 
@@ -58,13 +61,13 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.json");
         processor.process(exchange);
@@ -79,17 +82,17 @@ public class RestOpenApiProcessorTest {
     }
 
     @Test
-    public void testRestOpenApiProcessorOpenApiYamlPath() throws Exception {
+    public void testRestOpenApiProcessorOpenApiYamlDeprecatedVerb() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").deprecated().to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.yaml");
         processor.process(exchange);
@@ -99,33 +102,37 @@ public class RestOpenApiProcessorTest {
         assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(yaml.contains("/foo:"));
         assertTrue(yaml.contains("/bar:"));
-        assertTrue(yaml.contains("summary: \"Foo endpoint\""));
-        assertTrue(yaml.contains("summary: \"Bar endpoint\""));
+        assertTrue(yaml.contains("deprecated: true"));
+
+        JsonNode jsonNode = new ObjectMapper(new YAMLFactory()).readValue(yaml, JsonNode.class);
+        assertNull(jsonNode.get("paths").get("/bar").get("post").get("deprecated"));
+        assertNotNull(jsonNode.get("paths").get("/foo").get("get").get("deprecated"));
+        assertTrue(jsonNode.get("paths").get("/foo").get("get").get("deprecated").asBoolean());
     }
 
     @Test
-    public void testRestOpenApiProcessorCustomPath() throws Exception {
+    public void testRestOpenApiProcessorOpenApiYamlPath() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/some/custom/path/api.json");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.yaml");
         processor.process(exchange);
 
-        String json = exchange.getMessage().getBody(String.class);
-        assertNotNull(json);
-        assertEquals("application/json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
-        assertTrue(json.contains("\"/foo\""));
-        assertTrue(json.contains("\"/bar\""));
-        assertTrue(json.contains("\"summary\" : \"Foo endpoint\""));
-        assertTrue(json.contains("\"summary\" : \"Bar endpoint\""));
+        String yaml = exchange.getMessage().getBody(String.class);
+        assertNotNull(yaml);
+        assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertTrue(yaml.contains("/foo:"));
+        assertTrue(yaml.contains("/bar:"));
+        assertTrue(yaml.contains("summary: Foo endpoint"));
+        assertTrue(yaml.contains("summary: Bar endpoint"));
     }
 
     @Test
@@ -133,15 +140,15 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/some/custom/path/api");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/");
         exchange.getMessage().setHeader("Accept", "application/json");
         processor.process(exchange);
 
@@ -159,15 +166,15 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+            public void configure() {
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, false, null, context.getRestConfiguration());
+        RestOpenApiProcessor processor = new RestOpenApiProcessor(null, context.getRestConfiguration());
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/some/custom/path/api");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/");
         exchange.getMessage().setHeader("Accept", "application/yaml");
         processor.process(exchange);
 
@@ -176,106 +183,8 @@ public class RestOpenApiProcessorTest {
         assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(yaml.contains("/foo:"));
         assertTrue(yaml.contains("/bar:"));
-        assertTrue(yaml.contains("summary: \"Foo endpoint\""));
-        assertTrue(yaml.contains("summary: \"Bar endpoint\""));
+        assertTrue(yaml.contains("summary: Foo endpoint"));
+        assertTrue(yaml.contains("summary: Bar endpoint"));
     }
 
-    @Test
-    public void testRestOpenApiProcessorContextIdListingEnabledForDefaultPath() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
-            }
-        });
-
-        context.getRegistry().bind("dummy", new DummyRestConsumerFactory());
-
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(".*camel.*", true, null, context.getRestConfiguration());
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.json");
-
-        context.start();
-        try {
-            processor.process(exchange);
-
-            String json = exchange.getMessage().getBody(String.class);
-            assertNotNull(json);
-
-            assertEquals("[{\"name\":\"" + context.getName() + "\"}]", json.replaceAll("\\s+", ""));
-        } finally {
-            context.stop();
-        }
-    }
-
-    @Test
-    public void testRestOpenApiProcessorContextIdListingForNamePlaceholder() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
-            }
-        });
-
-        RestOpenApiProcessor processor = new RestOpenApiProcessor("#name#", false, null, context.getRestConfiguration());
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/openapi.json");
-        processor.process(exchange);
-
-        String json = exchange.getMessage().getBody(String.class);
-        assertNotNull(json);
-        assertTrue(json.contains("\"/foo\""));
-        assertTrue(json.contains("\"/bar\""));
-        assertTrue(json.contains("\"summary\" : \"Foo endpoint\""));
-        assertTrue(json.contains("\"summary\" : \"Bar endpoint\""));
-    }
-
-    @Test
-    public void testRestOpenApiProcessorContextIdListingEnabledForCustomPath() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/rest").get("/foo").description("Foo endpoint").route().id("foo-route").log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().id("bar-route").log("Hello /foo").endRest();
-            }
-        });
-
-        RestOpenApiProcessor processor = new RestOpenApiProcessor(".*camel.*", true, null, context.getRestConfiguration());
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "/" + context.getName() + "/rest");
-        processor.process(exchange);
-
-        String json = exchange.getMessage().getBody(String.class);
-        assertNotNull(json);
-        assertTrue(json.contains("\"/rest/foo\""));
-        assertTrue(json.contains("\"/rest/bar\""));
-        assertTrue(json.contains("\"summary\" : \"Foo endpoint\""));
-        assertTrue(json.contains("\"summary\" : \"Bar endpoint\""));
-    }
-
-    @Test
-    public void testRestOpenApiProcessorContextIdPatternNoMatches() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest("/").get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest().post("/bar")
-                        .description("Bar endpoint").route().log("Hello /foo").endRest();
-            }
-        });
-
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor("an-invalid-pattern", false, null, context.getRestConfiguration());
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader("/some/rest/api/document.json", Exchange.HTTP_PATH);
-        processor.process(exchange);
-
-        assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertNull(exchange.getMessage().getBody());
-    }
 }

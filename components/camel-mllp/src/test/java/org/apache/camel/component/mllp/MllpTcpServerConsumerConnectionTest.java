@@ -92,7 +92,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         Thread.sleep(1000);
         mllpClient.close();
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         Thread.sleep(1000);
         mllpClient.reset();
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     /**
@@ -146,7 +146,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             assertNull(expectedEx.getCause());
         }
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     void addTestRouteWithIdleTimeout(final int idleTimeout) throws Exception {
@@ -156,9 +156,9 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             public void configure() {
                 fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(),
                         mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                        .to(result);
             }
         };
 

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.util.Date;
+import java.time.Duration;
 
 /**
  * A very simple stop watch.
@@ -31,21 +31,7 @@ public final class StopWatch {
      * Starts the stop watch
      */
     public StopWatch() {
-        this.start = System.currentTimeMillis();
-    }
-
-    /**
-     * Starts the stop watch from the given timestamp
-     */
-    public StopWatch(Date startTimestamp) {
-        start = startTimestamp.getTime();
-    }
-
-    /**
-     * Starts the stop watch from the given timestamp
-     */
-    public StopWatch(long timeMillis) {
-        start = timeMillis;
+        this.start = System.nanoTime();
     }
 
     /**
@@ -55,7 +41,7 @@ public final class StopWatch {
      */
     public StopWatch(boolean start) {
         if (start) {
-            this.start = System.currentTimeMillis();
+            this.start = System.nanoTime();
         }
     }
 
@@ -63,7 +49,14 @@ public final class StopWatch {
      * Starts or restarts the stop watch
      */
     public void restart() {
-        start = System.currentTimeMillis();
+        start = System.nanoTime();
+    }
+
+    /**
+     * Whether the watch is started
+     */
+    public boolean isStarted() {
+        return start > 0;
     }
 
     /**
@@ -73,10 +66,28 @@ public final class StopWatch {
      */
     public long taken() {
         if (start > 0) {
-            return System.currentTimeMillis() - start;
-        } else {
-            return 0;
+            long delta = System.nanoTime() - start;
+            return Duration.ofNanos(delta).toMillis();
         }
+        return 0;
+    }
+
+    /**
+     * Returns the time taken in millis and restarts the timer.
+     *
+     * @return time in millis, or <tt>0</tt> if not started yet.
+     */
+    public long takenAndRestart() {
+        long answer = taken();
+        start = System.nanoTime();
+        return answer;
+    }
+
+    /**
+     * Stops the stop watch
+     */
+    public void stop() {
+        start = 0;
     }
 
 }

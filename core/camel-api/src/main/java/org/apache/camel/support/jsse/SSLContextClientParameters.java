@@ -37,7 +37,7 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
 
-    private List<SNIServerName> sniHostNames = new ArrayList<>();
+    private final List<SNIServerName> sniHostNames = new ArrayList<>();
 
     public void addAllSniHostNames(List<String> sniHostNames) {
         for (String sniHostName : sniHostNames) {

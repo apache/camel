@@ -17,18 +17,18 @@
 package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.oaipmh.component.model.OAIPMHConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultPollingEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.URISupport;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -36,8 +36,8 @@ import org.joda.time.format.ISODateTimeFormat;
  * Harvest metadata using OAI-PMH protocol
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
-             category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH })
-public class OAIPMHEndpoint extends DefaultPollingEndpoint {
+             category = { Category.SEARCH }, headersClass = OAIPMHConstants.class)
+public class OAIPMHEndpoint extends ScheduledPollEndpoint {
 
     private transient URI url;
 
@@ -118,7 +118,7 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
         return consumer;
     }
 
-    private void validateParameters() throws URISyntaxException {
+    private void validateParameters() {
         // From parameter in ISO 8601 format
         if (from != null) {
             ISODateTimeFormat.dateTimeNoMillis().parseDateTime(from);
@@ -150,10 +150,6 @@ public class OAIPMHEndpoint extends DefaultPollingEndpoint {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public String getFrom() {

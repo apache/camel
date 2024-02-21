@@ -17,9 +17,11 @@
 package org.apache.camel.component.optaplanner;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.api.solver.SolverManager;
@@ -35,25 +37,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
 
-    @Test
-    public void testAsyncProblemSolving() throws Exception {
-        getMockEndpoint("mock:result").setExpectedCount(1);
+    private static SolverManager solverManager;
 
-        CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
-        final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
-        assertNull(planningProblem.getScore());
-        assertNull(planningProblem.getProcessList().get(0).getComputer());
-
+    @BeforeEach
+    public void beforeEach() {
         ClassLoader classLoader = this.context().getApplicationContextClassLoader();
         SolverConfig solverConfig
                 = SolverConfig.createFromXmlResource("org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
         SolverFactory solverFactory = SolverFactory.create(solverConfig);
-        SolverManager solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
+        solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
+    }
 
-        CompletableFuture<CloudBalance> solution = template.asyncRequestBodyAndHeader("direct:in", planningProblem,
-                OptaPlannerConstants.SOLVER_MANAGER, solverManager,
+    @Test
+    public void testWithSolverManagerInHeader() throws Exception {
+        final CloudBalance planningProblem = getCloudBalance();
+
+        CompletableFuture<CloudBalance> solution
+                = template.asyncRequestBodyAndHeader("optaplanner:doesntmatter?async=true", planningProblem,
+                        OptaPlannerConstants.SOLVER_MANAGER, solverManager,
+                        CloudBalance.class);
+
+        assertResults(solution);
+    }
+
+    @Test
+    public void testWithSolverManagerBinded() throws Exception {
+        final CloudBalance planningProblem = getCloudBalance();
+
+        this.context.getRegistry().bind("mySolverManager", solverManager);
+
+        CompletableFuture<CloudBalance> solution = template.asyncRequestBody(
+                "optaplanner:doesntmatter?async=true&solverManager=#mySolverManager", planningProblem,
                 CloudBalance.class);
 
+        assertResults(solution);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+
+                from("optaplanner:doesntmatter")
+                        .to("mock:result");
+            }
+        };
+    }
+
+    private void assertResults(CompletableFuture<CloudBalance> solution) throws InterruptedException, ExecutionException {
         // consumer
         getMockEndpoint("mock:result").assertIsSatisfied();
 
@@ -66,15 +97,13 @@ public class OptaplannerSolverManagerAsyncTest extends CamelTestSupport {
         assertNotNull(bestSolution.getProcessList().get(0).getComputer());
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:in").to("optaplanner:doesntmatter?useSolverManager=true&async=true");
+    private CloudBalance getCloudBalance() {
+        getMockEndpoint("mock:result").setExpectedCount(1);
 
-                from("optaplanner:doesntmatter?useSolverManager=true")
-                        .to("mock:result");
-            }
-        };
+        CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
+        final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
+        assertNull(planningProblem.getScore());
+        assertNull(planningProblem.getProcessList().get(0).getComputer());
+        return planningProblem;
     }
 }

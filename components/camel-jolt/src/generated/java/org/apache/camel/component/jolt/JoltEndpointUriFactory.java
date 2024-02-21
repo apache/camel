@@ -19,18 +19,19 @@ public class JoltEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(7);
         props.add("allowTemplateFromHeader");
-        props.add("lazyStartProducer");
-        props.add("transformDsl");
         props.add("contentCache");
-        props.add("allowContextMapAll");
-        props.add("outputType");
         props.add("inputType");
+        props.add("lazyStartProducer");
+        props.add("outputType");
         props.add("resourceUri");
+        props.add("transformDsl");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -58,6 +59,11 @@ public class JoltEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

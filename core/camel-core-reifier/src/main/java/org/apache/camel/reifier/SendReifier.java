@@ -18,35 +18,41 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.support.CamelContextHelper;
 
-public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
+public class SendReifier extends ProcessorReifier<ToDefinition> {
 
     public SendReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (SendDefinition) definition);
+        super(route, (ToDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint endpoint = resolveEndpoint();
-        return new SendProcessor(endpoint, parse(ExchangePattern.class, definition.getPattern()));
+        SendProcessor answer = new SendProcessor(resolveEndpoint(), parse(ExchangePattern.class, definition.getPattern()));
+        answer.setVariableSend(parseString(definition.getVariableSend()));
+        answer.setVariableReceive(parseString(definition.getVariableReceive()));
+        return answer;
     }
 
     public Endpoint resolveEndpoint() {
+        Endpoint answer;
         if (definition.getEndpoint() == null) {
             if (definition.getEndpointProducerBuilder() == null) {
-                return CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), (String) null);
+                answer = CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), null);
             } else {
-                return definition.getEndpointProducerBuilder().resolve(camelContext);
+                answer = definition.getEndpointProducerBuilder().resolve(camelContext);
             }
         } else {
-            return definition.getEndpoint();
+            answer = definition.getEndpoint();
         }
+        LineNumberAware.trySetLineNumberAware(answer, definition);
+        return answer;
     }
 
 }

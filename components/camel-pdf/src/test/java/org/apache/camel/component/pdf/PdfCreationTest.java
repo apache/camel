@@ -23,9 +23,12 @@ import java.io.IOException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
@@ -62,13 +65,14 @@ public class PdfCreationTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()));
+                    PDDocument doc = Loader.loadPDF(
+                            new RandomAccessReadBuffer(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
                     String text = pdfTextStripper.getText(doc);
                     assertEquals(1, doc.getNumberOfPages());
                     assertThat(text, containsString(expectedText));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }
@@ -98,7 +102,8 @@ public class PdfCreationTest extends CamelTestSupport {
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
                     PDDocument doc
-                            = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
+                            = Loader.loadPDF(new RandomAccessReadBuffer(
+                                    new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())), userPass);
                     assertTrue(doc.isEncrypted(), "Expected encrypted document");
                     assertFalse(doc.getCurrentAccessPermission().canPrint(), "Printing should not be permitted");
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
@@ -106,7 +111,7 @@ public class PdfCreationTest extends CamelTestSupport {
                     assertEquals(1, doc.getNumberOfPages());
                     assertThat(text, containsString(expectedText));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
                 return true;
             }
@@ -115,12 +120,12 @@ public class PdfCreationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to("pdf:create?fontSize=6&font=Courier&pageSize=PAGE_SIZE_A1")
+                        .to("pdf:create?fontSize=6&font=COURIER&pageSize=PAGE_SIZE_A1")
                         .to("mock:result");
             }
         };

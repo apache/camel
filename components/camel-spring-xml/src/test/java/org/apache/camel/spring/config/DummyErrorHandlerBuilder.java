@@ -20,13 +20,12 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
+import org.apache.camel.builder.LegacyErrorHandlerBuilderSupport;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.springframework.beans.factory.BeanNameAware;
 
-public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements BeanNameAware {
+public class DummyErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport implements BeanNameAware {
 
     public static final String PROPERTY_NAME = "DummyErrorHandler";
 
@@ -49,7 +48,7 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
+    public DummyErrorHandlerBuilder cloneBuilder() {
         DummyErrorHandlerBuilder answer = new DummyErrorHandlerBuilder();
         answer.beanName = beanName;
         return answer;

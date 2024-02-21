@@ -16,116 +16,115 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
+public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
 
-    @Test
-    public void testTwoConsumerOnSameTopic() throws Exception {
-        sendAMessageToOneTopicWithTwoSubscribers();
+    @Nested
+    class MultipleMessagesTest {
+        @Test
+        public void testMultipleMessagesOnSameTopic() throws Exception {
+            getMockEndpoint("mock:a").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3",
+                    "Hello Camel 4");
+            getMockEndpoint("mock:b").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3",
+                    "Hello Camel 4");
+
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 1");
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 2");
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 3");
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 4");
+
+            MockEndpoint.assertIsSatisfied(context);
+        }
     }
 
-    @Test
-    public void testMultipleMessagesOnSameTopic() throws Exception {
-        // give a bit of time for AMQ to properly setup topic subscribers
-        Thread.sleep(500);
+    @Nested
+    class SingleMessageTest {
 
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
+        @BeforeEach
+        void prepare() {
+            getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+            getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:topic:foo", "Hello Camel 1");
-        template.sendBody("activemq:topic:foo", "Hello Camel 2");
-        template.sendBody("activemq:topic:foo", "Hello Camel 3");
-        template.sendBody("activemq:topic:foo", "Hello Camel 4");
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello World");
+        }
 
-        assertMockEndpointsSatisfied();
+        @Test
+        void testTwoConsumerOnSameTopic() throws Exception {
+            MockEndpoint.assertIsSatisfied(context);
+        }
+
+        @Test
+        void testStopAndStartOneRoute() throws Exception {
+            MockEndpoint.assertIsSatisfied(context);
+
+            // now stop route A
+            context.getRouteController().stopRoute("a");
+
+            // send new message should go to B only
+            MockEndpoint.resetMocks(context);
+
+            getMockEndpoint("mock:a").expectedMessageCount(0);
+            getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
+
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
+
+            MockEndpoint.assertIsSatisfied(context);
+
+            // send new message should go to both A and B
+            MockEndpoint.resetMocks(context);
+
+            // now start route A
+            context.getRouteController().startRoute("a");
+
+            getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+            getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
+
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello World");
+        }
+
+        @Test
+        void testRemoveOneRoute() throws Exception {
+            MockEndpoint.assertIsSatisfied(context);
+
+            // now stop and remove route A
+            context.getRouteController().stopRoute("a");
+            assertTrue(context.removeRoute("a"));
+
+            // send new message should go to B only
+            MockEndpoint.resetMocks(context);
+
+            getMockEndpoint("mock:a").expectedMessageCount(0);
+            getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
+
+            template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
+
+            MockEndpoint.assertIsSatisfied(context);
+        }
     }
 
-    @Test
-    public void testStopAndStartOneRoute() throws Exception {
-        sendAMessageToOneTopicWithTwoSubscribers();
-
-        // now stop route A
-        context.getRouteController().stopRoute("a");
-
-        // send new message should go to B only
-        resetMocks();
-
-        getMockEndpoint("mock:a").expectedMessageCount(0);
-        getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
-
-        template.sendBody("activemq:topic:foo", "Bye World");
-
-        assertMockEndpointsSatisfied();
-
-        // send new message should go to both A and B
-        resetMocks();
-
-        // now start route A
-        context.getRouteController().startRoute("a");
-
-        sendAMessageToOneTopicWithTwoSubscribers();
-    }
-
-    @Test
-    public void testRemoveOneRoute() throws Exception {
-        sendAMessageToOneTopicWithTwoSubscribers();
-
-        // now stop and remove route A
-        context.getRouteController().stopRoute("a");
-        assertTrue(context.removeRoute("a"));
-
-        // send new message should go to B only
-        resetMocks();
-
-        getMockEndpoint("mock:a").expectedMessageCount(0);
-        getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
-
-        template.sendBody("activemq:topic:foo", "Bye World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    private void sendAMessageToOneTopicWithTwoSubscribers() throws Exception {
-        // give a bit of time for AMQ to properly setup topic subscribers
-        Thread.sleep(500);
-
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
-
-        template.sendBody("activemq:topic:foo", "Hello World");
-
-        assertMockEndpointsSatisfied();
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent to remember the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:topic:foo").routeId("a")
+            public void configure() {
+                from("activemq:topic:TwoConsumerOnSameTopicTest").routeId("a")
                         .to("log:a", "mock:a");
 
-                from("activemq:topic:foo").routeId("b")
+                from("activemq:topic:TwoConsumerOnSameTopicTest").routeId("b")
                         .to("log:b", "mock:b");
             }
         };

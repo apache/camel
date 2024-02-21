@@ -53,18 +53,18 @@ public class LoadTest extends CamelTestSupport {
         MockEndpoint endpoint = getMockEndpoint(datasetEndpoint);
         endpoint.expectedMessageCount((int) dataSet.getSize());
 
-        assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 4, TimeUnit.MINUTES);
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("foo", dataSet);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(datasetEndpoint).to(ironMQEndpoint);
                 from(ironMQEndpoint).to(datasetEndpoint);
             }

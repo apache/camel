@@ -94,7 +94,7 @@ public class LRAUrlBuilder {
         try {
             key = URLEncoder.encode(toNonnullString(key), StandardCharsets.UTF_8.name());
             value = URLEncoder.encode(toNonnullString(value), StandardCharsets.UTF_8.name());
-            if (copy.query.length() == 0) {
+            if (copy.query.isEmpty()) {
                 copy.query += "?";
             } else {
                 copy.query += "&";

@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -41,7 +42,7 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
             assertEquals("Camel cannot do this", cause.getContentAsString());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -52,7 +53,7 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
                 "Hello World", String.class);
         assertEquals("Camel cannot do this", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -66,14 +67,14 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
         assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("Internal Server Error", out.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
                         // trigger failure by setting error code to 500

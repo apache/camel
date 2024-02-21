@@ -45,7 +45,9 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/storedProcedureTest.sql").build();
         jdbcTemplate = new JdbcTemplate(db);
         super.setUp();
     }
@@ -125,7 +127,9 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
 }

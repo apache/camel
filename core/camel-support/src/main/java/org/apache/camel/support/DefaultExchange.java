@@ -16,34 +16,65 @@
  */
 package org.apache.camel.support;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.clock.Clock;
 
 /**
  * The default and only implementation of {@link Exchange}.
  */
 public final class DefaultExchange extends AbstractExchange {
+    private final Clock timeInfo;
+
+    DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
+                    Map<String, Object> properties) {
+        super(context, internalProperties, properties);
+        this.timeInfo = new MonotonicClock();
+    }
 
     public DefaultExchange(CamelContext context) {
         super(context);
+        this.timeInfo = new MonotonicClock();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         super(context, pattern);
+        this.timeInfo = new MonotonicClock();
     }
 
     public DefaultExchange(Exchange parent) {
         super(parent);
+        this.timeInfo = parent.getClock();
     }
 
-    public DefaultExchange(Endpoint fromEndpoint) {
-        super(fromEndpoint);
+    DefaultExchange(AbstractExchange parent) {
+        super(parent);
+        this.timeInfo = parent.getClock();
     }
 
-    public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        super(fromEndpoint, pattern);
+    @Override
+    public Clock getClock() {
+        return timeInfo;
     }
 
+    @Override
+    AbstractExchange newCopy() {
+        return new DefaultExchange(this);
+    }
+
+    public static DefaultExchange newFromEndpoint(Endpoint fromEndpoint) {
+        return newFromEndpoint(fromEndpoint, fromEndpoint.getExchangePattern());
+    }
+
+    public static DefaultExchange newFromEndpoint(Endpoint fromEndpoint, ExchangePattern exchangePattern) {
+        DefaultExchange exchange = new DefaultExchange(fromEndpoint.getCamelContext(), exchangePattern);
+        exchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
+        return exchange;
+    }
 }

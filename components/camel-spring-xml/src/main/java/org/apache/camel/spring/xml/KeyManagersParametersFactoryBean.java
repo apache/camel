@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractKeyManagersParametersFactoryBean;

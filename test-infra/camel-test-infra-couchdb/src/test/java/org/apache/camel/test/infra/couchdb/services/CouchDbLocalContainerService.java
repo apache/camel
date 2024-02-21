@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
 import org.slf4j.Logger;
@@ -25,26 +26,29 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class CouchDbLocalContainerService implements CouchDbService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "couchdb:2.3.1"; // tested against 2.1.2, 2.2.0 & 2.3.1
     public static final String CONTAINER_NAME = "couchdb";
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public CouchDbLocalContainerService() {
-        String containerName = System.getProperty("couchdb.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(LocalPropertyResolver.getProperty(
+                CouchDbLocalContainerService.class,
+                CouchDbProperties.COUCHDB_CONTAINER));
     }
 
     public CouchDbLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(CONTAINER_NAME)
+    public CouchDbLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer<>(DockerImageName.parse(imageName))
+                .withNetworkAliases(containerName)
                 .withExposedPorts(CouchDbProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());
     }
@@ -78,7 +82,7 @@ public class CouchDbLocalContainerService implements CouchDbService, ContainerSe
 
     @Override
     public String host() {
-        return container.getContainerIpAddress();
+        return container.getHost();
     }
 
     @Override

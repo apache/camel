@@ -117,7 +117,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
     public String toString() {
         StringBuilder sb = new StringBuilder("[me: ");
         for (Entry<String, String> nsEntry : map.entrySet()) {
-            sb.append("{" + nsEntry.getKey() + " -> " + nsEntry.getValue() + "},");
+            sb.append('{').append(nsEntry.getKey()).append(" -> ").append(nsEntry.getValue()).append("},");
         }
         if (!map.isEmpty()) {
             // remove the last comma

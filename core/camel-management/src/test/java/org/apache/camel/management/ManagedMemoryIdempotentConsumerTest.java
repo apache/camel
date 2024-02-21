@@ -29,11 +29,14 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
@@ -41,11 +44,6 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // services
@@ -102,11 +100,6 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
 
     @Test
     public void testDuplicateMessagesCountAreCorrectlyCounted() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // processors

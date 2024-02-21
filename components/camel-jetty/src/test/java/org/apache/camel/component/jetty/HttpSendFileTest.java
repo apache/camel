@@ -38,24 +38,24 @@ public class HttpSendFileTest extends BaseJettyTest {
         mock.message(0).header("Content-Type").isEqualTo("image/jpeg");
 
         Exchange out = template.send("http://localhost:{{port}}/myapp/myservice", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
                 exchange.getIn().setHeader("Content-Type", "image/jpeg");
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("OK", out.getMessage().getBody(String.class));
         assertEquals("text/plain", out.getMessage().getHeader("Content-Type"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").to("mock:result").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         assertNotNull(body, "Body should not be null");
                     }

@@ -66,7 +66,7 @@ public class PollEnricherRefTest extends ContextTestSupport {
             public void configure() throws Exception {
                 cool.setEndpointUriIfNotSpecified("cool");
 
-                from("direct:start").pollEnrich().simple("ref:cool").timeout(2000).aggregationStrategyRef("agg");
+                from("direct:start").pollEnrich().simple("ref:cool").timeout(2000).aggregationStrategy("agg");
             }
         };
     }

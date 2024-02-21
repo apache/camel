@@ -28,15 +28,16 @@
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <rest path="/say/">
-      <get uri="/hello">
+      <get path="/hello">
         <to uri="direct:hello"/>
       </get>
-      <get uri="/bye" consumes="application/json">
+      <get path="/bye" consumes="application/json">
         <to uri="direct:bye"/>
       </get>
-      <post uri="/hi">
+      <post path="/hi">
         <to uri="mock:update"/>
       </post>
     </rest>

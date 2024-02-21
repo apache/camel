@@ -82,10 +82,13 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": target.getConfiguration().setTcpReceiverLocalPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "tcpreceiverport":
         case "tcpReceiverPort": target.getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "usesunhttpshandler":
@@ -159,10 +162,13 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "streaming": return boolean.class;
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": return java.lang.Integer.class;
         case "tcpreceiverport":
         case "tcpReceiverPort": return int.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "token": return java.lang.String.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "usesunhttpshandler":
@@ -237,10 +243,13 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "tcpreceiverlocalport":
+        case "tcpReceiverLocalPort": return target.getConfiguration().getTcpReceiverLocalPort();
         case "tcpreceiverport":
         case "tcpReceiverPort": return target.getConfiguration().getTcpReceiverPort();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "token": return target.getConfiguration().getToken();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "usesunhttpshandler":

@@ -1,9 +1,7 @@
-[[HowdoIuseURIswithparametersinXML-HowdoIuseURIswithparametersinXML]]
 = How do I use URIs with parameters in XML?
 
 If you try and use one of the Camel xref:ROOT:uris.adoc[URIs] in an
-xref:ROOT:xml-configuration.adoc[XML Configuration] using the URI query
-parameter notation, such as:
+XML DSL using the URI query parameter notation, such as:
 
 [source,xml]
 ----

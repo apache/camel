@@ -22,29 +22,38 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
+public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
 
-    protected Object expectedBody = "<time>" + new Date() + "</time>";
-    protected ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue");
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final Object expectedBody = "<time>" + new Date() + "</time>";
+    protected ActiveMQQueue replyQueue = new ActiveMQQueue("ActiveMQPropagateSerializableHeadersTest.reply.queue");
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private Calendar calValue;
     private Map<String, Object> mapValue;
 
@@ -66,7 +75,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         firstMessageExpectations.header("myCal").isEqualTo(calValue);
         firstMessageExpectations.header("myMap").isEqualTo(mapValue);
 
-        template.sendBody("activemq:test.a", expectedBody);
+        template.sendBody("activemq:ActiveMQPropagateSerializableHeadersTest.a", expectedBody);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -81,40 +90,48 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
             assertEquals(calValue, headerValue, "myCal");
         }
         {
-            Map<String, Object> headerValue = exchange.getIn().getHeader("myMap", Map.class);
+            Map<?, ?> headerValue = exchange.getIn().getHeader("myMap", Map.class);
             assertEquals(mapValue, headerValue, "myMap");
         }
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        // START SNIPPET: example
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        // END SNIPPET: example
-
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
         // prevent java.io.NotSerializableException: org.apache.camel.support.DefaultMessageHistory
-        camelContext.setMessageHistory(false);
-
-        return camelContext;
+        context.setMessageHistory(false);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:test.a").process(exchange -> {
+            public void configure() {
+                from("activemq:ActiveMQPropagateSerializableHeadersTest.a").process(exchange -> {
                     // set the JMS headers
                     Message in = exchange.getIn();
                     in.setHeader("myString", "stringValue");
                     in.setHeader("myMap", mapValue);
                     in.setHeader("myCal", calValue);
-                }).to("activemq:test.b?transferExchange=true&allowSerializedHeaders=true");
+                }).to("activemq:ActiveMQPropagateSerializableHeadersTest.b?transferExchange=true&allowSerializedHeaders=true");
 
-                from("activemq:test.b").to("mock:result");
+                from("activemq:ActiveMQPropagateSerializableHeadersTest.b").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

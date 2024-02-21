@@ -20,25 +20,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
     public void testInvalidStartingPath() {
-        try {
-            context.getEndpoint("file://target/path/${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
-            fail("Should have thrown an exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Invalid directory"));
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint(fileUri("${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt")),
+                "Should have thrown an exception");
+
+        assertTrue(e.getCause().getMessage().startsWith("Invalid directory"));
     }
 
     @Test
     public void testValidStartingPath() {
         context.getEndpoint(
-                "file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
+                fileUri("?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt"));
     }
 
 }

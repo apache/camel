@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><rests xmlns="http://camel.apache.org/schema/spring">
     <rest>
-        <put consumes="application/json,text/xml" produces="application/json,text/xml" uri="/pet">
+        <put consumes="application/json,text/xml" produces="application/json,text/xml" path="/pet">
             <param name="body" required="true" type="body"/>
             <to uri="direct:rest1"/>      
         </put> 

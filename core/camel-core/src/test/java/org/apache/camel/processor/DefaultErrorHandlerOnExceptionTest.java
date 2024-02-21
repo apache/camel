@@ -43,7 +43,7 @@ public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:boom");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +58,7 @@ public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
+                        if ("Kaboom".equals(body)) {
                             throw new IllegalArgumentException("Boom");
                         }
                         exchange.getIn().setBody("Bye World");

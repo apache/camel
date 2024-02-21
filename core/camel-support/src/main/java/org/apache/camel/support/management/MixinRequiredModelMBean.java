@@ -93,7 +93,7 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
                 Descriptor desc = info.getDescriptor();
                 if (desc != null) {
                     Object val = desc.getFieldValue("mask");
-                    return val != null && "true".equals(val);
+                    return "true".equals(val);
                 }
             }
         }
@@ -112,7 +112,7 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
         String answer = URISupport.sanitizeUri(value);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Masking JMX operation: {}.{} value: {} -> {}",
-                    new Object[] { getMBeanInfo().getClassName(), opName, value, answer });
+                    getMBeanInfo().getClassName(), opName, value, answer);
         }
         return answer;
     }

@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StreamDelayTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() throws Exception {
-        long start = System.currentTimeMillis();
+    public void testStringContent() {
+        StopWatch watch = new StopWatch();
         template.sendBody("direct:in", "Hello Text World\n");
-        long delta = System.currentTimeMillis() - start;
-        assertTrue(delta > 1900 && delta < 3000, "Delay should be around 2 sec: " + delta);
+        long duration = watch.taken();
+        assertTrue(duration > 1900 && duration < 3000, "Delay should be around 2 sec: " + duration);
     }
 
     @Override

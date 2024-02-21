@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.FileOutputStream;
-import java.util.Date;
+import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,34 +33,26 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/changed/");
-        createDirectory("target/data/changed/in");
-        writeFile();
-        // sleep to make the file a little bit old
-        Thread.sleep(100);
         super.setUp();
+        testDirectory("in", true);
+        LOG.debug("Writing file...");
+        Files.write(testFile("in/file.dat"), "Line".getBytes());
+        LOG.debug("Writing file DONE...");
     }
 
     @Test
-    public void testChangedReadLockMinAge() throws Exception {
+    public void testChangedReadLockMinAgeNotAcquired() throws Exception {
+        // terminate test quicker
+        context.getShutdownStrategy().setTimeout(1);
+
+        // we do not acquire read-lock because the check interval is 10s, so "changed" requires at least a poll of 10s
+        // before we can determine that the file has same size as before
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/changed/out/file.dat");
-        // We should get the file on the first poll
-        mock.expectedMessagesMatches(
-                exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
+        mock.expectedMessageCount(0);
 
-        assertMockEndpointsSatisfied();
-    }
-
-    private void writeFile() throws Exception {
-        LOG.debug("Writing file...");
-
-        FileOutputStream fos = new FileOutputStream("target/data/changed/in/file.dat");
-        fos.write("Line".getBytes());
-        fos.flush();
-        fos.close();
-        LOG.debug("Writing file DONE...");
+        // but the unit test only waits 2 seconds
+        mock.assertIsSatisfied(2000);
     }
 
     @Override
@@ -70,8 +60,9 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
-                        .to("file:target/data/changed/out", "mock:result");
+                from(fileUri(
+                        "in?initialDelay=500&delay=10&readLock=changed&readLockMinAge=1000&readLockCheckInterval=10000&readLockTimeout=20000"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

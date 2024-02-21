@@ -38,16 +38,16 @@ public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
         Object out = template.requestBody(
                 String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()), "Chad");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("Bye Chad", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()))
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort())
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             exchange.getMessage().setBody("Bye " + body);

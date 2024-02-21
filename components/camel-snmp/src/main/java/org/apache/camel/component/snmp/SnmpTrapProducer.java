@@ -20,19 +20,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
+import org.snmp4j.Target;
 import org.snmp4j.TransportMapping;
-import org.snmp4j.mp.MPv3;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityModels;
-import org.snmp4j.security.SecurityProtocols;
 import org.snmp4j.security.USM;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
 import org.snmp4j.smi.Integer32;
-import org.snmp4j.smi.OctetString;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
@@ -43,11 +40,11 @@ public class SnmpTrapProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapProducer.class);
 
-    private SnmpEndpoint endpoint;
+    private final SnmpEndpoint endpoint;
 
     private Address targetAddress;
     private USM usm;
-    private CommunityTarget target;
+    private Target target;
 
     public SnmpTrapProducer(SnmpEndpoint endpoint) {
         super(endpoint);
@@ -61,16 +58,8 @@ public class SnmpTrapProducer extends DefaultProducer {
         this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
         LOG.debug("targetAddress: {}", targetAddress);
 
-        this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-        SecurityModels.getInstance().addSecurityModel(this.usm);
-
-        // setting up target
-        this.target = new CommunityTarget();
-        this.target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
-        this.target.setAddress(this.targetAddress);
-        this.target.setRetries(this.endpoint.getRetries());
-        this.target.setTimeout(this.endpoint.getTimeout());
-        this.target.setVersion(this.endpoint.getSnmpVersion());
+        this.usm = SnmpHelper.createAndSetUSM(endpoint);
+        this.target = SnmpHelper.createTarget(endpoint);
     }
 
     @Override
@@ -78,7 +67,9 @@ public class SnmpTrapProducer extends DefaultProducer {
         super.doStop();
 
         try {
-            SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            if (this.usm != null) {
+                SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            }
         } finally {
             this.targetAddress = null;
             this.usm = null;
@@ -111,13 +102,12 @@ public class SnmpTrapProducer extends DefaultProducer {
 
             trap.setErrorIndex(0);
             trap.setErrorStatus(0);
-            trap.setMaxRepetitions(0);
             if (this.endpoint.getSnmpVersion() == SnmpConstants.version1) {
                 trap.setType(PDU.V1TRAP);
             } else {
                 trap.setType(PDU.TRAP);
+                trap.setMaxRepetitions(0);
             }
-
             LOG.debug("SnmpTrap: sending");
             snmp.send(trap, this.target);
             LOG.debug("SnmpTrap: sent");

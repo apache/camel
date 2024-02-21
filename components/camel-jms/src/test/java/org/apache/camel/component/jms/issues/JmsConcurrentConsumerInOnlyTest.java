@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -30,14 +34,15 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Concurrent consumer with InOnly test.
  */
 public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
-
-    private int size = 2000;
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Test
     public void testConcurrentConsumers() throws Exception {
         // send messages to queue before processing
+        int size = 2000;
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq:foo", "Hello " + i);
+            template.sendBody("activemq:JmsConcurrentConsumerInOnlyTest", "Hello " + i);
         }
 
         // start route and process the messages
@@ -45,24 +50,26 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPooledPersistentConnectionFactory();
+        ConnectionFactory connectionFactory
+                = CamelJmsTestHelper.createPooledPersistentConnectionFactory(service.serviceAddress());
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:foo?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo").noAutoStartup()
+            public void configure() {
+                from("activemq:JmsConcurrentConsumerInOnlyTest?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo")
+                        .noAutoStartup()
                         .log("${threadName} got ${body}")
                         .delay(simple("${random(0,10)}"))
                         .to("mock:foo");

@@ -18,14 +18,15 @@ package org.apache.camel.component.jsonb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.reflect.Type;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.json.bind.config.BinaryDataStrategy;
-import javax.json.bind.config.PropertyNamingStrategy;
-import javax.json.bind.config.PropertyOrderStrategy;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.config.BinaryDataStrategy;
+import jakarta.json.bind.config.PropertyNamingStrategy;
+import jakarta.json.bind.config.PropertyOrderStrategy;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -39,18 +40,19 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * Marshal POJOs to JSON and back using JSON-B.
  */
-@Dataformat("json-jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyamingStrategy,skipNull")
+@Dataformat("jsonb")
+@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
     private CamelContext camelContext;
     private Jsonb objectMapper;
     private String unmarshalTypeName;
-    private Type unmarshalType;
+    private Class<?> unmarshalType;
+    private Type customType;
     private boolean prettyPrint;
     private String encoding = "UTF-8";
     private String binaryStrategy = BinaryDataStrategy.BASE_64;
     private String propertyOrder = PropertyOrderStrategy.ANY;
-    private String propertyamingStrategy = PropertyNamingStrategy.IDENTITY;
+    private String propertyNamingStrategy = PropertyNamingStrategy.IDENTITY;
     private boolean skipNull = true;
 
     public JsonbDataFormat() {
@@ -60,10 +62,18 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     /**
      * Use the default JSON-B {@link Jsonb} and with a custom unmarshal type
      *
-     * @param unmarshalType the custom unmarshal type
+     * @param customType the custom unmarshal type
      */
-    public JsonbDataFormat(Type unmarshalType) {
+    public JsonbDataFormat(Type customType) {
+        this.customType = customType;
+    }
+
+    public JsonbDataFormat(Class<?> unmarshalType) {
         this(null, unmarshalType);
+    }
+
+    public JsonbDataFormat(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     /**
@@ -72,7 +82,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      */
-    public JsonbDataFormat(Jsonb mapper, Type unmarshalType) {
+    public JsonbDataFormat(Jsonb mapper, Class<?> unmarshalType) {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
     }
@@ -89,7 +99,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public String getDataFormatName() {
-        return "json-jsonb";
+        return "jsonb";
     }
 
     public Jsonb getObjectMapper() {
@@ -98,18 +108,18 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     /**
      * Set a custom Jsonb instance, potentially initialized with a custom JsonbConfig.
-     * 
+     *
      * @param objectMapper the Jsonb instance to set.
      */
     public void setObjectMapper(Jsonb objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    public Type getUnmarshalType() {
+    public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
 
-    public void setUnmarshalType(Type unmarshalType) {
+    public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
 
@@ -161,12 +171,12 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
         this.propertyOrder = propertyOrder;
     }
 
-    public String getPropertyamingStrategy() {
-        return propertyamingStrategy;
+    public String getPropertyNamingStrategy() {
+        return propertyNamingStrategy;
     }
 
-    public void setPropertyamingStrategy(String propertyamingStrategy) {
-        this.propertyamingStrategy = propertyamingStrategy;
+    public void setPropertyNamingStrategy(String propertyNamingStrategy) {
+        this.propertyNamingStrategy = propertyNamingStrategy;
     }
 
     @Override
@@ -176,13 +186,38 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return unmarshal(exchange, (Object) stream);
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, Object body) throws Exception {
         // is there a header with the unmarshal type?
-        Type expectedType = unmarshalType;
+        Class<?> expectedType = unmarshalType;
         String type = exchange.getIn().getHeader("CamelJsonbUnmarshallType", String.class);
         if (type != null) {
             expectedType = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }
-        return objectMapper.fromJson(stream, expectedType);
+        if (expectedType == null && customType != null) {
+            if (body instanceof String str) {
+                return objectMapper.fromJson(str, customType);
+            } else if (body instanceof Reader r) {
+                return objectMapper.fromJson(r, customType);
+            } else {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                return objectMapper.fromJson(is, customType);
+            }
+        } else {
+            if (body instanceof String str) {
+                return objectMapper.fromJson(str, expectedType);
+            } else if (body instanceof Reader r) {
+                return objectMapper.fromJson(r, expectedType);
+            } else {
+                // fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                return objectMapper.fromJson(is, expectedType);
+            }
+        }
     }
 
     @Override
@@ -200,7 +235,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
                     .withNullValues(!skipNull)
                     .withBinaryDataStrategy(binaryStrategy)
                     .withPropertyOrderStrategy(propertyOrder)
-                    .withPropertyNamingStrategy(propertyamingStrategy)
+                    .withPropertyNamingStrategy(propertyNamingStrategy)
                     .withEncoding(encoding));
         }
     }

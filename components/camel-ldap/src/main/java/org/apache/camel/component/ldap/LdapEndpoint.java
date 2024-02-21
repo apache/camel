@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ldap;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.naming.directory.SearchControls;
@@ -36,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform searches on LDAP servers.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true,
-             category = { Category.SEARCH, Category.LDAP })
+             category = { Category.DATABASE, Category.SECURITY })
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
@@ -55,7 +54,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     @UriParam
     private String returnedAttributes;
 
-    protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
+    protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) {
         super(endpointUri, component);
         this.dirContextName = remaining;
     }
@@ -95,7 +94,7 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.pageSize = pageSize;
     }
 
-    public int getPageSize() {
+    public Integer getPageSize() {
         return pageSize;
     }
 

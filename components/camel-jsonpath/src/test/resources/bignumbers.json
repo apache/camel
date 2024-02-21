@@ -1,0 +1,11 @@
+[
+  {
+    "adjustedRate"                     : 1.23,
+    "collateralQuantityOrNominalAmount": 987.654321,
+    "fixedRate"                        : -0.62,
+    "floatingRate"                     : 4.56,
+    "principalAmountOnMaturityDate"    : 121002700.0,
+    "principalAmountOnValueDate"       : -91000000.0,
+    "spread"                           : 4.56
+  }
+]

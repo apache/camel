@@ -17,24 +17,31 @@
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 
-public class ArangoDBLocalContainerService implements ArangoDBService, ContainerService<GenericContainer> {
+public class ArangoDBLocalContainerService implements ArangoDBService, ContainerService<ArangoDbContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerService.class);
 
-    private ArangoDbContainer container;
+    private final ArangoDbContainer container;
 
     public ArangoDBLocalContainerService() {
-        String containerName = System.getProperty(ArangoDBProperties.ARANGODB_CONTAINER);
+        this(LocalPropertyResolver.getProperty(ArangoDBLocalContainerService.class, ArangoDBProperties.ARANGODB_CONTAINER));
+    }
 
-        if (containerName == null) {
-            container = new ArangoDbContainer();
-        } else {
-            container = new ArangoDbContainer(containerName);
-        }
+    public ArangoDBLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public ArangoDBLocalContainerService(ArangoDbContainer container) {
+        this.container = container;
+    }
+
+    protected ArangoDbContainer initContainer(String imageName) {
+        return new ArangoDbContainer(imageName);
     }
 
     @Override
@@ -56,6 +63,8 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
     @Override
     public void initialize() {
         LOG.info("Trying to start the ArangoDB container");
+        ContainerEnvironmentUtil.configureContainerStartup(container, ArangoDBProperties.ARANGODB_CONTAINER, 2);
+
         container.start();
 
         registerProperties();
@@ -69,7 +78,7 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public ArangoDbContainer getContainer() {
         return container;
     }
 }

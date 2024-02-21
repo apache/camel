@@ -1,0 +1,75 @@
+= SMB Component
+:doctitle: SMB
+:shortname: smb
+:artifactid: camel-smb
+:description: Receive files from SMB (Server Message Block) shares.
+:since: 4.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only consumer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Server Message Block (SMB) component provides a way to connect natively to SMB file shares, such as those provided by Microsoft Windows or https://www.samba.org/[Samba].
+
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-smb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+smb:address[:port]/shareName[?options]
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+
+== Examples
+
+For instance, polling all the files from an SMB file share and reading their contents would look like this:
+
+[source,java]
+----
+private void process(Exchange exchange) throws IOException {
+    final File file = exchange.getMessage().getBody(File.class);
+    try (InputStream inputStream = file.getInputStream()) {
+        LOG.debug("Read exchange: {}, with contents: {}", file.getFileInformation(), new String(inputStream.readAllBytes()));
+    }
+}
+
+public void configure() {
+    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+        .process(this::process)
+        .to("mock:result");
+}
+----
+
+[NOTE]
+====
+Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
+====

@@ -18,13 +18,14 @@ package org.apache.camel.model.dataformat;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -35,39 +36,45 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "yaml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YAMLDataFormat extends DataFormatDefinition {
-    @XmlAttribute
-    @Metadata(defaultValue = "SnakeYAML")
-    private YAMLLibrary library = YAMLLibrary.SnakeYAML;
+
     @XmlTransient
     private ClassLoader classLoader;
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlAttribute
+    @Metadata(defaultValue = "SnakeYAML")
+    private YAMLLibrary library;
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String constructor;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String representer;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String dumperOptions;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String resolver;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
-    private String useApplicationContextClassLoader = Boolean.toString(true);
+    private String useApplicationContextClassLoader;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    private String prettyFlow = Boolean.toString(false);
+    @Metadata(javaType = "java.lang.Boolean")
+    private String prettyFlow;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    private String allowAnyType = Boolean.toString(false);
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowAnyType;
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "50")
-    private String maxAliasesForCollections = "50";
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50")
+    private String maxAliasesForCollections;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowRecursiveKeys;
 
     public YAMLDataFormat() {
@@ -75,14 +82,38 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     public YAMLDataFormat(YAMLLibrary library) {
-        super("yaml-" + library.name().toLowerCase());
+        super(library.getDataFormatName());
         this.library = library;
     }
 
     public YAMLDataFormat(YAMLLibrary library, Class<?> unmarshalType) {
-        super("yaml-" + library.name().toLowerCase());
+        super(library.getDataFormatName());
         this.library = library;
         this.unmarshalType = unmarshalType;
+    }
+
+    private YAMLDataFormat(Builder builder) {
+        super(builder.dataFormatName == null ? YAMLLibrary.SnakeYAML.getDataFormatName() : builder.dataFormatName);
+        this.classLoader = builder.classLoader;
+        this.unmarshalType = builder.unmarshalType;
+        this.library = builder.library;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.constructor = builder.constructor;
+        this.representer = builder.representer;
+        this.dumperOptions = builder.dumperOptions;
+        this.resolver = builder.resolver;
+        this.useApplicationContextClassLoader = builder.useApplicationContextClassLoader;
+        this.prettyFlow = builder.prettyFlow;
+        this.allowAnyType = builder.allowAnyType;
+        this.typeFilters = builder.typeFilters;
+        this.maxAliasesForCollections = builder.maxAliasesForCollections;
+        this.allowRecursiveKeys = builder.allowRecursiveKeys;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        // yaml data format is special as the name can be from different bundles
+        return this.library != null ? this.library.getDataFormatName() : "snakeYaml";
     }
 
     public YAMLLibrary getLibrary() {
@@ -240,5 +271,188 @@ public class YAMLDataFormat extends DataFormatDefinition {
      */
     public void setAllowRecursiveKeys(String allowRecursiveKeys) {
         this.allowRecursiveKeys = allowRecursiveKeys;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link YAMLDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<YAMLDataFormat> {
+
+        private String dataFormatName;
+        private ClassLoader classLoader;
+        private Class<?> unmarshalType;
+        private YAMLLibrary library = YAMLLibrary.SnakeYAML;
+        private String unmarshalTypeName;
+        private String constructor;
+        private String representer;
+        private String dumperOptions;
+        private String resolver;
+        private String useApplicationContextClassLoader;
+        private String prettyFlow;
+        private String allowAnyType;
+        private List<YAMLTypeFilterDefinition> typeFilters;
+        private String maxAliasesForCollections;
+        private String allowRecursiveKeys;
+
+        /**
+         * Which yaml library to use.
+         * <p/>
+         * By default it is SnakeYAML
+         */
+        public Builder library(YAMLLibrary library) {
+            this.library = library;
+            this.dataFormatName = "yaml-" + library.name().toLowerCase();
+            return this;
+        }
+
+        /**
+         * Class of the object to be created
+         */
+        public Builder unmarshalType(Class<?> unmarshalType) {
+            this.unmarshalType = unmarshalType;
+            return this;
+        }
+
+        /**
+         * Class name of the java type to use when unmarshalling
+         */
+        public Builder unmarshalTypeName(String unmarshalTypeName) {
+            this.unmarshalTypeName = unmarshalTypeName;
+            return this;
+        }
+
+        /**
+         * Set a custom classloader
+         */
+        public Builder classLoader(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+            return this;
+        }
+
+        /**
+         * BaseConstructor to construct incoming documents.
+         */
+        public Builder constructor(String constructor) {
+            this.constructor = constructor;
+            return this;
+        }
+
+        /**
+         * Representer to emit outgoing objects.
+         */
+        public Builder representer(String representer) {
+            this.representer = representer;
+            return this;
+        }
+
+        /**
+         * DumperOptions to configure outgoing objects.
+         */
+        public Builder dumperOptions(String dumperOptions) {
+            this.dumperOptions = dumperOptions;
+            return this;
+        }
+
+        /**
+         * Resolver to detect implicit type
+         */
+        public Builder resolver(String resolver) {
+            this.resolver = resolver;
+            return this;
+        }
+
+        /**
+         * Use ApplicationContextClassLoader as custom ClassLoader
+         */
+        public Builder useApplicationContextClassLoader(String useApplicationContextClassLoader) {
+            this.useApplicationContextClassLoader = useApplicationContextClassLoader;
+            return this;
+        }
+
+        /**
+         * Use ApplicationContextClassLoader as custom ClassLoader
+         */
+        public Builder useApplicationContextClassLoader(boolean useApplicationContextClassLoader) {
+            this.useApplicationContextClassLoader = Boolean.toString(useApplicationContextClassLoader);
+            return this;
+        }
+
+        /**
+         * Force the emitter to produce a pretty YAML document when using the flow style.
+         */
+        public Builder prettyFlow(String prettyFlow) {
+            this.prettyFlow = prettyFlow;
+            return this;
+        }
+
+        /**
+         * Force the emitter to produce a pretty YAML document when using the flow style.
+         */
+        public Builder prettyFlow(boolean prettyFlow) {
+            this.prettyFlow = Boolean.toString(prettyFlow);
+            return this;
+        }
+
+        /**
+         * Allow any class to be un-marshaled
+         */
+        public Builder allowAnyType(String allowAnyType) {
+            this.allowAnyType = allowAnyType;
+            return this;
+        }
+
+        /**
+         * Allow any class to be un-marshaled
+         */
+        public Builder allowAnyType(boolean allowAnyType) {
+            this.allowAnyType = Boolean.toString(allowAnyType);
+            return this;
+        }
+
+        /**
+         * Set the types SnakeYAML is allowed to un-marshall
+         */
+        public Builder typeFilters(List<YAMLTypeFilterDefinition> typeFilters) {
+            this.typeFilters = typeFilters;
+            return this;
+        }
+
+        /**
+         * Set the maximum amount of aliases allowed for collections.
+         */
+        public Builder maxAliasesForCollections(String maxAliasesForCollections) {
+            this.maxAliasesForCollections = maxAliasesForCollections;
+            return this;
+        }
+
+        /**
+         * Set the maximum amount of aliases allowed for collections.
+         */
+        public Builder maxAliasesForCollections(int maxAliasesForCollections) {
+            this.maxAliasesForCollections = Integer.toString(maxAliasesForCollections);
+            return this;
+        }
+
+        /**
+         * Set whether recursive keys are allowed.
+         */
+        public Builder allowRecursiveKeys(String allowRecursiveKeys) {
+            this.allowRecursiveKeys = allowRecursiveKeys;
+            return this;
+        }
+
+        /**
+         * Set whether recursive keys are allowed.
+         */
+        public Builder allowRecursiveKeys(boolean allowRecursiveKeys) {
+            this.allowRecursiveKeys = Boolean.toString(allowRecursiveKeys);
+            return this;
+        }
+
+        @Override
+        public YAMLDataFormat end() {
+            return new YAMLDataFormat(this);
+        }
     }
 }

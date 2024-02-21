@@ -1,12 +1,14 @@
-[[freemarker-component]]
 = Freemarker Component
-:docTitle: Freemarker
-:artifactId: camel-freemarker
+:doctitle: Freemarker
+:shortname: freemarker
+:artifactid: camel-freemarker
 :description: Transform messages using FreeMarker templates.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/freemarker.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: freemarker
 
 *Since Camel {since}*
 
@@ -31,79 +33,27 @@ for this component:
 
 == URI format
 
-[source,java]
 ---------------------------------
 freemarker:templateName[?options]
 ---------------------------------
 
 Where *templateName* is the classpath-local URI of the template to
-invoke; or the complete URL of the remote template (eg:
+invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.ftl`).
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
 
-== Options
+// component-configure options: START
 
-
-
+// component-configure options: END
 
 // component options: START
-The Freemarker component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *configuration* (advanced) | To use an existing freemarker.template.Configuration instance as the configuration. |  | Configuration
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
-
 // endpoint options: START
-The Freemarker endpoint is configured using URI syntax:
 
-----
-freemarker:resourceUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
-|===
-
-
-=== Query Parameters (7 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *configuration* (producer) | Sets the Freemarker configuration to use |  | Configuration
-| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *encoding* (producer) | Sets the encoding to be used for loading the template file. |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *templateUpdateDelay* (producer) | Number of seconds the loaded template resource will remain in the cache. |  | int
-|===
 // endpoint options: END
-
-
 
 
 == Headers
@@ -112,9 +62,8 @@ Headers set during the FreeMarker evaluation are returned to the message
 and added as headers. This provides a mechanism for the FreeMarker
 component to return values to the Message.
 
-An example: Set the header value of `fruit` in the FreeMarker template:
+For example, set the header value of `fruit` in the FreeMarker template:
 
-[source,java]
 --------------------------------------
 ${request.setHeader('fruit', 'Apple')}
 --------------------------------------
@@ -134,6 +83,8 @@ a `Map`). The `Exchange` is transferred as:
 
 |`exchange.properties` |The `Exchange` properties.
 
+|`variables` |The variables
+
 |`headers` |The headers of the In message.
 
 |`camelContext` |The Camel Context.
@@ -145,7 +96,7 @@ a `Map`). The `Exchange` is transferred as:
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-You can setup your custom FreeMarker context in the
+You can set up your custom FreeMarker context in the
 message header with the key "*CamelFreemarkerDataModel*" just like this
 
 [source,java]
@@ -168,24 +119,16 @@ reloading is thus enabled. This scenario can be used in development.
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|FreemarkerConstants.FREEMARKER_RESOURCE |org.springframework.core.io.Resource |The template resource.
-
-|FreemarkerConstants.FREEMARKER_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
-configured.
-
-|FreemarkerConstants.FREEMARKER_TEMPLATE |String |The template to use instead of the endpoint configured.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 -------------------------------------------
@@ -197,7 +140,7 @@ To use a FreeMarker template to formulate a response for a message for
 InOut message exchanges (where there is a `JMSReplyTo` header).
 
 If you want to use InOnly and consume the message and send it to another
-destination you could use:
+destination, you could use:
 
 [source,java]
 -------------------------------------------
@@ -206,7 +149,7 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 -------------------------------------------
 
-And to disable the content cache, e.g. for development usage where the
+And to disable the content cache, e.g., for development usage where the
 `.ftl` template should be hot reloaded:
 
 [source,java]
@@ -237,10 +180,9 @@ from("direct:in").
 
 == The Email Sample
 
-In this sample we want to use FreeMarker templating for an order
+In this sample, we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
 
-[source,java]
 ----------------------------------------------
 Dear ${headers.lastName}, ${headers.firstName}
 
@@ -250,7 +192,6 @@ Regards Camel Riders Bookstore
 ${body}
 ----------------------------------------------
 
-And the java code:
 
 
-include::camel-spring-boot::page$freemarker-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

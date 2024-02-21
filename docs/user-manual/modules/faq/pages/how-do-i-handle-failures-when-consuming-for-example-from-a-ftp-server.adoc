@@ -1,4 +1,3 @@
-[[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver]]
 = How do I handle failures when consuming for example from a FTP server?
 
 When you do a route such as:
@@ -9,7 +8,7 @@ from("ftp://foo@somesever.com?password=secret").to("bean:logic?method=doSomethin
 ----
 
 And there is a failure with connecting to the remote FTP server. The
-existing xref:ROOT:error-handling-in-camel.adoc[Error handling in Camel] is
+existing xref:ROOT:error-handler.adoc[error handler] is
 based on when a message is *being* routed.
 In this case the error occurs *before* a message has been initiated and
 routed. So how can I control the error handling?
@@ -20,7 +19,7 @@ and delay in between.
 
 But you can also plugin your own implementation and determine what to do
 using the `pollStrategy` option which has more documentation
-xref:{eip-vc}:eips:polling-consumer.adoc[Polling Consumer].
+xref:components:eips:polling-consumer.adoc[Polling Consumer].
 Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 

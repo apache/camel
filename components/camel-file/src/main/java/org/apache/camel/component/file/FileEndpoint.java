@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.camel.Category;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * Read and write files.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName",
-             category = { Category.FILE, Category.CORE })
+             category = { Category.FILE, Category.CORE }, headersClass = FileConstants.class)
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileEndpoint.class);
@@ -55,6 +55,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private static final Integer CHMOD_WRITE_MASK = 02;
     private static final Integer CHMOD_READ_MASK = 04;
     private static final Integer CHMOD_EXECUTE_MASK = 01;
+    private static final String PARAM_OPERATIONS = "operations";
+    public static final String PARAM_FILE = "file";
 
     private final FileOperations operations = new FileOperations(this);
 
@@ -65,6 +67,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam(label = "advanced")
     private boolean renameUsingCopy;
+    @UriParam(label = "consumer,advanced")
+    private boolean includeHiddenFiles;
+    @UriParam(label = "consumer,advanced")
+    private boolean includeHiddenDirs;
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
@@ -91,7 +97,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public FileConsumer createConsumer(Processor processor) throws Exception {
-        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
         ObjectHelper.notNull(file, "file");
 
         // auto create starting directory if needed
@@ -128,7 +134,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         }
 
         // if idempotent and no repository set then create a default one
-        if (isIdempotentSet() && isIdempotent() && idempotentRepository == null) {
+        if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
             LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
@@ -153,8 +159,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        ObjectHelper.notNull(operations, "operations");
-        ObjectHelper.notNull(file, "file");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
+        ObjectHelper.notNull(file, PARAM_FILE);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
@@ -172,10 +178,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     public GenericFileProducer<File> createProducer() throws Exception {
-        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(operations, PARAM_OPERATIONS);
 
         // you cannot use temp file and file exists append
-        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+        if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {
             throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
 
@@ -260,6 +266,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return FileUtil.isAbsolute(new File(name));
     }
 
+    @Override
+    public boolean isHiddenFilesEnabled() {
+        return includeHiddenFiles;
+    }
+
     public boolean isCopyAndDeleteOnRenameFail() {
         return copyAndDeleteOnRenameFail;
     }
@@ -286,6 +297,30 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         this.renameUsingCopy = renameUsingCopy;
     }
 
+    public boolean isIncludeHiddenFiles() {
+        return includeHiddenFiles;
+    }
+
+    /**
+     * Whether to accept hidden files. Files which names starts with dot is regarded as a hidden file, and by default
+     * not included. Set this option to true to include hidden files in the file consumer.
+     */
+    public void setIncludeHiddenFiles(boolean includeHiddenFiles) {
+        this.includeHiddenFiles = includeHiddenFiles;
+    }
+
+    public boolean isIncludeHiddenDirs() {
+        return includeHiddenDirs;
+    }
+
+    /**
+     * Whether to accept hidden directories. Directories which names starts with dot is regarded as a hidden directory,
+     * and by default not included. Set this option to true to include hidden directories in the file consumer.
+     */
+    public void setIncludeHiddenDirs(boolean includeHiddenDirs) {
+        this.includeHiddenDirs = includeHiddenDirs;
+    }
+
     public boolean isStartingDirectoryMustExist() {
         return startingDirectoryMustExist;
     }
@@ -293,7 +328,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     /**
      * Whether the starting directory must exist. Mind that the autoCreate option is default enabled, which means the
      * starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to
-     * ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     * ensure the starting directory must exist. Will throw an exception if the directory doesn't exist.
      */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;
@@ -379,7 +414,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> permissions = EnumSet.noneOf(PosixFilePermission.class);
         if (ObjectHelper.isEmpty(chmod)) {
             return permissions;
         }
@@ -442,7 +477,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getDirectoryPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> permissions = EnumSet.noneOf(PosixFilePermission.class);
         if (ObjectHelper.isEmpty(chmodDirectory)) {
             return permissions;
         }

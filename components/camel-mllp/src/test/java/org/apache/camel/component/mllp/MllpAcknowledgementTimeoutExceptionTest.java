@@ -34,11 +34,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES);
+    public void testConstructorOne() {
+        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementTimeoutException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -49,11 +48,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+    public void testConstructorTwo() {
+        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementTimeoutException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -64,11 +62,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorThree() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, CAUSE);
+    public void testConstructorThree() {
+        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementTimeoutException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -79,11 +76,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFour() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+    public void testConstructorFour() {
+        instance = new MllpAcknowledgementTimeoutException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementTimeoutException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -94,11 +90,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFive() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+    public void testConstructorFive() {
+        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -109,12 +104,11 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSix() throws Exception {
+    public void testConstructorSix() {
         instance = new MllpAcknowledgementTimeoutException(
-                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -125,11 +119,10 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSeven() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+    public void testConstructorSeven() {
+        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -140,12 +133,11 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorEight() throws Exception {
+    public void testConstructorEight() {
         instance = new MllpAcknowledgementTimeoutException(
-                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -156,18 +148,18 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGetHl7Acknowledgement() throws Exception {
+    public void testGetHl7Acknowledgement() {
         instance = new MllpAcknowledgementTimeoutException(
-                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7Acknowledgement());
 
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, new byte[0], CAUSE);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, new byte[0], CAUSE, LOG_PHI_TRUE);
         assertNull(instance.getHl7Acknowledgement());
 
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
         assertNull(instance.getHl7Acknowledgement());
     }
 

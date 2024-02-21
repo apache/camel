@@ -52,15 +52,15 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
     }
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .host("localhost")
                         .port(port);

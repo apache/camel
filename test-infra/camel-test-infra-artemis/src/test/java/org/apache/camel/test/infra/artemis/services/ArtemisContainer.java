@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.camel.test.infra.common.TestUtils;
@@ -28,7 +27,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_AMQP_PORT = 5672;
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
-    private static final String FROM_IMAGE_NAME = "fedora:33";
+    private static final String FROM_IMAGE_NAME = "fedora:38";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public ArtemisContainer() {
@@ -45,7 +44,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for exchanging messages using the AMQP protocol
-     * 
+     *
      * @return the port number
      */
     public int amqpPort() {
@@ -54,16 +53,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the AMQP protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String amqpEndpoint() {
-        return String.format("amqp://%s:%d", getContainerIpAddress(), amqpPort());
+        return String.format("amqp://%s:%d", getHost(), amqpPort());
     }
 
     /**
      * Gets the port number used for exchanging messages using the MQTT protocol
-     * 
+     *
      * @return the port number
      */
     public int mqttPort() {
@@ -72,16 +71,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the MQTT protocol (ie.: tcp://host:${mqtt.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String mqttEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), mqttPort());
+        return String.format("tcp://%s:%d", getHost(), mqttPort());
     }
 
     /**
      * Gets the port number used for accessing the web management console or the management API
-     * 
+     *
      * @return the port number
      */
     public int adminPort() {
@@ -90,16 +89,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used for accessing the web management console or the management API
-     * 
+     *
      * @return the admin URL as a string
      */
     public String adminURL() {
-        return String.format("http://%s:%d", getContainerIpAddress(), adminPort());
+        return String.format("http://%s:%d", getHost(), adminPort());
     }
 
     /**
      * Gets the port number used for exchanging messages using the default acceptor port
-     * 
+     *
      * @return the port number
      */
     public int defaultAcceptorPort() {
@@ -108,16 +107,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages through the default acceptor port
-     * 
+     *
      * @return the end point URL as a string
      */
     public String defaultEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), defaultAcceptorPort());
+        return String.format("tcp://%s:%d", getHost(), defaultAcceptorPort());
     }
 
     /**
      * Gets the port number used for exchanging messages using the Openwire protocol
-     * 
+     *
      * @return the port number
      */
     public int openwirePort() {
@@ -126,10 +125,10 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the Openwire protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String getOpenwireEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), openwirePort());
+        return String.format("tcp://%s:%d", getHost(), openwirePort());
     }
 }

@@ -25,6 +25,8 @@ public class Job extends JobBase {
     private Long numberRecordsFailed;
     private Long apexProcessingTime;
     private Long apiActiveProcessingTime;
+    private String apiVersion;
+    private String errorMessage;
 
     public String getAssignmentRuleId() {
         return assignmentRuleId;
@@ -80,5 +82,23 @@ public class Job extends JobBase {
 
     public void setApiActiveProcessingTime(Long apiActiveProcessingTime) {
         this.apiActiveProcessingTime = apiActiveProcessingTime;
+    }
+
+    @Override
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    @Override
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

@@ -22,7 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
+
+@ResourceLock(SSL_SYSPROPS)
 public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
 
     @Override
@@ -32,27 +36,27 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
         // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
+        setSystemProp("javax.net.ssl.trustStore", "file://" + trustStoreUrl.getPath());
 
         // START SNIPPET: e1
         // setup SSL using system properties
-        setSystemProp("org.eclipse.jetty.ssl.keystore", trustStoreUrl.getPath());
+        setSystemProp("org.eclipse.jetty.ssl.keystore", "file://" + trustStoreUrl.getPath());
         setSystemProp("org.eclipse.jetty.ssl.keypassword", pwd);
         setSystemProp("org.eclipse.jetty.ssl.password", pwd);
-        setSystemProp("jdk.tls.client.protocols", "TLSv1.2");
+        setSystemProp("jdk.tls.client.protocols", "TLSv1.3");
         // END SNIPPET: e1
 
         super.setUp();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

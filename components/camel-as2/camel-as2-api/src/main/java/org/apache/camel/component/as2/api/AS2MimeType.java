@@ -38,6 +38,10 @@ public interface AS2MimeType {
      */
     String APPLICATION_EDIFACT = "application/edifact";
     /**
+     * Mime Type for Application/XML
+     */
+    String APPLICATION_XML = "application/xml";
+    /**
      * Mime Type for Application/EDI-X12
      */
     String APPLICATION_EDI_X12 = "application/edi-x12";

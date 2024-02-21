@@ -26,18 +26,20 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
     private HttpClientConfigurer configurer;
 
     @Test
-    public void testHttpClientConfigurer() throws Exception {
+    public void testHttpClientConfigurer() {
         HttpClientConfigurer gotConfigurer
                 = getMandatoryEndpoint("http://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
         assertSame(configurer, gotConfigurer);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // add configurer to http component
-                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "http", "user", "password", null, null);
+                configurer = new ProxyHttpClientConfigurer(
+                        "proxyhost", 80, "http", "user", "password", null, null,
+                        new HttpCredentialsHelper());
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")

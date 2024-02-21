@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 
@@ -66,19 +67,14 @@ public class MetricsStatsCounter implements StatsCounter {
     }
 
     @Override
-    public void recordEviction() {
-        recordEviction(1);
-    }
-
-    @Override
-    public void recordEviction(int weight) {
+    public void recordEviction(int weight, RemovalCause removalCause) {
         evictionCount.inc();
         evictionWeight.inc(weight);
     }
 
     @Override
     public CacheStats snapshot() {
-        return new CacheStats(
+        return CacheStats.of(
                 hitCount.getCount(), missCount.getCount(), loadSuccessCount.getCount(), loadFailureCount.getCount(),
                 totalLoadTime.getCount(),
                 evictionCount.getCount(), evictionWeight.getCount());

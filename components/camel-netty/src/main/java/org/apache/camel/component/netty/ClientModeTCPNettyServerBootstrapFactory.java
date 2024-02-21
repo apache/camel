@@ -136,10 +136,10 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         clientBootstrap.handler(pipelineFactory);
         ChannelFuture channelFuture
                 = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
-                    new Object[] { configuration.getHost(), configuration.getPort(), clientBootstrap });
-        }
+
+        LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                configuration.getHost(), configuration.getPort(), clientBootstrap);
+
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
     }
@@ -206,17 +206,14 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
     private void scheduleReconnect(final ChannelFuture channelFuture) {
         final EventLoop loop = channelFuture.channel().eventLoop();
-        loop.schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
-                    doReconnectIfNeeded();
-                } catch (Exception e) {
-                    LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
-                            configuration.getAddress(), configuration.getReconnectInterval(),
-                            e);
-                }
+        loop.schedule(() -> {
+            try {
+                LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
+                doReconnectIfNeeded();
+            } catch (Exception e) {
+                LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
+                        configuration.getAddress(), configuration.getReconnectInterval(),
+                        e);
             }
         }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
     }

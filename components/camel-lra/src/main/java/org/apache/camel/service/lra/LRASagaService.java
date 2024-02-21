@@ -22,10 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StaticService;
+import org.apache.camel.*;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.saga.CamelSagaCoordinator;
@@ -64,18 +61,18 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     }
 
     @Override
-    public CompletableFuture<CamelSagaCoordinator> newSaga() {
-        return client.newLRA()
+    public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
+        return client.newLRA(exchange)
                 .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
     }
 
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
-        CompletableFuture<CamelSagaCoordinator> coordinator = new CompletableFuture<>();
+        CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator.complete(new LRASagaCoordinator(this, new URL(id)));
+            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, new URL(id)));
         } catch (Exception ex) {
-            coordinator.completeExceptionally(ex);
+            coordinator = CompletableFuture.failedFuture(ex);
         }
         return coordinator;
     }
@@ -94,8 +91,18 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                     .newDefaultScheduledThreadPool(this, "saga-lra");
         }
         if (this.client == null) {
-            this.client = new LRAClient(this);
+            this.client = createLRAClient();
         }
+    }
+
+    /**
+     * Use this method to override some behavior within the LRAClient
+     *
+     * @return the LRAClient to be used within the LRASagaService
+     *
+     */
+    protected LRAClient createLRAClient() {
+        return new LRAClient(this);
     }
 
     @Override

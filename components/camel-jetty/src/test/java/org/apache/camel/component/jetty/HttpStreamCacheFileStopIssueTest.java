@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
-    private String body = "12345678901234567890123456789012345678901234567890";
+    private final String body = "12345678901234567890123456789012345678901234567890";
 
     @Override
     @BeforeEach
@@ -53,23 +54,24 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
         String[] files = file.list();
         assertEquals(0, files.length, "There should be no files");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
                 from("direct:start").to("http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // there should be a temp cache file
                         File file = new File("target/cachedir");
                         String[] files = file.list();

@@ -33,23 +33,22 @@ public class XPathSplitStreamTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/file/xpathsplit");
         super.setUp();
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("\n<persons>");
         for (int i = 0; i < size; i++) {
-            sb.append("\n<person><id>" + i + "</id><name>John Doe</name></person>");
+            sb.append("\n<person><id>").append(i).append("</id><name>John Doe</name></person>");
         }
         sb.append("\n</persons>");
 
-        template.sendBodyAndHeader("file://target/data/file/xpathsplit", sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
+        template.sendBodyAndHeader(fileUri(), sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
     }
 
     @Test
     public void testXPathSplitStream() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:splitted");
+        MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(size);
         mock.expectsNoDuplicates().body();
 
@@ -64,10 +63,10 @@ public class XPathSplitStreamTest extends ContextTestSupport {
                 XPathBuilder personXPath = XPathBuilder.xpath("/persons/person").documentType(InputSource.class);
 
                 // START SNIPPET: e1
-                from("file://target/data/file/xpathsplit?initialDelay=0&delay=10")
+                from(fileUri("?initialDelay=0&delay=10"))
                         // set documentType to org.xml.sax.InputSource then Camel
                         // will use SAX to split the file
-                        .split(personXPath).streaming().to("mock:splitted");
+                        .split(personXPath).streaming().to("mock:split");
                 // END SNIPPET: e1
             }
         };

@@ -18,26 +18,27 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-import javax.activation.DataHandler;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.activation.DataHandler;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +63,6 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
     @Test
     public void testSendMultiPartForm() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
 
         File file = new File("src/test/resources/log4j2.properties");
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test");
@@ -71,19 +71,19 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
-        HttpResponse response = client.execute(httppost);
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-        assertEquals("A binary file of some kind", responseString, "Get a wrong result");
-        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals("A binary file of some kind", responseString, "Get a wrong result");
+            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
 
-        client.close();
+        }
     }
 
     @Test
     public void testSendMultiPartFormOverrideEnableMultpartFilterFalse() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
 
         File file = new File("src/test/resources/log4j2.properties");
 
@@ -92,16 +92,18 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
-        HttpResponse response = client.execute(httppost);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
 
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // Set the jetty temp directory which store the file for multi
                 // part form
@@ -128,7 +130,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                        String fileContent = new String(data.getDataSource().getInputStream().readAllBytes());
+                        assertTrue(fileContent.length() > 0,
                                 "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
@@ -142,7 +145,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 // the enableMultipartFilter=false parameter
                 from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
                                 assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
                                 DataHandler data = in.getAttachment("log4j2.properties");

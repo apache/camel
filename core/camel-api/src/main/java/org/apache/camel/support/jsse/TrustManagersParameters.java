@@ -62,7 +62,7 @@ public class TrustManagersParameters extends JsseParameters {
      * configuration returned from {@link #getKeyStore()}. The {@code KeyManager}s are produced from a factory created
      * by using the provider and algorithm identifiers returned by {@link #getProvider()} and {@link #getAlgorithm()},
      * respectively. If either of these methods returns null, the default JSSE value is used instead.
-     * 
+     *
      * @return                          the initialized {@code TrustManager}s
      * @throws GeneralSecurityException if there is an error creating the {@code TrustManagers}s or in creating the
      *                                  {@code KeyStore}
@@ -94,7 +94,7 @@ public class TrustManagersParameters extends JsseParameters {
             }
 
             LOG.debug("TrustManagerFactory [{}] is using provider [{}] and algorithm [{}].",
-                    new Object[] { tmf, tmf.getProvider(), tmf.getAlgorithm() });
+                    tmf, tmf.getProvider(), tmf.getAlgorithm());
 
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
             tmf.init(ks);
@@ -113,7 +113,7 @@ public class TrustManagersParameters extends JsseParameters {
     /**
      * Sets the key store configuration used to create the {@link KeyStoreParameters} that the {@link TrustManager}s
      * produced by this object's configuration expose.
-     * 
+     *
      * @param value the configuration to use
      */
     public void setKeyStore(KeyStoreParameters value) {
@@ -127,10 +127,10 @@ public class TrustManagersParameters extends JsseParameters {
     /**
      * Sets the optional provider identifier for the {@link TrustManagerFactory} used to create the
      * {@link TrustManager}s represented by this object's configuration.
-     * 
+     *
      * @param value the desired provider identifier or {@code null} to use the highest priority provider implementing
      *              the algorithm
-     * 
+     *
      * @see         Security#getProviders()
      */
     public void setProvider(String value) {
@@ -146,9 +146,9 @@ public class TrustManagersParameters extends JsseParameters {
      * represented by this object's configuration. See the
      * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
      * Socket Extension Reference Guide</a> for information about standard algorithm names.
-     * 
+     *
      * @param value the desired algorithm or {@code null} to use default
-     * 
+     *
      * @see         TrustManagerFactory#getDefaultAlgorithm()
      */
     public void setAlgorithm(String value) {

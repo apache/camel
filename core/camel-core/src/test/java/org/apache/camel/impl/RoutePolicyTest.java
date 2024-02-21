@@ -102,7 +102,7 @@ public class RoutePolicyTest extends ContextTestSupport {
         };
     }
 
-    private class MyRoutPolicy implements RoutePolicy {
+    private static class MyRoutPolicy implements RoutePolicy {
         private AtomicInteger removeCounter = new AtomicInteger();
         private AtomicInteger startCounter = new AtomicInteger();
         private AtomicInteger stopCounter = new AtomicInteger();

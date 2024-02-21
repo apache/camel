@@ -1,40 +1,52 @@
-[[xquery-language]]
 = XQuery Language
-:docTitle: XQuery
-:artifactId: camel-saxon
-:description: Evaluate an XQuery expressions against an XML payload.
+:doctitle: XQuery
+:shortname: xquery
+:artifactid: camel-saxon
+:description: Evaluates an XQuery expressions against an XML payload.
 :since: 1.0
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/xquery.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: saxon
 
 *Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
-Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
-Configuration]. For example you could use XQuery to create an
-Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
-Filter] or as an Expression for a
-Recipient List.
+xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] to be
+used in the xref:manual::dsl.adoc[DSL].
+
+For example, you could use XQuery to create a
+predicate in a xref:eips:filter-eip.adoc[Message Filter]
+or as an expression for a xref:eips:recipientList-eip.adoc[Recipient List].
 
 == XQuery Language options
 
 // language options: START
-The XQuery language supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| type |  | String | Sets the class name of the result type (type from output) The default result type is NodeSet
-| headerName |  | String | Name of header to use as input, instead of the message body
-| configurationRef |  | String | Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon). This may be needed to add custom functions to a saxon configuration, so these custom functions can be used in xquery expressions.
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
-== Examples
+== Variables
+
+The message body will be set as the `contextItem`.
+And the following variables are available as well:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+|exchange |Exchange |The current Exchange
+|in.body |Object |The message body
+|out.body |Object |*deprecated* The OUT message body (if any)
+|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+the variable which name is in.headers.foo
+|out.headers.* |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
+the variable which name is `out.headers.foo` variable
+|*key name* |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
+parameters set using `setParameters(Map)`. These parameters are added
+with their own key name, for instance, if there is an IN header with the
+key name *foo* then its added as *foo*.
+|=======================================================================
+
+== Example
 
 [source,java]
 ---------------------------
@@ -44,9 +56,9 @@ from("queue:foo")
 ---------------------------
 
 You can also use functions inside your query, in which case you need an
-explicit type conversion (or you will get a org.w3c.dom.DOMException:
-HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
-*xquery()* method.
+explicit type conversion, or you will get an `org.w3c.dom.DOMException:
+HIERARCHY_REQUEST_ERR`). You need to pass in the expected output type of the function.
+For example, the concat function returns a `String` which is done as shown:
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -54,37 +66,58 @@ from("direct:start")
   .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
-== Variables
+And in XML DSL:
 
-The IN message body will be set as the `contextItem`. Besides this these
-Variables is also added as parameters:
+[source,xml]
+-----------------------------------------------------------------------------
+<route>
+  <from uri="direct:start"/>
+  <recipientList>
+    <xquery resultType="java.lang.String">concat('mock:foo.', /person/@city</xquery>
+  </recipientList>
+</route>
+-----------------------------------------------------------------------------
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Variable |Type |Description
+=== Using namespaces
 
-|exchange |Exchange |The current Exchange
+If you have a standard set of namespaces you wish to work with and wish
+to share them across many XQuery expressions, you can use the
+`org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
 
-|in.body |Object |The In message's body
+[source,java]
+----
+Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-|out.body |Object |The OUT message's body (if any)
+from("direct:start")
+  .filter().xquery("/c:person[@name='James']", ns)
+  .to("mock:result");
+----
 
-|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
-the variable which name is in.headers.foo
+Notice how the namespaces are provided to `xquery` with the `ns` variable
+that are passed in as the second parameter.
 
-|out.headers.* |Object |You can access the value of exchange.out.headers with key *foo* by using
-the variable which name is out.headers.foo variable
+Each namespace is a key=value pair, where the prefix is the key.
+In the XQuery expression then the namespace is used by its prefix, e.g.:
 
-|*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
-parameters set using `setParameters(Map)`. These parameters is added
-with they own key name, for instance if there is an IN header with the
-key name *foo* then its added as *foo*.
-|=======================================================================
+[source,text]
+----
+/c:person[@name='James']
+----
 
-== Using XML configuration
+The namespace builder supports adding multiple namespaces as shown:
 
-If you prefer to configure your routes in your Spring
-XML file then you can use XPath expressions as follows
+[source,java]
+----
+Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
+                     .add("w", "http://acme.com/wine")
+                     .add("b", "http://acme.com/beer");
+----
+
+When using namespaces in XML DSL then its different, as you set up the namespaces
+in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
+
+In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
+in the line with `xmlns:foo="http://example.com/person"`:
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------------
@@ -107,53 +140,71 @@ XML file then you can use XPath expressions as follows
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-Notice how we can reuse the namespace prefixes, *foo* in this case, in
-the XPath expression for easier namespace based XQuery expressions!
+This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to use this namespace.
 
-When you use functions in your XQuery expression you need an explicit
-type conversion which is done in the xml configuration via the *@type*
-attribute:
+== Using XQuery as transformation
+
+We can do a message translation using transform or setBody in the route,
+as shown below:
+
+[source,java]
+----------------------------------------
+from("direct:start").
+   transform().xquery("/people/person");
+----------------------------------------
+
+Notice that xquery will use DOMResult by default, so if we want to grab
+the value of the person node, using `text()` we need to tell XQuery to use
+String as the result type, as shown:
+
+[source,java]
+-------------------------------------------------------------
+from("direct:start").
+   transform().xquery("/people/person/text()", String.class);
+-------------------------------------------------------------
+
+If you want to use Camel variables like headers, you have to explicitly
+declare them in the XQuery expression.
 
 [source,xml]
--------------------------------------------------------------------------------
-    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
--------------------------------------------------------------------------------
-
-== Learning XQuery
-
-XQuery is a very powerful language for querying, searching, sorting and
-returning XML. For help learning XQuery try these tutorials
-
-* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery
-Primer]
-* the W3Schools http://www.w3schools.com/xquery/default.asp[XQuery
-Tutorial]
-
-You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
-function reference] useful
+-------------------------------------------------------------
+<transform>
+    <xquery>
+        declare variable $in.headers.foo external;
+        element item {$in.headers.foo}
+    </xquery>
+</transform>
+-------------------------------------------------------------
 
 == Loading script from external resource
 
-You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
- This is done using the following syntax: `"resource:scheme:location"`,
-eg to refer to a file on the classpath you can do:
+You can externalize the script and have Apache Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ------------------------------------------------------------------------------
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
 ------------------------------------------------------------------------------
 
+== Learning XQuery
+
+XQuery is a very powerful language for querying, searching, sorting and
+returning XML. For help learning XQuery, try these tutorials
+
+* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
+* The W3Schools http://www.w3schools.com/xml/xquery_intro.asp[XQuery Tutorial]
+
 == Dependencies
 
-To use XQuery in your camel routes you need to add the a dependency on
-*camel-saxon* which implements the XQuery language.
+To use XQuery in your Camel routes, you need to add the dependency on
+*camel-saxon*, which implements the XQuery language.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use Maven you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
-[source,java]
+[source,xml]
 --------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
@@ -162,4 +213,5 @@ the download page for the latest versions).
 </dependency>
 --------------------------------------
 
-include::camel-spring-boot::page$saxon-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -44,7 +44,7 @@ public class RouteIdTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
         assertMockEndpointsSatisfied();
 
@@ -60,7 +60,7 @@ public class RouteIdTest extends ContextTestSupport {
                 onException(Exception.class).handled(true).to("mock:error").end();
 
                 from("direct:start").onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(5).end()
-                        .routeId("myCoolRoute").choice().when(body().contains("Kabom"))
+                        .routeId("myCoolRoute").choice().when(body().contains("Kaboom"))
                         .throwException(new IllegalArgumentException("Damn")).otherwise().to("mock:result").end();
             }
         };

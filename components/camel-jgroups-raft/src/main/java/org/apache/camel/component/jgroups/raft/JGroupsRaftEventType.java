@@ -19,7 +19,6 @@ package org.apache.camel.component.jgroups.raft;
 public enum JGroupsRaftEventType {
     LEADER,
     FOLLOWER,
-    CANDIDATE,
     APPLY,
     READ_CONTENT_FROM,
     WRITE_CONTENT_TO

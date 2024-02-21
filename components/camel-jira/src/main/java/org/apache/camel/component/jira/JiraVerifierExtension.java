@@ -70,20 +70,12 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
             OAuthAsynchronousJiraRestClientFactory factory = new OAuthAsynchronousJiraRestClientFactory();
 
             final URI jiraServerUri = URI.create(conf.getJiraUrl());
-            JiraRestClient client;
-            if (conf.getUsername() != null) {
-                client = factory.createWithBasicHttpAuthentication(jiraServerUri, conf.getUsername(),
-                        conf.getPassword());
-            } else {
-                JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
-                        conf.getConsumerKey(), conf.getVerificationCode(),
-                        conf.getPrivateKey(), conf.getAccessToken(), conf.getJiraUrl());
-                client = factory.create(jiraServerUri, oAuthHandler);
-            }
-            // test the connection to the jira server
-            ServerInfo serverInfo = client.getMetadataClient().getServerInfo().claim();
-            LOG.info("Verify connectivity to jira server OK: {}", serverInfo);
 
+            try (JiraRestClient client = newJiraRestClient(conf, factory, jiraServerUri)) {
+                // test the connection to the jira server
+                ServerInfo serverInfo = client.getMetadataClient().getServerInfo().claim();
+                LOG.info("Verify connectivity to jira server OK: {}", serverInfo);
+            }
         } catch (RestClientException e) {
             ResultErrorBuilder errorBuilder
                     = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
@@ -103,5 +95,18 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
             builder.error(errorBuilder.build());
         }
         return builder.build();
+    }
+
+    private static JiraRestClient newJiraRestClient(
+            JiraConfiguration conf, OAuthAsynchronousJiraRestClientFactory factory, URI jiraServerUri) {
+        if (conf.getUsername() != null) {
+            return factory.createWithBasicHttpAuthentication(jiraServerUri, conf.getUsername(),
+                    conf.getPassword());
+        } else {
+            JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                    conf.getConsumerKey(), conf.getVerificationCode(),
+                    conf.getPrivateKey(), conf.getAccessToken(), conf.getJiraUrl());
+            return factory.create(jiraServerUri, oAuthHandler);
+        }
     }
 }

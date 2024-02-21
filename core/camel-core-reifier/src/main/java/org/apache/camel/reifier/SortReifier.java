@@ -26,8 +26,6 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.support.ObjectHelper;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifier<U> {
 
     public SortReifier(Route route, ProcessorDefinition<?> definition) {
@@ -38,17 +36,14 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
     @SuppressWarnings("unchecked")
     public Processor createProcessor() throws Exception {
         // lookup in registry
-        if (isNotEmpty(definition.getComparatorRef())) {
-            definition.setComparator(lookup(parseString(definition.getComparatorRef()), Comparator.class));
+        Comparator<? super T> comp = definition.getComparatorBean();
+        if (comp == null && definition.getComparator() != null) {
+            comp = mandatoryLookup(definition.getComparator(), Comparator.class);
         }
 
         // if no comparator then default on to string representation
-        if (definition.getComparator() == null) {
-            definition.setComparator(new Comparator<T>() {
-                public int compare(T o1, T o2) {
-                    return ObjectHelper.compare(o1, o2);
-                }
-            });
+        if (comp == null) {
+            comp = (Comparator<T>) (o1, o2) -> ObjectHelper.compare(o1, o2);
         }
 
         // if no expression provided then default to body expression
@@ -58,7 +53,7 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
         } else {
             exp = createExpression(definition.getExpression());
         }
-        return new SortProcessor<T>(exp, definition.getComparator());
+        return new SortProcessor<T>(exp, comp);
     }
 
 }

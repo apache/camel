@@ -30,7 +30,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private Cache cache;
 
     public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration,
-                           Processor processor) throws Exception {
+                           Processor processor) {
         super(endpoint, processor);
         this.configuration = configuration;
         this.cacheName = cacheName;

@@ -20,24 +20,28 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+
+// TODO: camel4
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.DelegateEndpoint;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -45,14 +49,22 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
+import static org.apache.camel.xml.jaxb.JaxbHelper.enrichLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.extractNamespaces;
+import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
+import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 /**
  * JAXB based {@link ModelToXMLDumper}.
@@ -62,8 +74,13 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
+        return doDumpModelAsXml(context, definition, true);
+    }
+
+    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds) throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
+        final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
 
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
@@ -71,18 +88,34 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) definition).getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
+                if (context.isDebugging()) {
+                    extractSourceLocations(route.getRoute(), locations);
+                }
+                resolveEndpointDslUris(route.getRoute());
             }
         } else if (definition instanceof RouteTemplateDefinition) {
             RouteTemplateDefinition template = (RouteTemplateDefinition) definition;
             extractNamespaces(template.getRoute(), namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(template.getRoute(), locations);
+            }
+            resolveEndpointDslUris(template.getRoute());
         } else if (definition instanceof RoutesDefinition) {
             List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
+                if (context.isDebugging()) {
+                    extractSourceLocations(route, locations);
+                }
+                resolveEndpointDslUris(route);
             }
         } else if (definition instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) definition;
             extractNamespaces(route, namespaces);
+            if (context.isDebugging()) {
+                extractSourceLocations(route, locations);
+            }
+            resolveEndpointDslUris(route);
         }
 
         Marshaller marshaller = jaxbContext.createMarshaller();
@@ -100,18 +133,23 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             throw new TypeConversionException(xml, Document.class, e);
         }
 
+        if (context.isDebugging()) {
+            enrichLocations(dom, locations);
+        }
+        sanitizeXml(dom, generatedIds);
+
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
-        for (String nsPrefix : namespaces.keySet()) {
+        for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+            String nsPrefix = entry.getKey();
             String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
-            documentElement.setAttribute(prefix, namespaces.get(nsPrefix));
+            documentElement.setAttribute(prefix, entry.getValue());
         }
 
         // We invoke the type converter directly because we need to pass some
         // custom XML output options
         Properties outputProperties = new Properties();
-        outputProperties.put(OutputKeys.INDENT, "yes");
-        outputProperties.put(OutputKeys.STANDALONE, "yes");
+        outputProperties.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
         outputProperties.put(OutputKeys.ENCODING, "UTF-8");
         try {
             return xmlConverter.toStringFromDocument(dom, outputProperties);
@@ -122,51 +160,51 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
-        String xml = dumpModelAsXml(context, definition);
+        String xml = doDumpModelAsXml(context, definition, generatedIds);
 
         // if resolving placeholders we parse the xml, and resolve the property
         // placeholders during parsing
-        if (resolvePlaceholders || resolveDelegateEndpoints) {
+        if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
             final InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             final Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                private String prev;
 
                 @Override
                 public String transform(String text) {
                     String after = text;
-                    if (resolveDelegateEndpoints && "uri".equals(prev)) {
-                        try {
-                            // must resolve placeholder as the endpoint may use
-                            // property placeholders
-                            String uri = context.resolvePropertyPlaceholders(text);
-                            Endpoint endpoint = context.hasEndpoint(uri);
-                            if (endpoint instanceof DelegateEndpoint) {
-                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                                after = endpoint.getEndpointUri();
-                            }
-                        } catch (Exception e) {
-                            // ignore
+
+                    PropertiesComponent pc = context.getPropertiesComponent();
+                    Properties prop = new Properties();
+                    Iterator<?> it = null;
+                    if (definition instanceof RouteDefinition) {
+                        it = ObjectHelper.createIterator(definition);
+                    } else if (definition instanceof RoutesDefinition) {
+                        it = ObjectHelper.createIterator(((RoutesDefinition) definition).getRoutes());
+                    }
+                    while (it != null && it.hasNext()) {
+                        RouteDefinition routeDefinition = (RouteDefinition) it.next();
+                        // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                        if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                                && routeDefinition.getTemplateParameters() != null) {
+                            prop.putAll(routeDefinition.getTemplateParameters());
                         }
                     }
-
-                    if (resolvePlaceholders) {
-                        try {
-                            after = context.resolvePropertyPlaceholders(after);
-                        } catch (Exception e) {
-                            // ignore
-                        }
+                    pc.setLocalProperties(prop);
+                    try {
+                        after = context.resolvePropertyPlaceholders(after);
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        // clear local after the route is dumped
+                        pc.setLocalProperties(null);
                     }
 
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
+                    boolean updated = !text.equals(after);
+                    if (updated && !changed.get()) {
+                        changed.set(true);
                     }
-
-                    // okay the previous must be the attribute key with uri, so
-                    // it refers to an endpoint
-                    prev = text;
 
                     return after;
                 }
@@ -176,13 +214,154 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
+                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds);
             }
         }
 
         return xml;
+    }
+
+    @Override
+    public String dumpBeansAsXml(CamelContext context, List<Object> beans) throws Exception {
+        StringWriter buffer = new StringWriter();
+        BeanModelWriter writer = new BeanModelWriter(buffer);
+
+        List<RegistryBeanDefinition> list = new ArrayList<>();
+        for (Object bean : beans) {
+            if (bean instanceof RegistryBeanDefinition rb) {
+                list.add(rb);
+            }
+        }
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeBeans(list);
+        } finally {
+            writer.stop();
+        }
+
+        return buffer.toString();
+    }
+
+    private static void sanitizeXml(Node node, boolean generatedIds) {
+        // we want to remove all customId="false" attributes as they are noisy
+        if (node.hasAttributes()) {
+            Node att = node.getAttributes().getNamedItem("customId");
+            boolean custom = att != null && "true".equals(att.getNodeValue());
+            if (att != null) {
+                node.getAttributes().removeNamedItem("customId");
+            }
+            if (!generatedIds && !custom) {
+                // remove auto-generated ids
+                Node attId = node.getAttributes().getNamedItem("id");
+                if (attId != null) {
+                    node.getAttributes().removeNamedItem("id");
+                }
+            }
+        }
+        if (node.hasChildNodes()) {
+            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+                Node child = node.getChildNodes().item(i);
+                sanitizeXml(child, generatedIds);
+            }
+        }
+    }
+
+    private static class BeanModelWriter implements CamelContextAware {
+
+        private final StringWriter buffer;
+        private CamelContext camelContext;
+
+        public BeanModelWriter(StringWriter buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void start() {
+            // noop
+        }
+
+        public void stop() {
+            // noop
+        }
+
+        public void writeBeans(List<RegistryBeanDefinition> beans) {
+            if (beans.isEmpty()) {
+                return;
+            }
+            for (RegistryBeanDefinition b : beans) {
+                doWriteRegistryBeanDefinition(b);
+            }
+        }
+
+        private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
+            String type = b.getType();
+            if (type.startsWith("#class:")) {
+                type = type.substring(7);
+            }
+            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\"", b.getName(), type));
+            if (b.getFactoryBean() != null) {
+                buffer.write(String.format(" factoryBean=\"%s\"", b.getFactoryBean()));
+            }
+            if (b.getFactoryMethod() != null) {
+                buffer.write(String.format(" factoryMethod=\"%s\"", b.getFactoryMethod()));
+            }
+            if (b.getBuilderClass() != null) {
+                buffer.write(String.format(" builderClass=\"%s\"", b.getBuilderClass()));
+            }
+            if (b.getBuilderMethod() != null) {
+                buffer.write(String.format(" builderMethod=\"%s\"", b.getBuilderMethod()));
+            }
+            if (b.getInitMethod() != null) {
+                buffer.write(String.format(" initMethod=\"%s\"", b.getInitMethod()));
+            }
+            if (b.getDestroyMethod() != null) {
+                buffer.write(String.format(" destroyMethod=\"%s\"", b.getDestroyMethod()));
+            }
+            if (b.getScriptLanguage() != null) {
+                buffer.write(String.format(" scriptLanguage=\"%s\"", b.getScriptLanguage()));
+            }
+            if (b.getScript() != null) {
+                buffer.write(String.format("        <script>%n"));
+                buffer.write(b.getScript());
+                buffer.write("\n");
+                buffer.write(String.format("        </script>%n"));
+            }
+            buffer.write(">\n");
+            if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
+                buffer.write(String.format("        <constructors>%n"));
+                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
+                    Integer idx = entry.getKey();
+                    Object value = entry.getValue();
+                    if (idx != null) {
+                        buffer.write(String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
+                    } else {
+                        buffer.write(String.format("            <constructor value=\"%s\"/>%n", value));
+                    }
+                }
+                buffer.write(String.format("        </constructors>%n"));
+            }
+            if (b.getProperties() != null && !b.getProperties().isEmpty()) {
+                buffer.write(String.format("        <properties>%n"));
+                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    buffer.write(String.format("            <property key=\"%s\" value=\"%s\"/>%n", key, value));
+                }
+                buffer.write(String.format("        </properties>%n"));
+            }
+            buffer.write(String.format("    </bean>%n"));
+        }
     }
 
 }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SimpleJmsComponentTest extends CamelTestSupport {
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testHelloWorld() {
         SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
         assertNotNull(component);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 ActiveMQConnectionFactory connectionFactory

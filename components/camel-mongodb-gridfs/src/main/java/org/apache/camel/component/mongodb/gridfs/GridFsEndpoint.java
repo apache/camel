@@ -41,14 +41,9 @@ import org.slf4j.LoggerFactory;
  * Interact with MongoDB GridFS.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
-             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.NOSQL })
+             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.FILE },
+             headersClass = GridFsConstants.class)
 public class GridFsEndpoint extends DefaultEndpoint {
-
-    public static final String GRIDFS_OPERATION = "gridfs.operation";
-    public static final String GRIDFS_METADATA = "gridfs.metadata";
-    public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
-    public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
-    public static final String GRIDFS_OBJECT_ID = "gridfs.objectid";
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 
@@ -237,7 +232,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
      * Sets the initialDelay before the consumer will start polling. Default is 1000ms
      */
     public void setInitialDelay(long initialDelay) {
-        this.initialDelay = delay;
+        this.initialDelay = initialDelay;
     }
 
     /**

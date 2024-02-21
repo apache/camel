@@ -16,38 +16,41 @@
  */
 package org.apache.camel.language.simple;
 
-import java.text.SimpleDateFormat;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ClassicUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 
 /**
  * Expression builder used by the simple language.
@@ -75,6 +78,20 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the variable invoking methods defined in a simple OGNL notation
+     *
+     * @param ognl methods to invoke on the variable in a simple OGNL syntax
+     */
+    public static Expression variablesOgnlExpression(final String ognl) {
+        return new KeyedOgnlExpressionAdapter(
+                ognl, "variableOgnl(" + ognl + ")",
+                (exchange, exp) -> {
+                    String text = exp.evaluate(exchange, String.class);
+                    return ExchangeHelper.getVariable(exchange, text);
+                });
+    }
+
+    /**
      * Returns the message history (including exchange details or not)
      */
     public static Expression messageHistoryExpression(final boolean detailed) {
@@ -90,35 +107,13 @@ public final class SimpleExpressionBuilder {
                 }
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
             }
 
             private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
-                if (formatter == null) {
-                    Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
-                    if (formatters != null && formatters.size() == 1) {
-                        formatter = formatters.iterator().next();
-                    } else {
-                        // setup exchange formatter to be used for message history dump
-                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-                        def.setShowExchangeId(true);
-                        def.setMultiline(true);
-                        def.setShowHeaders(true);
-                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-                        try {
-                            Integer maxChars = CamelContextHelper.parseInteger(camelContext,
-                                    camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
-                            if (maxChars != null) {
-                                def.setMaxChars(maxChars);
-                            }
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
-                        formatter = def;
-                    }
-                }
-                return formatter;
+                return LanguageHelper.getOrCreateExchangeFormatter(camelContext, formatter);
             }
 
             @Override
@@ -140,10 +135,11 @@ public final class SimpleExpressionBuilder {
                 // first use simple then create the group expression
                 exp = context.resolveLanguage("simple").createExpression(expression);
                 exp.init(context);
-                exp = ExpressionBuilder.groupIteratorExpression(exp, null, "" + group, false);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(group), false);
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exp.evaluate(exchange, Object.class);
             }
@@ -168,6 +164,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 return skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
             }
@@ -180,6 +177,72 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Joins together the values from the expression
+     */
+    public static Expression joinExpression(final String expression, final String separator, final String prefix) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                exp = ExpressionBuilder.joinExpression(exp, separator, prefix);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                if (prefix != null) {
+                    return "join(" + expression + "," + separator + "," + prefix + ")";
+                } else {
+                    return "join(" + expression + "," + separator + ")";
+                }
+            }
+        };
+    }
+
+    /**
+     * Hashes the value using the given algorithm
+     */
+    public static Expression hashExpression(final String expression, final String algorithm) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                byte[] data = exp.evaluate(exchange, byte[].class);
+                if (data != null && data.length > 0) {
+                    try {
+                        MessageDigest digest = MessageDigest.getInstance(algorithm);
+                        byte[] bytes = digest.digest(data);
+                        return StringHelper.bytesToHex(bytes);
+                    } catch (Exception e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "hash(" + expression + "," + algorithm + ")";
+            }
+        };
+    }
+
+    /**
      * Returns a random number between min and max (exclusive)
      */
     public static Expression randomExpression(final String min, final String max) {
@@ -187,12 +250,12 @@ public final class SimpleExpressionBuilder {
             private Expression exp1;
             private Expression exp2;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 int num1 = exp1.evaluate(exchange, Integer.class);
                 int num2 = exp2.evaluate(exchange, Integer.class);
                 Random random = new Random(); // NOSONAR
-                int randomNum = random.nextInt(num2 - num1) + num1;
-                return randomNum;
+                return random.nextInt(num2 - num1) + num1;
             }
 
             @Override
@@ -222,10 +285,10 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression randomExpression(final int min, final int max) {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 Random random = new Random(); // NOSONAR
-                int randomNum = random.nextInt(max - min) + min;
-                return randomNum;
+                return random.nextInt(max - min) + min;
             }
 
             @Override
@@ -235,8 +298,74 @@ public final class SimpleExpressionBuilder {
         };
     }
 
+    /**
+     * Returns a new empty object of the given type
+     */
+    public static Expression newEmptyExpression(final String type) {
+
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if ("map".equalsIgnoreCase(type)) {
+                    return new LinkedHashMap<>();
+                } else if ("string".equalsIgnoreCase(type)) {
+                    return "";
+                } else if ("list".equalsIgnoreCase(type)) {
+                    return new ArrayList<>();
+                }
+                throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
+            }
+
+            @Override
+            public String toString() {
+                return "empty(%s)".formatted(type);
+            }
+        };
+    }
+
+    /**
+     * Returns a uuid string based on the given generator (default, classic, short, simple)
+     */
+    public static Expression uuidExpression(final String generator) {
+        return new ExpressionAdapter() {
+
+            UuidGenerator uuid;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return uuid.generateUuid();
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if ("classic".equalsIgnoreCase(generator)) {
+                    uuid = new ClassicUuidGenerator();
+                } else if ("short".equals(generator)) {
+                    uuid = new ShortUuidGenerator();
+                } else if ("simple".equals(generator)) {
+                    uuid = new SimpleUuidGenerator();
+                } else if (generator == null || "default".equals(generator)) {
+                    uuid = new DefaultUuidGenerator();
+                } else {
+                    // lookup custom generator
+                    uuid = CamelContextHelper.mandatoryLookup(context, generator, UuidGenerator.class);
+                }
+            }
+
+            @Override
+            public String toString() {
+                if (generator != null) {
+                    return "uuid(" + generator + ")";
+                } else {
+                    return "uuid";
+                }
+            }
+        };
+    }
+
     public static Expression fileNameExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             }
@@ -250,6 +379,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String answer = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
                 if (answer == null) {
@@ -268,6 +398,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileNameNoExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.stripExt(name);
@@ -282,6 +413,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileNameNoExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.stripExt(name, true);
@@ -296,6 +428,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = fileOnlyNameExpression().evaluate(exchange, String.class);
                 return FileUtil.stripExt(name);
@@ -310,6 +443,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileOnlyNameNoExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = fileOnlyNameExpression().evaluate(exchange, String.class);
                 return FileUtil.stripExt(name, true);
@@ -324,6 +458,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileExtensionExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.onlyExt(name);
@@ -338,6 +473,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileExtensionSingleExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 return FileUtil.onlyExt(name, true);
@@ -352,6 +488,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileParentExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileParent", String.class);
             }
@@ -365,6 +502,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression filePathExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFilePath", String.class);
             }
@@ -378,6 +516,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileAbsolutePathExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileAbsolutePath", String.class);
             }
@@ -391,6 +530,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileAbsoluteExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileAbsolute", Boolean.class);
             }
@@ -404,6 +544,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileSizeExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
             }
@@ -417,6 +558,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
             }
@@ -438,74 +580,14 @@ public final class SimpleExpressionBuilder {
 
     public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
-        // Capture optional time offsets
-        final List<Long> offsets = new ArrayList<>();
-        Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
-        while (offsetMatcher.find()) {
-            String time = offsetMatcher.group(2).trim();
-            long value = TimeUtils.toMilliSeconds(time);
-            offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
-        }
+        final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
-                Date date;
-                if ("now".equals(command)) {
-                    date = new Date();
-                } else if ("exchangeCreated".equals(command)) {
-                    long num = exchange.getCreated();
-                    date = new Date(num);
-                } else if (command.startsWith("header.")) {
-                    String key = command.substring(command.lastIndexOf('.') + 1);
-                    Object obj = exchange.getMessage().getHeader(key);
-                    if (obj instanceof Date) {
-                        date = (Date) obj;
-                    } else if (obj instanceof Long) {
-                        date = new Date((Long) obj);
-                    } else {
-                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-                    }
-                } else if (command.startsWith("exchangeProperty.")) {
-                    String key = command.substring(command.lastIndexOf('.') + 1);
-                    Object obj = exchange.getProperty(key);
-                    if (obj instanceof Date) {
-                        date = (Date) obj;
-                    } else if (obj instanceof Long) {
-                        date = new Date((Long) obj);
-                    } else {
-                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-                    }
-                } else if ("file".equals(command)) {
-                    Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
-                    if (num != null && num > 0) {
-                        date = new Date(num);
-                    } else {
-                        date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
-                        if (date == null) {
-                            throw new IllegalArgumentException(
-                                    "Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
-                        }
-                    }
-                } else {
-                    throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
-                }
+                Date date = evalDate(exchange, command);
 
-                // Apply offsets
-                long dateAsLong = date.getTime();
-                for (long offset : offsets) {
-                    dateAsLong += offset;
-                }
-                date = new Date(dateAsLong);
-
-                if (pattern != null && !pattern.isEmpty()) {
-                    SimpleDateFormat df = new SimpleDateFormat(pattern);
-                    if (timezone != null && !timezone.isEmpty()) {
-                        df.setTimeZone(TimeZone.getTimeZone(timezone));
-                    }
-                    return df.format(date);
-                } else {
-                    return date;
-                }
+                return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
             }
 
             @Override
@@ -521,8 +603,38 @@ public final class SimpleExpressionBuilder {
         };
     }
 
+    private static Date evalDate(Exchange exchange, String command) {
+        Date date;
+        if ("now".equals(command)) {
+            date = new Date();
+        } else if ("exchangeCreated".equals(command)) {
+            date = LanguageHelper.dateFromExchangeCreated(exchange);
+        } else if (command.startsWith("header.")) {
+            date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if (command.startsWith("variable.")) {
+            date = LanguageHelper.dateFromVariable(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if (command.startsWith("exchangeProperty.")) {
+            date = LanguageHelper.dateFromExchangeProperty(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if ("file".equals(command)) {
+            date = LanguageHelper.dateFromFileLastModified(exchange, command);
+        } else {
+            throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
+        }
+        return date;
+    }
+
+    private static Date tryConvertingAsDate(Exchange exchange, Object obj, String command) {
+        final Date date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
+        if (date == null) {
+            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+        }
+
+        return date;
+    }
+
     public static Expression skipIteratorExpression(final Expression expression, final int skip) {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
@@ -543,6 +655,7 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression nullExpression() {
         return new ExpressionAdapter() {
+            @Override
             public Object evaluate(Exchange exchange) {
                 return null;
             }
@@ -564,6 +677,7 @@ public final class SimpleExpressionBuilder {
             private Expression exp;
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -578,7 +692,7 @@ public final class SimpleExpressionBuilder {
                 } catch (InvalidPayloadException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -606,6 +720,7 @@ public final class SimpleExpressionBuilder {
             private ClassResolver classResolver;
             private Expression exp;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -636,6 +751,52 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the message converted to the given type and invoking methods on the converted message
+     * defined in a simple OGNL notation
+     */
+    public static Expression messageOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+            private Language bean;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String text = exp.evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = classResolver.resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                }
+                Object msg = exchange.getMessage(type);
+                if (msg != null) {
+                    // ognl is able to evaluate method name if it contains nested functions
+                    // so we should not eager evaluate ognl as a string
+                    Expression ognlExp = bean.createExpression(null, new Object[] { null, msg, ognl });
+                    ognlExp.init(exchange.getContext());
+                    return ognlExp.evaluate(exchange, Object.class);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = ExpressionBuilder.simpleExpression(name);
+                exp.init(context);
+                bean = context.resolveLanguage("bean");
+            }
+
+            @Override
+            public String toString() {
+                return "messageOgnlAs[" + name + "](" + ognl + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body converted to the given type and invoking methods on
      * the converted body defined in a simple OGNL notation
      */
@@ -645,6 +806,7 @@ public final class SimpleExpressionBuilder {
             private Expression exp;
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 String text = exp.evaluate(exchange, String.class);
                 Class<?> type;
@@ -657,7 +819,7 @@ public final class SimpleExpressionBuilder {
                 if (body != null) {
                     // ognl is able to evaluate method name if it contains nested functions
                     // so we should not eager evaluate ognl as a string
-                    Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                    Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                     ognlExp.init(exchange.getContext());
                     return ognlExp.evaluate(exchange, Object.class);
                 } else {
@@ -689,10 +851,11 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Expression ognlExp = bean.createExpression(null, new Object[] { exchange, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, exchange, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -724,6 +887,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
@@ -746,12 +910,13 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
                 if (body == null) {
                     return null;
                 }
-                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -779,6 +944,7 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private final AtomicReference<Object> cache = new AtomicReference<>();
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object answer = cache.get();
                 if (answer == null) {
@@ -813,6 +979,7 @@ public final class SimpleExpressionBuilder {
                 exp.init(context);
             }
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 // it may refer to a class type
                 String text = exp.evaluate(exchange, String.class);
@@ -827,19 +994,37 @@ public final class SimpleExpressionBuilder {
                     String after = text.substring(pos + 1);
                     type = classResolver.resolveClass(before);
                     if (type != null) {
-                        return ObjectHelper.lookupConstantFieldValue(type, after);
+                        // special for enum constants
+                        if (type.isEnum()) {
+                            Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
+                            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                                if (enumValue.name().equalsIgnoreCase(after)) {
+                                    return type.cast(enumValue);
+                                }
+                            }
+                            throw CamelExecutionException.wrapCamelExecutionException(exchange,
+                                    new ClassNotFoundException("Cannot find enum: " + after + " on type: " + type));
+                        } else {
+                            // we assume it is a field constant
+                            Object answer = ObjectHelper.lookupConstantFieldValue(type, after);
+                            if (answer != null) {
+                                return answer;
+                            }
+                        }
                     }
                 }
 
                 throw CamelExecutionException.wrapCamelExecutionException(exchange,
-                        new ClassNotFoundException("Cannot find type " + text));
+                        new ClassNotFoundException("Cannot find type: " + text));
             }
 
             @Override
             public String toString() {
                 return "type:" + name;
             }
-        };
+        }
+
+        ;
     }
 
     /**
@@ -866,10 +1051,11 @@ public final class SimpleExpressionBuilder {
         return new ExpressionAdapter() {
             private Language bean;
 
+            @Override
             public Object evaluate(Exchange exchange) {
                 Object exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
                 }
 
                 if (exception == null) {
@@ -878,7 +1064,7 @@ public final class SimpleExpressionBuilder {
 
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Expression ognlExp = bean.createExpression(null, new Object[] { exception, ognl });
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, exception, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -904,7 +1090,7 @@ public final class SimpleExpressionBuilder {
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
         private String key;
         private String keySuffix;
-        private String method;
+        private final String method;
         private Expression keyExpression;
         private Expression ognlExpression;
         private Language beanLanguage;
@@ -960,7 +1146,7 @@ public final class SimpleExpressionBuilder {
                 return null;
             }
             if (method != null) {
-                Expression exp = beanLanguage.createExpression(null, new Object[] { property, method });
+                Expression exp = beanLanguage.createExpression(null, new Object[] { null, property, method });
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             } else {

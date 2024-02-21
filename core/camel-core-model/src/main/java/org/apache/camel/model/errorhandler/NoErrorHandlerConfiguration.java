@@ -16,13 +16,27 @@
  */
 package org.apache.camel.model.errorhandler;
 
-// TODO: Maybe not needed
-// TODO: Maybe not needed
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.ErrorHandlerFactory;
+
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @XmlTransient
+@Deprecated
 public class NoErrorHandlerConfiguration implements NoErrorHandlerProperties {
 
     // no configuration
 
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public ErrorHandlerFactory cloneBuilder() {
+        // clone not needed
+        return this;
+    }
 }

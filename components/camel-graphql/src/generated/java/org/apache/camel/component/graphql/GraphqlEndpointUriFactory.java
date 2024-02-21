@@ -19,25 +19,29 @@ public class GraphqlEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
-        props.add("lazyStartProducer");
-        props.add("queryFile");
-        props.add("variables");
-        props.add("password");
-        props.add("jwtAuthorizationType");
-        props.add("httpUri");
-        props.add("query");
-        props.add("operationName");
+        Set<String> props = new HashSet<>(13);
         props.add("accessToken");
+        props.add("httpUri");
+        props.add("jwtAuthorizationType");
+        props.add("lazyStartProducer");
+        props.add("operationName");
+        props.add("password");
         props.add("proxyHost");
+        props.add("query");
+        props.add("queryFile");
+        props.add("queryHeader");
         props.add("username");
+        props.add("variables");
+        props.add("variablesHeader");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("password");
         secretProps.add("accessToken");
+        secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -68,8 +72,13 @@ public class GraphqlEndpointUriFactory extends org.apache.camel.support.componen
     }
 
     @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
+    }
+
+    @Override
     public boolean isLenientProperties() {
-        return false;
+        return true;
     }
 }
 

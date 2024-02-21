@@ -16,24 +16,36 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Expression;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
-import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     private final CamelContext camelContext;
-    private final BacklogDebugger backlogDebugger;
+    private final DefaultBacklogDebugger backlogDebugger;
 
-    public ManagedBacklogDebugger(CamelContext camelContext, BacklogDebugger backlogDebugger) {
+    public ManagedBacklogDebugger(CamelContext camelContext, DefaultBacklogDebugger backlogDebugger) {
         this.camelContext = camelContext;
         this.backlogDebugger = backlogDebugger;
     }
@@ -46,7 +58,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return camelContext;
     }
 
-    public BacklogDebugger getBacklogDebugger() {
+    public DefaultBacklogDebugger getBacklogDebugger() {
         return backlogDebugger;
     }
 
@@ -73,6 +85,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public boolean isEnabled() {
         return backlogDebugger.isEnabled();
+    }
+
+    @Override
+    public boolean isStandby() {
+        return backlogDebugger.isStandby();
     }
 
     @Override
@@ -106,7 +123,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public Set<String> getBreakpoints() {
+    public Set<String> breakpoints() {
         return backlogDebugger.getBreakpoints();
     }
 
@@ -170,6 +187,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public boolean isSuspendedMode() {
+        return backlogDebugger.isSuspendMode();
+    }
+
+    @Override
     public boolean isSingleStepMode() {
         return backlogDebugger.isSingleStepMode();
     }
@@ -180,7 +202,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    public Set<String> getSuspendedBreakpointNodeIds() {
+    public Set<String> suspendedBreakpointNodeIds() {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }
 
@@ -202,6 +224,26 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         backlogDebugger.setBodyMaxChars(bodyMaxChars);
+    }
+
+    @Override
+    public boolean isIncludeExchangeProperties() {
+        return backlogDebugger.isIncludeExchangeProperties();
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        backlogDebugger.setIncludeExchangeProperties(includeExchangeProperties);
+    }
+
+    @Override
+    public boolean isIncludeExchangeVariables() {
+        return backlogDebugger.isIncludeExchangeVariables();
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        backlogDebugger.setIncludeExchangeVariables(includeExchangeVariables);
     }
 
     @Override
@@ -227,6 +269,17 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         return backlogDebugger.dumpTracedMessagesAsXml(nodeId);
+    }
+
+    @Override
+    @Deprecated
+    public String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties) {
+        return dumpTracedMessagesAsXml(nodeId);
+    }
+
+    @Override
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        return backlogDebugger.dumpTracedMessagesAsJSon(nodeId);
     }
 
     @Override
@@ -264,4 +317,154 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     public void setFallbackTimeout(long fallbackTimeout) {
         backlogDebugger.setFallbackTimeout(fallbackTimeout);
     }
+
+    @Override
+    public String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression) {
+        return evaluateExpressionAtBreakpoint(nodeId, language, expression, "java.lang.String").toString();
+    }
+
+    @Override
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value) {
+        try {
+            backlogDebugger.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value);
+        } catch (NoTypeConversionAvailableException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public void setExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName, Object value, String type) {
+        try {
+            Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            backlogDebugger.setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value, classType);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public void removeExchangePropertyOnBreakpoint(String nodeId, String exchangePropertyName) {
+        backlogDebugger.removeExchangePropertyOnBreakpoint(nodeId, exchangePropertyName);
+    }
+
+    @Override
+    public Object evaluateExpressionAtBreakpoint(String nodeId, String language, String expression, String resultType) {
+        Exchange suspendedExchange;
+        try {
+            Language lan = camelContext.resolveLanguage(language);
+            suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
+            if (suspendedExchange != null) {
+                Object result;
+                Class<?> resultClass = camelContext.getClassResolver().resolveMandatoryClass(resultType);
+                if (!Boolean.class.isAssignableFrom(resultClass)) {
+                    Expression expr = lan.createExpression(expression);
+                    expr.init(camelContext);
+                    result = expr.evaluate(suspendedExchange, resultClass);
+                } else {
+                    Predicate pred = lan.createPredicate(expression);
+                    pred.init(camelContext);
+                    result = pred.matches(suspendedExchange);
+                }
+                //Test if result is serializable
+                if (!isSerializable(result)) {
+                    String resultStr = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class, result);
+                    if (resultStr != null) {
+                        result = resultStr;
+                    }
+                }
+                return result;
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    @Override
+    public String messageHistoryOnBreakpointAsXml(String nodeId) {
+        StringBuilder messageHistoryBuilder = new StringBuilder();
+        messageHistoryBuilder.append("<messageHistory>\n");
+
+        Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
+        if (suspendedExchange != null) {
+            List<MessageHistory> list = suspendedExchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+            if (list != null) {
+                // add incoming origin of message on the top
+                String routeId = suspendedExchange.getFromRouteId();
+                Route route = suspendedExchange.getContext().getRoute(routeId);
+                String loc = route != null ? route.getSourceLocationShort() : "";
+                String id = routeId;
+                String label = "";
+                if (suspendedExchange.getFromEndpoint() != null) {
+                    label = "from["
+                            + URISupport
+                                    .sanitizeUri(
+                                            StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
+                            + "]";
+                }
+
+                long elapsed = suspendedExchange.getClock().elapsed();
+
+                messageHistoryBuilder
+                        .append("    <messageHistoryEntry")
+                        .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
+                        .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
+                        .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
+                        .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
+                        .append(" elapsed=\"").append(elapsed).append("\"")
+                        .append("/>\n");
+
+                for (MessageHistory history : list) {
+                    // and then each history
+                    loc = LoggerHelper.getLineNumberLoggerName(history.getNode());
+                    if (loc == null) {
+                        loc = "";
+                    }
+                    routeId = history.getRouteId() != null ? history.getRouteId() : "";
+                    id = history.getNode().getId();
+                    // we need to avoid leak the sensible information here
+                    // the sanitizeUri takes a very long time for very long string
+                    // and the format cuts this to
+                    // 78 characters, anyway. Cut this to 100 characters. This will
+                    // give enough space for removing
+                    // characters in the sanitizeUri method and will be reasonably
+                    // fast
+                    label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
+                    elapsed = history.getElapsed();
+
+                    messageHistoryBuilder
+                            .append("    <messageHistoryEntry")
+                            .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
+                            .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
+                            .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
+                            .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
+                            .append(" elapsed=\"").append(elapsed).append("\"")
+                            .append("/>\n");
+                }
+            }
+        }
+        messageHistoryBuilder.append("</messageHistory>\n");
+        return messageHistoryBuilder.toString();
+    }
+
+    @Override
+    public void attach() {
+        backlogDebugger.attach();
+    }
+
+    @Override
+    public void detach() {
+        backlogDebugger.detach();
+    }
+
+    private static boolean isSerializable(Object obj) {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
+            out.writeObject(obj);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

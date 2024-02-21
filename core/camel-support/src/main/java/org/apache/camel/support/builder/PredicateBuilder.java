@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -33,7 +34,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A helper class for working with predicates
  */
-//CHECKSTYLE:OFF
 public class PredicateBuilder {
     /**
      * Converts the given expression into an {@link Predicate}
@@ -54,7 +54,7 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                predicate.init(camelContext);
+                predicate.initPredicate(camelContext);
             }
 
             @Override
@@ -77,8 +77,8 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                left.init(camelContext);
-                right.init(camelContext);
+                left.initPredicate(camelContext);
+                right.initPredicate(camelContext);
             }
 
             @Override
@@ -89,8 +89,8 @@ public class PredicateBuilder {
     }
 
     /**
-     * A helper method to combine two predicates by a logical OR.
-     * If you want to combine multiple predicates see {@link #in(Predicate...)}
+     * A helper method to combine two predicates by a logical OR. If you want to combine multiple predicates see
+     * {@link #in(Predicate...)}
      */
     public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
@@ -102,8 +102,8 @@ public class PredicateBuilder {
 
             @Override
             public void init(CamelContext camelContext) {
-                left.init(camelContext);
-                right.init(camelContext);
+                left.initPredicate(camelContext);
+                right.initPredicate(camelContext);
             }
 
             @Override
@@ -114,11 +114,10 @@ public class PredicateBuilder {
     }
 
     /**
-     * Concat the given predicates into a single predicate, which matches
-     * if at least one predicates matches.
+     * Concat the given predicates into a single predicate, which matches if at least one predicates matches.
      *
-     * @param predicates predicates
-     * @return a single predicate containing all the predicates
+     * @param  predicates predicates
+     * @return            a single predicate containing all the predicates
      */
     public static Predicate or(List<Predicate> predicates) {
         Predicate answer = null;
@@ -133,11 +132,10 @@ public class PredicateBuilder {
     }
 
     /**
-     * Concat the given predicates into a single predicate, which matches
-     * if at least one predicates matches.
+     * Concat the given predicates into a single predicate, which matches if at least one predicates matches.
      *
-     * @param predicates predicates
-     * @return a single predicate containing all the predicates
+     * @param  predicates predicates
+     * @return            a single predicate containing all the predicates
      */
     public static Predicate or(Predicate... predicates) {
         return or(Arrays.asList(predicates));
@@ -162,7 +160,7 @@ public class PredicateBuilder {
             @Override
             public void init(CamelContext camelContext) {
                 for (Predicate in : predicates) {
-                    in.init(camelContext);
+                    in.initPredicate(camelContext);
                 }
             }
 
@@ -347,7 +345,7 @@ public class PredicateBuilder {
             }
         };
     }
-    
+
     public static Predicate containsIgnoreCase(final Expression left, final Expression right) {
         return new BinaryPredicateSupport(left, right) {
 
@@ -376,7 +374,7 @@ public class PredicateBuilder {
                 if (leftValue == null) {
                     // the left operator is null so its true
                     return true;
-                } 
+                }
 
                 return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
@@ -397,7 +395,7 @@ public class PredicateBuilder {
                     // the left operator is not null so its true
                     return true;
                 }
-
+                // TODO leftValue is null, is it expected?
                 return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
@@ -435,20 +433,7 @@ public class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                if (leftValue == null && rightValue == null) {
-                    // they are equal
-                    return true;
-                } else if (leftValue == null || rightValue == null) {
-                    // only one of them is null so they are not equal
-                    return false;
-                }
-                String leftStr = exchange.getContext().getTypeConverter().convertTo(String.class, leftValue);
-                String rightStr = exchange.getContext().getTypeConverter().convertTo(String.class, rightValue);
-                if (leftStr != null && rightStr != null) {
-                    return leftStr.startsWith(rightStr);
-                } else {
-                    return false;
-                }
+                return LanguageHelper.startsWith(exchange, leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -461,20 +446,7 @@ public class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                if (leftValue == null && rightValue == null) {
-                    // they are equal
-                    return true;
-                } else if (leftValue == null || rightValue == null) {
-                    // only one of them is null so they are not equal
-                    return false;
-                }
-                String leftStr = exchange.getContext().getTypeConverter().convertTo(String.class, leftValue);
-                String rightStr = exchange.getContext().getTypeConverter().convertTo(String.class, rightValue);
-                if (leftStr != null && rightStr != null) {
-                    return leftStr.endsWith(rightStr);
-                } else {
-                    return false;
-                }
+                return LanguageHelper.endsWith(exchange, leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -484,24 +456,22 @@ public class PredicateBuilder {
     }
 
     /**
-     * Returns a predicate which is true if the expression matches the given
-     * regular expression
+     * Returns a predicate which is true if the expression matches the given regular expression
      *
-     * @param expression the expression to evaluate
-     * @param regex the regular expression to match against
-     * @return a new predicate
+     * @param  expression the expression to evaluate
+     * @param  regex      the regular expression to match against
+     * @return            a new predicate
      */
     public static Predicate regex(final Expression expression, final String regex) {
         return regex(expression, Pattern.compile(regex));
     }
 
     /**
-     * Returns a predicate which is true if the expression matches the given
-     * regular expression
+     * Returns a predicate which is true if the expression matches the given regular expression
      *
-     * @param expression the expression to evaluate
-     * @param pattern the regular expression to match against
-     * @return a new predicate
+     * @param  expression the expression to evaluate
+     * @param  pattern    the regular expression to match against
+     * @return            a new predicate
      */
     public static Predicate regex(final Expression expression, final Pattern pattern) {
         notNull(expression, "expression");
@@ -530,11 +500,10 @@ public class PredicateBuilder {
     }
 
     /**
-     * Concat the given predicates into a single predicate, which
-     * only matches if all the predicates matches.
+     * Concat the given predicates into a single predicate, which only matches if all the predicates matches.
      *
-     * @param predicates predicates
-     * @return a single predicate containing all the predicates
+     * @param  predicates predicates
+     * @return            a single predicate containing all the predicates
      */
     public static Predicate and(List<Predicate> predicates) {
         Predicate answer = null;
@@ -549,11 +518,10 @@ public class PredicateBuilder {
     }
 
     /**
-     * Concat the given predicates into a single predicate, which only matches
-     * if all the predicates matches.
+     * Concat the given predicates into a single predicate, which only matches if all the predicates matches.
      *
-     * @param predicates predicates
-     * @return a single predicate containing all the predicates
+     * @param  predicates predicates
+     * @return            a single predicate containing all the predicates
      */
     public static Predicate and(Predicate... predicates) {
         return and(Arrays.asList(predicates));
@@ -562,8 +530,8 @@ public class PredicateBuilder {
     /**
      * A constant predicate.
      *
-     * @param answer the constant matches
-     * @return a predicate that always returns the given answer.
+     * @param  answer the constant matches
+     * @return        a predicate that always returns the given answer.
      */
     public static Predicate constant(final boolean answer) {
         return new Predicate() {
@@ -574,7 +542,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "" + answer;
+                return String.valueOf(answer);
             }
         };
     }

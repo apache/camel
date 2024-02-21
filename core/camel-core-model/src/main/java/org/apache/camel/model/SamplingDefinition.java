@@ -19,10 +19,10 @@ package org.apache.camel.model;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.TimeUtils;
@@ -35,27 +35,22 @@ import org.apache.camel.util.TimeUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
-    // use Long to let it be optional in JAXB so when using XML the default is 1
-    // second
-
     @XmlAttribute
-    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String samplePeriod;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String messageFrequency;
-    @XmlAttribute
-    @Metadata(defaultValue = "SECONDS", enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
-              javaType = "java.util.concurrent.TimeUnit", deprecationNote = "Use samplePeriod extended syntax instead")
-    @Deprecated
-    private String units;
 
     public SamplingDefinition() {
     }
 
+    public SamplingDefinition(String samplePeriod) {
+        this.samplePeriod = samplePeriod;
+    }
+
     public SamplingDefinition(Duration period) {
         this.samplePeriod = TimeUtils.printDuration(period);
-        this.units = TimeUnit.MILLISECONDS.name();
     }
 
     public SamplingDefinition(long samplePeriod, TimeUnit units) {
@@ -96,7 +91,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this
      * many received.
      *
-     * @param  messageFrequency
+     * @param  messageFrequency the message frequency
      * @return                  the builder
      */
     public SamplingDefinition sampleMessageFrequency(long messageFrequency) {
@@ -121,20 +116,19 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * @param  samplePeriod the period
      * @return              the builder
      */
-    public SamplingDefinition samplePeriod(long samplePeriod) {
+    public SamplingDefinition samplePeriod(String samplePeriod) {
         setSamplePeriod(samplePeriod);
         return this;
     }
 
     /**
-     * Sets the time units for the sample period, defaulting to seconds.
+     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
-     * @param  units the time unit of the sample period.
-     * @return       the builder
+     * @param  samplePeriod the period
+     * @return              the builder
      */
-    @Deprecated
-    public SamplingDefinition timeUnits(TimeUnit units) {
-        setUnits(units);
+    public SamplingDefinition samplePeriod(long samplePeriod) {
+        setSamplePeriod(samplePeriod);
         return this;
     }
 
@@ -175,24 +169,4 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         this.messageFrequency = Long.toString(messageFrequency);
     }
 
-    /**
-     * Sets the time units for the sample period, defaulting to seconds.
-     */
-    @Deprecated
-    public void setUnits(String units) {
-        this.units = units;
-    }
-
-    /**
-     * Sets the time units for the sample period, defaulting to seconds.
-     */
-    @Deprecated
-    public void setUnits(TimeUnit units) {
-        this.units = units.name();
-    }
-
-    @Deprecated
-    public String getUnits() {
-        return units;
-    }
 }

@@ -1,4 +1,3 @@
-[[Exception-org.apache.camel.NoSuchEndpointException-Exceptionorg.apache.camel.NoSuchEndpointException]]
 = Exception: `org.apache.camel.NoSuchEndpointException`
 
 The usual cause for this exception is a missing component JAR on the

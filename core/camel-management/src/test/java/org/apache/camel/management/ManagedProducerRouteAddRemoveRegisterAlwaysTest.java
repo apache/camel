@@ -25,13 +25,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PRODUCER;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 12;
+    private static final int SERVICES = 16;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -48,14 +53,14 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
         result.assertIsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
         assertEquals(SERVICES, names.size());
 
         // number of producers
-        ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
+        ObjectName onP = getCamelObjectName(TYPE_PRODUCER, "*");
         Set<ObjectName> namesP = mbeanServer.queryNames(onP, null);
         assertEquals(3, namesP.size());
 

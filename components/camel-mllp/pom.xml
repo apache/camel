@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mllp</artifactId>
@@ -41,6 +41,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -51,6 +55,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -59,44 +64,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq.tooling</groupId>
-            <artifactId>activemq-junit</artifactId>
-            <version>${activemq-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- test logging -->
+        <!-- test infra -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-artemis</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

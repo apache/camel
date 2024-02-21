@@ -77,7 +77,7 @@ public class JavaMainTemplateTest {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
         assertEquals(0, camelContext.getRoutes().size());
-        assertEquals(1, camelContext.adapt(ModelCamelContext.class).getRouteTemplateDefinitions().size());
+        assertEquals(1, ((ModelCamelContext) camelContext).getRouteTemplateDefinitions().size());
 
         main.stop();
     }

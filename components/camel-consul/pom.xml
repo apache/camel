@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-consul</artifactId>
@@ -33,6 +33,9 @@
     <description>Camel Consul support</description>
 
     <properties>
+        <!-- Consul container is not available on these platforms -->
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -54,7 +57,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.orbitz.consul</groupId>
+            <groupId>org.kiwiproject</groupId>
             <artifactId>consul-client</artifactId>
             <version>${consul-client-version}</version>
         </dependency>
@@ -122,18 +125,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ribbon</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -156,14 +150,6 @@
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-consul</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -174,62 +160,23 @@
 
     <profiles>
         <profile>
-            <id>consul-skip-tests</id>
+            <id>ppc64le</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
             </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the docker socket file is accessible -->
-        <profile>
-            <id>consul-tests-docker-file</id>
-            <activation>
-                <file>
-                    <exists>/var/run/docker.sock</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
+                            <skipITs>${skipTests}</skipITs>
+                            <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the DOCKER_HOST env var is set -->
-        <profile>
-            <id>consul-tests-docker-env</id>
-            <activation>
-                <property>
-                    <name>env.DOCKER_HOST</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <systemPropertyVariables>
-                                <visibleassertions.silence>true</visibleassertions.silence>
-                            </systemPropertyVariables>
+                                 <consul.container>icr.io/ppc64le-oss/consul-ppc64le:1.9.4</consul.container>
+                           </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -18,48 +18,59 @@ package org.apache.camel.component.jms;
 
 import java.io.Serializable;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- *
- */
-public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
+@Timeout(30)
+public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
-    public void testReturnBean() throws Exception {
-        MyBean out = template.requestBody("activemq:queue:foo", "Camel", MyBean.class);
+    public void testReturnBean() {
+        MyBean out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "Camel", MyBean.class);
+
         assertNotNull(out);
         assertEquals("Camel", out.getName());
     }
 
     @Test
-    public void testReturnNull() throws Exception {
-        Object out = template.requestBody("activemq:queue:foo", "foo");
+    public void testReturnNull() {
+        Object out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "foo");
         assertNull(out);
     }
 
     @Test
-    public void testReturnNullMyBean() throws Exception {
-        MyBean out = template.requestBody("activemq:queue:foo", "foo", MyBean.class);
+    public void testReturnNullMyBean() {
+        MyBean out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "foo", MyBean.class);
         assertNull(out);
     }
 
     @Test
-    public void testReturnNullExchange() throws Exception {
-        Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("foo"));
+    public void testReturnNullExchange() {
+        Exchange reply
+                = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
         assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
@@ -69,19 +80,25 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
+
+        jmsComponent.setRequestTimeout(5000);
+
+        return jmsComponent;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo")
+            public void configure() {
+                from("activemq:queue:JmsInOutBeanReturnNullTest")
                         .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }
         };
@@ -95,10 +112,22 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
         }
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
+
     public static final class MyBean implements Serializable {
 
         private static final long serialVersionUID = 1L;
-        public String name;
+        public final String name;
 
         public MyBean(String name) {
             this.name = name;

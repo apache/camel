@@ -18,6 +18,8 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.StreamCache;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
@@ -47,6 +49,16 @@ public final class MinaHelper {
      */
     public static void writeBody(IoSession session, Object body, Exchange exchange, long writeTimeout)
             throws CamelExchangeException {
+
+        // if stream cached then mina needs to use byte array instead
+        if (body instanceof StreamCache) {
+            try {
+                body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
+            } catch (NoTypeConversionAvailableException e) {
+                throw new CamelExchangeException("Error converting body to byte[]", exchange, e);
+            }
+        }
+
         // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
         WriteFuture future = session.write(body);
         // must use a timeout as in some very high performance scenarios a write can cause thread hanging forever

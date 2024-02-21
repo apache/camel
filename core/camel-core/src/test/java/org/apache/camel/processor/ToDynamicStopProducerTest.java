@@ -65,7 +65,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         sendBody("bar", "mymock:y");
         sendBody("bar", "mymock:z");
 
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(-1, sdp.getCacheSize());
@@ -104,7 +104,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         sendBody("bar", "mymock:y");
         sendBody("bar", "mymock:z");
 
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(0, sdp.getCacheSize());
@@ -142,7 +142,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         sendBody("bar", "mymock:y");
         sendBody("bar", "mymock:z");
 
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(1, sdp.getCacheSize());
@@ -180,7 +180,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         sendBody("bar", "mymock:y");
         sendBody("bar", "mymock:z");
 
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(2, sdp.getCacheSize());
@@ -218,7 +218,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
         sendBody("bar", "mymock:y");
         sendBody("bar", "mymock:z");
 
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(3, sdp.getCacheSize());

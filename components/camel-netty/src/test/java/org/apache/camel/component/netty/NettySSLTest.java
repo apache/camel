@@ -35,12 +35,12 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 public class NettySSLTest extends BaseNettyTest {
 
     @BindToRegistry("ksf")
-    public File loadKeystoreKsf() throws Exception {
+    public File loadKeystoreKsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
     @BindToRegistry("tsf")
-    public File loadKeystoreTsf() throws Exception {
+    public File loadKeystoreTsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
@@ -58,7 +58,7 @@ public class NettySSLTest extends BaseNettyTest {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate
                 // details
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
+                from("netty:tcp://127.0.0.1:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 SSLSession session
@@ -67,10 +67,10 @@ public class NettySSLTest extends BaseNettyTest {
                                     X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                     Principal principal = cert.getSubjectDN();
                                     log.info("Client Cert SubjectDN: {}", principal.getName());
-                                    exchange.getOut().setBody(
+                                    exchange.getMessage().setBody(
                                             "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                                 } else {
-                                    exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                                    exchange.getMessage().setBody("Cannot start conversion without SSLSession");
                                 }
                             }
                         });

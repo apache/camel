@@ -58,7 +58,7 @@ public class SoapHeaderTest {
             }
         });
         assertNotNull(result);
-        String header = result.getOut().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, String.class);
+        String header = result.getMessage().getHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, String.class);
         assertEquals(soapHeader, header);
     }
 }

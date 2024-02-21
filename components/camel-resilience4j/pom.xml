@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-resilience4j</artifactId>
@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.0.0</firstVersion>
         <label>eip,microservice</label>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -42,6 +43,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-reifier</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
         </dependency>
 
         <dependency>
@@ -85,11 +94,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -30,14 +30,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
+
+    @XmlAttribute
+    private String message;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String markRollbackOnly;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String markRollbackOnlyLast;
-    @XmlAttribute
-    private String message;
 
     public RollbackDefinition() {
     }

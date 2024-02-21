@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class DisruptorWaitForTaskCompleteTest extends CamelTestSupport {
         final String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -44,14 +45,14 @@ public class DisruptorWaitForTaskCompleteTest extends CamelTestSupport {
         // and since the route changes the payload we can get the response anyway
         final Exchange out = template.send("direct:start", new Processor() {
             @Override
-            public void process(final Exchange exchange) throws Exception {
+            public void process(final Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
         });
         assertEquals("Bye World", out.getIn().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -17,15 +17,13 @@
 package org.apache.camel.component.as2.api.entity;
 
 import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
 
 public class MultipartReportEntity extends MultipartMimeEntity {
 
     public MultipartReportEntity(String charset,
                                  boolean isMainBody,
-                                 String boundary)
-                                                  throws HttpException {
+                                 String boundary) {
 
         super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
 

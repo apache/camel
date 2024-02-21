@@ -16,11 +16,11 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -31,16 +31,19 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionDefinition> {
-    @XmlAttribute
-    private String ref;
-    @XmlAttribute
-    private String message;
+
     @XmlTransient
     private Exception exception;
-    @XmlAttribute
-    private String exceptionType;
     @XmlTransient
     private Class<? extends Exception> exceptionClass;
+
+    @XmlAttribute
+    private String message;
+    @XmlAttribute
+    private String exceptionType;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String ref;
 
     public ThrowExceptionDefinition() {
     }

@@ -1,12 +1,14 @@
-[[pulsar-component]]
 = Pulsar Component
-:docTitle: Pulsar
-:artifactId: camel-pulsar
+:doctitle: Pulsar
+:shortname: pulsar
+:artifactid: camel-pulsar
 :description: Send and receive messages from/to Apache Pulsar messaging system.
 :since: 2.24
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/pulsar.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: pulsar
 
 *Since Camel {since}*
 
@@ -27,159 +29,25 @@ their `pom.xml` for this component.
 
 == URI format
 
-[source,text]
 ----------------------
 pulsar:[persistent|non-persistent]://tenant/namespace/topic
 ----------------------
 
-== Options
+// component-configure options: START
 
+// component-configure options: END
 
 // component options: START
-The Pulsar component supports 36 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *configuration* (common) | Allows to pre-configure the Pulsar component with common options that the endpoints will reuse. |  | PulsarConfiguration
-| *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
-| *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
-| *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
-| *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
-| *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
-| *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
-| *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
-| *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
-| *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
-| *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
-| *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
-| *subscriptionName* (consumer) | Name of the subscription to use | subs | String
-| *subscriptionTopicsMode* (consumer) | Determines to which topics this consumer should be subscribed to - Persistent, Non-Persistent, or both. Only used with pattern subscriptions. There are 3 enums and the value can be one of: PersistentOnly, NonPersistentOnly, AllTopics | PersistentOnly | RegexSubscriptionMode
-| *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults to EXCLUSIVE. There are 4 enums and the value can be one of: EXCLUSIVE, SHARED, FAILOVER, KEY_SHARED | EXCLUSIVE | SubscriptionType
-| *topicsPattern* (consumer) | Whether the topic is a pattern (regular expression) that allows the consumer to subscribe to all matching topics in the namespace | false | boolean
-| *pulsarMessageReceiptFactory* (consumer) | Provide a factory to create an alternate implementation of PulsarMessageReceipt. |  | PulsarMessageReceiptFactory
-| *batcherBuilder* (producer) | Control batching method used by the producer. | DEFAULT | BatcherBuilder
-| *batchingEnabled* (producer) | Control whether automatic batching of messages is enabled for the producer. | true | boolean
-| *batchingMaxMessages* (producer) | The maximum size to batch messages. | 1000 | int
-| *batchingMaxPublishDelayMicros* (producer) | The maximum time period within which the messages sent will be batched if batchingEnabled is true. | 1000 | long
-| *blockIfQueueFull* (producer) | Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError | false | boolean
-| *compressionType* (producer) | Compression type to use. There are 5 enums and the value can be one of: NONE, LZ4, ZLIB, ZSTD, SNAPPY | NONE | CompressionType
-| *initialSequenceId* (producer) | The first message published will have a sequence Id of initialSequenceId 1. | -1 | long
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxPendingMessages* (producer) | Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true | 1000 | int
-| *maxPendingMessagesAcross{zwsp}Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
-| *messageRouter* (producer) | Custom Message Router to use |  | MessageRouter
-| *messageRoutingMode* (producer) | Message Routing Mode to use. There are 3 enums and the value can be one of: SinglePartition, RoundRobinPartition, CustomPartition | RoundRobinPartition | MessageRoutingMode
-| *producerName* (producer) | Name of the producer. If unset, lets Pulsar select a unique identifier. |  | String
-| *sendTimeoutMs* (producer) | Send timeout in milliseconds | 30000 | int
-| *autoConfiguration* (advanced) | The pulsar auto configuration |  | AutoConfiguration
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *pulsarClient* (advanced) | *Autowired* The pulsar client |  | PulsarClient
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
-
 // endpoint options: START
-The Pulsar endpoint is configured using URI syntax:
 
-----
-pulsar:persistence://tenant/namespace/topic
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (4 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *persistence* | *Required* Whether the topic is persistent or non-persistent. There are 2 enums and the value can be one of: persistent, non-persistent |  | String
-| *tenant* | *Required* The tenant |  | String
-| *namespace* | *Required* The namespace |  | String
-| *topic* | *Required* The topic |  | String
-|===
-
-
-=== Query Parameters (33 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
-| *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
-| *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not acknowledged automatically after successful route completion. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
-| *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
-| *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
-| *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
-| *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
-| *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
-| *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
-| *readCompacted* (consumer) | Enable compacted topic reading. | false | boolean
-| *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
-| *subscriptionName* (consumer) | Name of the subscription to use | subs | String
-| *subscriptionTopicsMode* (consumer) | Determines to which topics this consumer should be subscribed to - Persistent, Non-Persistent, or both. Only used with pattern subscriptions. There are 3 enums and the value can be one of: PersistentOnly, NonPersistentOnly, AllTopics | PersistentOnly | RegexSubscriptionMode
-| *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults to EXCLUSIVE. There are 4 enums and the value can be one of: EXCLUSIVE, SHARED, FAILOVER, KEY_SHARED | EXCLUSIVE | SubscriptionType
-| *topicsPattern* (consumer) | Whether the topic is a pattern (regular expression) that allows the consumer to subscribe to all matching topics in the namespace | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *batcherBuilder* (producer) | Control batching method used by the producer. | DEFAULT | BatcherBuilder
-| *batchingEnabled* (producer) | Control whether automatic batching of messages is enabled for the producer. | true | boolean
-| *batchingMaxMessages* (producer) | The maximum size to batch messages. | 1000 | int
-| *batchingMaxPublishDelayMicros* (producer) | The maximum time period within which the messages sent will be batched if batchingEnabled is true. | 1000 | long
-| *blockIfQueueFull* (producer) | Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError | false | boolean
-| *compressionType* (producer) | Compression type to use. There are 5 enums and the value can be one of: NONE, LZ4, ZLIB, ZSTD, SNAPPY | NONE | CompressionType
-| *initialSequenceId* (producer) | The first message published will have a sequence Id of initialSequenceId 1. | -1 | long
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *maxPendingMessages* (producer) | Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true | 1000 | int
-| *maxPendingMessagesAcross{zwsp}Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
-| *messageRouter* (producer) | Custom Message Router to use |  | MessageRouter
-| *messageRoutingMode* (producer) | Message Routing Mode to use. There are 3 enums and the value can be one of: SinglePartition, RoundRobinPartition, CustomPartition | RoundRobinPartition | MessageRoutingMode
-| *producerName* (producer) | Name of the producer. If unset, lets Pulsar select a unique identifier. |  | String
-| *sendTimeoutMs* (producer) | Send timeout in milliseconds | 30000 | int
-|===
 // endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 
-// message-headers options: START
-=== Message headers evaluated by the Pulsar producer
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-| Header | Type | Description
-| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
-| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
-| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
-|===
-
-=== Message headers set by the Pulsar consumer
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-| Header | Type | Description
-| `properties` | `Map<String,String>` | The properties from the Pulsar message or the empty Map if unset on the Pulsar message
-| `producer_name` | `String` | The name of the producer that created the message
-| `sequence_id` | `long` | Sequence identifier of the Pulsar message
-| `publish_time` | `long` | Time the Pulsar message was published to the topic
-| `message_id` | `MessageId` | Unique identifier of the message
-| `event_time` | `long` | The event time associated with the message or 0 if unset on the Pulsar message
-| `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
-| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
-| `topic_name` | `String` | The topic to which the message was published
-| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
-|===
-// message-headers options: END
-
-include::camel-spring-boot::page$pulsar-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

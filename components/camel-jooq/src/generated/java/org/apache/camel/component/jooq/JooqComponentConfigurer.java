@@ -37,6 +37,10 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumeDelete": getOrCreateConfiguration(target).setConsumeDelete(property(camelContext, boolean.class, value)); return true;
         case "databaseconfiguration":
         case "databaseConfiguration": getOrCreateConfiguration(target).setDatabaseConfiguration(property(camelContext, org.jooq.Configuration.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.jooq.JooqOperation.class, value)); return true;
@@ -57,6 +61,10 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumeDelete": return boolean.class;
         case "databaseconfiguration":
         case "databaseConfiguration": return org.jooq.Configuration.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.jooq.JooqOperation.class;
@@ -78,6 +86,10 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumeDelete": return getOrCreateConfiguration(target).isConsumeDelete();
         case "databaseconfiguration":
         case "databaseConfiguration": return getOrCreateConfiguration(target).getDatabaseConfiguration();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();

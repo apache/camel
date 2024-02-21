@@ -58,7 +58,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
         template.sendBody("direct:marshall", person);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
@@ -84,7 +84,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
-        assertTrue(cause.getMessage().contains("javax.xml.bind.MarshalException"));
+        assertTrue(cause.getMessage().contains("jakarta.xml.bind.MarshalException"));
         assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
         assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.a"));
     }
@@ -105,7 +105,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
                 .toString();
         template.sendBody("direct:unmarshall", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 
@@ -115,7 +115,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshallWithValidationException() throws Exception {
+    public void testUnmarshallWithValidationException() {
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
                 .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
                 .toString();
@@ -125,19 +125,20 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
-        assertTrue(cause.getMessage().contains("javax.xml.bind.UnmarshalException"));
+        assertTrue(cause.getMessage().contains("jakarta.xml.bind.UnmarshalException"));
         assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
         assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
+                jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 
                 from("direct:marshall")
                         .marshal(jaxbDataFormat)

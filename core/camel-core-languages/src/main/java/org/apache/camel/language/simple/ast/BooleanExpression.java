@@ -47,7 +47,7 @@ public class BooleanExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return "" + value;
+                return String.valueOf(value);
             }
         };
     }

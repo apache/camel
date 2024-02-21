@@ -23,6 +23,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
@@ -68,11 +69,11 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
-        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
+        assertNull(derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello Again"));
-        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
+        assertNull(derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
     }
 
@@ -98,11 +99,11 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
-        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
+        assertNull(derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello Again"));
-        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
+        assertNull(derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
     }
 

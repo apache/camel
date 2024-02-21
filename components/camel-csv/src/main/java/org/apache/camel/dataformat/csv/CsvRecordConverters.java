@@ -45,10 +45,10 @@ final class CsvRecordConverters {
         private static final ListCsvRecordConverter SINGLETON = new ListCsvRecordConverter();
 
         @Override
-        public List<String> convertRecord(CSVRecord record) {
-            List<String> answer = new ArrayList<>(record.size());
-            for (int i = 0; i < record.size(); i++) {
-                answer.add(record.get(i));
+        public List<String> convertRecord(CSVRecord csvRecord) {
+            List<String> answer = new ArrayList<>(csvRecord.size());
+            for (int i = 0; i < csvRecord.size(); i++) {
+                answer.add(csvRecord.get(i));
             }
             return answer;
         }
@@ -67,8 +67,8 @@ final class CsvRecordConverters {
         private static final MapCsvRecordConverter SINGLETON = new MapCsvRecordConverter();
 
         @Override
-        public Map<String, String> convertRecord(CSVRecord record) {
-            return record.toMap();
+        public Map<String, String> convertRecord(CSVRecord csvRecord) {
+            return csvRecord.toMap();
         }
     }
 
@@ -86,8 +86,8 @@ final class CsvRecordConverters {
 
         @Override
         @SuppressWarnings("unchecked")
-        public Map<String, String> convertRecord(CSVRecord record) {
-            return record.toMap();
+        public Map<String, String> convertRecord(CSVRecord csvRecord) {
+            return csvRecord.toMap();
         }
     }
 }

@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- we intercept by endpoint, that means that whenever an exchange is about to be sent to
              this endpoint, its intercepted and routed with this detour route beforehand

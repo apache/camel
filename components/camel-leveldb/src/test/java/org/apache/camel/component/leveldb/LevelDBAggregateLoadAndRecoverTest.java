@@ -27,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadAndRecoverTest.class);
@@ -53,7 +56,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
         mock.expectedMessageCount(SIZE / 10);
         mock.setResultWaitTime(50 * 1000);
 
-        LOG.info("Staring to send " + SIZE + " messages.");
+        LOG.info("Starting to send {} messages.", SIZE);
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -67,9 +70,9 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
             Thread.sleep(5);
         }
 
-        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         int recovered = 0;
         for (Exchange exchange : mock.getReceivedExchanges()) {
@@ -87,10 +90,10 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 LevelDBAggregationRepository repo = getRepo();
                 repo.setUseRecovery(true);
                 // for faster unit testing
@@ -104,7 +107,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
                         .to("log:output?showHeaders=true")
                         // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int num = counter.incrementAndGet();
                                 if (num % 10 == 0) {
                                     throw new IllegalStateException("Failed for num " + num);

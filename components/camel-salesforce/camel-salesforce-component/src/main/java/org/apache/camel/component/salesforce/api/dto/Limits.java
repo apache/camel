@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -50,7 +49,7 @@ public final class Limits implements Serializable {
 
         @Override
         public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException, JsonProcessingException {
+                throws IOException {
 
             final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 
@@ -104,9 +103,7 @@ public final class Limits implements Serializable {
         private final Map<String, Usage> perApplication = new HashMap<>();
 
         @JsonCreator
-        Usage(@JsonProperty("Max")
-        final int max, @JsonProperty("Remaining")
-        final int remaining) {
+        Usage(@JsonProperty("Max") final int max, @JsonProperty("Remaining") final int remaining) {
             this.max = max;
             this.remaining = remaining;
         }

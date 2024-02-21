@@ -34,6 +34,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
             <from uri="file://src/test/data/fixedShort?noop=true"/>
+            <convertBodyTo type="String"/>
             <multicast>
                 <to uri="flatpack:fixed:PEOPLE-FixedLength.pzmap.xml?allowShortLines=true"/>
                 <to uri="direct:df"/>

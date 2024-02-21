@@ -31,7 +31,19 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
     protected final Properties properties;
 
     protected DigitalOceanTestSupport() {
-        URL url = getClass().getResource("/test-options.properties");
+        properties = loadProperties();
+    }
+
+    // This is used by JUnit to automatically determine whether or not to run the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
+
+        return !properties.getProperty("oAuthToken", "").isEmpty();
+    }
+
+    private static Properties loadProperties() {
+        URL url = DigitalOceanTestSupport.class.getResource("/test-options.properties");
 
         InputStream inStream;
         try {
@@ -41,9 +53,11 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
             throw new IllegalAccessError("test-options.properties could not be found");
         }
 
-        properties = new Properties();
+        Properties properties = new Properties();
         try {
             properties.load(inStream);
+
+            return properties;
         } catch (IOException e) {
             LOG.error("I/O error reading the stream: {}", e.getMessage(), e);
             throw new IllegalAccessError("test-options.properties could not be found");

@@ -21,10 +21,10 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 
 public class DefaultComponentNameResolver implements ComponentNameResolver {
 
@@ -33,13 +33,13 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
     @Override
     public Set<String> resolveNames(CamelContext camelContext) {
         try {
-            return camelContext.adapt(ExtendedCamelContext.class)
-                    .getPackageScanResourceResolver()
+            return PluginHelper.getPackageScanResourceResolver(camelContext)
                     .findResources(RESOURCE_PATH)
                     .stream()
                     .map(Resource::getLocation)
                     // remove leading path to only keep name
-                    .map(l -> l.substring(l.lastIndexOf('/') + 1))
+                    // searching for last separator: Jar path separator (/), Unix path (/) and Windows path separator (\)
+                    .map(l -> l.substring(Math.max(l.lastIndexOf('/'), l.lastIndexOf('\\')) + 1))
                     .collect(Collectors.toCollection(TreeSet::new));
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

@@ -34,7 +34,7 @@ import org.apache.camel.util.StringHelper;
  * Execute commands on the underlying operating system.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true,
-             category = { Category.SYSTEM })
+             remote = false, category = { Category.CORE }, headersClass = ExecBinding.class)
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
@@ -51,6 +51,8 @@ public class ExecEndpoint extends DefaultEndpoint {
     private String workingDir;
     @UriParam(javaType = "java.time.Duration")
     private long timeout;
+    @UriParam
+    private String exitValues;
     @UriParam
     private String outFile;
     @UriParam
@@ -126,6 +128,19 @@ public class ExecEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("The timeout must be a positive long!");
         }
         this.timeout = timeout;
+    }
+
+    public String getExitValues() {
+        return exitValues;
+    }
+
+    /**
+     * The exit values of successful executions. If the process exits with another value, an exception is raised.
+     * Comma-separated list of exit values. And empty list (the default) sets no expected exit values and disables the
+     * check.
+     */
+    public void setExitValues(String exitValues) {
+        this.exitValues = exitValues;
     }
 
     public String getOutFile() {

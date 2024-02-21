@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.irc;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -31,7 +29,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
@@ -133,12 +130,12 @@ public class IrcConfiguration implements Cloneable {
     public String getSpaceSeparatedChannelNames() {
         StringBuilder retval = new StringBuilder();
         for (IrcChannel channel : channelList) {
-            retval.append(retval.length() == 0 ? "" : " ").append(channel.getName());
+            retval.append(retval.isEmpty() ? "" : " ").append(channel.getName());
         }
         return retval.toString();
     }
 
-    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException {
+    public void configure(String uriStr) throws URISyntaxException {
         // fix provided URI and handle that we can use # to indicate the IRC room
         if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);
@@ -352,7 +349,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Use persistent messages.
-     * 
+     *
      * @deprecated not in use
      */
     @Deprecated
@@ -507,7 +504,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Delay in milliseconds before sending commands after the connection is established.
-     * 
+     *
      * @param timeout timeout value in milliseconds
      */
     public void setCommandTimeout(long timeout) {
@@ -545,34 +542,5 @@ public class IrcConfiguration implements Cloneable {
     public static String sanitize(String uri) {
         //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
         return uri.replace("#", "%23");
-    }
-
-    private static String formatQuery(Map<String, Object> params) {
-        if (params == null || params.size() == 0) {
-            return "";
-        }
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, Object> pair : params.entrySet()) {
-            Object value = pair.getValue();
-            // the value may be a list since the same key has multiple values
-            if (value instanceof List) {
-                List<?> list = (List<?>) value;
-                for (Object s : list) {
-                    addQueryParameter(result, pair.getKey(), s);
-                }
-            } else {
-                addQueryParameter(result, pair.getKey(), value);
-            }
-        }
-        return result.toString();
-    }
-
-    private static void addQueryParameter(StringBuilder sb, String key, Object value) {
-        sb.append(sb.length() == 0 ? "" : "&");
-        sb.append(key);
-        if (value != null) {
-            String s = value.toString();
-            sb.append(s.isEmpty() ? "" : "=" + UnsafeUriCharactersEncoder.encode(s));
-        }
     }
 }

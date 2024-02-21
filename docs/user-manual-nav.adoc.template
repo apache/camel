@@ -6,7 +6,7 @@
 * xref:architecture.adoc[Architecture]
  ** xref:async.adoc[Async]
  ** xref:asynchronous-routing-engine.adoc[Asynchronous Routing Engine]
- ** xref:backlogdebugger.adoc[Backlog debugger]
+ ** xref:backlog-debugger.adoc[Backlog debugger]
  ** xref:bam.adoc[Business Activity Monitoring]
  ** xref:batch-consumer.adoc[Batch Consumer]
  ** xref:browsable-endpoint.adoc[BrowsableEndpoint]
@@ -48,7 +48,6 @@
  ** xref:dsl.adoc[Camel Domain Specific Language]
  ** xref:java-dsl.adoc[Java DSL]
  ** xref:spring.adoc[Spring support]
-* xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Languages -- see Components documentation
 * xref:(eips-vc}:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * Frequently asked questions

@@ -26,6 +26,7 @@
 
   <!-- tag::e1[] -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- define a producer template -->
     <template id="producer"/>
     <!-- define a consumer template -->

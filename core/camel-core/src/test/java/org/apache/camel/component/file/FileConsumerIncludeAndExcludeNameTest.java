@@ -20,20 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test that file consumer will include/exclude pre and postfixes
  */
 public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/includeexclude");
-        super.setUp();
-    }
 
     @Test
     public void testIncludePreAndPostfixes() throws Exception {
@@ -47,20 +39,19 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/data/includeexclude";
-        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(url, "Report 1", Exchange.FILE_NAME, "report1.xml");
-        template.sendBodyAndHeader(url, "Report 2", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader(url, "Report 3", Exchange.FILE_NAME, "report3.txt");
-        template.sendBodyAndHeader(url, "Report 4", Exchange.FILE_NAME, "Report4.txt");
-        template.sendBodyAndHeader(url, "Secret", Exchange.FILE_NAME, "Secret.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Report 1", Exchange.FILE_NAME, "report1.xml");
+        template.sendBodyAndHeader(fileUri(), "Report 2", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(fileUri(), "Report 3", Exchange.FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader(fileUri(), "Report 4", Exchange.FILE_NAME, "Report4.txt");
+        template.sendBodyAndHeader(fileUri(), "Secret", Exchange.FILE_NAME, "Secret.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/includeexclude/?initialDelay=0&delay=10&include=report.*txt&exclude=hello.*")
+                from(fileUri("?initialDelay=0&delay=10&include=report.*txt&exclude=hello.*"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

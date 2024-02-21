@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class DisruptorVmQueueTest extends AbstractVmTestSupport {
 
     @Test
-    void testQueue() throws Exception {
+    void testQueue() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Goodday World", "Bar");
 

@@ -16,19 +16,24 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -39,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Spring XML version of {@link MailSplitAttachmentsTest}
  */
 public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     private Endpoint endpoint;
     private Exchange exchange;
@@ -56,7 +62,7 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
     @BeforeEach
     public void setup() {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
-        endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
+        endpoint = context.getEndpoint(james.uriPrefix(Protocol.smtp));
         exchange = endpoint.createExchange();
         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("Hello World");
@@ -86,7 +92,8 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         assertEquals("log4j2.properties", second.getHeader("CamelSplitAttachmentId"));
 
         byte[] expected1 = IOUtils.toByteArray(new FileDataSource("src/test/data/logo.jpeg").getInputStream());
-        byte[] expected2 = IOUtils.toByteArray(new FileDataSource("src/test/resources/log4j2.properties").getInputStream());
+        byte[] expected2 = Files.readString(Paths.get("src/test/resources/log4j2.properties"), StandardCharsets.UTF_8)
+                .replace("\n", "\r\n").trim().getBytes(StandardCharsets.UTF_8);
 
         assertArrayEquals(expected1, first.getBody(byte[].class));
         assertArrayEquals(expected2, second.getBody(byte[].class));

@@ -16,49 +16,66 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsToDTest extends AbstractJMSTest {
 
-public class JmsToDTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        getMockEndpoint("mock:JmsToDTest.bar").expectedBodiesReceived("Hello bar");
+        getMockEndpoint("mock:JmsToDTest.beer").expectedBodiesReceived("Hello beer");
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDTest.beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");
 
-                from("activemq:queue:bar").to("mock:bar");
-                from("activemq:queue:beer").to("mock:beer");
+                from("activemq:queue:JmsToDTest.bar").to("mock:JmsToDTest.bar");
+                from("activemq:queue:JmsToDTest.beer").to("mock:JmsToDTest.beer");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

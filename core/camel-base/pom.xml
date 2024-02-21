@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-base</artifactId>
@@ -31,6 +31,11 @@
 
     <name>Camel :: Base</name>
     <description>The Base Camel Framework</description>
+
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <label>core</label>
+    </properties>
 
     <dependencies>
 

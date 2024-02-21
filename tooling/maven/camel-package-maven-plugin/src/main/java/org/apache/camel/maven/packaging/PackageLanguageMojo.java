@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
@@ -116,7 +116,6 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         StringBuilder buffer = new StringBuilder();
         int count = 0;
 
-        // TODO
         File f = new File(project.getBasedir(), "target/classes");
         f = new File(f, "META-INF/services/org/apache/camel/language");
         if (f.exists() && f.isDirectory()) {
@@ -267,7 +266,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         }
         String name = file.getName();
         if (name.charAt(0) != '.') {
-            if (buffer.length() > 0) {
+            if (!buffer.isEmpty()) {
                 buffer.append(" ");
             }
             buffer.append(name);
@@ -312,7 +311,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String asDescription(String name, String description) {
         // special for some languages
         if ("file".equals(name)) {
-            return "For expressions and predicates using the file/simple language.";
+            return "File related capabilities for the Simple language";
         }
         return description;
     }

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.grpc.ClientInterceptor;
+import io.grpc.ServerInterceptor;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
@@ -67,18 +68,22 @@ public class GrpcConfiguration {
     private String jwtSubject;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String serviceAccountResource;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String keyCertChainResource;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String keyResource;
 
     @UriParam(label = "security", secret = true)
     private String keyPassword;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String trustCertCollectionResource;
 
     @UriParam(label = "producer", defaultValue = "SIMPLE")
@@ -111,14 +116,27 @@ public class GrpcConfiguration {
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean routeControlledStreamObserver;
 
+    private List<ServerInterceptor> serverInterceptors = Collections.emptyList();
+
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autoDiscoverServerInterceptors = true;
+
     private List<ClientInterceptor> clientInterceptors = Collections.emptyList();
 
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean autoDiscoverClientInterceptors = true;
 
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+
+    @UriParam(defaultValue = "false", label = "producer",
+              description = "Copies exchange properties from original exchange to all exchanges created for route defined by streamRepliesTo.")
+    private boolean inheritExchangePropertiesForReplies = false;
+
+    @UriParam(defaultValue = "false", label = "producer",
+              description = "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
+    private boolean toRouteControlledStreamObserver = false;
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
@@ -290,7 +308,10 @@ public class GrpcConfiguration {
      * This option specifies the top-level strategy for processing service requests and responses in streaming mode. If
      * an aggregation strategy is selected, all requests will be accumulated in the list, then transferred to the flow,
      * and the accumulated responses will be sent to the sender. If a propagation strategy is selected, request is sent
-     * to the stream, and the response will be immediately sent back to the sender.
+     * to the stream, and the response will be immediately sent back to the sender. If a delegation strategy is
+     * selected, request is sent to the stream, but no response generated under the assumption that all necessary
+     * responses will be sent at another part of route. Delegation strategy always comes with
+     * routeControlledStreamObserver=true to be able to achieve the assumption.
      */
     public GrpcConsumerStrategy getConsumerStrategy() {
         return consumerStrategy;
@@ -404,6 +425,30 @@ public class GrpcConfiguration {
         this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
     }
 
+    public List<ServerInterceptor> getServerInterceptors() {
+        return serverInterceptors;
+    }
+
+    /**
+     * Setting the server interceptors on the netty channel in order to intercept incoming calls before they are
+     * received by the server.
+     */
+    public void setServerInterceptors(List<ServerInterceptor> serverInterceptors) {
+        this.serverInterceptors = serverInterceptors;
+    }
+
+    public boolean isAutoDiscoverServerInterceptors() {
+        return autoDiscoverServerInterceptors;
+    }
+
+    /**
+     * Setting the autoDiscoverServerInterceptors mechanism, if true, the component will look for a ServerInterceptor
+     * instance in the registry automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverServerInterceptors(boolean autoDiscoverServerInterceptors) {
+        this.autoDiscoverServerInterceptors = autoDiscoverServerInterceptors;
+    }
+
     public List<ClientInterceptor> getClientInterceptors() {
         return clientInterceptors;
     }
@@ -434,6 +479,22 @@ public class GrpcConfiguration {
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public boolean isInheritExchangePropertiesForReplies() {
+        return inheritExchangePropertiesForReplies;
+    }
+
+    public void setInheritExchangePropertiesForReplies(boolean inheritExchangePropertiesForReplies) {
+        this.inheritExchangePropertiesForReplies = inheritExchangePropertiesForReplies;
+    }
+
+    public boolean isToRouteControlledStreamObserver() {
+        return toRouteControlledStreamObserver;
+    }
+
+    public void setToRouteControlledStreamObserver(boolean toRouteControlledStreamObserver) {
+        this.toRouteControlledStreamObserver = toRouteControlledStreamObserver;
     }
 
     public void parseURI(URI uri) {

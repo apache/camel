@@ -1,11 +1,13 @@
-[[rxjava-other]]
 = RxJava Component
-:docTitle: RxJava
-:artifactId: camel-rxjava
+:doctitle: RxJava
+:shortname: rxjava
+:artifactid: camel-rxjava
 :description: RxJava based back-end for Camel's reactive streams component
 :since: 2.22
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/rxjava.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: rxjava
 
 *Since Camel {since}*
 
@@ -25,3 +27,5 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

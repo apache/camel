@@ -17,28 +17,83 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Optional;
+
+import javax.net.ssl.SSLContext;
+
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ElasticSearchServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchServiceFactory.class);
+
+    static class SingletonElasticSearchService extends SingletonService<ElasticSearchService> implements ElasticSearchService {
+        public SingletonElasticSearchService(ElasticSearchService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public String getElasticSearchHost() {
+            return getService().getElasticSearchHost();
+        }
+
+        @Override
+        public String getHttpHostAddress() {
+            return getService().getHttpHostAddress();
+        }
+
+        @Override
+        public Optional<String> getCertificatePath() {
+            return getService().getCertificatePath();
+        }
+
+        @Override
+        public Optional<SSLContext> getSslContext() {
+            return getService().getSslContext();
+        }
+
+        @Override
+        public String getUsername() {
+            return getService().getUsername();
+        }
+
+        @Override
+        public String getPassword() {
+            return getService().getPassword();
+        }
+    }
 
     private ElasticSearchServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<ElasticSearchService> builder() {
+        return new SimpleTestServiceBuilder<>("elasticsearch");
+    }
+
     public static ElasticSearchService createService() {
-        String instanceType = System.getProperty("elasticsearch.instance.type");
+        return builder()
+                .addLocalMapping(ElasticSearchLocalContainerService::new)
+                .addRemoteMapping(RemoteElasticSearchService::new)
+                .build();
+    }
 
-        if (instanceType == null || instanceType.equals("local-elasticsearch-container")) {
-            return new ElasticSearchLocalContainerService();
+    public static ElasticSearchService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final ElasticSearchService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ElasticSearchService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonElasticSearchService(new ElasticSearchLocalContainerService(), "elastic"))
+                    .addRemoteMapping(RemoteElasticSearchService::new);
+            INSTANCE = instance.build();
         }
-
-        if (instanceType.equals("remote")) {
-            return new RemoteElasticSearchService();
-        }
-
-        LOG.error("ElasticSearch instance must be one of 'local-elasticsearch-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid ElasticSearch instance type");
     }
 }

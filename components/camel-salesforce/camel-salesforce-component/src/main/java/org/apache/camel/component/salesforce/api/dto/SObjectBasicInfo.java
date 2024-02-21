@@ -18,12 +18,9 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 public class SObjectBasicInfo extends AbstractDTOBase {
 
     private SObject objectDescribe;
-    @XStreamImplicit
     private List<RecentItem> recentItems;
 
     public SObject getObjectDescribe() {

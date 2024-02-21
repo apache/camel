@@ -38,26 +38,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedCamelContextTest.xml");
     }
 
     @Test
     public void testFindEipNames() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        assertEquals("19-" + context.getName(), context.getManagementName());
 
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         @SuppressWarnings("unchecked")
@@ -72,15 +63,11 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
     @Test
     public void testFindEips() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        assertEquals("19-" + context.getName(), context.getManagementName());
 
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         @SuppressWarnings("unchecked")
@@ -96,15 +83,11 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
     @Test
     public void testListEips() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+        assertEquals("19-" + context.getName(), context.getManagementName());
 
+        ObjectName on = getContextObjectName();
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);

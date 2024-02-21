@@ -90,6 +90,11 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public String getVariableReceive() {
+        return processor.getVariableReceive();
+    }
+
+    @Override
     public Long getTimeout() {
         return processor.getTimeout();
     }

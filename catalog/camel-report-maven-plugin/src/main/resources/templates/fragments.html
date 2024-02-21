@@ -1,0 +1,138 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<span th:fragment="test-details(testResult)" th:remove="tag">
+    <h3>Test Details</h3>
+    <div class="row">
+        <div class="col-4">
+            <label class="col-form-label" for="clazz">Class</label>
+            <div class="form-control" id="clazz" th:text="${testResult.test.clazz}"/>
+        </div>
+        <div class="col-4">
+            <label class="col-form-label" for="test">Method</label>
+            <div class="form-control" id="test" th:text="${testResult.test.method}"/>
+        </div>
+        <div class="col-2">
+            <label class="col-form-label" for="exchangesTotal">Total Exchanges</label>
+            <div class="form-control" id="exchangesTotal" th:text="${testResult.camelContextRouteCoverage.exchangesTotal}"/>
+        </div>
+        <div class="col-2">
+            <label class="col-form-label" for="totalProcessingTime">Total Processing Time (ms)</label>
+            <div class="form-control" id="totalProcessingTime" th:text="${testResult.camelContextRouteCoverage.totalProcessingTime}"/>
+        </div>
+    </div>
+    <p/>
+</span>
+
+
+<span th:fragment="route-details(route)" th:remove="tag">
+    <tr>
+        <td>
+            <table class="display" id="routeInfo" width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="col-form-label" for="route-id">Id</label>
+                                <div class="form-control" id="route-id" th:text="${route.id}"/>
+                            </div>
+                            <div class="col-3">
+                                <label class="col-form-label" for="route-exchangesTotal">Total Exchanges</label>
+                                <div class="form-control" id="route-exchangesTotal" th:text="${route.exchangesTotal}"/>
+                            </div>
+                            <div class="col-3">
+                                <label class="col-form-label" for="route-totalProcessingTime">Total Processing Time(ms)</label>
+                                <div class="form-control" id="route-totalProcessingTime" th:text="${route.totalProcessingTime}"/>
+                            </div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-12">
+                            <span th:replace="fragments :: components-tested(${route.components})"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</span>
+
+<span th:fragment="components-tested(components)" th:remove="tag">
+    <strong>EIPs Tested</strong>
+    <table class="display" id="components" width="100%">
+        <tbody>
+            <tr th:each="entry : ${components.attributeMap.entrySet()}">
+                <td class="col-2">
+                    <table class="display" id="eipAttributes" width="100%">
+                        <tbody>
+                            <span th:each="eipAttribute : ${entry.value}">
+                                <tr>
+                                    <td>
+                                        <strong><span th:text="${entry.key}"/></strong>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label class="col-form-label" for="route-id">Index</label>
+                                                <div class="form-control" id="eipAttribute-index" th:text="${eipAttribute.index}"/>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="col-form-label" for="route-exchangesTotal">Total Exchanges</label>
+                                                <div class="form-control" id="eipAttribute-exchangesTotal" th:text="${eipAttribute.exchangesTotal}"/>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="col-form-label" for="route-totalProcessingTime">Total Processing Time(ms)</label>
+                                                <div class="form-control" id="eipAttribute-totalProcessingTime" th:text="${eipAttribute.totalProcessingTime}"/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Properties</strong>
+                                        <table class="display" id="eipProps" width="100%">
+                                            <tbody>
+                                                <tr th:each="eipProp : ${eipAttribute?.properties}">
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-2">
+                                                                <div class="form-control" id="eipProp-key" th:text="${eipProp.key}"/>
+                                                            </div>
+                                                            <div class="col-10">
+                                                                <div class="form-control" id="eipProp-value" th:text="${eipProp.value}"/>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </span>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</span>
+
+</html>

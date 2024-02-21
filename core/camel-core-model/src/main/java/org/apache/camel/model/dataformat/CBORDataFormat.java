@@ -16,12 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -32,19 +33,23 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "cbor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CBORDataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> collectionType;
+    @XmlTransient
+    private Class<?> unmarshalType;
+
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String objectMapper;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String useDefaultObjectMapper;
-    @XmlAttribute
+    @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
-    @XmlTransient
-    private Class<?> unmarshalType;
-    @XmlAttribute
+    @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced")
     private String collectionTypeName;
-    @XmlTransient
-    private Class<?> collectionType;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String useList;
@@ -55,7 +60,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute
     private String enableFeatures;
@@ -64,6 +69,22 @@ public class CBORDataFormat extends DataFormatDefinition {
 
     public CBORDataFormat() {
         super("cbor");
+    }
+
+    private CBORDataFormat(Builder builder) {
+        this();
+        this.collectionType = builder.collectionType;
+        this.unmarshalType = builder.unmarshalType;
+        this.objectMapper = builder.objectMapper;
+        this.useDefaultObjectMapper = builder.useDefaultObjectMapper;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.collectionTypeName = builder.collectionTypeName;
+        this.useList = builder.useList;
+        this.allowUnmarshallType = builder.allowUnmarshallType;
+        this.prettyPrint = builder.prettyPrint;
+        this.allowJmsType = builder.allowJmsType;
+        this.enableFeatures = builder.enableFeatures;
+        this.disableFeatures = builder.disableFeatures;
     }
 
     public String getObjectMapper() {
@@ -216,4 +237,188 @@ public class CBORDataFormat extends DataFormatDefinition {
         this.disableFeatures = disableFeatures;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link CBORDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CBORDataFormat> {
+
+        private Class<?> collectionType;
+        private Class<?> unmarshalType;
+        private String objectMapper;
+        private String useDefaultObjectMapper;
+        private String unmarshalTypeName;
+        private String collectionTypeName;
+        private String useList;
+        private String allowUnmarshallType;
+        private String prettyPrint;
+        private String allowJmsType;
+        private String enableFeatures;
+        private String disableFeatures;
+
+        /**
+         * Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.
+         */
+        public Builder objectMapper(String objectMapper) {
+            this.objectMapper = objectMapper;
+            return this;
+        }
+
+        /**
+         * Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = useDefaultObjectMapper;
+            return this;
+        }
+
+        /**
+         * Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
+            return this;
+        }
+
+        /**
+         * Class name of the java type to use when unmarshalling
+         */
+        public Builder unmarshalTypeName(String unmarshalTypeName) {
+            this.unmarshalTypeName = unmarshalTypeName;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(String prettyPrint) {
+            this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
+            return this;
+        }
+
+        /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(String allowJmsType) {
+            this.allowJmsType = allowJmsType;
+            return this;
+        }
+
+        /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(boolean allowJmsType) {
+            this.allowJmsType = Boolean.toString(allowJmsType);
+            return this;
+        }
+
+        /**
+         * Class of the java type to use when unmarshalling
+         */
+        public Builder unmarshalType(Class<?> unmarshalType) {
+            this.unmarshalType = unmarshalType;
+            return this;
+        }
+
+        /**
+         * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
+         * allows to use different collection types than java.util.Collection based as default.
+         */
+        public Builder collectionTypeName(String collectionTypeName) {
+            this.collectionTypeName = collectionTypeName;
+            return this;
+        }
+
+        public Builder collectionType(Class<?> collectionType) {
+            this.collectionType = collectionType;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(String useList) {
+            this.useList = useList;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(boolean useList) {
+            this.useList = Boolean.toString(useList);
+            return this;
+        }
+
+        /**
+         * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(String allowUnmarshallType) {
+            this.allowUnmarshallType = allowUnmarshallType;
+            return this;
+        }
+
+        /**
+         * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(boolean allowUnmarshallType) {
+            this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
+            return this;
+        }
+
+        /**
+         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder enableFeatures(String enableFeatures) {
+            this.enableFeatures = enableFeatures;
+            return this;
+        }
+
+        /**
+         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder disableFeatures(String disableFeatures) {
+            this.disableFeatures = disableFeatures;
+            return this;
+        }
+
+        @Override
+        public CBORDataFormat end() {
+            return new CBORDataFormat(this);
+        }
+    }
 }

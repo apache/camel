@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.infinispan.InfinispanComponent;
+import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -28,12 +29,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.service.ServiceHelper;
 
+import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_EMBEDDED;
+
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan-embedded", title = "Infinispan Embedded",
+@UriEndpoint(firstVersion = "2.13.0", scheme = SCHEME_EMBEDDED, title = "Infinispan Embedded",
              syntax = "infinispan-embedded:cacheName",
-             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING })
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = InfinispanConstants.class)
 public class InfinispanEmbeddedEndpoint extends InfinispanEndpoint {
 
     @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")

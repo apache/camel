@@ -60,7 +60,7 @@ public class ScanStreamDelayTest extends CamelTestSupport {
     public void testScanFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(6);
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
     }
 
     @Override

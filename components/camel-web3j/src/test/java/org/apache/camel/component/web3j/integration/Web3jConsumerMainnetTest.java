@@ -45,7 +45,7 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
@@ -55,22 +55,22 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
                      + "fromBlock=5713030&"
                      + "toBlock=5713031&"
                      + "fullTransactionObjects=false")
-                             .choice()
-                             .when(simple("${in.header.status} != 'done'"))
-                             .to("log:foo?showAll=true&multiline=true&level=INFO")
-                             .process(new Processor() {
-                                 @Override
-                                 public void process(Exchange exchange) throws Exception {
-                                     EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
-                                     List<EthBlock.TransactionResult> transactions = body.getTransactions();
-                                     exchange.getIn().setBody(transactions);
-                                 }
-                             })
-                             .split(body())
-                             .to("mock:result")
-                             .endChoice()
-                             .otherwise()
-                             .log("DONE");
+                        .choice()
+                        .when(simple("${in.header.status} != 'done'"))
+                        .to("log:foo?showAll=true&multiline=true&level=INFO")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
+                                List<EthBlock.TransactionResult> transactions = body.getTransactions();
+                                exchange.getIn().setBody(transactions);
+                            }
+                        })
+                        .split(body())
+                        .to("mock:result")
+                        .endChoice()
+                        .otherwise()
+                        .log("DONE");
             }
         };
     }

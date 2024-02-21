@@ -18,6 +18,7 @@ package org.apache.camel.component.mina;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -41,7 +42,7 @@ public class MinaReverserServer {
 
         // Prepare the configuration
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
-        Charset charset = Charset.forName("UTF-8");
+        Charset charset = StandardCharsets.UTF_8;
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(charset)));
         acceptor.setHandler(new MinaReverseProtocolHandler());
 
@@ -49,7 +50,7 @@ public class MinaReverserServer {
         acceptor.bind(new InetSocketAddress(port));
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         acceptor.unbind();
     }
 

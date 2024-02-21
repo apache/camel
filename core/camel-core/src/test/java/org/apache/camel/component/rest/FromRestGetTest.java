@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.rest;
 
-import java.util.Arrays;
-
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -60,6 +61,7 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+        assertEquals("{{mySpecialId}}", rest.getVerbs().get(0).getId());
 
         assertEquals(2, rest.getVerbs().get(0).getParams().size());
         assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getType());
@@ -70,12 +72,18 @@ public class FromRestGetTest extends ContextTestSupport {
 
         assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
         assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
-        assertEquals(Arrays.asList("1", "2", "3", "4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
-        assertEquals(Arrays.asList("a", "b", "c", "d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(0).getValue());
+        assertEquals("2", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(1).getValue());
+        assertEquals("3", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(2).getValue());
+        assertEquals("4", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(3).getValue());
+        assertEquals("a", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(0).getValue());
+        assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(1).getValue());
+        assertEquals("c", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(2).getValue());
+        assertEquals("d", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(3).getValue());
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
-        assertEquals(null, rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
+        assertNull(rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
         assertEquals(CollectionFormat.multi, rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
 
         assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());
@@ -104,6 +112,12 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("Hello World", out);
         String out2 = template.requestBody("seda:get-say-bye", "Me", String.class);
         assertEquals("Bye World", out2);
+
+        // some tests that inherit this class does not use dynamic id
+        if (context.getPropertiesComponent().resolveProperty("mySpecialId").isPresent()) {
+            Route route = context.getRoute("scott");
+            Assertions.assertNotNull(route);
+        }
     }
 
     @Override
@@ -111,10 +125,14 @@ public class FromRestGetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getPropertiesComponent().addInitialProperty("mySpecialId", "scott");
+
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header)
+                rest("/say/bye").get()
+                        .id("{{mySpecialId}}")
+                        .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1").dataType("integer")
                         .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam()
                         .param().type(RestParamType.query)

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -31,6 +31,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 @XmlRootElement(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionSubElementDefinition implements HasExpressionType {
+
     @XmlElementRef
     private ExpressionDefinition expressionType;
 

@@ -16,21 +16,28 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.JmsConstants;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.sjms.SjmsHelper.*;
+import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
+import static org.apache.camel.component.sjms.SjmsHelper.closeConsumer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
+import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
+import static org.apache.camel.component.sjms.SjmsHelper.isTransactionOrClientAcknowledgeMode;
 
 public class SjmsTemplate {
 
@@ -39,6 +46,7 @@ public class SjmsTemplate {
     private final int acknowledgeMode;
     private DestinationCreationStrategy destinationCreationStrategy;
 
+    private boolean preserveMessageQos;
     private boolean explicitQosEnabled;
     private int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
     private int priority = Message.DEFAULT_PRIORITY;
@@ -69,7 +77,7 @@ public class SjmsTemplate {
             this.priority = priority;
             this.explicitQosEnabled = true;
         }
-        if (timeToLive != 0) {
+        if (timeToLive > 0) {
             this.timeToLive = timeToLive;
             this.explicitQosEnabled = true;
         }
@@ -77,6 +85,10 @@ public class SjmsTemplate {
 
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         this.explicitQosEnabled = explicitQosEnabled;
+    }
+
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        this.preserveMessageQos = preserveMessageQos;
     }
 
     public Object execute(SessionCallback sessionCallback, boolean startConnection) throws Exception {
@@ -140,10 +152,9 @@ public class SjmsTemplate {
                 try {
                     if (transacted) {
                         // defer closing till end of UoW
-                        ExtendedExchange ecc = exchange.adapt(ExtendedExchange.class);
                         TransactionOnCompletion toc = new TransactionOnCompletion(session, this.message);
-                        if (!ecc.containsOnCompletion(toc)) {
-                            ecc.addOnCompletion(toc);
+                        if (!exchange.getExchangeExtension().containsOnCompletion(toc)) {
+                            exchange.getExchangeExtension().addOnCompletion(toc);
                         }
                     } else {
                         closeSession(session);
@@ -159,17 +170,60 @@ public class SjmsTemplate {
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {
-        if (explicitQosEnabled) {
+        if (preserveMessageQos) {
+            long ttl = message.getJMSExpiration();
+            if (ttl != 0) {
+                ttl = ttl - System.currentTimeMillis();
+                // Message had expired.. so set the ttl as small as possible
+                if (ttl <= 0) {
+                    ttl = 1;
+                }
+            }
+
+            int priority = message.getJMSPriority();
+            if (priority < 0 || priority > 9) {
+                // use priority from endpoint if not provided on message with a valid range
+                priority = this.priority;
+            }
+
+            // if a delivery mode was set as a JMS header then we have used a temporary
+            // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
+            // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
+            // if it was set or not, so we can never tell if end user provided it in a header
+            int resolvedDeliveryMode = resolveDeliveryMode(message);
+
+            producer.send(message, resolvedDeliveryMode, priority, ttl);
+        } else if (explicitQosEnabled) {
             producer.send(message, deliveryMode, priority, timeToLive);
         } else {
             producer.send(message);
         }
     }
 
-    public Message receive(String destinationName, boolean isTopic, long timeout) throws Exception {
+    private static int resolveDeliveryMode(Message message) throws JMSException {
+        int resolvedDeliveryMode;
+        if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
+            resolvedDeliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
+            // remove the temporary property
+            JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
+        } else {
+            // use the existing delivery mode from the message
+            resolvedDeliveryMode = message.getJMSDeliveryMode();
+        }
+        return resolvedDeliveryMode;
+    }
+
+    public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout) throws Exception {
         Object obj = execute(sc -> {
             Destination dest = destinationCreationStrategy.createDestination(sc, destinationName, isTopic);
-            MessageConsumer consumer = sc.createConsumer(dest);
+            MessageConsumer consumer;
+
+            if (ObjectHelper.isNotEmpty(messageSelector)) {
+                consumer = sc.createConsumer(dest, messageSelector);
+            } else {
+                consumer = sc.createConsumer(dest);
+            }
+
             Message message = null;
             try {
                 if (timeout < 0) {

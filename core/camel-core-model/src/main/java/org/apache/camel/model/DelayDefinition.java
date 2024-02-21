@@ -18,11 +18,11 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -38,15 +38,17 @@ import org.apache.camel.spi.Metadata;
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
+
     @XmlAttribute
-    private String executorServiceRef;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String callerRunsWhenRejected;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String executorService;
 
     public DelayDefinition() {
     }
@@ -98,10 +100,31 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
+     * Whether or not the caller should run the task when it was rejected by the thread pool.
+     * <p/>
+     * Is by default <tt>true</tt>
+     *
+     * @param  callerRunsWhenRejected whether or not the caller should run
+     * @return                        the builder
+     */
+    public DelayDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
+        setCallerRunsWhenRejected(callerRunsWhenRejected);
+        return this;
+    }
+
+    /**
      * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
+     */
+    public DelayDefinition asyncDelayed(String asyncDelayed) {
+        setAsyncDelayed(asyncDelayed);
         return this;
     }
 
@@ -118,7 +141,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     @Override
     public DelayDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -126,13 +149,22 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * Refers to a custom Thread Pool if asyncDelay has been enabled.
      */
     @Override
-    public DelayDefinition executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public DelayDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
 
     /**
      * Expression to define how long time to wait (in millis)
@@ -159,23 +191,11 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
+    public String getExecutorService() {
         return executorService;
     }
 
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
+    public void setExecutorService(String executorService) {
         this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 }

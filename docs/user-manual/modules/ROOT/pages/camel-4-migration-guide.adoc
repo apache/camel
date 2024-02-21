@@ -1,0 +1,563 @@
+= Apache Camel 3.x to 4.0 Migration Guide
+
+This document is intended to help you migrate your Apache Camel applications
+from version 3.20 or higher to 4.0. If you are upgrading from an older Camel 3.x release,
+such as 3.14, then make sure to read the individual xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
+to upgrade to the 3.20 release, prior to upgrade to Camel 4.
+
+IMPORTANT: If you are upgrading Camel 4.x to 4.y then use the
+xref:camel-4x-upgrade-guide.adoc[Camel 4.x Upgrade Guide].
+
+== Java versions
+
+Camel 4 supports Java 17. Support for Java 11 is dropped.
+
+== Removed Components
+
+The following components has been removed:
+
+[options="header"]
+|===
+| Component | Alternative component(s)
+| camel-any23                          | none
+| camel-atlasmap                       | none
+| camel-atmos                          | none
+| camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
+| camel-cdi                            | camel-spring-boot, camel-quarkus
+| camel-corda                          | none
+| camel-directvm                       | camel-direct
+| camel-dozer                          | camel-mapstruct
+| camel-elasticsearch-rest             | camel-elasticsearch
+| camel-gora                           | none
+| camel-hbase                          | none
+| camel-hyperledger-aries              | none
+| camel-iota                           | none
+| camel-ipfs                           | none
+| camel-jbpm                           | none
+| camel-jclouds                        | none
+| camel-johnzon                        | camel-jackson, camel-fastjson, camel-gson
+| camel-microprofile-metrics           | camel-micrometer, camel-opentelemetry
+| camel-milo                           | none
+| camel-opentracing                    | camel-micrometer, camel-opentelemetry
+| camel-rabbitmq                       | spring-rabbitmq-component
+| camel-rest-swagger                   | camel-openapi-rest
+| camel-restdsl-swagger-plugin         | camel-restdsl-openapi-plugin
+| camel-resteasy                       | camel-cxf, camel-rest
+| camel-solr                           | none
+| camel-spark                          | none
+| camel-spring-integration             | none
+| camel-swagger-java                   | camel-openapi-java
+| camel-websocket                      | camel-vertx-websocket
+| camel-websocket-jsr356               | camel-vertx-websocket
+| camel-vertx-kafka                    | camel-kafka
+| camel-vm                             | camel-seda
+| camel-weka                           | none
+| camel-xstream                        | camel-jacksonxml
+| camel-zipkin                         | camel-micrometer, camel-opentelemetry
+|===
+
+== Logging
+
+Camel 4 has upgraded logging facade API `slf4j-api` from 1.7 to 2.0.
+
+== JUnit 4
+
+All the `camel-test` modules that were JUnit 4.x based has been removed. All test modules now use JUnit 5.
+
+== API Changes
+
+[options="header"]
+|===
+| Type of Change | API | Alternative
+| Removed   | `InOptionalOut` from `org.apache.camel.ExchangePattern` | `InOut`
+| Removed   | `@FallbackConverter` | `@Converter(fallback = true)`
+| Removed   | `getEndpointMap()` |
+| Removed   | `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` | Use `value` (default) instead. For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
+| Removed   | `label` on `@UriEndpoint` | use `category` instead.
+| Removed   | `consumerClass` on `@UriEndpoint` |
+| Removed   | all `asyncCallback` methods on `ProducerTemplate` | `asyncSend` or `asyncRequest`.
+| Removed   | `org.apache.camel.spi.OnCamelContextStart` | `org.apache.camel.spi.OnCamelContextStarting`
+| Removed   | `org.apache.camel.spi.OnCamelContextStop` | `org.apache.camel.spi.OnCamelContextStopping`
+| Removed   | `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy` |
+| Removed   | `org.apache.camel.builder.SimpleBuilder` | This API was mostly used internally in Camel with the Java DSL in some situations.
+| Removed   | `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog` |
+| Removed   | `configure` from the interface `org.apache.camel.main.Listener` |
+| Removed   | `getExtension` from the interface `CamelContext` | Use `getCamelContextExtension` instead. For example `ManagedCamelContext managed = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);`
+| Moved   | Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only | End users should use `org.apache.camel.spi.BeanIntrospection` instead.
+| Moved   | Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
+ |
+| Replaced   | Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension` |
+| Replaced   | Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension` |
+| Added   | Added `position` method to `org.apache.camel.StreamCache` |
+| Decoupled   |Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext` |
+| Decoupled   | Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`. |
+| Changed   | The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml. |
+| Changed   | The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`. |
+| Added   | Added `position` method to `org.apache.camel.StreamCache` |
+| Added   | The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`. |
+|===
+
+TIP: The `org.apache.camel.support.PluginHelper` gives easy access to various extensions and context plugins, that
+was available previously in Camel v3 directly from `CamelContext`.
+
+NOTE: You can get access to the advanced APIs in `CamelContext` known as `ExtendedCamelContext` via `context.getCamelContextExtension()`.
+
+To get hold of `ManagedCamelContext` then you should use the following way:
+
+[source,java]
+----
+ManagedCamelContext managed = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+----
+
+This can be done by many other advanced Camel features such as `RoutesLoader` or `ModelToXMLDumper`:
+
+[source,java]
+----
+RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
+----
+
+== EIP Changes
+
+Removed `lang` attribute for the `<description>` on every EIPs.
+
+The `InOnly` and `InOut` EIPs has been removed.
+Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
+
+=== Poll Enrich EIP
+
+The polled endpoint URI is now stored as property on the `Exchange` (with key `CamelToEndpoint`) like all other EIPs.
+Before the URI was stored as a message header.
+
+== CircuitBreaker EIP
+
+The following options in `camel-resilience4j` was mistakenly not defined as attributes:
+
+|===
+| *Option*
+| bulkheadEnabled
+| bulkheadMaxConcurrentCalls
+| bulkheadMaxWaitDuration
+| timeoutEnabled
+| timeoutExecutorService
+| timeoutDuration
+| timeoutCancelRunningFuture
+|===
+
+These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration>
+        <timeoutEnabled>true</timeoutEnabled>
+        <timeoutDuration>2000</timeoutDuration>
+    </resilience4jConfiguration>
+...
+</circuitBreaker>
+----
+
+To use attributes instead:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+...
+</circuitBreaker>
+----
+
+
+== XML DSL
+
+The `<description>` to set a description on a route or node, has been changed from an element to an attribute.
+
+Before:
+
+[source,xml]
+----
+<route id="myRoute">
+  <description>Something that this route do</description>
+  <from uri="kafka:cheese"/>
+  ...
+</route>
+----
+
+After:
+
+[source,xml]
+----
+<route id="myRoute" description="Something that this route do">
+  <from uri="kafka:cheese"/>
+  ...
+</route>
+----
+
+== Type Converter
+
+The `String` -> `java.io.File` converter has been removed.
+
+== Tracing
+
+The xref:tracer.adoc[Tracer] and xref:backlog-tracer.adoc[Backlog Tracer] no longer includes internal tracing events
+from routes that was created by Rest DSL or route templates or Kamelets. You can turn this on, by setting
+`traceTemplates=true` in the tracer.
+
+The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
+This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
+the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
+
+== UseOriginalMessage / UseOriginalBody
+
+When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,
+then the original message body is defensively copied and if possible converted to `StreamCache` to ensure
+the body can be re-read when accessed. Previously the original body was not converted to `StreamCache` which
+could lead to the body not able to be read or the stream has been closed.
+
+== Camel Health
+
+Health checks are now by default only readiness checks out of the box.
+
+Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
+one of each out of the box.
+
+Only consumer based health-checks is enabled by default.
+
+=== Producer Health Checks
+
+The option `camel.health.components-enabled` has been renamed to `camel.health.producers-enabled`.
+
+Some components (in particular AWS) provides also health checks for producers; in Camel 3.x
+these health checks did not work properly and has been disabled in the source.
+To continue this behaviour in Camel 4, then producer based health checks are disabled.
+
+Notice that `camel-kafka` comes with producer based health-check that worked in Camel 3,
+and therefore this change in Camel 4, means that this health-check is disabled.
+
+You *MUST* enable producer health-checks globally, such as in `application.properties`:
+
+[source,properties]
+----
+camel.health.producers-enabled = true
+----
+
+== JMX
+
+Camel now also include MBeans for `doCatch` and `doFinally` in the tree of processor MBeans.
+
+The `ManagedChoiceMBean` have renamed `choiceStatistics` to `extendedInformation`.
+The `ManagedFailoverLoadBalancerMBean` have renamed `exceptionStatistics` to `extendedInformation`.
+
+The `CamelContextMBean` and `CamelRouteMBean` has removed method `dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints)`.
+
+== YAML DSL
+
+The backwards compatible mode Camel 3.14 or older, which allowed to have _steps_ as child to _route_ has been removed.
+
+The old syntax:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:info"
+    steps:
+    - log: "message"
+----
+
+should be changed to:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:info"
+      steps:
+      - log: "message"
+----
+
+== Backlog Tracing
+
+The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+The old behavior can be archived by setting `backlogTracingStandby=true`.
+
+Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
+to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
+
+The `org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage` has been refactored into an interface `org.apache.camel.spi.BacklogTracerEventMessage`
+with some additional details about traced messages. For example Camel now captures a _first_ and _last_ trace
+that contains the input and outgoing (if `InOut`) messages.
+
+== XML serialization
+
+The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
+serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
+
+== OpenAPI Maven Plugin
+
+The `camel-restdsl-openapi-plugin` Maven plugin now uses `platform-http` as the default rest component
+in the generated Rest DSL code. Previously the default was servlet. However, platform-http is a better
+default that works out of the box with Spring Boot and Quarkus.
+
+== Component changes
+
+=== Category
+
+The number of enums for `org.apache.camel.Category` has been reduced from 83 to 37, which means custom components
+that are using removed values need to choose one of the remainder values. We have done this to consolidate
+the number of categories of all components in the Camel community.
+
+=== camel-openapi-rest-dsl-generator
+
+This dsl-generator has updated the underlying model classes (`apicurio-data-models`) from 1.1.27 to 2.0.3.
+
+=== camel-atom
+
+The `camel-atom` component has changed the 3rd party atom client from Apache Abdera to RSSReader.
+This means the feed object is changed from `org.apache.abdera.model.Feed` to `com.apptasticsoftware.rssreader.Item`.
+
+=== camel-azure-cosmosdb
+
+The `itemPartitionKey` has been updated. It's now a String a not a PartitionKey anymore. More details in CAMEL-19222.
+
+=== camel-bean
+
+When using the `method` option to refer to a specific method, and using parameter types and values, such as:
+`"bean:myBean?method=foo(com.foo.MyOrder, true)"` then any class types must now be using `.class` syntax,
+i.e. `com.foo.MyOrder` should now be `com.foo.MyOrder.class`.
+
+The example from above should now be as follows:
+
+    "bean:myBean?method=foo(com.foo.MyOrder.class, true)"
+
+This also applies to Java types such as String, int, etc:
+
+    "bean:myBean?method=bar(String.class, int.class)"
+
+=== camel-box
+
+Upgraded from Box Java SDK v2 to v4, which have some method signature changes.
+The method to get a file thumbnail is no longer available.
+
+=== camel-caffeine
+
+The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
+
+=== camel-fhir
+
+The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only the `Delete` API method has changed and now returns `ca.uhn.fhir.rest.api.MethodOutcome` instead of `org.hl7.fhir.instance.model.api.IBaseOperationOutcome`. See https://hapifhir.io/hapi-fhir/blog/ for a more detailed list of underlying changes (only the hapi-fhir client is used in Camel).
+
+=== camel-google
+
+The API based components `camel-google-drive`, `camel-google-calendar`, `camel-google-sheets` and `camel-google-mail`
+has been upgraded from Google Java SDK v1 to v2 and to latest API revisions. The `camel-google-drive` and `camel-google-sheets`
+have some API methods changes, but the others are identical as before.
+
+=== camel-http
+
+The component has been upgraded to use Apache HttpComponents v5 which has an impact on how the underlying client is configured. There are 4 different
+timeouts (`connectionRequestTimeout`, `connectTimeout`, `soTimeout` and `responseTimeout`) instead of initially 3
+(`connectionRequestTimeout`, `connectTimeout` and `socketTimeout`) and the default value of some of them has changed so please refer to the documentation
+for more details.
+
+Please note that the `socketTimeout` has been removed from the possible configuration parameters of `HttpClient`, use `responseTimeout` instead.
+
+Finally, the option `soTimeout` along with any parameters included into `SocketConfig`, need to be prefixed by `httpConnection.`,
+the rest of the parameters including those defined into `HttpClientBuilder` and `RequestConfig` still need to be prefixed by `httpClient.` like before.
+
+=== camel-http-common
+
+The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be more reusable.
+The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
+has been changed to generic `Message` types.
+
+=== camel-kubernetes
+
+The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated API usage has been removed. Operations previously prefixed with `replace` are now prefixed with `update`.
+
+For example `replaceConfigMap` is now `updateConfigMap`, `replacePod` is now `updatePod` etc. The corresponding 
+constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_OPERATION` is now `UPDATE_CONFIGMAP_OPERATION`, `REPLACE_POD_OPERATION` is now `UPDATE_POD_OPERATION` etc.
+
+=== camel-web3j
+
+The `camel-web3j` has upgrade web3j JAR from 3.x to 5.0 which has many API changes, and so
+some previous API calls are no long provided.
+
+=== camel-main
+
+The following constants has been moved from `BaseMainSupport` / `Main` to `MainConstants`:
+
+|===
+| Old Name | New Name
+| Main.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION | MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION
+| Main.INITIAL_PROPERTIES_LOCATION | MainConstants.INITIAL_PROPERTIES_LOCATION
+| Main.OVERRIDE_PROPERTIES_LOCATION | MainConstants.OVERRIDE_PROPERTIES_LOCATION
+| Main.PROPERTY_PLACEHOLDER_LOCATION | MainConstants.PROPERTY_PLACEHOLDER_LOCATION
+|===
+
+
+=== camel-micrometer
+
+The metrics has been renamed to follow Micrometer naming convention https://micrometer.io/docs/concepts#_naming_meters[Naming Meters].
+
+|===
+| Old Name | New Name
+| CamelExchangeEventNotifier | camel.exchange.event.notifier
+| CamelExchangesFailed | camel.exchanges.failed
+| CamelExchangesFailuresHandled | camel.exchanges.failures.handled
+| CamelExchangesInflight | camel.exchanges.external.redeliveries
+| CamelExchangesSucceeded | camel.exchanges.succeeded
+| CamelExchangesTotal | camel.exchanges.total
+| CamelMessageHistory | camel.message.history
+| CamelRoutePolicy | camel.route.policy
+| CamelRoutePolicyLongTask | camel.route.policy.long.task
+| CamelRoutesAdded | camel.routes.added
+| CamelRoutesRunning | camel.routes.running
+|===
+
+=== camel-jbang
+
+The command `camel dependencies` has been renamed to `camel dependency`.
+
+In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
+
+The `camel stop` command will now by default stop all running integrations (the option `--all` has been removed).
+
+The _Placeholders substitutes_ is changed to use `#name` instead of `$name` syntax.
+
+=== camel-jpa
+
+The option `transactionManager` has been removed, and a new option named `transactionStrategy`
+has been added, that acts as vendor neutral abstraction to make it easier to configure Spring Transaction
+or Quarkus Transaction.
+
+=== camel-openapi-java
+
+The `camel-openapi-java` component has been changed to use `io.swagger.v3` libraries instead of `io.apicurio.datamodels`.
+As a result, the return type of the public method org.apache.camel.openapi.RestOpenApiReader.read() is now `io.swagger.v3.oas.models.OpenAPI` instead of `io.apicurio.datamodels.openapi.models.OasDocument`.
+When an OpenAPI 2.0 (swagger) specification is parsed, it is automatically upgraded to OpenAPI 3.0.x by the swagger parser.
+This version also supports OpenAPI 3.1.x specifications.
+The related spring-boot starter components have been modified to use the new return type.
+
+=== camel-optaplanner
+
+The `camel-optaplanner` component has been change to use `SolverManager`. If you were using `SoverManager` in Camel 3, you don't need anymore the boolean useSolverManager in the Route.
+Deprecated `ProblemFactChange` has been replaced by `ProblemChange`.
+
+The new URI path is:
+
+[source,java]
+----
+from("optaplanner:myProblemName")
+  .to("...")
+----
+
+You can pass the OptaPlanner SolverManager in 2 ways:
+
+- as #parameter
+- as header
+
+When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferable to use the Spring Boot or Quarkus way of creating the SolverManager.
+
+It is possible to migrate legacy Camel OptaPlanner Routes, by putting the XML config file, as show in the code below. Camel OptaPlanner will handle creating the SolverManager for those legacy Routes:
+
+[source,java]
+----
+from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
+  .to("...")
+----
+
+Solver Daemon solutions should be migrated to use SolverManager.
+
+=== camel-platform-http-vertx
+
+If the route or consumer is suspended then http status 503 is now returned instead of 404.
+
+=== camel-salesforce
+
+Property names of blob fields on generated DTOs no longer have 'Url' affixed. E.g., the `ContentVersionUrl` property is now just `ContentVersion`.
+
+=== camel-slack
+
+The default delay (on slack consumer) is changed from 0.5s to 10s to avoid being rate limited to often by Slack.
+
+=== camel-spring-rabbitmq
+
+The option `replyTimeout` in `camel-spring-rabbitmq` has been fixed and the default value from 5 to 30 seconds
+(this is the default used by Spring).
+
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
+=== Graceful Shutdown
+
+Camel now shutdowns a bit later during Spring Boot shutdown. This allows Spring Boot graceful shutdown
+to complete first (stopping Spring Boot HTTP server gracefully),
+and then afterward Camel is doing its own xref:graceful-shutdown.adoc[].
+
+Technically `camel-spring` has changed `getPhase()` from returning `Integer.MAX_VALUE` to
+`Integer.MAX_VALUE - 2049`. This gives room for Spring Boot services to shut down first.
+
+=== camel-micrometer-starter
+
+The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
+
+=== camel-platform-http-starter
+
+The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
+Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
+
+For example:
+
+[source,java]
+----
+from("platform-http:myservice")
+  .to("...")
+----
+
+Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
+Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
+
+NOTE: The `platform-http-starter` can also be used with Rest DSL.
+
+If the route or consumer is suspended then http status 503 is now returned instead of 404.
+
+=== camel-twitter
+
+The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Tweet status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
+
+
+== Upgrading Camel 4.0.1 to 4.0.2
+
+=== camel-file
+
+The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
+
+For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+If you have many existing files on startup that are old, then Camel will now again be fast,
+and pickup these files immediately.
+
+
+== Upgrading Camel 4.0.0 to 4.0.1
+
+=== camel-aws2-sns
+
+The `queueUrl` parameter has been replaced by the `queueArn` parameter
+
+For Example before
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxx")
+----
+
+Should be changed to
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx")
+----

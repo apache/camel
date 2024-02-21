@@ -40,7 +40,7 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
 
     protected static final String REPO_PATH = "target/repository-simple-security";
 
-    private Repository repository;
+    private static final Repository repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
 
     @Override
     @BeforeEach
@@ -64,7 +64,6 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
             throw new FileNotFoundException("Missing config file: " + config.getPath());
         }
 
-        repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
         registry.bind("repository", repository);
     }
 }

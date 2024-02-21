@@ -19,12 +19,14 @@ package org.apache.camel.component.minio;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.camel.RuntimeCamelException;
+
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public final class MinioChecks {
     private MinioChecks() {
         // Prevent instantiation of this factory class.
-        throw new RuntimeException(
+        throw new RuntimeCamelException(
                 "Do not instantiate a Factory class! Refer to the class to learn how to properly use this factory implementation.");
     }
 

@@ -49,13 +49,10 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
-                from("direct:x").to(uri).process(new Processor() {
-
-                    public void process(Exchange e) {
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
+            public void configure() {
+                from("direct:x").to(uri).process(e -> {
+                    receivedExchange = e;
+                    latch.countDown();
                 });
             }
         });
@@ -94,7 +91,7 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:x").to(uri).process(new Processor() {
 
                     public void process(Exchange e) {

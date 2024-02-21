@@ -32,11 +32,11 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
     protected static final Logger LOG = LoggerFactory.getLogger(PullRequestCommentConsumerTest.class);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("github://pullRequestComment?repoOwner=anotherguy&repoName=somerepo")
                         .process(new PullRequestCommentProcessor())
                         .to(mockResultEndpoint);
@@ -59,11 +59,10 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
 
     public class PullRequestCommentProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Comment comment = (Comment) in.getBody();
-            LOG.debug("Got Comment " + comment.getId() + " [" + comment.getBody() + "] from User ["
-                      + comment.getUser().getLogin() + "]");
+            LOG.debug("Got Comment {} [{}] from User [{}]", comment.getId(), comment.getBody(), comment.getUser().getLogin());
         }
     }
 }

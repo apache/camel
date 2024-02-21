@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
+import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -26,17 +28,16 @@ public class ArangoDbContainer extends GenericContainer {
     public static final Integer PORT_DEFAULT = 8529;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDbContainer.class);
-
     private static final String CONTAINER_NAME = "arango";
-    private static final String ARANGO_IMAGE = "arangodb:latest";
     private static final String ARANGO_NO_AUTH = "ARANGO_NO_AUTH";
 
     public ArangoDbContainer() {
-        this(ARANGO_IMAGE);
+        this(LocalPropertyResolver.getProperty(ArangoDbContainer.class, ArangoDBProperties.ARANGODB_CONTAINER));
     }
 
     public ArangoDbContainer(String containerName) {
         super(containerName);
+
         setWaitStrategy(Wait.forListeningPort());
         addFixedExposedPort(PORT_DEFAULT, PORT_DEFAULT);
         withNetworkAliases(CONTAINER_NAME);

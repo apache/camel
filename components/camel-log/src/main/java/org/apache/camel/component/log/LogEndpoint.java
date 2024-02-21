@@ -18,7 +18,7 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,23 +37,27 @@ import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
+
 /**
  * Log messages to the underlying logging mechanism.
  *
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
-             syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
-public class LogEndpoint extends ProcessorEndpoint {
+             remote = false, syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
+public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     private volatile Processor logger;
     private Logger providedLogger;
     private ExchangeFormatter localFormatter;
+    private int lineNumber;
+    private String location;
 
     @UriPath(description = "Name of the logging category to use")
     @Metadata(required = true)
     private String loggerName;
-    @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
+    @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String level;
     @UriParam
     private String marker;
@@ -69,13 +73,22 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Boolean logMask;
     @UriParam(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
+    @UriParam(label = "formatting", description = "Show route ID.")
+    private boolean showRouteId;
+    @UriParam(label = "formatting", description = "Show route Group.")
+    private boolean showRouteGroup;
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true",
+    @UriParam(label = "formatting",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
-    private boolean showExchangePattern = true;
-    @UriParam(label = "formatting", description = "Show the exchange properties.")
+    private boolean showExchangePattern;
+    @UriParam(label = "formatting",
+              description = "Show the exchange properties (only custom). Use showAllProperties to show both internal and custom properties.")
     private boolean showProperties;
+    @UriParam(label = "formatting", description = "Show all of the exchange properties (both internal and custom).")
+    private boolean showAllProperties;
+    @UriParam(label = "formatting", description = "Show the variables.")
+    private boolean showVariables;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
@@ -104,6 +117,9 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting",
               description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
+    private boolean showCachedStreams = true;
     @UriParam(label = "formatting",
               description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
                             + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
@@ -115,6 +131,11 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
               description = "Sets the outputs style to use.")
     private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
+    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
+    private boolean plain;
+    @UriParam(description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
+                            + " of the given name. However, if the source location is disabled or not possible to resolve then the existing logger name will be used.")
+    private boolean sourceLocationLoggerName;
 
     public LogEndpoint() {
     }
@@ -141,14 +162,19 @@ public class LogEndpoint extends ProcessorEndpoint {
         if (this.localFormatter == null) {
 
             // are any options configured if not we can optimize to use shared default
-            boolean changed = !showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
-                    || style != DefaultExchangeFormatter.OutputStyle.Default;
-            changed |= showExchangeId || showProperties || showHeaders || showException || showCaughtException
+            boolean changed = showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
+                    || style != DefaultExchangeFormatter.OutputStyle.Default || plain;
+            changed |= showRouteId || showRouteGroup;
+            changed |= showExchangeId || showProperties || showAllProperties || showVariables || showHeaders || showException
+                    || showCaughtException
                     || showStackTrace;
-            changed |= showAll || multiline || showFuture || showStreams || showFiles;
+            changed |= showAll || multiline || showFuture || !showCachedStreams || showStreams || showFiles;
 
             if (changed) {
                 DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                def.setPlain(plain);
+                def.setShowRouteId(showRouteId);
+                def.setShowRouteGroup(showRouteGroup);
                 def.setShowAll(showAll);
                 def.setShowBody(showBody);
                 def.setShowBodyType(showBodyType);
@@ -159,8 +185,11 @@ public class LogEndpoint extends ProcessorEndpoint {
                 def.setShowFiles(showFiles);
                 def.setShowFuture(showFuture);
                 def.setShowHeaders(showHeaders);
+                def.setShowVariables(showVariables);
                 def.setShowProperties(showProperties);
+                def.setShowAllProperties(showAllProperties);
                 def.setShowStackTrace(showStackTrace);
+                def.setShowCachedStreams(showCachedStreams);
                 def.setShowStreams(showStreams);
                 def.setMaxChars(maxChars);
                 def.setMultiline(multiline);
@@ -184,6 +213,26 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(logger);
+    }
+
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setLogger(Processor logger) {
@@ -219,16 +268,23 @@ public class LogEndpoint extends ProcessorEndpoint {
     /**
      * Creates the logger {@link Processor} to be used.
      */
-    protected Processor createLogger() throws Exception {
+    protected Processor createLogger() {
         Processor answer;
         // setup a new logger here
         CamelLogger camelLogger;
         LoggingLevel loggingLevel = LoggingLevel.INFO;
-        if (level != null) {
+        if (level != null && !level.equals("INFO")) {
             loggingLevel = LoggingLevel.valueOf(level);
         }
         if (providedLogger == null) {
-            camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
+            String name = loggerName;
+            if (sourceLocationLoggerName) {
+                name = getLineNumberLoggerName(this);
+                if (name == null) {
+                    name = loggerName;
+                }
+            }
+            camelLogger = new CamelLogger(name, loggingLevel, getMarker());
         } else {
             camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
         }
@@ -241,7 +297,7 @@ public class LogEndpoint extends ProcessorEndpoint {
         } else {
             answer = new CamelLogProcessor(
                     camelLogger, localFormatter, getMaskingFormatter(),
-                    getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());
+                    getCamelContext().getCamelContextExtension().getLogListeners());
         }
         // the logger is the processor
         setProcessor(answer);
@@ -394,6 +450,22 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.exchangeFormatter = exchangeFormatter;
     }
 
+    public boolean isShowRouteId() {
+        return showRouteId;
+    }
+
+    public void setShowRouteId(boolean showRouteId) {
+        this.showRouteId = showRouteId;
+    }
+
+    public boolean isShowRouteGroup() {
+        return showRouteGroup;
+    }
+
+    public void setShowRouteGroup(boolean showRouteGroup) {
+        this.showRouteGroup = showRouteGroup;
+    }
+
     public boolean isShowExchangeId() {
         return showExchangeId;
     }
@@ -416,6 +488,22 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     public void setShowProperties(boolean showProperties) {
         this.showProperties = showProperties;
+    }
+
+    public boolean isShowAllProperties() {
+        return showAllProperties;
+    }
+
+    public void setShowAllProperties(boolean showAllProperties) {
+        this.showAllProperties = showAllProperties;
+    }
+
+    public boolean isShowVariables() {
+        return showVariables;
+    }
+
+    public void setShowVariables(boolean showVariables) {
+        this.showVariables = showVariables;
     }
 
     public boolean isShowHeaders() {
@@ -498,6 +586,14 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.showFuture = showFuture;
     }
 
+    public boolean isShowCachedStreams() {
+        return showCachedStreams;
+    }
+
+    public void setShowCachedStreams(boolean showCachedStreams) {
+        this.showCachedStreams = showCachedStreams;
+    }
+
     public boolean isShowStreams() {
         return showStreams;
     }
@@ -528,5 +624,21 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     public void setStyle(DefaultExchangeFormatter.OutputStyle style) {
         this.style = style;
+    }
+
+    public boolean isPlain() {
+        return plain;
+    }
+
+    public void setPlain(boolean plain) {
+        this.plain = plain;
+    }
+
+    public boolean isSourceLocationLoggerName() {
+        return sourceLocationLoggerName;
+    }
+
+    public void setSourceLocationLoggerName(boolean sourceLocationLoggerName) {
+        this.sourceLocationLoggerName = sourceLocationLoggerName;
     }
 }

@@ -20,13 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.agent.ImmutableRegistration;
-import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
@@ -36,6 +33,10 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.consul.AgentClient;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.model.agent.ImmutableRegistration;
+import org.kiwiproject.consul.model.agent.Registration;
 
 public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
     @RegisterExtension
@@ -96,7 +97,7 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         template.sendBody("direct:start", "service-2");
         template.sendBody("direct:start", "service-2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ************************************

@@ -29,9 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
@@ -40,43 +38,49 @@ import org.apache.camel.support.service.ServiceHelper;
              category = { Category.HTTP }, consumerOnly = true)
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
-    @UriPath(description = "The path under which this endpoint serves the HTTP requests")
+    private static final String PROXY_PATH = "proxy";
+
+    @UriPath(description = "The path under which this endpoint serves the HTTP requests, for proxy use 'proxy'")
     @Metadata(required = true)
     private final String path;
-
     @UriParam(label = "consumer", defaultValue = "false",
               description = "Whether or not the consumer should try to find a target consumer "
                             + "by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
-
     @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
                                                 + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
-
     @UriParam(label = "consumer", description = "The content type this endpoint accepts as an input, such as"
                                                 + " application/xml or application/json. <code>null</code> or <code>&#42;/&#42;</code> mean no restriction.")
     private String consumes;
-
     @UriParam(label = "consumer", description = "The content type this endpoint produces, such as"
                                                 + " application/xml or application/json.")
     private String produces;
-
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+    private boolean muteException = true;
     @UriParam(label = "consumer,advanced", description = "A comma or whitespace separated list of file extensions."
                                                          + " Uploads having these extensions will be stored locally."
                                                          + " Null value or asterisk (*) will allow all files.")
     private String fileNameExtWhitelist;
-
     @UriParam(label = "advanced", description = "An HTTP Server engine implementation to serve the requests of this"
                                                 + " endpoint.")
     private PlatformHttpEngine platformHttpEngine;
-
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new PlatformHttpHeaderFilterStrategy();
+    @UriParam(label = "consumer",
+              description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
+    private boolean useStreaming;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
         path = remaining;
+    }
+
+    @Override
+    public PlatformHttpComponent getComponent() {
+        return (PlatformHttpComponent) super.getComponent();
     }
 
     @Override
@@ -86,45 +90,15 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer(this, processor) {
-            private Consumer delegatedConsumer;
+        Consumer consumer = new PlatformHttpConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+    }
 
-            @Override
-            public PlatformHttpEndpoint getEndpoint() {
-                return (PlatformHttpEndpoint) super.getEndpoint();
-            }
-
-            @Override
-            protected void doInit() throws Exception {
-                super.doInit();
-                delegatedConsumer = getEndpoint().getOrCreateEngine().createConsumer(getEndpoint(), getProcessor());
-                configureConsumer(delegatedConsumer);
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-                super.doStart();
-                ServiceHelper.startService(delegatedConsumer);
-            }
-
-            @Override
-            protected void doStop() throws Exception {
-                super.doStop();
-                ServiceHelper.stopAndShutdownServices(delegatedConsumer);
-            }
-
-            @Override
-            protected void doResume() throws Exception {
-                ServiceHelper.resumeService(delegatedConsumer);
-                super.doResume();
-            }
-
-            @Override
-            protected void doSuspend() throws Exception {
-                ServiceHelper.suspendService(delegatedConsumer);
-                super.doSuspend();
-            }
-        };
+    protected Consumer createDelegateConsumer(Processor processor) throws Exception {
+        Consumer consumer = getOrCreateEngine().createConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -138,7 +112,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     }
 
     public String getPath() {
-        return path;
+        return isHttpProxy() ? "/" : path;
     }
 
     public PlatformHttpEngine getPlatformHttpEngine() {
@@ -189,9 +163,29 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
         this.produces = produces;
     }
 
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
+    }
+
+    public boolean isUseStreaming() {
+        return useStreaming;
+    }
+
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
+    }
+
     PlatformHttpEngine getOrCreateEngine() {
         return platformHttpEngine != null
                 ? platformHttpEngine
-                : ((PlatformHttpComponent) getComponent()).getOrCreateEngine();
+                : getComponent().getOrCreateEngine();
+    }
+
+    public boolean isHttpProxy() {
+        return this.path.startsWith(PROXY_PATH);
     }
 }

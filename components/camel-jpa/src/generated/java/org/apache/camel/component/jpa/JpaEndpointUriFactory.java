@@ -19,55 +19,64 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(45);
-        props.add("maximumResults");
-        props.add("preDeleteHandler");
-        props.add("backoffMultiplier");
-        props.add("deleteHandler");
-        props.add("transacted");
-        props.add("initialDelay");
-        props.add("namedQuery");
-        props.add("lockModeType");
-        props.add("remove");
-        props.add("sharedEntityManager");
-        props.add("entityManagerProperties");
-        props.add("scheduler");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
+        Set<String> props = new HashSet<>(48);
         props.add("backoffErrorThreshold");
-        props.add("greedy");
-        props.add("maxMessagesPerPoll");
-        props.add("skipLockedEntity");
-        props.add("scheduledExecutorService");
-        props.add("persistenceUnit");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("usePersist");
-        props.add("entityType");
-        props.add("query");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("usePassedInEntityManager");
-        props.add("nativeQuery");
-        props.add("useExecuteUpdate");
-        props.add("consumeLockEntity");
         props.add("backoffIdleThreshold");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("pollStrategy");
-        props.add("joinTransaction");
-        props.add("resultClass");
-        props.add("startScheduler");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
         props.add("consumeDelete");
-        props.add("findEntity");
+        props.add("consumeLockEntity");
+        props.add("delay");
+        props.add("deleteHandler");
+        props.add("entityManagerProperties");
+        props.add("entityType");
         props.add("exceptionHandler");
-        props.add("parameters");
+        props.add("exchangePattern");
+        props.add("findEntity");
+        props.add("firstResult");
         props.add("flushOnSend");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("joinTransaction");
+        props.add("lazyStartProducer");
+        props.add("lockModeType");
+        props.add("maxMessagesPerPoll");
+        props.add("maximumResults");
+        props.add("namedQuery");
+        props.add("nativeQuery");
+        props.add("outputTarget");
+        props.add("parameters");
+        props.add("persistenceUnit");
+        props.add("pollStrategy");
+        props.add("preDeleteHandler");
+        props.add("query");
+        props.add("remove");
+        props.add("repeatCount");
+        props.add("resultClass");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("sharedEntityManager");
+        props.add("singleResult");
+        props.add("skipLockedEntity");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("transacted");
+        props.add("useExecuteUpdate");
+        props.add("useFixedDelay");
+        props.add("usePassedInEntityManager");
+        props.add("usePersist");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(3);
+        prefixes.add("emf.");
+        prefixes.add("parameters.");
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -95,6 +104,11 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

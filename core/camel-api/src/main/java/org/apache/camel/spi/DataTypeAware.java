@@ -23,8 +23,8 @@ package org.apache.camel.spi;
  * carries that missing data type information even if it's marshaled, and whatever the Java class of the body is. This
  * type information is used to detect required {@link Transformer} and {@link Validator}.
  * <p/>
- * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
- * Otherwise data type is default off.
+ * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
+ * Otherwise, data type is default off.
  *
  * @see DataType
  * @see Transformer

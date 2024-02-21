@@ -16,17 +16,17 @@
  */
 package org.apache.camel.model.rest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
  * Rest security definition
  */
-@Metadata(label = "rest,security", title = "Security")
+@Metadata(label = "rest,security,configuration", title = "Rest Security")
 @XmlRootElement(name = "security")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SecurityDefinition {
@@ -34,7 +34,6 @@ public class SecurityDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true)
     private String key;
-
     @XmlAttribute
     private String scopes;
 

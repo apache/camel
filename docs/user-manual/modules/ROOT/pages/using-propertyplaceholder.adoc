@@ -1,51 +1,35 @@
-[[UsingPropertyPlaceholder-UsingPropertyPlaceholder]]
-= Using `PropertyPlaceholder`
+= Property placeholders
 
-*Since Camel 2.3*
+Camel has extensive support for property placeholders, which
+can be used _almost anywhere_ in your Camel xref:routes.adoc[routes],
+xref:endpoint.adoc[endpoints], xref:dsl.adoc[DSL], and xref:route-configuration.adoc[route configuration],
+xref:bean-integration.adoc[bean integration] and elsewhere.
 
-Camel now provides a new `PropertiesComponent` in `camel-core` which
-allows you to use property placeholders when defining Camel
-xref:endpoint.adoc[Endpoint] URIs. This works much like you would do if
-using Spring's `<property-placeholder>` tag. However Spring has a
-limitation that prevents third-party frameworks from fully leveraging
-Spring property placeholders.
+Property placeholders are used to define a _placeholder_ instead of the actual value.
+This is important as you would want to be able to make your applications external
+configurable, such as values for network addresses, port numbers, authentication credentials,
+login tokens, and configuration in general.
 
-For more details see:
-xref:faq:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
-I use Spring Property Placeholder with Camel XML].
+== Properties component
 
-[[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders]]
-== Bridging Spring and Camel Property Placeholders
+Camel provides the xref:components::properties-component.adoc[Properties] out of the box
+from the core, which is responsible for handling and resolving the property placeholders.
 
-From *Camel 2.10*: Spring's property placeholder can be bridged with
-Camel's. See below for more details.
+See the xref:components::properties-component.adoc[Properties] documentation for how
+to configure Camel to known from which location(a) to load properties.
 
-The property placeholder is typically used when trying to do any of the
-following:
 
-* Lookup or creating endpoints
-* Lookup of beans in the xref:registry.adoc[Registry]
-* Additional supported in Spring XML (see below in examples)
-* Using Blueprint `PropertyPlaceholder` with Camel
-xref:components::properties-component.adoc[Properties] component
-* Using `@PropertyInject` to inject a property in a POJO
-* *Camel 2.14.1* Using default value if a property does not exists
-* *Camel 2.14.1* Include out of the box functions, to lookup property
-values from OS environment variables, JVM system properties, or the
-service idiom
-* *Camel 2.14.1* Using custom functions, which can be plugged into the
-property component
-
-[[UsingPropertyPlaceholder-Format]]
-== Format
+== Property placeholder syntax
 
 The value of a Camel property can be obtained by specifying its key name
-within a property placeholder, using the following format: `{\{key}}`
+within a property placeholder, using the following syntax: `{\{key}}`
 
 For example:
-....
+
+[source,text]
+----
 {{file.uri}}
-....
+----
 
 where `file.uri` is the property key.
 
@@ -53,340 +37,311 @@ Property placeholders can be used to specify parts, or all, of an
 endpoint's URI by embedding one or more placeholders in the URI's string
 definition.
 
-From *Camel 2.14.1*: you can specify a default value to use if a
-property with the key does not exists, e.g., `file.url:/some/path`
-where the default value is the text after the colon, e.g.,
-`/some/path`.
+=== Using property placeholder with default value
 
-From *Camel 2.14.1*: do _not_ use a colon in the property key. The colon
-character is used as a token separator when providing a default value.
+You can specify a default value to use if a
+property with the key does not exist, where the default value is the text after the colon:
 
-[[UsingPropertyPlaceholder-UsingPropertyResolver]]
-== Using `PropertyResolver`
+[source,text]
+----
+{{file.url:/some/path}}
+----
 
-Camel provides a pluggable mechanism that allows third-parties to
-specify their own resolver to use for the lookup of properties.
+In this case the default value is `/some/path`.
 
-Camel provides a default implementation
-`org.apache.camel.component.properties.DefaultPropertiesResolver`
-which is capable of loading properties from the file system, classpath
-or xref:registry.adoc[Registry]. To indicate which source to use the
-location must contain the appropriate prefix.
+=== Using optional property placeholders
 
-The list of prefixes is:
+Camel's elaborate property placeholder feature supports optional placeholders,
+which is defined with the `?` (question mark) as prefix in the key name, as shown:
 
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|Prefix |Description
-|`ref:` |Lookup in the xref:registry.adoc[Registry.]
+[source,text]
+----
+{{?myBufferSize}}
+----
 
-|`file:` |Load from the file system.
+If a value for the key exists then the value is used, however if the key does not exist,
+then Camel understands this, such as when used in xref:endpoint.adoc[Endpoints]:
 
-|`classpath:` |Load from the classpath (this is also the default if no
-prefix is provided).
+[source,text]
+----
+file:foo?bufferSize={{?myBufferSize}}
+----
 
-|`blueprint:` |Use a specific OSGi blueprint placeholder service.
-|=======================================================================
+Then the `bufferSize` option will only be configured in the endpoint, if a placeholder exists.
+Otherwise the option will not be set on the endpoint, meaning the endpoint would be _restructued_ as:
 
-[[UsingPropertyPlaceholder-DefiningLocation]]
-== Defining Location
+[source,text]
+----
+file:foo
+----
 
-The `PropertiesResolver` must be configured with the location(s) to
-use when resolving properties. One or more locations can be given.
-Specifying multiple locations can be done a couple of ways: using either
-a single comma separated string, or an array of strings.
+Then the option `bufferSize` is not in specified at all, and this would allow Camel to
+use the standard default value for `bufferSize` if any exists.
+
+=== Reverse a boolean value
+
+If a property placeholder is a boolean value, then it is possible to negate (reverse) the value by using `!` as prefix in the key.
+
+[source,properties]
+----
+integration.ftpEnabled=true
+----
 
 [source,java]
 ----
-pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
-pc.setLocation(new String[] {"com/mycompany/myprop.properties", "com/mycompany/other.properties"});
+from("ftp:....").autoStartup("{{integration.ftpEnabled}}")
+    .to("kafka:cheese")
+
+from("jms:....").autoStartup("{{!integration.ftpEnabled}}")
+    .to("kafka:cheese")
 ----
 
-From *Camel 2.19.0*: you can set which location can be discarded if
-missing by setting  `optional=true`, (`false` by default).
+In the example above then the FTP route or the JMS route should only be started. So if the FTP is enabled then JMS should be disable, and vise-versa.
+We can do this be negating the `autoStartup` in the JMS route, by using `!integration.ftpEnabled` as the key.
 
-Example:
+
+== Using property placeholders
+
+When using property placeholders in the endpoint xref:uris.adoc[URIs] you should use this with the syntax `{\{key}}` as shown in this example:
+
+[source,properties]
+----
+cool.end = mock:result
+where = cheese
+----
+
+And in Java DSL:
 
 [source,java]
 ----
-pc.setLocations("com/mycompany/override.properties;optional=true,com/mycompany/defaults.properties");
-----
- 
-
-[[UsingPropertyPlaceholder-UsingSystemandEnvironmentVariablesinLocations]]
-== Using System and Environment Variables in Locations
-
-*Since Camel 2.7*
-
-The location now supports using placeholders for JVM system properties
-and OS environments variables.
-
-Example:
-....
-location=file:${karaf.home}/etc/foo.properties
-....
-
-In the location above we defined a location using the file scheme using
-the JVM system property with key `karaf.home`.
-
-To use an OS environment variable instead you would have to prefix with
-`env`:
-
-location=file:${env:APP_HOME}/etc/foo.properties
-
-Where `APP_HOME` is an OS environment variable.
-
-You can have multiple placeholders in the same location, such as:
-
-location=file:${env:APP_HOME}/etc/${prop.name}.properties
-
-[[UsingPropertyPlaceholder-ConfiguringinJavaDSL]]
-== Configuring in Java DSL
-
-You have to create and register the `PropertiesComponent` under the
-name `properties` such as:
-
-
-[source,java]
-----
-PropertiesComponent pc = camelContext.getPropertiesComponent();
-pc.setLocation("classpath:com/mycompany/myprop.properties");
-----
-
-[[UsingPropertyPlaceholder-ConfiguringinSpringXML]]
-== Configuring in Spring XML
-
-Spring XML offers two variations to configure. You can define a spring
-bean as a `PropertiesComponent` which resembles the way done in Java
-DSL. Or you can use the `<propertyPlaceholder>` tag.
-
-[source,xml]
-----
-<bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
-    <property name="location" value="classpath:com/mycompany/myprop.properties"/>
-</bean>
-----
-
-Using the `<propertyPlaceholder>` tag makes the configuration a bit
-more fresh such as:
-
-[source,xml]
-----
-<camelContext ...>
-    <propertyPlaceholder id="properties" location="com/mycompany/myprop.properties"/>
-</camelContext>
-----
-
-Setting the properties location through the location tag works just fine
-but sometime you have a number of resources to take into account and
-starting from **Camel 2.19.0** you can set the properties location with
-a dedicated `propertiesLocation`:
-
-[source,xml]
-----
-<camelContext ...>
-    <propertyPlaceholder id="myPropertyPlaceholder">
-        <propertiesLocation resolver="classpath" path="com/my/company/something/my-properties-1.properties" optional="false"/>
-        <propertiesLocation resolver="classpath" path="com/my/company/something/my-properties-2.properties" optional="false"/>
-        <propertiesLocation resolver="file" path="${karaf.home}/etc/my-override.properties" optional="true"/>
-    </propertyPlaceholder>
-</camelContext>
-----
-
-=== Specifying the cache option in XML
-
-From *Camel 2.10*: Camel supports specifying a value for the `cache`
-option both inside the Spring as well as the Blueprint XML.
-
-
-[[UsingPropertyPlaceholder-UsingaPropertiesfromthe]]
-== Using a Properties from the xref:registry.adoc[Registry]
-
-*Since Camel 2.4*
-
-For example in OSGi you may want to expose a service which returns the
-properties as a `java.util.Properties` object.
-
-Then you could setup the xref:components::properties-component.adoc[Properties] component as
-follows:
-
-[source,xml]
-----
-<propertyPlaceholder id="properties" location="ref:myProperties"/>
-----
-
-Where `myProperties` is the id to use for lookup in the OSGi registry.
-Notice we use the `ref:` prefix to tell Camel that it should lookup
-the properties for the xref:registry.adoc[Registry].
-
-[[UsingPropertyPlaceholder-ExamplesUsingPropertiesComponent]]
-== Examples Using Properties Component
-
-When using property placeholders in the endpoint URIs you can either use
-the `properties:` component or define the placeholders directly in the
-URI. We will show example of both cases, starting with the former.
-
-[source,java]
-----
-// properties
-cool.end=mock:result
-
-// route
 from("direct:start")
     .to("{{cool.end}}");
 ----
 
-You can also use placeholders as a part of the endpoint URI:
+And in XML DSL:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="{{cool.end}}"/>
+</route>
+----
+
+A property placeholder may also just be a one part in the endpoint URI.
+A common use-case is to use a placeholder for an endpoint option such
+as the size of the write buffer in the file endpoint:
+
+[source,properties]
+----
+buf = 8192
+----
 
 [source,java]
 ----
-// properties
-cool.foo=result
-
-// route
 from("direct:start")
-    .to("mock:{{cool.foo}}");
+    .to("file:outbox?bufferSize={{buf}}");
 ----
 
-In the example above the to endpoint will be resolved to
-`mock:result`.
+And in XML DSL:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="file:outbox?bufferSize={{buf}}"/>
+</route>
+----
+
+However the placeholder can be anywhere, so it could also be the name of a mock endpoint
+
+[source,java]
+----
+from("direct:start")
+    .to("mock:{{where}}");
+----
+
+In the example above the mock endpoint, is already hardcoded to start with `mock:`,
+and the `where` placeholder has the value `cheese` so the resolved uri becomes `mock:cheese`.
+
+=== Property placeholders referring to other properties (nested placeholders)
 
 You can also have properties with refer to each other such as:
 
-
-[source,java]
+[source,properties]
 ----
-// properties
 cool.foo=result
 cool.concat=mock:{{cool.foo}}
-
-// route
-from("direct:start")
-    .to("mock:{{cool.concat}}");
 ----
 
 Notice how `cool.concat` refer to another property.
 
-And you can use placeholders several times:
+And the route in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="{{cool.concat}}"/>
+</route>
+----
+
+==== Turning off nested placeholders
+
+If the placeholder value contains data that interfere with the property placeholder syntax `{{` and `}}` (such as JSon data),
+you can be then explicit turn off nested placeholder by `?nested=false` in the key name, such as shown:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="elasticsearch:foo?query={{myQuery?nested=false}}"/>
+</route>
+----
+
+In the example above the placeholder _myQuery_ placeholder value is as follows
+
+[source,json]
+----
+{"query":{"match_all":{}}}
+----
+
+Notice how the json query ends with `}}` which interfere with the Camel property placeholder syntax.
+
+Nested placeholders can also be turned off globally on the xref:components::properties-component.adoc[Properties] component, such as:
 
 [source,java]
 ----
-// properties
+CamelContext context = ...
+context.getPropertiesComponent().setNestedPlaceholder(false);
+----
+
+=== Escape a property placeholder
+
+The property placeholder can be problematic if the double curly brackets are used by a third party library like for example a query in ElasticSearch of type `{"query":{"match_all":{}}}`.
+
+To work around that it is possible to escape the double curly brackets with a backslash character like for example `\{{ property-name \}}`. This way, it won't be interpreted as a property placeholder to resolve and will be resolved as `{{ property-name }}`.
+
+If for some reason, the backslash character before the double curly brackets must not be interpreted as an escape character, it is possible to add another backslash in front of it to escape it, it will then be seen as a backslash.
+
+=== Using property placeholders multiple times
+
+You can of course also use placeholders several times:
+
+[source,properties]
+----
 cool.start=direct:start
 cool.showid=true
 cool.result=result
+----
 
-// route
+And in this route we use `cool.start` two times:
+
+[source,java]
+----
 from("{{cool.start}}")
     .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
     .to("mock:{{cool.result}}");
 ----
 
+=== Using property placeholders with producer template
+
 You can also your property placeholders when using
 xref:producertemplate.adoc[ProducerTemplate] for example:
-
 
 [source,java]
 ----
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
+=== Using property placeholders with consumer template
 
-[[UsingPropertyPlaceholder-Examplewithlanguage]]
-== Example with xref:components:languages:simple-language.adoc[Simple] language
-
-The xref:components:languages:simple-language.adoc[Simple] language now also support using property
-placeholders, for example in the route below:
-
+This can also be done when using xref:consumertemplate.adoc[ConsumerTemplate], such as:
 
 [source,java]
 ----
-// properties
-cheese.quote=Camel rocks
-
-// route from("direct:start")
-    .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
+Object body = template.receiveBody("{{cool.start}}");
 ----
 
-You can also specify the location in the xref:components:languages:simple-language.adoc[Simple]
-language for example:
+== Resolving property placeholders from Java code
 
+If you need to resolve property placeholder(s) from some Java code, then Camel has two APIs for this:
+
+- You can use the method `resolveProperty` on the `PropertiesComponent` to resolve a single property from Java code.
+- Use the method `resolvePropertyPlaceholders` on the `CamelContext` to resolve (one or more) property placeholder(s) in a String.
+
+For example to resolve a placeholder with key foo, you can do:
 
 [source,java]
 ----
-// bar.properties
-bar.quote=Beer tastes good
-
-// route
-from("direct:start")
-    .transform().simple("Hi ${body}. ${properties:com/mycompany/bar.properties:bar.quote}.");
+Optional<String> prop = camelContext.getPropertiesComponent().resolveProperty("foo");
+if (prop.isPresent()) {
+    String value = prop.get();
+    ....
+}
 ----
 
+This API is to lookup a single property and returns a `java.util.Optional` type.
 
-[[UsingPropertyPlaceholder-AdditionalPropertyPlaceholderSupportinSpringXML]]
-== Additional Property Placeholder Support in Spring XML
+The `CamelContext` have another API which is capable of resolving multiple placeholders, and interpolate placeholders from an input String.
+Lets try with an example to explain this:
 
-The property placeholders is also supported in many of the Camel Spring
-XML tags such as
-`<package>`, `<packageScan>`, `<contextScan>`, `<jmxAgent>`, `<endpoint>`, `<routeBuilder>`
-and the others.
-
-Example using property placeholders in the `<jmxAgent>` tag:
-
-[source,xml]
+[source,java]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
-    <!-- we can use propery placeholders when we define the JMX agent -->
-    <jmxAgent id="agent" registryPort="{{myjmx.port}}" disabled="{{myjmx.disabled}}"
-              usePlatformMBeanServer="{{myjmx.usePlatform}}" createConnector="true"
-              statisticsLevel="RoutesOnly" useHostIPAddress="true"/>
-    <route id="foo" autoStartup="false">
-        <from uri="seda:start"/>
-        <to uri="mock:result"/>
-    </route>
-</camelContext>
+String msg = camelContext.resolvePropertyPlaceholders("{{greeting}} Camel user, Camel is {{cool}} dont you think?");
 ----
 
+The input string is a text statement which have two placeholders that will be resolved, for example:
 
-Example using property placeholders in the attributes of `<camelContext>`:
-
-[source,xml]
+[source,properties]
 ----
-<camelContext trace="{{foo.trace}}" xmlns="http://camel.apache.org/schema/spring">
-    <propertyPlaceholder id="properties" location="org/apache/camel/spring/processor/myprop.properties"/>
-    <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
-    <route>
-        <from uri="direct:start"/>
-        <setHeader name="{{foo.header}}">
-            <simple>${in.body} World!</simple>
-        </setHeader>
-        <to uri="mock:result"/>
-    </route>
-</camelContext>
+greeting = Hi
+cool = awesome
 ----
 
+Will be resolved to:
 
-[[UsingPropertyPlaceholder-UsingPropertyPlaceholdersforAnyKindofAttributeintheXMLDSL]]
-== Using Property Placeholders for Any Kind of Attribute in the XML DSL
+[source,text]
+----
+Hi Camel user, Camel is awesome dont you think?
+----
 
-*Since Camel 2.7*
-
-If you use OSGi Blueprint then this only works from *2.11.1* or *2.10.5*
-on.
+== Using property placeholders for any kind of attribute in Spring XML files
 
 Previously it was only the `xs:string` type attributes in the XML DSL
 that support placeholders. For example often a timeout attribute would
 be a `xs:int` type and thus you cannot set a string value as the
-placeholder key. This is now possible from Camel 2.7 on using a special
+placeholder key. This is now possible using a special
 placeholder namespace.
 
 In the example below we use the `prop` prefix for the namespace
-`\http://camel.apache.org/schema/placeholder` by which we can use the
-`prop` prefix in the attributes in the XML DSLs. Notice how we use
-that in the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] to indicate that the option
-`stopOnException` should be the value of the placeholder with the key
-`stop`.
+`\http://camel.apache.org/schema/placeholder`. Now we can use `prop:` as prefix
+to configure any kind of XML attributes in Spring XML files.
+
+In the example below we want to use a placeholder for the `stopOnException` option in
+the xref:components:eips:multicast-eip.adoc[Multicast] EIP. The `stopOnException` is a `xs:boolean` type,
+so we cannot configure this as:
+
+[source,xml]
+----
+<multicast stopOnException="{{stop}}">
+   ...
+</multicast>
+----
+
+Instead, we must use the `prop:` namespace, so we must add this namespace
+in the top of the XML file in the `<beans>` tag.
+
+To configure the option we must then use the `prop:optionName` as shown below:
+
+[source,xml]
+----
+<multicast prop:stopOnException="stop">
+  ...
+</multicast>
+----
+
+The complete example is below:
 
 [source,xml]
 ----
@@ -395,20 +350,20 @@ that in the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] to indicate that th
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-    <!-- Notice in the declaration above, we have defined the prop prefix as the Camel placeholder namespace -->
+
     <bean id="damn" class="java.lang.IllegalArgumentException">
         <constructor-arg index="0" value="Damn"/>
     </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="classpath:org/apache/camel/component/properties/myprop.properties"
-                             xmlns="http://camel.apache.org/schema/spring"/>
+        <propertyPlaceholder id="properties" location="classpath:myprop.properties"/>
         <route>
             <from uri="direct:start"/>
             <!-- use prop namespace, to define a property placeholder, which maps to option stopOnException={{stop}} -->
             <multicast prop:stopOnException="stop">
-            <to uri="mock:a"/>
-            <throwException ref="damn"/>
-            <to uri="mock:b"/>
+                <to uri="mock:a"/>
+                <throwException ref="damn"/>
+                <to uri="mock:b"/>
             </multicast>
         </route>
     </camelContext>
@@ -416,365 +371,21 @@ that in the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] to indicate that th
 ----
 
 In our properties file we have the value defined as:
-....
-stop=true
-....
 
-
-[[UsingPropertyPlaceholder-UsingPropertyPlaceholderintheJavaDSL]]
-== Using Property Placeholder in the Java DSL
-
-*Since Camel 2.7*
-
-Likewise we have added support for defining placeholders in the Java DSL
-using the new `placeholder` DSL as shown in the following equivalent
-example:
-
-[source,java]
+[source,properties]
 ----
-from("direct:start")
-    // use a property placeholder for the option stopOnException on the Multicast EIP
-    // which should have the value of {{stop}} key being looked up in the properties file
-    .multicast()
-    .placeholder("stopOnException", "stop")
-    .to("mock:a")
-    .throwException(new IllegalAccessException("Damn"))
-    .to("mock:b");
+stop = true
 ----
 
 
-[[UsingPropertyPlaceholder-UsingBlueprintPropertyPlaceholderwithCamelRoutes]]
-== Using Blueprint Property Placeholder with Camel Routes
+== Bridging Camel property placeholders with Spring XML files
 
-*Since Camel 2.7*
-
-Camel supports xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
-which also offers a property placeholder service. Camel supports
-convention over configuration, so all you have to do is to define the
-OSGi Blueprint property placeholder in the XML file as shown below:
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
-           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-    <!-- OSGI blueprint property placeholder -->
-    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
-        <!-- list some properties as needed -->
-        <cm:default-properties>
-            <cm:property name="result" value="mock:result"/>
-        </cm:default-properties>
-    </cm:property-placeholder>
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint as Camel
-             will auto detect the OSGi blueprint property placeholder and use it -->
-        <route>
-            <from uri="direct:start"/>
-            <to uri="mock:foo"/>
-            <to uri="{{result}}"/>
-        </route>
-    </camelContext>
-</blueprint>
-----
-
-By default Camel detects and uses OSGi blueprint property placeholder
-service. You can disable this by setting the attribute
-`useBlueprintPropertyResolver` to false on the `<camelContext>`
-definition.
-
-=== About placeholder syntax
-
-Notice how we can use the Camel syntax for placeholders `{{ }}` in the
-Camel route, which will lookup the value from OSGi blueprint.
-The blueprint syntax for placeholders is `${}`. So outside
-the `<camelContext>` you must use the `${}` syntax. Where as
-inside `<camelContext>` you must use `{{ }}` syntax. OSGi blueprint
-allows you to configure the syntax, so you can actually align those if
-you want.
-
-You can also explicit refer to a specific OSGi blueprint property
-placeholder by its id. For that you need to use the
-Camel's `<propertyPlaceholder>` as shown in the example below:
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
-           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-    <!-- OSGI blueprint property placeholder -->
-    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
-        <!-- list some properties as needed -->
-        <cm:default-properties>
-            <cm:property name="prefix.result" value="mock:result"/>
-        </cm:default-properties>
-    </cm:property-placeholder>
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-        <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
-        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
-                             prefixToken="[[" suffixToken="]]" propertyPrefix="prefix."/>
-        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
-        <route>
-            <from uri="direct:start"/>
-            <to uri="mock:foo"/>
-            <to uri="[[result]]"/>
-        </route>
-    </camelContext>
-</blueprint>
-----
-
-Notice how we use the `blueprint` scheme to refer to the OSGi
-blueprint placeholder by its id. This allows you to mix and match, for
-example you can also have additional schemes in the location. For
-example to load a file from the classpath you can do:
-
-[source,java]
-----
-location="blueprint:myblueprint.placeholder,classpath:myproperties.properties"
-----
-
-Each location is separated by comma.
-
-[[UsingPropertyPlaceholder-OverridingBlueprintPropertyPlaceholdersOutsideCamelContext]]
-== Overriding Blueprint Property Placeholders Outside CamelContext
-
-*Since Camel 2.10.4*
-
-When using Blueprint property placeholder in the Blueprint XML file, you
-can declare the properties directly in the XML file as shown below:
-
-[source,xml]
-----
-<!-- blueprint property placeholders -->
-<cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
-  <cm:default-properties>
-    <cm:property name="greeting" value="Hello"/>
-    <cm:property name="destination" value="mock:result"/>
-  </cm:default-properties>
-</cm:property-placeholder>
-
-<!-- a bean that uses a blueprint property placeholder -->
-<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
-  <property name="say" value="${greeting}"/>
-</bean>
-
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
-  <route>
-    <from uri="direct:start"/>
-    <bean ref="myCoolBean" method="saySomething"/>
-    <to uri="{{destination}}"/>
-  </route>
-
-</camelContext>
-----
-
-Notice that we have a `<bean>` which refers to one of the properties. And in
-the Camel route we refer to the other using the `{{ }}` notation.
-
-Now if you want to override these Blueprint properties from an unit
-test, you can do this as shown below:
-
-[source,java]
-----
-protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
-    // add the properties we want to override
-    props.put("greeting", "Bye");
-
-    // return the PID of the config-admin we are using in the blueprint xml file
-    return "my-placeholders";
-}
-----
-
-To do this we override and implement the
-`useOverridePropertiesWithConfigAdmin` method. We can then put the
-properties we want to override on the given props parameter. And the
-return value _must_ be the persistence-id of
-the `<cm:property-placeholder>` tag, which you define in the blueprint
-XML file.
-
-[[UsingPropertyPlaceholder-Usinga.cfgor.propertiesFileForBlueprintPropertyPlaceholders]]
-== Using a `.cfg` or `.properties` File For Blueprint Property Placeholders
-
-*Since Camel 2.10.4*
-
-When using Blueprint property placeholder in the Blueprint XML file, you
-can declare the properties in a .properties or `.cfg` file. If you use
-Apache ServiceMix/Karaf then this container has a convention that it
-loads the properties from a file in the etc directory with the naming
-`etc/pid.cfg`, where `pid` is the persistence-id.
-
-For example in the blueprint XML file we have the
-`persistence-id="stuff"`, which mean it will load the configuration
-file as `etc/stuff.cfg`.
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
-           xsi:schemaLocation="
-             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-
-<!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
-<cm:property-placeholder persistent-id="stuff" update-strategy="reload"/>
-
-<!-- a bean that uses a blueprint property placeholder -->
-<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
-  <property name="say" value="${greeting}"/>
-</bean>
-
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
-  <route>
-    <from uri="direct:start"/>
-    <bean ref="myCoolBean" method="saySomething"/>
-    <to uri="mock:result"/>
-  </route>
-
-</camelContext>
-----
-
-Now if you want to unit test this blueprint XML file, then you can override
-the `loadConfigAdminConfigurationFile` and tell Camel which file to
-load as shown below:
-
-[source,java]
-----
-@Override
-protected String[] loadConfigAdminConfigurationFile() {
-    // String[0] = tell Camel the path of the .cfg file to use for OSGi ConfigAdmin in the blueprint XML file
-    // String[1] = tell Camel the persistence-id of the cm:property-placeholder in the blueprint XML file
-    return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
-}
-----
-Notice that this method requires to return a `String[]` with 2 values. The
-1st value is the path for the configuration file to load. The second
-value is the persistence-id of the `<cm:property-placeholder>` tag.
-
-The `stuff.cfg` file is just a plain properties file with the property
-placeholders such as:
-
-[source,java]
-----
-== this is a comment
-greeting=Bye
-----
-
-
-[[UsingPropertyPlaceholder-Usinga.cfgfileandOverridingPropertiesforBlueprintPropertyPlaceholders]]
-== Using a `.cfg` file and Overriding Properties for Blueprint Property Placeholders
-
-You can do both as well. Here is a complete example. First we have the
-Blueprint XML file:
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
-           xsi:schemaLocation="
-             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-
-  <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
-  <cm:property-placeholder persistent-id="stuff" update-strategy="reload">
-    <cm:default-properties>
-      <cm:property name="greeting" value="Hello" />
-      <cm:property name="echo" value="Hey" />
-      <cm:property name="destination" value="mock:original" />
-    </cm:default-properties>
-  </cm:property-placeholder>
-
-  <!-- a bean that uses a blueprint property placeholder -->
-  <bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
-    <property name="say" value="${greeting}"/>
-    <property name="echo" value="${echo}"/>
-  </bean>
-
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
-    <route>
-      <from uri="direct:start"/>
-      <bean ref="myCoolBean" method="saySomething"/>
-      <to uri="{{destination}}"/>
-      <bean ref="myCoolBean" method="echoSomething"/>
-      <to uri="{{destination}}"/>
-    </route>
-
-  </camelContext>
-
-</blueprint>
-----
-
-And in the unit test class we do as follows:
-
-[source,java]
-----
-/**
- * This example will load a Blueprint .cfg file (which will initialize configadmin), and also override its property
- * placeholders from this unit test source code directly (the change will reload blueprint container).
- */
-public class ConfigAdminLoadConfigurationFileAndOverrideTest extends CamelBlueprintTestSupport {
-
-    @Override
-    protected String getBlueprintDescriptor() {
-        // which blueprint XML file to use for this test
-        return "org/apache/camel/test/blueprint/configadmin-loadfileoverride.xml";
-    }
-
-    @Override
-    protected String[] loadConfigAdminConfigurationFile() {
-        // which .cfg file to use, and the name of the persistence-id
-        return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
-    }
-
-    @Override
-    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
-        // override / add extra properties
-        props.put("destination", "mock:extra");
-
-        // return the persistence-id to use
-        return "stuff";
-    }
-
-    @Test
-    public void testConfigAdmin() throws Exception {
-        // mock:original comes from <cm:default-properties>/<cm:property name="destination" value="mock:original" />
-        getMockEndpoint("mock:original").setExpectedMessageCount(0);
-        // mock:result comes from loadConfigAdminConfigurationFile()
-        getMockEndpoint("mock:result").setExpectedMessageCount(0);
-        // mock:extra comes from useOverridePropertiesWithConfigAdmin()
-        getMockEndpoint("mock:extra").expectedBodiesReceived("Bye World", "Yay Bye WorldYay Bye World");
-
-        template.sendBody("direct:start", "World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-}
-----
-
-And the `etc/stuff.cfg` configuration file contains:
-
-[source,java]
-----
-greeting=Bye
-echo=Yay
-destination=mock:result
-----
-
-
-[[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders-1]]
-== Bridging Spring and Camel Property Placeholders
-
-*Since Camel 2.10*
+NOTE: If you are using Spring Boot then this does not apply.
+This is only for legacy Camel and Spring applications which are using Spring XML files.
 
 The Spring Framework does not allow third-party frameworks such as
 Apache Camel to seamless hook into the Spring property placeholder
-mechanism. However you can easily bridge Spring and Camel by declaring a
+mechanism. However, you can bridge Spring and Camel by declaring a
 Spring bean with the type
 `org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer`,
 which is a Spring
@@ -819,156 +430,24 @@ tag as shown below:
 
 Notice how the hello bean is using pure Spring property placeholders using
 the `${}` notation. And in the Camel routes we use the Camel
-placeholder notation with `{{ }}`.
+placeholder notation with `{\{key}}`.
 
-[[UsingPropertyPlaceholder-ClashingSpringPropertyPlaceholderswithCamelsLanguage]]
-== Clashing Spring Property Placeholders with Camels xref:components:languages:simple-language.adoc[Simple] Language
+== Using property placeholder functions
 
-Take notice when using Spring bridging placeholder then the
-spring `${}` syntax clashes with the xref:components:languages:simple-language.adoc[Simple] in
-Camel, and therefore take care.
+The xref:components::properties-component.adoc[Properties] component includes the following functions out of the box:
 
-Example:
+* `env` - A function to lookup the property from OS environment variables
+* `sys` - A function to lookup the property from Java JVM system properties
+* `bean` - A function to lookup the property from the return value of bean's method (requires `camel-bean` JAR)
+* `service` - A function to lookup the property from OS environment variables using the service naming idiom
+* `service.name` - A function to lookup the property from OS environment variables using the service naming idiom returning the hostname part only
+* `service.port` - A function to lookup the property from OS environment variables using the service naming idiom returning the port part only
 
-[source,xml]
-----
-<setHeader name="Exchange.FILE_NAME">
-    <simple>{{file.rootdir}}/${in.header.CamelFileName}</simple>
-</setHeader>
-----
-
-clashes with Spring property placeholders, and you should
-use `$simple{}` to indicate using the xref:components:languages:simple-language.adoc[Simple]
-language in Camel.
-
+These functions are intended to make it easy to lookup values from the environment, as shown in the example below:
 
 [source,xml]
 ----
-<setHeader name="Exchange.FILE_NAME">
-    <simple>{{file.rootdir}}/$simple{in.header.CamelFileName}</simple>
-</setHeader>
-----
-
-An alternative is to configure the `PropertyPlaceholderConfigurer`
-with `ignoreUnresolvablePlaceholders` option to `true`.
-
-[[UsingPropertyPlaceholder-OverridingPropertiesfromCamelTestKit]]
-== Overriding Properties from Camel Test Kit
-
-*Since Camel 2.10*
-
-When xref:testing.adoc[Testing] with Camel and using the
-xref:components::properties-component.adoc[Properties] component, you may want to be able to
-provide the properties to be used from directly within the unit test
-source code. This is now possible from Camel 2.10, as the Camel test
-kits, e.g., `CamelTestSupport` class offers the following methods
-
-* `useOverridePropertiesWithPropertiesComponent`
-* `ignoreMissingLocationWithPropertiesComponent`
-
-So for example in your unit test classes, you can override the
-`useOverridePropertiesWithPropertiesComponent` method and return a
-`java.util.Properties` that contains the properties which should be
-preferred to be used.
-
-[source,java]
-----
-@Override
-protected Properties useOverridePropertiesWithPropertiesComponent() {
-    Properties extra = new Properties();
-    extra.put("destination", "mock:extra");
-    extra.put("greeting", "Bye");
-    return extra;
-}
-----
-
-This can be done from any of the Camel Test kits, such as `camel-test`,
-`camel-test-spring` and `camel-test-blueprint`.
-
-The `ignoreMissingLocationWithPropertiesComponent` can be used to
-instruct Camel to ignore any locations which was not discoverable. For
-example if you run the unit test, in an environment that does not have
-access to the location of the properties.
-
-
-[[UsingPropertyPlaceholder-UsingPropertyInject]]
-== Using `@PropertyInject`
-
-*Since Camel 2.12*
-
-Camel allows to inject property placeholders in POJOs using
-the `@PropertyInject` annotation which can be set on fields and setter
-methods. For example you can use that with `RouteBuilder` classes,
-such as shown below:
-
-[source,java]
-----
-public class MyRouteBuilder extends RouteBuilder {
-
-    @PropertyInject("hello")
-    private String greeting;
-
-    @Override
-    public void configure() throws Exception {
-        from("direct:start")
-            .transform().constant(greeting)
-            .to("{{result}}");
-    }
-}
-----
-
-Notice we have annotated the greeting field with `@PropertyInject` and
-define it to use the key `hello`. Camel will then lookup the property
-with this key and inject its value, converted to a String type.
-
-You can also use multiple placeholders and text in the key, for example
-we can do:
-
-[source,java]
-----
-@PropertyInject("Hello {{name}} how are you?")
-private String greeting;
-----
-
-This will lookup the placeholder with they key `name`.
-
-You can also add a default value if the key does not exists, such as:
-
-[source,java]
-----
-@PropertyInject(value = "myTimeout", defaultValue = "5000")
-private int timeout;
-----
-
-
-[[UsingPropertyPlaceholder-UsingOutoftheBoxFunctions]]
-== Using Out of the Box Functions
-
-*Since Camel 2.14.1*
-
-The xref:components::properties-component.adoc[Properties] component includes the following
-functions out of the box
-
-* `env` - A function to lookup the property from OS environment
-variables.
-* `sys` - A function to lookup the property from Java JVM system
-properties.
-* `service` - A function to lookup the property from OS environment
-variables using the service naming idiom.
-* `service.host` - **Camel 2.16.1: **A function to lookup the
-property from OS environment variables using the service naming idiom
-returning the hostname part only.
-* `service.port` - **Camel 2.16.1: **A function to lookup the
-property from OS environment variables using the service naming idiom
-returning the port part only.
-
-As you can see these functions is intended to make it easy to lookup
-values from the environment. As they are provided out of the box, they
-can easily be used as shown below:
-
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+<camelContext>
     <route>
         <from uri="direct:start"/>
         <to uri="{{env:SOMENAME}}"/>
@@ -977,14 +456,11 @@ can easily be used as shown below:
 </camelContext>
 ----
 
-You can use default values as well, so if the property does not exists,
-you can define a default value as shown below, where the default value
-is a `log:foo` and `log:bar` value.
-
+You can use default values as well, so if the property does not exist, you can define a default value as shown below, where the default value is a `log:foo` and `log:bar` value.
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+<camelContext>
     <route>
         <from uri="direct:start"/>
         <to uri="{{env:SOMENAME:log:foo}}"/>
@@ -993,26 +469,25 @@ is a `log:foo` and `log:bar` value.
 </camelContext>
 ----
 
-The service function is for looking up a service which is defined using
-OS environment variables using the service naming idiom, to refer to a
-service location using `hostname : port`
+The service function is for looking up a service which is defined using OS environment variables using the service naming idiom, to refer to a service location using `hostname : port`
 
-* __NAME___SERVICE_HOST
-* __NAME___SERVICE_PORT
+* __NAME__**_SERVICE_HOST**
+* __NAME__**_SERVICE_PORT**
 
-in other words the service uses `_SERVICE_HOST` and `_SERVICE_PORT`
-as prefix. So if the service is named `FOO`, then the OS environment
-variables should be set as
+in other words the service uses `_SERVICE_HOST` and `_SERVICE_PORT` as prefix.
+So if the service is named FOO, then the OS environment variables should be set as
 
-export $FOO_SERVICE_HOST=myserver export $FOO_SERVICE_PORT=8888
+[source,bash]
+----
+export $FOO_SERVICE_HOST=myserver
+export $FOO_SERVICE_PORT=8888
+----
 
-For example if the `FOO` service a remote HTTP service, then we can
-refer to the service in the Camel endpoint URI, and use
-the xref:components::http-component.adoc[HTTP] component to make the HTTP call:
+For example if the FOO service a remote HTTP service, then we can refer to the service in the Camel endpoint uri, and use the HTTP component to make the HTTP call:
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+<camelContext>
     <route>
         <from uri="direct:start"/>
         <to uri="http://{{service:FOO}}/myapp"/>
@@ -1020,61 +495,272 @@ the xref:components::http-component.adoc[HTTP] component to make the HTTP call:
 </camelContext>
 ----
 
-And we can use default values if the service has not been defined, for
-example to call a service on localhost, maybe for unit testing etc:
+And we can use default values if the service has not been defined, for example to call a service on localhost, maybe for unit testing.
 
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <route>
-        <from uri="direct:start"/>
-        <to uri="http://{{service:FOO:localhost:8080}}/myapp"/>
-    </route>
+<camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="http://{{service:FOO:localhost:8080}}/myapp"/>
+</route>
 </camelContext>
 ----
 
-[[UsingPropertyPlaceholder-UsingCustomFunctions]]
-== Using Custom Functions (advanced)
+The bean function (you need to have `camel-bean` JAR on classpath) is for looking up the property from the return value of bean's method.
 
-*Since Camel 2.14.1*
-
-The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party
-functions which can be used during parsing of the property placeholders.
-These functions are then able to do custom logic to resolve the
-placeholders, such as looking up in databases, do custom computations,
-or whatnot. The name of the function becomes the prefix used in the
-placeholder. This is best illustrated in the example code below
+Assuming we have registered a bean named 'foo' that has a method called 'bar' that returns a directory name, then we can refer to the bean's method in the camel endpoint url, and use the file component to poll a directory:
 
 [source,xml]
 ----
-<bean id="beerFunction" class="MyBeerFunction"/>
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <propertyPlaceholder id="properties" location="none" ignoreMissingLocation="true">
-        <propertiesFunction ref="beerFunction"/>
-    </propertyPlaceholder>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{beer:FOO}}"/>
-        <to uri="{{beer:BAR}}"/>
-    </route>
+<camelContext>
+<route>
+    <from uri="file:{{bean:foo.bar}}"/>
+    <to uri="direct:result"/>
+</route>
 </camelContext>
 ----
 
-Here we have a Camel XML route where we have defined
-the `<propertyPlaceholder>` to use a custom function, which we refer
-to be the bean id - e.g., the `beerFunction`. As the beer function
-uses `beer` as its name, then the placeholder syntax can trigger the
-beer function by starting with `beer:value`.
+IMPORTANT: The method must be a public no-arg method (i.e. no parameters) and return a value such as a String, boolean, int.
+
+=== Using Kubernetes property placeholder functions
+
+The `camel-kubernetes` component include the following functions:
+
+* `configmap` - A function to lookup the property from Kubernetes ConfigMaps.
+* `secret` - A function to lookup the property from Kubernetes Secrets.
+
+The syntax for both functions are:
+
+[source]
+----
+configmap:name/key[:defaultValue]
+----
+
+Where the default value is optional, for example the following will lookup `myKey`,
+and fail if there is no such configmap.
+
+[source]
+----
+configmap:mymap/mykey
+----
+
+In this example then it would not fail as a default value is provided:
+
+[source]
+----
+configmap:mymap/mykey:123
+----
+
+Before the Kubernetes property placeholder functions can be used they need to be configured with either (or both)
+
+- path - A _mount path_ that must be mounted to the running pod, to load the configmaps or secrets from local disk.
+- kubernetes client - *Autowired* An `io.fabric8.kubernetes.client.KubernetesClient` instance to use for connecting to the Kubernetes API server.
+
+Camel will first use _mount paths_ (if configured) to lookup, and then fallback to use the `KubernetesClient`.
+
+==== Configuring mount paths for ConfigMaps and Secrets
+
+The configuration of the _mount path_ are used by the given order:
+
+1. Reading configuration property with keys `camel.kubernetes-config.mount-path-configmaps`
+and `camel.kubernetes-config.mount-path-secrets`.
+2. Use JVM system property with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
+3. Use OS ENV variable with key `CAMEL_K_MOUNT_PATH_CONFIGMAPS` and `CAMEL_K_MOUNT_PATH_SECRETS` (Camel K compatible).
+
+For example to use `/etc/camel/resources/` as mount path, you can configure this in the `application.properties`:
+
+[source,properties]
+----
+camel.kubernetes-config.mount-path-configmaps = /etc/camel/myconfig/
+camel.kubernetes-config.mount-path-secrets = /etc/camel/mysecrets/
+----
+
+==== Configuring Kubernetes Client
+
+Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
+Otherwise, a new `KubernetesClient` is created. The client can be configured from either
+
+- Using `camel.kubernetes-config.client.` properties (see below for example)
+- Attempt to auto-configure itself by a combination of OS Environment variables, reading from `~./kube/config` configuration,
+and service account token file. For more details see the https://github.com/fabric8io/kubernetes-client documentation.
+
+You most likely only need to explicit configure the `KubernetesClient` when you want to connect
+from a local computer to a remote Kubernetes cluster, where you can specify various options,
+such as the masterUrl and oauthToken as shown:
+
+[source,properties]
+----
+camel.kubernetes-config.client.masterUrl = https://127.0.0.1:50179/
+camel.kubernetes-config.client.oauthToken = eyJhbGciOiJSUzI1NiIsImtpZCI...
+----
+
+The `KubernetesClient` has many options, see the https://github.com/fabric8io/kubernetes-client documentation.
+
+If you only use _mount paths_ then its good practice to disable `KubernetesClient` which can be done by setting enabled to false as show:
+
+[source,properties]
+----
+camel.kubernetes-config.client-enabled = false
+----
+
+When running your Camel applications inside an existing Kubernetes cluster, then you often
+would not need to explicit configure the `KubernetesClient` and can rely on default settings.
+
+TIP: If you use Camel Quarkus, then it is recommended to use their https://quarkus.io/guides/kubernetes-config
+which automatic pre-configure the `KubernetesClient` which Camel then will reuse.
+
+==== Using configmap with Kubernetes
+
+Given a configmap named `myconfig` in Kubernetes that has two entries:
+
+[source,properties]
+----
+drink = beer
+first = Carlsberg
+----
+
+Then these values can be used in your Camel routes such as:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:start"/>
+    <log message="What {{configmap:myconfig/drink}} do you want?"/>
+    <log message="I want {{configmap:myconfig/first}}"/>
+  </route>
+</camelContext>
+----
+
+You can also provide a default value in case a key does not exist:
+
+[source,xml]
+----
+    <log message="I want {{configmap:myconfig/second:Heineken}}"/>
+----
+
+==== Using secrets with Kubernetes
+
+Camel reads ConfigMaps from the Kubernetes API Server. And when RBAC is enabled on the cluster,
+the ServiceAccount that is used to run the application needs to have the proper permissions for such access.
+
+A secret named `mydb` could contain username and passwords to connect to a database such as:
+
+[source,properties]
+----
+myhost = killroy
+myport = 5555
+myuser = scott
+mypass = tiger
+----
+
+This can be used in Camel with for example the Postrgres Sink Kamelet:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rome"/>
+    <setBody>
+      <constant>{ "username":"oscerd", "city":"Rome"}</constant>
+    </setBody>
+    <to uri="kamelet:postgresql-sink?serverName={{secret:mydb/myhost}}
+             &amp;serverPort={{secret:mydb/myport}}
+             &amp;username={{secret:mydb/myuser}}
+             &amp;password={{secret:mydb/mypass}}
+             &amp;databaseName=cities
+             &amp;query=INSERT INTO accounts (username,city) VALUES (:#username,:#city)"/>
+  </route>
+</camelContext>
+----
+
+The postgres-sink Kamelet can also be configured in `application.properties` which reduces the configuration
+in the route above:
+
+[source,properties]
+----
+camel.component.kamelet.postgresql-sink.databaseName={{secret:mydb/myhost}}
+camel.component.kamelet.postgresql-sink.serverPort={{secret:mydb/myport}}
+camel.component.kamelet.postgresql-sink.username={{secret:mydb/myuser}}
+camel.component.kamelet.postgresql-sink.password={{secret:mydb/mypass}}
+----
+
+Which reduces the route to:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rome"/>
+    <setBody>
+      <constant>{ "username":"oscerd", "city":"Rome"}</constant>
+    </setBody>
+    <to uri="kamelet:postgresql-sink?databaseName=cities
+             &amp;query=INSERT INTO accounts (username,city) VALUES (:#username,:#city)"/>
+  </route>
+</camelContext>
+----
+
+==== Using configmap or secrets in local-mode
+
+During development you may want to run in _local mode_ where you do not need acces to a Kubernetes cluster, to lookup the configmap.
+In the local mode, then Camel will lookup the configmap _keys_ from local properties, eg:
+
+For example the example above with the postgresql kamelet, that was configured using a secret:
+
+[source,properties]
+----
+camel.component.kamelet.postgresql-sink.databaseName={{secret:mydb/myhost}}
+camel.component.kamelet.postgresql-sink.serverPort={{secret:mydb/myport}}
+camel.component.kamelet.postgresql-sink.username={{secret:mydb/myuser}}
+camel.component.kamelet.postgresql-sink.password={{secret:mydb/mypass}}
+----
+
+Now suppose we have a local Postrgres database we want to use, then we can turn on _local mode_
+and specify the credentials in the same properties file:
+
+[source,properties]
+----
+camel.kubernetes-config.local-mode = true
+mydb/myhost=localhost
+mydb/myport=1234
+mydb/myuser=scott
+mydb/mypass=tiger
+----
+
+NOTE: Notice how the key is prefixed with the name of the secret and a slash, eg `name/key`. This makes it easy to copy/paste
+from the actual use of the configmap/secret and into the `application.properties` file.
+
+=== Using custom property placeholder functions
+
+The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party functions which can be used during parsing of the property placeholders.
+These functions are then able to do custom logic to resolve the placeholders, such as looking up in databases, do custom computations, or whatnot.
+The name of the function becomes the prefix used in the placeholder.
+
+This is best illustrated in the example route below, where we use `beer` as the prefix:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{beer:FOO}}"/>
+    <to uri="{{beer:BAR}}"/>
+</route>
+----
 
 The implementation of the function is only two methods as shown below:
 
 [source,java]
 ----
-public static final class MyBeerFunction implements PropertiesFunction {
+@org.apache.camel.spi.annotations.PropertiesFunction("beer")
+public class MyBeerFunction implements PropertiesFunction {
+
     @Override
     public String getName() {
         return "beer";
     }
+
     @Override
     public String apply(String remainder) {
         return "mock:" + remainder.toLowerCase();
@@ -1082,18 +768,43 @@ public static final class MyBeerFunction implements PropertiesFunction {
 }
 ----
 
-The function must implement
-the `org.apache.camel.spi.PropertiesFunction`
-interface. The method `getName` is  the name of the function, e.g.,
-`beer`. And the `apply` method is where we implement the custom
-logic to do. As the sample code is from an unit test, it just returns a
-value to refer to a mock endpoint.
+The function must implement the `org.apache.camel.spi.PropertiesFunction` interface.
+The method `getName` is the name of the function (beer).
+And the `apply` method is where we implement the custom logic to do.
+As the sample code is from a unit test, it just returns a value to refer to a mock endpoint.
 
-To register a custom function from Java code is as shown below:
+You also need to have `camel-component-maven-plugin` as part of building the component will
+then ensure that this custom properties function has necessary source code generated that makes Camel
+able to automatically discover the function.
+
+NOTE: If the custom properties function need logic to startup and shutdown, then the function can extend `ServiceSupport`
+and have this logic in `doStart` and `doStop` methods.
+
+TIP: For an example see the `camel-base64` component.
+
+== Using third party property sources
+
+The properties component allows to plugin 3rd party sources to load and lookup properties via the `PropertySource`
+API from camel-api.
+
+The regular `PropertySource` will lookup the property on-demand,
+for example to lookup values from a backend source such as a database or HashiCorp Vault etc.
+
+A `PropertySource` can define that it supports loading all its properties
+(by implementing `LoadablePropertiesSource`) from the source at once, for example from file system.
+This allows Camel properties component to load these properties at once during startup.
+
+For example the `camel-microprofile-config` component is implemented using this.
+The 3rd-party `PropertySource` can automatically be discovered from classpath when Camel is starting up.
+This is done by including the file `META-INF/services/org/apache/camel/property-source-factory` which refers to the fully qualified class name of the `PropertySource` implementation.
+
+See xref:components:others:microprofile-config.adoc[MicroProfile Config] component as an example.
+
+You can also register 3rd-party property sources via Java API:
 
 [source,java]
 ----
 PropertiesComponent pc = context.getPropertiesComponent();
-pc.addFunction(new MyBeerFunction());
+pc.addPropertiesSource(myPropertySource);
 ----
 

@@ -73,7 +73,7 @@ public final class TestIgniteComputeResources {
         private static final long serialVersionUID = 986972344531961815L;
 
         @Override
-        public String call() throws Exception {
+        public String call() {
             return "hello";
         }
     };

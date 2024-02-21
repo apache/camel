@@ -49,7 +49,7 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
                     String.format("db: %s, col: %s", endpoint.getMongoDatabase(), endpoint.getCollection()));
         }
 
-        if (!isCollectionCapped()) {
+        if (Boolean.FALSE.equals(isCollectionCapped())) {
             throw new CamelMongoDbException(
                     String.format(
                             "Tailable cursors are only compatible with capped collections, and collection %s is not capped",
@@ -85,10 +85,9 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         if (lastVal == null) {
             answer = dbCol.find().cursorType(CursorType.TailableAwait).iterator();
         } else {
-            MongoCursor<Document> iterator = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal))
+            answer = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal))
                     .cursorType(CursorType.TailableAwait)
                     .iterator();
-            answer = iterator;
         }
         return answer;
     }

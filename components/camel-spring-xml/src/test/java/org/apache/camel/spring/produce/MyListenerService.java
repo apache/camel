@@ -29,7 +29,7 @@ public class MyListenerService implements MyListener {
     private static final Logger LOG = LoggerFactory.getLogger(MyListenerService.class);
 
     public MyListenerService() {
-        LOG.debug("Instantiated service: " + this);
+        LOG.debug("Instantiated service: {}", this);
     }
 
     @Override

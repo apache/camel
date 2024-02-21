@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util.spring;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.spring.xml.KeyStoreParametersFactoryBean;
 import org.apache.camel.support.jsse.KeyStoreParameters;

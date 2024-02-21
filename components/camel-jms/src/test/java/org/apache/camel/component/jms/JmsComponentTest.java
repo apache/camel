@@ -16,36 +16,52 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JmsComponentTest extends CamelTestSupport {
 
-    protected String componentName = "activemq123";
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    protected final String componentName = "activemq123";
     protected JmsEndpoint endpoint;
 
     @Test
-    public void testComponentOptions() throws Exception {
-        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
+    public void testComponentInOut() {
+        String reply
+                = template.requestBody("activemq123:queue:JmsComponentTest?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
+    }
 
-        assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
-        assertEquals(true, endpoint.isAllowReplyManagerQuickStop());
-        assertEquals(true, endpoint.isAlwaysCopyMessage());
+    @Timeout(10)
+    @Test
+    public void testComponentOptions() {
+        assertTrue(endpoint.isAcceptMessagesWhileStopping());
+        assertTrue(endpoint.isAllowReplyManagerQuickStop());
+        assertTrue(endpoint.isAlwaysCopyMessage());
         assertEquals(1, endpoint.getAcknowledgementMode());
-        assertEquals(true, endpoint.isAutoStartup());
+        assertTrue(endpoint.isAutoStartup());
         assertEquals(1, endpoint.getCacheLevel());
         assertEquals("foo", endpoint.getClientId());
         assertEquals(2, endpoint.getConcurrentConsumers());
-        assertEquals(true, endpoint.isDeliveryPersistent());
-        assertEquals(true, endpoint.isExplicitQosEnabled());
+        assertTrue(endpoint.isDeliveryPersistent());
+        assertTrue(endpoint.isExplicitQosEnabled());
         assertEquals(20, endpoint.getIdleTaskExecutionLimit());
         assertEquals(21, endpoint.getIdleConsumerLimit());
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
@@ -54,7 +70,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(5000, endpoint.getReceiveTimeout());
         assertEquals(9000, endpoint.getRecoveryInterval());
         assertEquals(3000, endpoint.getTimeToLive());
-        assertEquals(true, endpoint.isTransacted());
+        assertTrue(endpoint.isTransacted());
         assertEquals(15000, endpoint.getTransactionTimeout());
     }
 
@@ -62,7 +78,8 @@ public class JmsComponentTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        // Note: this one seems to mess with the component configuration, so we use a disposable broker
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), 0);
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);
@@ -88,15 +105,15 @@ public class JmsComponentTest extends CamelTestSupport {
 
         camelContext.addComponent(componentName, comp);
 
-        endpoint = (JmsEndpoint) comp.createEndpoint("queue:hello");
+        endpoint = (JmsEndpoint) comp.createEndpoint("queue:JmsComponentTest");
 
         return camelContext;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).transform(constant("Bye World"));
             }
         };

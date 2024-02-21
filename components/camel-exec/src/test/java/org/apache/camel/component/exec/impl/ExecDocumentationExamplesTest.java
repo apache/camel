@@ -74,7 +74,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
 
     @Test
     @Disabled
-    public void testExecLinuxWordCount() throws Exception {
+    public void testExecLinuxWordCount() {
         // use type conversion here
         ExecResult body = templateWordCount.requestBody((Object) "test", ExecResult.class);
         assertNotNull(body);
@@ -152,7 +152,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
             public void configure() {
                 // word count
                 from("direct:wordCount").to("exec:wc?args=--words /usr/share/dict/words").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // By default, the body is ExecResult instance
                         assertIsInstanceOf(ExecResult.class, exchange.getIn().getBody());
                         // Use the Camel Exec String type converter to

@@ -1,27 +1,21 @@
 = Apache Camel user manual
 
 Apache Camel™ is a versatile open-source integration framework based on
-known xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+known xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
-domain-specific languages, including a Java-based xref:dsl.adoc[Fluent
-API], xref:spring.adoc[Spring] or
-xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
-xref:xml-configuration.adoc[XML Configuration] files.
+domain-specific languages (xref:manual::dsl.adoc[DSL], such as Java, XML, Groovy, Kotlin, and YAML).
 This means you get smart completion of
 routing rules in your IDE, whether in a Java or XML editor.
 
 For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel.adoc[Introduction] is provided.
 
 
-
 == Summary
 
 * <<Overview>>
 * <<Documentation>>
-* <<Community>>
-* <<Requirements>>
 * <<Developers>>
 
 == Overview
@@ -29,17 +23,19 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:faq:index.adoc[FAQ]
-* https://github.com/apache/camel/blob/master/NOTICE.txt[Legal Notice]
+* https://github.com/apache/camel/blob/main/NOTICE.txt[Legal Notice]
 
 == Documentation
 
 * <<User Guide>>
-* xref:books.adoc[Books]
+* link:/community/books/[Books]
 * xref:examples.adoc[Examples]
 * xref:architecture.adoc[Architecture]
-* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-* xref:Endpoint-dsl.adoc[Endpoint-dsl]
-* xref:component-dsl.adoc[Component-dsl]
+* xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+* xref:component-dsl.adoc[Component DSL]
+* xref:Endpoint-dsl.adoc[Endpoint DSL]
+* xref:dataformat-dsl.adoc[DataFormat DSL]
+* xref:language-dsl.adoc[Language DSL]
 * xref:dsl.adoc[DSL]
 * xref:components::index.adoc[Components]
 * xref:components:dataformats:index.adoc[Data Formats]
@@ -49,63 +45,48 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
-* xref:camel-jar-dependencies.adoc[Camel JAR Dependencies]
-* xref:camel-boot.adoc[Camel Boot]
-* xref:components:others:cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
 * xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:camelcontext-autoconfigure.adoc[Auto Configuration]
 * xref:bean-integration.adoc[Bean Integration]
-* xref:configuring-camel.adoc[Configuring Camel]
 * xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
+* xref:error-handler.adoc[Error handler]
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
+* xref:variables.adoc[How to use Variables]
 * xref:examples.adoc[Examples]
 * xref:testing.adoc[Testing]
-* xref:xml-configuration.adoc[XML Configuration]
-* [Using CamelProxy] for how to use proxies for clients to easily invoke
-camel routes without them knowing
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
 * xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] to generate all the necessary metadata and Java file for your custom component.
 * xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin] to validate your source code and report the code coverage of your camel routes
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
-* xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
 * xref:components::jmx-component.adoc[Camel JMX]
-* xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * xref:rest-dsl.adoc[Working with REST and Rest DSL]
 * xref:writing-components.adoc[Writing Custom Camel Components]
 
 === xref:architecture.adoc[Architecture]
 
-* xref:async.adoc[Async]
-* xref:asynchronous-routing-engine.adoc[Asynchronous Routing Engine]
-* xref:backlogdebugger.adoc[BacklogDebugger]
+* xref:backlog-debugger.adoc[BacklogDebugger]
 * xref:backlog-tracer.adoc[BacklogTracer]
 * xref:batch-consumer.adoc[Batch Consumer]
-* xref:binding.adoc[Binding]
 * xref:browsable-endpoint.adoc[BrowsableEndpoint]
 * xref:camelcontext.adoc[CamelContext]
-* xref:camel-core.adoc[Camel Core]
-* xref:cep.adoc[CEP]
 * xref:clustering.adoc[Clustering and loadbalancing]
 * xref:components::index.adoc[Component]
-* xref:componentconfiguration.adoc[ComponentConfiguration]
 * xref:data-format.adoc[Data Format]
 * xref:debugger.adoc[Debugger]
-* xref:delay-interceptor.adoc[Delay Interceptor]
-* xref:dependency-injection.adoc[Dependency Injection]
-* xref:dozer-type-conversion.adoc[Dozer Type Conversion]
+* xref:delay-interceptor.adoc[Delayer]
 * xref:dsl.adoc[DSL]
 * xref:endpoint.adoc[Endpoint]
 * xref:endpoint-annotations.adoc[Endpoint Annotations]
 * xref:error-handler.adoc[Error Handler]
 * xref:exchange.adoc[Exchange]
 * xref:exchange-pattern.adoc[Exchange Pattern]
+* xref:exchange-pooling.adoc[Exchange Pooling]
 * xref:expression.adoc[Expression]
 * xref:http-session-handling.adoc[HTTP-Session Handling]
 * xref:injector.adoc[Injector]
-* xref:{eip-vc}:eips:intercept.adoc[Intercept]
-* xref:inversion-of-control-with-smart-defaults.adoc[Inversion of Control with Smart Defaults]
+* xref:components:eips:intercept.adoc[Intercept]
 * xref:languages.adoc[Languages]
 * xref:lifecycle.adoc[Lifecycle]
 * xref:oncompletion.adoc[OnCompletion]
@@ -117,56 +98,25 @@ camel routes without them knowing
 * xref:lambda-route-builder.adoc[LambdaRouteBuilder]
 * xref:route-controller.adoc[RouteController]
 * xref:route-policy.adoc[RoutePolicy]
+* xref:route-configuration.adoc[RouteConfiguration]
+* xref:context-reload.adoc[ContextReload]
+* xref:route-reload.adoc[RouteReload]
 * xref:route-template.adoc[RouteTemplate]
 * xref:routes.adoc[Routes]
 * xref:stream-caching.adoc[Stream caching]
 * xref:threading-model.adoc[Threading Model]
 * xref:tracer.adoc[Tracer]
-* xref:transport.adoc[Transport]
 * xref:type-converter.adoc[Type Converter]
 * xref:uris.adoc[URIs]
 * xref:uuidgenerator.adoc[UuidGenerator]
-* xref:xml-configuration.adoc[XML Configuration]
 
 === xref:dsl.adoc[DSL]
 
 * xref:java-dsl.adoc[Java DSL]
 * xref:bean-integration.adoc[Java Annotation DSL]
 * xref:components::spring-summary.adoc[Spring XML DSL]
-* xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint XML DSL]
 * xref:rest-dsl.adoc[Rest DSL]
-
-
-=== Components, Data Formats, Languages and Enterprise Integration Patterns
-
-Consult the xref:components::index.adoc[components] documentation.
-
-== Community
-
-* xref:support.adoc[Support]
-* xref:contributing.adoc[Contributing]
-* xref:release-guide.adoc[Release guide]
-* xref:mailing-lists.adoc[Mailing Lists]
-* https://camel.zulipchat.com[Chat room]
-* xref:user-stories.adoc[User Stories]
-* xref:team.adoc[Team]
-* https://github.com/camel-extra/camel-extra[Camel Extra]
-
-== Requirements
-
-=== Platform Requirements
-
-* Any platform that supports JDK 6 is required.
-
-=== JDK Requirements
-
-- Camel 2.x supports JDK 8
-- Camel 3.0 - 3.4 supports JDK 8 and 11
-- Camel 3.5 or higher supports JDK 8, 11 and 14
-Note: Camel 3.8 (when released), in case of JDK 8's usage, will need at least the JDK 8.0.272 with JFR included
 
 == Developers
 
-* Developer Guide
-* https://github.com/apache/camel/[GitHub]
-* xref:building.adoc[Building]
+* xref:building.adoc[Building Camel from Source]

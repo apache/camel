@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-management</artifactId>
@@ -32,11 +32,24 @@
     <name>Camel :: Management</name>
     <description>Camel Management</description>
 
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <label>core,management</label>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.vmargs>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -60,6 +73,13 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>${junit-pioneer-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,15 +91,20 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- logging for testing -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-core</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -263,29 +288,6 @@
             </build>
         </profile>
 
-        <!-- skip management tests on AIX as it hangs CI servers -->
-        <profile>
-            <id>aix</id>
-            <activation>
-                <os>
-                    <name>aix</name>
-                </os>
-            </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
-            </properties>
-        </profile>
-        <profile>
-            <id>xalan</id>
-            <dependencies>
-                <!-- enable the Xalan processor -->
-                <dependency>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                    <version>${xalan-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>xerces</id>
             <dependencies>
@@ -307,46 +309,10 @@
                 <dependency>
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>woodstox-core-asl</artifactId>
+                    <version>${woodstox-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
-        </profile>
-
-        <profile>
-            <id>jdk9s-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <dependencies>
-                <!-- xmltokenizer using woodstox -->
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <!-- skip file stress tests as they are intended to run manually -->
-                            <excludes>
-                                <exclude>org/apache/camel/component/file/stress/**.java</exclude>
-                                <exclude>**/DistributedCompletionIntervalTest.java</exclude>
-                                <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
-                                <exclude>${platform.skip.tests}</exclude>
-                            </excludes>
-                            <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
-                            <!-- needed for testing the properties component -->
-                            <environmentVariables>
-                                <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
-                                <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
-                            </environmentVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

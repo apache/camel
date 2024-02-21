@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TimerWithTimeOptionTest extends ContextTestSupport {
 
@@ -200,12 +199,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 fromF("timer://foo?time=%s", "20090101").to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should throw an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(ParseException.class, e.getCause().getCause());
-        }
+
+        Assertions.assertThrows(FailedToCreateRouteException.class, () -> context.start(), "Should throw an exception");
     }
 
 }

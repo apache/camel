@@ -48,6 +48,10 @@ public interface EventNotifier {
      */
     boolean isDisabled();
 
+    boolean isIgnoreCamelContextInitEvents();
+
+    void setIgnoreCamelContextInitEvents(boolean ignoreCamelContextInitEvents);
+
     boolean isIgnoreCamelContextEvents();
 
     void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents);
@@ -92,4 +96,7 @@ public interface EventNotifier {
 
     void setIgnoreStepEvents(boolean ignoreStepEvents);
 
+    void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents);
+
+    boolean isIgnoreExchangeAsyncProcessingStartedEvents();
 }

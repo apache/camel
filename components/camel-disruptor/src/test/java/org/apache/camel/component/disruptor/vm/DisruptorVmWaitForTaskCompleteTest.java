@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +34,7 @@ public class DisruptorVmWaitForTaskCompleteTest extends AbstractVmTestSupport {
         String out = template2.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,14 +44,14 @@ public class DisruptorVmWaitForTaskCompleteTest extends AbstractVmTestSupport {
         // we send an in only but we use Always to wait for it to complete
         // and since the route changes the payload we can get the response anyway
         Exchange out = template2.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
         });
         assertEquals("Bye World", out.getIn().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

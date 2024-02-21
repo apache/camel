@@ -25,7 +25,6 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Modification;
 import org.apache.directory.api.ldap.model.entry.ModificationOperation;
 import org.apache.directory.api.ldap.model.exception.LdapException;
-import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.util.FileUtils;
 import org.apache.directory.server.constants.ServerDNConstants;
@@ -220,7 +219,7 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
         }
 
         private long getCurrentRevision(DirectoryService dirService) throws Exception {
-            if ((dirService != null) && (dirService.getChangeLog().isEnabled())) {
+            if (dirService != null && dirService.getChangeLog().isEnabled()) {
                 long revision = dirService.getChangeLog().getCurrentRevision();
                 LOG.debug("Create revision {}", revision);
                 return revision;
@@ -233,13 +232,13 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 return;
             }
             ChangeLog cl = dirService.getChangeLog();
-            if (cl.isEnabled() && (revision < cl.getCurrentRevision())) {
+            if (cl.isEnabled() && revision < cl.getCurrentRevision()) {
                 LOG.debug("Revert revision {}", revision);
                 dirService.revert(revision);
             }
         }
 
-        private void updateTlsKey(DirectoryService ds) throws LdapException, LdapInvalidDnException {
+        private void updateTlsKey(DirectoryService ds) throws LdapException {
             // Update TLS key for tests. Newer Java 8 releases consider RSA keys
             // with less than 1024 bits as insecure and such are disabled by default, see
             // http://www.oracle.com/technetwork/java/javase/8-compatibility-guide-2156366.html

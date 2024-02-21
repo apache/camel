@@ -22,6 +22,7 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -38,7 +39,7 @@ public final class GraphqlFactory {
             GraphQLSchema graphQLSchema = buildSchema(schema);
             return GraphQL.newGraphQL(graphQLSchema).build();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 

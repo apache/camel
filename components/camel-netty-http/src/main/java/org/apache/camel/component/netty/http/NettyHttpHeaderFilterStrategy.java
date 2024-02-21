@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.http.HttpUtil;
 
 /**
  * Default Netty {@link HeaderFilterStrategy} used when binding with {@link NettyHttpBinding}.
@@ -29,20 +30,7 @@ public class NettyHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-        getOutFilter().add("content-length");
-        getOutFilter().add("content-type");
-        getOutFilter().add("host");
-        // Add the filter for the Generic Message header
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
-        getOutFilter().add("cache-control");
-        getOutFilter().add("connection");
-        getOutFilter().add("date");
-        getOutFilter().add("pragma");
-        getOutFilter().add("trailer");
-        getOutFilter().add("transfer-encoding");
-        getOutFilter().add("upgrade");
-        getOutFilter().add("via");
-        getOutFilter().add("warning");
+        HttpUtil.addCommonFilters(getOutFilter());
 
         setLowerCase(true);
 

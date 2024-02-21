@@ -29,14 +29,18 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.events.IgniteEventsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.Event;
 import org.apache.ignite.events.EventType;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+import static org.awaitility.Awaitility.await;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteEventsTest extends AbstractIgniteTest {
@@ -55,7 +59,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     public void testConsumeAllEvents() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ignite-events:" + resourceUid).to("mock:test1");
             }
         });
@@ -71,11 +75,10 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         cache.withExpiryPolicy(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, 100)).create())
                 .put(resourceUid, "123");
 
-        Thread.sleep(150);
+        await().atMost(150, TimeUnit.MILLISECONDS)
+                .until(() -> cache.get(resourceUid), Matchers.nullValue());
 
-        cache.get(resourceUid);
-
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
@@ -89,7 +92,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     public void testConsumeFilteredEventsInline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ignite-events:" + resourceUid + "?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
             }
         });
@@ -105,7 +108,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         cache.get(resourceUid);
         cache.put(resourceUid, "123");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Integer> eventTypes = receivedEventTypes("mock:test3");
 
@@ -132,7 +135,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
             }
             context.getRouteController().stopRoute(route.getId());
         }
-        resetMocks();
+        MockEndpoint.resetMocks(context);
     }
 
     @Override

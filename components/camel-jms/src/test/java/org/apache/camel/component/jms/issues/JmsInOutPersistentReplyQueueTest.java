@@ -16,18 +16,32 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+// Not parallel due to processing some part of the route concurrently (may be delayed when running on the test threads)
+@Tags({ @Tag("not-parallel") })
+public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
 
-public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testInOutPersistentReplyQueue() throws Exception {
@@ -38,31 +52,28 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
         template.sendBody("seda:start", "C");
         template.sendBody("seda:start", "D");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start")
                         .log("Sending ${body}")
-                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=myReplies")
                         // process the remainder of the route concurrently
                         .threads(5)
                         .log("Reply ${body}")
                         .delay(2000)
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOutPersistentReplyQueueTest")
                         .to("mock:foo")
                         .transform(body().prepend("Bye "))
                         .log("Sending back reply ${body}");
@@ -70,4 +81,15 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

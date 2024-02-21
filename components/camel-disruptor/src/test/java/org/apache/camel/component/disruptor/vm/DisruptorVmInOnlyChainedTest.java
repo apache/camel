@@ -32,7 +32,7 @@ public class DisruptorVmInOnlyChainedTest extends AbstractVmTestSupport {
 
         template.sendBody("disruptor-vm:a", "start");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         MockEndpoint.assertIsSatisfied(context2);
     }
 

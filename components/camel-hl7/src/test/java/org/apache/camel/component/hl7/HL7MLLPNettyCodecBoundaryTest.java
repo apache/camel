@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addNettyDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addNettyDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -46,19 +46,19 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
     }
 
     @BindToRegistry("hl7encoder")
-    public HL7MLLPNettyEncoderFactory addNettyEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addNettyEncoder() {
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
         return encoder;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // check presence of correct message type
                                 exchange.getIn().getBody(MDM_T02.class);
                             }

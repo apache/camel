@@ -20,10 +20,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * WebSphere specific resolver to handle loading annotated resources in JAR files.
  */
 public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassResolver {
+    private static final Logger LOG = LoggerFactory.getLogger(WebSpherePackageScanClassResolver.class);
 
     private final String resourcePath;
 
@@ -43,7 +47,7 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
      * @return        <tt>true</tt> if IBM classloader, <tt>false</tt> otherwise.
      */
     public static boolean isWebSphereClassLoader(ClassLoader loader) {
-        return loader != null ? loader.getClass().getName().startsWith("com.ibm.") : false;
+        return loader != null && loader.getClass().getName().startsWith("com.ibm.");
     }
 
     /**
@@ -62,7 +66,7 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
         // try super first, just in vase
         Enumeration<URL> enumeration = super.getResources(loader, packageName);
         if (!enumeration.hasMoreElements()) {
-            log.trace("Using WebSphere workaround to load the camel jars with the annotated converters.");
+            LOG.trace("Using WebSphere workaround to load the camel jars with the annotated converters.");
             // Special WebSphere trick to load a file that exists in the JAR and then let it go from there.
             // The trick is that we just need the URL's for the .jars that contains the type
             // converters that is annotated. So by searching for this resource WebSphere is able to find

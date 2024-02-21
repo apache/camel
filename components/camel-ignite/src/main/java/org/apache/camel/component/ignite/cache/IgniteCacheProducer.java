@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -86,6 +85,10 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
                 doRebalance(in, out);
                 break;
 
+            case REPLACE:
+                doReplace(in, out);
+                break;
+
             default:
                 break;
         }
@@ -144,7 +147,7 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
         out.setBody(cursor.iterator());
 
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+        exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
             @Override
             public void onFailure(Exchange exchange) {
                 cursor.close();
@@ -195,6 +198,24 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         }
 
         out.setBody(result);
+    }
+
+    private void doReplace(Message in, Message out) {
+        Object cacheKey = in.getHeader(IgniteConstants.IGNITE_CACHE_KEY);
+
+        if (cacheKey == null) {
+            throw new RuntimeCamelException(
+                    "Cache REPLACE operation requires the cache key in the CamelIgniteCacheKey header");
+        }
+
+        Object oldValue = in.getHeader(IgniteConstants.IGNITE_CACHE_OLD_VALUE);
+        if (oldValue == null) {
+            cache.replace(cacheKey, in.getBody());
+        } else {
+            cache.replace(cacheKey, oldValue, in.getBody());
+        }
+
+        IgniteHelper.maybePropagateIncomingBody(endpoint, in, out);
     }
 
     private Object cacheKey(Message msg) {

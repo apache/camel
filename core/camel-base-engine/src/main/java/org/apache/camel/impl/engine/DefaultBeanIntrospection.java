@@ -32,12 +32,10 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("deprecation")
 public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntrospection, CamelContextAware, StartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanIntrospection.class);
@@ -181,6 +179,15 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
             log("getPropertyGetter", type, propertyName);
         }
         return IntrospectionSupport.getPropertyGetter(type, propertyName, ignoreCase);
+    }
+
+    @Override
+    public Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
+        invoked.incrementAndGet();
+        if (!preStartDone || logger.shouldLog()) {
+            log("getPropertySetter", type, propertyName);
+        }
+        return IntrospectionSupport.getPropertySetter(type, propertyName);
     }
 
     @Override

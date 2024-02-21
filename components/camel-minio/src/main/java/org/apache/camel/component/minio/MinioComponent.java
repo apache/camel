@@ -21,18 +21,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.HealthCheckComponent;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Component("minio")
-public class MinioComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MinioComponent.class);
-
+public class MinioComponent extends HealthCheckComponent {
     @Metadata
     private MinioConfiguration configuration = new MinioConfiguration();
 
@@ -47,7 +42,7 @@ public class MinioComponent extends DefaultComponent {
 
     @Override
     protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (isEmpty(remaining) || remaining.trim().length() == 0) {
+        if (isEmpty(remaining) || remaining.isBlank()) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
 

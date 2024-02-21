@@ -1,0 +1,50 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "whatsapp",
+    "title": "WhatsApp",
+    "description": "Send messages to WhatsApp.",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "cloud,api,chat",
+    "javaType": "org.apache.camel.component.whatsapp.WhatsAppComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-whatsapp",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "whatsapp",
+    "extendsScheme": "",
+    "syntax": "whatsapp:phoneNumberId",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "phoneNumberId": { "index": 1, "kind": "property", "displayName": "Phone Number Id", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Phone Number ID taken from WhatsApp Meta for Developers Dashboard" },
+    "apiVersion": { "index": 2, "kind": "property", "displayName": "Api Version", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "v13.0", "description": "WhatsApp Cloud API version" },
+    "autowiredEnabled": { "index": 3, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "baseUri": { "index": 4, "kind": "property", "displayName": "Base Uri", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "https:\/\/graph.facebook.com", "description": "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API" },
+    "client": { "index": 5, "kind": "property", "displayName": "Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.net.http.HttpClient", "deprecated": false, "autowired": false, "secret": false, "description": "Java 11 HttpClient implementation" },
+    "webhookVerifyToken": { "index": 6, "kind": "property", "displayName": "Webhook Verify Token", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Webhook verify token" },
+    "authorizationToken": { "index": 7, "kind": "property", "displayName": "Authorization Token", "group": "security", "label": "security", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Authorization Token taken from WhatsApp Meta for Developers Dashboard" }
+  },
+  "headers": {
+    "CamelWhatsAppPhoneNumberId": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Phone Number ID taken from WhatsApp Meta for Developers Dashboard", "constantName": "org.apache.camel.component.whatsapp.WhatsAppConstants#WHATSAPP_PHONE_NUMBER_ID" },
+    "CamelWhatsAppRecipientPhoneNumberId": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Recipient phone number associated with Phone Number ID", "constantName": "org.apache.camel.component.whatsapp.WhatsAppConstants#WHATSAPP_RECIPIENT_PHONE_NUMBER_ID" }
+  },
+  "properties": {
+    "phoneNumberId": { "index": 0, "kind": "path", "displayName": "Phone Number Id", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "The phone number ID taken from whatsapp-business dashboard." },
+    "lazyStartProducer": { "index": 1, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "apiVersion": { "index": 2, "kind": "parameter", "displayName": "Api Version", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "Facebook graph api version." },
+    "baseUri": { "index": 3, "kind": "parameter", "displayName": "Base Uri", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API" },
+    "httpClient": { "index": 4, "kind": "parameter", "displayName": "Http Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.net.http.HttpClient", "deprecated": false, "autowired": false, "secret": false, "description": "HttpClient implementation" },
+    "webhookPath": { "index": 5, "kind": "parameter", "displayName": "Webhook Path", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "webhook", "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "Webhook path" },
+    "webhookVerifyToken": { "index": 6, "kind": "parameter", "displayName": "Webhook Verify Token", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "Webhook verify token" },
+    "whatsappService": { "index": 7, "kind": "parameter", "displayName": "Whatsapp Service", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.whatsapp.WhatsAppService", "deprecated": false, "autowired": false, "secret": false, "description": "WhatsApp service implementation" },
+    "authorizationToken": { "index": 8, "kind": "parameter", "displayName": "Authorization Token", "group": "security", "label": "security", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.whatsapp.WhatsAppConfiguration", "configurationField": "configuration", "description": "The authorization access token taken from whatsapp-business dashboard." }
+  }
+}

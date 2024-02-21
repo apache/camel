@@ -26,4 +26,10 @@ public interface ManagedTransformMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Expression to return the transformed message body (the new message body to use)")
     String getExpression();
 
+    @ManagedAttribute(description = "Data type used as defined input for the message transformation")
+    String getFromType();
+
+    @ManagedAttribute(description = "Data type representing the defined outcome of a data type transformation (the new message body to use)")
+    String getToType();
+
 }

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
@@ -90,23 +93,22 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // shutdown during processing
         context.stop();
 
-        // sleep a little
-        Thread.sleep(1000);
-
         // should route all 8
-        assertEquals(8, bar.getReceivedCounter(), "Should complete all messages");
+        await()
+                .atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(8, bar.getReceivedCounter(), "Should complete all messages"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("mybatis:selectAllAccounts").noAutoStartup().routeId("route1")
                         // let it complete all tasks
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)

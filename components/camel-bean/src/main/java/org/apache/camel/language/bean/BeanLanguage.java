@@ -16,7 +16,10 @@
  */
 package org.apache.camel.language.bean;
 
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
@@ -25,13 +28,19 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.component.bean.AmbiguousMethodCallException;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.MethodInfo;
+import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -48,60 +57,24 @@ import org.apache.camel.util.URISupport;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements PropertyConfigurer, StaticService {
+public class BeanLanguage extends TypedLanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 
     private volatile BeanComponent beanComponent;
     private volatile ParameterMappingStrategy parameterMappingStrategy;
     private volatile Language simple;
 
-    private Object bean;
-    private Class<?> beanType;
-    private String ref;
-    private String method;
-    private BeanScope scope = BeanScope.Singleton;
+    private boolean validate = true;
 
     public BeanLanguage() {
     }
 
-    public Object getBean() {
-        return bean;
+    public boolean isValidate() {
+        return validate;
     }
 
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
-
-    public Class<?> getBeanType() {
-        return beanType;
-    }
-
-    public void setBeanType(Class<?> beanType) {
-        this.beanType = beanType;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public BeanScope getScope() {
-        return scope;
-    }
-
-    public void setScope(BeanScope scope) {
-        this.scope = scope;
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     @Override
@@ -110,21 +83,8 @@ public class BeanLanguage extends LanguageSupport implements PropertyConfigurer,
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "bean":
-                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value));
-                return true;
-            case "beantype":
-            case "beanType":
-                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "ref":
-                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "method":
-                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "scope":
-                setScope(PropertyConfigurerSupport.property(camelContext, BeanScope.class, value));
+            case "validate":
+                setValidate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
                 return true;
             default:
                 return false;
@@ -137,6 +97,11 @@ public class BeanLanguage extends LanguageSupport implements PropertyConfigurer,
     }
 
     @Override
+    public Expression createExpression(String expression) {
+        return createExpression(expression, null);
+    }
+
+    @Override
     public Predicate createPredicate(String expression, Object[] properties) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
@@ -145,106 +110,166 @@ public class BeanLanguage extends LanguageSupport implements PropertyConfigurer,
     public Expression createExpression(String expression, Object[] properties) {
         BeanExpression answer = null;
 
-        String method = (String) properties[1];
-        Object bean = properties[0];
+        Object bean = property(Object.class, properties, 1, null);
+        String method = property(String.class, properties, 2, null);
         if (bean != null) {
             answer = new BeanExpression(bean, method);
         }
         if (answer == null) {
-            Class<?> beanType = (Class<?>) properties[2];
+            Class<?> beanType = property(Class.class, properties, 3, null);
             if (beanType != null) {
                 answer = new BeanExpression(beanType, method);
             }
         }
         if (answer == null) {
-            String ref = (String) properties[3];
+            String ref = property(String.class, properties, 4, null);
             if (ref != null) {
                 answer = new BeanExpression(ref, method);
             }
         }
         if (answer == null) {
+            answer = createBeanExpression(expression);
+        }
+        if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
-        if (properties.length == 5) {
-            Object scope = properties[4];
-            if (scope instanceof BeanScope) {
-                answer.setScope((BeanScope) scope);
-            } else if (scope != null) {
-                answer.setScope(BeanScope.valueOf(scope.toString()));
-            }
+        Object scope = property(Object.class, properties, 5, null);
+        if (scope instanceof BeanScope) {
+            answer.setScope((BeanScope) scope);
+        } else if (scope != null) {
+            answer.setScope(BeanScope.valueOf(scope.toString()));
         }
+        answer.setValidate(property(boolean.class, properties, 6, isValidate()));
+        answer.setResultType(property(Class.class, properties, 0, null));
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);
-        answer.init(getCamelContext());
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
+        return answer;
+    }
+
+    protected BeanExpression createBeanExpression(String expression) {
+        BeanExpression answer;
+
+        // we support different syntax for bean function
+        String beanName = expression;
+        String method = null;
+        String beanScope = null;
+        if (expression.contains("?method=") || expression.contains("?scope=")) {
+            beanName = StringHelper.before(expression, "?");
+            String query = StringHelper.after(expression, "?");
+            try {
+                Map<String, Object> map = URISupport.parseQuery(query);
+                method = (String) map.get("method");
+                beanScope = (String) map.get("scope");
+            } catch (URISyntaxException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        } else {
+            //first check case :: because of my.own.Bean::method
+            int doubleColonIndex = expression.indexOf("::");
+            //need to check that not inside params
+            int beginOfParameterDeclaration = expression.indexOf('(');
+            if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                beanName = expression.substring(0, doubleColonIndex);
+                method = expression.substring(doubleColonIndex + 2);
+            } else {
+                int idx = expression.indexOf('.');
+                if (idx > 0) {
+                    beanName = expression.substring(0, idx);
+                    method = expression.substring(idx + 1);
+                }
+            }
+        }
+
+        if (beanName.startsWith("type:")) {
+            try {
+                Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
+                answer = new BeanExpression(clazz, method);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        } else {
+            answer = new BeanExpression(beanName, method);
+        }
+        if (beanScope != null) {
+            answer.setScope(BeanScope.valueOf(beanScope));
+        }
         return answer;
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        BeanExpression answer;
-        String beanScope = null;
+    public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
+        script = loadResource(script);
+        String beanName = StringHelper.before(script, "?method=");
+        String beanMethod = StringHelper.after(script, "?method=");
 
-        // favour using the configured options
-        if (bean != null) {
-            answer = new BeanExpression(bean, method);
-        } else if (beanType != null) {
-            answer = new BeanExpression(beanType, method);
-        } else if (ref != null) {
-            answer = new BeanExpression(ref, method);
-        } else {
-            // we support different syntax for bean function
-            String beanName = expression;
-            String method = null;
-            if (expression.contains("?method=") || expression.contains("?scope=")) {
-                beanName = StringHelper.before(expression, "?");
-                String query = StringHelper.after(expression, "?");
-                try {
-                    Map<String, Object> map = URISupport.parseQuery(query);
-                    method = (String) map.get("method");
-                    beanScope = (String) map.get("scope");
-                } catch (URISyntaxException e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            } else {
-                //first check case :: because of my.own.Bean::method
-                int doubleColonIndex = expression.indexOf("::");
-                //need to check that not inside params
-                int beginOfParameterDeclaration = expression.indexOf('(');
-                if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
-                    beanName = expression.substring(0, doubleColonIndex);
-                    method = expression.substring(doubleColonIndex + 2);
-                } else {
-                    int idx = expression.indexOf('.');
-                    if (idx > 0) {
-                        beanName = expression.substring(0, idx);
-                        method = expression.substring(idx + 1);
+        try {
+            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName);
+            // find methods with that name
+            BeanInfo bi = new BeanInfo(getCamelContext(), clazz);
+
+            // find method that is the best candidate
+            // match by number of arguments
+            List<MethodInfo> candidates = new ArrayList<>();
+            for (MethodInfo mi : bi.getMethods()) {
+                if (mi.getMethod().getName().equals(beanMethod)) {
+                    // must match number of args
+                    int size = bindings != null ? bindings.size() : 0;
+                    boolean match = mi.getParameters().size() == size;
+                    if (match) {
+                        candidates.add(mi);
                     }
                 }
             }
-
-            if (beanName.startsWith("type:")) {
-                try {
-                    Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
-                    answer = new BeanExpression(clazz, method);
-                } catch (ClassNotFoundException e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
+            // if there are a method with no arguments, then we can use that as fallback
+            if (candidates.isEmpty()) {
+                MethodInfo fallback = null;
+                for (MethodInfo mi : bi.getMethods()) {
+                    if (mi.getMethod().getName().equals(beanMethod)) {
+                        boolean match = !mi.hasParameters();
+                        if (match) {
+                            if (fallback == null) {
+                                fallback = mi;
+                            } else {
+                                fallback = null;
+                                break;
+                            }
+                        }
+                    }
                 }
-            } else {
-                answer = new BeanExpression(beanName, method);
+                if (fallback != null) {
+                    candidates.add(fallback);
+                }
             }
-        }
 
-        if (beanScope != null) {
-            answer.setScope(getCamelContext().getTypeConverter().tryConvertTo(BeanScope.class, beanScope));
-        } else {
-            answer.setScope(scope);
+            if (candidates.isEmpty()) {
+                throw new MethodNotFoundException(clazz, beanMethod);
+            } else if (candidates.size() > 1) {
+                throw new AmbiguousMethodCallException(null, candidates);
+            }
+
+            Object out;
+            MethodInfo mi = candidates.get(0);
+            Method method = mi.getMethod();
+            // map bindings to method
+            Object[] args
+                    = method.getParameterCount() > 0 && bindings != null ? bindings.values().toArray(new Object[0]) : null;
+            if (mi.isStaticMethod()) {
+                out = ObjectHelper.invokeMethod(method, null, args);
+            } else {
+                Object bean = getCamelContext().getInjector().newInstance(clazz);
+                out = ObjectHelper.invokeMethod(method, bean, args);
+            }
+            if (out != null && resultType != null) {
+                out = getCamelContext().getTypeConverter().convertTo(resultType, out);
+            }
+            return (T) out;
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
-        answer.setBeanComponent(beanComponent);
-        answer.setParameterMappingStrategy(parameterMappingStrategy);
-        answer.setSimple(simple);
-        answer.init(getCamelContext());
-        return answer;
     }
 
     @Override

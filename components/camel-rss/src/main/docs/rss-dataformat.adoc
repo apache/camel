@@ -1,11 +1,13 @@
-[[rss-dataformat]]
 = RSS DataFormat
-:docTitle: RSS
-:artifactId: camel-rss
+:doctitle: RSS
+:shortname: rss
+:artifactid: camel-rss
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/rss.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -34,8 +36,36 @@ you can for example do
 == Options
 
 // dataformat options: START
-The RSS dataformat has no options.
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
+== Example
 
-include::camel-spring-boot::page$rss-starter.adoc[]
+The RSS component ships with an RSS dataformat that can be used to
+convert between String (as XML) and ROME RSS model objects.
+
+* marshal = from ROME `SyndFeed` to XML `String`
+* unmarshal = from XML `String` to ROME `SyndFeed`
+
+A route using the RSS dataformat will look like this:
+
+[source,java]
+----
+from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000")
+  .marshal().rss()
+  .to("mock:marshal");
+----
+
+The purpose of this feature is to make it possible to use Camel's built-in expressions for manipulating RSS messages. As shown below, an
+XPath expression can be used to filter the RSS message. In the following example, on ly entries with Camel in the title will get through the filter.
+
+[source,java]
+----
+from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
+  .marshal().rss()
+  .filter().xpath("//item/title[contains(.,'Camel')]")
+    .to("mock:result");
+----
+
+
+include::spring-boot:partial$starter.adoc[]

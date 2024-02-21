@@ -47,8 +47,7 @@ public class StompConfiguration implements Cloneable {
      */
     public StompConfiguration copy() {
         try {
-            StompConfiguration copy = (StompConfiguration) clone();
-            return copy;
+            return (StompConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

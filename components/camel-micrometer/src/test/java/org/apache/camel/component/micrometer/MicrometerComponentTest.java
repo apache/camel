@@ -17,12 +17,12 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -39,7 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -60,6 +60,9 @@ public class MicrometerComponentTest {
     @Mock
     private MeterRegistry metricRegistry;
 
+    @Mock
+    private CompositeMeterRegistry compositeMeterRegistry;
+
     private InOrder inOrder;
 
     private MicrometerComponent component;
@@ -68,31 +71,6 @@ public class MicrometerComponentTest {
     public void setUp() {
         component = new MicrometerComponent();
         inOrder = Mockito.inOrder(camelContext, camelRegistry, metricRegistry, typeConverter);
-    }
-
-    @Test
-    public void testCreateEndpoint() throws Exception {
-        component.setCamelContext(camelContext);
-        when(camelContext.getRegistry()).thenReturn(camelRegistry);
-        when(camelContext.getTypeConverter()).thenReturn(typeConverter);
-        when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class))
-                .thenReturn(metricRegistry);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("tags", "key=value");
-        Endpoint result = component.createEndpoint("micrometer:counter:counter", "counter:counter", params);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(MicrometerEndpoint.class)));
-        MicrometerEndpoint me = (MicrometerEndpoint) result;
-        assertThat(me.getMetricsName(), is("counter"));
-        assertThat(me.getRegistry(), is(metricRegistry));
-        inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME,
-                MeterRegistry.class);
-        inOrder.verify(camelContext, times(1)).getTypeConverter();
-        inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -138,48 +116,81 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetOrCreateMetricRegistryFoundInCamelRegistry() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(null);
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(CompositeMeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testGetOrCreateCompositeMetricRegistryFoundInCamelRegistry() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(compositeMeterRegistry);
+        MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
+        assertThat(result, is(compositeMeterRegistry));
+        inOrder.verify(camelRegistry, times(1))
+                .lookupByNameAndType("name", CompositeMeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(Collections.singleton(null));
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(CompositeMeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).findByType(MeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() {
-        when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
-        when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.emptySet());
+    public void testGetOrCreateCompositeMetricRegistryFoundInCamelRegistryByType() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(CompositeMeterRegistry.class))
+                .thenReturn(Collections.singleton(compositeMeterRegistry));
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(metricRegistry)));
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
-        inOrder.verify(camelRegistry, times(1)).findByType(MeterRegistry.class);
+        assertThat(result, is(compositeMeterRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(CompositeMeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testGetMetricRegistryFromCamelRegistry() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(null);
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).findByType(CompositeMeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testGetCompositeMetricRegistryFromCamelRegistry() {
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(compositeMeterRegistry);
+        MeterRegistry result = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry, "name");
+        assertThat(result, is(compositeMeterRegistry));
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testCreateMetricRegistry() {
         MeterRegistry registry = MicrometerUtils.createMeterRegistry();
-        assertThat(registry, is(notNullValue()));
+        assertThat(registry, isA(SimpleMeterRegistry.class));
     }
 }

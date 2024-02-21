@@ -17,6 +17,7 @@
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class DisruptorVmUseSameQueueTest extends AbstractVmTestSupport {
@@ -28,7 +29,7 @@ public class DisruptorVmUseSameQueueTest extends AbstractVmTestSupport {
         template2.sendBody("direct:start", "Hello World");
         template2.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
 
-    private MetricRegistry metricRegistry = new MetricRegistry();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
     @BindToRegistry("statsCounter")
     private MetricsStatsCounter msc = new MetricsStatsCounter(metricRegistry);
 

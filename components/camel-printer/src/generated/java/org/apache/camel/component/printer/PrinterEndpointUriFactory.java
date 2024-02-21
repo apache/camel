@@ -19,24 +19,26 @@ public class PrinterEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(14);
-        props.add("orientation");
-        props.add("sendToPrinter");
-        props.add("mimeType");
-        props.add("mediaTray");
+        props.add("copies");
         props.add("docFlavor");
-        props.add("printerPrefix");
         props.add("flavor");
-        props.add("mediaSize");
         props.add("hostname");
         props.add("lazyStartProducer");
-        props.add("copies");
+        props.add("mediaSize");
+        props.add("mediaTray");
+        props.add("mimeType");
+        props.add("orientation");
         props.add("port");
-        props.add("sides");
+        props.add("printerPrefix");
         props.add("printername");
+        props.add("sendToPrinter");
+        props.add("sides");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -66,6 +68,11 @@ public class PrinterEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

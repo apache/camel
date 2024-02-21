@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyConsumerQueueTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue.InOnlyConsumerQueueTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -50,9 +50,9 @@ public class InOnlyConsumerQueueTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(SJMS_QUEUE_NAME)
                         .to(MOCK_RESULT);
             }

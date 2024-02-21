@@ -36,7 +36,7 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
     private final AuthenticationHandler authenticationHandler;
     private URI uri;
 
-    public OAuthHttpClientDecorator(HttpClient httpClient, AuthenticationHandler authenticationHandler) {
+    protected OAuthHttpClientDecorator(HttpClient httpClient, AuthenticationHandler authenticationHandler) {
         this.httpClient = httpClient;
         this.authenticationHandler = authenticationHandler;
     }

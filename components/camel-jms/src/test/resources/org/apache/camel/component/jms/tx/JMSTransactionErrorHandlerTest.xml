@@ -26,13 +26,15 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- setup JMS connection factory -->
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
+                </property>
     </bean>
 
     <!-- setup spring jms TX manager -->
@@ -54,7 +56,7 @@
 
     <!-- START SNIPPET: e3 -->
     <!-- use a transaction error handler -->
-    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
+    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder">
         <property name="redeliveryPolicy" ref="myPolicy"/>
     </bean>
     <!-- and let it try to redeliver up till 4 times -->
@@ -69,7 +71,7 @@
         <jmxAgent id="agent" disabled="true"/>
         <route errorHandlerRef="myErrorHandler">
             <!-- 1: from the jms queue -->
-            <from uri="activemq:queue:okay"/>
+            <from uri="activemq:queue:okay.JMSTransactionErrorHandlerTest"/>
             <!-- 2: mark this route as transacted -->
             <transacted/>
             <!-- 3: call our business logic that is myProcessor -->

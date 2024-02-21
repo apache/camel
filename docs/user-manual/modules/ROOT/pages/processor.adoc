@@ -1,24 +1,39 @@
-[[Processor-Processor]]
 = Processor
 
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
 interface is used to implement consumers of message exchanges or to
-implement a xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
+implement a xref:components:eips:message-translator.adoc[Message Translator],
+and other use-cases.
 
-[[Processor-Usingaprocessorinaroute]]
 == Using a processor in a route
 
-Once you have written a class which implements processor like this...
+Once you have written a class which implements processor like this:
 
 [source,java]
 ----
 public class MyProcessor implements Processor {
+
     public void process(Exchange exchange) throws Exception {
         // do something...
     }
+
 }
 ----
+
+Then you can easily call this processor from a Java such as:
+
+[source,java]
+----
+from("activemq:myQueue").process(new MyProcessor());
+----
+
+Notice that the processor is referred to by the class type `MyProcessor.class` in the route.
+Camel will during startup automatic create one new instance of the processor using xref:injector.adoc[Injector]
+to be used during routing messages.
+
+In XML DSL however the `<process`> tag requires, referring to an existing processor instance
+which can be done:
 
 You can then easily use this inside a route by declaring the bean in
 Spring, say via the XML:
@@ -28,32 +43,52 @@ Spring, say via the XML:
 <bean id="myProcessor" class="com.acme.MyProcessor"/>
 ----
 
-Then in Camel you can do:
+And then use the bean id in the Camel route:
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:myQueue"/>
+  <process ref="myProcessor"/>
+</route>
+----
+
+And in Java DSL:
 
 [source,java]
 ----
 from("activemq:myQueue").process("myProcessor");
 ----
 
-In your route you can also use the `process` DSL syntax for invoking a
-processor.
+=== Referring to beans using #class syntax
+
+In XML DSL you can also refer to the processor by its class name using `#class:` as prefix as shown:
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:myQueue"/>
+  <process ref="#class:com.acme.MyProcessor"/>
+</route>
+----
+
+This also works in Java DSL:
 
 [source,java]
 ----
-Processor myProcessor = new MyProcessor();
-...
-from("activemq:myQueue").process(myProcessor);
+from("activemq:myQueue").process("#class:com.acme.MyProcessor");
 ----
 
-If you need to lookup the processor in the xref:registry.adoc[Registry]
-then you can do:
+NOTE: For more details about the `#class:` prefix (and others) then see xref:property-binding.adoc[Property Binding].
+
+However in Java DSL you would often use the type safe way and instantiate the Processor directly as previously shown:
 
 [source,java]
 ----
-from("activemq:myQueue").process("myProcessor");
+from("activemq:myQueue").process(new MyProcessor());
 ----
 
-[[Processor-Whyuseprocesswhenyoucanusetoinstead]]
+
 == Why use process when you can use to instead?
 
 The process can be used in routes as an anonymous inner class such:
@@ -72,19 +107,9 @@ The process can be used in routes as an anonymous inner class such:
 This is usable for quickly whirling up some code. If the code in the
 inner class gets a bit more complicated it is of course advised to
 refactor it into a separate class. This approach is better if you do not want to use this processor again.
-From reusability perspective, it is not recommended to follow this approach.
+From reusability perspective, it is not recommended to use this approach with anonymous inner classes.
 
-[[Processor-TurningyourprocessorintoafullComponent]]
-== Turning your processor into a full Component
+== See Also
 
-There is a base class called
-https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/ProcessorEndpoint.html[ProcessorEndpoint]
-which supports the full xref:endpoint.adoc[Endpoint] semantics given a
-Processor instance.
-
-So you just need to create a xref:component.adoc[Component] class by
-deriving from
-https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/DefaultComponent.html[DefaultComponent]
-which returns instances of ProcessorEndpoint. For more details see
-xref:writing-components.adoc[Writing Components]
-
+** xref:manual::consumertemplate.adoc[Consumer Template]: to learn how to consume data (including within processors)
+** xref:manual::producertemplate.adoc[Producer Template]: to learn how to produce data (including within processors)

@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterEventType;
-import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitter4j.v1.Status;
 
 /**
  * Consumes the user's home timeline.

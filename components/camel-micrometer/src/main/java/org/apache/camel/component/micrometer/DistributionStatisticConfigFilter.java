@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer;
 
 import java.time.Duration;
 import java.util.function.Predicate;
+import java.util.stream.LongStream;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
@@ -55,9 +56,9 @@ public class DistributionStatisticConfigFilter implements MeterFilter {
                     .percentilesHistogram(publishPercentileHistogram)
                     .percentiles(percentiles)
                     .percentilePrecision(percentilePrecision)
-                    .maximumExpectedValue(maximumExpectedValue)
-                    .minimumExpectedValue(minimumExpectedValue)
-                    .sla(slas)
+                    .maximumExpectedValue((double) maximumExpectedValue)
+                    .minimumExpectedValue((double) minimumExpectedValue)
+                    .serviceLevelObjectives(LongStream.of(slas).asDoubleStream().toArray())
                     .bufferLength(bufferLength)
                     .expiry(expiry)
                     .build()

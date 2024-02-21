@@ -41,26 +41,26 @@ public class SyncJmsInOutIT extends JmsTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:start", "" + i);
+            template.sendBody("seda:start.SyncJmsInOutIT", "" + i);
         }
 
         // just in case we run on slow boxes
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
+        log.info("Took {} ms. to process 100 messages request/reply over JMS", watch.taken());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
-                from("seda:start")
-                        .to("sjms:queue:in.foo?replyTo=out.bar&exchangePattern=InOut")
+                from("seda:start.SyncJmsInOutIT")
+                        .to("sjms:queue:in.foo.SyncJmsInOutIT?replyTo=out.bar&exchangePattern=InOut")
                         .to("mock:result");
 
-                from("sjms:queue:in.foo?exchangePattern=InOut")
+                from("sjms:queue:in.foo.SyncJmsInOutIT?exchangePattern=InOut")
                         .log("Using ${threadName} to process ${body}")
                         .transform(body().prepend("Bye "));
             }

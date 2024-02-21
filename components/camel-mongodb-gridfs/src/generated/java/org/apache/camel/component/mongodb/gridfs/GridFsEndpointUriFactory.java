@@ -19,27 +19,29 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(17);
-        props.add("connectionBean");
-        props.add("query");
-        props.add("exchangePattern");
-        props.add("writeConcern");
-        props.add("initialDelay");
-        props.add("queryStrategy");
-        props.add("bucket");
-        props.add("database");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
+        props.add("bucket");
+        props.add("connectionBean");
+        props.add("database");
         props.add("delay");
-        props.add("persistentTSCollection");
-        props.add("readPreference");
-        props.add("fileAttributeName");
-        props.add("persistentTSObject");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fileAttributeName");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("persistentTSCollection");
+        props.add("persistentTSObject");
+        props.add("query");
+        props.add("queryStrategy");
+        props.add("readPreference");
+        props.add("writeConcern");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -67,6 +69,11 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

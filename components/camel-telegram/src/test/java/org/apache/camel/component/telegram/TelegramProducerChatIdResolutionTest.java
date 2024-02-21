@@ -40,7 +40,7 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
     private Endpoint endpoint;
 
     @Test
-    public void testRouteWithFixedChatId() throws Exception {
+    public void testRouteWithFixedChatId() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -53,7 +53,7 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithOverridenChatId() throws Exception {
+    public void testRouteWithOverridenChatId() {
         final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
         mockProcessor.clearRecordedMessages();
 
@@ -71,12 +71,12 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:telegram")
                                 .to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
                     }

@@ -66,6 +66,7 @@ public class RawProducerTest extends SplunkMockTestSupport {
         when(service.getIndexes()).thenReturn(indexColl);
         when(service.getInputs()).thenReturn(inputCollection);
         when(input.attach()).thenReturn(socket);
+        when(input.getHost()).thenReturn("localhost");
         when(inputCollection.get(anyString())).thenReturn(input);
         when(indexColl.get(anyString())).thenReturn(index);
         when(index.attach(isA(Args.class))).thenReturn(socket);
@@ -78,7 +79,7 @@ public class RawProducerTest extends SplunkMockTestSupport {
         mock.setExpectedMessageCount(1);
         mock.expectedBodiesReceived(PAYLOAD);
         template.sendBody("direct:stream", PAYLOAD);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -87,7 +88,7 @@ public class RawProducerTest extends SplunkMockTestSupport {
         mock.setExpectedMessageCount(1);
         mock.expectedBodiesReceived(PAYLOAD);
         template.sendBody("direct:submit", PAYLOAD);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -96,11 +97,11 @@ public class RawProducerTest extends SplunkMockTestSupport {
         mock.setExpectedMessageCount(1);
         mock.expectedBodiesReceived(PAYLOAD);
         template.sendBody("direct:tcp", PAYLOAD);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:stream").to(

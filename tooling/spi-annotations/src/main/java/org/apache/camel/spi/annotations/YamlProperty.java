@@ -28,11 +28,21 @@ public @interface YamlProperty {
 
     String type();
 
+    String defaultValue() default "";
+
     String format() default "";
 
+    String displayName() default "";
+
     String description() default "";
+
+    boolean deprecated() default false;
 
     boolean required() default false;
 
     String[] values() default {};
+
+    String oneOf() default "";
+
+    boolean wrapItem() default false;
 }

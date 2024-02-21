@@ -34,6 +34,7 @@ import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
@@ -69,7 +70,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
         final ItemEvent<String> event = new ItemEvent<>("mm", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -83,7 +84,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
         final ItemEvent<String> event = new ItemEvent<>("mm", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 
@@ -105,7 +106,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
     private void checkHeaders(Map<String, Object> headers, String action) {
         assertEquals(action, headers.get(HazelcastConstants.LISTENER_ACTION));
         assertEquals(HazelcastConstants.CACHE_LISTENER, headers.get(HazelcastConstants.LISTENER_TYPE));
-        assertEquals(null, headers.get(HazelcastConstants.OBJECT_ID));
+        assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
 }

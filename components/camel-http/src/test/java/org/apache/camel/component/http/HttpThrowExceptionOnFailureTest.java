@@ -21,10 +21,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,11 +46,11 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -66,7 +66,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWhichReturnsHttp501() throws Exception {
+    public void httpGetWhichReturnsHttp501() {
         Exchange exchange = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false", exchange1 -> {
         });
 
@@ -81,7 +81,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWhichReturnsHttp501ShouldThrowAnException() throws Exception {
+    public void httpGetWhichReturnsHttp501ShouldThrowAnException() {
         Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true", exchange -> {
         });
 
@@ -92,7 +92,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() throws Exception {
+    public void httpGetWhichReturnsHttp501WithIgnoreResponseBody() {
         Exchange exchange
                 = template.request(baseUrl + "/XXX?throwExceptionOnFailure=false&ignoreResponseBody=true", exchange1 -> {
                 });
@@ -109,7 +109,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() throws Exception {
+    public void httpGetWhichReturnsHttp501ShouldThrowAnExceptionWithIgnoreResponseBody() {
         Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> {
         });
 

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.syslog.netty;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
@@ -36,8 +36,8 @@ public class Rfc5425Encoder extends MessageToMessageEncoder<ByteBuf> {
 
             String headerString = length + " ";
 
-            ByteBuf header = ByteBufAllocator.DEFAULT.buffer(headerString.getBytes(Charset.forName("UTF8")).length);
-            header.writeBytes(headerString.getBytes(Charset.forName("UTF8")));
+            ByteBuf header = ByteBufAllocator.DEFAULT.buffer(headerString.getBytes(StandardCharsets.UTF_8).length);
+            header.writeBytes(headerString.getBytes(StandardCharsets.UTF_8));
 
             Unpooled.buffer();
 

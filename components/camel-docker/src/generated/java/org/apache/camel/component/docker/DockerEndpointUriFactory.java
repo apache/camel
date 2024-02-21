@@ -19,35 +19,37 @@ public class DockerEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(22);
-        props.add("followRedirectFilter");
-        props.add("cmdExecFactory");
-        props.add("tlsVerify");
-        props.add("exchangePattern");
-        props.add("maxTotalConnections");
-        props.add("serverAddress");
-        props.add("secure");
-        props.add("lazyStartProducer");
-        props.add("maxPerRouteConnections");
-        props.add("password");
         props.add("bridgeErrorHandler");
         props.add("certPath");
-        props.add("port");
-        props.add("loggingFilter");
-        props.add("host");
-        props.add("socket");
-        props.add("operation");
-        props.add("exceptionHandler");
-        props.add("parameters");
+        props.add("cmdExecFactory");
         props.add("email");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("followRedirectFilter");
+        props.add("host");
+        props.add("lazyStartProducer");
+        props.add("loggingFilter");
+        props.add("maxPerRouteConnections");
+        props.add("maxTotalConnections");
+        props.add("operation");
+        props.add("parameters");
+        props.add("password");
+        props.add("port");
         props.add("requestTimeout");
+        props.add("secure");
+        props.add("serverAddress");
+        props.add("socket");
+        props.add("tlsVerify");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -75,6 +77,11 @@ public class DockerEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

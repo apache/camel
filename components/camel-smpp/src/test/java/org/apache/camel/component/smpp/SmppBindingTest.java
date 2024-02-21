@@ -26,10 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.GeneralDataCoding;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Message_payload;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.TypeOfNumber;
@@ -53,6 +57,7 @@ public class SmppBindingTest {
 
     private SmppBinding binding;
     private CamelContext camelContext;
+    private String defaultEncoding;
 
     @BeforeEach
     public void setUp() {
@@ -62,6 +67,7 @@ public class SmppBindingTest {
             }
         };
         camelContext = new DefaultCamelContext();
+        defaultEncoding = binding.getConfiguration().getEncoding();
     }
 
     @Test
@@ -199,7 +205,7 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() throws Exception {
+    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setOptionalParameters(new OptionalParameter.Short((short) 0x2153, (short) 0));
@@ -264,7 +270,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
 
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(13, smppMessage.getHeaders().size());
+        assertEquals(15, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
@@ -280,7 +286,7 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDataSmShouldReturnASmppMessage() throws Exception {
+    public void createSmppMessageFromDataSmShouldReturnASmppMessage() {
         DataSm dataSm = new DataSm();
         dataSm.setSequenceNumber(1);
         dataSm.setCommandId(1);
@@ -311,6 +317,45 @@ public class SmppBindingTest {
         assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.REGISTERED_DELIVERY));
         assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.DATA_CODING));
         assertEquals(SmppMessageType.DataSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+    }
+
+    @Test
+    void deliverSmWithEmptyBodyAndPayloadInOptionalParameter() throws Exception {
+        DeliverSm deliverSm = new DeliverSm();
+        String payload = "Hellö SMPP wörld!";
+        deliverSm.setShortMessage(new byte[] {});
+        deliverSm.setDataCoding(new GeneralDataCoding(Alphabet.ALPHA_DEFAULT).toByte());
+        deliverSm.setOptionalParameters(new Message_payload(payload.getBytes(defaultEncoding)));
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
+
+        assertEquals(payload, smppMessage.getBody());
+        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+    }
+
+    @Test
+    void deliverSmDlrWithEmptyBodyAndPayloadInOptionalParameter() throws Exception {
+
+        DeliveryReceipt dlr = new DeliveryReceipt();
+        dlr.setId("4");
+        dlr.setSubmitted(1);
+        dlr.setSubmitDate(binding.getCurrentDate());
+        dlr.setDoneDate(binding.getCurrentDate());
+        dlr.setFinalStatus(DeliveryReceiptState.UNDELIV);
+        dlr.setDelivered(1);
+        dlr.setError("000");
+        dlr.setText("Hellö SMPP wörld!");
+
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setShortMessage(new byte[] {});
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setDataCoding(new GeneralDataCoding(Alphabet.ALPHA_DEFAULT).toByte());
+        deliverSm.setOptionalParameters(new Message_payload(dlr.toString().getBytes(defaultEncoding)));
+
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
+        assertEquals(dlr.getText(), smppMessage.getBody(String.class));
+        assertEquals(dlr.getId(), smppMessage.getHeader(SmppConstants.ID));
+        assertEquals(dlr.getFinalStatus(), smppMessage.getHeader(SmppConstants.FINAL_STATUS));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
 
     @Test

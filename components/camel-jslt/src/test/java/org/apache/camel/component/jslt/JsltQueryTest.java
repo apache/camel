@@ -19,6 +19,7 @@ package org.apache.camel.component.jslt;
 import java.util.Collections;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -39,11 +40,11 @@ public class JsltQueryTest extends CamelTestSupport {
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")),
                 Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, ".published"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")

@@ -22,13 +22,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_HPA;
 
 /**
  * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_HPA, title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl",
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesHPAEndpoint(String uri, KubernetesHPAComponent component, KubernetesConfiguration config) {

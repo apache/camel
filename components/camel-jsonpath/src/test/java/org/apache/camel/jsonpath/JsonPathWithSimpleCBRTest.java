@@ -19,16 +19,17 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when().jsonpath("$.store.book[?(@.price < ${header.cheap})]")
@@ -50,7 +51,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/cheap.json"))
                 .to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/average.json"))
                 .to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +75,7 @@ public class JsonPathWithSimpleCBRTest extends CamelTestSupport {
         fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/expensive.json"))
                 .to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

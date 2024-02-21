@@ -20,19 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
-//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject Account
  */
-@XStreamAlias("Account")
 public class Account extends AbstractDescribedSObjectBase {
 
     public Account() {
@@ -53,7 +48,6 @@ public class Account extends AbstractDescribedSObjectBase {
         this.MasterRecordId = MasterRecordId;
     }
 
-    @XStreamAlias("MasterRecord")
     private Account MasterRecord;
 
     @JsonProperty("MasterRecord")
@@ -73,7 +67,6 @@ public class Account extends AbstractDescribedSObjectBase {
         this.ParentId = ParentId;
     }
 
-    @XStreamAlias("Parent")
     private Account Parent;
 
     @JsonProperty("Parent")
@@ -350,7 +343,6 @@ public class Account extends AbstractDescribedSObjectBase {
         this.Sic = Sic;
     }
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private Account_IndustryEnum Industry;
 
     @JsonProperty("Industry")
@@ -781,4 +773,3 @@ public class Account extends AbstractDescribedSObjectBase {
         return description;
     }
 }
-//CHECKSTYLE:ON

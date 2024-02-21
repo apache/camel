@@ -30,6 +30,7 @@
       <globalOption key="KEY_2" value="VALUE_2" />
       <globalOption key="KEY_3" value="VALUE_3" />
     </globalOptions>
+    <jmxAgent id="jmx" disabled="true"/>
 
     <route>
       <from uri="direct:start" />

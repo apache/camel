@@ -26,14 +26,9 @@ import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("dropbox")
 public class DropboxComponent extends DefaultComponent {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
-
     public DropboxComponent() {
         this(null);
     }
@@ -45,7 +40,7 @@ public class DropboxComponent extends DefaultComponent {
 
     /**
      * Create a camel endpoint after passing validation on the incoming url.
-     * 
+     *
      * @param  uri        the full URI of the endpoint
      * @param  remaining  the remaining part of the URI without the query parameters or component prefix
      * @param  parameters the optional parameters passed in
@@ -57,7 +52,15 @@ public class DropboxComponent extends DefaultComponent {
         DropboxConfiguration configuration = new DropboxConfiguration();
 
         // set options from component
+        //set auth parameters
         configuration.setAccessToken((String) parameters.get("accessToken"));
+        if (parameters.get("expireIn") != null) {
+            configuration.setExpireIn(Long.valueOf((String) parameters.get("expireIn")));
+        }
+        configuration.setRefreshToken((String) parameters.get("refreshToken"));
+        configuration.setApiKey((String) parameters.get("apiKey"));
+        configuration.setApiSecret((String) parameters.get("apiSecret"));
+
         configuration.setLocalPath((String) parameters.get("localPath"));
         configuration.setRemotePath(
                 parameters.get("remotePath") != null

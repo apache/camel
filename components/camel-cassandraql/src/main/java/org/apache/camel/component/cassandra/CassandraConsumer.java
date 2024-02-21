@@ -22,17 +22,24 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.resume.ResumeStrategyHelper;
+
+import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
 
 /**
  * Cassandra 2 CQL3 consumer.
  */
-public class CassandraConsumer extends ScheduledPollConsumer {
+public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAware<ResumeStrategy> {
 
     /**
      * Prepared statement used for polling
      */
     private PreparedStatement preparedStatement;
+
+    private ResumeStrategy resumeStrategy;
 
     public CassandraConsumer(CassandraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -74,10 +81,13 @@ public class CassandraConsumer extends ScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         if (isPrepareStatements()) {
             preparedStatement = getEndpoint().prepareStatement();
         }
+
+        ResumeStrategyHelper.resume(getEndpoint().getCamelContext(), this, resumeStrategy, CASSANDRA_RESUME_ACTION);
+
+        super.doStart();
     }
 
     @Override
@@ -90,4 +100,13 @@ public class CassandraConsumer extends ScheduledPollConsumer {
         return getEndpoint().isPrepareStatements();
     }
 
+    @Override
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
 }

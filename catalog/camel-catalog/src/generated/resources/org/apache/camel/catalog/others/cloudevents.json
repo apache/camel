@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cloudevents",
+    "title": "Cloudevents",
+    "description": "Camel support for the CloudEvents specification",
+    "deprecated": false,
+    "firstVersion": "3.15.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cloudevents",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

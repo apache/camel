@@ -42,7 +42,7 @@ public class InfinispanEmbeddedClusteredRoutePolicyFactoryTest extends AbstractI
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace(namespace));
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     fromF("timer:%s?delay=1000&period=1000", id)
                             .routeId("route-" + id)
                             .log("From ${routeId}")

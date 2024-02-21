@@ -16,15 +16,8 @@
  */
 package org.apache.camel.component.as2.api;
 
-import java.io.IOException;
-
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Receives EDI Messages over HTTP
@@ -50,8 +43,6 @@ public class AS2ServerManager {
      */
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
 
-    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManager.class);
-
     private AS2ServerConnection as2ServerConnection;
 
     public AS2ServerManager(AS2ServerConnection as2ServerConnection) {
@@ -59,13 +50,7 @@ public class AS2ServerManager {
     }
 
     public void listen(String requestUriPattern, HttpRequestHandler handler) {
-        try {
-            as2ServerConnection.listen(requestUriPattern, handler);
-        } catch (IOException e) {
-            LOG.error("Failed to listen for '{}' requests: {}", requestUriPattern, e.getMessage(), e);
-            throw new RuntimeException("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
-        }
-
+        as2ServerConnection.listen(requestUriPattern, handler);
     }
 
     public void stopListening(String requestUri) {
@@ -73,8 +58,7 @@ public class AS2ServerManager {
     }
 
     public void handleMDNResponse(
-            HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from)
-            throws HttpException {
+            HttpContext httpContext, String subject, String from) {
         // Add Context attributes for Response
         httpContext.setAttribute(SUBJECT, subject);
         httpContext.setAttribute(FROM, from);

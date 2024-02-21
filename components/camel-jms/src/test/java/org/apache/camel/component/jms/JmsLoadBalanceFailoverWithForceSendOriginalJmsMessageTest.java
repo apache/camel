@@ -16,23 +16,35 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
-public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends CamelTestSupport {
-    private boolean forceSendOriginalMessage = true;
+@Timeout(10)
+public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+    private final boolean forceSendOriginalMessage = true;
 
     @Test
     public void testFailover() throws Exception {
@@ -49,10 +61,11 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
-        String out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
+        String out = template.requestBodyAndHeader("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start",
+                "Hello World", "foo", "bar", String.class);
         assertEquals("Hello Back", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // we should get an ActiveMQTextMessage with the body and custom header intact
         assertEquals(ActiveMQTextMessage.class, oneMock.getExchanges().get(0).getIn().getBody().getClass());
@@ -78,10 +91,11 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
-        out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
+        out = template.requestBodyAndHeader("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start",
+                "Hello World", "foo", "bar", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(ActiveMQTextMessage.class, threeMock.getExchanges().get(0).getIn().getBody().getClass());
         assertEquals("Hello World", ((ActiveMQTextMessage) threeMock.getExchanges().get(0).getIn().getBody()).getText());
@@ -89,27 +103,27 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("jms:queue:start?mapJmsMessage=false")
+            public void configure() {
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start?mapJmsMessage=false")
                         .loadBalance().failover(-1, false, true)
-                        .to("jms:queue:one?forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:two?forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:three?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.one?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.two?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.three?forceSendOriginalMessage=" + forceSendOriginalMessage)
                         .end()
                         .to("mock:result");
 
-                from("jms:queue:one?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.one?mapJmsMessage=false")
                         .to("mock:one")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("jms:queue:two?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.two?mapJmsMessage=false")
                         .to("mock:two")
                         .transform().simple("Hello Back");
 
-                from("jms:queue:three?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.three?mapJmsMessage=false")
                         .to("mock:three")
                         .transform().simple("Bye World");
             }
@@ -117,17 +131,28 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        // we want to transfer the exception
-        jms.getConfiguration().setTransferException(true);
-
-        camelContext.addComponent("jms", jms);
-
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
+
+        // we want to transfer the exception
+        jms.getConfiguration().setTransferException(true);
+        return jms;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

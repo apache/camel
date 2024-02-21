@@ -28,7 +28,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="pop3://james@mymailserver.com?password=secret&amp;initialDelay=100&amp;delay=100"/>
+      <from uri="imap://james@localhost:3143?password=secret&amp;initialDelay=100&amp;delay=100"/>
       <to uri="log:email"/>
       <split>
         <ref>splitAttachments</ref>

@@ -29,19 +29,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpPollingConsumerTest extends BaseJettyTest {
 
     @Test
-    public void testReceive() throws Exception {
+    public void testReceive() {
         String body = consumer.receiveBody("http://localhost:{{port}}/test", String.class);
         assertEquals("Bye World", body);
     }
 
     @Test
-    public void testReceiveTimeout() throws Exception {
+    public void testReceiveTimeout() {
         String body = consumer.receiveBody("http://localhost:{{port}}/test", 5000, String.class);
         assertEquals("Bye World", body);
     }
 
     @Test
-    public void testReceiveTimeoutTriggered() throws Exception {
+    public void testReceiveTimeoutTriggered() {
         try {
             consumer.receiveBody("http://localhost:{{port}}/test", 250, String.class);
             fail("Should have thrown an exception");
@@ -51,10 +51,10 @@ public class HttpPollingConsumerTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").delay(2000).transform(constant("Bye World"));
             }
         };

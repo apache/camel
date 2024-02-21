@@ -71,8 +71,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
             // create an iterator that returns the value in the named order
             try {
 
-                return new Iterator<Object>() {
-                    private NamedQueryParser parser = new NamedQueryParser(query);
+                return new Iterator<>() {
+                    private final NamedQueryParser parser = new NamedQueryParser(query);
                     private Object next;
                     private boolean done;
                     private boolean preFetched;

@@ -1,0 +1,93 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.test.main.junit5.annotation;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.common.MyMainClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * A test class ensuring that a new camel context is created for the entire test class.
+ */
+@CamelMainTest(mainClass = MyMainClass.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class TestInstancePerClassTest {
+
+    @EndpointInject("mock:bean")
+    MockEndpoint mock;
+
+    @EndpointInject("direct:bean")
+    ProducerTemplate template;
+
+    @AfterEach
+    void reset() {
+        mock.reset();
+    }
+
+    @Order(1)
+    @Test
+    void shouldBeLaunchedFirst() throws Exception {
+        mock.expectedBodiesReceived(1);
+        int result = template.requestBody((Object) null, Integer.class);
+        mock.assertIsSatisfied();
+        assertEquals(1, result);
+    }
+
+    @Order(2)
+    @Test
+    void shouldBeLaunchedSecondWithDifferentResult() throws Exception {
+        mock.expectedBodiesReceived(2);
+        int result = template.requestBody((Object) null, Integer.class);
+        mock.assertIsSatisfied();
+        assertEquals(2, result);
+    }
+
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @Nested
+    class NestedTest {
+
+        @Order(1)
+        @Test
+        void shouldSupportNestedTestLaunchedFirst() throws Exception {
+            mock.expectedBodiesReceived(3);
+            int result = template.requestBody((Object) null, Integer.class);
+            mock.assertIsSatisfied();
+            assertEquals(3, result);
+        }
+
+        @Order(2)
+        @Test
+        void shouldSupportNestedTestLaunchedSecondWithDifferentResult() throws Exception {
+            mock.expectedBodiesReceived(4);
+            int result = template.requestBody((Object) null, Integer.class);
+            mock.assertIsSatisfied();
+            assertEquals(4, result);
+        }
+    }
+}

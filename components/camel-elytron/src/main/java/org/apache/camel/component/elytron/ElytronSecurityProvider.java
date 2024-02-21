@@ -28,6 +28,7 @@ import io.undertow.security.handlers.AuthenticationConstraintHandler;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.wildfly.elytron.web.undertow.server.ElytronContextAssociationHandler;
 import org.wildfly.elytron.web.undertow.server.ElytronRunAsHandler;
@@ -48,6 +49,7 @@ import org.wildfly.security.http.util.SecurityProviderServerMechanismFactory;
  * Implementation of `UndertowSecurityProvider` which adds elytron capability into camel-undertow. Provider requires
  * instance of `ElytronSecurityConfiguration` to be provided as `securityConfiguration` parameter in camel-undertow.
  */
+@Deprecated
 public class ElytronSecurityProvider implements UndertowSecurityProvider {
     /**
      * Name of the header which contains associated security identity if request is authenticated.
@@ -124,7 +126,7 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
                     try {
                         return Collections.singletonList(httpAuthenticationFactory.createMechanism(mechanismName));
                     } catch (HttpAuthenticationException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 }).build();
     }

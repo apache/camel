@@ -25,6 +25,7 @@ import java.util.Properties;
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -39,23 +40,46 @@ public class DropboxTestSupport extends CamelTestSupport {
     protected final Properties properties;
     protected String workdir;
     protected String token;
-    private DbxClientV2 client;
+    protected String apiKey;
+    protected String apiSecret;
+    protected String refreshToken;
+    protected Long expireIn;
+
+    private final DbxClientV2 client;
 
     protected DropboxTestSupport() {
-        properties = new Properties();
-        try (InputStream inStream = getClass().getResourceAsStream("/test-options.properties")) {
+        properties = loadProperties();
+
+        workdir = properties.getProperty("workDir");
+        token = properties.getProperty("accessToken");
+        refreshToken = properties.getProperty("refreshToken");
+        apiKey = properties.getProperty("apiKey");
+        apiSecret = properties.getProperty("apiSecret");
+        expireIn = Long.valueOf(properties.getProperty("expireIn"));
+
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
+        DbxCredential credential = new DbxCredential(token, expireIn, refreshToken, apiKey, apiSecret);
+        client = new DbxClientV2(config, credential);
+
+    }
+
+    private static Properties loadProperties() {
+        final Properties properties = new Properties();
+        try (InputStream inStream = DropboxTestSupport.class.getResourceAsStream("/test-options.properties")) {
             properties.load(inStream);
         } catch (IOException e) {
             LOG.error("I/O error: reading test-options.properties: {}", e.getMessage(), e);
             throw new IllegalAccessError("test-options.properties could not be found");
         }
+        return properties;
+    }
 
-        workdir = properties.getProperty("workDir");
-        token = properties.getProperty("accessToken");
+    // Used by JUnit to automatically trigger the integration tests
+    @SuppressWarnings("unused")
+    private static boolean hasCredentials() {
+        Properties properties = loadProperties();
 
-        DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
-        client = new DbxClientV2(config, token);
-
+        return !properties.getProperty("accessToken", "").isEmpty();
     }
 
     @BeforeEach
@@ -67,12 +91,12 @@ public class DropboxTestSupport extends CamelTestSupport {
         try {
             removeDir(name);
         } finally {
-            client.files().createFolder(name);
+            client.files().createFolderV2(name);
         }
     }
 
     protected void removeDir(String name) throws DbxException {
-        client.files().delete(name);
+        client.files().deleteV2(name);
     }
 
     protected void createFile(String fileName, String content) throws IOException {
@@ -89,12 +113,13 @@ public class DropboxTestSupport extends CamelTestSupport {
     }
 
     protected String getFileContent(String path) throws DbxException, IOException {
-        ByteArrayOutputStream target = new ByteArrayOutputStream();
-        DbxDownloader<FileMetadata> downloadedFile = client.files().download(path);
-        if (downloadedFile != null) {
-            downloadedFile.download(target);
+        try (ByteArrayOutputStream target = new ByteArrayOutputStream();
+             DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
+            if (downloadedFile != null) {
+                downloadedFile.download(target);
+            }
+            return target.toString();
         }
-        return new String(target.toByteArray());
     }
 
     @Override

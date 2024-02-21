@@ -16,9 +16,9 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.spi.Metadata;
 
@@ -26,58 +26,58 @@ import org.apache.camel.spi.Metadata;
 public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String circuitBreakerRef;
+    @Metadata(label = "advanced")
+    private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "5s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "1", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "1", javaType = "java.lang.Integer")
     private String successThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "20", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "20", javaType = "java.lang.Integer")
     private String requestVolumeThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "50", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "50", javaType = "java.lang.Integer")
     private String failureRatio;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "1s", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeoutDuration;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
     @XmlAttribute
-    @Metadata(label = "timeout")
-    private String timeoutScheduledExecutorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
+    private String timeoutScheduledExecutorService;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadWaitingTaskQueue;
     @XmlAttribute
-    @Metadata(label = "bulkhead")
-    private String bulkheadExecutorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String bulkheadExecutorService;
 
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
      * from the registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
     public String getDelay() {
@@ -160,15 +160,15 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutPoolSize = timeoutPoolSize;
     }
 
-    public String getTimeoutScheduledExecutorServiceRef() {
-        return timeoutScheduledExecutorServiceRef;
+    public String getTimeoutScheduledExecutorService() {
+        return timeoutScheduledExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public void setTimeoutScheduledExecutorServiceRef(String timeoutScheduledExecutorServiceRef) {
-        this.timeoutScheduledExecutorServiceRef = timeoutScheduledExecutorServiceRef;
+    public void setTimeoutScheduledExecutorService(String timeoutScheduledExecutorService) {
+        this.timeoutScheduledExecutorService = timeoutScheduledExecutorService;
     }
 
     public String getBulkheadEnabled() {
@@ -204,14 +204,14 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
     }
 
-    public String getBulkheadExecutorServiceRef() {
-        return bulkheadExecutorServiceRef;
+    public String getBulkheadExecutorService() {
+        return bulkheadExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when bulkhead is enabled.
      */
-    public void setBulkheadExecutorServiceRef(String bulkheadExecutorServiceRef) {
-        this.bulkheadExecutorServiceRef = bulkheadExecutorServiceRef;
+    public void setBulkheadExecutorService(String bulkheadExecutorService) {
+        this.bulkheadExecutorService = bulkheadExecutorService;
     }
 }

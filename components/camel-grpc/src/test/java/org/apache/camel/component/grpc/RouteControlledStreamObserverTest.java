@@ -67,8 +67,12 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
 
     @AfterEach
     public void stopGrpcChannels() {
-        syncRequestChannel.shutdown().shutdownNow();
-        asyncRequestChannel.shutdown().shutdownNow();
+        if (syncRequestChannel != null) {
+            syncRequestChannel.shutdown().shutdownNow();
+        }
+        if (asyncRequestChannel != null) {
+            asyncRequestChannel.shutdown().shutdownNow();
+        }
     }
 
     @Test
@@ -106,7 +110,7 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -124,7 +128,7 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncAsync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -145,7 +149,7 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
         requestObserver.onNext(pingRequest);
         requestObserver.onNext(pingRequest);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -166,7 +170,7 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
         requestObserver.onNext(pingRequest);
         requestObserver.onNext(pingRequest);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -210,11 +214,11 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=PROPAGATION&routeControlledStreamObserver=true")
-                             .process(this::process);
+                        .process(this::process);
 
                 from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };
     }

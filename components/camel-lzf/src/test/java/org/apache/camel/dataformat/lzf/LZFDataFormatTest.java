@@ -67,7 +67,7 @@ public class LZFDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -89,6 +89,6 @@ public class LZFDataFormatTest extends CamelTestSupport {
     }
 
     private byte[] sendText(String destination) throws Exception {
-        return (byte[]) template.requestBody(destination, TEXT.getBytes("UTF-8"));
+        return template.requestBody(destination, TEXT.getBytes("UTF-8"), byte[].class);
     }
 }

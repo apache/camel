@@ -118,8 +118,7 @@
       "javaType": "org.apache.camel.ExchangePattern",
       "enum": [
         "InOnly",
-        "InOut",
-        "InOptionalOut"
+        "InOut"
       ],
       "deprecated": false,
       "defaultValue": "InOnly",

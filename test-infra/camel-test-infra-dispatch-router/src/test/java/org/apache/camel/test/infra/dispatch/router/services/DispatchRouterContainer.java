@@ -25,7 +25,7 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 
 public class DispatchRouterContainer extends GenericContainer<DispatchRouterContainer> implements MessagingContainer {
     private static final int DEFAULT_AMQP_PORT = 5672;
-    private static final String FROM_IMAGE_NAME = "fedora:33";
+    private static final String FROM_IMAGE_NAME = "fedora:38";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public DispatchRouterContainer() {
@@ -41,7 +41,7 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
 
     /**
      * Gets the port number used for exchanging messages using the AMQP protocol
-     * 
+     *
      * @return the port number
      */
     public int getAMQPPort() {
@@ -50,11 +50,11 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
 
     /**
      * Gets the end point URL used exchanging messages using the AMQP protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String getAMQPEndpoint() {
-        return String.format("amqp://%s:%d", getContainerIpAddress(), getAMQPPort());
+        return String.format("amqp://%s:%d", getHost(), getAMQPPort());
     }
 
     @Override

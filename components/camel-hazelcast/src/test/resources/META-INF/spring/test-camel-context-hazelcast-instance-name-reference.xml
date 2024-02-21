@@ -30,8 +30,13 @@
     <bean id="config" class="com.hazelcast.config.Config">
         <constructor-arg type="java.lang.String" value="HZ.INSTANCE" />
     </bean>
+    <bean id="network" factory-bean="config" factory-method="getNetworkConfig"/>
+    <bean id="join" factory-bean="network" factory-method="getJoin"/>
+    <bean id="auto-detection" factory-bean="join" factory-method="getAutoDetectionConfig">
+        <property name="enabled" value="false"/>
+    </bean>
 
-    <bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+    <bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance" depends-on="auto-detection">
         <constructor-arg type="com.hazelcast.config.Config" ref="config"/>
     </bean>
     <camelContext xmlns="http://camel.apache.org/schema/spring">

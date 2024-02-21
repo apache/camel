@@ -71,7 +71,7 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
 
     /**
      * Handles the given exception using the {@link #getExceptionHandler()}
-     * 
+     *
      * @param t the exception to handle
      */
     protected void handleException(Throwable t) {

@@ -21,8 +21,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringMainStartFailedIssueTest extends CamelTestSupport {
 
@@ -31,12 +30,9 @@ public class SpringMainStartFailedIssueTest extends CamelTestSupport {
         Main main = new Main();
 
         String[] args = new String[] { "-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml" };
-        try {
-            main.run(args);
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e);
-        }
+
+        Exception e = assertThrows(Exception.class, () -> main.run(args), "Should have thrown an exception");
+        assertIsInstanceOf(FailedToCreateRouteException.class, e);
 
         assertNull(main.getApplicationContext(), "Spring application context should NOT be created");
     }

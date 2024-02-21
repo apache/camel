@@ -170,7 +170,7 @@ public class CsvDataFormatTest {
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
         assertTrue(dataFormat.isHeaderDisabled());
-        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
+        assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
         assertNull(dataFormat.getActiveFormat().getHeader());
@@ -179,11 +179,11 @@ public class CsvDataFormatTest {
     @Test
     void shouldOverrideHeader() {
         CsvDataFormat dataFormat = new CsvDataFormat()
-                .setHeader(new String[] { "a", "b", "c" });
+                .setHeader("a,b,c");
 
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getHeader());
+        assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
         assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getActiveFormat().getHeader());
@@ -450,7 +450,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getTrim());
+        assertNull(dataFormat.getTrim());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrim());
 
@@ -478,7 +478,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getIgnoreHeaderCase());
+        assertNull(dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
 
@@ -505,7 +505,7 @@ public class CsvDataFormatTest {
         dataFormat = new CsvDataFormat();
         // Properly saved
         assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-        assertEquals(null, dataFormat.getTrailingDelimiter());
+        assertNull(dataFormat.getTrailingDelimiter());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
 

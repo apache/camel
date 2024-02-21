@@ -37,7 +37,7 @@ public class RestUndertowHttpPostJsonPojoListTest extends BaseUndertowTest {
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
         template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);
@@ -52,10 +52,10 @@ public class RestUndertowHttpPostJsonPojoListTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);

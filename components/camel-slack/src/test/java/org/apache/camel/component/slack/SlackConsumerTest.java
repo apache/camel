@@ -18,15 +18,15 @@ package org.apache.camel.component.slack;
 
 import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +42,7 @@ public class SlackConsumerTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         token = System.getProperty("SLACK_TOKEN");
-        hook = System.getProperty("SLACK_HOOK",
-                "https://hooks.slack.com/services/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");
+        hook = System.getProperty("SLACK_HOOK");
 
         assumeCredentials();
         super.setUp();
@@ -58,7 +57,7 @@ public class SlackConsumerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).simple("${body.getText()}").isEqualTo(message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void assumeCredentials() {
@@ -67,19 +66,26 @@ public class SlackConsumerTest extends CamelTestSupport {
     }
 
     private void sendMessage(String message) throws IOException {
-        HttpClient client = HttpClients.createDefault();
-        HttpPost post = new HttpPost(hook);
-        post.setHeader("Content-type", "application/json");
-        post.setEntity(new StringEntity(String.format("{ 'text': '%s'}", message)));
-        HttpResponse response = client.execute(post);
-        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+        RequestBody requestBody
+                = RequestBody.create(MediaType.parse("application/json"), String.format("{ 'text': '%s'}", message));
+
+        Request request = new Request.Builder()
+                .url(hook)
+                .post(requestBody)
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+        Call call = client.newCall(request);
+        Response response = call.execute();
+
+        assertEquals(200, response.code());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(String.format("slack://general?token=RAW(%s)&maxResults=1", token))
                         .to("mock:result");
             }

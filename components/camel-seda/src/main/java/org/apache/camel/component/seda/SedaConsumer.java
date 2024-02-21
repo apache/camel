@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -103,7 +102,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -148,6 +147,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                     Thread.sleep(Math.min(pollTimeout, 1000));
                 } catch (InterruptedException e) {
                     LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                    Thread.currentThread().interrupt();
                 }
                 continue;
             }
@@ -166,6 +166,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         Thread.sleep(Math.min(pollTimeout, 1000));
                     } catch (InterruptedException e) {
                         LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                        Thread.currentThread().interrupt();
                     }
                     continue;
                 }
@@ -181,19 +182,14 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 }
                 if (exchange != null) {
                     try {
-                        // send a new copied exchange with new camel context
+                        // prepare the exchange before sending to consumer
                         Exchange newExchange = prepareExchange(exchange);
                         // process the exchange
                         sendToConsumers(newExchange);
-                        // copy the message back
-                        if (newExchange.hasOut()) {
-                            exchange.setOut(newExchange.getOut().copy());
-                        } else {
-                            exchange.setIn(newExchange.getIn());
-                        }
+                        // copy result back
+                        ExchangeHelper.copyResults(exchange, newExchange);
                         // log exception if an exception occurred and was not handled
-                        if (newExchange.getException() != null) {
-                            exchange.setException(newExchange.getException());
+                        if (exchange.getException() != null) {
                             getExceptionHandler().handleException("Error processing exchange", exchange,
                                     exchange.getException());
                         }
@@ -207,8 +203,9 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 }
             } catch (InterruptedException e) {
                 LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                Thread.currentThread().interrupt();
                 continue;
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 if (exchange != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 } else {
@@ -225,11 +222,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * @return          the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
-        // send a new copied exchange with new camel context
-        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getEndpoint().getCamelContext());
-        // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(getEndpoint());
-        return newExchange;
+        // this consumer grabbed the exchange so mark its from this route/endpoint
+        exchange.getExchangeExtension().setFromEndpoint(getEndpoint());
+        exchange.getExchangeExtension().setFromRouteId(getRouteId());
+        return exchange;
     }
 
     /**
@@ -239,7 +235,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * exchange in parallel to the multiple consumers.
      * <p/>
      * If there is only a single consumer then its dispatched directly to it using same thread.
-     * 
+     *
      * @param  exchange  the exchange
      * @throws Exception can be thrown if processing of the exchange failed
      */
@@ -258,7 +254,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             }
 
             // handover completions, as we need to done this when the multicast is done
-            final List<Synchronization> completions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
+            final List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
 
             // use a multicast processor to process it
             AsyncProcessor mp = getEndpoint().getConsumerMulticastProcessor();
@@ -267,7 +263,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             // and use the asynchronous routing engine to support it
             mp.process(exchange, doneSync -> {
                 // done the uow on the completions
-                UnitOfWorkHelper.doneSynchronizations(exchange, completions, LOG);
+                UnitOfWorkHelper.doneSynchronizations(exchange, completions);
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it

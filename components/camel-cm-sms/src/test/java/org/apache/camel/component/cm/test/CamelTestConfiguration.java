@@ -16,89 +16,79 @@
  */
 package org.apache.camel.component.cm.test;
 
+import java.io.FileInputStream;
+import java.util.Properties;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * Builds a SimpleRoute to send a message to CM GW and CM Uri is built based on properties in a file.
  */
-@Configuration("cmConfig")
-@PropertySource("classpath:/cm-smsgw.properties")
-public class CamelTestConfiguration extends SingleRouteCamelConfiguration {
+public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
 
     public static final String SIMPLE_ROUTE_ID = "simple-route";
 
     private String uri;
 
     @Override
-    public RouteBuilder route() {
-        return new RouteBuilder() {
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
+    }
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        loadProperties();
+
+        context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-
-                Assert.hasLength(uri, "The URI string should not be empty or null");
-
+            public void configure() {
                 log.debug("CM Component is an URI based component\nCM URI: {}", uri);
 
                 // Route definition
                 from("direct:sms").to(uri).to("mock:test")
                         .routeId(SIMPLE_ROUTE_ID);
-
             }
-        };
-    }
+        });
 
-    @Bean
-    public LocalValidatorFactoryBean getValidatorFactory() {
-        final LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-        localValidatorFactoryBean.getValidationPropertyMap()
-                .put("hibernate.validator.fail_fast", "true");
-        return localValidatorFactoryBean;
+        return context;
     }
 
     /**
      * Build the URI of the CM Component based on Environmental properties
      */
-    @Override
-    public final void setApplicationContext(
-            final ApplicationContext applicationContext) {
+    private void loadProperties() throws Exception {
+        Properties prop = new Properties();
+        prop.load(new FileInputStream("src/test/resources/cm-smsgw.properties"));
 
-        super.setApplicationContext(applicationContext);
+        final String host = prop.getProperty("cm.url");
+        final String productTokenString = prop.getProperty("cm.product-token");
+        final String sender = prop.getProperty("cm.default-sender");
 
-        final Environment env = applicationContext.getEnvironment();
-
-        final String host = env.getRequiredProperty("cm.url");
-        final String productTokenString = env
-                .getRequiredProperty("cm.product-token");
-        final String sender = env.getRequiredProperty("cm.default-sender");
-
-        final StringBuffer cmUri = new StringBuffer("cm-sms:" + host)
+        final StringBuilder cmUri = new StringBuilder("cm-sms:" + host)
                 .append("?productToken=").append(productTokenString);
         if (sender != null && !sender.isEmpty()) {
             cmUri.append("&defaultFrom=").append(sender);
         }
 
         // Defaults to false
-        final Boolean testConnectionOnStartup = Boolean.parseBoolean(
-                env.getProperty("cm.testConnectionOnStartup", "false"));
+        final boolean testConnectionOnStartup = Boolean.parseBoolean(
+                prop.getProperty("cm.testConnectionOnStartup", "false"));
         if (testConnectionOnStartup) {
             cmUri.append("&testConnectionOnStartup=")
-                    .append(testConnectionOnStartup.toString());
+                    .append(testConnectionOnStartup);
         }
 
         // Defaults to 8
-        final Integer defaultMaxNumberOfParts = Integer
-                .parseInt(env.getProperty("defaultMaxNumberOfParts", "8"));
+        final int defaultMaxNumberOfParts = Integer
+                .parseInt(prop.getProperty("defaultMaxNumberOfParts", "8"));
         cmUri.append("&defaultMaxNumberOfParts=")
-                .append(defaultMaxNumberOfParts.toString());
+                .append(defaultMaxNumberOfParts);
 
         uri = cmUri.toString();
     }

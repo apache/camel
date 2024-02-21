@@ -30,7 +30,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.emptyOrNullString;
 
 @Disabled("Not implemented yet")
 public class WordpressServiceTaxonomyAdapterIT {
@@ -48,7 +48,7 @@ public class WordpressServiceTaxonomyAdapterIT {
     public void testRetrieve() {
         final Taxonomy taxonomy = serviceTaxonomy.retrieve(null, "category");
         assertThat(taxonomy, not(nullValue()));
-        assertThat(taxonomy.getName(), not(isEmptyOrNullString()));
+        assertThat(taxonomy.getName(), not(emptyOrNullString()));
     }
 
     @Test

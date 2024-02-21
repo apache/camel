@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FreemarkerTest extends CamelTestSupport {
 
     @Test
-    public void testFreemarkerLetter() throws Exception {
+    public void testFreemarkerLetter() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Monday");
                 exchange.getIn().setHeader("name", "Christian");
                 exchange.setProperty("item", "7");
@@ -48,10 +48,10 @@ public class FreemarkerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFreemarkerDataModel() throws Exception {
+    public void testFreemarkerDataModel() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader("name", "Christian");
                 Map<String, Object> variableMap = new HashMap<>();

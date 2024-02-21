@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -41,17 +42,27 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     private String routeId;
     private final Class<?> type;
     private final String charset;
+    private final boolean mandatory;
 
     public ConvertBodyProcessor(Class<?> type) {
         ObjectHelper.notNull(type, "type", this);
         this.type = type;
         this.charset = null;
+        this.mandatory = true;
     }
 
     public ConvertBodyProcessor(Class<?> type, String charset) {
         ObjectHelper.notNull(type, "type", this);
         this.type = type;
         this.charset = IOHelper.normalizeCharset(charset);
+        this.mandatory = true;
+    }
+
+    public ConvertBodyProcessor(Class<?> type, String charset, boolean mandatory) {
+        ObjectHelper.notNull(type, "type", this);
+        this.type = type;
+        this.charset = IOHelper.normalizeCharset(charset);
+        this.mandatory = mandatory;
     }
 
     @Override
@@ -96,13 +107,18 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
         String originalCharsetName = null;
         if (charset != null) {
-            originalCharsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            originalCharsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             // override existing charset with configured charset as that is what the user
             // have explicit configured and expects to be used
-            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
         }
         // use mandatory conversion
-        Object value = old.getMandatoryBody(type);
+        Object value;
+        if (mandatory) {
+            value = old.getMandatoryBody(type);
+        } else {
+            value = old.getBody(type);
+        }
 
         // create a new message container so we do not drag specialized message objects along
         // but that is only needed if the old message is a specialized message
@@ -123,9 +139,9 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         // as that can lead to double converting later on
         if (charset != null) {
             if (originalCharsetName != null && !originalCharsetName.isEmpty()) {
-                exchange.setProperty(Exchange.CHARSET_NAME, originalCharsetName);
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, originalCharsetName);
             } else {
-                exchange.removeProperty(Exchange.CHARSET_NAME);
+                exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
             }
         }
     }
@@ -154,15 +170,5 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
     public String getCharset() {
         return charset;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 }

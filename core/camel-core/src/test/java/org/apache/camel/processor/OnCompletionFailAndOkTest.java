@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +42,7 @@ public class OnCompletionFailAndOkTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (Exception e) {
             // expected
@@ -55,12 +54,12 @@ public class OnCompletionFailAndOkTest extends ContextTestSupport {
     @Test
     public void testOkAndFail() throws Exception {
         getMockEndpoint("mock:ok").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:fail").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:fail").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (Exception e) {
             // expected
@@ -75,14 +74,8 @@ public class OnCompletionFailAndOkTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .onCompletion()
-                        .choice()
-                            .when(e -> e.getProperty(Exchange.EXCEPTION_CAUGHT) != null)
-                                .to("log:fail").to("mock:fail")
-                            .otherwise()
-                                .to("log:ok").to("mock:ok")
-                        .end()
-                    .end()
+                    .onCompletion().onCompleteOnly().to("log:ok").to("mock:ok").end()
+                    .onCompletion().onFailureOnly().to("log:fail").to("mock:fail").end()
                     .process(new OnCompletionTest.MyProcessor())
                     .to("mock:result");
             }

@@ -21,9 +21,11 @@ import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class DirectComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
@@ -34,7 +36,7 @@ public class DirectComponentConfigurationAndDocumentationTest extends CamelTestS
     @Test
     void testComponentJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema("direct");
+            String json = ((CatalogCamelContext) context).getComponentParameterJsonSchema("direct");
             assertNotNull(json, "Should have found some auto-generated JSON");
         }
     }

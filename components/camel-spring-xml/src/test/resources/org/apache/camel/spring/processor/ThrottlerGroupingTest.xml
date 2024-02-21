@@ -23,11 +23,15 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean id="incrementProcessor" class="org.apache.camel.spring.processor.throttle.SpringThrottlerGroupingTest$IncrementProcessor"/>
+  <bean id="decrementProcessor" class="org.apache.camel.spring.processor.throttle.SpringThrottlerGroupingTest$DecrementProcessor"/>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
     <route errorHandlerRef="dlc">
       <from uri="seda:a"/>
-      <throttle timePeriodMillis="1000">
+      <throttle>
         <header>max</header>
         <correlationExpression>
           <constant>1</constant>
@@ -39,7 +43,7 @@
     
     <route errorHandlerRef="dlc">
       <from uri="seda:b"/>
-      <throttle timePeriodMillis="1000">
+      <throttle>
         <header>max</header>
         <correlationExpression>
           <constant>2</constant>
@@ -51,7 +55,7 @@
     
     <route errorHandlerRef="dlc">
       <from uri="seda:c"/>
-      <throttle timePeriodMillis="1000">
+      <throttle>
         <header>max</header>
         <correlationExpression>
           <header>key</header>
@@ -62,40 +66,37 @@
     </route>
     
     <route errorHandlerRef="dlc">
-      <from uri="seda:ga"/>
-      <!-- throttle 3 messages per 1 sec -->
-      <throttle timePeriodMillis="1000">
-        <constant>3</constant>
-        <correlationExpression>
-          <header>key</header>
-        </correlationExpression>
-      </throttle>
-      <to uri="log:gresult"/>
-      <to uri="mock:gresult"/>
-    </route>
-    
-    <route errorHandlerRef="dlc">
       <from uri="direct:ga"/>
-      <!-- throttle 5 messages per 0.5 sec -->
-      <throttle timePeriodMillis="500">
-        <constant>5</constant>
+      <!-- throttle max of 5 concurrent messages -->
+      <throttle>
+        <constant>2</constant>
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
       </throttle>
+      <process ref="incrementProcessor"/>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="decrementProcessor"/>
       <to uri="log:gresult"/>
       <to uri="mock:gresult"/>
     </route>
     
     <route errorHandlerRef="dlc">
       <from uri="direct:gexpressionHeader"/>
-      <throttle timePeriodMillis="500">
-        <!-- use a header to determine how many messages to throttle per 0.5 sec -->
+      <throttle>
+        <!-- use a header to determine the max number of concurrent requests to set on the throttle-->
         <header>throttleValue</header>
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
       </throttle>
+      <process ref="incrementProcessor"/>
+      <delay>
+        <constant>100</constant>
+      </delay>
+      <process ref="decrementProcessor"/>
       <to uri="log:gresult"/>
       <to uri="mock:gresult"/>
     </route>

@@ -25,7 +25,7 @@ import org.apache.camel.support.DefaultComponent;
  */
 public abstract class FeedComponent extends DefaultComponent {
 
-    public FeedComponent() {
+    protected FeedComponent() {
     }
 
     @Override

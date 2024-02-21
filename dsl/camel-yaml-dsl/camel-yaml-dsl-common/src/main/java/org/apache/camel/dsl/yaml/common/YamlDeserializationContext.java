@@ -24,15 +24,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Service;
-import org.apache.camel.dsl.yaml.common.exception.UnknownNodeTypeException;
+import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
+import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -43,14 +43,14 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public class YamlDeserializationContext extends StandardConstructor implements CamelContextAware, Service {
+
     private final Set<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
-
-    private ExtendedCamelContext camelContext;
+    private CamelContext camelContext;
+    private Resource resource;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
-
         this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
         this.constructors = new HashMap<>();
     }
@@ -67,6 +67,14 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         this.resolvers.addAll(resolvers);
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -74,7 +82,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -105,11 +113,11 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     //
     // *********************************
 
-    public Object construct(String key, Node val) {
+    public Object construct(Node key, Node val) {
         return mandatoryResolve(key).construct(val);
     }
 
-    public <T> T construct(String key, Node val, Class<T> type) {
+    public <T> T construct(Node key, Node val, Class<T> type) {
         Object result = construct(key, val);
         if (result == null) {
             return null;
@@ -118,12 +126,12 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         return type.cast(result);
     }
 
-    public Object construct(Node key, Node val) {
-        return mandatoryResolve(key).construct(val);
-    }
-
-    public <T> T construct(Node key, Node val, Class<T> type) {
-        Object result = construct(key, val);
+    public <T> T construct(Node node, Class<T> type) {
+        ConstructNode constructor = resolve(type);
+        if (constructor == null) {
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
+        }
+        Object result = constructor.construct(node);
         if (result == null) {
             return null;
         }
@@ -138,19 +146,15 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     // *********************************
 
     public ConstructNode resolve(Class<?> type) {
-        final ConstructNode answer = resolve(type.getName());
-
         return CamelContextAware.trySetCamelContext(
-                new ConstructNode() {
-                    @Override
-                    public Object construct(Node node) {
-                        Node n = YamlSupport.setProperty(
-                                node,
-                                YamlDeserializationContext.class.getName(),
-                                YamlDeserializationContext.this);
+                (Node n) -> {
+                    Node newNode = YamlSupport.setProperty(
+                            n,
+                            YamlDeserializationContext.class.getName(),
+                            YamlDeserializationContext.this);
 
-                        return answer.construct(n);
-                    }
+                    final ConstructNode answer = resolve(n, type.getName());
+                    return answer.construct(newNode);
                 },
                 camelContext);
     }
@@ -158,7 +162,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public ConstructNode mandatoryResolve(Node node) {
         ConstructNode constructor = resolve(node);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
         }
 
         return constructor;
@@ -170,7 +174,9 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         MappingNode mn = (MappingNode) node;
-        if (mn.getValue().size() != 1) {
+        if (mn.getValue().size() > 1) {
+            throw new DuplicateKeyException(node, mn.getValue());
+        } else if (mn.getValue().size() != 1) {
             return null;
         }
 
@@ -180,52 +186,37 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         final String id = ((ScalarNode) key).getValue();
-        final ConstructNode answer = resolve(id);
+        final ConstructNode answer = resolve(node, id);
 
         return CamelContextAware.trySetCamelContext(
-                new ConstructNode() {
-                    @Override
-                    public Object construct(Node node) {
-                        Node n = YamlSupport.setProperty(
-                                node,
-                                YamlDeserializationContext.class.getName(),
-                                YamlDeserializationContext.this);
+                (Node n) -> {
+                    YamlSupport.setProperty(
+                            n,
+                            YamlDeserializationContext.class.getName(),
+                            YamlDeserializationContext.this);
 
-                        return answer.construct(
-                                ((MappingNode) n).getValue().get(0).getValueNode());
-                    }
+                    return answer.construct(
+                            ((MappingNode) n).getValue().get(0).getValueNode());
                 },
                 camelContext);
     }
 
-    public ConstructNode mandatoryResolve(String id) {
-        ConstructNode constructor = resolve(id);
-        if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for id: " + id);
-        }
+    public ConstructNode resolve(Node node, String id) {
+        return constructors.computeIfAbsent(id, (String s) -> {
+            ConstructNode answer = null;
 
-        return constructor;
-    }
-
-    public ConstructNode resolve(String id) {
-        return constructors.computeIfAbsent(id, new Function<String, ConstructNode>() {
-            @Override
-            public ConstructNode apply(String s) {
-                ConstructNode answer = null;
-
-                for (YamlDeserializerResolver resolver : resolvers) {
-                    answer = resolver.resolve(id);
-                    if (answer != null) {
-                        break;
-                    }
+            for (YamlDeserializerResolver resolver : resolvers) {
+                answer = resolver.resolve(id);
+                if (answer != null) {
+                    break;
                 }
-
-                if (answer == null) {
-                    throw new UnknownNodeTypeException(id);
-                }
-
-                return answer;
             }
+
+            if (answer == null) {
+                throw new UnknownNodeIdException(node, id);
+            }
+
+            return answer;
         });
     }
 }

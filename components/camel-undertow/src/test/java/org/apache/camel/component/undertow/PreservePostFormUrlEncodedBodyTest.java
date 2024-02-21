@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
 
     @Test
-    public void testSendToUndertow() throws Exception {
+    public void testSendToUndertow() {
         Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", exchange1 -> {
             exchange1.getIn().setBody("b1=x&b2=y");
             exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
@@ -41,9 +41,9 @@ public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp/myservice?map").process(exchange -> {
                     Map body = exchange.getIn().getBody(Map.class);
 

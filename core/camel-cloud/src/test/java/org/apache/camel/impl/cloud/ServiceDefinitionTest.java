@@ -18,7 +18,6 @@ package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.junit.jupiter.api.Test;
@@ -31,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ServiceDefinitionTest {
     @Test
     public void testParse() {
-        List<ServiceDefinition> definitions = DefaultServiceDefinition.parse(
-                "svc1@host:2001,myId/svc1@host:2001").collect(Collectors.toList());
+        List<? extends ServiceDefinition> definitions = DefaultServiceDefinition.parse(
+                "svc1@host:2001,myId/svc1@host:2001").toList();
 
         assertEquals(2, definitions.size());
 

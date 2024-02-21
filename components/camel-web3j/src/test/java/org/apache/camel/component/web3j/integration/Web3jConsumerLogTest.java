@@ -35,7 +35,7 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
@@ -45,7 +45,7 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
                      + "fromBlock=earliest&"
                      + "toBlock=latest&"
                      + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

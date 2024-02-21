@@ -19,31 +19,33 @@ public class InfinispanEmbeddedEndpointUriFactory extends org.apache.camel.suppo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(21);
+        props.add("bridgeErrorHandler");
+        props.add("cacheContainer");
+        props.add("cacheContainerConfiguration");
+        props.add("cacheName");
+        props.add("clusteredListener");
+        props.add("configurationUri");
         props.add("customListener");
         props.add("defaultValue");
+        props.add("eventTypes");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("flags");
-        props.add("eventTypes");
-        props.add("cacheContainer");
+        props.add("key");
+        props.add("lazyStartProducer");
+        props.add("oldValue");
+        props.add("operation");
+        props.add("queryBuilder");
+        props.add("remappingFunction");
         props.add("resultHeader");
         props.add("sync");
-        props.add("configurationUri");
-        props.add("clusteredListener");
-        props.add("lazyStartProducer");
-        props.add("cacheName");
-        props.add("bridgeErrorHandler");
-        props.add("remappingFunction");
-        props.add("oldValue");
-        props.add("cacheContainerConfiguration");
-        props.add("exceptionHandler");
-        props.add("operation");
         props.add("value");
-        props.add("queryBuilder");
-        props.add("key");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +73,11 @@ public class InfinispanEmbeddedEndpointUriFactory extends org.apache.camel.suppo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

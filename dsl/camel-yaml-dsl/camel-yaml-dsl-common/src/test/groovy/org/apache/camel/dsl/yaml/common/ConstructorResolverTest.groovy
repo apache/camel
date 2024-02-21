@@ -28,6 +28,13 @@ import spock.lang.Specification
 
 class ConstructorResolverTest extends Specification {
 
+    static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+
+        return Integer.parseInt(javaSpecVersion);
+
+    }
+
     def "test"() {
         given:
             def settings = LoadSettings.builder().build()

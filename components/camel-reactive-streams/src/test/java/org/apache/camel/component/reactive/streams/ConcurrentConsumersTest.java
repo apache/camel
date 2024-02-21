@@ -27,7 +27,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test the behaviour of the consumer side when using a different number of consumer threads.
  */
-public class ConcurrentConsumersTest extends CamelTestSupport {
+public class ConcurrentConsumersTest extends BaseReactiveTest {
 
     @Test
     public void testSingleConsumer() throws Exception {
@@ -56,7 +55,7 @@ public class ConcurrentConsumersTest extends CamelTestSupport {
         // Ensure order is preserved when using a single consumer
         List<Long> nums = endpoint.getExchanges().stream()
                 .map(x -> x.getIn().getBody(Long.class))
-                .collect(Collectors.toList());
+                .toList();
 
         long prev = -1;
         for (long n : nums) {
@@ -85,7 +84,7 @@ public class ConcurrentConsumersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

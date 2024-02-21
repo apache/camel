@@ -33,8 +33,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -43,7 +41,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SalesforceTimeFormatsTest {
 
-    @XStreamAlias("Dto")
     public static class DateTransferObject<T> {
 
         private T value;
@@ -95,11 +92,9 @@ public class SalesforceTimeFormatsTest {
 
     private final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
-    private final XStream xStream = XStreamUtils.createXStream(DateTransferObject.class);
-
     @ParameterizedTest
     @MethodSource("cases")
-    public void shouldDeserializeJson(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType)
+    public void shouldDeserializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws IOException {
         final JavaType javaType
                 = TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
@@ -111,28 +106,10 @@ public class SalesforceTimeFormatsTest {
 
     @ParameterizedTest
     @MethodSource("cases")
-    public void shouldDeserializeXml(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) {
-        xStream.addDefaultImplementation(parameterType, Object.class);
-
-        final DateTransferObject<?> deserialized = (DateTransferObject<?>) xStream.fromXML(xml);
-
-        assertDeserializationResult(dto, deserialized);
-    }
-
-    @ParameterizedTest
-    @MethodSource("cases")
-    public void shouldSerializeJson(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType)
+    public void shouldSerializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws JsonProcessingException {
         String actual = objectMapper.writeValueAsString(dto).replaceAll("000\\+00:00", "000+0000");
         String expected = json;
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @ParameterizedTest
-    @MethodSource("cases")
-    public void shouldSerializeXml(DateTransferObject<?> dto, String json, String xml, Class<?> parameterType) {
-        String actual = xStream.toXML(dto).replaceAll("000\\+00:00", "000+0000");
-        String expected = xml;
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -185,8 +162,6 @@ public class SalesforceTimeFormatsTest {
 
         final String json = format(JSON_FMT, serialized);
 
-        final String xml = format(XML_FMT, serialized);
-
-        return new Object[] { dto, json, xml, value.getClass() };
+        return new Object[] { dto, json, value.getClass() };
     }
 }

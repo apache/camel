@@ -37,11 +37,12 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Standalone
+@Tag("standalone")
 @Parameterized
 public class RawPayloadTest extends AbstractSalesforceTestBase {
 
@@ -69,7 +70,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         // create the component
         SalesforceComponent component = new SalesforceComponent();
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
-        config.setApiVersion(System.getProperty("apiVersion", salesforceApiVersionToUse()));
+        config.setApiVersion(System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION));
         component.setConfig(config);
 
         SalesforceLoginConfig dummyLoginConfig = new SalesforceLoginConfig();
@@ -102,7 +103,9 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
                 if (recordedRequest.getPath().equals(OAUTH2_TOKEN_PATH)) {
                     return new MockResponse().setResponseCode(200)
-                            .setBody("{ \"access_token\": \"mock_token\", \"instance_url\": \"" + loginUrl + "\"}");
+                            .setBody(
+                                    "{ \"access_token\": \"mock_token\", \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\", \"instance_url\": \""
+                                     + loginUrl + "\"}");
                 } else {
                     return new MockResponse().setResponseCode(200)
                             .setHeader(HttpHeader.CONTENT_TYPE.toString(),

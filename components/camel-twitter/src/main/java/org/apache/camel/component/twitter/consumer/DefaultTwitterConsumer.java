@@ -58,11 +58,6 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
-    @Override
     protected int poll() throws Exception {
         List<Exchange> exchanges = handler.pollConsume();
 

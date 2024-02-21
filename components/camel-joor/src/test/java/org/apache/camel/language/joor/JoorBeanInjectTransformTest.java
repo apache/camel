@@ -18,6 +18,7 @@ package org.apache.camel.language.joor;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +28,10 @@ public class JoorBeanInjectTransformTest extends CamelTestSupport {
     private MyEchoBean myEchoBean = new MyEchoBean();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().joor("#bean:myEcho.greet() + #bean:myEcho.echo(bodyAs(String))")
                         .to("mock:result");
@@ -45,7 +46,7 @@ public class JoorBeanInjectTransformTest extends CamelTestSupport {
         template.sendBody("direct:start", "Camel");
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
-    void testDisruptorInOutChainedTimeout() throws Exception {
+    void testDisruptorInOutChainedTimeout() {
         // time timeout after 2 sec should trigger a immediately reply
         final StopWatch watch = new StopWatch();
         try {

@@ -1,87 +1,702 @@
-[[Security-Security]]
 = Security
 
 Camel offers several forms & levels of security capabilities that can be
-utilized on camel routes. These various forms of security may be used in
+utilized on Camel routes. These various forms of security may be used in
 conjunction with each other or separately.
 
-The broad categories offered are
+The broad categories offered are:
 
-* Route Security - Authentication and Authorization services to proceed
+* _Route Security_ - Authentication and Authorization services to proceed
 on a route or route segment
-* Payload Security - Data Formats that offer encryption/decryption
+* _Payload Security_ - Data Formats that offer encryption/decryption
 services at the payload level
-* Endpoint Security - Security offered by components that can be
+* _Endpoint Security_ - Security offered by components that can be
 utilized by endpointUri associated with the component
-* Configuration Security - Security offered by encrypting sensitive
-information from configuration files
+* _Configuration Security_ - Security offered by encrypting sensitive
+information from configuration files or external Secured Vault systems.
 
-[[Security-RouteSecurity-AuthenticationandAuthorizationServices]]
-== Route Security - Authentication and Authorization Services
+Camel offers the xref:camel-configuration-utilities.adoc[JSSE Utility]
+for configuring SSL/TLS related aspects of a number of Camel components.
 
-Camel offers Policy driven security capabilities that may be wired into
-routes or route segments. A Policy in Camel utilizes a strategy pattern
-for applying interceptors on Camel Processors. It offering the ability
-to apply cross-cutting concerns (for example. security, transactions
-etc) on sections/segments of a camel route.
+== Route Security
 
-The components offering authentication and authorization Services
-utilizing Route Policies are
+Authentication and Authorization Services
+
+Camel offers xref:route-policy.adoc[Route Policy] driven security capabilities that may be wired into
+routes or route segments. A route policy in Camel utilizes a strategy pattern
+for applying interceptors on Camel Processors. It's offering the ability
+to apply cross-cutting concerns (for example. security, transactions etc) of a Camel route.
+
+The components offering authentication and authorization services
+utilizing xref:route-policy.adoc[Route Policy] are:
 
 * xref:components:others:shiro.adoc[Shiro Security]
 * xref:components:others:spring-security.adoc[Spring Security]
 
-[[Security-PayloadSecurity-DataFormatsandProducersConsumersofferingencryptiondecryptionservices]]
-== Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
+== Payload Security
 
 Camel offers encryption/decryption services to secure payloads or
 selectively apply encryption/decryption capabilities on
 portions/sections of a payload.
 
-These capabilites are offered by the following components
-
-* xref:components:dataformats:secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
-Encryption support)
-* xref:components:dataformats:crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
-* xref:components::crypto-component.adoc[Crypto component] (Signature
-support)
-
-[[Security-EndpointSecurity]]
 == Endpoint Security
 
-Some components in camel offer an ability to secure their endpoints
+Some components in Camel offer an ability to secure their endpoints
 (using interceptors etc) and therefore ensure that they offer the
 ability to secure payloads as well as provide
 authentication/authorization capabilities at endpoints created using the
 components.
 
-Some such components are
-
-* xref:components::jetty-component.adoc[Jetty] - HTTP Basic Authentication support * SSL
-support
-* xref:components::cxf-component.adoc[CXF] - HTTP Basic Authentication & WS-Security support
-using the CXF Bus driven interceptor chain
-* xref:components::spring-ws-component.adoc[Spring Web Services] - HTTP Basic
-Authentication & WS-Security support
-* xref:components::netty-component.adoc[Netty] - SSL support
-* xref:components::mina-component.adoc[MINA] - SSL support
-* xref:components::cometd-component.adoc[Cometd] - SSL support
-* xref:components::jms-component.adoc[JMS] - JAAS and SSL based security for client <-->
-broker communication
-
-[[Security-ConfigurationSecurity]]
 == Configuration Security
-
-*Since Camel 2.5*
 
 Camel offers the xref:components::properties-component.adoc[Properties] component to
 externalize configuration values to properties files. Those values could
-contain sensitive information such as usernames and passwords. Those
-values can be encrypted and automatic decrypted by Camel.
+contain sensitive information such as usernames and passwords.
+
+Those values can be encrypted and automatic decrypted by Camel using:
 
 * xref:components:others:jasypt.adoc[Jasypt]
 
-*Since Camel 2.8*
+Camel also support accessing the secured configuration from an external vault systems.
 
-Camel offers the xref:camel-configuration-utilities.adoc[JSSE Utility]
-for configuring SSL/TLS related aspects of a number of Camel components.
+=== Configuration Security using Vaults
+
+The following _Vaults_ are supported by Camel:
+
+* xref:components::aws-secrets-manager-component.adoc[AWS Secrets Manager]
+// TODO: Enable link when website build works again
+// * xref:components::google-secret-manager-component.adoc[Google Secret Manager]
+// * xref:components::azure-key-vault-component.adoc[Azure Key Vault]
+
+==== Using AWS Vault
+
+To use AWS Secrets Manager you need to provide _accessKey_, _secretKey_ and the _region_.
+This can be done using environmental variables before starting the application:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_ACCESS_KEY=accessKey
+export $CAMEL_VAULT_AWS_SECRET_KEY=secretKey
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.accessKey = accessKey
+camel.vault.aws.secretKey = secretKey
+camel.vault.aws.region = region
+----
+
+If you want instead to use the https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS default credentials provider], you'll need to provide the following env variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=true
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.defaultCredentialsProvider = true
+camel.vault.aws.region = region
+----
+
+It is also possible to specify a particular profile name for accessing AWS Secrets Manager
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER=true
+export $CAMEL_VAULT_AWS_PROFILE_NAME=test-account
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.profileCredentialsProvider = true
+camel.vault.aws.profileName = test-account
+camel.vault.aws.region = region
+----
+
+At this point you'll be able to reference a property in the following way by using `aws:` as prefix in the `{{ }}` syntax:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{aws:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where `route` will be the name of the secret stored in the AWS Secrets Manager Service.
+
+You could specify a default value in case the secret is not present on AWS Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{aws:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,json]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{aws:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on AWS Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{aws:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+The only requirement is adding `camel-aws-secrets-manager` JAR to your Camel application.
+
+==== Using GCP Vault
+
+To use GCP Secret Manager you need to provide _serviceAccountKey_ file and GCP _projectId_.
+This can be done using environmental variables before starting the application:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY=file:////path/to/service.accountkey
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.gcp.serviceAccountKey = accessKey
+camel.vault.gcp.projectId = secretKey
+----
+
+If you want instead to use the https://cloud.google.com/docs/authentication/production[GCP default client instance], you'll need to provide the following env variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE=true
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.gcp.useDefaultInstance = true
+camel.vault.aws.projectId = region
+----
+
+At this point you'll be able to reference a property in the following way by using `gcp:` as prefix in the `{{ }}` syntax:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{gcp:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where `route` will be the name of the secret stored in the GCP Secret Manager Service.
+
+You could specify a default value in case the secret is not present on GCP Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{gcp:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,json]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{gcp:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on GCP Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{gcp:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+There are only two requirements: 
+- Adding `camel-google-secret-manager` JAR to your Camel application.
+- Give the service account used permissions to do operation at secret management level (for example accessing the secret payload, or being admin of secret manager service)
+
+==== Using Azure Key Vault
+
+To use this function you'll need to provide credentials to Azure Key Vault Service as environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.tenantId = accessKey
+camel.vault.azure.clientId = clientId
+camel.vault.azure.clientSecret = clientSecret
+camel.vault.azure.vaultName = vaultName
+----
+
+Or you can enable the usage of Azure Identity in the following way:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also enable the usage of Azure Identity in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.azureIdentityEnabled = true
+camel.vault.azure.vaultName = vaultName
+----
+
+At this point you'll be able to reference a property in the following way:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{azure:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where route will be the name of the secret stored in the Azure Key Vault Service.
+
+You could specify a default value in case the secret is not present on Azure Key Vault Service:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{azure:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,bash]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{azure:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on Azure Key Vault:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{azure:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+The only requirement is adding the camel-azure-key-vault jar to your Camel application.
+
+==== Using Hashicorp Vault
+
+To use this function you'll need to provide credentials for Hashicorp vault as environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_HASHICORP_TOKEN=token
+export $CAMEL_VAULT_HASHICORP_ENGINE=secretKey
+export $CAMEL_VAULT_HASHICORP_HOST=host
+export $CAMEL_VAULT_HASHICORP_PORT=port
+export $CAMEL_VAULT_HASHICORP_SCHEME=http/https
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.hashicorp.token = token
+camel.vault.hashicorp.engine = engine
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = scheme
+----
+
+At this point you'll be able to reference a property in the following way:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{hashicorp:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where route will be the name of the secret stored in the Hashicorp Vault instance.
+
+You could specify a default value in case the secret is not present on Hashicorp Vault instance:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{hashicorp:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,bash]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{hashicorp:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{hashicorp:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{hashicorp:route@2}}"/>
+    </route>
+</camelContext>
+----
+
+This approach will return the RAW route secret with version '2'.
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{hashicorp:route:default@2}}"/>
+    </route>
+</camelContext>
+----
+
+This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist.
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{hashicorp:database/username:admin@2}}"/>
+    </route>
+</camelContext>
+----
+
+This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
+
+The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
+
+==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for AWS Secret Manager Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=accessKey
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.aws.useDefaultCredentialProvider = true
+camel.vault.aws.region = region
+----
+
+Or by specifying accessKey/SecretKey and region, instead of using the default credentials provider chain.
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.aws.refreshEnabled=true
+camel.vault.aws.refreshPeriod=60000
+camel.vault.aws.secrets=Secret
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.aws.refreshEnabled` will enable the automatic context reload, `camel.vault.aws.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.aws.secrets` is a regex representing the secrets we want to track for updates.
+
+Note that `camel.vault.aws.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `aws:` prefix.
+
+The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
+
+==== Automatic Camel context reloading on Secret Refresh while using Google Secret Manager
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for Google Secret Manager Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE=true
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.gcp.useDefaultInstance = true
+camel.vault.aws.projectId = projectId
+----
+
+Or by specifying a path to a service account key file, instead of using the default instance.
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.gcp.projectId= projectId
+camel.vault.gcp.refreshEnabled=true
+camel.vault.gcp.refreshPeriod=60000
+camel.vault.gcp.secrets=hello*
+camel.vault.gcp.subscriptionName=subscriptionName
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.gcp.refreshEnabled` will enable the automatic context reload, `camel.vault.gcp.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.gcp.secrets` is a regex representing the secrets we want to track for updates.
+
+Note that `camel.vault.gcp.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `gcp:` prefix.
+
+The `camel.vault.gcp.subscriptionName` is the subscription name created in relation to the Google PubSub topic associated with the tracked secrets.
+
+This mechanism while make use of the notification system related to Google Secret Manager: through this feature, every secret could be associated to one up to ten Google Pubsub Topics. These topics will receive 
+events related to life cycle of the secret.
+
+There are only two requirements: 
+- Adding `camel-google-secret-manager` JAR to your Camel application.
+- Give the service account used permissions to do operation at secret management level (for example accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
+
+==== Automatic Camel context reloading on Secret Refresh while using Azure Key Vault
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for Azure Key Vault Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.azure.tenantId = accessKey
+camel.vault.azure.clientId = clientId
+camel.vault.azure.clientSecret = clientSecret
+camel.vault.azure.vaultName = vaultName
+----
+
+If you want to use Azure Identity with environment variables, you can do in the following way:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_IDENTITY_ENABLED=true
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also enable the usage of Azure Identity in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.azureIdentityEnabled = true
+camel.vault.azure.vaultName = vaultName
+----
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.azure.refreshEnabled=true
+camel.vault.azure.refreshPeriod=60000
+camel.vault.azure.secrets=Secret
+camel.vault.azure.eventhubConnectionString=eventhub_conn_string
+camel.vault.azure.blobAccountName=blob_account_name
+camel.vault.azure.blobContainerName=blob_container_name
+camel.vault.azure.blobAccessKey=blob_access_key
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.azure.refreshEnabled` will enable the automatic context reload, `camel.vault.azure.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.azure.secrets` is a regex representing the secrets we want to track for updates.
+
+where `camel.vault.azure.eventhubConnectionString` is the eventhub connection string to get notification from, `camel.vault.azure.blobAccountName`, `camel.vault.azure.blobContainerName` and `camel.vault.azure.blobAccessKey` are the Azure Storage Blob parameters for the checkpoint store needed by Azure Eventhub.
+
+Note that `camel.vault.azure.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `azure:` prefix.
+
+The only requirement is adding the camel-azure-key-vault jar to your Camel application.

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ public class SpringResilienceRouteFallbackTest extends CamelSpringTestSupport {
 
         template.sendBody(endPointUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

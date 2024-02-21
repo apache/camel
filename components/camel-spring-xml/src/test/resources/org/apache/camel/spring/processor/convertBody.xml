@@ -25,11 +25,18 @@
     ">
 
     <!-- START SNIPPET: example -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext loadTypeConverters="true" xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>
             <convertBodyTo type="java.lang.Integer"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route>
+            <from uri="direct:optional"/>
+            <convertBodyTo type="java.lang.Integer" mandatory="false"/>
             <to uri="mock:result"/>
         </route>
 
@@ -54,6 +61,12 @@
         <route>
             <from uri="direct:charset3"/>
             <convertBodyTo type="java.lang.String" charset="utf-16"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route>
+            <from uri="direct:loadedCustomConverter"/>
+            <convertBodyTo type="org.apache.camel.processor.converter.custom.MyBean"/>
             <to uri="mock:result"/>
         </route>
 

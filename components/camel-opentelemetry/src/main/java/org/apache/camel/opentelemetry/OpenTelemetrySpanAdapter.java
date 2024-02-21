@@ -23,14 +23,13 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.context.Context;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
-    private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
+    private static Map<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
     static {
         tagMap.put(Tag.COMPONENT, "component");
@@ -71,12 +70,16 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     @Override
     public void setTag(Tag key, String value) {
-        this.span.setAttribute(tagMap.get(key), value);
+        String attribute = tagMap.getOrDefault(key, key.getAttribute());
+        this.span.setAttribute(attribute, value);
+        if (!attribute.equals(key.getAttribute())) {
+            this.span.setAttribute(key.getAttribute(), value);
+        }
     }
 
     @Override
     public void setTag(Tag key, Number value) {
-        this.span.setAttribute(tagMap.get(key), value.intValue());
+        this.span.setAttribute(tagMap.getOrDefault(key, key.getAttribute()), value.intValue());
     }
 
     @Override
@@ -97,6 +100,21 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     @Override
     public void log(Map<String, String> fields) {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
+    }
+
+    @Override
+    public String traceId() {
+        return span.getSpanContext().getTraceId();
+    }
+
+    @Override
+    public String spanId() {
+        return span.getSpanContext().getSpanId();
+    }
+
+    @Override
+    public AutoCloseable makeCurrent() {
+        return span.makeCurrent();
     }
 
     String getEventNameFromFields(Map<String, ?> fields) {
@@ -144,7 +162,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     public void setCorrelationContextItem(String key, String value) {
         BaggageBuilder builder = Baggage.builder();
         if (baggage != null) {
-            builder = builder.setParent(Context.current().with(baggage));
+            builder = Baggage.current().toBuilder();
         }
         baggage = builder.put(key, value).build();
     }

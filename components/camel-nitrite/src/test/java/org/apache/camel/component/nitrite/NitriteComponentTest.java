@@ -48,7 +48,7 @@ public class NitriteComponentTest extends AbstractNitriteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 FileUtil.deleteFile(new File(tempDb() + ".a.db"));

@@ -19,7 +19,7 @@ package org.apache.camel.coap;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -28,8 +28,13 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConfig;
+import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier;
+import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 
 /**
  * Test the CoAP Rest Component with UDP + TLS
@@ -44,16 +49,23 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
     @Override
     protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
 
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
-        builder.setClientOnly();
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(Configuration.getStandard());
+        builder.set(DtlsConfig.DTLS_ROLE, DtlsRole.CLIENT_ONLY);
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
         KeyStore trustStore = truststoreParameters.createKeyStore();
-        Certificate[] certs = new Certificate[] { trustStore.getCertificate(trustStore.aliases().nextElement()) };
-        builder.setTrustStore(certs);
+        X509Certificate[] certs
+                = new X509Certificate[] { (X509Certificate) trustStore.getCertificate(trustStore.aliases().nextElement()) };
+
+        NewAdvancedCertificateVerifier trust = StaticNewAdvancedCertificateVerifier
+                .builder()
+                .setTrustedCertificates(certs)
+                .build();
+        builder.setAdvancedCertificateVerifier(trust);
 
         CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
         coapBuilder.setConnector(new DTLSConnector(builder.build()));
@@ -64,21 +76,27 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
     @Override
     protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setCamelContext(context);
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
 
         SSLContextParameters serviceSSLContextParameters = new SSLContextParameters();
+        serviceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters serviceSSLKeyManagers = new KeyManagersParameters();
+        serviceSSLKeyManagers.setCamelContext(context);
         serviceSSLKeyManagers.setKeyPassword("security");
         serviceSSLKeyManagers.setKeyStore(keystoreParameters);
         serviceSSLContextParameters.setKeyManagers(serviceSSLKeyManagers);
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
         SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        clientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setCamelContext(context);
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
 

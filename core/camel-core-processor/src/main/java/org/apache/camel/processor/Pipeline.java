@@ -19,13 +19,11 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -53,18 +51,32 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     private final ReactiveExecutor reactiveExecutor;
     private final List<AsyncProcessor> processors;
     private final int size;
+    private PooledExchangeTaskFactory taskFactory;
+
     private String id;
     private String routeId;
 
-    private final class PipelineTask implements Runnable, AsyncCallback {
+    private final class PipelineTask implements PooledExchangeTask, AsyncCallback {
 
-        private final Exchange exchange;
-        private final AsyncCallback callback;
+        private Exchange exchange;
+        private AsyncCallback callback;
         private int index;
 
-        PipelineTask(Exchange exchange, AsyncCallback callback) {
+        PipelineTask() {
+        }
+
+        @Override
+        public void prepare(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
+            this.index = 0;
+        }
+
+        @Override
+        public void reset() {
+            this.exchange = null;
+            this.callback = null;
+            this.index = 0;
         }
 
         @Override
@@ -82,34 +94,34 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
 
                 // prepare for next run
-                if (exchange.hasOut()) {
-                    exchange.setIn(exchange.getOut());
-                    exchange.setOut(null);
-                }
+                ExchangeHelper.prepareOutToIn(exchange);
 
                 // get the next processor
                 AsyncProcessor processor = processors.get(index++);
 
                 processor.process(exchange, this);
             } else {
+                // copyResults is needed in case MEP is OUT and the message is not an OUT message
                 ExchangeHelper.copyResults(exchange, exchange);
 
                 // logging nextExchange as it contains the exchange that might have altered the payload and since
-                // we are logging the completion if will be confusing if we log the original instead
+                // we are logging the completion it will be confusing if we log the original instead
                 // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
 
-                reactiveExecutor.schedule(callback);
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
             }
         }
     }
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
-        this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).collect(Collectors.toList());
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
+        this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).toList();
         this.size = processors.size();
     }
 
@@ -141,35 +153,66 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // create task which has state used during routing
-        PipelineTask task = new PipelineTask(exchange, callback);
+        try {
+            // create task which has state used during routing
+            PooledExchangeTask task = taskFactory.acquire(exchange, callback);
 
-        if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleSync(task);
-        } else {
-            reactiveExecutor.scheduleMain(task);
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleMain(task);
+            }
+            return false;
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
-        return false;
     }
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(processors);
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        if (pooled) {
+            taskFactory = new PooledTaskFactory(getId()) {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new PipelineTask();
+                }
+            };
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            taskFactory.setCapacity(capacity);
+        } else {
+            taskFactory = new PrototypeTaskFactory() {
+                @Override
+                public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
+                    return new PipelineTask();
+                }
+            };
+        }
+        LOG.trace("Using TaskFactory: {}", taskFactory);
+
+        ServiceHelper.buildService(taskFactory, processors);
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(processors);
+        ServiceHelper.initService(taskFactory, processors);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(processors);
+        ServiceHelper.startService(taskFactory, processors);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors);
+        ServiceHelper.stopService(taskFactory, processors);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(taskFactory, processors);
     }
 
     @Override

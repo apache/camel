@@ -17,14 +17,11 @@
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for ArangoDB
  */
-public interface ArangoDBService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface ArangoDBService extends TestService {
 
     int getPort();
 
@@ -32,15 +29,5 @@ public interface ArangoDBService extends BeforeAllCallback, AfterAllCallback, Te
 
     default String getServiceAddress() {
         return String.format("%s:%d", getHost(), getPort());
-    }
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
     }
 }

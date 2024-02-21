@@ -1,4 +1,3 @@
-[[Howtoavoidsendingsomeorallmessageheaders-Howtoavoidsendingsomeorallmessageheaders]]
 = How to avoid sending some or all message headers?
 
 When I send a message to a Camel endpoint such as the

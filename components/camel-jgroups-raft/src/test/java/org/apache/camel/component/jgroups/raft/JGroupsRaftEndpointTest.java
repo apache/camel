@@ -24,8 +24,8 @@ import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
-import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
+import org.jgroups.raft.StateMachine;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,19 +42,18 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
             = "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
 
     StateMachine sm = new StateMachine() {
+
         @Override
-        public byte[] apply(byte[] bytes, int i, int i1) throws Exception {
+        public byte[] apply(byte[] data, int offset, int length, boolean serialize_response) throws Exception {
             return new byte[0];
         }
 
         @Override
-        public void readContentFrom(DataInput dataInput) throws Exception {
-
+        public void readContentFrom(DataInput dataInput) {
         }
 
         @Override
-        public void writeContentTo(DataOutput dataOutput) throws Exception {
-
+        public void writeContentTo(DataOutput dataOutput) {
         }
     };
 
@@ -67,10 +66,10 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(CONFIGURED_ENDPOINT_URI).to("mock:test");
                 from(CONFIGURED_ENDPOINT_URI1).to("mock:test1");
                 from(CONFIGURED_ENDPOINT_URI2).to("mock:test2");
@@ -79,7 +78,7 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldSetClusterNameAndResolveRaftHandle() throws Exception {
+    public void shouldSetClusterNameAndResolveRaftHandle() {
         JGroupsRaftEndpoint endpoint = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI, JGroupsRaftEndpoint.class);
 
         assertEquals(CLUSTER_NAME, endpoint.getClusterName());

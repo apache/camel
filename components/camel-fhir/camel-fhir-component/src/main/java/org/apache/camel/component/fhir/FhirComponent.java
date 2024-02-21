@@ -26,24 +26,18 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link FhirEndpoint}.
- */
 @Component("fhir")
 public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfiguration, FhirApiCollection> {
 
     @Metadata(label = "advanced")
-    FhirConfiguration configuration;
-
-    @Metadata(label = "advanced")
-    private IGenericClient client;
+    private FhirConfiguration configuration;
 
     public FhirComponent() {
-        super(FhirEndpoint.class, FhirApiName.class, FhirApiCollection.getCollection());
+        super(FhirApiName.class, FhirApiCollection.getCollection());
     }
 
     public FhirComponent(CamelContext context) {
-        super(context, FhirEndpoint.class, FhirApiName.class, FhirApiCollection.getCollection());
+        super(context, FhirApiName.class, FhirApiCollection.getCollection());
     }
 
     @Override
@@ -52,27 +46,43 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
     }
 
     @Override
+    protected void afterPropertiesSet(FhirConfiguration endpointConfiguration) {
+        // ensure a client is set on the config
+        if (endpointConfiguration.getClient() == null) {
+            if (configuration != null && configuration.getClient() != null) {
+                endpointConfiguration.setClient(configuration.getClient());
+
+                return;
+            } else if (configuration != null) {
+                if (endpointConfiguration.getServerUrl() == null) {
+                    endpointConfiguration.setServerUrl(configuration.getServerUrl());
+                }
+                if (endpointConfiguration.getFhirContext() == null) {
+                    endpointConfiguration.setFhirContext(configuration.getFhirContext());
+                }
+            }
+
+            endpointConfiguration.setClient(createClient(endpointConfiguration));
+        }
+    }
+
+    @Override
     protected Endpoint createEndpoint(
             String uri, String methodName, FhirApiName apiName,
             FhirConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
+
         return new FhirEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    public IGenericClient getClient(FhirConfiguration endpointConfiguration) {
-        final IGenericClient result;
-        if (endpointConfiguration.equals(this.configuration)) {
-            synchronized (this) {
-                if (client == null) {
-                    client = FhirHelper.createClient(this.configuration, getCamelContext());
-                }
-            }
-            result = client;
-        } else {
-            result = FhirHelper.createClient(endpointConfiguration, getCamelContext());
-        }
-        return result;
+    protected IGenericClient createClient(FhirConfiguration config) {
+        return FhirHelper.createClient(config, getCamelContext());
+    }
+
+    @Override
+    public FhirConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -80,12 +90,6 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
      */
     @Override
     public void setConfiguration(FhirConfiguration configuration) {
-        super.setConfiguration(configuration);
+        this.configuration = configuration;
     }
-
-    @Override
-    public FhirConfiguration getConfiguration() {
-        return super.getConfiguration();
-    }
-
 }

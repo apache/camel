@@ -38,11 +38,13 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "3.0",
              scheme = "kudu",
              title = "Kudu", syntax = "kudu:host:port/tableName",
-             category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true)
+             category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true,
+             headersClass = KuduConstants.class)
 public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
     private KuduClient kuduClient;
+    private boolean userManagedClient;
 
     @UriPath(name = "host", displayName = "Host", label = "common", description = "Host of the server to connect to")
     private String host;
@@ -84,11 +86,17 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        try {
-            LOG.info("doStop()");
-            getKuduClient().shutdown();
-        } catch (Exception e) {
-            LOG.error("Unable to shutdown kudu client", e);
+        // Only shut down clients created by this endpoint
+        if (!isUserManagedClient()) {
+            KuduClient client = getKuduClient();
+            if (client != null) {
+                LOG.debug("Shutting down kudu client");
+                try {
+                    client.shutdown();
+                } catch (Exception e) {
+                    LOG.error("Unable to shutdown kudu client", e);
+                }
+            }
         }
 
         super.doStop();
@@ -157,5 +165,13 @@ public class KuduEndpoint extends DefaultEndpoint {
      */
     public void setOperation(KuduOperations operation) {
         this.operation = operation;
+    }
+
+    public boolean isUserManagedClient() {
+        return userManagedClient;
+    }
+
+    public void setUserManagedClient(boolean userManagedClient) {
+        this.userManagedClient = userManagedClient;
     }
 }

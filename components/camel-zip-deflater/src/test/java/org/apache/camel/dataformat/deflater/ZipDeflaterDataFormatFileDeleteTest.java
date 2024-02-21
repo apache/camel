@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class ZipDeflaterDataFormatFileDeleteTest extends CamelTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait till the exchange is done which means the file should then have been deleted
         oneExchangeDone.matchesWaitTime();
@@ -57,10 +58,10 @@ public class ZipDeflaterDataFormatFileDeleteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
                         .marshal().zipDeflater()
                         .to("file:target/data/zip/out?fileName=${file:name}.zip")

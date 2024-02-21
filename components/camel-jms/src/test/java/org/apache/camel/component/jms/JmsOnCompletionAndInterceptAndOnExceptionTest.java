@@ -16,19 +16,28 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTest {
 
-public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSynchronizeComplete() throws Exception {
@@ -40,9 +49,9 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,16 +64,16 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:start", "Kabom");
+        template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Kaboom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 intercept().to("mock:intercept");
 
                 // define a global on completion that is invoked when the exchange is complete
@@ -73,7 +82,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
                 // define an on exception
                 onException(Exception.class).to("mock:exception");
 
-                from("activemq:queue:start")
+                from("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start")
                         .process(new MyProcessor())
                         .to("mock:result");
             }
@@ -81,13 +90,20 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
 
-        return camelContext;
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public static class MyProcessor implements Processor {
@@ -96,9 +112,9 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            if ("Kabom".equals(exchange.getIn().getBody())) {
-                throw new IllegalArgumentException("Kabom");
+        public void process(Exchange exchange) {
+            if ("Kaboom".equals(exchange.getIn().getBody())) {
+                throw new IllegalArgumentException("Kaboom");
             }
             exchange.getIn().setBody("Bye World");
         }

@@ -29,6 +29,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeseri
           types = ProcessorDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT)
 public class ProcessorDefinitionDeserializer implements ConstructNode {
+
     @Override
     public Object construct(Node node) {
         final YamlDeserializationContext dc = getDeserializationContext(node);

@@ -19,28 +19,26 @@ package org.apache.camel.model.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Failover load balancer The failover load balancer is capable of trying the next processor in case an Exchange failed
- * with an exception during processing. You can constrain the failover to activate only when one exception of a list you
- * specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same
- * strategy for matching exceptions as the Exception Clause does for the onException.
+ * In case of failures the exchange will be tried on the next endpoint.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlTransient
     private List<Class<?>> exceptionTypes = new ArrayList<>();
+
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlAttribute

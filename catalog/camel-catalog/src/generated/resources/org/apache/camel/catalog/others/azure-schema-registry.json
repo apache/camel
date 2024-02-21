@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "azure-schema-registry",
+    "title": "Azure Schema Registry",
+    "description": "Azure Schema Registry Component for utilities to deal with authentication",
+    "deprecated": false,
+    "firstVersion": "4.2.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-schema-registry",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

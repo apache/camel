@@ -45,7 +45,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Test
-    public void clientVersionTest() throws Exception {
+    public void clientVersionTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, WEB3_CLIENT_VERSION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
@@ -53,7 +53,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Test
-    public void netVersionTest() throws Exception {
+    public void netVersionTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NET_VERSION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
@@ -61,7 +61,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Test
-    public void netWeb3Sha3Test() throws Exception {
+    public void netWeb3Sha3Test() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, WEB3_SHA3);
         exchange.getIn().setBody("0x68656c6c6f20776f726c64");
         template.send(exchange);
@@ -70,7 +70,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Test
-    public void ethBlockNumberTest() throws Exception {
+    public void ethBlockNumberTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ETH_BLOCK_NUMBER);
         template.send(exchange);
         Long body = exchange.getIn().getBody(Long.class);
@@ -78,7 +78,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

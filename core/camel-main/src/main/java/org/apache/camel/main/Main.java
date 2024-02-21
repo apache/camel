@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.Map;
 
+import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,12 +31,37 @@ public class Main extends MainCommandLineSupport {
 
     protected static Main instance;
     protected final MainRegistry registry = new MainRegistry();
+    protected Class<?> mainClass;
 
+    /**
+     * Camel main application
+     *
+     * It is recommended to use {@link Main#Main(Class)} to specify the main class.
+     */
     public Main() {
     }
 
-    public Main(Class<?>... configurationClass) {
-        super(configurationClass);
+    /**
+     * Camel main application
+     *
+     * @param mainClass the main class
+     */
+    public Main(Class<?> mainClass) {
+        this.mainClass = mainClass;
+        configure().withBasePackageScan(mainClass.getPackageName());
+    }
+
+    /**
+     * Camel main application
+     *
+     * @param mainClass            the main class
+     * @param configurationClasses additional camel configuration classes
+     */
+    @SafeVarargs
+    public Main(Class<?> mainClass, Class<CamelConfiguration>... configurationClasses) {
+        super(configurationClasses);
+        this.mainClass = mainClass;
+        configure().withBasePackageScan(mainClass.getPackageName());
     }
 
     public static void main(String... args) throws Exception {
@@ -143,7 +169,12 @@ public class Main extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
-        answer.setRegistry(registry);
+        answer.getCamelContextExtension().setRegistry(registry);
+        if (mainClass != null) {
+            answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
+        } else {
+            answer.getGlobalOptions().put("CamelMainClass", this.getClass().getName());
+        }
         return answer;
     }
 

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
+import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,14 +32,16 @@ import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
+
 /**
  * Run <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a> on an Ignite cluster.
- * 
+ *
  * You can pass an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their
  * parameters if necessary. This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId",
-             category = { Category.COMPUTE }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_COMPUTE, title = "Ignite Compute", syntax = "ignite-compute:endpointId",
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -62,7 +65,7 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     private Long timeoutMillis;
 
     public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters,
-                                 IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
+                                 IgniteComputeComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 

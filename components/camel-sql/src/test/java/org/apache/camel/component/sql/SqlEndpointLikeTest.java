@@ -38,15 +38,17 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
         reg.bind("jdbc/myDataSource", db);
         return reg;
     }
@@ -55,13 +57,15 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select * from projects where license like 'A%25'?dataSource=#jdbc/myDataSource")
                         .split(body())

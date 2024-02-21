@@ -23,6 +23,8 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "defaultoperation":
         case "defaultOperation": target.setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": target.setHazelcastConfigUri(property(camelContext, java.lang.String.class, value)); return true;
         case "hazelcastinstance":
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "hazelcastinstancename":
@@ -38,6 +40,8 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "defaultoperation":
         case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": return java.lang.String.class;
         case "hazelcastinstance":
         case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "hazelcastinstancename":
@@ -54,6 +58,8 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "defaultoperation":
         case "defaultOperation": return target.getDefaultOperation();
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": return target.getHazelcastConfigUri();
         case "hazelcastinstance":
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":

@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "avro-rpc-spi",
+    "title": "Avro Rpc Spi",
+    "description": "Camel Avro  RPC spi",
+    "deprecated": false,
+    "firstVersion": "3.11.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-avro-rpc-spi",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

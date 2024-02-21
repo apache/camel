@@ -16,9 +16,10 @@
  */
 package org.apache.camel.dataformat.soap.name;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlType;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.util.ObjectHelper;
@@ -70,6 +71,11 @@ public class XmlRootElementPreferringElementNameStrategy implements ElementNameS
 
     @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
+        throw new UnsupportedOperationException("Exception lookup is not supported");
+    }
+
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
         throw new UnsupportedOperationException("Exception lookup is not supported");
     }
 

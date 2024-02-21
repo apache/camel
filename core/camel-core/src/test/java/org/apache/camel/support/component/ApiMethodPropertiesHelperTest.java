@@ -56,7 +56,7 @@ public class ApiMethodPropertiesHelperTest {
         MockEndpoint mock = new MockEndpoint(null, new MockComponent(camelContext));
 
         final HashMap<String, Object> properties = new HashMap<>();
-        final DefaultExchange exchange = new DefaultExchange(mock);
+        final DefaultExchange exchange = DefaultExchange.newFromEndpoint(mock);
         exchange.getIn().setHeader(PROPERTY_1, VALUE_1);
         exchange.getIn().setHeader(PROPERTY_2, VALUE_2);
         exchange.getIn().setHeader(PROPERTY_3, VALUE_3);

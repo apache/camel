@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.nats.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.nats.common.NatsProperties;
 import org.slf4j.Logger;
@@ -24,26 +25,23 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerService implements NatsService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "nats:2.1.9";
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;
 
     private static final Logger LOG = LoggerFactory.getLogger(NatsLocalContainerService.class);
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public NatsLocalContainerService() {
-        String imageName = System.getProperty("nats.container", CONTAINER_IMAGE);
-
-        initContainer(imageName);
+        this(LocalPropertyResolver.getProperty(NatsLocalContainerService.class, NatsProperties.NATS_CONTAINER));
     }
 
     public NatsLocalContainerService(String imageName) {
-        initContainer(imageName);
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String imageName) {
-        container = new GenericContainer(imageName)
-                .withNetworkAliases(CONTAINER_NAME)
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withExposedPorts(PORT)
                 .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
     }

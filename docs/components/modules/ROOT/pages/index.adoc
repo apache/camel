@@ -9,24 +9,24 @@ services that can not only resolve easy messaging and transferring data but also
 
 Below is the list of core components that are provided by Apache Camel.
 
-Number of Core Components: indexCount:[attributes=core] in indexUniqueCount:[attributes=core,unique=artifactid] JAR artifacts (indexCount:[attributes="core,deprecated"] deprecated)
+Number of Core Components: indexCount:[attributes=core] in indexUniqueCount:[attributes=core,format=artifactid] JAR artifacts (indexCount:[attributes="core,deprecated"] deprecated)
 
 [{index-table-format}]
 |===
 | Component | Artifact | Support Level | Since | Description
 |===
-indexTable::[attributes=core,cells="$xref,artifactid,supportlevel,since,description"]
+indexTable::[attributes=core,cellformats="$xref|artifactid|supportlevel|since|description"]
 
 == Components
 
 Below is the list of non-core components that are provided by Apache Camel.
 
-Number of Non-Core Components: indexCount:[attributes=!core] in indexUniqueCount:[attributes=!core,unique=artifactid] JAR artifacts (indexCount:[attributes="!core,deprecated"] deprecated)
+Number of Non-Core Components: indexCount:[attributes=!core] in indexUniqueCount:[attributes=!core,format=artifactid] JAR artifacts (indexCount:[attributes="!core,deprecated"] deprecated)
 
 [{index-table-format}]
 |===
 | Component | Artifact | Support Level | Since | Description
 |===
 //'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
-indexTable::[relative=!nav.adoc,attributes=!core,cells="$xref,artifactid,supportlevel,since,description"]
+indexTable::[relative=!nav.adoc,attributes=!core,cellformats="$xref|artifactid|supportlevel|since|description"]
 

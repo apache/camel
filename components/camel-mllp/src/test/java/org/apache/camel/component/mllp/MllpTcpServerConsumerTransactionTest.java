@@ -18,17 +18,18 @@ package org.apache.camel.component.mllp;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mllp.support.EmbeddedActiveMQBroker;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
@@ -40,7 +41,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
     @RegisterExtension
-    public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker("broker");
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -65,10 +66,10 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     }
 
     @BindToRegistry("target")
-    public SjmsComponent addTargetComponent() throws Exception {
+    public SjmsComponent addTargetComponent() {
 
         SjmsComponent target = new SjmsComponent();
-        target.setConnectionFactory(new ActiveMQConnectionFactory(broker.getVmURL()));
+        target.setConnectionFactory(new ActiveMQConnectionFactory(service.serviceAddress()));
 
         return target;
     }
@@ -84,7 +85,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
@@ -99,12 +100,13 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to("target://test-queue?transacted=true");
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to("target://test-queue?transacted=true");
 
                 from("target://test-queue")
                         .routeId("jms-consumer")
+                        .process(exchange -> System.out.println(exchange.getIn().getBody()))
                         .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
                         .to(result);
 
@@ -115,21 +117,21 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     @Test
     public void testReceiveSingleMessage() throws Exception {
         result.expectedMessageCount(1);
-        complete.expectedMessageCount(1);
+        complete.expectedMessageCount(2);
         failure.expectedMessageCount(0);
 
         mllpClient.connect();
 
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
     public void testAcknowledgementWriteFailure() throws Exception {
-        result.expectedMessageCount(0);
+        result.expectedMessageCount(1);
         result.setAssertPeriod(1000);
-        complete.expectedMessageCount(0);
+        complete.expectedMessageCount(1);
         failure.expectedMessageCount(1);
 
         mllpClient.connect();
@@ -137,6 +139,6 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(), true);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 }

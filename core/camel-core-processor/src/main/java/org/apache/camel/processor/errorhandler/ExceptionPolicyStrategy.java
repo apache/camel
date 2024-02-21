@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 /**
  * A strategy to determine which {@link ExceptionPolicyKey} should handle the thrown exception.
  *
- * @see DefaultExceptionPolicyStrategy DefaultExceptionPolicy
+ * To use a custom implementation, then register the custom {@link ExceptionPolicyStrategy} instance to the Camel
+ * {@link org.apache.camel.spi.Registry}.
+ *
+ * @see DefaultExceptionPolicyStrategy for the DefaultExceptionPolicy
  */
 public interface ExceptionPolicyStrategy {
 

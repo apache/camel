@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SplitSubUnitOfWorkTest extends ContextTestSupport {
 
-    private static int counter;
+    private int counter;
 
     @Test
     public void testOK() throws Exception {
@@ -75,7 +75,7 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
                 from("direct:start").to("mock:a")
                         // share unit of work in the splitter, which tells Camel to
                         // propagate failures from
-                        // processing the splitted messages back to the result of
+                        // processing the split messages back to the result of
                         // the splitter, which allows
                         // it to act as a combined unit of work
                         .split(body().tokenize(",")).shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");
@@ -86,7 +86,7 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
         };
     }
 
-    public static class MyProcessor implements Processor {
+    public class MyProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {

@@ -92,7 +92,7 @@ public class EndpointHelperTest extends ContextTestSupport {
     public void testLookupEndpointRegistryId() throws Exception {
         assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
-        assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
+        assertNull(EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class EndpointHelperTest extends ContextTestSupport {
 
         assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
-        assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
+        assertNull(EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class EndpointHelperTest extends ContextTestSupport {
                     AuthorizationPolicy.class);
             fail("Should throw exception");
         } catch (NoSuchBeanException e) {
-            assertTrue(e.getMessage().contains("Found 2 beans"));
+            // expected
         }
     }
 

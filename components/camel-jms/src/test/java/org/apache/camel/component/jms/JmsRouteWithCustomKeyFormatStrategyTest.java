@@ -17,7 +17,6 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -26,35 +25,33 @@ import org.apache.camel.util.StringHelper;
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
     @BindToRegistry("myJmsKeyStrategy")
-    private MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
+    private final MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
 
     @Override
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(getUri());
-
-                from(getUri()).to("mock:result");
-            }
-        };
+        return "activemq:queue:JmsRouteWithCustomKeyFormatStrategyTest?jmsKeyFormatStrategy=#myJmsKeyStrategy";
     }
 
     private static class MyCustomKeyFormatStrategy implements JmsKeyFormatStrategy {
 
         @Override
         public String encodeKey(String key) {
+            key = key.replace("-", "_HYPHEN_")
+                    .replace(".", "_DOT_");
+
             return "FOO" + key + "BAR";
         }
 
         @Override
         public String decodeKey(String key) {
-            return StringHelper.between(key, "FOO", "BAR");
+            if (key.startsWith("FOO") && key.endsWith("BAR")) {
+                key = key.replace("_HYPHEN_", "-")
+                        .replace("_DOT_", ".");
+
+                return StringHelper.between(key, "FOO", "BAR");
+            } else {
+                return key;
+            }
         }
     }
 }

@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SjmsToDSendDynamicTwoTest extends JmsTestSupport {
 
     @Test
-    public void testToD() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
+    public void testToD() {
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.SjmsToDSendDynamicTwoTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.SjmsToDSendDynamicTwoTest");
+        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin.SjmsToDSendDynamicTwoTest");
 
-        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer");
-        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey");
+        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer.SjmsToDSendDynamicTwoTest");
+        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey.SjmsToDSendDynamicTwoTest");
 
         // there should be 2 sjms endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms:")).count();
@@ -39,10 +39,10 @@ public class SjmsToDSendDynamicTwoTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("sjms:queue:${header.where}");
 

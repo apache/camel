@@ -92,7 +92,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         Message message = result.getExchanges().get(0).getIn();
 
@@ -114,7 +114,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         Message message = result.getExchanges().get(0).getIn();
 
@@ -147,7 +147,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
@@ -157,9 +157,9 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&hl7Headers=%b",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout, hl7Headers)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to(result);
 
             }
         };

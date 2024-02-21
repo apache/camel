@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kudu</artifactId>
@@ -31,13 +31,16 @@
     <name>Camel :: Kudu</name>
     <description>Camel Apache Kudu support</description>
 
+    <properties>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.net=ALL-UNNAMED</camel.surefire.fork.vmargs>
+    </properties>
     <profiles>
         <profile>
-            <!-- kudu-binary is not available for Windows. It is needed for tests, so skip that -->
-            <id>Windows-Kudu-SkipTests</id>
+            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
+            <id>NotLinux</id>
             <activation>
                 <os>
-                    <family>Windows</family>
+                    <family>!Linux</family>
                 </os>
             </activation>
             <properties>
@@ -46,12 +49,23 @@
             </properties>
         </profile>
         <profile>
-            <!-- kudu-binary is not available for Apple. It is needed for tests, so skip that -->
-            <id>Apple-Arm64-SkipTests</id>
+            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
+            <id>Notx86</id>
             <activation>
                 <os>
-                    <family>mac</family>
+                    <arch>!amd64</arch>
                 </os>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
+            </properties>
+        </profile>
+        <profile>
+            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
@@ -85,11 +99,6 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Spin a kudu cluster to run integration tests -->
         <!-- as described in
@@ -99,6 +108,16 @@
             <artifactId>kudu-test-utils</artifactId>
             <version>${kudu-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

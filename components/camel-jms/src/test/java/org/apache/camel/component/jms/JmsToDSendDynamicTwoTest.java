@@ -16,25 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsToDSendDynamicTwoTest extends CamelTestSupport {
+public class JmsToDSendDynamicTwoTest extends AbstractPersistentJMSTest {
 
     @Test
-    public void testToD() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
+    public void testToD() {
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDSendDynamicTwoTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDSendDynamicTwoTest.beer");
+        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "JmsToDSendDynamicTwoTest.gin");
 
-        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer");
+        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "JmsToDSendDynamicTwoTest.beer");
         template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey");
 
         // there should be 2 activemq endpoint
@@ -43,20 +38,10 @@ public class JmsToDSendDynamicTwoTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");
 

@@ -17,6 +17,7 @@
 package org.apache.camel.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -31,16 +32,16 @@ public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupp
 
         template.sendBody("direct:a", in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context.getGlobalOptions().put(FallbackTypeConverter.OBJECT_FACTORY, "true");
         return new RouteBuilder(context) {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").convertBodyTo(String.class).to("direct:b");
                 from("direct:b").convertBodyTo(Message.class).to("mock:a");
             }

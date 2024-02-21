@@ -24,9 +24,7 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesCustomResourcesComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesCustomResourcesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
-            throws Exception {
-        KubernetesCustomResourcesEndpoint endpoint = new KubernetesCustomResourcesEndpoint(uri, this, config);
-        return endpoint;
+    protected KubernetesCustomResourcesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+        return new KubernetesCustomResourcesEndpoint(uri, this, config);
     }
 }

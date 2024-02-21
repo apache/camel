@@ -18,27 +18,24 @@ package org.apache.camel.component.snmp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
+import org.snmp4j.Target;
 import org.snmp4j.TransportMapping;
 import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.mp.MPv3;
+import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityModels;
-import org.snmp4j.security.SecurityProtocols;
 import org.snmp4j.security.USM;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
 import org.snmp4j.smi.Integer32;
 import org.snmp4j.smi.OID;
-import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
@@ -54,7 +51,7 @@ public class SnmpProducer extends DefaultProducer {
 
     private Address targetAddress;
     private USM usm;
-    private CommunityTarget target;
+    private Target target;
     private SnmpActionType actionType;
     private PDU pdu;
 
@@ -71,18 +68,10 @@ public class SnmpProducer extends DefaultProducer {
         this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
         LOG.debug("targetAddress: {}", targetAddress);
 
-        this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-        SecurityModels.getInstance().addSecurityModel(this.usm);
+        this.usm = SnmpHelper.createAndSetUSM(endpoint);
+        this.pdu = SnmpHelper.createPDU(endpoint);
+        this.target = SnmpHelper.createTarget(endpoint);
 
-        // setting up target
-        this.target = new CommunityTarget();
-        this.target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
-        this.target.setAddress(this.targetAddress);
-        this.target.setRetries(this.endpoint.getRetries());
-        this.target.setTimeout(this.endpoint.getTimeout());
-        this.target.setVersion(this.endpoint.getSnmpVersion());
-
-        this.pdu = new PDU();
         // in here,only POLL do set the oids
         if (this.actionType == SnmpActionType.POLL) {
             for (OID oid : this.endpoint.getOids()) {
@@ -91,13 +80,16 @@ public class SnmpProducer extends DefaultProducer {
         }
         this.pdu.setErrorIndex(0);
         this.pdu.setErrorStatus(0);
-        this.pdu.setMaxRepetitions(0);
+        if (endpoint.getSnmpVersion() > SnmpConstants.version1) {
+            this.pdu.setMaxRepetitions(0);
+        }
         // support POLL and GET_NEXT
         if (this.actionType == SnmpActionType.GET_NEXT) {
             this.pdu.setType(PDU.GETNEXT);
         } else {
             this.pdu.setType(PDU.GET);
         }
+
     }
 
     @Override
@@ -105,7 +97,9 @@ public class SnmpProducer extends DefaultProducer {
         super.doStop();
 
         try {
-            SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            if (this.usm != null) {
+                SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            }
         } finally {
             this.targetAddress = null;
             this.usm = null;
@@ -153,9 +147,9 @@ public class SnmpProducer extends DefaultProducer {
                         }
                         PDU response = responseEvent.getResponse();
                         String nextOid = null;
-                        Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
+                        List<? extends VariableBinding> variableBindings = response.getVariableBindings();
                         for (int i = 0; i < variableBindings.size(); i++) {
-                            VariableBinding variableBinding = variableBindings.elementAt(i);
+                            VariableBinding variableBinding = variableBindings.get(i);
                             nextOid = variableBinding.getOid().toDottedString();
                             if (!nextOid.startsWith(oid.toDottedString())) {
                                 matched = false;
@@ -194,4 +188,5 @@ public class SnmpProducer extends DefaultProducer {
             }
         }
     } //end process
+
 }

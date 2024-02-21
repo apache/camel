@@ -22,6 +22,7 @@ import java.util.Timer;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -41,18 +42,21 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
-             category = { Category.CORE, Category.SCHEDULING })
+             remote = false, category = { Category.CORE, Category.SCHEDULING }, headersClass = TimerConstants.class)
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath
     @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1s", description = "If greater than 0, generate periodic events every period.",
+    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period.",
               javaType = "java.time.Duration")
     private long period = 1000;
-    @UriParam(defaultValue = "1s", description = "Delay before first event is triggered.", javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1000", description = "Delay before first event is triggered.", javaType = "java.time.Duration")
     private long delay = 1000;
-    @UriParam(defaultValue = "0")
+    @UriParam
     private long repeatCount;
+    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
+              description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     @UriParam
     private boolean fixedRate;
     @UriParam(defaultValue = "true", label = "advanced")
@@ -63,8 +67,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
-    @UriParam(defaultValue = "true")
-    private boolean includeMetadata = true;
+    @UriParam
+    private boolean includeMetadata;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
@@ -176,6 +180,16 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.fixedRate = fixedRate;
     }
 
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public LoggingLevel getRunLoggingLevel() {
+        return runLoggingLevel;
+    }
+
+    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
+        this.runLoggingLevel = runLoggingLevel;
+    }
+
     @ManagedAttribute(description = "Timer Period")
     public long getPeriod() {
         return period;
@@ -253,8 +267,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc. This information is
-     * default included.
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
      */
     @ManagedAttribute(description = "Include metadata")
     public void setIncludeMetadata(boolean includeMetadata) {

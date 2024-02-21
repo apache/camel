@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -32,38 +30,38 @@ public final class PropertyConfigurerGenerator {
     private PropertyConfigurerGenerator() {
     }
 
-    public static void generatePropertyConfigurer(
+    public static String generatePropertyConfigurer(
             String pn, String cn, String en,
             String pfqn, String psn, boolean hasSuper, boolean component, boolean extended, boolean bootstrap,
-            Collection<? extends BaseOptionModel> options, ComponentModel model, Writer w)
-            throws IOException {
+            Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
-        w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
-        w.write("package " + pn + ";\n");
-        w.write("\n");
-        w.write("import java.util.Map;\n");
-        w.write("\n");
-        w.write("import org.apache.camel.CamelContext;\n");
-        w.write("import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;\n");
-        w.write("import org.apache.camel.spi.PropertyConfigurerGetter;\n");
-        w.write("import org.apache.camel.spi.ConfigurerStrategy;\n");
-        w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
-        w.write("import org.apache.camel.util.CaseInsensitiveMap;\n");
-        w.write("import " + pfqn + ";\n");
-        w.write("\n");
-        w.write("/**\n");
-        w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
-        w.write(" */\n");
-        w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends " + psn
-                + " implements GeneratedPropertyConfigurer");
+        StringBuilder w = new StringBuilder();
+
+        w.append("/* ").append(AbstractGeneratorMojo.GENERATED_MSG + " */\n");
+        w.append("package ").append(pn).append(";\n");
+        w.append('\n');
+        w.append("import java.util.Map;\n");
+        w.append("\n");
+        w.append("import org.apache.camel.CamelContext;\n");
+        w.append("import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;\n");
+        w.append("import org.apache.camel.spi.PropertyConfigurerGetter;\n");
+        w.append("import org.apache.camel.spi.ConfigurerStrategy;\n");
+        w.append("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
+        w.append("import org.apache.camel.util.CaseInsensitiveMap;\n");
+        w.append("import ").append(pfqn).append(";\n");
+        w.append('\n');
+        w.append("/**\n");
+        w.append(" * ").append(AbstractGeneratorMojo.GENERATED_MSG).append('\n');
+        w.append(" */\n");
+        w.append("@SuppressWarnings(\"unchecked\")\n");
+        w.append("public class ").append(cn).append(" extends ").append(psn).append(" implements GeneratedPropertyConfigurer");
         if (extended) {
-            w.write(", ExtendedPropertyConfigurerGetter");
+            w.append(", ExtendedPropertyConfigurerGetter");
         } else {
-            w.write(", PropertyConfigurerGetter");
+            w.append(", PropertyConfigurerGetter");
         }
-        w.write(" {\n");
-        w.write("\n");
+        w.append(" {\n");
+        w.append('\n');
 
         // sort options A..Z so they always have same order
         if (!options.isEmpty()) {
@@ -74,61 +72,78 @@ public final class PropertyConfigurerGenerator {
         if (extended) {
             if (model != null || !hasSuper) {
                 // static block for all options which is immutable information
-                w.write("    private static final Map<String, Object> ALL_OPTIONS;\n");
+                w.append("    private static final Map<String, Object> ALL_OPTIONS;\n");
                 if (model != null) {
-                    w.write(generateAllOptions(cn, bootstrap, component, model));
+                    w.append(generateAllOptions(cn, bootstrap, component, model));
                 } else {
-                    w.write(generateAllOptions(cn, bootstrap, options));
+                    w.append(generateAllOptions(cn, bootstrap, options));
                 }
-                w.write("\n");
+                w.append('\n');
             }
         }
 
-        if (!options.isEmpty() || !hasSuper) {
+        boolean stub = model != null && model.getName().equals("stub");
+        if (stub && options.isEmpty() && !component) {
+            // special for stub to accept and ignore lenient options
+            w.append("    @Override\n");
+            w.append(
+                    "    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
+            w.append("        super.configure(camelContext, obj, name, value, ignoreCase);\n");
+            w.append("        return true;\n");
+            w.append("    }\n");
+        } else if (!options.isEmpty() || !hasSuper) {
             if (component) {
                 // if its a component configurer then configuration classes are optional and we need
                 // to generate a method that can lazy create a new configuration if it was null
                 for (BaseOptionModel bo : findConfigurations(options)) {
-                    w.write(createGetOrCreateConfiguration(en, bo.getConfigurationClass(),
+                    w.append(createGetOrCreateConfiguration(en, bo.getConfigurationClass(),
                             bo.getConfigurationField()));
-                    w.write("\n");
+                    w.append('\n');
                 }
             }
 
-            w.write("    @Override\n");
-            w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
+            w.append("    @Override\n");
+            w.append(
+                    "    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
             if (!options.isEmpty()) {
-                w.write("        " + en + " target = (" + en + ") obj;\n");
-                w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                w.append("        ").append(en).append(" target = (").append(en).append(") obj;\n");
+                w.append("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                    boolean builder = option instanceof AbstractGenerateConfigurerMojo.ConfigurerOption
+                            && ((AbstractGenerateConfigurerMojo.ConfigurerOption) option).isBuilderMethod();
                     String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(),
-                            option.getConfigurationField(), component, option.getType());
+                            option.getConfigurationField(), component, option.getType(), builder);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
-                        w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                        w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+                    w.append(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
                 }
-                if (hasSuper) {
-                    w.write("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
+                if (stub) {
+                    // special for stub to accept and ignore lenient options
+                    w.append("        default: return true;\n");
+                } else if (hasSuper) {
+                    w.append("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
                 } else {
-                    w.write("        default: return false;\n");
+                    w.append("        default: return false;\n");
                 }
-                w.write("        }\n");
+                w.append("        }\n");
+            } else {
+                w.append("        return false;\n");
             }
-            w.write("    }\n");
+            w.append("    }\n");
 
             if (extended) {
                 // generate method that returns all the options
-                w.write("\n");
-                w.write("    @Override\n");
-                w.write("    public Map<String, Object> getAllOptions(Object target) {\n");
+                w.append('\n');
+                w.append("    @Override\n");
+                w.append("    public Map<String, Object> getAllOptions(Object target) {\n");
                 if (model != null || !hasSuper) {
-                    w.write("        return ALL_OPTIONS;\n");
-                    w.write("    }\n");
+                    w.append("        return ALL_OPTIONS;\n");
+                    w.append("    }\n");
                 } else {
-                    w.write("        Map<String, Object> answer = super.getAllOptions(target);\n");
+                    w.append("        Map<String, Object> answer = super.getAllOptions(target);\n");
                     if (!options.isEmpty()) {
                         for (BaseOptionModel option : options) {
                             // type may contain generics so remove those
@@ -137,42 +152,42 @@ public final class PropertyConfigurerGenerator {
                                 type = type.substring(0, type.indexOf('<'));
                             }
                             type = type.replace('$', '.');
-                            w.write(String.format("        answer.put(\"%s\", %s.class);\n", option.getName(), type));
+                            w.append(String.format("        answer.put(\"%s\", %s.class);\n", option.getName(), type));
                         }
-                        w.write("        return answer;\n");
-                        w.write("    }\n");
+                        w.append("        return answer;\n");
+                        w.append("    }\n");
                     }
                 }
             }
             if (bootstrap && extended) {
-                w.write("\n");
-                w.write("    public static void clearBootstrapConfigurers() {\n");
-                w.write("        ALL_OPTIONS.clear();\n");
-                w.write("    }\n");
+                w.append('\n');
+                w.append("    public static void clearBootstrapConfigurers() {\n");
+                w.append("        ALL_OPTIONS.clear();\n");
+                w.append("    }\n");
             }
 
             // generate method for autowired
             if (options.stream().anyMatch(BaseOptionModel::isAutowired)) {
-                w.write("\n");
-                w.write("    @Override\n");
-                w.write("    public String[] getAutowiredNames() {\n");
+                w.append('\n');
+                w.append("    @Override\n");
+                w.append("    public String[] getAutowiredNames() {\n");
                 String names = options.stream()
                         .filter(BaseOptionModel::isAutowired)
                         .map(BaseOptionModel::getName)
                         .map(PropertyConfigurerGenerator::quote)
                         .collect(Collectors.joining(","));
-                w.write("        return new String[]{");
-                w.write(names);
-                w.write("};\n");
-                w.write("    }\n");
+                w.append("        return new String[]{");
+                w.append(names);
+                w.append("};\n");
+                w.append("    }\n");
             }
 
             // generate method for getting a property type
-            w.write("\n");
-            w.write("    @Override\n");
-            w.write("    public Class<?> getOptionType(String name, boolean ignoreCase) {\n");
+            w.append('\n');
+            w.append("    @Override\n");
+            w.append("    public Class<?> getOptionType(String name, boolean ignoreCase) {\n");
             if (!options.isEmpty()) {
-                w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                w.append("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                 for (BaseOptionModel option : options) {
                     // type may contain generics so remove those
                     String type = option.getJavaType();
@@ -181,77 +196,86 @@ public final class PropertyConfigurerGenerator {
                     }
                     type = type.replace('$', '.');
                     if (!option.getName().toLowerCase().equals(option.getName())) {
-                        w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                        w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.write(String.format("        case \"%s\": return %s.class;\n", option.getName(), type));
+                    w.append(String.format("        case \"%s\": return %s.class;\n", option.getName(), type));
                 }
                 if (hasSuper) {
-                    w.write("        default: return super.getOptionType(name, ignoreCase);\n");
+                    w.append("        default: return super.getOptionType(name, ignoreCase);\n");
                 } else {
-                    w.write("        default: return null;\n");
+                    w.append("        default: return null;\n");
                 }
-                w.write("        }\n");
+                w.append("        }\n");
+            } else {
+                w.append("        return null;\n");
             }
-            w.write("    }\n");
+            w.append("    }\n");
 
             // generate method for getting a property
-            w.write("\n");
-            w.write("    @Override\n");
-            w.write("    public Object getOptionValue(Object obj, String name, boolean ignoreCase) {\n");
+            w.append('\n');
+            w.append("    @Override\n");
+            w.append("    public Object getOptionValue(Object obj, String name, boolean ignoreCase) {\n");
             if (!options.isEmpty()) {
-                w.write("        " + en + " target = (" + en + ") obj;\n");
-                w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                w.append("        ").append(en).append(" target = (").append(en).append(") obj;\n");
+                w.append("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                     String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getGetterMethod(),
                             option.getConfigurationField(), component);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
-                        w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                        w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.write(String.format("        case \"%s\": return %s;\n", option.getName(), getterLambda));
+                    w.append(String.format("        case \"%s\": return %s;\n", option.getName(), getterLambda));
                 }
                 if (hasSuper) {
-                    w.write("        default: return super.getOptionValue(obj, name, ignoreCase);\n");
+                    w.append("        default: return super.getOptionValue(obj, name, ignoreCase);\n");
                 } else {
-                    w.write("        default: return null;\n");
+                    w.append("        default: return null;\n");
                 }
-                w.write("        }\n");
+                w.append("        }\n");
+            } else {
+                w.append("        return null;\n");
+
             }
-            w.write("    }\n");
+            w.append("    }\n");
 
             // nested type was stored in extra as we use BaseOptionModel to hold the option data
             boolean hasNestedTypes
-                    = options.stream().map(BaseOptionModel::getNestedType).anyMatch(s -> s != null && !s.trim().isEmpty());
+                    = options.stream().map(BaseOptionModel::getNestedType).anyMatch(s -> s != null && !s.isBlank());
             if (hasNestedTypes) {
-                w.write("\n");
-                w.write("    @Override\n");
-                w.write("    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {\n");
+                w.append('\n');
+                w.append("    @Override\n");
+                w.append("    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {\n");
                 if (!options.isEmpty()) {
-                    w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                    w.append("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                     for (BaseOptionModel option : options) {
                         String nestedType = option.getNestedType();
                         if (nestedType != null && !nestedType.isEmpty()) {
                             nestedType = nestedType.replace('$', '.');
                             if (!option.getName().toLowerCase().equals(option.getName())) {
-                                w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                                w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                             }
-                            w.write(String.format("        case \"%s\": return %s.class;\n", option.getName(), nestedType));
+                            w.append(String.format("        case \"%s\": return %s.class;\n", option.getName(), nestedType));
                         }
                     }
                     if (hasSuper) {
-                        w.write("        default: return super.getCollectionValueType(target, name, ignoreCase);\n");
+                        w.append("        default: return super.getCollectionValueType(target, name, ignoreCase);\n");
                     } else {
-                        w.write("        default: return null;\n");
+                        w.append("        default: return null;\n");
                     }
-                    w.write("        }\n");
+                    w.append("        }\n");
+                } else {
+                    w.append("        return null;\n");
                 }
-                w.write("    }\n");
+                w.append("    }\n");
             }
         }
 
-        w.write("}\n");
-        w.write("\n");
+        w.append("}\n");
+        w.append('\n');
+
+        return w.toString();
     }
 
     private static String generateAllOptions(String className, boolean bootstrap, boolean component, ComponentModel model) {
@@ -327,26 +351,26 @@ public final class PropertyConfigurerGenerator {
 
     private static String setterLambda(
             String getOrSet, String type, String setterMethod, String configurationField, boolean component,
-            String optionKind) {
+            String optionKind, boolean builder) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
         }
         type = type.replace('$', '.');
+        String prefix = builder ? "with" : "set";
         if (configurationField != null) {
             if (component) {
                 String methodName
                         = "getOrCreate" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
-                getOrSet = methodName + "(target).set" + getOrSet;
+                getOrSet = methodName + "(target)." + prefix + getOrSet;
             } else {
                 getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
-                           + "().set" + getOrSet;
+                           + "()." + prefix + getOrSet;
             }
         } else {
-            getOrSet = "target.set" + getOrSet;
+            getOrSet = "target." + prefix + getOrSet;
         }
 
-        // target.setGroupSize(property(camelContext, java.lang.Integer.class, value))
         String rv;
         if ("duration".equals(optionKind) && "long".equals(type)) {
             rv = "property(camelContext, java.time.Duration.class, value).toMillis()";
@@ -393,9 +417,9 @@ public final class PropertyConfigurerGenerator {
         String line1 = String.format("    private %s %s(%s target) {\n", configurationClass, methodName, targetClass);
         String line2 = String.format("        if (target.%s() == null) {\n", getter);
         String line3 = String.format("            target.%s(new %s());\n", setter, configurationClass);
-        String line4 = String.format("        }\n");
+        String line4 = "        }\n";
         String line5 = String.format("        return target.%s();\n", getter);
-        String line6 = String.format("    }\n");
+        String line6 = "    }\n";
 
         sb.append(line1).append(line2).append(line3).append(line4).append(line5).append(line6);
         return sb.toString();

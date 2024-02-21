@@ -18,6 +18,8 @@ package org.apache.camel.cloud;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
+
 /**
  * Allows SPIs to implement custom Service Filter.
  *
@@ -27,10 +29,12 @@ import java.util.List;
 public interface ServiceFilter {
 
     /**
-     * Chooses one of the service to use
+     * Chooses service candidates to use
      *
+     * @param  exchange for content-based filtering
      * @param  services list of services
      * @return          the chosen service to use.
      */
-    List<ServiceDefinition> apply(List<ServiceDefinition> services);
+    List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services);
+
 }

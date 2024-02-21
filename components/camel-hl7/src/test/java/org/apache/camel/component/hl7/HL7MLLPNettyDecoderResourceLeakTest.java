@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
 
     @BindToRegistry("hl7decoder")
@@ -41,9 +43,9 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -56,7 +58,11 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     }
 
     @Test
-    public void testSendHL7Message() throws Exception {
+    public void testSendHL7Message() {
+        assertDoesNotThrow(() -> sendHL7Message());
+    }
+
+    private void sendHL7Message() {
         String message = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
 
         for (int i = 0; i < 10; i++) {

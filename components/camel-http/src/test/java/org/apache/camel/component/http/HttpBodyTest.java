@@ -24,20 +24,20 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.IMAGE_JPEG;
 import static org.apache.camel.component.http.HttpMethods.POST;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.apache.http.entity.ContentType.IMAGE_JPEG;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http://";
     // default content encoding of the local test server
-    private String charset = "ISO-8859-1";
+    private final String charset = "ISO-8859-1";
     private HttpServer localServer;
     private String endpointUrl;
 
@@ -49,14 +49,14 @@ public class HttpBodyTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
-                .registerHandler("/post1",
+                .setSslContext(getSSLContext())
+                .register("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
+                .register("/post1",
                         new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
 
-        endpointUrl = getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = getProtocolString() + "localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -80,7 +80,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithStringBody() throws Exception {
+    public void httpPostWithStringBody() {
         Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> {
             // without this property, camel use the os default encoding
             // to create the byte array for the StringRequestEntity
@@ -92,7 +92,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithByteArrayBody() throws Exception {
+    public void httpPostWithByteArrayBody() {
         Exchange exchange
                 = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
@@ -100,7 +100,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithInputStreamBody() throws Exception {
+    public void httpPostWithInputStreamBody() {
         Exchange exchange = template.request(endpointUrl + "/post",
                 exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
@@ -108,7 +108,7 @@ public class HttpBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpPostWithImage() throws Exception {
+    public void httpPostWithImage() {
 
         Exchange exchange = template.send(endpointUrl + "/post1", exchange1 -> {
             exchange1.getIn().setBody(new File("src/test/data/logo.jpeg"));

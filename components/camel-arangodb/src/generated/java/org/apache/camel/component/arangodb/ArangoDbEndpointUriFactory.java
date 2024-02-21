@@ -19,24 +19,27 @@ public class ArangoDbEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
-        props.add("edgeCollection");
+        Set<String> props = new HashSet<>(12);
+        props.add("arangoDB");
         props.add("database");
-        props.add("lazyStartProducer");
-        props.add("password");
-        props.add("vertexCollection");
-        props.add("port");
         props.add("documentCollection");
-        props.add("host");
-        props.add("operation");
-        props.add("user");
+        props.add("edgeCollection");
         props.add("graph");
+        props.add("host");
+        props.add("lazyStartProducer");
+        props.add("operation");
+        props.add("password");
+        props.add("port");
+        props.add("user");
+        props.add("vertexCollection");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("user");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +67,11 @@ public class ArangoDbEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

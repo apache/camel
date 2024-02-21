@@ -1,9 +1,9 @@
 # Jakarta Mail IMAP provider Oracle
-protocol=imap; type=store; class=com.sun.mail.imap.IMAPStore; vendor=Oracle;
-protocol=imaps; type=store; class=com.sun.mail.imap.IMAPSSLStore; vendor=Oracle;
+protocol=imap; type=store; class=org.eclipse.angus.mail.imap.IMAPStore; vendor=Oracle;
+protocol=imaps; type=store; class=org.eclipse.angus.mail.imap.IMAPSSLStore; vendor=Oracle;
 # Jakarta Mail SMTP provider Oracle
-protocol=smtp; type=transport; class=com.sun.mail.smtp.SMTPTransport; vendor=Oracle;
-protocol=smtps; type=transport; class=com.sun.mail.smtp.SMTPSSLTransport; vendor=Oracle;
+protocol=smtp; type=transport; class=org.eclipse.angus.mail.smtp.SMTPTransport; vendor=Oracle;
+protocol=smtps; type=transport; class=org.eclipse.angus.mail.smtp.SMTPSSLTransport; vendor=Oracle;
 # Jakarta Mail POP3 provider Oracle
-protocol=pop3; type=store; class=com.sun.mail.pop3.POP3Store; vendor=Oracle;
-protocol=pop3s; type=store; class=com.sun.mail.pop3.POP3SSLStore; vendor=Oracle;
+protocol=pop3; type=store; class=org.eclipse.angus.mail.pop3.POP3Store; vendor=Oracle;
+protocol=pop3s; type=store; class=org.eclipse.angus.mail.pop3.POP3SSLStore; vendor=Oracle;

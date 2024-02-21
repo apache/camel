@@ -29,7 +29,6 @@ import ca.uhn.fhir.rest.api.RequestFormatParamStyleEnum;
 import ca.uhn.fhir.rest.api.RequestTypeEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.Header;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpClient;
 import ca.uhn.fhir.rest.client.api.IRestfulClient;
@@ -56,12 +55,15 @@ import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link FhirConfiguration} APIs.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
@@ -79,14 +81,14 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
     private CustomClientFactory clientFactory = new CustomClientFactory();
 
     @Test
-    public void testConfigurationWithCustomClient() throws Exception {
+    public void testConfigurationWithCustomClient() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI_CUSTOM_CLIENT, FhirEndpoint.class);
         IGenericClient client = endpoint.getClient();
         assertTrue(client instanceof CustomClient);
     }
 
     @Test
-    public void testConfigurationWithCustomFactory() throws Exception {
+    public void testConfigurationWithCustomFactory() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI_CUSTOM_CLIENT_FACTORY, FhirEndpoint.class);
         IGenericClient client = endpoint.getClient();
         assertTrue(client instanceof CustomClient);
@@ -98,7 +100,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -297,6 +299,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
+        public void registerInterceptor(Object o) {
+
+        }
+
+        @Override
         public IInterceptorService getInterceptorService() {
             return null;
         }
@@ -332,11 +339,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void registerInterceptor(IClientInterceptor theInterceptor) {
-
-        }
-
-        @Override
         public void setEncoding(EncodingEnum theEncoding) {
 
         }
@@ -367,7 +369,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void unregisterInterceptor(IClientInterceptor theInterceptor) {
+        public void unregisterInterceptor(Object o) {
 
         }
 

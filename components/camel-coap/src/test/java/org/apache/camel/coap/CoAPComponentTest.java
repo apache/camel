@@ -16,7 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,11 +48,11 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody("Camel CoAP");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,11 +60,11 @@ public class CoAPComponentTest extends CoAPTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         tcpSender.sendBody("Camel CoAP");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

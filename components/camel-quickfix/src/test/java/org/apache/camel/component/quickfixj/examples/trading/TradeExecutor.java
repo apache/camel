@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.DataDictionaryProvider;
-import quickfix.FieldConvertError;
 import quickfix.FieldNotFound;
 import quickfix.FixVersions;
 import quickfix.IncorrectTagValue;
@@ -38,7 +37,6 @@ import quickfix.MessageUtils;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
-import quickfix.UnsupportedMessageType;
 import quickfix.field.ApplVerID;
 import quickfix.field.AvgPx;
 import quickfix.field.CumQty;
@@ -72,7 +70,7 @@ public class TradeExecutor {
     private int orderID;
     private int execID;
 
-    public TradeExecutor() throws ConfigError, FieldConvertError {
+    public TradeExecutor() {
         setAlwaysFillLimitOrders(true);
 
         Set<String> validOrderTypes = new HashSet<>();
@@ -107,7 +105,7 @@ public class TradeExecutor {
         listeners.remove(listener);
     }
 
-    public void execute(final Message message) throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+    public void execute(final Message message) {
         final SessionID sessionID = MessageUtils.getSessionID(message);
 
         try {
@@ -130,7 +128,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix40.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -169,8 +167,8 @@ public class TradeExecutor {
             char side = order.getChar(Side.FIELD);
             BigDecimal thePrice = new BigDecimal(price.getValue());
 
-            return (side == Side.BUY && thePrice.compareTo(limitPrice) <= 0)
-                    || ((side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0);
+            return side == Side.BUY && thePrice.compareTo(limitPrice) <= 0
+                    || (side == Side.SELL || side == Side.SELL_SHORT) && thePrice.compareTo(limitPrice) >= 0;
         }
         return true;
     }
@@ -181,7 +179,7 @@ public class TradeExecutor {
             price = new Price(message.getDouble(Price.FIELD));
         } else {
             if (marketQuoteProvider == null) {
-                throw new RuntimeException("No market data provider specified for market order");
+                throw new RuntimeCamelException("No market data provider specified for market order");
             }
             char side = message.getChar(Side.FIELD);
             if (side == Side.BUY) {
@@ -189,7 +187,7 @@ public class TradeExecutor {
             } else if (side == Side.SELL || side == Side.SELL_SHORT) {
                 price = new Price(marketQuoteProvider.getBid(message.getString(Symbol.FIELD)));
             } else {
-                throw new RuntimeException("Invalid order side: " + side);
+                throw new RuntimeCamelException("Invalid order side: " + side);
             }
         }
         return price;
@@ -239,7 +237,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix41.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -279,7 +277,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix42.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -327,7 +325,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix43.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -362,7 +360,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix44.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -397,7 +395,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix50.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 

@@ -24,6 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +35,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.security.auth.AuthenticateCallbackHandler;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
@@ -42,13 +45,19 @@ import org.slf4j.LoggerFactory;
  * Sent and receive messages to/from an Apache Kafka broker.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = KafkaConstants.class)
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
 
+    private static final String CALLBACK_HANDLER_CLASS_CONFIG = "sasl.login.callback.handler.class";
+
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+    @UriParam(label = "advanced")
+    private KafkaClientFactory kafkaClientFactory;
+    @UriParam(label = "consumer,advanced")
+    private KafkaManualCommitFactory kafkaManualCommitFactory;
 
     public KafkaEndpoint() {
     }
@@ -68,6 +77,44 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public KafkaClientFactory getKafkaClientFactory() {
+        return this.kafkaClientFactory;
+    }
+
+    /**
+     * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows to configure a custom factory to
+     * create instances with logic that extends the vanilla Kafka clients.
+     */
+    public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
+        this.kafkaClientFactory = kafkaClientFactory;
+    }
+
+    public KafkaManualCommitFactory getKafkaManualCommitFactory() {
+        return kafkaManualCommitFactory;
+    }
+
+    /**
+     * Factory to use for creating {@link KafkaManualCommit} instances. This allows to plugin a custom factory to create
+     * custom {@link KafkaManualCommit} instances in case special logic is needed when doing manual commits that
+     * deviates from the default implementation that comes out of the box.
+     */
+    public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
+        this.kafkaManualCommitFactory = kafkaManualCommitFactory;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        if (kafkaClientFactory == null) {
+            kafkaClientFactory = getComponent().getKafkaClientFactory();
+        }
+        if (kafkaManualCommitFactory == null) {
+            kafkaManualCommitFactory = getComponent().getKafkaManualCommitFactory();
+        }
     }
 
     @Override
@@ -123,6 +170,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 replaceWithClass(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, resolver, Partitioner.class);
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
+
+                // because he property is not available in Kafka client, use a static string
+                replaceWithClass(props, CALLBACK_HANDLER_CLASS_CONFIG, resolver, AuthenticateCallbackHandler.class);
             }
         } catch (Exception t) {
             // can ignore and Kafka itself might be able to handle it, if not,
@@ -133,7 +183,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());
     }
 
     public ExecutorService createProducerExecutor() {

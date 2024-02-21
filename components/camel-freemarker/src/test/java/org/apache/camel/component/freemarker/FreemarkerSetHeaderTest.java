@@ -41,7 +41,7 @@ public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {
         //mock.expectedHeaderReceived("fruit", value);
         mock.expectedBodiesReceived(expectedBody);
         template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(value);
 

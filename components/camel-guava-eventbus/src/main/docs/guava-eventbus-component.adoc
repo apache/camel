@@ -1,12 +1,14 @@
-[[guava-eventbus-component]]
 = Guava EventBus Component
-:docTitle: Guava EventBus
-:artifactId: camel-guava-eventbus
+:doctitle: Guava EventBus
+:shortname: guava-eventbus
+:artifactid: camel-guava-eventbus
 :description: Send and receive messages to/from Guava EventBus.
 :since: 2.10
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/guava-eventbus.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: guava-eventbus
 
 *Since Camel {since}*
 
@@ -21,7 +23,7 @@ component provides integration bridge between Camel and
 https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] infrastructure. With the latter component, messages
 exchanged with the Guava `EventBus` can be transparently forwarded to
-the Camel routes. EventBus component allows also to route body of Camel
+the Camel routes. EventBus component allows also routing the body of Camel
 exchanges to the Guava `EventBus`.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -39,7 +41,6 @@ for this component:
 
 == URI format
 
-[source,java]
 --------------------------------
 guava-eventbus:busName[?options]
 --------------------------------
@@ -48,67 +49,19 @@ Where *busName* represents the name of the
 `com.google.common.eventbus.EventBus` instance located in the Camel
 registry.
 
-== Options
 
+// component-configure options: START
 
-
-
+// component-configure options: END
 
 // component options: START
-The Guava EventBus component supports 5 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *eventBus* (common) | To use the given Guava EventBus instance |  | EventBus
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *listenerInterface* (consumer) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
-
 // endpoint options: START
-The Guava EventBus endpoint is configured using URI syntax:
 
-----
-guava-eventbus:eventBusRef
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *eventBusRef* | To lookup the Guava EventBus from the registry with the given name |  | String
-|===
-
-
-=== Query Parameters (6 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *eventClass* (common) | If used on the consumer side of the route, will filter events received from the EventBus to the instances of the class and superclasses of eventClass. Null value of this option is equal to setting it to the java.lang.Object i.e. the consumer will capture all messages incoming to the event bus. This option cannot be used together with listenerInterface option. |  | Class
-| *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
-
-
 
 
 == Usage
@@ -176,7 +129,7 @@ This drawback of this approach is that `EventBus` instance used by Camel
 will never generate `com.google.common.eventbus.DeadEvent`
 notifications. If you want Camel to listen only to the precisely
 specified event (and therefore enable `DeadEvent` support), use
-`listenerInterface` endpoint option. Camel will create dynamic proxy
+`listenerInterface` endpoint option. Camel will create a dynamic proxy
 over the interface you specify with the latter option and listen only to
 messages specified by the interface handler methods. The example of the
 listener interface with single method handling only `SpecificEvent`
@@ -202,9 +155,9 @@ follows.
 from("guava-eventbus:busName?listenerInterface=com.example.CustomListener").to("seda:queue");
 ---------------------------------------------------------------------------------------------
 
-== Consuming multiple type of events
+== Consuming multiple types of events
 
-In order to define multiple type of events to be consumed by Guava
+To define multiple types of events to be consumed by Guava
 EventBus consumer use `listenerInterface` endpoint option, as listener
 interface could provide multiple methods marked with the `@Subscribe`
 annotation.
@@ -232,4 +185,5 @@ follows.
 from("guava-eventbus:busName?listenerInterface=com.example.MultipleEventsListener").to("seda:queue");
 -----------------------------------------------------------------------------------------------------
 
-include::camel-spring-boot::page$guava-eventbus-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

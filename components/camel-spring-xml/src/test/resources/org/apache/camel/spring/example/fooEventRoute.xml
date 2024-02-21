@@ -31,6 +31,7 @@
     <bean id="consumer2" class="org.apache.camel.spring.example.AnotherFooEventConsumer"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- define a shared endpoint which the consumers can refer to instead of using url -->
         <endpoint id="foo" uri="seda:foo?multipleConsumers=true"/>
     </camelContext>

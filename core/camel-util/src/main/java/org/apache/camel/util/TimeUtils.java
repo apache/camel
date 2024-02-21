@@ -35,12 +35,50 @@ public final class TimeUtils {
         return dur.getSeconds() > 0 || dur.getNano() != 0;
     }
 
-    public static String printDuration(Duration uptime) {
-        return printDuration(uptime.toMillis(), true);
+    /**
+     * Prints the since ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
+     *
+     * @param  time time of the event (millis since epoch)
+     * @return      ago in human-readable since the given time.
+     */
+    public static String printSince(long time) {
+        long age = System.currentTimeMillis() - time;
+        return printDuration(age, false);
     }
 
     /**
-     * Prints the duration in a human readable format as X days Y hours Z minutes etc.
+     * Prints the ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
+     *
+     * @param  age age in millis
+     * @return     ago in human-readable.
+     */
+    public static String printAge(long age) {
+        return printDuration(age, false);
+    }
+
+    /**
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
+     *
+     * @param  uptime the uptime in millis
+     * @return        the time used for displaying on screen or in logs
+     */
+    public static String printDuration(Duration uptime) {
+        return printDuration(uptime, false);
+    }
+
+    /**
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
+     *
+     * @param  uptime  the uptime in millis
+     * @param  precise whether to be precise and include more details
+     * @return         the time used for displaying on screen or in logs
+     */
+    public static String printDuration(Duration uptime, boolean precise) {
+        return printDuration(uptime.toMillis(), precise);
+    }
+
+    /**
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
      *
      * @param  uptime the uptime in millis
      * @return        the time used for displaying on screen or in logs
@@ -50,10 +88,10 @@ public final class TimeUtils {
     }
 
     /**
-     * Prints the duration in a human readable format as X days Y hours Z minutes etc.
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
      *
      * @param  uptime  the uptime in millis
-     * @param  precise whether to be precise and include all details including milli seconds
+     * @param  precise whether to be precise and include more details
      * @return         the time used for displaying on screen or in logs
      */
     public static String printDuration(long uptime, boolean precise) {
@@ -75,33 +113,57 @@ public final class TimeUtils {
         }
 
         if (days > 0) {
-            sb.append(days).append("d").append(hours % 24).append("h").append(minutes % 60).append("m").append(seconds % 60)
-                    .append("s");
+            sb.append(days).append("d").append(hours % 24).append("h");
+            if (precise) {
+                sb.append(minutes % 60).append("m").append(seconds % 60).append("s");
+            }
         } else if (hours > 0) {
-            sb.append(hours % 24).append("h").append(minutes % 60).append("m").append(seconds % 60).append("s");
+            sb.append(hours % 24).append("h").append(minutes % 60).append("m");
+            if (precise) {
+                sb.append(seconds % 60).append("s");
+            }
         } else if (minutes > 0) {
             sb.append(minutes % 60).append("m").append(seconds % 60).append("s");
+            if (precise) {
+                sb.append(millis).append("ms");
+            }
         } else if (seconds > 0) {
             sb.append(seconds % 60).append("s");
-            // lets include millis when there are only seconds by default
-            precise = true;
+            if (precise) {
+                sb.append(millis).append("ms");
+            }
         } else if (millis > 0) {
-            precise = false;
-            sb.append(millis).append("ms");
-        }
-
-        if (precise & millis > 0) {
-            sb.append(millis).append("ms");
+            if (!precise) {
+                // less than a second so just report it as zero
+                sb.append("0s");
+            } else {
+                sb.append(millis).append("ms");
+            }
         }
 
         return sb.toString();
     }
 
-    public static Duration toDuration(String source) throws IllegalArgumentException {
+    /**
+     * Converts to duration.
+     *
+     * @param source duration which can be in text format such as 15s
+     */
+    public static Duration toDuration(String source) {
         return Duration.ofMillis(toMilliSeconds(source));
     }
 
-    public static long toMilliSeconds(String source) throws IllegalArgumentException {
+    /**
+     * Converts to milliseconds.
+     *
+     * @param  source duration which can be in text format such as 15s
+     * @return        time in millis, will return 0 if the input is null or empty
+     */
+    public static long toMilliSeconds(String source) {
+        if (source == null || source.isEmpty()) {
+            return 0;
+        }
+
         // quick conversion if its only digits
         boolean digit = true;
         for (int i = 0; i < source.length(); i++) {
@@ -146,7 +208,7 @@ public final class TimeUtils {
             if (source.length() - 1 <= pos) {
                 valid = true;
             } else {
-                // beware of minutes and not milli seconds
+                // beware of minutes and not milliseconds
                 valid = source.charAt(pos + 1) != 's';
             }
             if (valid) {
@@ -157,7 +219,7 @@ public final class TimeUtils {
         }
 
         pos = source.indexOf('s');
-        // beware of seconds and not milli seconds
+        // beware of seconds and not milliseconds
         if (pos != -1 && source.charAt(pos - 1) != 'm') {
             String s = source.substring(0, pos);
             seconds = Long.parseLong(s);
@@ -187,6 +249,18 @@ public final class TimeUtils {
         LOG.trace("source: [{}], milliseconds: {}", source, answer);
 
         return answer;
+    }
+
+    /**
+     * Elapsed time using milliseconds since epoch.
+     *
+     * @param      start the timestamp in milliseconds since epoch
+     * @return           the elapsed time in milliseconds
+     * @deprecated       Use the Clock API when possible
+     */
+    @Deprecated(since = "4.4.0")
+    public static long elapsedMillisSince(long start) {
+        return System.currentTimeMillis() - start;
     }
 
 }

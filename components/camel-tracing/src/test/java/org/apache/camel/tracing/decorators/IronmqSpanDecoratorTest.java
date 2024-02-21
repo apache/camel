@@ -32,9 +32,9 @@ public class IronmqSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(IronmqSpanDecorator.CAMEL_IRON_MQ_MESSAGE_ID)).thenReturn(messageId);
+        Mockito.when(message.getHeader(IronmqSpanDecorator.CAMEL_IRON_MQ_MESSAGE_ID, String.class)).thenReturn(messageId);
 
-        IronmqSpanDecorator decorator = new IronmqSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new IronmqSpanDecorator();
 
         assertEquals(messageId, decorator.getMessageId(exchange));
     }

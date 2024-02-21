@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.servicenow.releases.fuji;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,7 +39,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
             throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
-            response = retrieveRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
+            response = retrieveRecord(responseModel, apiVersion, tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_CREATE, action, true)) {
             response = createRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName);
         } else {
@@ -54,7 +54,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/import/{tableName}/{sys_id}
      */
     private Response retrieveRecord(
-            Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId)
+            Class<?> responseModel, String apiVersion, String tableName, String sysId)
             throws Exception {
         return client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)

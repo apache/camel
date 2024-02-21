@@ -48,11 +48,11 @@ public class JettyHandle404Test extends BaseJettyTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testCustomerErrorHandler() throws Exception {
+    public void testCustomerErrorHandler() {
         String response
                 = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
         // look for the error message which is sent by MyErrorHandler
@@ -61,10 +61,10 @@ public class JettyHandle404Test extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // setup the jetty component with the customx error handler
                 JettyHttpComponent jettyComponent = (JettyHttpComponent) context.getComponent("jetty");
                 jettyComponent.setErrorHandler(new MyErrorHandler());
@@ -101,7 +101,7 @@ public class JettyHandle404Test extends BaseJettyTest {
 
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("Page not found");
                         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                     }

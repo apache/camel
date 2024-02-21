@@ -26,8 +26,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class AnnotatedWithPackageScanFilter implements PackageScanFilter {
 
-    private Class<? extends Annotation> annotation;
-    private boolean checkMetaAnnotations;
+    private final Class<? extends Annotation> annotation;
+    private final boolean checkMetaAnnotations;
 
     public AnnotatedWithPackageScanFilter(Class<? extends Annotation> annotation) {
         this(annotation, false);

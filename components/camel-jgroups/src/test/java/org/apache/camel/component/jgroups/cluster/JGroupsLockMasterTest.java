@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsLockMasterTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(JGroupsLockMasterTest.class);
-    private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+    private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size());
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
@@ -77,7 +76,7 @@ public class JGroupsLockMasterTest {
             context.addService(service);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("master:jgl:timer:master?delay=1000&period=1000")
                             .routeId("route-" + id)
                             .log("From ${routeId}")
@@ -99,7 +98,7 @@ public class JGroupsLockMasterTest {
 
             LATCH.countDown();
         } catch (Exception e) {
-            LOGGER.warn("", e);
+            LOGGER.warn("{}", e.getMessage(), e);
         }
     }
 }

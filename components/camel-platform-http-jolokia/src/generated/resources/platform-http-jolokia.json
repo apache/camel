@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "platform-http-jolokia",
+    "title": "Platform Http Jolokia",
+    "description": "Jolokia plugin for standalone Camel HTTP Platform",
+    "deprecated": false,
+    "firstVersion": "4.5.0",
+    "label": "http,monitoring",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-platform-http-jolokia",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

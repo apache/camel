@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.junit.jupiter.api.BeforeEach;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * To test that using polling consumer with file will not keep scheduled file consumer keep running in the background.
@@ -32,18 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class FilePollingConsumerTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/enrich");
-        super.setUp();
-    }
-
     @Test
     public void testPollingConsumer() throws Exception {
-        template.sendBodyAndHeader("file:target/data/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        PollingConsumer consumer = context.getEndpoint("file:target/data/enrich").createPollingConsumer();
+        PollingConsumer consumer = context.getEndpoint(fileUri()).createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);
         assertNotNull(exchange);
@@ -51,17 +48,13 @@ public class FilePollingConsumerTest extends ContextTestSupport {
 
         // sleep a bit to ensure polling consumer would be suspended after we
         // have used it
-        Thread.sleep(500);
-
-        // drop a new file which should not be picked up by the consumer
-        template.sendBodyAndHeader("file:target/data/enrich", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        Awaitility.await().pollDelay(500, TimeUnit.MILLISECONDS).untilAsserted(() -> Assertions
+                .assertDoesNotThrow(() -> template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt")));
 
         // sleep a bit to ensure polling consumer would not have picked up that
         // file
-        Thread.sleep(1000);
-
-        File file = new File("target/data/enrich/bye.txt");
-        assertTrue(file.exists(), "File should exist " + file);
+        Awaitility.await().pollDelay(1000, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertTrue(Files.exists(testFile("bye.txt")), "File should exist bye.txt"));
 
         consumer.stop();
     }

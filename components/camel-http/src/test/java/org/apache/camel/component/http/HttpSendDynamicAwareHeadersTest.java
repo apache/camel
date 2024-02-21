@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/dynamicAware", new BasicValidationHandler(GET.name(), "par1=val1&par2=val2", null, null))
+                .setSslContext(getSSLContext())
+                .register("/dynamicAware", new BasicValidationHandler(GET.name(), "par1=val1&par2=val2", null, null))
                 .create();
         localServer.start();
 
@@ -57,10 +57,10 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dynamicAwareWithoutPathHeader")
                         .setHeader(Exchange.HTTP_QUERY, constant("par1=val1&par2=val2"))
                         .toD("http://localhost:" + localServer.getLocalPort() + "/dynamicAware");
@@ -69,7 +69,7 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareHeadersQuery() throws Exception {
+    public void testDynamicAwareHeadersQuery() {
         Exchange e = fluentTemplate.to("direct:dynamicAwareWithoutPathHeader").send();
         assertEquals("/dynamicAware", e.getIn().getHeader(Exchange.HTTP_PATH));
         assertEquals("par1=val1&par2=val2", e.getIn().getHeader(Exchange.HTTP_QUERY));

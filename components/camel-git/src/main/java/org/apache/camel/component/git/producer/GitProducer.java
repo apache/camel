@@ -18,15 +18,16 @@ package org.apache.camel.component.git.producer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.RepositoryFactory;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
@@ -36,17 +37,20 @@ import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.ConfigInvalidException;
+import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.SystemReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,15 +98,15 @@ public class GitProducer extends DefaultProducer {
         switch (operation) {
 
             case GitOperation.CLONE_OPERATION:
-                doClone(exchange, operation);
+                doClone(operation);
                 break;
 
             case GitOperation.CHECKOUT_OPERATION:
-                doCheckout(exchange, operation);
+                doCheckout(operation);
                 break;
 
             case GitOperation.INIT_OPERATION:
-                doInit(exchange, operation);
+                doInit(operation);
                 break;
 
             case GitOperation.ADD_OPERATION:
@@ -126,11 +130,11 @@ public class GitProducer extends DefaultProducer {
                 break;
 
             case GitOperation.CREATE_BRANCH_OPERATION:
-                doCreateBranch(exchange, operation);
+                doCreateBranch(operation);
                 break;
 
             case GitOperation.DELETE_BRANCH_OPERATION:
-                doDeleteBranch(exchange, operation);
+                doDeleteBranch(operation);
                 break;
 
             case GitOperation.STATUS_OPERATION:
@@ -158,11 +162,11 @@ public class GitProducer extends DefaultProducer {
                 break;
 
             case GitOperation.CREATE_TAG_OPERATION:
-                doCreateTag(exchange, operation);
+                doCreateTag(operation);
                 break;
 
             case GitOperation.DELETE_TAG_OPERATION:
-                doDeleteTag(exchange, operation);
+                doDeleteTag(operation);
                 break;
 
             case GitOperation.SHOW_BRANCHES_OPERATION:
@@ -194,7 +198,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doClone(Exchange exchange, String operation) throws Exception {
+    protected void doClone(String operation) throws GitAPIException {
         Git result = null;
         if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
@@ -227,7 +231,7 @@ public class GitProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         } finally {
@@ -237,7 +241,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doCheckout(Exchange exchange, String operation) throws Exception {
+    protected void doCheckout(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
@@ -248,20 +252,20 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName())
                         .call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doInit(Exchange exchange, String operation) throws Exception {
+    protected void doInit(String operation) throws GitAPIException {
         Git result = null;
         if (ObjectHelper.isEmpty(endpoint.getLocalPath())) {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
             result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         } finally {
@@ -271,7 +275,7 @@ public class GitProducer extends DefaultProducer {
         }
     }
 
-    protected void doAdd(Exchange exchange, String operation) throws Exception {
+    protected void doAdd(Exchange exchange, String operation) throws GitAPIException {
         String fileName = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME))) {
             fileName = exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME, String.class);
@@ -283,13 +287,13 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             git.add().addFilepattern(fileName).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doRemove(Exchange exchange, String operation) throws Exception {
+    protected void doRemove(Exchange exchange, String operation) throws GitAPIException {
         String fileName = null;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME))) {
             fileName = exchange.getIn().getHeader(GitConstants.GIT_FILE_NAME, String.class);
@@ -301,13 +305,13 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             git.rm().addFilepattern(fileName).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doCommit(Exchange exchange, String operation) throws Exception {
+    protected void doCommit(Exchange exchange, String operation) throws GitAPIException {
         String commitMessage = null;
         String username = null;
         String email = null;
@@ -335,13 +339,13 @@ public class GitProducer extends DefaultProducer {
             } else {
                 git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doCommitAll(Exchange exchange, String operation) throws Exception {
+    protected void doCommitAll(Exchange exchange, String operation) throws GitAPIException {
         String commitMessage = null;
         String username = null;
         String email = null;
@@ -370,65 +374,65 @@ public class GitProducer extends DefaultProducer {
             } else {
                 git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doCreateBranch(Exchange exchange, String operation) throws Exception {
+    protected void doCreateBranch(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
         try {
             git.branchCreate().setName(endpoint.getBranchName()).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doDeleteBranch(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteBranch(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
         try {
             git.branchDelete().setBranchNames(endpoint.getBranchName()).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doStatus(Exchange exchange, String operation) throws Exception {
+    protected void doStatus(Exchange exchange, String operation) throws GitAPIException {
         Status status = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             status = git.status().call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, status);
     }
 
-    protected void doLog(Exchange exchange, String operation) throws Exception {
+    protected void doLog(Exchange exchange, String operation) throws GitAPIException {
         Iterable<RevCommit> revCommit = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             revCommit = git.log().call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, revCommit);
     }
 
-    protected void doPush(Exchange exchange, String operation) throws Exception {
+    protected void doPush(Exchange exchange, String operation) throws GitAPIException {
         Iterable<PushResult> result = null;
         try {
             if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
@@ -444,14 +448,14 @@ public class GitProducer extends DefaultProducer {
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doPushTag(Exchange exchange, String operation) throws Exception {
+    protected void doPushTag(Exchange exchange, String operation) throws GitAPIException {
         Iterable<PushResult> result = null;
         try {
             if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
@@ -468,14 +472,14 @@ public class GitProducer extends DefaultProducer {
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doPull(Exchange exchange, String operation) throws Exception {
+    protected void doPull(Exchange exchange, String operation) throws GitAPIException {
         PullResult result = null;
         try {
             if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
@@ -491,14 +495,14 @@ public class GitProducer extends DefaultProducer {
             } else {
                 result = git.pull().setRemote(endpoint.getRemoteName()).call();
             }
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doMerge(Exchange exchange, String operation) throws Exception {
+    protected void doMerge(Exchange exchange, String operation) throws ConfigInvalidException, GitAPIException, IOException {
         MergeResult result = null;
         ObjectId mergeBase;
         try {
@@ -506,62 +510,73 @@ public class GitProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Branch name must be specified to execute " + operation);
             }
             mergeBase = git.getRepository().resolve(endpoint.getBranchName());
-            git.checkout().setName("master").call();
+            git.checkout().setName(defineTargetBranchName()).call();
             result = git.merge().include(mergeBase).setFastForward(FastForwardMode.FF).setCommit(true).call();
-        } catch (Exception e) {
+        } catch (ConfigInvalidException | GitAPIException | IOException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doCreateTag(Exchange exchange, String operation) throws Exception {
+    private String defineTargetBranchName() throws ConfigInvalidException, IOException {
+        if (ObjectHelper.isNotEmpty(endpoint.getTargetBranchName())) {
+            return endpoint.getTargetBranchName();
+        }
+
+        String defaultBranch = SystemReader.getInstance().getUserConfig().getString(ConfigConstants.CONFIG_INIT_SECTION, null,
+                ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH);
+
+        return ObjectHelper.isNotEmpty(defaultBranch) ? defaultBranch : "master";
+    }
+
+    protected void doCreateTag(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getTagName())) {
             throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
         }
         try {
             git.tag().setName(endpoint.getTagName()).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doDeleteTag(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteTag(String operation) throws GitAPIException {
         if (ObjectHelper.isEmpty(endpoint.getTagName())) {
             throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
         }
         try {
             git.tagDelete().setTags(endpoint.getTagName()).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
     }
 
-    protected void doShowBranches(Exchange exchange, String operation) throws Exception {
+    protected void doShowBranches(Exchange exchange, String operation) throws GitAPIException {
         List<Ref> result = null;
         try {
             result = git.branchList().setListMode(ListMode.ALL).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doShowTags(Exchange exchange, String operation) throws Exception {
+    protected void doShowTags(Exchange exchange, String operation) throws GitAPIException {
         List<Ref> result = null;
         try {
             result = git.tagList().call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doCherryPick(Exchange exchange, String operation) throws Exception {
+    protected void doCherryPick(Exchange exchange, String operation) throws GitAPIException, IOException {
         CherryPickResult result = null;
         String commitId = null;
         try {
@@ -578,39 +593,39 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             result = git.cherryPick().include(commit).call();
-        } catch (Exception e) {
+        } catch (GitAPIException | IOException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doClean(Exchange exchange, String operation) throws Exception {
+    protected void doClean(Exchange exchange, String operation) throws GitAPIException {
         Set<String> result = null;
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             result = git.clean().setCleanDirectories(true).call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doGc(Exchange exchange, String operation) throws Exception {
+    protected void doGc(Exchange exchange, String operation) throws GitAPIException {
         Properties result = null;
         try {
             result = git.gc().call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doRemoteAdd(Exchange exchange, String operation) throws Exception {
+    protected void doRemoteAdd(Exchange exchange, String operation) throws GitAPIException, URISyntaxException {
         if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
             throw new IllegalArgumentException("Remote Name must be specified to execute " + operation);
         }
@@ -623,43 +638,30 @@ public class GitProducer extends DefaultProducer {
             remoteAddCommand.setUri(new URIish(endpoint.getRemotePath()));
             remoteAddCommand.setName(endpoint.getRemoteName());
             result = remoteAddCommand.call();
-        } catch (Exception e) {
+        } catch (GitAPIException | URISyntaxException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    protected void doRemoteList(Exchange exchange, String operation) throws Exception {
+    protected void doRemoteList(Exchange exchange, String operation) throws GitAPIException {
         List<RemoteConfig> result = null;
+
         try {
             result = git.remoteList().call();
-        } catch (Exception e) {
+        } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
         }
         updateExchange(exchange, result);
     }
 
-    private Repository getLocalRepository() throws IOException {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = null;
-        try {
-            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
-                    // environment
-                    // GIT_*
-                    // variables
-                    .findGitDir() // scan up the file system tree
-                    .build();
-        } catch (IOException e) {
-            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
-            throw e;
-        }
-        return repo;
+    private Repository getLocalRepository() {
+        return RepositoryFactory.of(endpoint);
     }
 
     private void updateExchange(Exchange exchange, Object body) {
-        exchange.getOut().setBody(body);
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getMessage().setBody(body);
     }
 }

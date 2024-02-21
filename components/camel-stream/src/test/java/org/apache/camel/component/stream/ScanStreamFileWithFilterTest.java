@@ -69,7 +69,7 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
         Thread.sleep(150);
         fos.write("World\n".getBytes());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         fos.close();
     }

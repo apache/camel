@@ -35,7 +35,7 @@
         
         <!-- we define the soap jaxb data formats -->
         <dataFormats>
-            <soapjaxb id="soap" contextPath="com.example.customerservice" elementNameStrategyRef="myNameStrategy"
+            <soap id="soap" contextPath="com.example.customerservice" elementNameStrategyRef="myNameStrategy"
              schema="classpath:org/apache/camel/dataformat/soap/CustomerService.xsd,classpath:soap.xsd"/>
         </dataFormats>
 

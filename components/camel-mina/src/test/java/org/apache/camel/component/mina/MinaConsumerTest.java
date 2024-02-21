@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -40,12 +38,12 @@ public class MinaConsumerTest extends BaseMinaTest {
 
         template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // END SNIPPET: e2
     }
 
     @Test
-    public void testSendTextlineSyncText() throws Exception {
+    public void testSendTextlineSyncText() {
         // START SNIPPET: e4
         String response = (String) template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
@@ -53,24 +51,21 @@ public class MinaConsumerTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 port1 = getPort();
                 port2 = getNextPort();
 
                 // START SNIPPET: e1
-                from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
+                fromF("mina:tcp://localhost:%d?textline=true&sync=false", port1).to("mock:result");
                 // END SNIPPET: e1
 
                 // START SNIPPET: e3
-                from("mina:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getMessage().setBody("Bye " + body);
-                    }
+                fromF("mina:tcp://localhost:%d?textline=true&sync=true", port2).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 });
                 // END SNIPPET: e3
             }

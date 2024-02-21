@@ -41,7 +41,7 @@ public class ToDynamicNoCacheTest extends ContextTestSupport {
         sendBody("bar", "mock:z");
 
         // make sure its using an empty producer cache as the cache is disabled
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         SendDynamicProcessor sdp = (SendDynamicProcessor) list.get(0);
         assertNotNull(sdp);
         assertEquals(-1, sdp.getCacheSize());

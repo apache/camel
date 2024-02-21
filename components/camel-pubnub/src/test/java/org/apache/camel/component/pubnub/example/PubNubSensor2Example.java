@@ -52,7 +52,7 @@ public final class PubNubSensor2Example {
                                                + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:device2").routeId("device-event-route")
                     .bean(PubNubSensor2Example.EventGeneratorBean.class, "getRandomEvent('device2')")
                     .to(deviceEP);
@@ -69,7 +69,7 @@ public final class PubNubSensor2Example {
         private static Map<String, String> devices = new ConcurrentHashMap<>();
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(masterEP)
                     .routeId("master-route")
                     .bean(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "doSomethingInteresting(${body})")
@@ -107,30 +107,12 @@ public final class PubNubSensor2Example {
         }
     }
 
-    static class DeviceWeatherInfo {
-        private String device;
-        private int humidity;
-        private int temperature;
+    record DeviceWeatherInfo(String device, int humidity, int temperature) {
 
-        DeviceWeatherInfo(String device) {
-            SecureRandom rand = new SecureRandom();
-            this.device = device;
-            this.humidity = rand.nextInt(100);
-            this.temperature = rand.nextInt(40);
+        private static SecureRandom rand = new SecureRandom();
+        public DeviceWeatherInfo(String device) {
+            this(device, rand.nextInt(100), rand.nextInt(40));
         }
-
-        public String getDevice() {
-            return device;
-        }
-
-        public int getHumidity() {
-            return humidity;
-        }
-
-        public int getTemperature() {
-            return temperature;
-        }
-
     }
 
     public static class EventGeneratorBean {

@@ -19,11 +19,10 @@ package org.apache.camel.component.weather.geolocation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.weather.WeatherConfiguration;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -49,28 +48,31 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
         String url = String.format("http://api.ipstack.com/%s?access_key=%s&legacy=1&output=json",
                 configuration.getGeolocationRequestHostIP(), configuration.getGeolocationAccessKey());
         HttpGet getMethod = new HttpGet(url);
-        try {
-            HttpResponse response = httpClient.execute(getMethod);
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new IllegalStateException(
-                        "Got the unexpected http-status '" + response.getStatusLine().getStatusCode()
-                                                + "' for the geolocation");
-            }
-            String geoLocation = EntityUtils.toString(response.getEntity(), "UTF-8");
-            if (isEmpty(geoLocation)) {
-                throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
-            }
+        return httpClient.execute(
+                getMethod,
+                response -> {
+                    try {
+                        if (response.getCode() != HttpStatus.SC_OK) {
+                            throw new IllegalStateException(
+                                    "Got the unexpected http-status '" + response.getCode()
+                                                            + "' for the geolocation");
+                        }
+                        String geoLocation = EntityUtils.toString(response.getEntity(), "UTF-8");
+                        if (isEmpty(geoLocation)) {
+                            throw new IllegalStateException(
+                                    "Got the unexpected value '" + geoLocation + "' for the geolocation");
+                        }
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
-            JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
-            JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
+                        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
+                        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
 
-            return new GeoLocation(longitudeNode.asText(), latitudeNode.asText());
-        } finally {
-            getMethod.releaseConnection();
-        }
-
+                        return new GeoLocation(longitudeNode.asText(), latitudeNode.asText());
+                    } finally {
+                        getMethod.reset();
+                    }
+                });
     }
 
 }

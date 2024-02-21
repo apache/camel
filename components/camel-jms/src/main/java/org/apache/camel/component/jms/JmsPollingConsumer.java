@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.PollingConsumerSupport;
@@ -29,8 +29,8 @@ import org.springframework.jms.support.destination.JmsDestinationAccessor;
  * A JMS {@link org.apache.camel.PollingConsumer}.
  */
 public class JmsPollingConsumer extends PollingConsumerSupport {
-    private JmsOperations template;
-    private JmsEndpoint jmsEndpoint;
+    private final JmsOperations template;
+    private final JmsEndpoint jmsEndpoint;
 
     public JmsPollingConsumer(JmsEndpoint endpoint, JmsOperations template) {
         super(endpoint);

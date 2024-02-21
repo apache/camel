@@ -19,6 +19,7 @@ package org.apache.camel.component.zookeeper.cluster;
 import java.util.UUID;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
@@ -47,14 +48,14 @@ public final class ZooKeeperClusteredRoutePolicyFactoryMain {
                     context.addService(service);
                     context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
             }
         });
 
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:clustered?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .log("Route ${routeId} is running ...");

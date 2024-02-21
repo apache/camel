@@ -37,7 +37,7 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         String json = "[{\"name\":\"Camel\"}, {\"name\":\"World\"}]";
         template.sendBody("direct:backPojo", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);
@@ -58,7 +58,7 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         String json = "[{\"name\":\"Camel\"}]";
         template.sendBody("direct:backPojo", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);
@@ -69,11 +69,11 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonDataFormat format = new JacksonDataFormat(TestPojo.class);
                 format.useList();
 

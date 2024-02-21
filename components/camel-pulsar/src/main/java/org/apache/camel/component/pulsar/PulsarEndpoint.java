@@ -20,23 +20,25 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.pulsar.client.api.ClientBuilder;
 import org.apache.pulsar.client.api.PulsarClient;
 
 /**
  * Send and receive messages from/to Apache Pulsar messaging system.
  */
 @UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar",
-             syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING })
+             syntax = "pulsar:persistence://tenant/namespace/topic", category = { Category.MESSAGING },
+             headersClass = PulsarMessageHeaders.class)
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
-    private String uri;
 
     @UriPath(enums = "persistent,non-persistent")
     @Metadata(required = true)
@@ -145,13 +147,22 @@ public class PulsarEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(tenant, "tenant", this);
         ObjectHelper.notNull(namespace, "namespace", this);
         ObjectHelper.notNull(topic, "topic", this);
-
-        uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
     }
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(pulsarClient, "pulsarClient", this);
+        if (ObjectHelper.isEmpty(pulsarClient)) {
+            ClientBuilder builder = PulsarClient.builder();
+            if (ObjectHelper.isNotEmpty(pulsarConfiguration.getServiceUrl())) {
+                builder = builder.serviceUrl(pulsarConfiguration.getServiceUrl());
+            }
+            if (ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationClass())
+                    && ObjectHelper.isNotEmpty(pulsarConfiguration.getAuthenticationParams())) {
+                builder = builder.authentication(pulsarConfiguration.getAuthenticationClass(),
+                        pulsarConfiguration.getAuthenticationParams());
+            }
+            pulsarClient = builder.build();
+        }
     }
 
     @Override

@@ -16,54 +16,73 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsInOnlyWithReplyToTest extends AbstractJMSTest {
 
-public class JmsInOnlyWithReplyToTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:JmsInOnlyWithReplyToTest.foo").expectedBodiesReceived("World");
+        getMockEndpoint("mock:JmsInOnlyWithReplyToTest.bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
+                        .to("activemq:queue:JmsInOnlyWithReplyToTest.foo?replyTo=queue:JmsInOnlyWithReplyToTest.bar&preserveMessageQos=true")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
-                        .to("log:foo?showAll=true", "mock:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToTest.foo")
+                        .to("log:JmsInOnlyWithReplyToTest.foo?showAll=true", "mock:JmsInOnlyWithReplyToTest.foo")
                         .transform(body().prepend("Bye "));
 
                 // we should disable reply to to avoid sending the message back to our self
                 // after we have consumed it
-                from("activemq:queue:bar?disableReplyTo=true")
-                        .to("log:bar?showAll=true", "mock:bar");
+                from("activemq:queue:JmsInOnlyWithReplyToTest.bar?disableReplyTo=true")
+                        .to("log:JmsInOnlyWithReplyToTest.bar?showAll=true", "mock:JmsInOnlyWithReplyToTest.bar");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

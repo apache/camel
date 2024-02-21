@@ -27,6 +27,7 @@
 
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <template id="template" defaultEndpoint="direct:start"/>
 
     <route>

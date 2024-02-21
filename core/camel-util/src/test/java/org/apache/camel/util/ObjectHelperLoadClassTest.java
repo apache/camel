@@ -24,16 +24,16 @@ public class ObjectHelperLoadClassTest {
     @Test
     public void testLoadClass() throws Exception {
         Class<?> clazz = ObjectHelper.loadClass("int");
-        Assertions.assertEquals(clazz.getName(), "int");
+        Assertions.assertEquals("int", clazz.getName());
 
         clazz = ObjectHelper.loadClass("java.lang.String");
-        Assertions.assertEquals(clazz.getName(), "java.lang.String");
+        Assertions.assertEquals("java.lang.String", clazz.getName());
 
         clazz = ObjectHelper.loadClass("java.lang.String[]");
         Assertions.assertTrue(clazz.isArray());
 
         clazz = ObjectHelper.loadClass("org.apache.camel.util.MyPojo");
-        Assertions.assertEquals(clazz.getName(), "org.apache.camel.util.MyPojo");
+        Assertions.assertEquals("org.apache.camel.util.MyPojo", clazz.getName());
         Assertions.assertFalse(clazz.isArray());
 
         clazz = ObjectHelper.loadClass("org.apache.camel.util.MyPojo[]");

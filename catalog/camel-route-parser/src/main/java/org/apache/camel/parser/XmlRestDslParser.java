@@ -42,12 +42,11 @@ public final class XmlRestDslParser {
      * file.
      *
      * @param  xml                    the xml file as input stream
-     * @param  baseDir                the base of the source code
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of rest configurations (often there is only one)
      */
     public static List<RestConfigurationDetails> parseRestConfiguration(
-            InputStream xml, String baseDir, String fullyQualifiedFileName) {
+            InputStream xml, String fullyQualifiedFileName) {
         // try parse it as dom
         Document dom = null;
         try {
@@ -57,10 +56,10 @@ public final class XmlRestDslParser {
         }
         if (dom != null) {
             CamelXmlRestDslParserHelper parser = new CamelXmlRestDslParserHelper();
-            return parser.parseRestConfiguration(dom, baseDir, fullyQualifiedFileName);
+            return parser.parseRestConfiguration(dom, fullyQualifiedFileName);
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -68,11 +67,10 @@ public final class XmlRestDslParser {
      * class.
      *
      * @param  xml                    the xml file as input stream
-     * @param  baseDir                the base of the source code
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of rest services
      */
-    public static List<RestServiceDetails> parseRestService(InputStream xml, String baseDir, String fullyQualifiedFileName) {
+    public static List<RestServiceDetails> parseRestService(InputStream xml, String fullyQualifiedFileName) {
 
         // try parse it as dom
         Document dom = null;
@@ -83,10 +81,10 @@ public final class XmlRestDslParser {
         }
         if (dom != null) {
             CamelXmlRestDslParserHelper parser = new CamelXmlRestDslParserHelper();
-            return parser.parseRestService(dom, baseDir, fullyQualifiedFileName);
+            return parser.parseRestService(dom, fullyQualifiedFileName);
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
 }

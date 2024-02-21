@@ -25,60 +25,60 @@ import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.impl.TypeImpl;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
-public class StatementFieldSource implements FieldSource {
+public class StatementFieldSource<O extends JavaSource<O>> implements FieldSource<O> {
 
     // this implementation should only implement the needed logic to support the parser
 
-    private final JavaClassSource origin;
+    private final O origin;
     private final Object internal;
-    private final Type type;
+    private final Type<O> type;
 
-    public StatementFieldSource(JavaClassSource origin, Object internal, Object typeInternal) {
+    public StatementFieldSource(O origin, Object internal, Object typeInternal) {
         this.origin = origin;
         this.internal = internal;
-        this.type = new TypeImpl(origin, typeInternal);
+        this.type = new TypeImpl<>(origin, typeInternal);
     }
 
     @Override
-    public FieldSource setType(Class clazz) {
+    public FieldSource<O> setType(Class clazz) {
         return null;
     }
 
     @Override
-    public FieldSource setType(String type) {
+    public FieldSource<O> setType(String type) {
         return null;
     }
 
     @Override
-    public FieldSource setLiteralInitializer(String value) {
+    public FieldSource<O> setLiteralInitializer(String value) {
         return null;
     }
 
     @Override
-    public FieldSource setStringInitializer(String value) {
+    public FieldSource<O> setStringInitializer(String value) {
         return null;
     }
 
     @Override
-    public FieldSource setTransient(boolean value) {
+    public FieldSource<O> setTransient(boolean value) {
         return null;
     }
 
     @Override
-    public FieldSource setVolatile(boolean value) {
+    public FieldSource<O> setVolatile(boolean value) {
         return null;
     }
 
     @Override
-    public FieldSource setType(JavaType entity) {
+    public FieldSource<O> setType(JavaType entity) {
         return null;
     }
 
     @Override
-    public List<AnnotationSource> getAnnotations() {
+    public List<AnnotationSource<O>> getAnnotations() {
         return null;
     }
 
@@ -88,22 +88,22 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public boolean hasAnnotation(Class type) {
+    public boolean hasAnnotation(Class<? extends java.lang.annotation.Annotation> type) {
         return false;
     }
 
     @Override
-    public AnnotationSource getAnnotation(String type) {
+    public AnnotationSource<O> getAnnotation(String type) {
         return null;
     }
 
     @Override
-    public AnnotationSource addAnnotation() {
+    public AnnotationSource<O> addAnnotation() {
         return null;
     }
 
     @Override
-    public AnnotationSource addAnnotation(String className) {
+    public AnnotationSource<O> addAnnotation(String className) {
         return null;
     }
 
@@ -112,22 +112,22 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public Object removeAnnotation(Annotation annotation) {
+    public FieldSource<O> removeAnnotation(Annotation annotation) {
         return null;
     }
 
     @Override
-    public AnnotationSource addAnnotation(Class type) {
+    public AnnotationSource<O> addAnnotation(Class type) {
         return null;
     }
 
     @Override
-    public AnnotationSource getAnnotation(Class type) {
+    public AnnotationSource<O> getAnnotation(Class type) {
         return null;
     }
 
     @Override
-    public Type getType() {
+    public Type<O> getType() {
         return type;
     }
 
@@ -152,7 +152,7 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public Object setFinal(boolean finl) {
+    public FieldSource<O> setFinal(boolean finl) {
         return null;
     }
 
@@ -167,7 +167,7 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public JavaDocSource getJavaDoc() {
+    public JavaDocSource<FieldSource<O>> getJavaDoc() {
         return null;
     }
 
@@ -177,12 +177,12 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public Object removeJavaDoc() {
+    public FieldSource<O> removeJavaDoc() {
         return null;
     }
 
     @Override
-    public Object setName(String name) {
+    public FieldSource<O> setName(String name) {
         return null;
     }
 
@@ -192,12 +192,12 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public Object getOrigin() {
+    public O getOrigin() {
         return origin;
     }
 
     @Override
-    public Object setStatic(boolean value) {
+    public FieldSource<O> setStatic(boolean value) {
         return null;
     }
 
@@ -207,27 +207,27 @@ public class StatementFieldSource implements FieldSource {
     }
 
     @Override
-    public Object setPackagePrivate() {
+    public FieldSource<O> setPackagePrivate() {
         return null;
     }
 
     @Override
-    public Object setPublic() {
+    public FieldSource<O> setPublic() {
         return null;
     }
 
     @Override
-    public Object setPrivate() {
+    public FieldSource<O> setPrivate() {
         return null;
     }
 
     @Override
-    public Object setProtected() {
+    public FieldSource<O> setProtected() {
         return null;
     }
 
     @Override
-    public Object setVisibility(Visibility scope) {
+    public FieldSource<O> setVisibility(Visibility scope) {
         return null;
     }
 

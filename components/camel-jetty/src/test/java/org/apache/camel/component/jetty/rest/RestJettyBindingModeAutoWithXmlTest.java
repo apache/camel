@@ -36,7 +36,7 @@ public class RestJettyBindingModeAutoWithXmlTest extends BaseJettyTest {
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -45,10 +45,10 @@ public class RestJettyBindingModeAutoWithXmlTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services

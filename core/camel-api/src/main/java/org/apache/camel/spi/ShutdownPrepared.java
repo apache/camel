@@ -43,7 +43,7 @@ public interface ShutdownPrepared {
      * <p/>
      * For forced shutdown, then the service is expected to aggressively shutdown any child services, such as thread
      * pools etc. This is the last chance it has to perform such duties.
-     * 
+     *
      * @param suspendOnly <tt>true</tt> if the intention is to only suspend the service, and not stop/shutdown the
      *                    service.
      * @param forced      <tt>true</tt> is forcing a more aggressive shutdown, <tt>false</tt> is for preparing to

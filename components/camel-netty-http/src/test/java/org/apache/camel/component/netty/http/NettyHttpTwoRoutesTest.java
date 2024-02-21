@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,14 +35,14 @@ public class NettyHttpTwoRoutesTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:foo")
                         .transform().constant("Bye World");

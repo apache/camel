@@ -108,7 +108,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMissingEncryptionKey() throws Exception {
+    public void testMissingEncryptionKey() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
@@ -122,7 +122,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         final ShiroSecurityPolicy securityPolicy2 = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini");
 
@@ -152,7 +152,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }

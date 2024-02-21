@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.stream.Stream;
+
 import org.apache.camel.StartupStep;
 import org.apache.camel.StaticService;
 
@@ -59,7 +61,7 @@ public interface StartupStepRecorder extends StaticService {
     String getRecordingDir();
 
     /**
-     * Directory to store the recording. By default the user home directory will be used.
+     * Directory to store the recording. By default the current directory will be used.
      */
     void setRecordingDir(String recordingDir);
 
@@ -107,5 +109,12 @@ public interface StartupStepRecorder extends StaticService {
      * Ends the step
      */
     void endStep(StartupStep step);
+
+    /**
+     * Some records will capture all steps which can be accessed on demand.
+     */
+    default Stream<StartupStep> steps() {
+        return Stream.empty();
+    }
 
 }

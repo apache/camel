@@ -26,20 +26,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.component.mock.MockComponent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered with the mbean server.
  */
+@DisabledOnOs(OS.AIX)
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -52,11 +50,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     @Test
     public void testCustomEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         resolveMandatoryEndpoint("custom://end", CustomEndpoint.class);
@@ -78,11 +71,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     @Test
     public void testManagedEndpoint() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         resolveMandatoryEndpoint("direct:start", DirectEndpoint.class);
@@ -95,11 +83,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     @Override
     @Test
     public void testCounters() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         CustomEndpoint resultEndpoint = resolveMandatoryEndpoint("custom:end", CustomEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
@@ -112,11 +95,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     @Override
     @Test
     public void testMBeansRegistered() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         assertDefaultDomain();
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
@@ -143,7 +121,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         };
     }
 
-    private static class CustomComponent extends DefaultComponent {
+    private static class CustomComponent extends MockComponent {
         @Override
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
                 throws Exception {

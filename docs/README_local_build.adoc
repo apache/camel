@@ -1,0 +1,22 @@
+= Local/partial build of docs
+
+See https://camel.apache.org/manual/improving-the-documentation.html for initial setup instructions and more details.
+
+After initial setup, there are three local build options:
+
+== Quick: `./local-build.sh quick`
+
+This will build this project only.
+Links out of this component will go to the published Camel website, and there will be no links back.
+This is primarily intended to check for errors.
+
+== Full: `./local-build.sh full`
+
+This will build the full site locally, with your changes in this project.
+Running this (at least) once is a prerequisite for the partial build.
+This should show the site exactly as it would be should your changes be merged.
+
+== Partial: `./local-build.sh`
+
+This will build this project only, replacing this component in the locally built "full" build, and start a local server to view with, rebuild the project when file changes are detected, and sync your browser with the rebuilt site.
+This is intended for documentation development.

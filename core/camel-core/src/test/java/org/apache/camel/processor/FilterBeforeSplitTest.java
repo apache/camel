@@ -73,7 +73,7 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
         };
     }
 
-    protected class MyAggregationStrategy implements AggregationStrategy {
+    protected static class MyAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

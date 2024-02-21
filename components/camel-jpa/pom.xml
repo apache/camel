@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jpa</artifactId>
@@ -32,14 +32,10 @@
     <description>Camel JPA support</description>
 
     <properties>
-        <camel.osgi.import.pkg>
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            javax.persistence.*;version="[1.1,3)",
-            ${camel.osgi.import.defaults},
-            org.hibernate.proxy;resolution:=optional,
-            javassist.util.proxy;resolution:=optional,
-            *
-        </camel.osgi.import.pkg>
+        <!-- Needs to be investigated: crashes on CI on s390x -->
+        <skipTests.s390x>true</skipTests.s390x>
+        <camel.surefire.fork.additional-vmargs>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar -Xmx3G</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.forkTimeout>240</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -59,11 +55,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.1_spec</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta-persistence-api-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -80,18 +77,27 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <version>${spring-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${commons-dbcp2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
+            <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${derby-version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -100,6 +106,19 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>${jakarta-transaction-api-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -108,7 +127,9 @@
         <profile>
             <id>openjpa</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!hibernate</name>
+                </property>
             </activation>
             <build>
                 <pluginManagement>
@@ -167,6 +188,17 @@
                                 <groupId>org.apache.openjpa</groupId>
                                 <artifactId>openjpa</artifactId>
                                 <version>${openjpa-version}</version>
+                                <classifier>jakarta</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>jakarta.transaction</groupId>
+                                <artifactId>jakarta.transaction-api</artifactId>
+                                <version>${jakarta-transaction-api-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>jakarta.persistence</groupId>
+                                <artifactId>jakarta.persistence-api</artifactId>
+                                <version>${jakarta-persistence-api-version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -175,19 +207,19 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa-persistence-jdbc</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.apache.geronimo.specs</groupId>
-                            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                        </exclusion>
-                    </exclusions>
+                    <artifactId>openjpa</artifactId>
+                    <version>${openjpa-version}</version>
+                    <classifier>jakarta</classifier>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
             <id>hibernate</id>
+            <activation>
+                <property>
+                    <name>hibernate</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -217,15 +249,18 @@
             <dependencies>
                 <dependency>
                     <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
+                    <artifactId>hibernate-core-jakarta</artifactId>
+                    <version>${hibernate-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>java9+</id>
+            <id>full</id>
             <activation>
-                <jdk>[9,)</jdk>
+                <property>
+                    <name>!quickly</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -245,6 +280,7 @@
                                             <groupId>org.apache.openjpa</groupId>
                                             <artifactId>openjpa</artifactId>
                                             <version>${openjpa-version}</version>
+                                            <classifier>jakarta</classifier>
                                             <outputDirectory>${project.build.directory}</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
@@ -254,29 +290,8 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}.jar
-                                ${camel.surefire.fork.vmargs}
-                            </argLine>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa-persistence-jdbc</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.apache.geronimo.specs</groupId>
-                            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 </project>

@@ -18,9 +18,9 @@ package org.apache.camel.component.activemq.converter;
 
 import java.io.Serializable;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.apache.activemq.command.ActiveMQMessage;
 import org.apache.activemq.command.ActiveMQObjectMessage;
@@ -49,7 +49,7 @@ public class ActiveMQMessageConverter {
     /**
      * Allows a JMS {@link MessageListener} to be converted to a Camel {@link Processor} so that we can provide better
      * <a href="">Bean Integration</a> so that we can use any JMS MessageListener in in Camel as a bean
-     * 
+     *
      * @param  listener the JMS message listener
      * @return          a newly created Camel Processor which when invoked will invoke
      *                  {@link MessageListener#onMessage(Message)}

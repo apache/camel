@@ -58,7 +58,7 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
             futures.add(out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < futures.size(); i++) {
             Object out = futures.get(i).get();
@@ -73,14 +73,14 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to("sjms:a?replyToConcurrentConsumers=5&replyTo=myResponse")
+                        .to("sjms:a.InOutConcurrentConsumerTest?replyToConcurrentConsumers=5&replyTo=myResponse")
                         .to("mock:result");
 
-                from("sjms:a?concurrentConsumers=5")
+                from("sjms:a.InOutConcurrentConsumerTest?concurrentConsumers=5")
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             // sleep a little to simulate heavy work and force concurrency processing

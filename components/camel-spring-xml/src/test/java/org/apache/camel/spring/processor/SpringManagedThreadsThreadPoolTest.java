@@ -26,6 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
@@ -39,7 +40,8 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myPool\"");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(2, corePoolSize.intValue());
@@ -56,10 +58,10 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
         // no source or route as its a shared thread pool
         String source = (String) mbeanServer.getAttribute(on, "SourceId");
-        assertEquals(null, source);
+        assertNull(source);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals(null, routeId);
+        assertNull(routeId);
     }
 
 }

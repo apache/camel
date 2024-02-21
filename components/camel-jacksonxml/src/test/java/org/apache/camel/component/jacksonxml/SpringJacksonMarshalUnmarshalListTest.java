@@ -38,7 +38,7 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
         String json = "<list><pojo name=\"Camel\"/><pojo name=\"World\"/></list>";
         template.sendBody("direct:backPojo", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);
@@ -59,7 +59,7 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
         String json = "<list><pojo name=\"Camel\"/></list>";
         template.sendBody("direct:backPojo", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);

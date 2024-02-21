@@ -3,14 +3,15 @@
     "kind": "model",
     "name": "roundRobin",
     "title": "Round Robin",
-    "description": "Round robin load balancer The round robin load balancer will use the next endpoint for each message. This load balancer is not meant to work with failover, for that you should use the dedicated failover load balancer.",
+    "description": "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

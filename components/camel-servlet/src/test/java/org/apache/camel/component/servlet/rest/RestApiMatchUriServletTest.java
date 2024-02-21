@@ -17,6 +17,7 @@
 package org.apache.camel.component.servlet.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

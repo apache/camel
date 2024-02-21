@@ -29,6 +29,7 @@
     <bean id="proc" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalMessageTest$MyProcessor"/>
  
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <onException useOriginalMessage="true">
             <exception>java.lang.IllegalArgumentException</exception>
@@ -38,7 +39,7 @@
 
         <route>
             <from uri="direct:a"/>
-            <inOut uri="log:test"/>
+            <to uri="log:test" pattern="InOut"/>
             <process ref="proc" />
         </route>
 

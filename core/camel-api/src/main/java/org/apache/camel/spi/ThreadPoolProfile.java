@@ -236,7 +236,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     /**
      * Overwrites each attribute that is null with the attribute from defaultProfile
-     * 
+     *
      * @param defaultProfile profile with default values
      */
     public void addDefaults(ThreadPoolProfile defaultProfile) {

@@ -24,19 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-docker</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Docker</name>
     <description>Camel Docker Support</description>
-
-
-    <properties>
-        <jffi.version>1.2.7</jffi.version>
-        <jnr-x86asm.version>1.0.2</jnr-x86asm.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -51,34 +45,6 @@
             <version>${docker-java-version}</version>
         </dependency>
 
-        <!-- need to avoid the snapshot dependency -->
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jffi</artifactId>
-            <version>${jffi.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jffi</artifactId>
-            <version>${jffi.version}</version>
-            <scope>runtime</scope>
-            <classifier>native</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jnr-x86asm</artifactId>
-            <version>${jnr-x86asm.version}</version>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -88,6 +54,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

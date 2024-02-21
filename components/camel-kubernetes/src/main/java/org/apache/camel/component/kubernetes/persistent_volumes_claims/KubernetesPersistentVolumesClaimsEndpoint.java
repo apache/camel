@@ -22,15 +22,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PERSISTENT_VOLUMES_CLAIMS;
 
 /**
  * Perform operations on Kubernetes Persistent Volumes Claims and get notified on Persistent Volumes Claim changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PERSISTENT_VOLUMES_CLAIMS,
              title = "Kubernetes Persistent Volume Claim",
              syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesClaimsEndpoint(

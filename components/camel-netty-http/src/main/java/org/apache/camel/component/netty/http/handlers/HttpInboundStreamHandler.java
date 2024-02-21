@@ -67,7 +67,7 @@ public class HttpInboundStreamHandler extends MessageToMessageDecoder<HttpObject
             HttpHeaders headers = ((HttpMessage) msg).headers();
             return isChunked = headers.contains(TRANSFER_ENCODING, CHUNKED, true);
         } else {
-            return (msg instanceof HttpContent) && isChunked;
+            return msg instanceof HttpContent && isChunked;
         }
     }
 

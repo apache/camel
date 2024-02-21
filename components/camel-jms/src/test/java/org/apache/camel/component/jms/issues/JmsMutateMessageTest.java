@@ -16,24 +16,33 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JmsMutateMessageTest extends CamelTestSupport {
+public class JmsMutateMessageTest extends AbstractJMSTest {
 
-    private String uri = "activemq:queue:hello";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+    private final String uri = "activemq:queue:JmsMutateMessageTest";
 
     @Test
     public void testMutateMessage() throws Exception {
@@ -44,27 +53,24 @@ public class JmsMutateMessageTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(uri, "Hello World", "HEADER_1", "VALUE_1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri)
                         .process(exchange -> {
                             // do not mutate it
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            assertNotNull(msg.getJmsMessage(), "jakarta.jms.Message should not be null");
 
                             // get header should not mutate it
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
@@ -74,7 +80,7 @@ public class JmsMutateMessageTest extends CamelTestSupport {
                         .process(exchange -> {
                             // it should have been mutated
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            assertNotNull(msg.getJmsMessage(), "jakarta.jms.Message should not be null");
 
                             // get header should not mutate it
                             assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
@@ -84,4 +90,15 @@ public class JmsMutateMessageTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

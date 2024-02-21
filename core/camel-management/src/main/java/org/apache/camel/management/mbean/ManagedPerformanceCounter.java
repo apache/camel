@@ -48,6 +48,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private String firstExchangeCompletedExchangeId;
     private Statistic firstExchangeFailureTimestamp;
     private String firstExchangeFailureExchangeId;
+    private Statistic lastExchangeCreatedTimestamp;
     private Statistic lastExchangeCompletedTimestamp;
     private String lastExchangeCompletedExchangeId;
     private Statistic lastExchangeFailureTimestamp;
@@ -74,6 +75,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
         this.firstExchangeCompletedTimestamp = new StatisticValue();
         this.firstExchangeFailureTimestamp = new StatisticValue();
+        this.lastExchangeCreatedTimestamp = new StatisticValue();
         this.lastExchangeCompletedTimestamp = new StatisticValue();
         this.lastExchangeFailureTimestamp = new StatisticValue();
     }
@@ -83,7 +85,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
-        exchangesInflight.reset();
+        // do not reset exchangesInflight
         failuresHandled.reset();
         redeliveries.reset();
         externalRedeliveries.reset();
@@ -97,6 +99,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         firstExchangeCompletedExchangeId = null;
         firstExchangeFailureTimestamp.reset();
         firstExchangeFailureExchangeId = null;
+        lastExchangeCreatedTimestamp.reset();
         lastExchangeCompletedTimestamp.reset();
         lastExchangeCompletedExchangeId = null;
         lastExchangeFailureTimestamp.reset();
@@ -104,12 +107,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public long getExchangesCompleted() throws Exception {
+    public long getExchangesCompleted() {
         return exchangesCompleted.getValue();
     }
 
     @Override
-    public long getExchangesFailed() throws Exception {
+    public long getExchangesFailed() {
         return exchangesFailed.getValue();
     }
 
@@ -119,48 +122,70 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public long getFailuresHandled() throws Exception {
+    public long getFailuresHandled() {
         return failuresHandled.getValue();
     }
 
     @Override
-    public long getRedeliveries() throws Exception {
+    public long getRedeliveries() {
         return redeliveries.getValue();
     }
 
     @Override
-    public long getExternalRedeliveries() throws Exception {
+    public long getExternalRedeliveries() {
         return externalRedeliveries.getValue();
     }
 
     @Override
-    public long getMinProcessingTime() throws Exception {
+    public long getMinProcessingTime() {
         return minProcessingTime.getValue();
     }
 
     @Override
-    public long getMeanProcessingTime() throws Exception {
+    public long getMeanProcessingTime() {
         return meanProcessingTime.getValue();
     }
 
     @Override
-    public long getMaxProcessingTime() throws Exception {
+    public long getMaxProcessingTime() {
         return maxProcessingTime.getValue();
     }
 
     @Override
-    public long getTotalProcessingTime() throws Exception {
+    public long getTotalProcessingTime() {
         return totalProcessingTime.getValue();
     }
 
     @Override
-    public long getLastProcessingTime() throws Exception {
+    public long getLastProcessingTime() {
         return lastProcessingTime.getValue();
     }
 
     @Override
-    public long getDeltaProcessingTime() throws Exception {
+    public long getDeltaProcessingTime() {
         return deltaProcessingTime.getValue();
+    }
+
+    @Override
+    public long getIdleSince() {
+        // must not have any inflight
+        if (getExchangesInflight() <= 0) {
+            // what is the last time since completed/failed
+            long max = Math.max(lastExchangeCompletedTimestamp.getValue(), lastExchangeFailureTimestamp.getValue());
+            if (max > 0) {
+                long delta = System.currentTimeMillis() - max;
+                if (delta > 0) {
+                    return delta;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public Date getLastExchangeCreatedTimestamp() {
+        long value = lastExchangeCreatedTimestamp.getValue();
+        return value > 0 ? new Date(value) : null;
     }
 
     @Override
@@ -218,8 +243,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public void processExchange(Exchange exchange) {
+    public void processExchange(Exchange exchange, String type) {
         exchangesInflight.increment();
+        if ("route".equals(type)) {
+            long now = System.currentTimeMillis();
+            lastExchangeCreatedTimestamp.updateValue(now);
+        }
     }
 
     @Override
@@ -301,6 +330,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
         sb.append(String.format(" deltaProcessingTime=\"%s\"", deltaProcessingTime.getValue()));
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+        sb.append(String.format(" idleSince=\"%s\"", getIdleSince()));
 
         if (fullStats) {
             sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));
@@ -311,6 +341,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"",
                     dateAsString(firstExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" firstExchangeFailureExchangeId=\"%s\"", nullSafe(firstExchangeFailureExchangeId)));
+            sb.append(String.format(" lastExchangeCreatedTimestamp=\"%s\"",
+                    dateAsString(lastExchangeCreatedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
                     dateAsString(lastExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));

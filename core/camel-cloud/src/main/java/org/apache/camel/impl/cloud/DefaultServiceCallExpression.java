@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Support class for custom implementations of ServiceCall EIP components.
  * <p/>
  * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
- * 
+ *
  * <pre>
  serviceCall("myService") -> http://hostname:port
  serviceCall("myService/foo") -> http://hostname:port/foo
@@ -55,7 +55,7 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
                 answer = answer.replaceFirst(name + "\\.host", host);
             }
             if (answer.contains(name + ".port") && port != null) {
-                answer = answer.replaceFirst(name + "\\.port", "" + port);
+                answer = answer.replaceFirst(name + "\\.port", Integer.toString(port));
             }
             if (answer.contains(name) && port != null) {
                 answer = answer.replaceFirst(name, host + ":" + port);

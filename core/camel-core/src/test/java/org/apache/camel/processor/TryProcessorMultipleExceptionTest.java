@@ -65,7 +65,6 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @SuppressWarnings("unchecked")
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").doTry().process(new ProcessorFail()).to("mock:result")

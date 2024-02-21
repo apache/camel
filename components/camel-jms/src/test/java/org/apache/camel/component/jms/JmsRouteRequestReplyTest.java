@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
@@ -36,11 +36,16 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -49,18 +54,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Isolated("This test creates a lot of threads")
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
-    protected static String componentName = "amq";
-    protected static String componentName1 = "amq1";
-    protected static String endpointUriA = componentName + ":queue:test.a";
-    protected static String endpointUriB = componentName + ":queue:test.b";
-    protected static String endpointUriB1 = componentName1 + ":queue:test.b";
+    protected static final String COMPONENT_NAME = "amq";
+    protected static final String COMPONENT_NAME_1 = "amq1";
+    protected static String endpointUriA = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.a";
+    protected static String endpointUriB = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.b";
+    protected static String endpointUriB1 = COMPONENT_NAME_1 + ":queue:JmsRouteRequestReplyTest.b";
     // note that the replyTo both A and B endpoints share the persistent replyTo queue,
     // which is one more way to verify that reply listeners of A and B endpoints don't steal each other messages
-    protected static String endpointReplyToUriA = componentName + ":queue:test.a?replyTo=queue:test.a.reply";
-    protected static String endpointReplyToUriB = componentName + ":queue:test.b?replyTo=queue:test.a.reply";
+    protected static String endpointReplyToUriA
+            = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.a?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
+    protected static String endpointReplyToUriB
+            = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.b?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
+
     protected static String request = "Hello World";
     protected static String expectedReply = "Re: " + request;
     protected static int maxTasks = 20;
@@ -73,12 +85,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected TestInfo testInfo;
 
     private interface ContextBuilder {
-        CamelContext buildContext(CamelContext context) throws Exception;
+        CamelContext buildContext(CamelContext context);
     }
 
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA)
                     // We are not expect the response here
                     .setExchangePattern(ExchangePattern.InOnly).process(e -> {
@@ -89,7 +101,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class SingleNodeRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).process(e -> {
                 String request = e.getIn().getBody(String.class);
                 e.getMessage().setBody(expectedReply + request.substring(request.indexOf('-')));
@@ -99,7 +111,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointUriB);
             from(endpointUriB).process(e -> {
                 String request = e.getIn().getBody(String.class);
@@ -110,7 +122,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeReplyToRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointReplyToUriB);
             from(endpointUriB).process(e -> {
                 Message in = e.getIn();
@@ -125,7 +137,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeDiffCompRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointUriB1);
             from(endpointUriB1).process(e -> {
                 String request = e.getIn().getBody(String.class);
@@ -136,12 +148,14 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class ContextBuilderMessageID implements ContextBuilder {
         @Override
-        public CamelContext buildContext(CamelContext context) throws Exception {
-            ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        public CamelContext buildContext(CamelContext context) {
+            ConnectionFactory connectionFactory
+                    = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
             jmsComponent.getConfiguration().setConcurrentConsumers(maxServerTasks);
-            context.addComponent(componentName, jmsComponent);
+            context.addComponent(COMPONENT_NAME, jmsComponent);
             return context;
         }
     }
@@ -152,58 +166,66 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderMessageID = new ContextBuilderMessageID();
 
             ContextBuilder contextBuilderCorrelationID = context -> {
-                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                ConnectionFactory connectionFactory
+                        = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
             ContextBuilder contextBuilderMessageIDNamedReplyToSelector = context -> {
-                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                ConnectionFactory connectionFactory
+                        = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
             ContextBuilder contextBuilderCorrelationIDNamedReplyToSelector = context -> {
-                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                ConnectionFactory connectionFactory
+                        = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
             ContextBuilder contextBuilderCorrelationIDDiffComp = context -> {
-                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                ConnectionFactory connectionFactory
+                        = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
                 jms1.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName1, jms1);
+                context.addComponent(COMPONENT_NAME_1, jms1);
                 return context;
             };
 
             ContextBuilder contextBuilderMessageIDDiffComp = context -> {
-                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                ConnectionFactory connectionFactory
+                        = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
                 jms1.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName1, jms1);
+                context.addComponent(COMPONENT_NAME_1, jms1);
                 return context;
             };
 
@@ -259,8 +281,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     public class Task implements Callable<Task> {
-        private AtomicInteger counter;
-        private String fromUri;
+        private final AtomicInteger counter;
+        private final String fromUri;
         private volatile boolean ok = true;
         private volatile String message = "";
 
@@ -270,7 +292,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
 
         @Override
-        public Task call() throws Exception {
+        public Task call() {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = "";
@@ -389,13 +411,11 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUseCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent) context.getComponent(componentName);
-        c.getConfiguration().setRequestTimeout(1000);
-
+    public void testUseCorrelationIDTimeout() {
         Object reply = "";
         try {
-            reply = template.requestBody(endpointUriA, request);
+            // set the timeout for the request, specifically. At this point it is too late to re-configure
+            template.requestBodyAndHeader(endpointUriA, request, JmsConstants.JMS_REQUEST_TIMEOUT, "1000");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -404,13 +424,11 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUseMessageIDAsCorrelationIDTimeout() throws Exception {
-        JmsComponent c = (JmsComponent) context.getComponent(componentName);
-        c.getConfiguration().setRequestTimeout(1000);
-
+    public void testUseMessageIDAsCorrelationIDTimeout() {
         Object reply = "";
         try {
-            reply = template.requestBody(endpointUriA, request);
+            // set the timeout for the request, specifically. At this point it is too late to re-configure
+            reply = template.requestBodyAndHeader(endpointUriA, request, JmsConstants.JMS_REQUEST_TIMEOUT, "1000");
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -467,7 +485,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return routeBuilders.get(getTestMethodName());
     }
 }

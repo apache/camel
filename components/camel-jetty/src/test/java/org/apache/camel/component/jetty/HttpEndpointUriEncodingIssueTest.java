@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
 
     @Test
-    public void testEndpointUriEncodingIssue() throws Exception {
+    public void testEndpointUriEncodingIssue() {
         String uri = "http://localhost:{{port}}/myapp/mytest?columns=totalsens,upsens&username=apiuser";
         String out = template.requestBody(uri, null, String.class);
 
@@ -37,7 +37,7 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEndpointUriWithDanishCharEncodingIssue() throws Exception {
+    public void testEndpointUriWithDanishCharEncodingIssue() {
         String uri = "http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
         String out = template.requestBody(uri, null, String.class);
 
@@ -45,7 +45,7 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEndpointHeaderUriEncodingIssue() throws Exception {
+    public void testEndpointHeaderUriEncodingIssue() {
         String uri = "http://localhost:{{port}}/myapp/mytest?columns=totalsens,upsens&username=apiuser";
         String out = template.requestBodyAndHeader("http://localhost/dummy", null, Exchange.HTTP_URI, uri, String.class);
 
@@ -53,12 +53,12 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String columns = exchange.getIn().getHeader("columns", String.class);
                         exchange.getMessage().setBody("We got " + columns + " columns");
                     }

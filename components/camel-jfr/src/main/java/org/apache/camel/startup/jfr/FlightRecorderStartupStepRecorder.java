@@ -45,9 +45,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
     private FlightRecorderListener frl;
 
     public FlightRecorderStartupStepRecorder() {
+        // should default be enabled if discovered from classpath
         setEnabled(true);
-        // pre-empty enable recording so we have as early as possible recording started
-        setRecording(true);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
 
             if (!"false".equals(getRecordingDir())) {
                 // recording to disk can be turned off by setting to false
-                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(System.getenv().get("HOME"));
+                Path dir = getRecordingDir() != null ? Paths.get(getRecordingDir()) : Paths.get(".");
                 Path file = Files.createTempFile(dir, "camel-recording", ".jfr");
                 // when stopping then the recording is automatic dumped by flight recorder
                 rec.setDestination(file);
@@ -71,7 +70,8 @@ public class FlightRecorderStartupStepRecorder extends DefaultStartupStepRecorde
             if (getStartupRecorderDuration() == 0) {
                 if (rec.getDestination() != null) {
                     rec.setDumpOnExit(true);
-                    LOG.info("Java flight recorder will be saved to file on JVM exit: {}", rec.getDestination());
+                    LOG.info("Java flight recorder with profile: {} will be saved to file on JVM exit: {}",
+                            getRecordingProfile(), rec.getDestination());
                 }
             } else if (getStartupRecorderDuration() > 0) {
                 rec.setDuration(Duration.ofSeconds(getStartupRecorderDuration()));

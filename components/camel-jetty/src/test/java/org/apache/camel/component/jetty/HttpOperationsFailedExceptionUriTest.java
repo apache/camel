@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpOperationsFailedExceptionUriTest extends BaseJettyTest {
 
     @Test
-    public void testHttpOperationsFailedExceptionUri() throws Exception {
+    public void testHttpOperationsFailedExceptionUri() {
         try {
             template.requestBodyAndHeader("http://localhost:{{port}}/foo?bar=123", null, "foo", 123);
             fail("Should have thrown an exception");
@@ -42,12 +42,12 @@ public class HttpOperationsFailedExceptionUriTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                     }
                 });

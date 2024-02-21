@@ -38,8 +38,6 @@ import javax.naming.OperationNotSupportedException;
 import javax.naming.Reference;
 import javax.naming.spi.NamingManager;
 
-import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CastUtils;
 
 /**
@@ -61,7 +59,7 @@ public class JndiContext implements Context, Serializable {
     private String nameInNamespace = "";
 
     public JndiContext() throws Exception {
-        this(new Hashtable<String, Object>());
+        this(new Hashtable<>());
     }
 
     public JndiContext(Hashtable<String, Object> env) throws Exception {
@@ -114,8 +112,8 @@ public class JndiContext implements Context, Serializable {
      * (the names are suitably extended by the segment originally lopped off).
      */
     protected Map<String, Object> internalBind(String name, Object value) throws NamingException {
-        assert name != null && name.length() > 0;
-        assert !frozen;
+        org.apache.camel.util.ObjectHelper.isNotEmpty(name);
+        org.apache.camel.util.ObjectHelper.notNull(frozen, "frozen");
 
         Map<String, Object> newBindings = new HashMap<>();
         int pos = name.indexOf('/');
@@ -127,8 +125,7 @@ public class JndiContext implements Context, Serializable {
             newBindings.put(name, value);
         } else {
             String segment = name.substring(0, pos);
-            assert segment != null;
-            assert !segment.equals("");
+            org.apache.camel.util.ObjectHelper.isNotEmpty(segment);
             Object o = treeBindings.get(segment);
             if (o == null) {
                 o = newContext();
@@ -176,7 +173,7 @@ public class JndiContext implements Context, Serializable {
 
     @Override
     public Object lookup(String name) throws NamingException {
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             return this;
         }
         Object result = treeBindings.get(name);
@@ -227,7 +224,7 @@ public class JndiContext implements Context, Serializable {
         }
         if (result instanceof JndiContext) {
             String prefix = getNameInNamespace();
-            if (prefix.length() > 0) {
+            if (!prefix.isEmpty()) {
                 prefix = prefix + SEPARATOR;
             }
             result = new JndiContext((JndiContext) result, environment, prefix + name);
@@ -384,7 +381,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
-        private Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
+        private final Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
 
         @Override
         public boolean hasMore() throws NamingException {
@@ -437,10 +434,4 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
-    @Deprecated
-    protected static Object createBean(Class<?> type, Map<String, Object> properties, String prefix) throws Exception {
-        Object value = ObjectHelper.newInstance(type);
-        IntrospectionSupport.setProperties(value, properties, prefix);
-        return value;
-    }
 }

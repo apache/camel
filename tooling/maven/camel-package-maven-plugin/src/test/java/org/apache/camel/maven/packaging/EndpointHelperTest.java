@@ -67,7 +67,7 @@ public class EndpointHelperTest {
     }
 
     @Test
-    public void testRE() throws Exception {
+    public void testRE() {
         Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
         Pattern attrRE = Pattern.compile(":[a-zA-Z0-9_-]*:( .*)?");
 

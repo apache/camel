@@ -41,13 +41,13 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     private T2 defaultConnectionOptions;
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions) {
+    protected AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions) {
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
     }
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions,
-                                final CamelContext context) {
+    protected AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions,
+                                   final CamelContext context) {
         super(context);
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
@@ -80,7 +80,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     protected abstract Endpoint createEndpoint(String uri, T1 connection, ObjectAddress address);
 
-    protected T2 parseOptions(final ConnectionId id, final Map<String, Object> parameters) throws Exception {
+    protected T2 parseOptions(final Map<String, Object> parameters) throws Exception {
 
         // test for provided connection options
 
@@ -141,7 +141,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
             LOG.debug("Result - {} -> {}", id, connection);
 
             if (connection == null) {
-                final T2 options = parseOptions(id, parameters);
+                final T2 options = parseOptions(parameters);
                 LOG.debug("Creating new connection: {}", options);
 
                 connection = createConnection(id, options);

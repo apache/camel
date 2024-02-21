@@ -36,9 +36,9 @@ public interface KeyAccessor {
     /**
      * Returns the key selector which determines the key for signing the XML document. The method is called every time a
      * XML document is signed.
-     * 
+     *
      * If <code>null</code> is returned the XML signature generator will throw a {@link XmlSignatureNoKeyException}.
-     * 
+     *
      * @param  message   the incoming message, from which you can read headers to configure the key selector, for
      *                   example, a header could contain a private key for the key selector
      * @return           key selector, must not be <code>null</code>
@@ -52,7 +52,7 @@ public interface KeyAccessor {
      * <p>
      * This method will be called several times if several signatures shall be created for the XML document; for each
      * signature a call is executed. This allows you to create different key info IDs.
-     * 
+     *
      * @param  message        incoming message, from which you can read headers, for example, there could be a header
      *                        which contains the public key or certificate for the key info
      * @param  messageBody    the message body as DOM node. If the message body is plain text then the node will be a

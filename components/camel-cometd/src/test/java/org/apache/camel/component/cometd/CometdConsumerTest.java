@@ -19,6 +19,7 @@ package org.apache.camel.component.cometd;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cometd.CometdConsumer.ConsumerService;
@@ -28,7 +29,6 @@ import org.cometd.bayeux.server.LocalSession;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
-import org.eclipse.jetty.util.log.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +46,9 @@ public class CometdConsumerTest {
     private static final String USER_NAME = "userName";
     private CometdConsumer testObj;
     @Mock
-    private ExtendedCamelContext context;
+    private CamelContext context;
+    @Mock
+    private ExtendedCamelContext ecc;
     @Mock
     private ExchangeFactory exchangeFactory;
     @Mock
@@ -57,8 +59,6 @@ public class CometdConsumerTest {
     private BayeuxServerImpl bayeuxServerImpl;
     @Mock
     private LocalSession localSession;
-    @Mock
-    private Logger logger;
     @Mock
     private ServerChannel serverChannel;
     @Mock
@@ -73,8 +73,8 @@ public class CometdConsumerTest {
         when(markedReferenceServerChannel.getReference()).thenReturn(serverChannel);
 
         when(endpoint.getCamelContext()).thenReturn(context);
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
-        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(context.getCamelContextExtension()).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         testObj = new CometdConsumer(endpoint, processor);

@@ -68,7 +68,7 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
         assertEquals(3, invoked);
     }
 
-    public class MyRetryBean {
+    public static class MyRetryBean {
 
         // using bean binding we can bind the information from the exchange to
         // the types we have in our method signature

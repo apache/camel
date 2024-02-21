@@ -16,27 +16,25 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
-    public void testHttpEndpointURLWithIPv6() throws Exception {
+    public void testHttpEndpointURLWithIPv6() {
         HttpEndpoint endpoint = (HttpEndpoint) context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
 
     @Test
-    public void testHttpEndpointHttpUri() throws Exception {
+    public void testHttpEndpointHttpUri() {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint(
                 "https://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
@@ -46,23 +44,25 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         assertEquals("https://www.google.com?test=parameter", http2.getHttpUri().toString(), "Get a wrong HttpUri of http2");
         assertEquals(http2.getHttpUri(), http3.getHttpUri(), "Get a wrong HttpUri of http2 andhttp3");
 
-        try {
-            // need to catch the exception here
-            context.getEndpoint("https://http://www.google.com", HttpEndpoint.class);
-            fail("need to throw an exception here");
-        } catch (ResolveEndpointFailedException ex) {
-            assertTrue(ex.getMessage().indexOf("You have duplicated the http(s) protocol") > 0,
-                    "Get a wrong exception message");
-        }
+        // secure because protocol in remainder is https
+        HttpEndpoint http4 = context.getEndpoint("http://https://www.google.com", HttpEndpoint.class);
+        assertEquals("https://www.google.com", http4.getHttpUri().toString(), "Get a wrong HttpUri of http1");
+
+        // secure because protocol in remainder is https
+        HttpEndpoint http5 = context.getEndpoint("https://https://www.google.com", HttpEndpoint.class);
+        assertEquals("https://www.google.com", http5.getHttpUri().toString(), "Get a wrong HttpUri of http1");
+
+        // not secure because protocol in remainder is plain http
+        HttpEndpoint http6 = context.getEndpoint("https://http://www.google.com", HttpEndpoint.class);
+        assertEquals("http://www.google.com", http6.getHttpUri().toString(), "Get a wrong HttpUri of http1");
     }
 
     @Test
-    public void testConnectionManagerFromHttpUri() throws Exception {
+    public void testConnectionManagerFromHttpUri() {
         HttpEndpoint http1
                 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
         assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager, "Get a wrong type of connection manager");
-        @SuppressWarnings("resource")
         PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager) connectionManager;
         assertEquals(40, poolManager.getMaxTotal(), "Get a wrong setting of maxTotalConnections");
         assertEquals(5, poolManager.getDefaultMaxPerRoute(), "Get a wrong setting of connectionsPerRoute");
@@ -70,7 +70,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     // Just for CAMEL-8607
-    public void testRawWithUnsafeCharacters() throws Exception {
+    public void testRawWithUnsafeCharacters() {
         HttpEndpoint http1 = context.getEndpoint(
                 "http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)",
                 HttpEndpoint.class);

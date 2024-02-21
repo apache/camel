@@ -16,22 +16,13 @@
  */
 package org.apache.camel.spring;
 
-import java.lang.management.ManagementFactory;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -39,53 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class DefaultJMXAgentTest extends SpringTestSupport {
 
-    protected MBeanServerConnection mbsc;
-
     @Override
     protected boolean useJmx() {
         return true;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        releaseMBeanServers();
-        super.setUp();
-
-        await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> {
-            mbsc = getMBeanConnection();
-            return true;
-        });
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        try {
-            releaseMBeanServers();
-        } finally {
-            mbsc = null;
-            super.tearDown();
-        }
-    }
-
-    protected void releaseMBeanServers() {
-        List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-
-        for (MBeanServer server : servers) {
-            MBeanServerFactory.releaseMBeanServer(server);
-        }
-    }
-
     @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
-        int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+        int before = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
         // start route should enlist the consumer to JMX
         context.getRouteController().startRoute("foo");
 
-        int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
+        int after = getMBeanConnection().queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
         assertTrue(after > before, "Should have added consumer to JMX, before: " + before + ", after: " + after);
     }
@@ -96,10 +54,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     protected MBeanServerConnection getMBeanConnection() throws Exception {
-        if (mbsc == null) {
-            mbsc = ManagementFactory.getPlatformMBeanServer();
-        }
-        return mbsc;
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
 }

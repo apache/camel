@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategySupport;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +32,7 @@ public class RouteTemplateModelLifecycleTest extends ContextTestSupport {
     @Test
     public void testModelLifecycle() throws Exception {
         // add lifecycle before we add routes
-        context.adapt(ModelCamelContext.class).addModelLifecycleStrategy(new ModelLifecycleStrategySupport() {
+        context.addModelLifecycleStrategy(new ModelLifecycleStrategySupport() {
             @Override
             public void onAddRouteTemplateDefinition(RouteTemplateDefinition template) {
                 // lets mutate the template a bit

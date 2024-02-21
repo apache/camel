@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test that placeholder DSL is working as expected.
@@ -38,13 +38,13 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
                         .throwException(new IllegalAccessException("Damn")).to("mock:b");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should have thrown exception");
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
     }
 
     @Override

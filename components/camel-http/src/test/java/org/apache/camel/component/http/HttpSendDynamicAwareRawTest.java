@@ -20,8 +20,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +42,9 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/moes", new DrinkValidationHandler(GET.name(), "drink=beer&password=se+%ret", null, "drink"))
-                .registerHandler("/joes",
+                .setSslContext(getSSLContext())
+                .register("/moes", new DrinkValidationHandler(GET.name(), "drink=beer&password=se+%ret", null, "drink"))
+                .register("/joes",
                         new DrinkValidationHandler(GET.name(), "drink=wine&password=se+%ret.$", null, "drink"))
                 .create();
         localServer.start();
@@ -63,13 +63,13 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}&password=se+%ret");
+                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}&password=RAW(se+%ret)");
 
                 from("direct:joes")
                         .toD("http://localhost:" + localServer.getLocalPort()
@@ -79,7 +79,7 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
     }
 
     @Test
-    public void testDynamicAwareRaw() throws Exception {
+    public void testDynamicAwareRaw() {
         String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
@@ -87,12 +87,12 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap()
+        boolean found = context.getEndpointRegistry()
                 .containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
         assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 1xhttp
-        assertEquals(3, context.getEndpointMap().size());
+        assertEquals(3, context.getEndpointRegistry().size());
     }
 
 }

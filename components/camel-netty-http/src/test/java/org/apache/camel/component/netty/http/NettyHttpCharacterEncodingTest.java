@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpCharacterEncodingTest extends BaseNettyTest {
 
     @Test
-    public void testSendToNetty() throws Exception {
+    public void testSendToNetty() {
         Exchange exchange = template.request("netty-http:http://localhost:{{port}}/myapp/myservice", exchange1 -> {
             exchange1.getIn().setBody("Hello World Thai Elephant \u0E08");
             exchange1.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
@@ -37,17 +37,17 @@ public class NettyHttpCharacterEncodingTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 

@@ -39,11 +39,9 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
 import org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl;
-import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.InputStreamEntity;
@@ -75,7 +73,6 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +120,7 @@ public class Olingo4AppAPITest {
     private static final String COUNT_OPTION = "/$count";
     private static final String TEST_UNBOUND_ACTION_RESETDATASOURCE = "ResetDataSource";
     private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP
-            = TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip";
+            = TEST_PEOPLE + "/Trippin.ShareTrip";
 
     private static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
@@ -141,7 +138,7 @@ public class Olingo4AppAPITest {
     }
 
     @AfterAll
-    public static void afterClass() throws Exception {
+    public static void afterClass() {
         if (olingoApp != null) {
             olingoApp.close();
         }
@@ -168,7 +165,7 @@ public class Olingo4AppAPITest {
      * generated postfix
      */
     @SuppressWarnings("deprecation")
-    protected static String getRealServiceUrl(String baseUrl) throws ClientProtocolException, IOException {
+    protected static String getRealServiceUrl(String baseUrl) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(baseUrl);
         HttpContext httpContext = new BasicHttpContext();
@@ -575,7 +572,6 @@ public class Olingo4AppAPITest {
     }
 
     @Test
-    @Disabled
     public void testBoundActionRequest() throws Exception {
         final ClientEntity clientEntity = objFactory.newEntity(null);
         clientEntity.getProperties().add(
@@ -593,7 +589,6 @@ public class Olingo4AppAPITest {
     // Unfortunately there is no action that returns a client entity. So we fake
     // one
     @Test
-    @Disabled
     public void testBoundActionRequestWithClientEntityResponse() throws Exception {
         final ODataClient odataClient = ODataClientFactory.getClient();
         final ODataWriter odataWriter = odataClient.getWriter();
@@ -601,7 +596,7 @@ public class Olingo4AppAPITest {
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.addInterceptorFirst(new HttpResponseInterceptor() {
             @Override
-            public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
+            public void process(HttpResponse response, HttpContext context) throws IOException {
                 if (response.getStatusLine().getStatusCode() == HttpStatusCode.NO_CONTENT.getStatusCode()) {
                     try {
                         response.setEntity(new InputStreamEntity(

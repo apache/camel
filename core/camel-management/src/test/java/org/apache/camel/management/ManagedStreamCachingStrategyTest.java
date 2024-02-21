@@ -26,24 +26,24 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.apache.camel.util.FileUtil.normalizePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
 
     @Test
     public void testStreamCachingStrategy() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=myCamel,type=services,*");
+        assertEquals("myCamel", context.getManagementName());
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
@@ -59,8 +59,11 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "Enabled");
         assertEquals(Boolean.TRUE, enabled);
 
+        enabled = (Boolean) mbeanServer.getAttribute(name, "SpoolEnabled");
+        assertEquals(Boolean.TRUE, enabled);
+
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
-        assertEquals(normalizePath("target/data/cachedir/myCamel"), normalizePath(dir));
+        assertEquals(normalizePath(testDirectory("myCamel").toString()), normalizePath(dir));
 
         Long threshold = (Long) mbeanServer.getAttribute(name, "SpoolThreshold");
         assertEquals(StreamCache.DEFAULT_SPOOL_THRESHOLD, threshold.longValue());
@@ -96,7 +99,8 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 dcc.setName("myCamel");
 
                 context.setStreamCaching(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/data/cachedir/#name#/");
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory("#name#").toString());
 
                 from("direct:start").routeId("foo")
                         .convertBodyTo(int.class)

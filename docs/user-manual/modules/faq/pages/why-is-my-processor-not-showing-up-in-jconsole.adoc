@@ -1,4 +1,3 @@
-[[WhyismyprocessornotshowingupinJConsole-WhyismyprocessornotshowingupinJConsole]]
 = Why is my processor not showing up in JConsole?
 
 Not every processor is managed, and thus not all are visible in

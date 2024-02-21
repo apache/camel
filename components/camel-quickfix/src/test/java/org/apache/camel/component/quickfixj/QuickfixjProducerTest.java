@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -58,7 +59,7 @@ public class QuickfixjProducerTest {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         context = Mockito.mock(CamelContext.class);
 
-        quickfixjEngine = TestSupport.createEngine(context);
+        quickfixjEngine = TestSupport.createEngine();
         Mockito.when(mockEndpoint.getEngine()).thenReturn(quickfixjEngine);
 
         inboundFixMessage = new Message();
@@ -69,7 +70,7 @@ public class QuickfixjProducerTest {
 
         Mockito.when(mockCamelMessage.getBody(Message.class)).thenReturn(inboundFixMessage);
 
-        Mockito.when(mockEndpoint.getSessionID()).thenReturn(sessionID);
+        Mockito.when(mockEndpoint.getSID()).thenReturn(sessionID);
 
         producer = Mockito.spy(new QuickfixjProducer(mockEndpoint));
     }
@@ -124,7 +125,7 @@ public class QuickfixjProducerTest {
                 1000L, Long.class)).thenReturn(5000L);
 
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
-        Mockito.when(mockExchange.getOut()).thenReturn(mockOutboundCamelMessage);
+        Mockito.when(mockExchange.getMessage()).thenReturn(mockOutboundCamelMessage);
 
         final Message outboundFixMessage = new Email();
         outboundFixMessage.getHeader().setString(SenderCompID.FIELD, "TARGET");
@@ -140,7 +141,7 @@ public class QuickfixjProducerTest {
                         quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
                                 outboundFixMessage);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 }
             }, 10);
@@ -181,7 +182,7 @@ public class QuickfixjProducerTest {
                         quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
                                 outboundFixMessage);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeCamelException(e);
                     }
                 }
             }, 10);

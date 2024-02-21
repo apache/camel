@@ -16,51 +16,55 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JmsDurableTopicTest extends CamelTestSupport {
+@Timeout(30)
+public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
+    private MockEndpoint mock;
+    private MockEndpoint mock2;
 
-    @Test
-    public void testDurableTopic() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    @BeforeEach
+    void setUpMocks() {
+        mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        MockEndpoint mock2 = getMockEndpoint("mock:result2");
+        mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        // wait a bit and send the message
-        Thread.sleep(1000);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
-        template.sendBody("activemq:topic:foo", "Hello World");
+    @Test
+    public void testDurableTopic() {
+        final CompletableFuture<Object> future = template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
+        final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
+        assertNotNull(request);
 
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(6, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:topic:foo?clientId=123&durableSubscriptionName=bar")
+            public void configure() {
+                from("activemq:topic:JmsDurableTopicTest?clientId=123&durableSubscriptionName=bar")
+                        .routeId("route-1")
                         .to("mock:result");
 
-                from("activemq:topic:foo?clientId=456&durableSubscriptionName=bar")
+                from("activemq:topic:JmsDurableTopicTest?clientId=456&durableSubscriptionName=bar")
+                        .routeId("route-2")
                         .to("mock:result2");
             }
         };

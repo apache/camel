@@ -19,31 +19,34 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
-        props.add("consumeDelay");
-        props.add("exchangePattern");
-        props.add("preloadSize");
-        props.add("initialDelay");
-        props.add("expectedCount");
-        props.add("retainLast");
+        Set<String> props = new HashSet<>(22);
         props.add("assertPeriod");
-        props.add("failFast");
-        props.add("resultMinimumWaitTime");
-        props.add("reportGroup");
-        props.add("sleepForEmptyTest");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("name");
-        props.add("dataSetIndex");
-        props.add("minRate");
+        props.add("consumeDelay");
         props.add("copyOnExchange");
+        props.add("dataSetIndex");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("expectedCount");
+        props.add("failFast");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
+        props.add("log");
+        props.add("minRate");
+        props.add("name");
+        props.add("preloadSize");
         props.add("produceDelay");
+        props.add("reportGroup");
+        props.add("resultMinimumWaitTime");
         props.add("resultWaitTime");
         props.add("retainFirst");
+        props.add("retainLast");
+        props.add("sleepForEmptyTest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +74,11 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

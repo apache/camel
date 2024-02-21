@@ -38,7 +38,7 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
     public Validator resolveValidator(ValidatorKey key) {
         Validator answer = get(key);
         if (answer == null && ObjectHelper.isNotEmpty(key.getType().getName())) {
-            answer = get(new ValidatorKey(new DataType(key.getType().getModel())));
+            answer = get(new ValidatorKey(new DataType(key.getType().getScheme())));
         }
         return answer;
     }
@@ -55,14 +55,14 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
 
     @Override
     public String toString() {
-        return "ValidatorRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
+        return "ValidatorRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
 
     @Override
-    public Validator put(ValidatorKey key, Validator validator) {
+    public Validator put(ValidatorKey key, Validator obj) {
         // ensure validator is started before its being used
-        ServiceHelper.startService(validator);
-        return super.put(key, validator);
+        ServiceHelper.startService(obj);
+        return super.put(key, obj);
     }
 
 }

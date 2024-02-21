@@ -1,4 +1,3 @@
-[[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler]]
 = Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?
 
 There could be several reasons why the xref:components::file-component.adoc[File] consumer is
@@ -14,7 +13,7 @@ xref:how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 
 Well, this is really a
 http://en.wikipedia.org/wiki/Chicken_or_the_egg["chicken or the egg"]
-question. The Camel xref:ROOT:error-handling-in-camel.adoc[error handler]
+question. The Camel xref:ROOT:error-handler.adoc[error handler]
 (e.g., in the routes) only applies when a message is being routed by the
 routing engine.
 Before this happens, a consumer must successfully receive a message,
@@ -36,12 +35,12 @@ documentation.
 ====
 
 If the component consumer extends the
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/DefaultConsumer.java[`DefaultConsumer`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/impl/DefaultConsumer.java[`DefaultConsumer`]
 from Camel, then it offers an
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/spi/ExceptionHandler.java[`org.apache.camel.spi.ExceptionHandler`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/spi/ExceptionHandler.java[`org.apache.camel.spi.ExceptionHandler`]
 hook for end users to plug-in a custom strategy. The default
 implementation from Camel is
-https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/camel/impl/LoggingExceptionHandler.java[`LoggingExceptionHandler`]
+https://github.com/apache/camel/blob/main/camel-core/src/main/java/org/apache/camel/impl/LoggingExceptionHandler.java[`LoggingExceptionHandler`]
 that will log the exception at `ERROR`/`WARN` level, and then ignore the
 exception.
 

@@ -47,6 +47,7 @@ import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNAT
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class SignatureTest extends CamelTestSupport {
 
@@ -117,8 +118,8 @@ public class SignatureTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: buffersize
-                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&buffersize=1024",
-                        "crypto:verify:buffer?publicKey=#myPublicKey&buffersize=1024",
+                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&bufferSize=1024",
+                        "crypto:verify:buffer?publicKey=#myPublicKey&bufferSize=1024",
                         "mock:result");
                 // END SNIPPET: buffersize
             }
@@ -197,7 +198,7 @@ public class SignatureTest extends CamelTestSupport {
     void testBasicSignatureRoute() throws Exception {
         setupMock();
         sendBody("direct:keypair", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
@@ -209,67 +210,64 @@ public class SignatureTest extends CamelTestSupport {
     void testSetAlgorithmInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:algorithm", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA1() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA256() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha256", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetBufferInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:buffersize", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetRandomInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:random", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetProviderInRouteDefinition() throws Exception {
-        if (isJavaVendor("ibm")) {
-            return;
-        }
-        // can only be run on SUN JDK
+        assumeFalse(isJavaVendor("ibm"), "can only be run on SUN JDK");
         setupMock();
         sendBody("direct:provider", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetCertificateInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:certificate", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystore", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreParametersInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystoreParameters", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -280,7 +278,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:signature-header", signed);
         assertNotNull(signed.getIn().getHeader("AnotherDigitalSignature"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -300,7 +298,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:alias-verify", signed);
         // START SNIPPET: alias-send
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -322,7 +320,7 @@ public class SignatureTest extends CamelTestSupport {
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, pair.getPublic());
         template.send("direct:headerkey-verify", signed);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -346,15 +344,15 @@ public class SignatureTest extends CamelTestSupport {
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, certificate);
         template.send("direct:headerkey-verify", signed);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testVerifyHeadersNotCleared() throws Exception {
         setupMock();
         template.requestBody("direct:headers", payload);
-        assertMockEndpointsSatisfied();
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
@@ -386,7 +384,7 @@ public class SignatureTest extends CamelTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(SignatureTest.this.context);
             return mock.getReceivedExchanges().get(0);
         }
     }
@@ -431,7 +429,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @BindToRegistry("myDSAPublicKey")
-    public PublicKey getDSAPublicKey() throws Exception {
+    public PublicKey getDSAPublicKey() {
         return dsaKeyPair.getPublic();
     }
 
@@ -441,7 +439,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @BindToRegistry("myDSAPrivateKey")
-    public PrivateKey getDSAPrivateKey() throws Exception {
+    public PrivateKey getDSAPrivateKey() {
         return dsaKeyPair.getPrivate();
     }
 

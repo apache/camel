@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.ValidationProviderResolver;
+import jakarta.validation.ValidationProviderResolver;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -61,7 +61,7 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
         sendBody("direct:test", carWithNullFields);
 
         // Then
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

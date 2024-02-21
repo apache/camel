@@ -1,12 +1,14 @@
-[[graphql-component]]
 = GraphQL Component
-:docTitle: GraphQL
-:artifactId: camel-graphql
+:doctitle: GraphQL
+:shortname: graphql
+:artifactid: camel-graphql
 :description: Send GraphQL queries and mutations to external systems.
 :since: 3.0
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/graphql.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: graphql
 
 *Since Camel {since}*
 
@@ -27,65 +29,26 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== GraphQL Endpoint URI
 
-// endpoint options: START
-The GraphQL endpoint is configured using URI syntax:
+// component-configure options: START
 
-----
-graphql:httpUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *httpUri* | *Required* The GraphQL server URI. |  | URI
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operationName* (producer) | The query or mutation name. |  | String
-| *proxyHost* (producer) | The proxy host in the format hostname:port. |  | String
-| *query* (producer) | The query text. |  | String
-| *queryFile* (producer) | The query file name located in the classpath. |  | String
-| *variables* (producer) | The JsonObject instance containing the operation variables. |  | JsonObject
-| *accessToken* (security) | The access token sent in the Authorization header. |  | String
-| *jwtAuthorizationType* (security) | The JWT Authorization type. Default is Bearer. | Bearer | String
-| *password* (security) | The password for Basic authentication. |  | String
-| *username* (security) | The username for Basic authentication. |  | String
-|===
-// endpoint options: END
-
-== GraphQL Component Options
+// component-configure options: END
 
 // component options: START
-The GraphQL component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
+
+// endpoint options: START
+
+// endpoint options: END
 
 
 == Message Body
 
-Camel will store the GraphQL response from the external server on the OUT message body. All headers from the IN message will be copied to the OUT message, so headers are preserved during routing. Additionally Camel will add the HTTP response headers as well to the OUT message headers.
+If the `variables` and `variablesHeader` parameters are not set and the IN body is a JsonObject instance, Camel will use it for the operation's variables. If the `query` and `queryFile` parameters are not set and the IN body is a String, Camel will use it as the query. Camel will store the GraphQL response from the external server on the OUT message body.
+All headers from the IN message will be copied to the OUT message, so headers are preserved during routing.
+Additionally, Camel will add the HTTP response headers as well to the OUT message headers.
 
 == Examples
 
@@ -99,18 +62,38 @@ from("direct:start")
     .to("graphql://http://example.com/graphql?query={books{id name}}")
 ----
 
-More complex queries can be stored in a file and referenced in the URI:
+The body can also be used for the query:
 
 [source,java]
 ----
-# booksQuery.graphql
+from("direct:start")
+    .setBody(constant("{books{id name}}"))
+    .to("graphql://http://example.com/graphql")
+----
+
+The query can come from a header also:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("myQuery", constant("{books{id name}}"))
+    .to("graphql://http://example.com/graphql?queryHeader=myQuery")
+----
+
+More complex queries can be stored in a file and referenced in the URI:
+
+booksQuery.graphql file:
+----
 query Books {
   books {
     id
     name
   }
 }
+----
 
+[source,java]
+----
 from("direct:start")
     .to("graphql://http://example.com/graphql?queryFile=booksQuery.graphql")
 ----
@@ -138,13 +121,26 @@ from("direct:start")
     .to("graphql://http://example.com/graphql?queryFile=bookByIdQuery.graphql&variables=#bookByIdQueryVariables")
 ----
 
-=== Mutations
-
-Mutations are like queries with variables. They specify a query and a reference to a variables bean:
+A query that accesses variables via the variablesHeader parameter:
 
 [source,java]
 ----
-# addBookMutation.graphql
+from("direct:start")
+    .setHeader("myVariables", () -> {
+        JsonObject variables = new JsonObject();
+        variables.put("id", "book-1");
+        return variables;
+    })
+    .to("graphql://http://example.com/graphql?queryFile=bookByIdQuery.graphql&variablesHeader=myVariables")
+----
+
+=== Mutations
+
+Mutations are like queries with variables. They specify a query and a reference to a variables' bean:
+
+addBookMutation.graphql file:
+
+----
 mutation AddBook($bookInput: BookInput) {
   addBook(bookInput: $bookInput) {
     id
@@ -154,7 +150,10 @@ mutation AddBook($bookInput: BookInput) {
     }
   }
 }
+----
 
+[source,java]
+----
 @BindToRegistry("addBookMutationVariables")
 public JsonObject addBookMutationVariables() {
     JsonObject bookInput = new JsonObject();
@@ -169,4 +168,5 @@ from("direct:start")
     .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
 
-include::camel-spring-boot::page$graphql-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -30,7 +30,7 @@ import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
@@ -64,6 +64,25 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+    }
+
+    @Test
+    public void testClusteredRoutePolicyRemoveAllRoutes() throws Exception {
+        cs.getView().setLeader(true);
+
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().stopRoute("baz");
+        context.removeRoute("foo");
+        context.removeRoute("baz");
+
+        assertFalse(cs.getView().isRunning());
+    }
+
+    @Test
+    public void testClusteredRoutePolicyDontStartAutoStartFalseRoutes() throws Exception {
+        cs.getView().setLeader(true);
+
+        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("baz"));
     }
 
     @Test
@@ -129,6 +148,8 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo").routePolicy(policy)
                         .to("mock:foo");
+                from("seda:baz").autoStartup(false).routeId("baz").routePolicy(policy)
+                        .to("mock:baz");
             }
         };
     }
@@ -139,6 +160,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
     private static class TestClusterView extends AbstractCamelClusterView {
         private boolean leader;
+        private boolean running;
 
         public TestClusterView(CamelClusterService cluster, String namespace) {
             super(cluster, namespace);
@@ -176,10 +198,12 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
 
         @Override
         protected void doStart() throws Exception {
+            running = true;
         }
 
         @Override
         protected void doStop() throws Exception {
+            running = false;
         }
 
         public boolean isLeader() {
@@ -192,6 +216,10 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
             if (isRunAllowed()) {
                 fireLeadershipChangedEvent(getLeader());
             }
+        }
+
+        public boolean isRunning() {
+            return running;
         }
     }
 

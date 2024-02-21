@@ -20,24 +20,28 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.RequestLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TrustSelfSignedStrategy;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,22 +88,20 @@ public class OAIPMHHttpClient {
 
             HttpGet httpget = new HttpGet(builder.build());
 
-            RequestLine requestLine = httpget.getRequestLine();
-
-            LOG.info("Executing request: {} ", requestLine);
+            LOG.info("Executing request: {} ", httpget);
 
             // Create a custom response handler
-            ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+            HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
 
                 @Override
-                public String handleResponse(final HttpResponse response) throws IOException {
-                    int status = response.getStatusLine().getStatusCode();
+                public String handleResponse(final ClassicHttpResponse response) throws HttpException, IOException {
+                    int status = response.getCode();
                     if (status >= 200 && status < 300) {
                         HttpEntity entity = response.getEntity();
                         if (entity == null) {
                             throw new IOException("No response received");
                         }
-                        return EntityUtils.toString(entity, Charset.forName("UTF-8"));
+                        return EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     } else {
                         throw new ClientProtocolException("Unexpected response status: " + status);
                     }
@@ -121,8 +123,11 @@ public class OAIPMHHttpClient {
                 builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                         builder.build());
-                return HttpClients.custom().setSSLSocketFactory(
-                        sslsf).build();
+                RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
+                registryBuilder.register("https", sslsf);
+                return HttpClients.custom()
+                        .setConnectionManager(new PoolingHttpClientConnectionManager(registryBuilder.build()))
+                        .build();
             } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException ex) {
                 throw new IOException("The HTTP Client could not be started", ex);
             }

@@ -86,46 +86,48 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
 
             // read source java text for class
             log.debug("Loading source: {}", sourcePath);
+            JavaSourceParser parser;
             try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(sourcePath)) {
                 if (inputStream == null) {
                     log.debug("Java source not found on classpath for {}", aClass.getName());
                     break;
                 }
 
-                JavaSourceParser parser = new JavaSourceParser();
+                parser = new JavaSourceParser();
                 parser.parse(inputStream, nestedClass);
-
-                // look for parse errors
-                final String parseError = parser.getErrorMessage();
-                if (parseError != null) {
-                    throw new MojoExecutionException(parseError);
-                }
-
-                // get public method signature
-                for (String method : parser.getMethodSignatures()) {
-                    if (!result.containsKey(method)
-                            && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
-                            && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
-
-                        String signature = method;
-                        method = method.replace("public ", "");
-                        int whitespace = method.indexOf(' ');
-                        int leftBracket = method.indexOf('(');
-                        String name = method.substring(whitespace + 1, leftBracket);
-
-                        SignatureModel model = new SignatureModel();
-                        model.setSignature(method);
-                        model.setApiDescription(parser.getClassDoc());
-                        model.setMethodDescription(parser.getMethodDocs().get(name));
-                        model.setParameterDescriptions(parser.getParameterDocs().get(name));
-                        model.setParameterTypes(parser.getParameterTypes().get(signature));
-
-                        result.put(method, model);
-                    }
-                }
             } catch (Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
+
+            // look for parse errors
+            final String parseError = parser.getErrorMessage();
+            if (parseError != null) {
+                throw new MojoExecutionException(parseError);
+            }
+
+            // get public method signature
+            for (String method : parser.getMethodSignatures()) {
+                if (!result.containsKey(method)
+                        && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
+                        && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
+
+                    String signature = method;
+                    method = method.replace("public ", "");
+                    int whitespace = method.indexOf(' ');
+                    int leftBracket = method.indexOf('(');
+                    String name = method.substring(whitespace + 1, leftBracket);
+
+                    SignatureModel model = new SignatureModel();
+                    model.setSignature(method);
+                    model.setApiDescription(parser.getClassDoc());
+                    model.setMethodDescription(parser.getMethodDocs().get(name));
+                    model.setParameterDescriptions(parser.getParameterDocs().get(name));
+                    model.setParameterTypes(parser.getParameterTypes().get(signature));
+
+                    result.put(method, model);
+                }
+            }
+
         }
 
         if (result.isEmpty()) {

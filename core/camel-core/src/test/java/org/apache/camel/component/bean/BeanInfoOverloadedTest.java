@@ -46,7 +46,7 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
         assertEquals(RequestB.class, method.getGenericParameterTypes()[0]);
     }
 
-    class Bean {
+    static class Bean {
         public void doSomething(RequestA request) {
         }
 
@@ -54,11 +54,11 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
         }
     }
 
-    class RequestA {
+    static class RequestA {
         public int i;
     }
 
-    class RequestB {
+    static class RequestB {
         public String s;
     }
 

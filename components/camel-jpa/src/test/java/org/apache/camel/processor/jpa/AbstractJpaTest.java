@@ -18,8 +18,8 @@ package org.apache.camel.processor.jpa;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.examples.SendEmail;
@@ -81,11 +81,11 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
         });
     }
 
-    protected void assertEntityInDB(int size) throws Exception {
+    protected void assertEntityInDB(int size) {
         assertEntityInDB(size, SendEmail.class);
     }
 
-    protected void assertEntityInDB(int size, Class entityType) {
+    protected void assertEntityInDB(int size, Class<?> entityType) {
         List<?> results = entityManager.createQuery("select o from " + entityType.getName() + " o").getResultList();
         assertEquals(size, results.size());
 

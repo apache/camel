@@ -22,10 +22,12 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 
+import org.apache.camel.component.jcache.support.HazelcastTest;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+@HazelcastTest
 public class JCachePolicyTestBase extends CamelTestSupport {
 
     @BeforeEach

@@ -23,7 +23,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -136,10 +135,9 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     private Exchange prepareExchange(final Exchange exchange) {
         // send a new copied exchange with new camel context
         // don't copy handovers as they are handled by the Disruptor Event Handlers
-        final Exchange newExchange = ExchangeHelper
-                .copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
+        final Exchange newExchange = ExchangeHelper.copyExchangeWithProperties(exchange, endpoint.getCamelContext());
         // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
+        newExchange.getExchangeExtension().setFromEndpoint(endpoint);
         return newExchange;
     }
 
@@ -164,31 +162,38 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
             // To solve this problem, a new synchronization is set on the exchange that is to be
             // processed
-            result.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
-                @Override
-                public void onComplete(Exchange exchange) {
-                    synchronizedExchange.consumed(result);
-                }
-
-                @Override
-                public void onFailure(Exchange exchange) {
-                    synchronizedExchange.consumed(result);
-                }
-            });
+            result.getExchangeExtension().addOnCompletion(newSynchronization(synchronizedExchange, result));
 
             // As the necessary post-processing of the exchange is done by the registered Synchronization,
             // we can suffice with a no-op AsyncCallback
             processor.process(result, NOOP_ASYNC_CALLBACK);
 
         } catch (Exception e) {
-            Exchange exchange = synchronizedExchange.getExchange();
+            handleException(synchronizedExchange, e);
+        }
+    }
 
-            if (exchange != null) {
-                getExceptionHandler().handleException("Error processing exchange",
-                        exchange, e);
-            } else {
-                getExceptionHandler().handleException(e);
+    private static Synchronization newSynchronization(SynchronizedExchange synchronizedExchange, Exchange result) {
+        return new Synchronization() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                synchronizedExchange.consumed(result);
             }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                synchronizedExchange.consumed(result);
+            }
+        };
+    }
+
+    private void handleException(SynchronizedExchange synchronizedExchange, Exception e) {
+        Exchange exchange = synchronizedExchange.getExchange();
+
+        if (exchange != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, e);
+        } else {
+            getExceptionHandler().handleException(e);
         }
     }
 

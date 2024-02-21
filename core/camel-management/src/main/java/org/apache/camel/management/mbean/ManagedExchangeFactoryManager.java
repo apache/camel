@@ -37,7 +37,7 @@ import org.apache.camel.util.URISupport;
 @ManagedResource(description = "Managed ExchangeFactory")
 public class ManagedExchangeFactoryManager extends ManagedService implements ManagedExchangeFactoryManagerMBean {
 
-    private ExchangeFactoryManager exchangeFactoryManager;
+    private final ExchangeFactoryManager exchangeFactoryManager;
     private boolean sanitize;
 
     public ManagedExchangeFactoryManager(CamelContext context, ExchangeFactoryManager exchangeFactoryManager) {

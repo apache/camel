@@ -37,11 +37,11 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
     private String commitsha;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:validPullRequest")
                         .process(new MockPullRequestStateProducerProcessor())
                         .to("github://pullRequestState?state=success&repoOwner=anotherguy&repoName=somerepo");
@@ -51,7 +51,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
     }
 
     @Test
-    public void testPullRequestStateProducer() throws Exception {
+    public void testPullRequestStateProducer() {
         commitsha = commitService.getNextSha();
 
         Endpoint stateProducerEndpoint = getMandatoryEndpoint("direct:validPullRequest");
@@ -80,7 +80,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
 
     public class MockPullRequestStateProducerProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
             headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);

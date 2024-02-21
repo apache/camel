@@ -47,15 +47,21 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected final String startToken;
     protected final String endToken;
     protected final boolean includeTokens;
+    private final Expression source;
     private Expression startExp;
     private Expression endExp;
 
     public TokenPairExpressionIterator(String startToken, String endToken, boolean includeTokens) {
+        this(null, startToken, endToken, includeTokens);
+    }
+
+    public TokenPairExpressionIterator(Expression source, String startToken, String endToken, boolean includeTokens) {
         StringHelper.notEmpty(startToken, "startToken");
         StringHelper.notEmpty(endToken, "endToken");
         this.startToken = startToken;
         this.endToken = endToken;
         this.includeTokens = includeTokens;
+        this.source = source;
     }
 
     @Override
@@ -94,7 +100,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         InputStream in = null;
         try {
-            in = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (source != null) {
+                in = source.evaluate(exchange, InputStream.class);
+            } else {
+                in = exchange.getIn().getBody(InputStream.class);
+            }
+            if (in == null) {
+                throw new InvalidPayloadException(exchange, InputStream.class);
+            }
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = ExchangeHelper.getCharsetName(exchange);
             return createIterator(exchange, in, charset);
@@ -183,7 +196,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
-            this.image = scanner.hasNext() ? next(true) : null;
+            this.image = scanner.hasNext() ? next() : null;
         }
 
         @Override
@@ -193,14 +206,10 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
         @Override
         public Object next() {
-            return next(false);
-        }
-
-        Object next(boolean first) {
             Object answer = image;
             // calculate next
             if (scanner.hasNext()) {
-                image = getNext(first);
+                image = getNext();
             } else {
                 image = null;
             }
@@ -212,7 +221,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             return answer;
         }
 
-        Object getNext(boolean first) {
+        Object getNext() {
             String next = scanner.next();
 
             // only grab text after the start token

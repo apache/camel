@@ -28,7 +28,6 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
@@ -376,7 +375,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -397,7 +396,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("5000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(5000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -419,7 +418,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);
@@ -544,7 +543,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class NoBeanInjectionTestClass {
+    public static class NoBeanInjectionTestClass {
         @EndpointInject
         public FluentProducerTemplate fluentProducerTemplate;
 
@@ -566,7 +565,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         @Consume("seda:foo")
         public void consumeSomething(String body, Exchange exchange) {
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(mySynchronization);
+            exchange.getExchangeExtension().addOnCompletion(mySynchronization);
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
@@ -581,7 +580,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             assertEquals("Hello World", body);
 
             Exchange exchange = producer.getEndpoint().createExchange();
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(mySynchronization);
+            exchange.getExchangeExtension().addOnCompletion(mySynchronization);
             exchange.getIn().setBody(body);
             producer.process(exchange);
         }
@@ -605,7 +604,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyEndpointInjectBeanProducerTemplate {
+    public static class MyEndpointInjectBeanProducerTemplate {
 
         private ProducerTemplate producer;
 
@@ -623,7 +622,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyEndpointBeanProducer {
+    public static class MyEndpointBeanProducer {
 
         private Producer producer;
 
@@ -642,7 +641,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointBeanPollingConsumer {
+    public static class MyEndpointBeanPollingConsumer {
 
         private PollingConsumer consumer;
 
@@ -661,7 +660,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplate {
+    public static class MyEndpointInjectProducerTemplate {
 
         @EndpointInject("mock:result")
         public ProducerTemplate producer;
@@ -672,7 +671,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectFluentProducerTemplate {
+    public static class MyEndpointInjectFluentProducerTemplate {
 
         @EndpointInject("mock:result")
         public FluentProducerTemplate producer;
@@ -683,7 +682,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateNoDefaultEndpoint {
+    public static class MyEndpointInjectProducerTemplateNoDefaultEndpoint {
 
         @EndpointInject()
         public ProducerTemplate producer;
@@ -694,7 +693,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateNameUnknown {
+    public static class MyEndpointInjectProducerTemplateNameUnknown {
 
         @EndpointInject("ref:unknown")
         public ProducerTemplate producer;
@@ -705,7 +704,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateUrlUnknown {
+    public static class MyEndpointInjectProducerTemplateUrlUnknown {
 
         @EndpointInject("xxx:foo")
         public ProducerTemplate producer;
@@ -725,7 +724,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyFieldBean {
+    public static class MyPropertyFieldBean {
 
         @PropertyInject("myTimeout")
         public int timeout;
@@ -738,7 +737,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyFieldDefaultValueBean {
+    public static class MyPropertyFieldDefaultValueBean {
 
         @PropertyInject(value = "myTimeout", defaultValue = "5000")
         public int timeout;
@@ -751,7 +750,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyMethodBean {
+    public static class MyPropertyMethodBean {
 
         private int timeout;
         private String greeting;
@@ -779,7 +778,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanInjectBean {
+    public static class MyBeanInjectBean {
 
         @BeanInject("foo")
         public FooBar foo;
@@ -789,7 +788,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanInjectByTypeBean {
+    public static class MyBeanInjectByTypeBean {
 
         @BeanInject
         public FooBar foo;
@@ -799,7 +798,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanConfigInjectByTypeBean {
+    public static class MyBeanConfigInjectByTypeBean {
 
         @BeanConfigInject("foobar")
         public FooBarConfig config;
@@ -811,7 +810,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanConfigInjectByMethod {
+    public static class MyBeanConfigInjectByMethod {
 
         public FooBar fooBar;
 

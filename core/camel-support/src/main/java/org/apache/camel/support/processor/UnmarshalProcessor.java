@@ -30,6 +30,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -43,9 +44,17 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     private String routeId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
+    private final boolean allowNullBody;
+    private String variableSend;
+    private String variableReceive;
 
     public UnmarshalProcessor(DataFormat dataFormat) {
+        this(dataFormat, false);
+    }
+
+    public UnmarshalProcessor(DataFormat dataFormat, boolean allowNullBody) {
         this.dataFormat = dataFormat;
+        this.allowNullBody = allowNullBody;
     }
 
     @Override
@@ -55,13 +64,22 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         InputStream stream = null;
         Object result = null;
         try {
-            stream = exchange.getIn().getMandatoryBody(InputStream.class);
-
-            // lets setup the out message before we invoke the dataFormat so that it can mutate it if necessary
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-
-            result = dataFormat.unmarshal(exchange, stream);
+            final Message in = exchange.getIn();
+            final Object originalBody = in.getBody();
+            Object body = originalBody;
+            if (variableSend != null) {
+                body = ExchangeHelper.getVariable(exchange, variableSend);
+            }
+            final Message out;
+            if (allowNullBody && body == null) {
+                // The body is null, and it is an allowed value so let's skip the unmarshalling
+                out = exchange.getOut();
+            } else {
+                // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
+                out = exchange.getOut();
+                out.copyFrom(in);
+                result = dataFormat.unmarshal(exchange, body);
+            }
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
@@ -69,13 +87,24 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
                             "The returned exchange " + result + " is not the same as " + exchange
                                                     + " provided to the DataFormat");
                 }
-            } else if (result instanceof Message) {
-                // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
-                exchange.setOut((Message) result);
+            } else if (result instanceof Message msg) {
+                // result should be stored in variable instead of message body
+                if (variableReceive != null) {
+                    Object value = msg.getBody();
+                    ExchangeHelper.setVariable(exchange, variableReceive, value);
+                } else {
+                    // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
+                    exchange.setOut(msg);
+                }
             } else {
-                out.setBody(result);
+                // result should be stored in variable instead of message body
+                if (variableReceive != null) {
+                    ExchangeHelper.setVariable(exchange, variableReceive, result);
+                } else {
+                    out.setBody(result);
+                }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
             exchange.setException(e);
@@ -129,12 +158,30 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         this.camelContext = camelContext;
     }
 
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public String getVariableSend() {
+        return variableSend;
+    }
+
+    public void setVariableSend(String variableSend) {
+        this.variableSend = variableSend;
+    }
+
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
+
     @Override
     protected void doStart() throws Exception {
         // inject CamelContext on data format
-        if (dataFormat instanceof CamelContextAware) {
-            ((CamelContextAware) dataFormat).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(dataFormat, camelContext);
         // add dataFormat as service which will also start the service
         // (false => we handle the lifecycle of the dataFormat)
         getCamelContext().addService(dataFormat, false, true);

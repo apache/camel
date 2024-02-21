@@ -42,6 +42,7 @@
     </routeContext>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- we can include multiple route contexts -->
         <routeContextRef ref="myCoolRoute"/>
         <routeContextRef ref="myOtherRoute"/>

@@ -16,58 +16,68 @@
  */
 package org.apache.camel.component.jms.activemq;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * ActiveMQ specific unit test
  */
-public class ActiveMQConsumeWildcardQueuesTest extends CamelTestSupport {
+public class ActiveMQConsumeWildcardQueuesTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testWildcard() throws Exception {
-        getMockEndpoint("mock:chelsea").expectedBodiesReceived("B");
-        getMockEndpoint("mock:1st").expectedBodiesReceived("D");
-        getMockEndpoint("mock:other").expectedBodiesReceivedInAnyOrder("A", "C");
+        MockEndpoint chelsea = getMockEndpoint("mock:chelsea");
+        chelsea.expectedBodiesReceived("B");
+        MockEndpoint first = getMockEndpoint("mock:1st");
+        first.expectedBodiesReceived("D");
+        MockEndpoint other = getMockEndpoint("mock:other");
+        other.expectedBodiesReceivedInAnyOrder("A", "C");
 
         template.sendBody("activemq:queue:sport.pl.manu", "A");
         template.sendBody("activemq:queue:sport.pl.chelsea", "B");
         template.sendBody("activemq:queue:sport.pl.arsenal", "C");
         template.sendBody("activemq:queue:sport.1st.leeds", "D");
 
-        assertMockEndpointsSatisfied();
+        chelsea.assertIsSatisfied();
+        other.assertIsSatisfied();
+        first.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // use wildcard to consume from all sports
-                from("activemq:queue:sport.>")
+                from("activemq:queue:sport.#")
                         .to("log:received?showHeaders=true")
                         .choice()
                         // the JMSDestination contains from which queue the message was consumed from
-                        .when(header("JMSDestination").isEqualTo("queue://sport.pl.chelsea"))
+                        .when(header("JMSDestination").isEqualTo("ActiveMQQueue[sport.pl.chelsea]"))
                         .to("mock:chelsea")
                         // we can use a reg exp to match any message from 1st division
-                        .when(header("JMSDestination").regex("queue://sport.1st.*"))
+                        .when(header("JMSDestination").regex("ActiveMQQueue\\[sport.1st.*\\]"))
                         .to("mock:1st")
                         .otherwise()
                         .to("mock:other")
@@ -76,4 +86,15 @@ public class ActiveMQConsumeWildcardQueuesTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

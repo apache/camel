@@ -19,23 +19,25 @@ public class ZooKeeperEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(13);
         props.add("backoff");
-        props.add("createMode");
-        props.add("exchangePattern");
-        props.add("serverUrls");
-        props.add("timeout");
-        props.add("path");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
+        props.add("create");
+        props.add("createMode");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
+        props.add("listChildren");
+        props.add("path");
         props.add("repeat");
         props.add("sendEmptyMessageOnDelete");
-        props.add("create");
-        props.add("exceptionHandler");
-        props.add("listChildren");
+        props.add("serverUrls");
+        props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +66,11 @@ public class ZooKeeperEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

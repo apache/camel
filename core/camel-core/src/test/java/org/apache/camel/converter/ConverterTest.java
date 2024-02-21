@@ -34,8 +34,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConverterTest extends TestSupport {
 
@@ -58,7 +65,7 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testIntegerPropertyEditorConversion() throws Exception {
+    public void testIntegerPropertyEditorConversion() {
         Integer value = converter.convertTo(Integer.class, "1000");
         assertNotNull(value);
         assertEquals(Integer.valueOf(1000), (Object) value, "Converted to Integer");
@@ -68,29 +75,29 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testConvertStringToAndFromByteArray() throws Exception {
+    public void testConvertStringToAndFromByteArray() {
         byte[] array = converter.convertTo(byte[].class, "foo");
         assertNotNull(array);
 
-        LOG.debug("Found array of size: " + array.length);
+        LOG.debug("Found array of size: {}", array.length);
 
         String text = converter.convertTo(String.class, array);
         assertEquals("foo", text, "Converted to String");
     }
 
     @Test
-    public void testConvertStringToAndFromCharArray() throws Exception {
+    public void testConvertStringToAndFromCharArray() {
         char[] array = converter.convertTo(char[].class, "foo");
         assertNotNull(array);
 
-        LOG.debug("Found array of size: " + array.length);
+        LOG.debug("Found array of size: {}", array.length);
 
         String text = converter.convertTo(String.class, array);
         assertEquals("foo", text, "Converted to String");
     }
 
     @Test
-    public void testConvertStringAndStreams() throws Exception {
+    public void testConvertStringAndStreams() {
         InputStream inputStream = converter.convertTo(InputStream.class, "bar");
         assertNotNull(inputStream);
 
@@ -99,23 +106,22 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testArrayToListAndSetConversion() throws Exception {
+    public void testArrayToListAndSetConversion() {
         String[] array = new String[] { "one", "two" };
 
         List<?> list = converter.convertTo(List.class, array);
         assertEquals(2, list.size(), "List size: " + list);
 
         Collection<?> collection = converter.convertTo(Collection.class, array);
+        assertNotNull(collection, "Returned object must not be null");
         assertEquals(2, collection.size(), "Collection size: " + collection);
 
-        Set<?> set = converter.convertTo(Set.class, array);
-        assertEquals(2, set.size(), "Set size: " + set);
-        set = converter.convertTo(Set.class, list);
+        Set<?> set = converter.convertTo(Set.class, list);
         assertEquals(2, set.size(), "Set size: " + set);
     }
 
     @Test
-    public void testCollectionToArrayConversion() throws Exception {
+    public void testCollectionToArrayConversion() {
         List<String> list = new ArrayList<>();
         list.add("one");
         list.add("two");
@@ -128,7 +134,7 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testCollectionToPrimitiveArrayConversion() throws Exception {
+    public void testCollectionToPrimitiveArrayConversion() {
         List<Integer> list = new ArrayList<>();
         list.add(5);
         list.add(6);
@@ -146,14 +152,7 @@ public class ConverterTest extends TestSupport {
         // now lets go back to a List again
         List<?> resultList = converter.convertTo(List.class, intArray);
         assertEquals(2, resultList.size(), "List size");
-        LOG.debug("From primitive type array we've created the list: " + resultList);
-    }
-
-    @Test
-    public void testStringToFile() throws Exception {
-        File file = converter.convertTo(File.class, "foo.txt");
-        assertNotNull("Should have converted to a file!");
-        assertEquals("foo.txt", file.getName(), "file name");
+        LOG.debug("From primitive type array we've created the list: {}", resultList);
     }
 
     @Test
@@ -168,26 +167,35 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testPrimitiveBooleanConversion() throws Exception {
-        boolean value = converter.convertTo(boolean.class, null);
-        assertFalse(value);
+    public void testPrimitiveBooleanConversion() {
+        boolean value = assertDoesNotThrow(() -> converter.convertTo(boolean.class, null),
+                "A conversion from primitive boolean must not throw when receiving a null value");
+        assertFalse(value, "A conversion from primitive boolean must default to false when converting from null");
     }
 
     @Test
-    public void testPrimitiveIntConversion() throws Exception {
+    public void testPrimitiveIntConversion() {
         int value = converter.convertTo(int.class, 4);
         assertEquals(4, value, "value");
     }
 
     @Test
-    public void testPrimitiveIntPropertySetter() throws Exception {
+    public void testPrimitiveIntPropertySetter() {
         MyBean bean = new MyBean();
-        IntrospectionSupport.setProperty(converter, bean, "foo", "4");
-        assertEquals(4, bean.getFoo(), "bean.foo");
+
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
+
+        assertDoesNotThrow(() -> bi.setProperty(context, converter, bean, "foo", "4", null, true, true, true),
+                "Setting an int property in a bean, should have succeeded without throwing exceptions");
+        assertEquals(4, bean.getFoo(), "The property bean.foo does not match the value that was previously set");
+
+        context.stop();
     }
 
     @Test
-    public void testStringToBoolean() throws Exception {
+    public void testStringToBoolean() {
         Boolean value = converter.convertTo(Boolean.class, "true");
         assertEquals(Boolean.TRUE, value, "converted boolean value");
 
@@ -195,11 +203,11 @@ public class ConverterTest extends TestSupport {
         assertEquals(Boolean.FALSE, value, "converted boolean value");
 
         value = converter.convertTo(Boolean.class, null);
-        assertEquals(null, value, "converted boolean value");
+        assertNull(value, "converted boolean value");
     }
 
     @Test
-    public void testStaticMethodConversionWithExchange() throws Exception {
+    public void testStaticMethodConversionWithExchange() {
         CamelContext camel = new DefaultCamelContext();
         Exchange e = new DefaultExchange(camel);
         e.setProperty("prefix", "foo-");
@@ -209,7 +217,7 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testInstanceMethodConversionWithExchange() throws Exception {
+    public void testInstanceMethodConversionWithExchange() {
         String[] values = new String[] { "5", "bar" };
 
         CamelContext camel = new DefaultCamelContext();
@@ -223,46 +231,44 @@ public class ConverterTest extends TestSupport {
     @Test
     public void testMandatoryConvertTo() {
         CamelContext camel = new DefaultCamelContext();
-        Exchange e = new DefaultExchange(camel);
-        try {
-            converter.mandatoryConvertTo(InputStream.class, e);
-            fail("Expect exception here");
-        } catch (Exception ex) {
-            boolean b = ex instanceof NoTypeConversionAvailableException;
-            assertTrue(b, "Expect to get a NoTypeConversionAvailableException here");
-        }
+        Exchange exchange = new DefaultExchange(camel);
+
+        assertThrows(NoTypeConversionAvailableException.class,
+                () -> converter.mandatoryConvertTo(InputStream.class, exchange),
+                "Expected to get a NoTypeConversionAvailableException here");
     }
 
     @Test
-    public void testStringToChar() throws Exception {
-        char ch = converter.convertTo(char.class, "A");
-        assertEquals('A', (int) ch);
+    public void testStringToChar() {
+        char ch = assertDoesNotThrow(() -> converter.convertTo(char.class, "A"),
+                "A conversion from String to char should have succeeded without throwing exceptions");
+        assertEquals('A', (int) ch, "The converted value does not match what was set");
 
-        ch = converter.convertTo(char.class, " ");
-        assertEquals(' ', (int) ch);
+        ch = assertDoesNotThrow(() -> converter.convertTo(char.class, " "),
+                "A conversion from String with spaces to char should have succeeded without throwing exceptions");
+        assertEquals(' ', (int) ch,
+                "The converted value does not match what was set");
 
-        try {
-            converter.mandatoryConvertTo(char.class, "ABC");
-            fail("Should have thrown an exception");
-        } catch (TypeConversionException e) {
-            assertEquals("String must have exactly a length of 1: ABC", e.getCause().getMessage());
-        }
+        Exception ex = assertThrows(TypeConversionException.class,
+                () -> converter.mandatoryConvertTo(char.class, "ABC"), "Should have thrown an exception");
+
+        assertEquals("String must have exactly a length of 1: ABC", ex.getCause().getMessage());
     }
 
     @Test
-    public void testNullToBoolean() throws Exception {
+    public void testNullToBoolean() {
         boolean b = converter.convertTo(boolean.class, null);
         assertFalse(b);
     }
 
     @Test
-    public void testNullToInt() throws Exception {
+    public void testNullToInt() {
         int i = converter.convertTo(int.class, null);
         assertEquals(0, i);
     }
 
     @Test
-    public void testToInt() throws Exception {
+    public void testToInt() {
         int i = converter.convertTo(int.class, "0");
         assertEquals(0, i);
     }

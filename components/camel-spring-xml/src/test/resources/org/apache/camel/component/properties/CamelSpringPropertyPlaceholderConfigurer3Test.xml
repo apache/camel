@@ -38,6 +38,7 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- in this route we use Camels property placeholder {{ }} style -->
     <route>
       <from uri="direct:{{foo}}"/>

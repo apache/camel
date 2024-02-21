@@ -16,13 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.function.Supplier;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -37,28 +35,31 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
+    @XmlTransient
+    private IdempotentRepository idempotentRepositoryBean;
+
     @XmlAttribute(required = true)
-    private String messageIdRepositoryRef;
+    @Metadata(javaType = "org.apache.camel.spi.IdempotentRepository")
+    private String idempotentRepository;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String eager;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String completionEager;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String skipDuplicate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String removeOnFailure;
-    @XmlTransient
-    private IdempotentRepository idempotentRepository;
 
     public IdempotentConsumerDefinition() {
     }
 
     public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         super(messageIdExpression);
-        this.idempotentRepository = idempotentRepository;
+        this.idempotentRepositoryBean = idempotentRepository;
     }
 
     @Override
@@ -82,11 +83,11 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     /**
      * Sets the reference name of the message id repository
      *
-     * @param  messageIdRepositoryRef the reference name of message id repository
-     * @return                        builder
+     * @param  ref the reference name of message id repository
+     * @return     builder
      */
-    public IdempotentConsumerDefinition messageIdRepositoryRef(String messageIdRepositoryRef) {
-        setMessageIdRepositoryRef(messageIdRepositoryRef);
+    public IdempotentConsumerDefinition idempotentRepository(String ref) {
+        setIdempotentRepository(ref);
         return this;
     }
 
@@ -96,19 +97,8 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * @param  idempotentRepository the repository instance of idempotent
      * @return                      builder
      */
-    public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository idempotentRepository) {
-        setMessageIdRepository(idempotentRepository);
-        return this;
-    }
-
-    /**
-     * Sets the message id repository for the idempotent consumer
-     *
-     * @param  idempotentRepository the repository instance of idempotent
-     * @return                      builder
-     */
-    public IdempotentConsumerDefinition messageIdRepository(Supplier<IdempotentRepository> idempotentRepository) {
-        setMessageIdRepository(idempotentRepository.get());
+    public IdempotentConsumerDefinition idempotentRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepositoryBean = idempotentRepository;
         return this;
     }
 
@@ -184,20 +174,20 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
         super.setExpression(expression);
     }
 
-    public String getMessageIdRepositoryRef() {
-        return messageIdRepositoryRef;
+    public IdempotentRepository getIdempotentRepositoryBean() {
+        return idempotentRepositoryBean;
     }
 
-    public void setMessageIdRepositoryRef(String messageIdRepositoryRef) {
-        this.messageIdRepositoryRef = messageIdRepositoryRef;
-    }
-
-    public IdempotentRepository getMessageIdRepository() {
+    public String getIdempotentRepository() {
         return idempotentRepository;
     }
 
-    public void setMessageIdRepository(IdempotentRepository idempotentRepository) {
+    public void setIdempotentRepository(String idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
+    }
+
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepositoryBean = idempotentRepository;
     }
 
     public String getEager() {

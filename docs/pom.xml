@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -30,6 +30,24 @@
     <description>Camel Documentation</description>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <skipOnUnsupported>true</skipOnUnsupported>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -40,56 +58,118 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.11.0</version>
-                <executions>
-                    <execution>
-                        <id>install node and yarn</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v10.14.2</nodeVersion>
-                            <yarnVersion>v1.12.3</yarnVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>yarn-install</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>install --no-progress --force --non-interactive --frozen-lockfile</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>yarn-gulp</id>
-                        <goals>
-                            <goal>gulp</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>xref-check</id>
-                        <goals>
-                            <goal>xref-check</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>x86</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- we want to copy some adoc files from tooling -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-maven-plugin-doc</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/user-manual/modules/ROOT/pages</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../tooling/maven/camel-maven-plugin/src/main/docs</directory>
+                                        </resource>
+                                        <resource>
+                                            <directory>../catalog/camel-report-maven-plugin/src/main/docs</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.0</version>
+                        <executions>
+                            <execution>
+                                <id>install node and yarn</id>
+                                <goals>
+                                    <goal>install-node-and-yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>v16.17.1</nodeVersion>
+                                    <yarnVersion>v1.22.19</yarnVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn-gulp</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>gulp</arguments>
+                                    <skip>${skipOnUnsupported}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>xref-check</id>
+                                <goals>
+                                    <goal>xref-check</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

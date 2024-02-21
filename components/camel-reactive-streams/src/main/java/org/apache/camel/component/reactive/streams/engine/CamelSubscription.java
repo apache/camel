@@ -116,7 +116,7 @@ public class CamelSubscription implements Subscription {
 
     protected void checkAndFlush() {
         mutex.lock();
-        boolean shouldFlush = !terminated && !sending && requested > 0 && buffer.size() > 0;
+        boolean shouldFlush = !terminated && !sending && requested > 0 && !buffer.isEmpty();
         if (shouldFlush) {
             sending = true;
         }
@@ -190,7 +190,7 @@ public class CamelSubscription implements Subscription {
         }
     }
 
-    public void signalCompletion() throws Exception {
+    public void signalCompletion() {
         mutex.lock();
         terminating = true;
         mutex.unlock();
@@ -202,11 +202,15 @@ public class CamelSubscription implements Subscription {
     public void cancel() {
         publisher.unsubscribe(this);
 
+        List<Exchange> bufferCopy;
         mutex.lock();
-        this.terminated = true;
-        List<Exchange> bufferCopy = new LinkedList<>(buffer);
-        this.buffer.clear();
-        mutex.unlock();
+        try {
+            this.terminated = true;
+            bufferCopy = new LinkedList<>(buffer);
+            this.buffer.clear();
+        } finally {
+            mutex.unlock();
+        }
 
         discardBuffer(bufferCopy);
     }

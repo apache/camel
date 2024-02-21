@@ -16,10 +16,11 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -27,24 +28,33 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
-@XmlRootElement(name = "univocity-csv")
+@XmlRootElement(name = "univocityCsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
+
+    @XmlAttribute
+    @Metadata(defaultValue = ",")
+    private String delimiter;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String quoteAllFields;
     @XmlAttribute
-    @Metadata(defaultValue = "\"")
+    @Metadata(label = "advanced", defaultValue = "\"")
     private String quote;
     @XmlAttribute
-    @Metadata(defaultValue = "\"")
+    @Metadata(label = "advanced", defaultValue = "\"")
     private String quoteEscape;
-    @XmlAttribute
-    @Metadata(defaultValue = ",")
-    private String delimiter;
 
     public UniVocityCsvDataFormat() {
-        super("univocity-csv");
+        super("univocityCsv");
+    }
+
+    private UniVocityCsvDataFormat(Builder builder) {
+        super("univocityCsv", builder);
+        this.delimiter = builder.delimiter;
+        this.quoteAllFields = builder.quoteAllFields;
+        this.quote = builder.quote;
+        this.quoteEscape = builder.quoteEscape;
     }
 
     public String getQuoteAllFields() {
@@ -91,4 +101,60 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         this.delimiter = delimiter;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link UniVocityCsvDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, UniVocityCsvDataFormat> {
+
+        private String delimiter;
+        private String quoteAllFields;
+        private String quote;
+        private String quoteEscape;
+
+        /**
+         * Whether or not all values must be quoted when writing them.
+         */
+        public Builder quoteAllFields(String quoteAllFields) {
+            this.quoteAllFields = quoteAllFields;
+            return this;
+        }
+
+        /**
+         * Whether or not all values must be quoted when writing them.
+         */
+        public Builder quoteAllFields(boolean quoteAllFields) {
+            this.quoteAllFields = Boolean.toString(quoteAllFields);
+            return this;
+        }
+
+        /**
+         * The quote symbol.
+         */
+        public Builder quote(String quote) {
+            this.quote = quote;
+            return this;
+        }
+
+        /**
+         * The quote escape symbol
+         */
+        public Builder quoteEscape(String quoteEscape) {
+            this.quoteEscape = quoteEscape;
+            return this;
+        }
+
+        /**
+         * The delimiter of values
+         */
+        public Builder delimiter(String delimiter) {
+            this.delimiter = delimiter;
+            return this;
+        }
+
+        @Override
+        public UniVocityCsvDataFormat end() {
+            return new UniVocityCsvDataFormat(this);
+        }
+    }
 }

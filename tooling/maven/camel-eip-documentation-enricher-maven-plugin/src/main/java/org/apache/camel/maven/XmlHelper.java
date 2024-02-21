@@ -41,15 +41,39 @@ public final class XmlHelper {
 
     public static Document buildNamespaceAwareDocument(File xml)
             throws SAXException, ParserConfigurationException, IOException {
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        try {
+            // disable DOCTYPE declaration:
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
+            // Set secure processing
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
+            // Disable the external-general-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
+            // Disable the external-parameter-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (ParserConfigurationException e) {
+        }
         return factory.newDocumentBuilder().parse(xml);
     }
 
     public static Transformer buildTransformer() throws TransformerConfigurationException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

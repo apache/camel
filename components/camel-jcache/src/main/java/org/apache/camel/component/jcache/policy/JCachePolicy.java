@@ -53,6 +53,7 @@ public class JCachePolicy implements Policy {
     private String cacheName;
     private Configuration cacheConfiguration;
     private Expression keyExpression;
+    private Expression bypassExpression;
     private boolean enabled = true;
 
     @Override
@@ -105,7 +106,7 @@ public class JCachePolicy implements Policy {
 
         }
 
-        return new JCachePolicyProcessor(route.getCamelContext(), cache, keyExpression, processor);
+        return new JCachePolicyProcessor(route.getCamelContext(), cache, keyExpression, bypassExpression, processor);
     }
 
     public Cache getCache() {
@@ -146,6 +147,14 @@ public class JCachePolicy implements Policy {
 
     public void setKeyExpression(Expression keyExpression) {
         this.keyExpression = keyExpression;
+    }
+
+    public Expression getBypassExpression() {
+        return bypassExpression;
+    }
+
+    public void setBypassExpression(Expression bypassExpression) {
+        this.bypassExpression = bypassExpression;
     }
 
     public boolean isEnabled() {

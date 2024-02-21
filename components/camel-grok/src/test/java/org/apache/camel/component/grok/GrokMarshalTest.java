@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GrokMarshalTest extends CamelTestSupport {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:direct")
                         .marshal().grok("%{IP:ip}")
                         .to("mock:mock");
@@ -40,7 +40,7 @@ public class GrokMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshalNotSupported() throws Exception {
+    public void testMarshalNotSupported() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:direct", ""));
         assertIsInstanceOf(UnsupportedOperationException.class, e.getCause());

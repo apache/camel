@@ -24,5 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OneToMany {
 
+    /**
+     * Class name associated to the type of the List<Type of the Class>
+     */
     String mappedTo() default "";
 }

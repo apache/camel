@@ -38,8 +38,6 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo2Producer.class);
 
-    private static final String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
-
     private Olingo2Index resultIndex;
 
     public Olingo2Producer(Olingo2Endpoint endpoint) {
@@ -49,8 +47,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
-        final Map<String, Object> properties = new HashMap<>();
-        properties.putAll(endpoint.getEndpointProperties());
+        final Map<String, Object> properties = new HashMap<>(endpoint.getEndpointProperties());
         propertiesHelper.getExchangeProperties(exchange, properties);
 
         // let the endpoint and the Producer intercept properties
@@ -72,7 +69,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
                 exchange.getOut().setHeaders(exchange.getIn().getHeaders());
 
                 // Add http response headers
-                exchange.getOut().setHeader(Olingo2Constants.PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS, responseHeaders);
+                exchange.getOut().setHeader(Olingo2Constants.RESPONSE_HTTP_HEADERS, responseHeaders);
 
                 interceptResult(response, exchange);
 
@@ -106,8 +103,8 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
 
         try {
             doInvokeMethod(method, properties);
-        } catch (Throwable t) {
-            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
+        } catch (Exception e) {
+            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(e));
             callback.done(true);
             return true;
         }

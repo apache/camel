@@ -34,7 +34,7 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
     private JettyRestHttpBinding binding = new JettyRestHttpBinding();
 
     @Test
-    public void testDefaultValue() throws Exception {
+    public void testDefaultValue() {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
 
@@ -44,18 +44,20 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
                         "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").param().name("verbose").type(RestParamType.query).defaultValue("false")
-                        .endParam().route().process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                        .endParam().to("direct:basic");
+                from("direct:basic")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("id", String.class);
 
                                 Object verbose = exchange.getIn().getHeader("verbose");

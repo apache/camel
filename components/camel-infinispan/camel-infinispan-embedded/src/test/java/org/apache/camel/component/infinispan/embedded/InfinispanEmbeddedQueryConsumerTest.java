@@ -31,15 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InfinispanEmbeddedQueryConsumerTest extends InfinispanEmbeddedQueryTestSupport {
 
     @BindToRegistry("continuousQueryBuilder")
-    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER = InfinispanQueryBuilder.create(
+    private InfinispanQueryBuilder continuousQueryBuilder = InfinispanQueryBuilder.create(
             "FROM org.infinispan.protostream.sampledomain.User WHERE name like 'CQ%'");
 
     @BindToRegistry("continuousQueryBuilderNoMatch")
-    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH = InfinispanQueryBuilder.create(
+    private InfinispanQueryBuilder continuousQueryBuilderNoMatch = InfinispanQueryBuilder.create(
             "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%TEST%'");
 
     @BindToRegistry("continuousQueryBuilderAll")
-    public static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL = InfinispanQueryBuilder.create(
+    private InfinispanQueryBuilder continuousQueryBuilderAll = InfinispanQueryBuilder.create(
             "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%Q0%'");
 
     // *****************************

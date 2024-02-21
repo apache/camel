@@ -49,7 +49,7 @@
     </bean>
 
     <!-- the error handler we use which is transactional -->
-    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
+    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder">
         <property name="transactionTemplate" ref="PROPAGATION_REQUIRES_NEW_TEMPLATE"/>
     </bean>
 

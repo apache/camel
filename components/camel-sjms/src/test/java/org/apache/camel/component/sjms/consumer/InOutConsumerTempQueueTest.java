@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,19 +29,20 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World");
 
-        template.sendBody("sjms:start", "Hello Camel");
-        template.sendBody("sjms:start", "Hello World");
-        assertMockEndpointsSatisfied();
+        template.sendBody("sjms:start.queue.InOutConsumerTempQueueTest", "Hello Camel");
+        template.sendBody("sjms:start.queue.InOutConsumerTempQueueTest", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("sjms:queue:start").to("sjms:queue:in.out.temp.queue?exchangePattern=InOut")
+            public void configure() {
+                from("sjms:queue:start.queue.InOutConsumerTempQueueTest")
+                        .to("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.temp.queue?exchangePattern=InOut").to("log:before")
+                from("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut").to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = (String) exchange.getIn().getBody();

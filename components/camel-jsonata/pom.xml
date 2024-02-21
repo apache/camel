@@ -24,7 +24,7 @@
      <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jsonata</artifactId>
@@ -50,18 +50,10 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.ibm.jsonata4java/JSONata4Java -->
         <dependency>
-            <groupId>com.ibm.jsonata4java</groupId>
-            <artifactId>JSONata4Java</artifactId>
-            <version>${jsonata4java-version}</version>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
+            <groupId>com.dashjoin</groupId>
+            <artifactId>jsonata</artifactId>
+            <version>${jsonata-version}</version>
         </dependency>
 
         <!-- testing -->

@@ -91,6 +91,7 @@ They no longer uses their own connection pooling, but let you use the existing 3
 The components are now reactive and non-blocking, and support the optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
 
 Many of the previous features and configuration options have been removed/renamed.
+The sjms-batch sub component has been removed and is scheduled to be reimplemented in the future.
 To migrate you need to read their documentation and see what options they now offer.
 
 === camel-aws2-sns

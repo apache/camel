@@ -23,6 +23,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -54,7 +56,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
         case "stricthostkeychecking":
         case "strictHostKeyChecking": target.getConfiguration().setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "useuserknownhostsfile":
         case "useUserKnownHostsFile": target.getConfiguration().setUseUserKnownHostsFile(property(camelContext, boolean.class, value)); return true;
@@ -68,6 +69,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return java.lang.String.class;
         case "chmod": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
         case "connecttimeout":
@@ -99,7 +102,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "soTimeout": return int.class;
         case "stricthostkeychecking":
         case "strictHostKeyChecking": return java.lang.String.class;
-        case "synchronous": return boolean.class;
         case "timeout": return int.class;
         case "useuserknownhostsfile":
         case "useUserKnownHostsFile": return boolean.class;
@@ -114,6 +116,8 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "chmod": return target.getConfiguration().getChmod();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "connecttimeout":
@@ -145,7 +149,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "soTimeout": return target.getConfiguration().getSoTimeout();
         case "stricthostkeychecking":
         case "strictHostKeyChecking": return target.getConfiguration().getStrictHostKeyChecking();
-        case "synchronous": return target.isSynchronous();
         case "timeout": return target.getConfiguration().getTimeout();
         case "useuserknownhostsfile":
         case "useUserKnownHostsFile": return target.getConfiguration().isUseUserKnownHostsFile();

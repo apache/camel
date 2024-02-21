@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -49,9 +50,9 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     private long periodInMillis;
     private TimeUnit units;
     private long timeOfLastExchange;
-    private StopProcessor stopper = new StopProcessor();
+    private final StopProcessor stopper = new StopProcessor();
     private final Object calculationLock = new Object();
-    private SampleStats sampled = new SampleStats();
+    private final SampleStats sampled = new SampleStats();
 
     public SamplingThrottler(long messageFrequency) {
         if (messageFrequency <= 0) {
@@ -131,7 +132,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
                     doSend = true;
                 }
             } else {
-                long now = System.currentTimeMillis();
+                long now = Duration.ofNanos(System.nanoTime()).toMillis();
                 if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
                     if (LOG.isTraceEnabled()) {

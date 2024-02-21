@@ -26,6 +26,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTestSupport {
 
@@ -42,11 +43,11 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         context.resume();
 
         // route C should still be stopped after we have resumed
-        assertEquals(true, context.getRouteController().getRouteStatus("C").isStopped());
+        assertTrue(context.getRouteController().getRouteStatus("C").isStopped());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
 
         assertEquals(3, order.size());
         assertEquals("direct://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
@@ -70,11 +71,11 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         context.resume();
 
         // route C should be started
-        assertEquals(true, context.getRouteController().getRouteStatus("C").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("C").isStarted());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
 
         assertEquals(4, order.size());
         assertEquals("direct://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());

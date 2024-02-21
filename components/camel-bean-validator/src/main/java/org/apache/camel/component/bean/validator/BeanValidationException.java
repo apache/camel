@@ -18,7 +18,7 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
@@ -43,10 +43,11 @@ public class BeanValidationException extends ValidationException {
 
         buffer.append(" errors: [");
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-            buffer.append("property: " + constraintViolation.getPropertyPath() + "; value: "
-                          + constraintViolation.getInvalidValue() + "; constraint: " + constraintViolation.getMessage() + "; ");
+            buffer.append("property: ").append(constraintViolation.getPropertyPath()).append("; value: ")
+                    .append(constraintViolation.getInvalidValue()).append("; constraint: ")
+                    .append(constraintViolation.getMessage()).append("; ");
         }
-        buffer.append("]");
+        buffer.append(']');
 
         return buffer.toString();
     }

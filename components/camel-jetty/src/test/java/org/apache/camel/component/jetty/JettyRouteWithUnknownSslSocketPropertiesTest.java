@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest {
 
@@ -36,13 +37,10 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
 
     @Test
     public void testUnknownProperty() throws Exception {
-        if (!Server.getVersion().startsWith("8")) {
-            // SocketConnector props do not work for jetty 9
-            return;
-        }
+        assumeTrue(Server.getVersion().startsWith("8"), "SocketConnector props do not work for jetty 9");
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // define socket connector properties
                 Map<String, Object> properties = new HashMap<>();
                 properties.put("acceptors", 4);

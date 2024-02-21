@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.jupiter.api.AfterEach;
-
-public class MllpExceptionTestSupport {
+public abstract class MllpExceptionTestSupport {
     public static final String HL7_MESSAGE = "MSH|^~\\&|APP_A|FAC_A|^org^sys||20161206193919||ADT^A04|00001||2.6" + '\r'
                                              + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S"
                                              + '\r'
@@ -31,12 +29,8 @@ public class MllpExceptionTestSupport {
     public static final byte[] HL7_MESSAGE_BYTES = HL7_MESSAGE.getBytes();
     public static final byte[] HL7_ACKNOWLEDGEMENT_BYTES = HL7_ACKNOWLEDGEMENT.getBytes();
 
-    public static final Exception CAUSE = new Exception("Dummy Exception");
+    public static final boolean LOG_PHI_TRUE = true;
 
-    @AfterEach
-    public void tearDown() throws Exception {
-        System.clearProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
-        System.clearProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY);
-    }
+    public static final Exception CAUSE = new Exception("Dummy Exception");
 
 }

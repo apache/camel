@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.spi.Metadata;
@@ -72,8 +71,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                             + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.")
     private boolean autowiredEnabled = true;
     @Metadata(label = "consumer",
-              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
-                            + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
+                            + " the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                            + " Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only,"
+                            + " and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component"
+                            + " and make this possible for future releases."
                             + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
     @Metadata(label = "producer",
@@ -108,11 +110,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         Map<String, Object> parameters;
         if (useRawUri()) {
             // when using raw uri then the query is taking from the uri as is
-            String query;
-            int idx = uri.indexOf('?');
-            if (idx > -1) {
-                query = uri.substring(idx + 1);
-            } else {
+            String query = StringHelper.after(uri, "?");
+            if (query == null) {
                 query = u.getRawQuery();
             }
             // and use method parseQuery
@@ -233,9 +232,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
-     * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
-     * the routing Error Handler.
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible)
+     * occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a
+     * message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component
+     * allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore
+     * bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd
+     * party component and make this possible for future releases.
      * <p/>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
@@ -244,6 +246,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.bridgeErrorHandler = bridgeErrorHandler;
     }
 
+    @Override
     public boolean isAutowiredEnabled() {
         return autowiredEnabled;
     }
@@ -294,7 +297,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             param = PropertiesHelper.extractProperties(parameters, optionPrefix);
         }
 
-        if (param.size() > 0) {
+        if (!param.isEmpty()) {
             throw new ResolveEndpointFailedException(
                     uri, "There are " + param.size()
                          + " parameters that couldn't be set on the endpoint."
@@ -365,36 +368,29 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             org.apache.camel.spi.annotations.Component ann
                     = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
             if (ann != null) {
-                defaultName = ann.value();
+                String name = ann.value();
                 // just grab first scheme name if the component has scheme alias (eg http,https)
-                if (defaultName.contains(",")) {
-                    defaultName = StringHelper.before(defaultName, ",");
+                if (name.contains(",")) {
+                    name = StringHelper.before(name, ",");
                 }
+                defaultName = name;
             }
         }
         if (defaultName != null) {
-            final String componentConfigurerName = defaultName + "-component-configurer";
-            componentPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                    .resolvePropertyConfigurer(componentConfigurerName, getCamelContext());
-            final String endpointConfigurerName = defaultName + "-endpoint-configurer";
-            endpointPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                    .resolvePropertyConfigurer(endpointConfigurerName, getCamelContext());
+            if (componentPropertyConfigurer == null) {
+                componentPropertyConfigurer = PluginHelper.getConfigurerResolver(getCamelContext())
+                        .resolvePropertyConfigurer(defaultName + "-component-configurer", getCamelContext());
+            }
+            if (endpointPropertyConfigurer == null) {
+                endpointPropertyConfigurer = PluginHelper.getConfigurerResolver(getCamelContext())
+                        .resolvePropertyConfigurer(defaultName + "-endpoint-configurer", getCamelContext());
+            }
         }
     }
 
     @Override
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     /**
@@ -486,7 +482,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param  parameters the parameters
      * @param  key        the key
      * @param  type       the requested type to convert the value from the parameter
-     * @return            the converted value parameter, <tt>null</tt> if parameter does not exists.
+     * @return            the converted value parameter, <tt>null</tt> if parameter does not exist.
      * @see               #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {
@@ -683,7 +679,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     protected String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {
             String remainder = text.substring(prefix.length());
-            if (remainder.length() > 0) {
+            if (!remainder.isEmpty()) {
                 return remainder;
             }
         }

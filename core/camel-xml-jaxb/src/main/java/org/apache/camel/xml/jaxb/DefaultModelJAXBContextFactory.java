@@ -16,8 +16,8 @@
  */
 package org.apache.camel.xml.jaxb;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.Constants;
 import org.apache.camel.spi.ModelJAXBContextFactory;

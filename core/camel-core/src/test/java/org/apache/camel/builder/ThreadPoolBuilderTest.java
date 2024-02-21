@@ -26,8 +26,9 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThreadPoolBuilderTest extends ContextTestSupport {
 
@@ -45,9 +46,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -56,9 +57,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.maxQueueSize(2000).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -67,9 +68,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.maxPoolSize(100).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -78,9 +79,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.poolSize(50).maxPoolSize(100).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -89,9 +90,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.keepAliveTime(30).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -100,9 +101,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ExecutorService executor = builder.keepAliveTime(20000, TimeUnit.MILLISECONDS).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -110,12 +111,12 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor
                 = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest).build(this, "myPool");
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build(this, "myPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -127,11 +128,11 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertNotNull(executor);
         assertNotNull(executor2);
 
-        assertEquals(false, executor.isShutdown());
-        assertEquals(false, executor2.isShutdown());
+        assertFalse(executor.isShutdown());
+        assertFalse(executor2.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
-        assertEquals(true, executor2.isShutdown());
+        assertTrue(executor.isShutdown());
+        assertTrue(executor2.isShutdown());
     }
 
     @Test
@@ -140,9 +141,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled();
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -151,9 +152,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled("myScheduledPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
     @Test
@@ -162,9 +163,9 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000).buildScheduled(this, "myScheduledPool");
         assertNotNull(executor);
 
-        assertEquals(false, executor.isShutdown());
+        assertFalse(executor.isShutdown());
         context.stop();
-        assertEquals(true, executor.isShutdown());
+        assertTrue(executor.isShutdown());
     }
 
 }

@@ -178,7 +178,8 @@ public class DisruptorReference {
                     }
                     eventHandlerStarted = true;
                 } catch (InterruptedException e) {
-                    //just retry
+                    LOGGER.info("Interrupted while waiting for the startup to complete");
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -216,7 +217,7 @@ public class DisruptorReference {
 
         LOGGER.debug("Disruptor created with {} event handlers", eventHandlers.size());
         handleEventsWith(newDisruptor,
-                eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[eventHandlers.size()]));
+                eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[0]));
 
         return newDisruptor;
     }
@@ -262,7 +263,7 @@ public class DisruptorReference {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
             //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
             final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
-            //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int- 
+            //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int-
             // and http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
             //for more information
             if (newSize <= threadPoolExecutor.getCorePoolSize()) {
@@ -317,7 +318,8 @@ public class DisruptorReference {
                         }
                         eventHandlerFinished = true;
                     } catch (InterruptedException e) {
-                        //just retry
+                        LOGGER.info("Interrupted while waiting for the shutdown to complete");
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
@@ -404,7 +406,9 @@ public class DisruptorReference {
             blockingLatch.await();
             final Exchange exchange = event.getSynchronizedExchange().cancelAndGetOriginalExchange();
 
-            if (exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class)) {
+            final boolean ignoreExchange
+                    = exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
+            if (ignoreExchange) {
                 // Property was set and it was set to true, so don't process Exchange.
                 LOGGER.trace("Ignoring exchange {}", exchange);
             } else {

@@ -21,10 +21,8 @@ import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -90,74 +88,6 @@ public class SObjectTreeResponseTest {
 
         final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
-
-        assertNotNull(response, "Response should be parsed");
-
-        assertTrue(response.hasErrors(), "`hasErrors` flag should be true");
-
-        assertEquals(1, response.getResults().size(), "Should read one reference");
-        assertThat("The reference should be read as expected", response.getResults(),
-                hasItems(new ReferenceId(
-                        "ref2", null, Arrays.asList(new RestError(
-                                "INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
-    }
-
-    @Test
-    public void shouldDeserializeXmlFromSalesforceExample() throws Exception {
-        final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"//
-                           + "<Result>\n"//
-                           + "    <hasErrors>false</hasErrors>\n"//
-                           + "    <results>\n"//
-                           + "        <id>001D000000K0fXOIAZ</id>\n"//
-                           + "        <referenceId>ref1</referenceId>\n"//
-                           + "    </results>\n"//
-                           + "    <results>\n"//
-                           + "        <id>001D000000K0fXPIAZ</id>\n"//
-                           + "        <referenceId>ref4</referenceId>\n"//
-                           + "    </results>\n"//
-                           + "    <results>\n"//
-                           + "        <id>003D000000QV9n2IAD</id>\n"//
-                           + "        <referenceId>ref2</referenceId>\n"//
-                           + "    </results>\n"//
-                           + "    <results>\n"//
-                           + "        <id>003D000000QV9n3IAD</id>\n"//
-                           + "        <referenceId>ref3</referenceId>\n"//
-                           + "    </results>\n"//
-                           + "</Result>";
-
-        final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
-
-        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
-
-        assertNotNull(response, "Response should be parsed");
-
-        assertFalse(response.hasErrors(), "`hasErrors` flag should be false");
-
-        assertEquals(4, response.getResults().size(), "Should read 4 references");
-        assertThat("4 references should be read as expected", response.getResults(),
-                hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                        new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                        new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                        new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
-    }
-
-    @Test
-    public void shouldDeserializeXmlFromSalesforceFailureExample() throws Exception {
-        final String xml = "<Result>\n"//
-                           + "    <hasErrors>true</hasErrors>\n"//
-                           + "    <results>\n"//
-                           + "        <errors>\n"//
-                           + "            <fields>Email</fields>\n"//
-                           + "            <message>Email: invalid email address: 123</message>\n"//
-                           + "            <statusCode>INVALID_EMAIL_ADDRESS</statusCode>\n"//
-                           + "        </errors>\n"//
-                           + "        <referenceId>ref2</referenceId>\n"//
-                           + "    </results>\n"//
-                           + "</Result>";
-
-        final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
-
-        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
         assertNotNull(response, "Response should be parsed");
 

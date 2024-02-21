@@ -37,7 +37,7 @@ public class RoutingSlipNoCacheTest extends ContextTestSupport {
         sendBody("bar");
 
         // make sure its using an empty producer cache as the cache is disabled
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         RoutingSlip rl = (RoutingSlip) list.get(0);
         assertNotNull(rl);
         assertEquals(-1, rl.getCacheSize());

@@ -99,12 +99,17 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
         };
     }
 
-    private class BodyToStreamCacheConverter extends TypeConverterSupport {
+    private static class BodyToStreamCacheConverter extends TypeConverterSupport {
 
         private int invoked;
 
         @Override
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+            return tryConvertTo(type, exchange, value);
+        }
+
+        @Override
+        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
             invoked++;
 
             String str = value.toString();
@@ -125,7 +130,7 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
         }
     }
 
-    private class MyBody {
+    private static class MyBody {
         private String body;
 
         public MyBody(String body) {

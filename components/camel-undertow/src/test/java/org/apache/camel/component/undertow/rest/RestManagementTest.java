@@ -42,7 +42,8 @@ public class RestManagementTest extends BaseUndertowTest {
     public void testRestManagement() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        Set<ObjectName> s = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,*"), null);
+        Set<ObjectName> s = mbeanServer.queryNames(
+                new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=endpoints,*"), null);
         assertEquals(8, s.size(), "Could not find 8 endpoints: " + s);
 
         // there should be 3 rest endpoints
@@ -51,7 +52,7 @@ public class RestManagementTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort());

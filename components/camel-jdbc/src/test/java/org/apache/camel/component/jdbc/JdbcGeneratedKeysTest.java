@@ -43,11 +43,11 @@ public class JdbcGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             // START SNIPPET: route
             // lets add simple route
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:hello").to("jdbc:testdb?readSize=100");
             }
             // END SNIPPET: route

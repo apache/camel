@@ -25,6 +25,7 @@ import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
+import org.apache.camel.tracing.TagConstants;
 import org.apache.camel.tracing.propagation.CamelHeadersExtractAdapter;
 import org.apache.camel.tracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.util.StringHelper;
@@ -97,11 +98,17 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         String scheme = getComponentName(endpoint);
         span.setComponent(CAMEL_COMPONENT + scheme);
+        span.setTag(TagConstants.URL_SCHEME, scheme);
 
         // Including the endpoint URI provides access to any options that may
-        // have been provided, for
-        // subsequent analysis
-        span.setTag("camel.uri", URISupport.sanitizeUri(endpoint.getEndpointUri()));
+        // have been provided, for subsequent analysis
+        String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+        span.setTag("camel.uri", uri);
+        span.setTag(TagConstants.URL_PATH, stripSchemeAndOptions(endpoint));
+        String query = URISupport.extractQuery(uri);
+        if (query != null) {
+            span.setTag(TagConstants.URL_QUERY, query);
+        }
     }
 
     @Override

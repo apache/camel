@@ -43,7 +43,7 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            sb.append("Line #" + i);
+            sb.append("Line #").append(i);
             sb.append("\n");
         }
 

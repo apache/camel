@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
@@ -86,7 +85,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     // ***************************************************
 
     protected RouteController getInternalRouteController() {
-        return camelContext.adapt(ExtendedCamelContext.class).getInternalRouteController();
+        return camelContext.getCamelContextExtension().getInternalRouteController();
     }
 
     @Override
@@ -95,8 +94,33 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
+    public void stopAllRoutes() throws Exception {
+        getInternalRouteController().stopAllRoutes();
+    }
+
+    @Override
+    public void removeAllRoutes() throws Exception {
+        getInternalRouteController().removeAllRoutes();
+    }
+
+    @Override
     public boolean isStartingRoutes() {
         return getInternalRouteController().isStartingRoutes();
+    }
+
+    @Override
+    public boolean hasUnhealthyRoutes() {
+        return getInternalRouteController().hasUnhealthyRoutes();
+    }
+
+    @Override
+    public void reloadAllRoutes() throws Exception {
+        getInternalRouteController().reloadAllRoutes();
+    }
+
+    @Override
+    public boolean isReloadingRoutes() {
+        return getInternalRouteController().isReloadingRoutes();
     }
 
     @Override
@@ -112,6 +136,11 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     @Override
     public void stopRoute(String routeId) throws Exception {
         getInternalRouteController().stopRoute(routeId);
+    }
+
+    @Override
+    public void stopRoute(String routeId, Throwable cause) throws Exception {
+        getInternalRouteController().stopRoute(routeId, cause);
     }
 
     @Override

@@ -21,12 +21,19 @@ import java.util.Arrays;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult;
+import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult;
+import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult;
+import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult;
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +55,7 @@ public class PubNubConsumer extends DefaultConsumer {
         this.pubNubConfiguration = pubNubConfiguration;
     }
 
-    private void initCommunication() throws Exception {
+    private void initCommunication() {
         endpoint.getPubnub().addListener(new PubNubCallback());
         if (pubNubConfiguration.isWithPresence()) {
             endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
@@ -108,6 +115,7 @@ public class PubNubConsumer extends DefaultConsumer {
             inmessage.setBody(message);
             inmessage.setHeader(TIMETOKEN, message.getTimetoken());
             inmessage.setHeader(CHANNEL, message.getChannel());
+            inmessage.setHeader(Exchange.MESSAGE_TIMESTAMP, message.getTimetoken());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
@@ -122,6 +130,7 @@ public class PubNubConsumer extends DefaultConsumer {
             inmessage.setBody(presence);
             inmessage.setHeader(TIMETOKEN, presence.getTimetoken());
             inmessage.setHeader(CHANNEL, presence.getChannel());
+            inmessage.setHeader(Exchange.MESSAGE_TIMESTAMP, presence.getTimetoken());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
@@ -129,6 +138,42 @@ public class PubNubConsumer extends DefaultConsumer {
             }
         }
 
+        /**
+         * signal, user, space, membership, messageAction, presence, and file listeners are mandatory and you MUST at
+         * least provide no op implementations for these listeners
+         *
+         * @param pubnub
+         * @param pnSignalResult
+         */
+        @Override
+        public void signal(@NotNull PubNub pubnub, @NotNull PNSignalResult pnSignalResult) {
+            LOG.trace("signal: {}.", pnSignalResult);
+        }
+
+        @Override
+        public void uuid(@NotNull PubNub pubnub, @NotNull PNUUIDMetadataResult pnUUIDMetadataResult) {
+            LOG.trace("uuid: {}.", pnUUIDMetadataResult);
+        }
+
+        @Override
+        public void channel(@NotNull PubNub pubnub, @NotNull PNChannelMetadataResult pnChannelMetadataResult) {
+            LOG.trace("uuid: {}.", pnChannelMetadataResult);
+        }
+
+        @Override
+        public void membership(@NotNull PubNub pubnub, @NotNull PNMembershipResult pnMembershipResult) {
+            LOG.trace("membership: {}.", pnMembershipResult);
+        }
+
+        @Override
+        public void messageAction(@NotNull PubNub pubnub, @NotNull PNMessageActionResult pnMessageActionResult) {
+            LOG.trace("messageAction: {}.", pnMessageActionResult);
+        }
+
+        @Override
+        public void file(@NotNull PubNub pubnub, @NotNull PNFileEventResult pnFileEventResult) {
+            LOG.trace("file: {}.", pnFileEventResult);
+        }
     }
 
 }

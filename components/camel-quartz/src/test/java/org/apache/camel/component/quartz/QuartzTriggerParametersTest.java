@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class QuartzTriggerParametersTest extends BaseQuartzTest {
@@ -28,14 +29,14 @@ public class QuartzTriggerParametersTest extends BaseQuartzTest {
     public void testTriggerParameters() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Europe/Berlin");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String cron = String.format("quartz://job?cron=0+%s+%s+?+*+*&trigger.timeZone=%s&trigger.misfireInstruction=2",
                         59, 23, "Europe/Berlin");
 

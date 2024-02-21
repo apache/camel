@@ -16,39 +16,22 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsProducerDisableReplyToTest extends CamelTestSupport {
+public class JmsProducerDisableReplyToTest extends AbstractPersistentJMSTest {
 
     @Test
-    public void testProducerDisableReplyTo() throws Exception {
+    public void testProducerDisableReplyTo() {
         // must start CamelContext because use route builder is false
         context.start();
 
-        String url = "activemq:queue:foo?disableReplyTo=true";
+        String url = "activemq:queue:JmsProducerDisableReplyToTest?disableReplyTo=true";
         template.requestBody(url, "Hello World");
 
         Object out = consumer.receiveBody(url, 5000);
         assertEquals("Hello World", out);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent so the consumer can receive the message as we receive AFTER the message
-        // has been published
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

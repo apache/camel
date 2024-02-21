@@ -59,7 +59,7 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
                     .filter(SRVRecord.class::isInstance)
                     .map(SRVRecord.class::cast)
                     .sorted(COMPARATOR)
-                    .map(record -> asService(name, record))
+                    .map(srvRecord -> asService(name, srvRecord))
                     .collect(Collectors.toList());
         } else {
             services = Collections.emptyList();
@@ -85,15 +85,15 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
         return byPriority.thenComparing(byWeight);
     }
 
-    private static ServiceDefinition asService(String serviceName, SRVRecord record) {
+    private static ServiceDefinition asService(String serviceName, SRVRecord srvRecord) {
         Map<String, String> meta = new HashMap<>();
-        ObjectHelper.ifNotEmpty(record.getPriority(), val -> meta.put("priority", Integer.toString(val)));
-        ObjectHelper.ifNotEmpty(record.getWeight(), val -> meta.put("weight", Integer.toString(val)));
+        ObjectHelper.ifNotEmpty(srvRecord.getPriority(), val -> meta.put("priority", Integer.toString(val)));
+        ObjectHelper.ifNotEmpty(srvRecord.getWeight(), val -> meta.put("weight", Integer.toString(val)));
 
         return new DefaultServiceDefinition(
                 serviceName,
-                record.getTarget().toString(true),
-                record.getPort(),
+                srvRecord.getTarget().toString(true),
+                srvRecord.getPort(),
                 meta);
     }
 }

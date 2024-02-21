@@ -28,6 +28,7 @@
   <!-- START SNIPPET: example -->
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route errorHandlerRef="noErrorHandler">
       <from uri="direct:exception"/>
       <loadBalance>
@@ -64,7 +65,7 @@
     </route>    
   </camelContext>
   
-  <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+  <bean id="noErrorHandler" class="org.apache.camel.builder.LegacyNoErrorHandlerBuilder"/>
   <bean id="myExceptionProcessor" class="org.apache.camel.processor.FailOverLoadBalanceTest$MyExceptionProcessor"/>
   <bean id="myAnotherExceptionProcessor" class="org.apache.camel.processor.FailOverLoadBalanceTest$MyAnotherExceptionProcessor"/>
   

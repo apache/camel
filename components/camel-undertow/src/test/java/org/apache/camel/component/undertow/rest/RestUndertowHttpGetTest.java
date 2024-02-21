@@ -25,23 +25,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestUndertowHttpGetTest extends BaseUndertowTest {
 
     @Test
-    public void testProducerGet() throws Exception {
+    public void testProducerGet() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);

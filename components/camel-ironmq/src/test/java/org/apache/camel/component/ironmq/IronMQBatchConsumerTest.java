@@ -36,13 +36,13 @@ public class IronMQBatchConsumerTest extends CamelTestSupport {
         for (int counter = 0; counter <= 5; counter++) {
             Message message = new Message();
             message.setBody("{\"body\": \"Message " + counter + "\"}");
-            message.setId("" + counter);
+            message.setId(Integer.toString(counter));
             ((MockQueue) endpoint.getClient().queue("testqueue")).add(message);
         }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
@@ -76,7 +76,7 @@ public class IronMQBatchConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

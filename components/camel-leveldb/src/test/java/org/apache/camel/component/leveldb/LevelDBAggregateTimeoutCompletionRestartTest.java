@@ -20,10 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateTimeoutCompletionRestartTest extends LevelDBTestSupport {
 
     @Override
@@ -52,15 +55,15 @@ public class LevelDBAggregateTimeoutCompletionRestartTest extends LevelDBTestSup
         mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABC");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, mock.getReceivedCounter());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 // here is the Camel route where we aggregate
                 from("direct:start")

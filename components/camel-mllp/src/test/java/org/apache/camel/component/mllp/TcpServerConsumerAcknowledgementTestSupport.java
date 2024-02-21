@@ -90,7 +90,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidAcknowledgementException.class)
@@ -114,8 +114,8 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
                 fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&exchangePattern=%s&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(),
                         exchangePattern(), connectTimeout, responseTimeout)
-                                .routeId(routeId)
-                                .to(result);
+                        .routeId(routeId)
+                        .to(result);
             }
         };
     }
@@ -137,7 +137,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         assertTrue(done.matches(10, TimeUnit.SECONDS), "Exchange should have completed");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public void acknowledgementDeliveryFailure() throws Exception {
@@ -147,7 +147,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         mllpClient.sendFramedData(TEST_MESSAGE, disconnectAfterSend);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     public void unparsableMessage(String testMessage) throws Exception {
@@ -157,6 +157,6 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         mllpClient.sendFramedData(testMessage);
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "One exchange should have complete");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

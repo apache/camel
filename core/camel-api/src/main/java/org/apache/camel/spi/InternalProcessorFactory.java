@@ -27,7 +27,9 @@ import org.apache.camel.Route;
 
 /**
  * A factory used internally by Camel to create {@link Processor} and other internal building blocks. This factory is
- * used to have loose coupling between the modules in core. Camel user user should only use {@link ProcessorFactory}.
+ * used to have loose coupling between the modules in core.
+ *
+ * Camel end user should NOT use this, but use {@link ProcessorFactory} instead.
  *
  * @see ProcessorFactory
  */

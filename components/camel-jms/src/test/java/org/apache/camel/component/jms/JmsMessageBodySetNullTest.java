@@ -16,54 +16,46 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit test setting null body
  */
-public class JmsMessageBodySetNullTest extends CamelTestSupport {
+public class JmsMessageBodySetNullTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSetNullBodyUsingProcessor() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("jms:queue:foo")
-                        .to("mock:foo")
-                        .process(exchange -> exchange.getIn().setBody(null))
-                        .to("mock:bar");
-            }
-        });
-        context.start();
+        context.getRouteController().startRoute("testSetNullBodyUsingProcessor");
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").message(0).body().isNull();
 
-        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSetNullBodyUsingProcessorPreserveHeaders() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("jms:queue:foo")
-                        .to("mock:foo")
-                        .process(exchange -> exchange.getIn().setBody(null))
-                        .to("mock:bar");
-            }
-        });
-        context.start();
+        context.getRouteController().startRoute("testSetNullBodyUsingProcessorPreserveHeaders");
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedHeaderReceived("code", 123);
@@ -71,45 +63,27 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").message(0).body().isNull();
         getMockEndpoint("mock:bar").expectedHeaderReceived("code", 123);
 
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "code", 123);
+        template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSetNullBodyUsingSetBody() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("jms:queue:foo")
-                        .to("mock:foo")
-                        .setBody(constant(null))
-                        .to("mock:bar");
-            }
-        });
-        context.start();
+        context.getRouteController().startRoute("testSetNullBodyUsingSetBody");
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").message(0).body().isNull();
 
-        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSetNullBodyUsingSetBodyPreserveHeaders() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("jms:queue:foo")
-                        .to("mock:foo")
-                        .setBody(constant(null))
-                        .to("mock:bar");
-            }
-        });
-        context.start();
+        context.getRouteController().startRoute("testSetNullBodyUsingSetBodyPreserveHeaders");
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedHeaderReceived("code", 123);
@@ -117,23 +91,61 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").message(0).body().isNull();
         getMockEndpoint("mock:bar").expectedHeaderReceived("code", 123);
 
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "code", 123);
+        template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("jms:queue:JmsMessageBodySetNullTest")
+                        .routeId("testSetNullBodyUsingProcessor")
+                        .autoStartup(false)
+                        .to("mock:foo")
+                        .process(exchange -> exchange.getIn().setBody(null))
+                        .to("mock:bar");
+
+                from("jms:queue:JmsMessageBodySetNullTest")
+                        .routeId("testSetNullBodyUsingProcessorPreserveHeaders")
+                        .autoStartup(false)
+                        .to("mock:foo")
+                        .process(exchange -> exchange.getIn().setBody(null))
+                        .to("mock:bar");
+
+                from("jms:queue:JmsMessageBodySetNullTest")
+                        .routeId("testSetNullBodyUsingSetBody")
+                        .autoStartup(false)
+                        .to("mock:foo")
+                        .setBody(simple("${null}"))
+                        .to("mock:bar");
+
+                from("jms:queue:JmsMessageBodySetNullTest")
+                        .routeId("testSetNullBodyUsingSetBodyPreserveHeaders")
+                        .autoStartup(false)
+                        .to("mock:foo")
+                        .setBody(simple("${null}"))
+                        .to("mock:bar");
+            }
+        };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

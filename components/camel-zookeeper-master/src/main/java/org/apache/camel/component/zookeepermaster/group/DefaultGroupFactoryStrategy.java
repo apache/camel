@@ -19,10 +19,7 @@ package org.apache.camel.component.zookeepermaster.group;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.zookeepermaster.ManagedGroupFactoryStrategy;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 
 public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy {
@@ -34,22 +31,12 @@ public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy 
             CamelContext camelContext,
             Callable<CuratorFramework> factory)
             throws Exception {
+
         if (curator != null) {
             return new DefaultManagedGroupFactory(curator, false);
+        } else {
+            return new DefaultManagedGroupFactory(factory.call(), true);
         }
-        try {
-            Class<?> clazz = camelContext.getClassResolver()
-                    .resolveClass("org.apache.camel.component.zookeepermaster.group.internal.osgi.OsgiManagedGroupFactory");
-            if (clazz != null) {
-                Object instance = ObjectHelper.newInstance(clazz);
-                BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-                beanIntrospection.setProperty(camelContext, instance, "classLoader", loader);
-                return (ManagedGroupFactory) instance;
-            }
-        } catch (Throwable e) {
-            // Ignore if we're not in OSGi
-        }
-        return new DefaultManagedGroupFactory(factory.call(), true);
     }
 
 }

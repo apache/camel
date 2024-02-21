@@ -47,10 +47,10 @@ public class JGroupsClusterTest {
     class Builder extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(jgroupsEndpoint).filter(dropNonCoordinatorViews()).process(new Processor() {
                 @Override
-                public void process(Exchange exchange) throws Exception {
+                public void process(Exchange exchange) {
                     String camelContextName = exchange.getContext().getName();
                     if (!camelContextName.equals(master)) {
                         master = camelContextName;
@@ -75,7 +75,7 @@ public class JGroupsClusterTest {
     // Tests
 
     @Test
-    public void shouldElectSecondNode() throws Exception {
+    public void shouldElectSecondNode() {
         // When
         firstCamelContext.start();
         String firstMaster = master;
@@ -91,7 +91,7 @@ public class JGroupsClusterTest {
     }
 
     @Test
-    public void shouldKeepMaster() throws Exception {
+    public void shouldKeepMaster() {
         // When
         firstCamelContext.start();
         String firstMaster = master;
@@ -107,7 +107,7 @@ public class JGroupsClusterTest {
     }
 
     @Test
-    public void shouldElectSecondNodeAndReturnToFirst() throws Exception {
+    public void shouldElectSecondNodeAndReturnToFirst() {
         // When
         firstCamelContext.start();
         String firstMaster = master;

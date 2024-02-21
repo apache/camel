@@ -36,7 +36,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cache - this use cases is also covered by tests in JCachePolicyProcessorTest
     @Test
-    public void testSetCache() throws Exception {
+    public void testSetCache() {
         final String key = randomString();
 
         //Send exchange
@@ -50,7 +50,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cacheManager, cacheName, cacheConfiguration
     @Test
-    public void testSetManagerNameConfiguration() throws Exception {
+    public void testSetManagerNameConfiguration() {
         final String key = randomString();
 
         //Send exchange
@@ -71,7 +71,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cacheManager, cacheName
     @Test
-    public void testSetManagerName() throws Exception {
+    public void testSetManagerName() {
         final String key = randomString();
 
         //Send exchange
@@ -85,7 +85,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cacheManager, cacheName - cache already exists
     @Test
-    public void testSetManagerNameExists() throws Exception {
+    public void testSetManagerNameExists() {
         final String key = randomString();
 
         //Send exchange
@@ -100,7 +100,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cacheManager, cacheConfiguration
     @Test
-    public void testSetManagerConfiguration() throws Exception {
+    public void testSetManagerConfiguration() {
         final String key = randomString();
 
         //Send exchange
@@ -122,7 +122,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Set cacheName - use CachingProvider to lookup CacheManager
     @Test
-    public void testDefaultCacheManager() throws Exception {
+    public void testDefaultCacheManager() {
         final String key = randomString();
 
         //Send exchange
@@ -138,7 +138,7 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
 
     //Not enabled
     @Test
-    public void testNotEnabled() throws Exception {
+    public void testNotEnabled() {
         final String key = randomString();
 
         //Send exchange
@@ -153,10 +153,10 @@ public class JCachePolicyTest extends JCachePolicyTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
                 MutableConfiguration configuration;
 

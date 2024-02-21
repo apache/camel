@@ -21,6 +21,8 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Override
@@ -30,8 +32,8 @@ public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
-    void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline");
+    void testEncryption() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline"));
     }
 
 }

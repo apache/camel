@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-rest-openapi</artifactId>
@@ -36,10 +35,6 @@
     <properties>
         <firstVersion>3.1.0</firstVersion>
         <label>rest,api,http</label>
-        <camel.osgi.import.before.defaults>
-            com.fasterxml.jackson.*;version="[2.11,3)",
-            io.apicurio.datamodels*
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
@@ -50,9 +45,52 @@
         </dependency>
 
         <dependency>
-            <groupId>io.apicurio</groupId>
-            <artifactId>apicurio-data-models</artifactId>
-            <version>${apicurio-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest</artifactId>
+        </dependency>
+
+         <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+            <version>${swagger-openapi3-java-parser-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-core</artifactId>
+            <version>${swagger-request-validator-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>findbugs</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- test -->
@@ -70,7 +108,8 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -81,35 +120,23 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Override the guava version prescribed by Camel with the one needed by wiremock for tests -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
-            <version>${wiremock-version}</version>
+            <artifactId>wiremock</artifactId>
+            <!-- TODO: needs code changes to update -->
+            <version>3.0.1</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <!--
-                     Adding `camel-jetty` forces WireMock to use mixed Jetty
-                     versions, here we exclude WireMocks Jetty dependencies so
-                     that we only use the ones declared by the `jetty` component
-                     -->
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -125,11 +152,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+        <!-- To be restored once wiremock releases jetty 12 support https://github.com/wiremock/wiremock/issues/2395 -->
+        <!--dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -138,8 +166,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-vertx-http</artifactId>
             <scope>test</scope>
         </dependency>
 

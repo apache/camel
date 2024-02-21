@@ -24,8 +24,8 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("methodName", java.lang.String.class);
         map.put("environment", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
         map.put("merchantId", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
         map.put("httpReadTimeout", java.lang.Integer.class);
         map.put("httpLogLevel", java.lang.String.class);
         map.put("httpLogName", java.lang.String.class);

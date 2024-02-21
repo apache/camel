@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrokOptionalOptionsTest extends CamelTestSupport {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 DataFormat grokFlattenedTrue = new GrokDataFormat("%{INT:i} %{INT:i}")
                         .setFlattened(true);
                 DataFormat grokFlattenedFalse = new GrokDataFormat("%{INT:i} %{INT:i}")
@@ -68,7 +68,7 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testFlattened() throws Exception {
+    public void testFlattened() {
         Map<String, Object> flattenedFalse = template.requestBody("direct:flattenedFalse", "123 456", Map.class);
         assertNotNull(flattenedFalse);
         assertTrue(flattenedFalse.containsKey("i"));
@@ -83,7 +83,7 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testNamedOnly() throws Exception {
+    public void testNamedOnly() {
         Map<String, Object> namedOnlyTrue
                 = template.requestBody("direct:namedOnlyTrue", "https://github.com/apache/camel", Map.class);
         assertNotNull(namedOnlyTrue);
@@ -103,7 +103,7 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testAllowMultipleMatchesPerLine() throws Exception {
+    public void testAllowMultipleMatchesPerLine() {
         List<Map<String, Object>> allowMultipleMatchesPerLineTrue = template.requestBody(
                 "direct:allowMultipleMatchesPerLineTrue",
                 "1 2 \n 3",

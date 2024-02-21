@@ -29,6 +29,6 @@ public class RouteAddedEvent extends AbstractRouteEvent implements CamelEvent.Ro
 
     @Override
     public String toString() {
-        return "Added route: " + getRoute().getId();
+        return "Route added: " + getRoute().getId();
     }
 }

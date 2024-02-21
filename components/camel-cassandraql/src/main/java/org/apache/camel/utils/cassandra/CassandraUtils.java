@@ -103,18 +103,25 @@ public final class CassandraUtils {
      */
     public static Insert generateInsert(String table, String[] columns, boolean ifNotExists, Integer ttl) {
         InsertInto into = insertInto(table);
-        RegularInsert regularInsert = null;
+        final RegularInsert regularInsert = createRegularInsert(columns, into);
+
         Insert insert = null;
-        for (String column : columns) {
-            regularInsert = (regularInsert != null ? regularInsert : into).value(column, bindMarker());
-        }
-        if (ifNotExists) {
+        if (ifNotExists && regularInsert != null) {
             insert = regularInsert.ifNotExists();
         }
-        if (ttl != null) {
+        if (ttl != null && insert != null) {
             insert = (insert != null ? insert : regularInsert).usingTtl(ttl);
         }
         return insert != null ? insert : regularInsert;
+    }
+
+    private static RegularInsert createRegularInsert(String[] columns, InsertInto into) {
+        RegularInsert regularInsert = null;
+
+        for (String column : columns) {
+            regularInsert = (regularInsert != null ? regularInsert : into).value(column, bindMarker());
+        }
+        return regularInsert;
     }
 
     /**
@@ -170,7 +177,7 @@ public final class CassandraUtils {
                                                + "To delete all records, use Truncate");
         }
 
-        if (ifExists) {
+        if (ifExists && delete != null) {
             delete = delete.ifExists();
         }
         return delete;
@@ -184,8 +191,7 @@ public final class CassandraUtils {
      * Generate delete where columns = ? CQL.
      */
     public static Truncate generateTruncate(String table) {
-        Truncate truncate = QueryBuilder.truncate(table);
-        return truncate;
+        return QueryBuilder.truncate(table);
     }
 
     /**

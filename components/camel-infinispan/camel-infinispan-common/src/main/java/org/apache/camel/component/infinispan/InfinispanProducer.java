@@ -34,7 +34,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     private final M manager;
 
     protected InfinispanProducer(InfinispanEndpoint endpoint, String cacheName, M manager, C configuration) {
-        super(endpoint, InfinispanConstants.OPERATION, configuration.getOperationOrDefault()::name, false);
+        super(endpoint, InfinispanConstants.OPERATION, configuration.getOperationOrDefault()::name);
 
         this.cacheName = cacheName;
         this.configuration = configuration;

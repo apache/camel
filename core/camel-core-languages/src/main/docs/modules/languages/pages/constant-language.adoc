@@ -1,20 +1,22 @@
-[[constant-language]]
 = Constant Language
-:docTitle: Constant
-:artifactId: camel-core-languages
+:doctitle: Constant
+:shortname: constant
+:artifactid: camel-core-languages
 :description: A fixed value set only once during the route startup.
 :since: 1.5
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/constant.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
-The Constant Expression Language is really just a way to specify
-constant strings as a type of expression.
+The Constant Expression Language is really just a way to use a constant value or object.
 
 [NOTE]
 ====
-This is a fixed constant value that is only set once during starting up the route,
+This is a fixed constant value (or object) that is only set once during starting up the route,
 do not use this if you want dynamic values during routing.
 ====
 
@@ -22,21 +24,13 @@ do not use this if you want dynamic values during routing.
 
 
 // language options: START
-The Constant language supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 
-== Example usage
+== Example
 
-The setHeader element of the Spring DSL can utilize a constant
+The `setHeader` EIP can utilize a constant
 expression like:
 
 [source,xml]
@@ -50,9 +44,9 @@ expression like:
 </route>
 ----
 
-in this case, the Message coming from the seda:a
-Endpoint will have 'theHeader' header set to the
-constant value 'the value'.
+in this case, the message coming from the seda:a
+endpoint will have the header with key `theHeader`
+set its value as `the value` (string type).
 
 And the same example using Java DSL:
 
@@ -62,6 +56,25 @@ from("seda:a")
   .setHeader("theHeader", constant("the value"))
   .to("mock:b");
 ----
+
+=== Specifying type of value
+
+The option `resultType` can be used to specify the type of the value, when the value is given
+as a `String` value, which happens when using XML or YAML DSL:
+
+For example to set a header with `int` type you can do:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <setHeader name="zipCode">
+    <constant resultType="int">90210</constant>
+  </setHeader>
+  <to uri="mock:b"/>
+</route>
+----
+
 
 == Loading constant from external resource
 
@@ -78,3 +91,5 @@ eg to refer to a file on the classpath you can do:
 == Dependencies
 
 The Constant language is part of *camel-core*.
+
+include::spring-boot:partial$starter.adoc[]

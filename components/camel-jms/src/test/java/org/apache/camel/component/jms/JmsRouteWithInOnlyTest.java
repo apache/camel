@@ -16,28 +16,43 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test inspired by user forum
  */
-public class JmsRouteWithInOnlyTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(10)
+public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @BindToRegistry("orderService")
-    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
+    private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @Test
     public void testSendOrder() throws Exception {
@@ -47,10 +62,10 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
         MockEndpoint order = getMockEndpoint("mock:topic");
         order.expectedBodiesReceived("Camel in Action");
 
-        Object out = template.requestBody("activemq:queue:inbox", "Camel in Action");
+        Object out = template.requestBody("activemq:queue:JmsRouteWithInOnlyTest", "Camel in Action");
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         // assert MEP
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());
@@ -58,27 +73,35 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:inbox").to("mock:inbox").to(ExchangePattern.InOnly, "activemq:topic:order").bean(
-                        "orderService",
-                        "handleOrder");
+            public void configure() {
+                from("activemq:queue:JmsRouteWithInOnlyTest").to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "activemq:topic:JmsRouteWithInOnlyTest.order").bean(
+                                "orderService",
+                                "handleOrder");
 
-                from("activemq:topic:order").to("mock:topic");
+                from("activemq:topic:JmsRouteWithInOnlyTest.order").to("mock:topic");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public static class MyOrderServiceBean {

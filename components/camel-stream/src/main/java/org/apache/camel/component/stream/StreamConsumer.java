@@ -22,12 +22,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,7 +51,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamConsumer.class);
 
-    private static final String TYPES = "in,file,url";
+    private static final String TYPES = "in,file,http";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private ExecutorService executor;
@@ -54,6 +59,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private volatile boolean watchFileChanged;
     private volatile InputStream inputStream = System.in;
     private volatile InputStream inputStreamToClose;
+    private volatile URLConnection urlConnectionToClose;
     private volatile File file;
     private StreamEndpoint endpoint;
     private String uri;
@@ -89,7 +95,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         // if we scan the stream we are lenient and can wait for the stream to be available later
         if (!endpoint.isScanStream()) {
-            initializeStream();
+            initializeStreamLineMode();
         }
 
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
@@ -111,25 +117,35 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         ServiceHelper.stopAndShutdownService(fileWatcher);
         lines.clear();
 
-        // do not close regular inputStream as it may be System.in etc.
         IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+            urlConnectionToClose = null;
+        }
         super.doStop();
     }
 
     @Override
     public void run() {
         try {
-            readFromStream();
+            if (endpoint.isReadLine()) {
+                readFromStreamLineMode();
+            } else {
+                readFromStreamRawMode();
+            }
         } catch (InterruptedException e) {
-            // we are closing down so ignore
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
         }
     }
 
-    private BufferedReader initializeStream() throws Exception {
+    private BufferedReader initializeStreamLineMode() throws Exception {
         // close old stream, before obtaining a new stream
         IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+        }
 
         if ("in".equals(uri)) {
             inputStream = System.in;
@@ -137,20 +153,115 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else if ("file".equals(uri)) {
             inputStream = resolveStreamFromFile();
             inputStreamToClose = inputStream;
+        } else if ("http".equals(uri)) {
+            inputStream = resolveStreamFromUrl();
+            inputStreamToClose = inputStream;
         }
 
         if (inputStream != null) {
-            Charset charset = endpoint.getCharset();
-            return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+            if ("http".equals(uri)) {
+                // read as-is
+                return IOHelper.buffered(new InputStreamReader(inputStream));
+            } else {
+                Charset charset = endpoint.getCharset();
+                return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+            }
         } else {
             return null;
         }
     }
 
-    private void readFromStream() throws Exception {
+    private InputStream initializeStreamRawMode() throws Exception {
+        // close old stream, before obtaining a new stream
+        IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+        }
+
+        if ("in".equals(uri)) {
+            inputStream = System.in;
+            // do not close regular inputStream as it may be System.in etc.
+            inputStreamToClose = null;
+        } else if ("file".equals(uri)) {
+            inputStream = resolveStreamFromFile();
+            inputStreamToClose = inputStream;
+        } else if ("http".equals(uri)) {
+            inputStream = resolveStreamFromUrl();
+            inputStreamToClose = inputStream;
+        }
+
+        return inputStream;
+    }
+
+    private void readFromStreamRawMode() throws Exception {
+        long index = 0;
+        InputStream is = initializeStreamRawMode();
+
+        if (endpoint.isScanStream()) {
+            // repeat scanning from stream
+            while (isRunAllowed()) {
+
+                byte[] data = null;
+                try {
+                    data = is.readAllBytes();
+                } catch (IOException e) {
+                    // ignore
+                }
+                boolean eos = data == null || data.length == 0;
+
+                if (isRunAllowed() && endpoint.isRetry()) {
+                    boolean reOpen = true;
+                    if (endpoint.isFileWatcher()) {
+                        reOpen = watchFileChanged;
+                    }
+                    if (reOpen) {
+                        LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
+                        is = initializeStreamRawMode();
+                        // we have re-initialized the stream so lower changed flag
+                        if (endpoint.isFileWatcher()) {
+                            watchFileChanged = false;
+                        }
+                    } else {
+                        LOG.trace("File: {} not changed since last read", file);
+                    }
+                }
+
+                // sleep only if there is no input
+                if (eos) {
+                    try {
+                        Thread.sleep(endpoint.getScanStreamDelay());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        } else {
+            // regular read stream once until end of stream
+            boolean eos = false;
+            byte[] data = null;
+            while (!eos && isRunAllowed()) {
+                if (endpoint.getPromptMessage() != null) {
+                    doPromptMessage();
+                }
+
+                try {
+                    data = is.readAllBytes();
+                } catch (IOException e) {
+                    // ignore
+                }
+                eos = data == null || data.length == 0;
+                if (!eos) {
+                    processRaw(data, index);
+                }
+            }
+        }
+    }
+
+    private void readFromStreamLineMode() throws Exception {
         long index = 0;
         String line;
-        BufferedReader br = initializeStream();
+        BufferedReader br = initializeStreamLineMode();
 
         if (endpoint.isScanStream()) {
             // repeat scanning from stream
@@ -171,7 +282,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     }
                     if (reOpen) {
                         LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
-                        br = initializeStream();
+                        br = initializeStreamLineMode();
                         // we have re-initialized the stream so lower changed flag
                         if (endpoint.isFileWatcher()) {
                             watchFileChanged = false;
@@ -255,6 +366,15 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     }
 
     /**
+     * Strategy method for processing the data
+     */
+    protected synchronized long processRaw(byte[] body, long index) throws Exception {
+        Exchange exchange = createExchange(body, index++, true);
+        getProcessor().process(exchange);
+        return index;
+    }
+
+    /**
      * Strategy method for prompting the prompt message
      */
     protected void doPromptMessage() {
@@ -312,6 +432,49 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         return fileStream;
     }
 
+    /**
+     * From a comma-separated list of headers in the format of "FIELD=VALUE" or "FIELD:VALUE", split on the commas and
+     * split on the separator to create a stream of Map.Entry values while filtering out invalid combinations
+     *
+     * @param  headerList A string containing a comma-separated list of headers
+     * @return            A Stream of Map.Entry items which can then be added as headers to a URLConnection
+     */
+    Stream<Map.Entry<String, String>> parseHeaders(String headerList) {
+        return Arrays.asList(headerList.split(","))
+                .stream()
+                .map(s -> s.split("[=:]"))
+                .filter(h -> h.length == 2)
+                .map(h -> Map.entry(h[0].trim(), h[1].trim()));
+    }
+
+    private InputStream resolveStreamFromUrl() throws IOException {
+        String url = endpoint.getHttpUrl();
+        StringHelper.notEmpty(url, "httpUrl");
+
+        urlConnectionToClose = new URL(url).openConnection();
+        urlConnectionToClose.setUseCaches(false);
+        String headers = endpoint.getHttpHeaders();
+        if (headers != null) {
+            parseHeaders(headers)
+                    .forEach(e -> urlConnectionToClose.setRequestProperty(e.getKey(), e.getValue()));
+        }
+
+        InputStream is;
+
+        try {
+            is = urlConnectionToClose.getInputStream();
+        } catch (IOException e) {
+            // close the http connection to avoid
+            // leaking gaps in case of an exception
+            if (urlConnectionToClose instanceof HttpURLConnection) {
+                ((HttpURLConnection) urlConnectionToClose).disconnect();
+            }
+            throw e;
+        }
+
+        return is;
+    }
+
     private void validateUri(String uri) throws IllegalArgumentException {
         String[] s = uri.split(":");
         if (s.length < 2) {
@@ -339,6 +502,16 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         exchange.getIn().setHeader(StreamConstants.STREAM_INDEX, index);
         exchange.getIn().setHeader(StreamConstants.STREAM_COMPLETE, last);
         return exchange;
+    }
+
+    private static void closeURLConnection(URLConnection con) {
+        if (con instanceof HttpURLConnection) {
+            try {
+                ((HttpURLConnection) con).disconnect();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
 }

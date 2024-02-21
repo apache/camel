@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
@@ -99,7 +98,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the prefix used when creating the ZIP file name.
-     * 
+     *
      * @return the prefix
      */
     public String getFilePrefix() {
@@ -108,7 +107,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the prefix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param filePrefix prefix to use on ZIP file.
      */
     public void setFilePrefix(String filePrefix) {
@@ -117,7 +116,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the suffix used when creating the ZIP file name.
-     * 
+     *
      * @return the suffix
      */
     public String getFileSuffix() {
@@ -126,7 +125,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param fileSuffix suffix to use on ZIP file.
      */
     public void setFileSuffix(String fileSuffix) {
@@ -170,7 +169,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
+            answer.getExchangeExtension().addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
         } else {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
@@ -216,6 +215,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         return answer;
     }
 
+    @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        // this aggregation strategy added onCompletion which we should handover when we are complete
+        if (inputExchange != null) {
+            exchange.getExchangeExtension().handoverCompletions(inputExchange);
+        }
+    }
+
     private static void newZipFile(File zipFile) throws URISyntaxException, IOException {
         if (zipFile.exists() && !zipFile.delete()) { //Delete, because ZipFileSystem needs to create file on its own (with correct END bytes in the file)
             throw new IOException("Cannot delete file " + zipFile);
@@ -234,8 +241,13 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
-            Files.createDirectories(dest.getParent());
-            Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+            Path parent = dest.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+                Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                // TODO do some logging
+            }
         }
     }
 
@@ -246,8 +258,13 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
-            Files.createDirectories(dest.getParent());
-            Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Path parent = dest.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+                Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } else {
+                // TODO do some logging
+            }
         }
     }
 
@@ -258,7 +275,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     /**
      * This callback class is used to clean up the temporary ZIP file once the exchange has completed.
      */
-    private class DeleteZipFileOnCompletion implements Synchronization {
+    private static class DeleteZipFileOnCompletion implements Synchronization {
 
         private final File fileToDelete;
 

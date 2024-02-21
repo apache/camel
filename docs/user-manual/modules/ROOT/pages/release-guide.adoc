@@ -1,7 +1,7 @@
-[[ReleaseGuide-ReleaseGuide]]
 = Release Guide
 
 This guide covers how to create and announce a Camel release.
+Instructions on updating the website to include the new documentation version are xref:release-guide-website.adoc[here].
 
 [[ReleaseGuide-Prequisites]]
 == Prequisites
@@ -16,7 +16,7 @@ ApacheCon for instance).
 * https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards and should be used
 for building the release.
 * You may want to get familiar with the release settings in the parent Apache POM.
-* Make sure you are using Java 1.8 for Apache Camel 2.18.0 and later.
+* Make sure you are using Java 11 for Apache Camel 3 and Java 21 for Apache Camel 4.
 
 [[ReleaseGuide-MavenSetup]]
 == Maven Setup
@@ -64,7 +64,7 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
   ...
   <profiles>
     <profile>
-      <id>apache-release</id>
+      <id>release</id>
       <properties>
         <gpg.useagent>false</gpg.useagent>
         <gpg.passphrase><!-- YOUR GPG PASSPHRASE --></gpg.passphrase>
@@ -268,7 +268,7 @@ Complete the following steps to create a new Camel-karaf release:
   $ git checkout BRANCH_NAME
 
 . From Camel 3.3.0 ahead, the camel-karaf project uses camel-dependencies as parent.
-You'll need to set the version here https://github.com/apache/camel-karaf/blob/master/pom.xml#L26
+You'll need to set the version here https://github.com/apache/camel-karaf/blob/main/pom.xml#L26
 To the version released from the main Camel repository as first step.
   
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
@@ -281,7 +281,7 @@ To the version released from the main Camel repository as first step.
   proceeding with the next step.
 
 . You already have built the main camel repo for releasing, so you already have a final version in your local repository.
-Change the camel-version property in https://github.com/apache/camel-karaf/blob/master/pom.xml accordingly and commit.
+Change the camel-version property in https://github.com/apache/camel-karaf/blob/main/pom.xml accordingly and commit.
 
 . Do a release dry run to check for problems:
 
@@ -365,6 +365,11 @@ This will release the artifacts.
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
+  
+. Copy SBOMs to Apache website:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-sbom.sh <Camel version>
 
 . Remove the old distribution version from the Apache website:
 
@@ -390,7 +395,7 @@ This will release the artifacts.
 [[Publish-xsd-schemas]]
 == Publish xsd schemas
 
-* On https://github.com/apache/camel-website/tree/master/static/schema the xsd related to blueprint,cxf,spring-security and spring
+* On https://github.com/apache/camel-website/tree/main/static/schema the xsd related to blueprint,cxf,spring-security and spring
 must be pushed to make them available to end users.
 * The blueprint one is under the camel-karaf release
 

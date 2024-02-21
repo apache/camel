@@ -37,12 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 @Configurer(extended = true)
 public class BraintreeConfiguration {
-    private static final String ENVIRONMENT = "environment";
-    private static final String MERCHANT_ID = "merchant_id";
-    private static final String PUBLIC_KEY = "public_key";
-    private static final String PRIVATE_KEY = "private_key";
-    private static final String ACCESS_TOKEN = "access_token";
-
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;

@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -46,20 +48,18 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     private String id;
     private String routeId;
-    private LoopState state;
     private boolean shutdownPending;
-    private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
     private final Predicate predicate;
     private final boolean copy;
     private final boolean breakOnShutdown;
+    private final LongAdder taskCount = new LongAdder();
 
     public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
                          boolean copy, boolean breakOnShutdown) {
         super(processor);
-        this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.expression = expression;
         this.predicate = predicate;
         this.copy = copy;
@@ -69,10 +69,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            state = new LoopState(exchange, callback);
+            LoopState state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleSync(state);
+                reactiveExecutor.scheduleQueue(state);
             } else {
                 reactiveExecutor.scheduleMain(state);
             }
@@ -91,7 +91,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     @Override
     public int getPendingExchangesSize() {
-        return state.getPendingSize();
+        return taskCount.intValue();
     }
 
     @Override
@@ -121,7 +121,9 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 // but evaluation result is a textual representation of a numeric value.
                 String text = expression.evaluate(exchange, String.class);
                 count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
-                exchange.setProperty(Exchange.LOOP_SIZE, count);
+                // keep track of pending task if loop with fixed value
+                taskCount.add(count);
+                exchange.setProperty(ExchangePropertyKey.LOOP_SIZE, count);
             }
         }
 
@@ -141,11 +143,15 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
                     // set current index as property
                     LOG.debug("LoopProcessor: iteration #{}", index);
-                    current.setProperty(Exchange.LOOP_INDEX, index);
+                    current.setProperty(ExchangePropertyKey.LOOP_INDEX, index);
 
                     processor.process(current, doneSync -> {
                         // increment counter after done
                         index++;
+                        if (expression != null) {
+                            // keep track of pending task if loop with fixed value
+                            taskCount.decrement();
+                        }
                         reactiveExecutor.schedule(this);
                     });
                 } else {
@@ -154,19 +160,29 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                     }
+                    if (!cont && expression != null) {
+                        // if we should stop due to an exception etc, then make sure to dec task count
+                        int gap = count - index;
+                        while (gap-- > 0) {
+                            taskCount.decrement();
+                        }
+                    }
                     callback.done(false);
                 }
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
                 }
+                if (expression != null) {
+                    // if we should stop due to an exception etc, then make sure to dec task count
+                    int gap = count - index;
+                    while (gap-- > 0) {
+                        taskCount.decrement();
+                    }
+                }
                 exchange.setException(e);
                 callback.done(false);
             }
-        }
-
-        public int getPendingSize() {
-            return Math.max(count - index, 0);
         }
 
         @Override

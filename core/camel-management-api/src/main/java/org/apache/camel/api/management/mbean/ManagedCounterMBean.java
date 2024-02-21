@@ -33,6 +33,6 @@ public interface ManagedCounterMBean {
     Date getResetTimestamp();
 
     @ManagedAttribute(description = "Total number of exchanges")
-    long getExchangesTotal() throws Exception;
+    long getExchangesTotal();
 
 }

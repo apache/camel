@@ -31,8 +31,6 @@ import static java.util.Collections.singletonList;
  */
 public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
 
-    private static final String STREAM_FILTER_PROPERTY = "streamFilter";
-
     private final MongoDbEndpoint endpoint;
     private ExecutorService executor;
     private MongoDbChangeStreamsThread changeStreamsThread;
@@ -57,14 +55,15 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        String streamFilter = (String) getRoute().getProperties().get(STREAM_FILTER_PROPERTY);
+
+        String streamFilter = endpoint.getStreamFilter();
         List<BsonDocument> bsonFilter = null;
         if (ObjectHelper.isNotEmpty(streamFilter)) {
             bsonFilter = singletonList(BsonDocument.parse(streamFilter));
         }
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
-                1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                endpoint.getEndpointUri(), 1);
         changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter);
         changeStreamsThread.init();
         executor.execute(changeStreamsThread);

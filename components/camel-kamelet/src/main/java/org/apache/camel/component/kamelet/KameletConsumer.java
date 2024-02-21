@@ -19,11 +19,13 @@ package org.apache.camel.component.kamelet;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
 
 final class KameletConsumer extends DefaultConsumer implements ShutdownAware, Suspendable {
 
+    private final InflightRepository inflight;
     private final KameletComponent component;
     private final String key;
 
@@ -31,6 +33,7 @@ final class KameletConsumer extends DefaultConsumer implements ShutdownAware, Su
         super(endpoint, processor);
         this.component = endpoint.getComponent();
         this.key = key;
+        this.inflight = endpoint.getCamelContext().getInflightRepository();
     }
 
     @Override
@@ -71,9 +74,8 @@ final class KameletConsumer extends DefaultConsumer implements ShutdownAware, Su
 
     @Override
     public int getPendingExchangesSize() {
-        // return 0 as we do not have an internal memory queue with a variable
-        // size of inflight messages.
-        return 0;
+        // capture the inflight counter from the route
+        return inflight.size(getRouteId());
     }
 
     @Override

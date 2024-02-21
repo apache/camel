@@ -15,24 +15,27 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":configFile";
+    private static final String BASE = ":problemName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(11);
         props.add("async");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("threadPoolSize");
         props.add("configFile");
-        props.add("exchangePattern");
-        props.add("useSolverManager");
-        props.add("solverId");
-        props.add("problemId");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
+        props.add("problemId");
+        props.add("problemName");
+        props.add("solverId");
+        props.add("solverManager");
+        props.add("threadPoolSize");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "configFile", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "problemName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
@@ -60,6 +63,11 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

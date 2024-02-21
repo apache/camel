@@ -18,8 +18,8 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.List;
 
-import javax.validation.ValidationProviderResolver;
-import javax.validation.spi.ValidationProvider;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.spi.ValidationProvider;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,10 +48,10 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").to(
                         "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }

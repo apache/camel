@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.Message;
@@ -27,6 +28,7 @@ import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.slack.helper.SlackHelper;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
 
@@ -44,7 +46,9 @@ public class SlackProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        this.slack = Slack.getInstance(new CustomSlackHttpClient());
+        SlackConfig config = SlackHelper.createSlackConfig(slackEndpoint.getServerUrl());
+        CustomSlackHttpClient client = new CustomSlackHttpClient();
+        this.slack = Slack.getInstance(config, client);
         super.doStart();
     }
 

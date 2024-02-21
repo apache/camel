@@ -114,7 +114,7 @@ public class SocketInputStreamStub extends InputStream {
     }
 
     @Override
-    public int available() throws IOException {
+    public int available() {
         if (packetQueue.size() > 0) {
             Object element = packetQueue.element();
             if (element instanceof ByteArrayInputStream) {
@@ -140,7 +140,7 @@ public class SocketInputStreamStub extends InputStream {
         return this;
     }
 
-    public SocketInputStreamStub addPacket(byte[] bytes) throws IOException {
+    public SocketInputStreamStub addPacket(byte[] bytes) {
         if (bytes != null) {
             this.packetQueue.add(new ByteArrayInputStream(bytes));
         } else {
@@ -160,7 +160,7 @@ public class SocketInputStreamStub extends InputStream {
         return this;
     }
 
-    public SocketInputStreamStub addPacket(String... strings) throws IOException {
+    public SocketInputStreamStub addPacket(String... strings) {
         this.packetQueue.add(new ByteArrayInputStream(PayloadBuilder.build(strings)));
 
         return this;

@@ -71,6 +71,7 @@ public class PulsarComponentTest extends CamelTestSupport {
         assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getPulsarConfiguration().getSubscriptionType());
         assertFalse(endpoint.getPulsarConfiguration().isAllowManualAcknowledgement());
         assertFalse(endpoint.getPulsarConfiguration().isReadCompacted());
+        assertTrue(endpoint.getPulsarConfiguration().isMessageListener());
     }
 
     @Test

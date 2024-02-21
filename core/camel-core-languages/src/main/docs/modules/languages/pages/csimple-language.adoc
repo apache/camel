@@ -1,11 +1,14 @@
-[[csimple-language]]
 = CSimple Language
-:docTitle: CSimple
-:artifactId: camel-core-languages
-:description: Evaluate a compile simple expression language.
+:doctitle: CSimple
+:shortname: csimple
+:artifactid: camel-core-languages
+:description: Evaluate a compiled simple expression.
 :since: 3.7
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: core
+:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -18,13 +21,13 @@ The simple language is a dynamic expression language which is runtime parsed int
 The csimple language is parsed into regular Java source code and compiled together with all the other source code,
 or compiled once during bootstrap via the `camel-csimple-joor` module.
 
-The simple langauge is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
+The simple language is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
 then the simple language does runtime introspection and reflection calls. This has an overhead on performance,
 and was one of the reasons why csimple was created.
 
 The csimple language requires to be typesafe and method calls via OGNL paths requires to know the type during parsing.
 This means for csimple languages expressions you would need to provide the class type in the script,
-where as simple introspects this at runtime.
+whereas simple introspects this at runtime.
 
 In other words the simple language is using _duck typing_ (if it looks like a duck, and quacks like a duck, then it is a duck)
 and csimple is using Java type (typesafety). If there is a type error then simple will report this at runtime,
@@ -57,6 +60,9 @@ and then converting the exchange property to the given type determined by its cl
 |mandatoryExchangePropertyAsIndex(_key_, _type_, _index_) |Type | To be used for collecting an exchange property from an existing `Collection`, `Map` or array (lookup by the index)
 and then converting the exchange property to the given type determined by its classname. Expects the exchange property to be not null.
 
+|messageAs(_type_) |Type |Converts the message to the given type determined by its
+classname. The converted message can be null.
+
 |=======================================================================
 
 For example given the following simple expression:
@@ -86,14 +92,14 @@ There are two ways to compile csimple
 
 === Using camel-csimple-maven-plugin
 
-The `camel-csimple-maven-plugin` Maven plugin is used for discoving all the csimple scripts from the source code, and then automatic generate source code in the `src/generated/java` folder, which then gets compiled together with all the other sources.
+The `camel-csimple-maven-plugin` Maven plugin is used for discovering all the csimple scripts from the source code, and then automatic generate source code in the `src/generated/java` folder, which then gets compiled together with all the other sources.
 
 The maven plugin will do source code scanning of `.java` and `.xml` files (Java and XML DSL).
 The scanner limits to detect certain code patterns, and it may miss discovering some csimple scripts if they are being used in unusual/rare ways.
 
 The runtime compilation using `camel-csimple-joor` does not have this limitation.
 
-However the pros is that all of the csimple scripts will be compiled using the regular Java compiler and therefore everything
+The benefit is all the csimple scripts will be compiled using the regular Java compiler and therefore everything
 is included out of the box as `.class` files in the application JAR file, and no additional dependencies is required at runtime.
 
 To use `camel-csimple-maven-plugin` you need to add it to your `pom.xml` file as shown:
@@ -176,21 +182,12 @@ See the `camel-example-csimple-joor` example at https://github.com/apache/camel-
 == CSimple Language options
 
 // language options: START
-The CSimple language supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| resultType |  | String | Sets the class name of the result type (type from output)
-| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
-|===
+include::partial$language-options.adoc[]
 // language options: END
 
 == Limitations
 
-Currently the csimple language does **not** support:
+Currently, the csimple language does **not** support:
 
 - nested functions (aka functions inside functions)
 - the _null safe_ operator (`?`).
@@ -209,7 +206,7 @@ For example the following scripts cannot compile:
 
 == Auto imports
 
-The csimple language will automatic import from:
+The csimple language will automatically import from:
 
 [source,java]
 ----
@@ -256,6 +253,8 @@ The _echo()_ alias will be replaced with its value resulting in a script as:
     .transform(csimple("Hello ${bodyAs(String)} ${bodyAs(String)}"))
 ----
 
-== More documentation
+== See Also
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
+
+include::spring-boot:partial$starter.adoc[]

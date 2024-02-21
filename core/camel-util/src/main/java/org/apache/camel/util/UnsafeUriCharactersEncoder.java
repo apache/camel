@@ -25,9 +25,9 @@ import java.util.List;
  * A good source for details is <a href="http://en.wikipedia.org/wiki/Url_encode">wikipedia url encode</a> article.
  */
 public final class UnsafeUriCharactersEncoder {
-    private static BitSet unsafeCharactersFastParser;
-    private static BitSet unsafeCharactersRfc1738;
-    private static BitSet unsafeCharactersHttp;
+    private static final BitSet unsafeCharactersFastParser;
+    private static final BitSet unsafeCharactersRfc1738;
+    private static final BitSet unsafeCharactersHttp;
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
             'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f' };

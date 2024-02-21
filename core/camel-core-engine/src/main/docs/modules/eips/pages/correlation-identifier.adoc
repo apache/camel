@@ -1,55 +1,83 @@
-[[CorrelationIdentifier-CorrelationIdentifier]]
 = Correlation Identifier
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
 Identifier] from the xref:enterprise-integration-patterns.adoc[EIP
-patterns] by getting or setting a header on a
-xref:message.adoc[Message].
+patterns] by getting or setting a header on the xref:message.adoc[Message].
 
-When working with the xref:components::activemq-component.adoc[ActiveMQ] or xref:components::jms-component.adoc[JMS]
+When working with the xref:ROOT:jms-component.adoc[JMS]
 components the correlation identifier header is called
-*JMSCorrelationID*. You can add your own correlation identifier to any
-message exchange to help correlate messages together to a single
-conversation (or business process).
+*JMSCorrelationID*, and they handle the correlation automatically.
+
+Other messaging systems, such as xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] also handles this automatic,
+and you should generally not have a need for using custom correlation IDs with these systems.
 
 image::eip/CorrelationIdentifierSolution.gif[image]
 
-The use of a Correlation Identifier is key to working with the
-xref:latest@manual:ROOT:bam.adoc[Camel Business Activity Monitoring Framework] and can also
-be highly useful when testing with simulation or canned data such as
-with the xref:components::mock-component.adoc[Mock testing framework]
+You can use your own correlation identifier to any
+message exchange to help correlate messages together to a single
+conversation (or business process). For example if you need to correlation messages when using web services.
+
+The use of a correlation identifier is key to working with xref:others:tracing.adoc[Distributed Tracing]
+and be useful when using xref:manual::tracer.adoc[Tracer] messages to log,
+or testing with simulation or canned data such as with the xref:ROOT:mock-component.adoc[Mock] testing framework.
+
+
+== EIPs using correlation identifiers
 
 Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
-xref:latest@manual:ROOT:exchange.adoc[Exchange] as a property with they key
+xref:manual::exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
-xref:latest@manual:ROOT:exchange.adoc[Exchange]. For example the
-xref:split-eip.adoc[Splitter], xref:multicast-eip.adoc[Multicast],
-xref:recipientList-eip.adoc[Recipient List], and xref:wireTap-eip.adoc[Wire
-Tap] EIP does this.
+xref:manual::exchange.adoc[Exchange] and its exchange id.
 
-The following example demonstrates using the Camel JMSMessageID as the
-Correlation Identifier within a request/reply pattern in
-the xref:components::jms-component.adoc[JMS] component
+The following EIPs does this:
 
-== Samples
+- xref:enrich-eip.adoc[Enrich]
+- xref:multicast-eip.adoc[Multicast]
+- xref:recipientList-eip.adoc[Recipient List]
+- xref:split-eip.adoc[Split]
+- xref:wireTap-eip.adoc[Wire Tap]
 
+== Example
+
+The following example uses a request/reply pattern in
+the xref:ROOT:jms-component.adoc[JMS] component, where correlation identifiers are automatically handled:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .to(ExchangePattern.InOut, "jms:queue:foo?useMessageIDAsCorrelationID=true")
+    .to(ExchangePattern.InOut, "jms:queue:foo")
     .to("mock:result");
 ----
 
-And with XML:
-
+XML::
++
 [source,xml]
-------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:start"/>
-    <to pattern="InOut" uri="jms:queue:foo?useMessageIDAsCorrelationID=true"/>
+    <to pattern="InOut" uri="jms:queue:foo"/>
     <to uri="mock:result"/>
 </route>
-------------------------------------------------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to:
+          uri: jms:queue:foo
+          pattern: InOut
+      - to:
+          uri: mock:result
+----
+====

@@ -82,7 +82,7 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
 
                 @Override
                 public Exchange createExchange(boolean autoRelease) {
-                    return new DefaultExchange(getEndpoint());
+                    return DefaultExchange.newFromEndpoint(getEndpoint());
                 }
 
                 @Override

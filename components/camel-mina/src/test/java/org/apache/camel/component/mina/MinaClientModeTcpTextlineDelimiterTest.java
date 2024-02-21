@@ -17,7 +17,7 @@
 package org.apache.camel.component.mina;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -52,13 +52,13 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
-                        getPort()))
-                                .id("minaRoute")
-                                .noAutoStartup()
-                                .to("log:before?showAll=true")
-                                .to("mock:result")
-                                .to("log:after?showAll=true");
+                fromF("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
+                        getPort())
+                        .id("minaRoute")
+                        .noAutoStartup()
+                        .to("log:before?showAll=true")
+                        .to("mock:result")
+                        .to("log:after?showAll=true");
             }
         };
     }
@@ -73,21 +73,21 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
 
         public void startup() throws Exception {
             acceptor = new NioSocketAcceptor();
-            MinaTextLineCodecFactory codecFactory = new MinaTextLineCodecFactory(Charset.forName("UTF-8"), LineDelimiter.UNIX);
+            MinaTextLineCodecFactory codecFactory = new MinaTextLineCodecFactory(StandardCharsets.UTF_8, LineDelimiter.UNIX);
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
             acceptor.setHandler(new ServerHandler());
             acceptor.bind(new InetSocketAddress("127.0.0.1", port));
         }
 
-        public void shutdown() throws Exception {
+        public void shutdown() {
             acceptor.unbind();
             acceptor.dispose();
         }
     }
 
-    private class ServerHandler extends IoHandlerAdapter {
+    private static class ServerHandler extends IoHandlerAdapter {
         @Override
-        public void sessionOpened(IoSession session) throws Exception {
+        public void sessionOpened(IoSession session) {
             session.write("Hello there!\n");
             session.closeNow();
         }

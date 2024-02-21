@@ -20,7 +20,7 @@ package org.apache.camel.component.file;
  * File filter using AntPathMatcher.
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
- * 
+ *
  * @param <T>
  */
 public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> {

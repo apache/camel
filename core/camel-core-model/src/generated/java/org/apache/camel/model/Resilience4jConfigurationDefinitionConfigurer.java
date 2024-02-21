@@ -24,8 +24,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("BulkheadEnabled", java.lang.String.class);
         map.put("BulkheadMaxConcurrentCalls", java.lang.String.class);
         map.put("BulkheadMaxWaitDuration", java.lang.String.class);
-        map.put("CircuitBreakerRef", java.lang.String.class);
-        map.put("ConfigRef", java.lang.String.class);
+        map.put("CircuitBreaker", java.lang.String.class);
+        map.put("Config", java.lang.String.class);
         map.put("FailureRateThreshold", java.lang.String.class);
         map.put("Id", java.lang.String.class);
         map.put("MinimumNumberOfCalls", java.lang.String.class);
@@ -34,10 +34,11 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("SlidingWindowType", java.lang.String.class);
         map.put("SlowCallDurationThreshold", java.lang.String.class);
         map.put("SlowCallRateThreshold", java.lang.String.class);
+        map.put("ThrowExceptionWhenHalfOpenOrOpenState", java.lang.String.class);
         map.put("TimeoutCancelRunningFuture", java.lang.String.class);
         map.put("TimeoutDuration", java.lang.String.class);
         map.put("TimeoutEnabled", java.lang.String.class);
-        map.put("TimeoutExecutorServiceRef", java.lang.String.class);
+        map.put("TimeoutExecutorService", java.lang.String.class);
         map.put("WaitDurationInOpenState", java.lang.String.class);
         map.put("WritableStackTraceEnabled", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -55,10 +56,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "BulkheadMaxConcurrentCalls": target.setBulkheadMaxConcurrentCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxwaitduration":
         case "BulkheadMaxWaitDuration": target.setBulkheadMaxWaitDuration(property(camelContext, java.lang.String.class, value)); return true;
-        case "circuitbreakerref":
-        case "CircuitBreakerRef": target.setCircuitBreakerRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "configref":
-        case "ConfigRef": target.setConfigRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "circuitbreaker":
+        case "CircuitBreaker": target.setCircuitBreaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "config":
+        case "Config": target.setConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "failureratethreshold":
         case "FailureRateThreshold": target.setFailureRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
         case "id":
@@ -75,14 +76,16 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": target.setSlowCallDurationThreshold(property(camelContext, java.lang.String.class, value)); return true;
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": target.setSlowCallRateThreshold(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": target.setThrowExceptionWhenHalfOpenOrOpenState(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": target.setTimeoutCancelRunningFuture(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutduration":
         case "TimeoutDuration": target.setTimeoutDuration(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutenabled":
         case "TimeoutEnabled": target.setTimeoutEnabled(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeoutexecutorserviceref":
-        case "TimeoutExecutorServiceRef": target.setTimeoutExecutorServiceRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeoutexecutorservice":
+        case "TimeoutExecutorService": target.setTimeoutExecutorService(property(camelContext, java.lang.String.class, value)); return true;
         case "waitdurationinopenstate":
         case "WaitDurationInOpenState": target.setWaitDurationInOpenState(property(camelContext, java.lang.String.class, value)); return true;
         case "writablestacktraceenabled":
@@ -107,10 +110,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "BulkheadMaxConcurrentCalls": return java.lang.String.class;
         case "bulkheadmaxwaitduration":
         case "BulkheadMaxWaitDuration": return java.lang.String.class;
-        case "circuitbreakerref":
-        case "CircuitBreakerRef": return java.lang.String.class;
-        case "configref":
-        case "ConfigRef": return java.lang.String.class;
+        case "circuitbreaker":
+        case "CircuitBreaker": return java.lang.String.class;
+        case "config":
+        case "Config": return java.lang.String.class;
         case "failureratethreshold":
         case "FailureRateThreshold": return java.lang.String.class;
         case "id":
@@ -127,14 +130,16 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": return java.lang.String.class;
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": return java.lang.String.class;
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": return java.lang.String.class;
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": return java.lang.String.class;
         case "timeoutduration":
         case "TimeoutDuration": return java.lang.String.class;
         case "timeoutenabled":
         case "TimeoutEnabled": return java.lang.String.class;
-        case "timeoutexecutorserviceref":
-        case "TimeoutExecutorServiceRef": return java.lang.String.class;
+        case "timeoutexecutorservice":
+        case "TimeoutExecutorService": return java.lang.String.class;
         case "waitdurationinopenstate":
         case "WaitDurationInOpenState": return java.lang.String.class;
         case "writablestacktraceenabled":
@@ -155,10 +160,10 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "BulkheadMaxConcurrentCalls": return target.getBulkheadMaxConcurrentCalls();
         case "bulkheadmaxwaitduration":
         case "BulkheadMaxWaitDuration": return target.getBulkheadMaxWaitDuration();
-        case "circuitbreakerref":
-        case "CircuitBreakerRef": return target.getCircuitBreakerRef();
-        case "configref":
-        case "ConfigRef": return target.getConfigRef();
+        case "circuitbreaker":
+        case "CircuitBreaker": return target.getCircuitBreaker();
+        case "config":
+        case "Config": return target.getConfig();
         case "failureratethreshold":
         case "FailureRateThreshold": return target.getFailureRateThreshold();
         case "id":
@@ -175,14 +180,16 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": return target.getSlowCallDurationThreshold();
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": return target.getSlowCallRateThreshold();
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": return target.getThrowExceptionWhenHalfOpenOrOpenState();
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": return target.getTimeoutCancelRunningFuture();
         case "timeoutduration":
         case "TimeoutDuration": return target.getTimeoutDuration();
         case "timeoutenabled":
         case "TimeoutEnabled": return target.getTimeoutEnabled();
-        case "timeoutexecutorserviceref":
-        case "TimeoutExecutorServiceRef": return target.getTimeoutExecutorServiceRef();
+        case "timeoutexecutorservice":
+        case "TimeoutExecutorService": return target.getTimeoutExecutorService();
         case "waitdurationinopenstate":
         case "WaitDurationInOpenState": return target.getWaitDurationInOpenState();
         case "writablestacktraceenabled":

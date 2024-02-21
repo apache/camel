@@ -58,7 +58,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         BindyCsvRowFormat75191 model
                 = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75191.class);
@@ -81,7 +81,7 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal2", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         BindyCsvRowFormat75192 model
                 = mockEndPointUnMarshal2.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat75192.class);
@@ -92,10 +92,10 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyCsvDataFormat camelDataFormat1 = new BindyCsvDataFormat(BindyCsvRowFormat75191.class);
 
                 from("direct:startMarshal1")

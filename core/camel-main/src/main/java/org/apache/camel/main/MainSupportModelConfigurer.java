@@ -16,16 +16,22 @@
  */
 package org.apache.camel.main;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -46,28 +52,12 @@ public final class MainSupportModelConfigurer {
     static void configureModelCamelContext(
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
-            Map<String, String> autoConfiguredProperties,
-            Map<String, Object> hystrixProperties,
-            Map<String, Object> resilience4jProperties,
-            Map<String, Object> faultToleranceProperties)
+            OrderedLocationProperties autoConfiguredProperties,
+            OrderedLocationProperties resilience4jProperties,
+            OrderedLocationProperties faultToleranceProperties)
             throws Exception {
 
-        ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-
-        if (!hystrixProperties.isEmpty() || mainConfigurationProperties.hasHystrixConfiguration()) {
-            HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
-            LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-            HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
-            if (hystrixModel == null) {
-                hystrixModel = new HystrixConfigurationDefinition();
-                model.setHystrixConfiguration(hystrixModel);
-            }
-            if (hystrix != null) {
-                setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
-            }
-        }
+        ModelCamelContext model = (ModelCamelContext) camelContext;
 
         if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
@@ -98,17 +88,54 @@ public final class MainSupportModelConfigurer {
         }
     }
 
+    static void setVariableProperties(
+            CamelContext camelContext,
+            OrderedLocationProperties variableProperties,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        for (String key : variableProperties.stringPropertyNames()) {
+            String value = variableProperties.getProperty(key);
+            String id = "global";
+            if (key.startsWith("route.")) {
+                id = "route";
+                key = key.substring(6);
+                key = StringHelper.replaceFirst(key, ".", ":");
+            } else if (key.startsWith("global.")) {
+                id = "global";
+                key = key.substring(7);
+                key = StringHelper.replaceFirst(key, ".", ":");
+            }
+            VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+                    .getVariableRepository(id);
+            // it may be a resource to load from disk then
+            if (value.startsWith(LanguageSupport.RESOURCE)) {
+                value = value.substring(9);
+                if (ResourceHelper.hasScheme(value)) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
+                    value = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                }
+            }
+            repo.setVariable(key, value);
+        }
+        for (var e : variableProperties.entrySet()) {
+            String loc = variableProperties.getLocation(e.getKey());
+            autoConfiguredProperties.put(loc, "camel.variable." + e.getKey(), e.getValue());
+        }
+    }
+
     static void setThreadPoolProperties(
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
-            Map<String, Object> threadPoolProperties,
-            boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
+            OrderedLocationProperties threadPoolProperties,
+            OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
         ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
 
         // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties, "config", false);
+        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties.asMap(), "config", false);
         Map<String, ThreadPoolProfileConfigurationProperties> tpConfigs = new HashMap<>();
         // build set of configuration objects
         for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {

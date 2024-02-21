@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "avro-binary",
+    "title": "Avro Binary",
+    "description": "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.jackson.avro.transform.AvroBinaryDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jackson-avro",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

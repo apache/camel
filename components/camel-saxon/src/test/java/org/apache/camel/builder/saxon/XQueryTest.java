@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XQueryTest {
     @Test
-    public void testXQuery() throws Exception {
+    public void testXQuery() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 

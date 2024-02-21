@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.cluster;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 
 public abstract class InfinispanClusterConfiguration<C extends InfinispanConfiguration> implements Cloneable {
@@ -68,7 +69,7 @@ public abstract class InfinispanClusterConfiguration<C extends InfinispanConfigu
         try {
             return (InfinispanClusterConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

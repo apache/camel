@@ -36,7 +36,7 @@ public class InfluxDbProducerQueryTest extends AbstractInfluxDbTest {
     MockEndpoint errorEndpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
@@ -48,7 +48,7 @@ public class InfluxDbProducerQueryTest extends AbstractInfluxDbTest {
                         .process(new Processor() {
 
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getIn().setHeader(InfluxDbConstants.INFLUXDB_QUERY, "select * from cpu");
                             }
                         })

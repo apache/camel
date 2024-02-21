@@ -27,7 +27,7 @@ public interface CamelSpringWSEndpointMapping extends EndpointMapping {
 
     /**
      * Used by Camel Spring Web Services endpoint to register consumers
-     * 
+     *
      * @param key      unique consumer key
      * @param endpoint consumer
      */
@@ -35,7 +35,7 @@ public interface CamelSpringWSEndpointMapping extends EndpointMapping {
 
     /**
      * Used by Camel Spring Web Services endpoint to unregister consumers
-     * 
+     *
      * @param key unique consumer key
      */
     void removeConsumer(Object key);

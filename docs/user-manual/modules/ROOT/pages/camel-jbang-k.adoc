@@ -1,0 +1,164 @@
+= Camel Integration with Kubernetes
+
+Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
+
+* Connect to namespace on a Kubernetes cluster where you want to run the integration
+* Camel K operator must be installed on the Kubernetes cluster (either installed on the same namespace or as global operator for the whole cluster)
+
+Running Camel routes on Kubernetes is quite simple with Camel JBang.
+In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
+
+The Camel JBang Kubernetes functionality is provided as a command plugin.
+This means you need to enable the `camel-k` plugin first to use the subcommands in Camel JBang.
+
+[source,bash]
+----
+camel plugin add camel-k
+----
+
+You should see the `camel-k` plugin listed as installed plugin.
+
+[source,bash]
+----
+camel plugin get
+----
+
+Now Camel JBang is able to run the subcommands offered by the plugin.
+Simply run the integration using the `k` subcommand in Camel JBang.
+
+[source,bash]
+----
+camel k run route.yaml
+----
+
+The command runs the Camel integration on Kubernetes.
+More precisely it creates a Camel K Integration custom resource in the current namespace.
+The Camel K operator makes sure to create a proper runtime image and run the integration (usually as a Pod).
+
+The Camel K operator will automatically manage and configure this integration.
+In particular the operator takes care on exposing services, configuring health endpoints, providing metrics, updating image streams and much more.
+
+By default, the run command will not wait for the integration to in state running.
+You need to add `-w` or `--wait` option in order to wait for the integration to become ready.
+
+The `--logs` option makes the command also print the integration output once the integration Pod is running.
+
+The run command offers a lot more options that you may use to configure the Camel K integration.
+
+[width="100%",cols="1m,3",options="header",]
+|=======================================================================
+|Option |Description
+
+|--name
+|The integration name. Use this when the name should not get derived from the source file name.
+
+|--image
+|An image built externally (for instance via CI/CD). Enabling it will skip the integration build phase.
+
+|--kit, -k
+|The kit used to run the integration.
+
+|--profile
+|The trait profile to use for the deployment.
+
+|--service-account
+|The service account used to run this Integration.
+
+|--pod-template
+|The path of the YAML file containing a PodSpec template to be used for the integration pods.
+
+|--operator-id
+|Operator id selected to manage this integration. (default=camel-k)
+
+|--dependency, -d
+|Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
+
+|--property, -p
+|Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
+
+|--build-property
+|Add a build time property or properties file from a path, a config map or a secret  (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]]).
+
+|--config
+|Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap,secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
+
+|--resource
+|Add a runtime resource from a Configmap or a Secret (syntax: [configmap,secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
+
+|--open-api
+|Add an OpenAPI spec (syntax: [configmap,file]:name).
+
+|--env, -e
+|Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
+
+|--volume, -v
+|Mount a volume into the integration container, for instance "-v pvcname:/container/path".
+
+|--connect, -c
+|A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
+
+|--source
+|Add source file to your integration, this is added to the list of files listed as arguments of the command.
+
+|--maven-repository
+|Add a maven repository used to resolve dependencies.
+
+|--annotation
+|Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello".
+
+|--label
+|Add a label to the integration. Use name values pairs like "--label my.company=hello".
+
+|--traits, -t
+|Add a label to the integration. Use name values pairs like "--label my.company=hello".
+
+|--use-flows
+|Write yaml sources as Flow objects in the integration custom resource (default=true).
+
+|--compression
+|Enable storage of sources and resources as a compressed binary blobs.
+
+|--wait, -w
+|Wait for the integration to become ready.
+
+|--logs, -l
+|Print logs after integration has been started.
+
+|--output, -o
+|Just output the generated integration custom resource (supports: yaml or json).
+|=======================================================================
+
+You can list the available integration resources with the following command.
+
+[source,bash]
+----
+camel k get
+NAME      PHASE    KIT            READY
+my-route  Running  kit-123456789   1/1
+----
+
+This looks for all integrations in the current namespace and lists their individual status.
+
+To inspect the log output of a running integration call:
+
+[source,bash]
+----
+camel k logs my-route
+----
+
+The command connects to the running integration Pod and prints the log output.
+Just terminate the process to stop printing the logs.
+
+Of course, you may also delete an integration resource from the cluster.
+
+[source,bash]
+----
+camel k delete my-route
+----
+
+To remove all available integrations on the current namespace use the `--all` option.
+
+[source,bash]
+----
+camel k delete --all
+----

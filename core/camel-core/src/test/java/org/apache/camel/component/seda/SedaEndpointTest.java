@@ -154,6 +154,7 @@ public class SedaEndpointTest extends ContextTestSupport {
         SedaComponent sedaComponent = new SedaComponent();
         sedaComponent.setQueueSize(300);
         sedaComponent.setConcurrentConsumers(3);
+        context.removeComponent("seda");
         context.addComponent("seda", sedaComponent);
         SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
 

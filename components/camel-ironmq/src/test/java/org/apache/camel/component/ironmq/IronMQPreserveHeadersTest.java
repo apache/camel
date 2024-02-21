@@ -40,7 +40,7 @@ public class IronMQPreserveHeadersTest extends CamelTestSupport {
         mock.expectedHeaderReceived("MyHeader", "HeaderValue");
         template.sendBodyAndHeader("direct:start", "some payload", "MyHeader", "HeaderValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         String id = mock.getExchanges().get(0).getIn().getHeader(IronMQConstants.MESSAGE_ID, String.class);
         assertNotNull(id);
     }
@@ -57,7 +57,7 @@ public class IronMQPreserveHeadersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(endpoint);

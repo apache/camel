@@ -60,8 +60,7 @@ public class JcrConsumer extends DefaultConsumer {
     }
 
     protected JcrEndpoint getJcrEndpoint() {
-        JcrEndpoint endpoint = (JcrEndpoint) getEndpoint();
-        return endpoint;
+        return (JcrEndpoint) getEndpoint();
     }
 
     private synchronized void createSessionAndRegisterListener() throws RepositoryException {
@@ -90,7 +89,7 @@ public class JcrConsumer extends DefaultConsumer {
         if (uuids != null) {
             uuids = uuids.trim();
 
-            if (!"".equals(uuids)) {
+            if (!uuids.isEmpty()) {
                 uuid = uuids.split(",");
             }
         }
@@ -101,7 +100,7 @@ public class JcrConsumer extends DefaultConsumer {
         if (nodeTypeNames != null) {
             nodeTypeNames = nodeTypeNames.trim();
 
-            if (!"".equals(nodeTypeNames)) {
+            if (!nodeTypeNames.isEmpty()) {
                 nodeTypeName = nodeTypeNames.split(",");
             }
         }

@@ -30,7 +30,6 @@ import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.object.SwiftContainer;
-import org.openstack4j.model.storage.object.SwiftHeaders;
 import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 
@@ -150,25 +149,25 @@ public class ContainerProducer extends AbstractOpenstackProducer {
     private CreateUpdateContainerOptions messageToCreateUpdateOptions(Message message) {
         CreateUpdateContainerOptions options = message.getBody(CreateUpdateContainerOptions.class);
         if (options == null) {
-            Map headers = message.getHeaders();
-            if (headers.containsKey(SwiftHeaders.CONTAINER_METADATA_PREFIX)) {
+            Map<String, Object> headers = message.getHeaders();
+            if (headers.containsKey(SwiftConstants.CONTAINER_METADATA_PREFIX)) {
                 options = getCreateUpdateOptions(options)
-                        .metadata(message.getHeader(SwiftHeaders.CONTAINER_METADATA_PREFIX, Map.class));
+                        .metadata(message.getHeader(SwiftConstants.CONTAINER_METADATA_PREFIX, Map.class));
             }
 
-            if (headers.containsKey(SwiftHeaders.VERSIONS_LOCATION)) {
+            if (headers.containsKey(SwiftConstants.VERSIONS_LOCATION)) {
                 options = getCreateUpdateOptions(options)
-                        .versionsLocation(message.getHeader(SwiftHeaders.VERSIONS_LOCATION, String.class));
+                        .versionsLocation(message.getHeader(SwiftConstants.VERSIONS_LOCATION, String.class));
             }
 
-            if (headers.containsKey(SwiftHeaders.CONTAINER_READ)) {
+            if (headers.containsKey(SwiftConstants.CONTAINER_READ)) {
                 options = getCreateUpdateOptions(options)
-                        .accessRead(message.getHeader(SwiftHeaders.CONTAINER_READ, String.class));
+                        .accessRead(message.getHeader(SwiftConstants.CONTAINER_READ, String.class));
             }
 
-            if (headers.containsKey(SwiftHeaders.CONTAINER_WRITE)) {
+            if (headers.containsKey(SwiftConstants.CONTAINER_WRITE)) {
                 options = getCreateUpdateOptions(options)
-                        .accessWrite(message.getHeader(SwiftHeaders.CONTAINER_WRITE, String.class));
+                        .accessWrite(message.getHeader(SwiftConstants.CONTAINER_WRITE, String.class));
             }
         }
         return options;

@@ -16,42 +16,40 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a JsonPath expression against a JSON message body.
+ * Evaluates a JSONPath expression against a JSON message body.
  */
-@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JsonPathExpression extends ExpressionDefinition {
+public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
 
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String suppressExceptions;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowSimple;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowEasyPredicate;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String writeAsString;
     @XmlAttribute
-    private String headerName;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String unpackArray;
     @XmlAttribute
-    @Metadata(enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+    @Metadata(label = "advanced",
+              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
     private String option;
 
     public JsonPathExpression() {
@@ -61,26 +59,14 @@ public class JsonPathExpression extends ExpressionDefinition {
         super(expression);
     }
 
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
+    private JsonPathExpression(Builder builder) {
+        super(builder);
+        this.suppressExceptions = builder.suppressExceptions;
+        this.allowSimple = builder.allowSimple;
+        this.allowEasyPredicate = builder.allowEasyPredicate;
+        this.writeAsString = builder.writeAsString;
+        this.unpackArray = builder.unpackArray;
+        this.option = builder.option;
     }
 
     public String getSuppressExceptions() {
@@ -92,7 +78,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to allow in inlined simple exceptions in the JsonPath expression
+     * Whether to allow in inlined Simple exceptions in the JSONPath expression
      */
     public void setAllowSimple(String allowSimple) {
         this.allowSimple = allowSimple;
@@ -127,15 +113,15 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.writeAsString = writeAsString;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public String getUnpackArray() {
+        return unpackArray;
     }
 
     /**
-     * Name of header to use as input, instead of the message body
+     * Whether to unpack a single element json-array into an object.
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setUnpackArray(String unpackArray) {
+        this.unpackArray = unpackArray;
     }
 
     public String getOption() {
@@ -143,7 +129,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * To configure additional options on json path. Multiple values can be separated by comma.
+     * To configure additional options on JSONPath. Multiple values can be separated by comma.
      */
     public void setOption(String option) {
         this.option = option;
@@ -154,4 +140,110 @@ public class JsonPathExpression extends ExpressionDefinition {
         return "jsonpath";
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link JsonPathExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, JsonPathExpression> {
+
+        private String suppressExceptions;
+        private String allowSimple;
+        private String allowEasyPredicate;
+        private String writeAsString;
+        private String unpackArray;
+        private String option;
+
+        /**
+         * Whether to suppress exceptions such as PathNotFoundException.
+         */
+        public Builder suppressExceptions(String suppressExceptions) {
+            this.suppressExceptions = suppressExceptions;
+            return this;
+        }
+
+        /**
+         * Whether to suppress exceptions such as PathNotFoundException.
+         */
+        public Builder suppressExceptions(boolean suppressExceptions) {
+            this.suppressExceptions = Boolean.toString(suppressExceptions);
+            return this;
+        }
+
+        /**
+         * Whether to allow in inlined Simple exceptions in the JSONPath expression
+         */
+        public Builder allowSimple(String allowSimple) {
+            this.allowSimple = allowSimple;
+            return this;
+        }
+
+        /**
+         * Whether to allow in inlined Simple exceptions in the JSONPath expression
+         */
+        public Builder allowSimple(boolean allowSimple) {
+            this.allowSimple = Boolean.toString(allowSimple);
+            return this;
+        }
+
+        /**
+         * Whether to allow using the easy predicate parser to pre-parse predicates.
+         */
+        public Builder allowEasyPredicate(String allowEasyPredicate) {
+            this.allowEasyPredicate = allowEasyPredicate;
+            return this;
+        }
+
+        /**
+         * Whether to allow using the easy predicate parser to pre-parse predicates.
+         */
+        public Builder allowEasyPredicate(boolean allowEasyPredicate) {
+            this.allowEasyPredicate = Boolean.toString(allowEasyPredicate);
+            return this;
+        }
+
+        /**
+         * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
+         */
+        public Builder writeAsString(String writeAsString) {
+            this.writeAsString = writeAsString;
+            return this;
+        }
+
+        /**
+         * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
+         */
+        public Builder writeAsString(boolean writeAsString) {
+            this.writeAsString = Boolean.toString(writeAsString);
+            return this;
+        }
+
+        /**
+         * Whether to unpack a single element json-array into an object.
+         */
+        public Builder unpackArray(String unpackArray) {
+            this.unpackArray = unpackArray;
+            return this;
+        }
+
+        /**
+         * Whether to unpack a single element json-array into an object.
+         */
+        public Builder unpackArray(boolean unpackArray) {
+            this.unpackArray = Boolean.toString(unpackArray);
+            return this;
+        }
+
+        /**
+         * To configure additional options on JSONPath. Multiple values can be separated by comma.
+         */
+        public Builder option(String option) {
+            this.option = option;
+            return this;
+        }
+
+        @Override
+        public JsonPathExpression end() {
+            return new JsonPathExpression(this);
+        }
+    }
 }

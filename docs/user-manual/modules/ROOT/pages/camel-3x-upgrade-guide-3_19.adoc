@@ -1,0 +1,119 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.18 to 3.19
+
+=== camel-api
+
+Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
+
+The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3` in Camel JSSE support.
+
+=== camel-management
+
+The context MBean (`ManagedCamelContextMBean`) total counter is changed to count only once
+while an _exchange_ is being routed through multiple routes. Previously the counter was
+a total aggregation of all the routes the _exchange_ was processed. For example if an _exchange_
+is routed via A, B and C; then previously the total counter was +3 (+1 for route A, +1 for route B, +1 for route C).
+This is now corrected so the total is +1 on the context MBean.
+
+=== camel-main
+
+The option `camel.main.eager-classloading` has been removed.
+
+=== camel-ftp
+
+The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3`.
+
+=== camel-kafka
+
+Updated the documentation to reflect the default TLS protocol in Kafka Clients running on JDK11+
+is `TLSv1.2,TLSv1.3` (prefer v1.3 but can fall back to v1.2).
+
+=== camel-netty / camel-netty-http
+
+The default TLS protocol is changed from `TLSv1,TLSv1.1,TLSv1.2` to `TLSv1.2,TLSv1.3`.
+
+=== camel-yaml-dsl
+
+Removed using `template` as a custom alias for `routeTemplate` or `route-template`.
+
+Removed the `tod` custom alias for `toD` or `to-d`.
+
+A route template can now also define a `route` which allows specifying route
+options that otherwise is not possible when using `from`.
+
+For example, you can now disable stream-caching, as shown in the snippet below that are from a Kamelet:
+
+[source,yaml]
+----
+spec:
+  template:
+    route:
+      stream-caching: false
+      message-history: true
+      from:
+        uri: timer:tick
+        parameters:
+          period: "{{period}}"
+        steps:
+          - set-body:
+              constant: "{{message}}"
+          - set-header:
+              name: "Content-Type"
+              constant: "{{contentType}}"
+          - to: kamelet:sink
+----
+
+=== camel-salesforce
+
+The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.
+
+=== camel-consul
+
+The deprecated options were removed and should be replaced by the following options:
+
+|===
+|Deprecated |Replace with
+
+|`connectTimeoutMillis`
+|`connectTimeout`
+
+|`readTimeoutMillis`
+|`readTimeout`
+
+|`writeTimeoutMillis`
+|`writeTimeout`
+|===
+
+=== camel-google-bigquery-sql
+
+Parameters in form of `@name` are extracted from the body or message and their type is preserved and translated into corresponding `com.google.cloud.bigquery.StandardSQLTypeName`. See the https://cloud.google.com/java/docs/reference/google-cloud-bigquery/latest/com.google.cloud.bigquery.QueryParameterValue[documentation] for more information. (Conversion to StandardSQLTypeName.STRING was used for each type before)
+
+
+=== camel-telegram
+
+The component was migrated from the Async HTTP Client to the builtin HTTP client from Java 11 and newer. As such,
+* the parameter `clientConfig`, that received an `AsyncHTTPClientConfiguration` instance was removed
+* the parameter `client`, that received an `AsyncHttpClient` instance, was modified to receive a HTTPClient instance.
+
+
+=== xtokenize language
+
+The xtokenize language has moved from `camel-xml-jaxp` to `camel-stax` JAR because
+a stax parser was needed anyway to use the language.
+
+
+=== camel-karaf
+
+Upgraded from Karaf 4.3.x to Karaf 4.4.x, which requires JDK11+.
+
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-ahc
+* camel-ahc-ws

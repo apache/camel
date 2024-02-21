@@ -28,7 +28,7 @@ public abstract class BonitaProducer extends DefaultProducer {
     protected BonitaEndpoint endpoint;
     protected BonitaConfiguration configuration;
 
-    public BonitaProducer(BonitaEndpoint endpoint, BonitaConfiguration configuration) {
+    protected BonitaProducer(BonitaEndpoint endpoint, BonitaConfiguration configuration) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = configuration;

@@ -46,7 +46,7 @@ public final class EasyPredicateOperators {
      */
     static boolean hasOperator(String exp) {
         // need to have space around operator to not match eg in used in some other word
-        return Arrays.stream(OPS).anyMatch(o -> exp.contains(" " + o + ""));
+        return Arrays.stream(OPS).anyMatch(o -> exp.contains(" " + o));
     }
 
     /**
@@ -60,7 +60,7 @@ public final class EasyPredicateOperators {
      * Gets the operator (with single space around)
      */
     static String getOperatorAtStart(String exp) {
-        return Arrays.stream(OPS).filter(o -> exp.startsWith(" " + o + "")).findFirst().orElse(null);
+        return Arrays.stream(OPS).filter(o -> exp.startsWith(" " + o)).findFirst().orElse(null);
     }
 
 }

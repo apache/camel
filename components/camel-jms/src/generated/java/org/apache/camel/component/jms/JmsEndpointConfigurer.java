@@ -56,7 +56,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "concurrentconsumers":
         case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "connectionfactory":
-        case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, jakarta.jms.ConnectionFactory.class, value)); return true;
         case "consumertype":
         case "consumerType": target.getConfiguration().setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "correlationproperty":
@@ -90,7 +90,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exceptionlistener":
-        case "exceptionListener": target.getConfiguration().setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "exceptionListener": target.getConfiguration().setExceptionListener(property(camelContext, jakarta.jms.ExceptionListener.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "explicitqosenabled":
@@ -151,6 +151,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": target.getConfiguration().setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": target.getConfiguration().setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytoconsumertype":
+        case "replyToConsumerType": target.getConfiguration().setReplyToConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": target.getConfiguration().setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytodestinationselectorname":
@@ -247,7 +249,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
         case "connectionfactory":
-        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionFactory": return jakarta.jms.ConnectionFactory.class;
         case "consumertype":
         case "consumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "correlationproperty":
@@ -281,7 +283,7 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exceptionlistener":
-        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exceptionListener": return jakarta.jms.ExceptionListener.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "explicitqosenabled":
@@ -342,6 +344,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": return java.lang.String.class;
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return int.class;
+        case "replytoconsumertype":
+        case "replyToConsumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytodestinationselectorname":
@@ -534,6 +538,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "replyToCacheLevelName": return target.getConfiguration().getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
         case "replyToConcurrentConsumers": return target.getConfiguration().getReplyToConcurrentConsumers();
+        case "replytoconsumertype":
+        case "replyToConsumerType": return target.getConfiguration().getReplyToConsumerType();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return target.getConfiguration().isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":

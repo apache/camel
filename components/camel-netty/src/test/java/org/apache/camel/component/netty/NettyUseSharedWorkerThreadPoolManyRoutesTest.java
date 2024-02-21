@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     @BindToRegistry("sharedBoss")
     private EventLoopGroup sharedWorkerGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
     private int before;
+    private AvailablePortFinder.Port[] ports;
 
     @Override
     protected boolean useJmx() {
@@ -45,11 +48,24 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     @BeforeEach
     public void setUp() throws Exception {
         before = Thread.activeCount();
+        ports = new AvailablePortFinder.Port[60];
+        for (int i = 0; i < ports.length; i++) {
+            ports[i] = AvailablePortFinder.find();
+        }
         super.setUp();
     }
 
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        for (AvailablePortFinder.Port port : ports) {
+            port.release();
+        }
+    }
+
     @Test
-    public void testSharedThreadPool() throws Exception {
+    public void testSharedThreadPool() {
         int delta = Thread.activeCount() - before;
 
         LOG.info("Created threads {}", delta);
@@ -60,16 +76,16 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
-                for (int i = 0; i < 60; i++) {
-                    from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false"
+                for (AvailablePortFinder.Port port : ports) {
+                    from("netty:tcp://localhost:" + port.getPort() + "?textline=true&sync=true&usingExecutorService=false"
                          + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
-                                 .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
-                                 .transform(body().regexReplaceAll("Hello", "Bye"));
+                            .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                            .transform(body().regexReplaceAll("Hello", "Bye"));
                 }
             }
         };

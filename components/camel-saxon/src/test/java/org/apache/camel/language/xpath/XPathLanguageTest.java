@@ -25,15 +25,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  *
  */
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathLanguageTest extends CamelSpringTestSupport {
 
     private static final String KEY = XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://java.sun.com/jaxp/xpath/dom";
@@ -66,21 +69,19 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathLanguageTest.xml");
+        return newAppContext("XPathLanguageTest.xml");
     }
 
     @Test
     public void testSpringDSLXPathSaxonFlag() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResult");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -88,16 +89,14 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathFactory() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResult");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -106,16 +105,14 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
     @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModel() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResult");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -123,45 +120,39 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathSaxonFlagPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSpringDSLXPathFactoryPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModelPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

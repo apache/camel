@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class BaseOptionModel {
 
     protected String name;
-
+    protected int index;
     protected String kind;
     protected String displayName;
     protected String group;
@@ -48,6 +48,9 @@ public abstract class BaseOptionModel {
     protected String configurationField;
     protected String description;
     protected String nestedType;  // optional and currently only used by configurer
+    protected boolean supportFileReference;
+    protected boolean largeInput;
+    protected String inputLanguage;
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -58,6 +61,14 @@ public abstract class BaseOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getKind() {
@@ -268,8 +279,32 @@ public abstract class BaseOptionModel {
         this.nestedType = nestedType;
     }
 
+    public boolean isSupportFileReference() {
+        return supportFileReference;
+    }
+
+    public void setSupportFileReference(boolean supportFileReference) {
+        this.supportFileReference = supportFileReference;
+    }
+
+    public boolean isLargeInput() {
+        return largeInput;
+    }
+
+    public void setLargeInput(boolean largeInput) {
+        this.largeInput = largeInput;
+    }
+
+    public String getInputLanguage() {
+        return inputLanguage;
+    }
+
+    public void setInputLanguage(String inputLanguage) {
+        this.inputLanguage = inputLanguage;
+    }
+
     public String getShortGroup() {
-        if (group.endsWith(" (advanced)")) {
+        if (group != null && group.endsWith(" (advanced)")) {
             return group.substring(0, group.length() - 11);
         }
         return group;
@@ -305,4 +340,8 @@ public abstract class BaseOptionModel {
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

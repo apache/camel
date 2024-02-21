@@ -24,6 +24,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Resilience using timeout and custom thread pool with Java DSL
@@ -48,7 +49,7 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFast() throws Exception {
+    public void testFast() {
         // this calls the fast route and therefore we get a response
         Object out = template.requestBody("direct:start", "fast");
         assertEquals("Fast response", out);
@@ -62,16 +63,13 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSlow() throws Exception {
+    public void testSlow() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
-        try {
-            template.requestBody("direct:start", "slow");
-            fail("Should fail due to timeout");
-        } catch (Exception e) {
-            // expected a timeout
-            assertIsInstanceOf(TimeoutException.class, e.getCause());
-        }
+        Exception exception = assertThrows(Exception.class,
+                () -> template.requestBody("direct:start", "slow"),
+                "Should fail due to timeout");
+        assertIsInstanceOf(TimeoutException.class, exception.getCause());
 
         ThreadPoolExecutor pte = context().getRegistry().lookupByNameAndType("myThreadPool", ThreadPoolExecutor.class);
         assertNotNull(pte);
@@ -86,30 +84,28 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSlowLoop() throws Exception {
+    @Disabled("manual testing")
+    public void testSlowLoop() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         for (int i = 0; i < 10; i++) {
-            try {
-                log.info(">>> test run " + i + " <<<");
-                template.requestBody("direct:start", "slow");
-                fail("Should fail due to timeout");
-            } catch (Exception e) {
-                // expected a timeout
-                assertIsInstanceOf(TimeoutException.class, e.getCause());
-            }
+            log.info(">>> test run {} <<<", i);
+            Exception exception = assertThrows(Exception.class,
+                    () -> template.requestBody("direct:start", "slow"),
+                    "Should fail due to timeout");
+            assertIsInstanceOf(TimeoutException.class, exception.getCause());
         }
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").circuitBreaker()
                         // enable and use 2 second timeout
                         .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000)
-                        .timeoutExecutorServiceRef("myThreadPool").end()
+                        .timeoutExecutorService("myThreadPool").end()
                         .log("Resilience processing start: ${threadName}").toD("direct:${body}")
                         .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
 

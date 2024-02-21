@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.stitch;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -76,7 +75,7 @@ class StitchProducerTest extends CamelTestSupport {
 
         final Message message = result.getExchanges().get(0).getMessage();
 
-        assertEquals(message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"), "test");
+        assertEquals("test", message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"));
     }
 
     @Test
@@ -140,7 +139,7 @@ class StitchProducerTest extends CamelTestSupport {
 
         final Message message = result.getExchanges().get(0).getMessage();
 
-        assertEquals(message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"), "test");
+        assertEquals("test", message.getHeader(StitchConstants.HEADERS, Map.class).get("header-1"));
     }
 
     @Test
@@ -173,10 +172,10 @@ class StitchProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:sendStitch")
                         .to("stitch:table_1?stitchClient=#client&token=dummy")
                         .to(result);
@@ -202,7 +201,7 @@ class StitchProducerTest extends CamelTestSupport {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // noop
         }
     }
@@ -223,7 +222,7 @@ class StitchProducerTest extends CamelTestSupport {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // noop
         }
     }

@@ -66,7 +66,7 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
 
         verify(mockConnector).dispose(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort())).to("mock:result");
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()).to("mock:result");
             }
         };
     }

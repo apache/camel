@@ -28,6 +28,6 @@ public class RouteStoppedEvent extends AbstractRouteEvent implements CamelEvent.
 
     @Override
     public String toString() {
-        return "Stopped route: " + getRoute().getId();
+        return "Route stopped: " + getRoute().getId();
     }
 }

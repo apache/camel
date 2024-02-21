@@ -1,0 +1,21 @@
+= Camel JBang Integration Tests
+
+== Overview
+
+This module is used to run integration tests for Camel JBang; CLI commands are executed in a containerized environment provided by link:../../../test-infra/camel-test-infra-cli[camel-test-infra-cli]
+
+== Run tests
+
+To run tests use the dedicated Maven profile `jbang-it-test` activated by the same property:
+
+[source,bash]
+----
+mvn verify -Djbang-it-test
+----
+
+== Configuration
+
+Camel CLI infra configuration is defined in link:../../../test-infra/camel-test-infra-cli/README.adoc[README.adoc]
+
+- `jbang.it.assert.wait.timeout` : timeout in seconds for log assertions, default `60`
+

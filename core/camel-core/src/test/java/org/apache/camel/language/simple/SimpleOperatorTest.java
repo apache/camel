@@ -169,6 +169,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def'", false);
         assertPredicate("${in.header.foo} == '1'", false);
 
+        // special with just minus sign
+        assertPredicate("${in.header.foo} == '-'", false);
+        assertPredicate("${in.header.bar} == '-'", false);
+
         // no type converter needed from this point forward
         context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
         context.getTypeConverterRegistry().getStatistics().reset();
@@ -207,6 +211,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} =~ '444'", false);
         assertPredicate("${in.header.bar} =~ 444", false);
         assertPredicate("${in.header.bar} =~ '1'", false);
+
+        // special with just minus sign
+        assertPredicate("${in.header.foo} =~ '-'", false);
+        assertPredicate("${in.header.bar} =~ '-'", false);
     }
 
     @Test
@@ -222,6 +230,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} != '444'", true);
         assertPredicate("${in.header.bar} != 444", true);
         assertPredicate("${in.header.bar} != '1'", true);
+
+        // special with just minus sign
+        assertPredicate("${in.header.foo} != '-'", true);
+        assertPredicate("${in.header.bar} != '-'", true);
     }
 
     @Test
@@ -326,6 +338,10 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} >= '123'", true);
         assertPredicate("${in.header.bar} >= 123", true);
         assertPredicate("${in.header.bar} >= '200'", false);
+
+        // special with just minus sign
+        assertPredicate("${in.header.foo} >= '-'", true);
+        assertPredicate("${in.header.bar} >= '-'", true);
     }
 
     @Test
@@ -776,6 +792,16 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testStartsWithTextAsNumeric() throws Exception {
+        exchange.getIn().setBody("01234");
+        assertPredicate("${in.body} starts with '1234'", false);
+        assertPredicate("${in.body} starts with 1234", false);
+        assertPredicate("${in.body} starts with '01234'", true);
+        assertPredicate("${in.body} starts with \"01234\"", true);
+        assertPredicate("${in.body} starts with 01234", false);
+    }
+
+    @Test
     public void testEndsWith() throws Exception {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} ends with 'there'", true);
@@ -797,7 +823,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         return "simple";
     }
 
-    public class MyFileNameGenerator {
+    public static class MyFileNameGenerator {
         public String generateFilename(Exchange exchange) {
             return "abc";
         }

@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -35,7 +35,6 @@ import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -62,8 +61,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final String[] includeExt;
     private final String[] excludeExt;
 
-    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
-                               GenericFileProcessStrategy<T> processStrategy) {
+    protected GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
+                                  GenericFileProcessStrategy<T> processStrategy) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
@@ -71,8 +70,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         this.includePattern = endpoint.getIncludePattern();
         this.excludePattern = endpoint.getExcludePattern();
-        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().split(",") : null;
-        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().split(",") : null;
+        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().toLowerCase().split(",") : null;
+        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().toLowerCase().split(",") : null;
     }
 
     public Processor getCustomProcessor() {
@@ -151,7 +150,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         long delta = stop.taken();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
+            LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta, true), name);
         }
 
         // log if we hit the limit
@@ -228,9 +227,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // after we have processed it
             Exchange exchange = (Exchange) exchanges.poll();
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -407,11 +406,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
             if (beginCause != null) {
                 String msg = endpoint + " cannot begin processing file: " + file + " due to: " + beginCause.getMessage();
-                handleException(msg, beginCause);
+                handleException(msg, exchange, beginCause);
             }
             if (abortCause != null) {
                 String msg2 = endpoint + " cannot abort processing file: " + file + " due to: " + abortCause.getMessage();
-                handleException(msg2, abortCause);
+                handleException(msg2, exchange, abortCause);
             }
             return false;
         }
@@ -446,7 +445,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
                 if (!retrieved) {
                     if (ignoreCannotRetrieveFile(name, exchange, cause)) {
-                        LOG.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
+                        LOG.trace("Cannot retrieve file {} maybe it does not exist. Ignoring.", name);
                         // remove file from the in progress list as we could not
                         // retrieve it, but should ignore
                         endpoint.getInProgressRepository().remove(absoluteFileName);
@@ -475,7 +474,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // register on completion callback that does the completion
             // strategies
             // (for instance to move the file after we have processed it)
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(
+            exchange.getExchangeExtension().addOnCompletion(
                     new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);
@@ -503,7 +502,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             endpoint.getInProgressRepository().remove(absoluteFileName);
 
             String msg = "Error processing file " + file + " due to " + e.getMessage();
-            handleException(msg, e);
+            handleException(msg, exchange, e);
         }
 
         return true;
@@ -548,7 +547,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             LOG.debug("{} error custom processing: {} due to: {}. This exception will be ignored.",
                     endpoint, file, e.getMessage(), e);
 
-            handleException(e);
+            handleException("Error during custom processing", exchange, e);
         } finally {
             // always remove file from the in progress list as its no longer in
             // progress
@@ -569,7 +568,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files       files in the directory
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T> files) {
+    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, T[] files) {
         String absoluteFilePath = file.getAbsoluteFilePath();
 
         if (!isMatched(file, isDirectory, files)) {
@@ -590,21 +589,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return false;
         }
 
-        // if its a file then check we have the file in the idempotent registry
+        // if it is a file then check we have the file in the idempotent registry
         // already
-        if (endpoint.isIdempotent()) {
-            // use absolute file path as default key, but evaluate if an
-            // expression key was configured
-            String key = file.getAbsoluteFilePath();
-            if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = endpoint.createExchange(file);
-                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
-                LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
-            }
-            if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-                LOG.trace(
-                        "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
-                        key, file);
+        if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
+            if (notUnique(file)) {
                 return false;
             }
         }
@@ -613,6 +601,44 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // are the
         // only thread processing this file
         return endpoint.getInProgressRepository().add(absoluteFilePath);
+    }
+
+    private boolean notUnique(GenericFile<T> file) {
+        // use absolute file path as default key, but evaluate if an
+        // expression key was configured
+        String key = file.getAbsoluteFilePath();
+        if (endpoint.getIdempotentKey() != null) {
+            Exchange dummy = endpoint.createExchange(file);
+            key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+            LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
+        }
+        if (key != null && endpoint.getIdempotentRepository().contains(key)) {
+            LOG.trace(
+                    "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
+                    key, file);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Strategy to perform hidden file matching based on endpoint configuration.
+     * <p/>
+     * Will always return <tt>false</tt> for certain files/folders:
+     * <ul>
+     * <li>Starting with a dot (hidden)</li>
+     * </ul>
+     */
+    protected boolean isMatchedHiddenFile(GenericFile<T> file, boolean isDirectory) {
+        String name = file.getFileNameOnly();
+
+        // folders/names starting with dot is always skipped (eg. ".", ".camel",
+        // ".camelLock")
+        if (name.startsWith(".")) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -630,12 +656,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files       files in the directory
      * @return             <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, List<T> files) {
+    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, T[] files) {
         String name = file.getFileNameOnly();
 
-        // folders/names starting with dot is always skipped (eg. ".", ".camel",
-        // ".camelLock")
-        if (name.startsWith(".")) {
+        if (!isMatchedHiddenFile(file, isDirectory)) {
+            // folders/names starting with dot is always skipped (eg. ".", ".camel",
+            // ".camelLock")
             return false;
         }
 
@@ -678,9 +704,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (excludeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             for (String exclude : excludeExt) {
-                if (exclude.equalsIgnoreCase(ext)) {
+                if (fname.endsWith("." + exclude)) {
                     return false;
                 }
             }
@@ -691,10 +717,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (includeExt != null) {
-            String ext = FileUtil.onlyExt(file.getFileName());
+            String fname = file.getFileName().toLowerCase();
             boolean any = false;
             for (String include : includeExt) {
-                any |= include.equalsIgnoreCase(ext);
+                any |= fname.endsWith("." + include);
             }
             if (!any) {
                 return false;
@@ -750,7 +776,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files        files in the directory
      * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
+    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, T[] files);
 
     protected String evaluateFileExpression(Exchange exchange) {
         String result = endpoint.getFileName().evaluate(exchange, String.class);

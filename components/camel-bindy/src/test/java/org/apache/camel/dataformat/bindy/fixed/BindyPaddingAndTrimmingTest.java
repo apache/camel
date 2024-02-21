@@ -38,10 +38,10 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
     private MockEndpoint unmarhsalResult;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(URI_DIRECT_UNMARSHAL)
                         .unmarshal().bindy(BindyType.Fixed, MyBindyModel.class)
                         .to(URI_MOCK_UNMARSHAL_RESULT);

@@ -19,12 +19,13 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class ToTest extends YamlTestSupport {
 
     def "to definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], ToDefinition) {
                 endpointUri == 'direct:start'
@@ -50,24 +51,18 @@ class ToTest extends YamlTestSupport {
                         steps:    
                           - to: 
                               uri: "direct"
-                              properties:
+                              parameters:
                                 name: "start"
                     '''),
-                asResource('endpoint', '''
+                asResource('properties-out-of-order', '''
                     - from:
                         uri: "direct:start"
                         steps:    
                           - to: 
-                              direct:
+                              parameters:
                                 name: "start"
+                              uri: "direct"
                     '''),
-                asResource('endpoint-dsl', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - direct:
-                              name: "start"
-                    ''')
             ]
     }
 }

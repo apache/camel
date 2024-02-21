@@ -23,7 +23,7 @@ public interface ApiName {
 
     /**
      * Returns API name prefix path element for endpoint uri.
-     * 
+     *
      * @return unique API name prefix
      */
     String getName();

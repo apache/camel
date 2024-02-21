@@ -19,18 +19,23 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
-        props.add("template");
-        props.add("noop");
-        props.add("lazyStartProducer");
-        props.add("useMessageBodyForTemplate");
-        props.add("outputHeader");
-        props.add("function");
+        Set<String> props = new HashSet<>(9);
         props.add("batch");
         props.add("dataSource");
+        props.add("function");
+        props.add("lazyStartProducer");
+        props.add("noop");
+        props.add("outputHeader");
+        props.add("template");
+        props.add("templateOptions");
+        props.add("useMessageBodyForTemplate");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("template.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -58,6 +63,11 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

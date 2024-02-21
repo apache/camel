@@ -20,14 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Represents the component that manages {@link PgReplicationSlotEndpoint}.
  */
 @Component("pg-replication-slot")
-public class PgReplicationSlotComponent extends DefaultComponent {
+public class PgReplicationSlotComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

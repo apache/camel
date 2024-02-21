@@ -18,9 +18,9 @@ package org.apache.camel.component.mail;
 
 import java.util.Properties;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * The JavaMailSender interface contains all the methods of a JavaMailSender implementation currently used by the mail
@@ -31,8 +31,8 @@ public interface JavaMailSender {
     /**
      * Send the mail
      *
-     * @param  mimeMessage                   the message to send
-     * @throws javax.mail.MessagingException is thrown if error sending the mail.
+     * @param  mimeMessage                     the message to send
+     * @throws jakarta.mail.MessagingException is thrown if error sending the mail.
      */
     void send(MimeMessage mimeMessage) throws MessagingException;
 

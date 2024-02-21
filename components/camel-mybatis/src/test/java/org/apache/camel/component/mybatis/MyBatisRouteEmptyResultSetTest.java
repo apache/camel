@@ -31,7 +31,7 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should be an empty list
         assertEquals(0, endpoint.getReceivedExchanges().get(0).getIn().getBody(ArrayList.class).size(),
@@ -39,9 +39,9 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("mybatis:selectAllAccounts?useIterator=false&routeEmptyResultSet=true").to("mock:results");
             }
         };

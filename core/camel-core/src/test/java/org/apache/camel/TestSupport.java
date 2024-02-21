@@ -17,7 +17,11 @@
 package org.apache.camel;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -25,8 +29,8 @@ import java.util.Locale;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -36,14 +40,22 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A bunch of useful testing methods
  */
+@ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
 public abstract class TestSupport {
 
     protected static final String LS = System.lineSeparator();
@@ -52,6 +64,9 @@ public abstract class TestSupport {
     protected TestInfo info;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @TempDir
+    private Path tempDirectory;
 
     @Override
     public String toString() {
@@ -69,16 +84,75 @@ public abstract class TestSupport {
 
     @BeforeEach
     public void setUp() throws Exception {
-        // start with a clean slate
-        AbstractCamelContext.setContextCounter(0);
-        TestSupportNodeIdFactory.resetCounters();
         Assumptions.assumeTrue(canRunOnThisPlatform());
+    }
+
+    @Deprecated
+    public void deleteTestDirectory() {
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
         TestSupportJmxCleanup.removeMBeans(null);
+    }
+
+    public Path testDirectory() {
+        return tempDirectory;
+    }
+
+    protected Path testFile(String file) {
+        return testFile(testDirectory(), file);
+    }
+
+    protected static Path testFile(Path testDirectory, String file) {
+        return testDirectory.resolve(file);
+    }
+
+    protected Path testDirectory(String path) {
+        return testDirectory(path, false);
+    }
+
+    @Deprecated
+    protected Path testDirectory(boolean create) {
+        return testDirectory();
+    }
+
+    @Deprecated
+    public static Path testDirectory(Class<?> testClass, boolean create) {
+        Path dir = Paths.get("target", "data", testClass.getSimpleName());
+        if (create) {
+            try {
+                Files.createDirectories(dir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + dir, e);
+            }
+        }
+        return dir;
+    }
+
+    protected Path testDirectory(String path, boolean create) {
+        Path resolvedPath = testDirectory().resolve(path);
+        if (create) {
+            try {
+                Files.createDirectories(resolvedPath);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create test directory: " + resolvedPath, e);
+            }
+        }
+        return resolvedPath;
+    }
+
+    protected String fileUri() {
+        return "file:" + tempDirectory;
+    }
+
+    protected String fileUri(String query) {
+        return fileUri(tempDirectory, query);
+    }
+
+    protected String fileUri(Path directory, String query) {
+        return "file:" + directory + (query.startsWith("?") ? "" : "/") + query;
     }
 
     protected boolean canRunOnThisPlatform() {
@@ -153,14 +227,6 @@ public abstract class TestSupport {
     }
 
     /**
-     * Asserts the Out message on the exchange contains the expected value
-     */
-    @Deprecated
-    public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
-        return assertMessageHeader(exchange.getMessage(), name, expected);
-    }
-
-    /**
      * Asserts that the given exchange has an OUT message of the given body value
      *
      * @param  exchange                the exchange which should have an OUT message
@@ -180,29 +246,6 @@ public abstract class TestSupport {
         assertEquals(expected, actual, "in body of: " + exchange);
 
         LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
-    }
-
-    /**
-     * Asserts that the given exchange has an OUT message of the given body value
-     *
-     * @param  exchange                the exchange which should have an OUT message
-     * @param  expected                the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
-     */
-    @Deprecated
-    public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull(exchange, "Should have a response exchange!");
-
-        Object actual;
-        if (expected == null) {
-            actual = exchange.getMessage().getMandatoryBody();
-            assertEquals(expected, actual, "output body of: " + exchange);
-        } else {
-            actual = exchange.getMessage().getMandatoryBody(expected.getClass());
-        }
-        assertEquals(expected, actual, "output body of: " + exchange);
-
-        LOG.debug("Received response: {} with out: {}", exchange, exchange.getMessage());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {
@@ -251,7 +294,7 @@ public abstract class TestSupport {
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
-            LOG.debug("Caught expected assertion error: " + e);
+            LOG.debug("Caught expected assertion error: {}", e.getMessage(), e);
         }
         assertPredicate(predicate, exchange, false);
     }
@@ -347,6 +390,10 @@ public abstract class TestSupport {
      */
     public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
         CamelContext context = new DefaultCamelContext();
+
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
+
         context.addRoutes(builder);
         context.start();
         List<Route> answer = context.getRoutes();
@@ -405,8 +452,11 @@ public abstract class TestSupport {
     /**
      * Recursively delete a directory, useful to zapping test data
      *
-     * @param file the directory to be deleted
+     * @param      file the directory to be deleted
+     * @deprecated      since updating the class to use junit5 @TempDir, it no longer should control temp directory
+     *                  lifecycle
      */
+    @Deprecated
     public static void deleteDirectory(String file) {
         deleteDirectory(new File(file));
     }
@@ -414,27 +464,22 @@ public abstract class TestSupport {
     /**
      * Recursively delete a directory, useful to zapping test data
      *
-     * @param file the directory to be deleted
+     * @param      file the directory to be deleted
+     * @deprecated      since updating the class to use junit5 @TempDir, it no longer should control temp directory
+     *                  lifecycle
      */
+    @Deprecated
     public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (File child : files) {
-                deleteDirectory(child);
+            if (files != null) {
+                for (File child : files) {
+                    deleteDirectory(child);
+                }
             }
         }
 
         file.delete();
-    }
-
-    /**
-     * create the directory
-     *
-     * @param file the directory to be created
-     */
-    public static void createDirectory(String file) {
-        File dir = new File(file);
-        dir.mkdirs();
     }
 
     /**
@@ -462,6 +507,14 @@ public abstract class TestSupport {
     /**
      * To be used to check is a directory is found in the file system
      */
+    public static void assertDirectoryExists(Path file) {
+        assertTrue(Files.exists(file), "Directory " + file + " should exist");
+        assertTrue(Files.isDirectory(file), "Directory " + file + " should be a directory");
+    }
+
+    /**
+     * To be used to check is a directory is found in the file system
+     */
     public static void assertDirectoryExists(String filename) {
         File file = new File(filename);
         assertTrue(file.exists(), "Directory " + filename + " should exist");
@@ -471,10 +524,34 @@ public abstract class TestSupport {
     /**
      * To be used to check is a file is found in the file system
      */
+    public static void assertFileExists(Path file) {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.exists(file), "File " + file + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is found in the file system
+     */
+    public static void assertFileExists(Path file, String content) throws IOException {
+        assertTrue(Files.exists(file), "File " + file + " should exist");
+        assertTrue(Files.isRegularFile(file), "File " + file + " should be a file");
+        assertEquals(content, new String(Files.readAllBytes(file)), "File " + file + " has unexpected content");
+    }
+
+    /**
+     * To be used to check is a file is found in the file system
+     */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
         assertTrue(file.exists(), "File " + filename + " should exist");
         assertTrue(file.isFile(), "File " + filename + " should be a file");
+    }
+
+    /**
+     * To be used to check is a file is <b>not</b> found in the file system
+     */
+    public static void assertFileNotExists(Path file) {
+        assertFalse(Files.exists(file), "File " + file + " should not exist");
     }
 
     /**
@@ -516,31 +593,23 @@ public abstract class TestSupport {
      * <p/>
      * Uses <tt>java.version</tt> from the system properties to determine the version.
      *
-     * @param  version such as 1.6 or 6
+     * @param  version such as 17
      * @return         <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
-        if (version.contains(".")) { // before jdk 9
-            return Integer.parseInt(version.split("\\.")[1]) == getJavaMajorVersion();
-        } else {
-            return Integer.parseInt(version) == getJavaMajorVersion();
-        }
+        return Integer.parseInt(version) == getJavaMajorVersion();
     }
 
     /**
-     * Returns the current major Java version e.g 8.
+     * Returns the current major Java version e.g 17.
      * <p/>
      * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
-     * 
+     *
      * @return the current major Java version.
      */
     public static int getJavaMajorVersion() {
         String javaSpecVersion = System.getProperty("java.specification.version");
-        if (javaSpecVersion.contains(".")) { // before jdk 9
-            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
-        } else {
-            return Integer.parseInt(javaSpecVersion);
-        }
+        return Integer.parseInt(javaSpecVersion);
     }
 
     /**

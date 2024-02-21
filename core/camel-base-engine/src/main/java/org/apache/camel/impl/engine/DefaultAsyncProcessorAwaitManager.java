@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -37,6 +35,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +86,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void await(Exchange exchange, CountDownLatch latch) {
-        ReactiveExecutor reactiveExecutor = exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        ReactiveExecutor reactiveExecutor = exchange.getContext().getCamelContextExtension().getReactiveExecutor();
         // Early exit for pending reactive queued work
         do {
             if (latch.getCount() <= 0) {
@@ -111,6 +110,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
 
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
                         exchange.getExchangeId(), exchange);
@@ -200,7 +201,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 }
                 exchange.setException(new RejectedExecutionException(
                         "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
-                exchange.adapt(ExtendedExchange.class).setInterrupted(true);
+                exchange.getExchangeExtension().setInterrupted(true);
                 entry.getLatch().countDown();
             }
         }
@@ -238,9 +239,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 for (AwaitThread entry : threads) {
                     try {
                         interrupt(entry.getExchange());
-                    } catch (Throwable e) {
-                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName()
-                                 + ". This exception is ignored.",
+                    } catch (Exception e) {
+                        LOG.warn("Error while interrupting thread: {}. This exception is ignored.",
+                                entry.getBlockedThread().getName(),
                                 e);
                     }
                 }
@@ -281,13 +282,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         private final Thread thread;
         private final Exchange exchange;
         private final CountDownLatch latch;
-        private final long start;
+        private final StopWatch watch = new StopWatch();
 
         private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch) {
             this.thread = thread;
             this.exchange = exchange;
             this.latch = latch;
-            this.start = System.currentTimeMillis();
         }
 
         @Override
@@ -302,7 +302,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public long getWaitDuration() {
-            return System.currentTimeMillis() - start;
+            return watch.taken();
         }
 
         @Override
@@ -312,7 +312,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getNodeId() {
-            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
+            return exchange.getExchangeExtension().getHistoryNodeId();
         }
 
         public CountDownLatch getLatch() {

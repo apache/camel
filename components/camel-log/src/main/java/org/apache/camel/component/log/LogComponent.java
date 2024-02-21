@@ -29,6 +29,8 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
+
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a> is for logging message exchanges via the underlying
  * logging mechanism.
@@ -42,6 +44,8 @@ public class LogComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private ExchangeFormatter exchangeFormatter;
+    @Metadata
+    private boolean sourceLocationLoggerName;
 
     public LogComponent() {
     }
@@ -76,13 +80,19 @@ public class LogComponent extends DefaultComponent {
 
         LogEndpoint endpoint = new LogEndpoint(uri, this);
         endpoint.setLevel(level.name());
+        endpoint.setSourceLocationLoggerName(sourceLocationLoggerName);
         endpoint.setExchangeFormatter(logFormatter);
+        setProperties(endpoint, parameters);
+
         if (providedLogger == null) {
-            endpoint.setLoggerName(remaining);
+            String loggerName = endpoint.isSourceLocationLoggerName() ? getLineNumberLoggerName(endpoint) : null;
+            if (loggerName == null) {
+                loggerName = remaining;
+            }
+            endpoint.setLoggerName(loggerName);
         } else {
             endpoint.setProvidedLogger(providedLogger);
         }
-        setProperties(endpoint, parameters);
 
         return endpoint;
     }
@@ -91,8 +101,12 @@ public class LogComponent extends DefaultComponent {
      * Gets the logging level, will default to use INFO if no level parameter provided.
      */
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
-        String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
-        return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+        String levelText = getAndRemoveParameter(parameters, "level", String.class);
+        if (levelText != null) {
+            return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+        } else {
+            return LoggingLevel.INFO;
+        }
     }
 
     /**
@@ -116,6 +130,19 @@ public class LogComponent extends DefaultComponent {
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
+    }
+
+    public boolean isSourceLocationLoggerName() {
+        return sourceLocationLoggerName;
+    }
+
+    /**
+     * If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger
+     * name, instead of the given name. However, if the source location is disabled or not possible to resolve then the
+     * existing logger name will be used.
+     */
+    public void setSourceLocationLoggerName(boolean sourceLocationLoggerName) {
+        this.sourceLocationLoggerName = sourceLocationLoggerName;
     }
 
     /**

@@ -35,7 +35,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
     public void testInvalidPath() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost");
 
@@ -48,7 +48,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
             fail("Should fail");
         } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Swagger api-doc does not contain operation for get:/api/hello/unknown/{name}", iae.getMessage());
+            assertEquals("OpenApi api-doc does not contain operation for get:/api/hello/unknown/{name}", iae.getMessage());
         }
     }
 
@@ -56,7 +56,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
     public void testInvalidQuery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost").producerApiDoc("hello-api.json");
 
@@ -69,7 +69,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
             fail("Should fail");
         } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Swagger api-doc does not contain query parameter name for get:/api/bye", iae.getMessage());
+            assertEquals("OpenApi api-doc does not contain query parameter name for get:/api/bye", iae.getMessage());
         }
     }
 }

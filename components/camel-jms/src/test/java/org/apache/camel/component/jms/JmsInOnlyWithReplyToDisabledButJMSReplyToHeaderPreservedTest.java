@@ -16,50 +16,70 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extends AbstractJMSTest {
 
-public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testJMSReplyToHeaderPreserved() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSReplyTo", "queue://bar");
+
+        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSReplyTo", "ActiveMQQueue[bar]");
         getMockEndpoint("mock:done").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // must use preserveMessageQos to include JMSReplyTo
-                        .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
+                        .to("activemq:queue:JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest?replyTo=queue:bar&preserveMessageQos=true")
                         .to("mock:done");
 
                 // and disable reply to as we do not want to send back a reply message in this route
-                from("activemq:queue:foo?disableReplyTo=true")
+                from("activemq:queue:JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest?disableReplyTo=true")
                         .to("log:foo?showAll=true", "mock:foo");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

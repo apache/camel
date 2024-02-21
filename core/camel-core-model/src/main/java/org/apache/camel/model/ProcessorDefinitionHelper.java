@@ -17,23 +17,20 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.NamedNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Helper class for ProcessorDefinition and the other model classes.
  */
 public final class ProcessorDefinitionHelper {
-
-    public static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
 
     private ProcessorDefinitionHelper() {
     }
@@ -45,7 +42,7 @@ public final class ProcessorDefinitionHelper {
      * @param  type    the type to look for
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
+    public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         return filterTypeInOutputs(outputs, type, -1);
     }
 
@@ -57,10 +54,10 @@ public final class ProcessorDefinitionHelper {
      * @param  maxDeep maximum levels deep to traverse
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
+    public static <T> Collection<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<>();
         doFindType(outputs, type, found, maxDeep);
-        return found.iterator();
+        return found;
     }
 
     /**
@@ -338,11 +335,20 @@ public final class ProcessorDefinitionHelper {
 
                     List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
                     for (CatchDefinition doCatch : doTryCatch) {
+                        // ensure to add ourself if we match also
+                        if (type.isInstance(doCatch)) {
+                            found.add((T) doCatch);
+                        }
                         doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
                     }
 
                     if (doTry.getFinallyClause() != null) {
-                        doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                        // ensure to add ourself if we match also
+                        FinallyDefinition doFinally = doTry.getFinallyClause();
+                        if (type.isInstance(doFinally)) {
+                            found.add((T) doFinally);
+                        }
+                        doFindType(doFinally.getOutputs(), type, found, ++current, maxDeep);
                     }
                 }
 
@@ -374,6 +380,85 @@ public final class ProcessorDefinitionHelper {
             List<ProcessorDefinition<?>> children = out.getOutputs();
             doFindType(children, type, found, ++current, maxDeep);
         }
+    }
+
+    /**
+     * Prepares the output to gather source location:line-number if possible. This operation is slow as it uses
+     * StackTrace so this should only be used when Camel Debugger is enabled.
+     *
+     * @param node the node
+     */
+    public static void prepareSourceLocation(Resource resource, NamedNode node) {
+        if (resource != null) {
+            node.setLocation(resource.getLocation());
+
+            String ext = FileUtil.onlyExt(resource.getLocation(), true);
+            if ("groovy".equals(ext) || "js".equals(ext) || "jsh".equals(ext)) {
+                // we cannot get line number for groovy/java-script/java-shell
+                return;
+            }
+        }
+
+        // line number may already be set if parsed via XML, YAML etc.
+        int number = node.getLineNumber();
+        if (number < 0) {
+            StackTraceElement[] st = Thread.currentThread().getStackTrace();
+            // skip first stack as that is this method
+            for (int i = 1; i < st.length; i++) {
+                StackTraceElement e = st[i];
+                if (!e.getClassName().startsWith("org.apache.camel.model") &&
+                        !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder") &&
+                        !e.getClassName().startsWith("org.apache.camel.dsl")) {
+                    // when we are no longer in model/RouteBuilder, we have found the location:line-number
+                    node.setLineNumber(e.getLineNumber());
+                    if (node.getLocation() == null) {
+                        String name = e.getFileName();
+                        if (name == null) {
+                            name = e.getClassName();
+                        }
+                        // find out what scheme for location as it can be file, classpath etc
+                        if (!ResourceHelper.hasScheme(name)) {
+                            String scheme = findParentSourceLocationScheme(node);
+                            if (scheme != null) {
+                                name = scheme + name;
+                            }
+                        }
+                        node.setLocation(name);
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the level of the node in the route tree. Level 1 is the root level, level 2 is a child of an EIP, and so
+     * forth
+     */
+    public static int getNodeLevel(NamedNode node) {
+        int level = 0;
+        while (node != null && node.getParent() != null) {
+            boolean shallow = node instanceof WhenDefinition || node instanceof OtherwiseDefinition;
+            node = node.getParent();
+            if (!shallow) {
+                level++;
+            }
+        }
+        return level;
+    }
+
+    /**
+     * Finds the source location scheme from the parent nodes.
+     */
+    public static String findParentSourceLocationScheme(NamedNode node) {
+        while (node != null && node.getParent() != null) {
+            String location = node.getLocation();
+            if (ResourceHelper.hasScheme(location)) {
+                return ResourceHelper.getScheme(location);
+            }
+            node = node.getParent();
+        }
+        return null;
     }
 
 }

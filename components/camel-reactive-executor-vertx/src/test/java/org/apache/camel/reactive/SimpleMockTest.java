@@ -18,7 +18,6 @@ package org.apache.camel.reactive;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reactive.vertx.VertXReactiveExecutor;
@@ -33,7 +32,7 @@ public class SimpleMockTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        VertXReactiveExecutor re = (VertXReactiveExecutor) context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        VertXReactiveExecutor re = (VertXReactiveExecutor) context.getCamelContextExtension().getReactiveExecutor();
         re.setVertx(vertx);
 
         return context;
@@ -46,7 +45,7 @@ public class SimpleMockTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,14 +56,14 @@ public class SimpleMockTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
             }
         };

@@ -16,23 +16,25 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for batch consumer.
  */
 public class MailMaxMessagesPerPollTest extends CamelTestSupport {
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
     @BeforeEach
@@ -51,7 +53,7 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("Message 2");
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMessageCount(2);
@@ -59,15 +61,15 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         mock.message(0).body().isEqualTo("Message 3");
         mock.message(1).body().isEqualTo("Message 4");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "jones", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), jones.getLogin(), jones.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -84,10 +86,10 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&maxMessagesPerPoll=3"
+            public void configure() {
+                from(jones.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&maxMessagesPerPoll=3"
                      + "&delete=true").to("mock:result");
             }
         };

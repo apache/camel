@@ -27,14 +27,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
 
     @Test
-    public void testConstantBinary() throws Exception {
-        byte[] data = template.requestBody("direct:start", "", byte[].class);
+    public void testConstantBinaryDefault() throws Exception {
+        byte[] data = template.requestBody("direct:default", "", byte[].class);
         // should have X number of bytes
         assertNotNull(data);
         assertEquals(10249, data.length);
 
         // store the logo
-        template.sendBodyAndHeader("file:target/data", data, Exchange.FILE_NAME, "savedlogo.jpeg");
+        template.sendBodyAndHeader(fileUri(), data, Exchange.FILE_NAME, "savedlogo.jpeg");
+    }
+
+    @Test
+    public void testConstantBinaryClasspath() throws Exception {
+        byte[] data = template.requestBody("direct:classpath", "", byte[].class);
+        // should have X number of bytes
+        assertNotNull(data);
+        assertEquals(10249, data.length);
+
+        // store the logo
+        template.sendBodyAndHeader(fileUri(), data, Exchange.FILE_NAME, "savedlogo.jpeg");
     }
 
     @Override
@@ -42,7 +53,9 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
+                from("direct:default").to("language:constant:resource:org/apache/camel/logo.jpeg?binary=true");
+
+                from("direct:classpath").to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
             }
         };
     }

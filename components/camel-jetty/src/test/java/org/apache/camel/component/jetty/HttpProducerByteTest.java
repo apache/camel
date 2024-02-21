@@ -24,17 +24,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpProducerByteTest extends BaseJettyTest {
 
     @Test
-    public void testHttpProducerByteTest() throws Exception {
+    public void testHttpProducerByteTest() {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("http://localhost:{{port}}/test", data, String.class);
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").transform(constant("Bye World"));
             }
         };

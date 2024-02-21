@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import java.nio.charset.Charset;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerException;
@@ -43,7 +45,8 @@ public class SchematronProcessorTest {
     @Test
     public void testValidXML() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
+                Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
 
         // validate
@@ -56,7 +59,8 @@ public class SchematronProcessorTest {
 
     @Test
     public void testInvalidXMLWithClientResolver() throws Exception {
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-3.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-3.xml"),
+                Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
 
         // validate
@@ -69,7 +73,8 @@ public class SchematronProcessorTest {
     @Test
     public void testInValidXML() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
+                Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
         // validate
         String result = getProcessor("sch/schematron-2.sch", null).validate(payload);
@@ -100,7 +105,7 @@ public class SchematronProcessorTest {
         @Override
         public Source resolve(String href, String base) throws TransformerException {
             return new StreamSource(
-                    ClientUriResolver.class.getClassLoader().getResourceAsStream("custom-resolver/".concat(href)));
+                    org.apache.camel.util.ObjectHelper.loadResourceAsStream("custom-resolver/".concat(href)));
         }
     }
 }

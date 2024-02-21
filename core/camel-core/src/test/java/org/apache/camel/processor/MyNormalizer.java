@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.language.xpath.XPath;
 
-// START SNIPPET: example   
+// START SNIPPET: example
 public class MyNormalizer {
     public void employeeToPerson(Exchange exchange, @XPath("/employee/name/text()") String name) {
         exchange.getMessage().setBody(createPerson(name));
@@ -33,4 +33,4 @@ public class MyNormalizer {
         return "<person name=\"" + name + "\"/>";
     }
 }
-// END SNIPPET: example   
+// END SNIPPET: example

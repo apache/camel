@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -77,6 +78,11 @@ public class MessageHelperTest {
 
             @Override
             public long length() {
+                return 0;
+            }
+
+            @Override
+            public long position() {
                 return 0;
             }
         });
@@ -145,7 +151,7 @@ public class MessageHelperTest {
 
         MessageHelper.copyHeaders(source, target, headerFilterStrategy, true);
 
-        assertEquals(null, target.getHeader("foo"));
+        assertNull(target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
         context.stop();
     }
@@ -200,7 +206,8 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false);
 
-        assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
+        assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId()
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
                      + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
@@ -212,7 +219,7 @@ public class MessageHelperTest {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        message = new DefaultExchange(context).getIn();
+        message = new DefaultExchange(context, ExchangePattern.InOut).getIn();
 
         // xml message body
         message.setBody("Hello World");
@@ -220,7 +227,8 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
-        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
+        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId()
+                     + "\" exchangePattern=\"InOut\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
                      + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
                 out);
 
@@ -239,6 +247,56 @@ public class MessageHelperTest {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message, true);
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
+    }
+
+    @Test
+    public void testMessageDumpBodyJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message, true);
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
+    }
+
+    @Test
+    public void testDumpAsXmlBodyJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("<?xml version=\"1.0\"?><hi>Hello World</hi>");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message);
+        // xml is escaped in json output
+        assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
+
+        context.stop();
+    }
+
+    @Test
+    public void testMessageDumpBodyIndentJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message, true, 4);
         assertNotNull(out);
         assertTrue(out.contains("Hello World"));
     }

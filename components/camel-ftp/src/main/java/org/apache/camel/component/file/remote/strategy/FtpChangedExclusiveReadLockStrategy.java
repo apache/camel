@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.file.remote.strategy;
 
-import java.util.Date;
-import java.util.List;
+import java.time.Duration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -26,7 +25,9 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.util.StopWatch;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,113 +52,26 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     public boolean acquireExclusiveReadLock(
             GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
             throws Exception {
-        boolean exclusive = false;
-
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
-        long lastModified = Long.MIN_VALUE;
-        long length = Long.MIN_VALUE;
-        StopWatch watch = new StopWatch();
-        long startTime = new Date().getTime();
+        BlockingTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withMaxDuration(Duration.ofMillis(timeout))
+                        .withInterval(Duration.ofMillis(checkInterval))
+                        .build())
+                .withName("ftp-acquire-exclusive-read-lock")
+                .build();
 
-        while (!exclusive) {
-            // timeout check
-            if (timeout > 0) {
-                long delta = watch.taken();
-                if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
-                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                    // we could not get the lock within the timeout period, so
-                    // return false
-                    return false;
-                }
-            }
+        ExclusiveReadLockCheck exclusiveReadLockCheck = new ExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
 
-            long newLastModified = 0;
-            long newLength = 0;
+        if (!task.run(() -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+            CamelLogger.log(LOG, readLockLoggingLevel,
+                    "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 
-            List<FTPFile> files;
-            if (fastExistsCheck) {
-                // use the absolute file path to only pickup the file we want to
-                // check, this avoids expensive
-                // list operations if we have a lot of files in the directory
-                String path = file.getAbsoluteFilePath();
-                if (path.equals("/") || path.equals("\\")) {
-                    // special for root (= home) directory
-                    LOG.trace("Using fast exists to update file information in home directory");
-                    files = operations.listFiles();
-                } else {
-                    LOG.trace("Using fast exists to update file information for {}", path);
-                    files = operations.listFiles(path);
-                }
-            } else {
-                // fast option not enabled, so list the directory and filter the
-                // file name
-                String path = file.getParent();
-                if (path.equals("/") || path.equals("\\")) {
-                    // special for root (= home) directory
-                    LOG.trace(
-                            "Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
-                    files = operations.listFiles();
-                } else {
-                    LOG.trace(
-                            "Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.",
-                            path);
-                    files = operations.listFiles(path);
-                }
-            }
-            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
-            for (FTPFile f : files) {
-                boolean match;
-                if (fastExistsCheck) {
-                    // uses the absolute file path as well
-                    match = f.getName().equals(file.getAbsoluteFilePath()) || f.getName().equals(file.getFileNameOnly());
-                } else {
-                    match = f.getName().equals(file.getFileNameOnly());
-                }
-                if (match) {
-                    newLength = f.getSize();
-                    if (f.getTimestamp() != null) {
-                        newLastModified = f.getTimestamp().getTimeInMillis();
-                    }
-                }
-            }
-
-            LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
-            LOG.trace("Previous length: {}, new length: {}", length, newLength);
-            long newOlderThan = startTime + watch.taken() - minAge;
-            LOG.trace("New older than threshold: {}", newOlderThan);
-
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
-                    || (minAge != 0 && newLastModified < newOlderThan))) {
-                LOG.trace("Read lock acquired.");
-                exclusive = true;
-            } else {
-                // set new base file change information
-                lastModified = newLastModified;
-                length = newLength;
-
-                boolean interrupted = sleep();
-                if (interrupted) {
-                    // we were interrupted while sleeping, we are likely being
-                    // shutdown so return false
-                    return false;
-                }
-            }
-        }
-
-        return exclusive;
-    }
-
-    private boolean sleep() {
-        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
-        try {
-            Thread.sleep(checkInterval);
             return false;
-        } catch (InterruptedException e) {
-            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
-            return true;
         }
+
+        return true;
     }
 
     @Override

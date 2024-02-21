@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,7 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,14 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DirectoryCreateIssueTest extends ContextTestSupport {
 
     private final int numFiles = 10;
-    private final String path = "target/data/a/b/c/d/e/f/g/h";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/a");
-        super.setUp();
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -51,7 +44,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                     destinations[i] = "direct:file" + i;
 
                     from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
-                            .to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
+                            .to(fileUri("a/b/c/d/e/f/g/h/?fileExist=Override&noop=true"), "mock:result");
                 }
 
                 from("seda:testFileCreatedAsDir").to(destinations);
@@ -72,11 +65,11 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a little while for the files to settle down
-        Thread.sleep(50);
-
-        for (int i = 0; i < numFiles; i++) {
-            assertTrue((new File(path + "/file" + i + ".txt")).isFile());
-        }
+        Awaitility.await().pollDelay(50, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+            for (int i = 0; i < numFiles; i++) {
+                assertTrue(Files.isRegularFile(testFile("a/b/c/d/e/f/g/h/file" + i + ".txt")));
+            }
+        });
     }
 
 }

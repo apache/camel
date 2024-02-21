@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,11 +50,6 @@ import org.slf4j.LoggerFactory;
  * A number of useful helper methods for working with Objects
  */
 public final class ObjectHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
-
-    private static final Float FLOAT_NAN = Float.NaN;
-    private static final Double DOUBLE_NAN = Double.NaN;
 
     /**
      * Utility classes should not have a public constructor.
@@ -126,10 +121,16 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
+        if (value instanceof byte[]) {
+            String str = new String((byte[]) value);
+            if (isBoolean(str)) {
+                return Boolean.valueOf(str);
+            }
+        }
         if (value instanceof String) {
             // we only want to accept true or false as accepted values
             String str = (String) value;
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+            if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
@@ -156,6 +157,21 @@ public final class ObjectHelper {
     }
 
     /**
+     * Asserts that the given {@code value} is neither {@code null} nor an emptyString.
+     *
+     * @param  value                    the value to test
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static String notNullOrEmpty(String value, String name) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(name + " must be specified and non-empty");
+        }
+        return value;
+    }
+
+    /**
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param  value                    the value to test
@@ -176,20 +192,50 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an empty string.
+     * Tests whether the value is <tt>null</tt> or an empty string or an empty collection/map.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if empty
      */
-    public static boolean isEmpty(Object value) {
+    public static boolean isEmpty(String value) {
+        return value == null || value.isBlank();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty collection
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isEmpty(Collection<?> value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty map
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isEmpty(Map<?, ?> value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt>, an empty string or an empty collection/map.
+     *
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if empty
+     */
+    public static <T> boolean isEmpty(T value) {
         if (value == null) {
             return true;
         } else if (value instanceof String) {
-            return ((String) value).trim().isEmpty();
+            return isEmpty((String) value);
         } else if (value instanceof Collection) {
-            return ((Collection<?>) value).isEmpty();
+            return isEmpty((Collection<?>) value);
         } else if (value instanceof Map) {
-            return ((Map<?, ?>) value).isEmpty();
+            return isEmpty((Map<?, ?>) value);
         } else {
             return false;
         }
@@ -201,18 +247,38 @@ public final class ObjectHelper {
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if <b>not</b> empty
      */
-    public static boolean isNotEmpty(Object value) {
-        if (value == null) {
-            return false;
-        } else if (value instanceof String) {
-            return !((String) value).trim().isEmpty();
-        } else if (value instanceof Collection) {
-            return !((Collection<?>) value).isEmpty();
-        } else if (value instanceof Map) {
-            return !((Map<?, ?>) value).isEmpty();
-        } else {
-            return true;
-        }
+    public static <T> boolean isNotEmpty(T value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string
+     *
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if <b>not</b> empty
+     */
+    public static boolean isNotEmpty(String value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty collection
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isNotEmpty(Collection<?> value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty map
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isNotEmpty(Map<?, ?> value) {
+        return !isEmpty(value);
     }
 
     /**
@@ -290,7 +356,7 @@ public final class ObjectHelper {
         try {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
-            LOG.debug("Caught security exception accessing system property: {}. Will use default value: {}",
+            logger().debug("Caught security exception accessing system property: {}. Will use default value: {}",
                     name, defaultValue, e);
 
             return defaultValue;
@@ -404,9 +470,9 @@ public final class ObjectHelper {
 
         if (clazz == null) {
             if (needToWarn) {
-                LOG.warn("Cannot find class: {}", name);
+                logger().warn("Cannot find class: {}", name);
             } else {
-                LOG.debug("Cannot find class: {}", name);
+                logger().debug("Cannot find class: {}", name);
             }
         }
 
@@ -419,7 +485,6 @@ public final class ObjectHelper {
      * @param  name the name of the class to load
      * @return      the class or <tt>null</tt> if it could not be loaded
      */
-    //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -468,7 +533,6 @@ public final class ObjectHelper {
         }
         return null;
     }
-    //CHECKSTYLE:ON
 
     /**
      * Loads the given class with the provided classloader (may be null). Will ignore any class not found and return
@@ -485,11 +549,10 @@ public final class ObjectHelper {
         }
 
         try {
-            LOG.trace("Loading class: {} using classloader: {}", name, loader);
             return loader.loadClass(name);
         } catch (ClassNotFoundException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot load class: {} using classloader: {}", name, loader, e);
+            if (logger().isTraceEnabled()) {
+                logger().trace("Cannot load class: {} using classloader: {}", name, loader, e);
             }
         }
 
@@ -891,6 +954,38 @@ public final class ObjectHelper {
         return false;
     }
 
+    /**
+     * Checks if the given class has a subclass (extends or implements)
+     *
+     * @param clazz    the class
+     * @param subClass the subclass (class or interface)
+     */
+    public static boolean isSubclass(Class<?> clazz, Class<?> subClass) {
+        if (clazz == subClass) {
+            return true;
+        }
+        if (clazz == null || subClass == null) {
+            return false;
+        }
+        for (Class<?> aClass = clazz; aClass != null; aClass = aClass.getSuperclass()) {
+            if (aClass == subClass) {
+                return true;
+            }
+            if (subClass.isInterface()) {
+                Class<?>[] interfaces = aClass.getInterfaces();
+                for (Class<?> anInterface : interfaces) {
+                    if (isSubclass(anInterface, subClass)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Used by camel-bean
+     */
     public static int arrayLength(Object[] pojo) {
         return pojo.length;
     }
@@ -923,6 +1018,31 @@ public final class ObjectHelper {
     }
 
     /**
+     * Converts wrapper type like {@link Integer} to its primitive type, i.e. int.
+     */
+    public static Class<?> convertWrapperTypeToPrimitiveType(Class<?> type) {
+        Class<?> rc = type;
+        if (type == Integer.class) {
+            rc = int.class;
+        } else if (type == Long.class) {
+            rc = long.class;
+        } else if (type == Double.class) {
+            rc = double.class;
+        } else if (type == Float.class) {
+            rc = float.class;
+        } else if (type == Short.class) {
+            rc = short.class;
+        } else if (type == Byte.class) {
+            rc = byte.class;
+        } else if (type == Boolean.class) {
+            rc = boolean.class;
+        } else if (type == Character.class) {
+            rc = char.class;
+        }
+        return rc;
+    }
+
+    /**
      * Helper method to return the default character set name
      */
     public static String getDefaultCharacterSet() {
@@ -935,7 +1055,7 @@ public final class ObjectHelper {
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
         if (propertyName.startsWith("set") && method.getParameterCount() == 1) {
-            propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
+            propertyName = StringHelper.decapitalize(propertyName.substring(3));
         }
         return propertyName;
     }
@@ -1000,6 +1120,21 @@ public final class ObjectHelper {
     }
 
     /**
+     * Does the given class have a default no-arg constructor (public or inherited).
+     */
+    public static boolean hasDefaultNoArgConstructor(Class<?> type) {
+        if (hasDefaultPublicNoArgConstructor(type)) {
+            return true;
+        }
+        for (Constructor<?> ctr : type.getDeclaredConstructors()) {
+            if (!Modifier.isPrivate(ctr.getModifiers()) && ctr.getParameterCount() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns the type of the given object or null if the value is null
      */
     public static Object type(Object bean) {
@@ -1014,26 +1149,36 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
-            String str = ((String) value).trim();
-            if (str.isEmpty()) {
-                return false;
-            } else if ("true".equalsIgnoreCase(str)) {
-                return true;
-            } else if ("false".equalsIgnoreCase(str)) {
-                return false;
-            }
+            return evaluateString((String) value);
         } else if (value instanceof NodeList) {
-            // is it an empty dom with empty attributes
-            if (value instanceof Node && ((Node) value).hasAttributes()) {
-                return true;
-            }
-            NodeList list = (NodeList) value;
-            return list.getLength() > 0;
+            return evaluateNodeList(value);
         } else if (value instanceof Collection) {
             // is it an empty collection
             return !((Collection<?>) value).isEmpty();
         }
         return value != null;
+    }
+
+    private static boolean evaluateString(String value) {
+        final String str = value.trim();
+        if (str.isEmpty()) {
+            return false;
+        } else if ("true".equalsIgnoreCase(str)) {
+            return true;
+        } else if ("false".equalsIgnoreCase(str)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean evaluateNodeList(Object value) {
+        // is it an empty dom with empty attributes
+        if (value instanceof Node && ((Node) value).hasAttributes()) {
+            return true;
+        }
+        NodeList list = (NodeList) value;
+        return list.getLength() > 0;
     }
 
     /**
@@ -1148,46 +1293,66 @@ public final class ObjectHelper {
      * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        return (value instanceof Number)
-                && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
-    }
-
-    /**
-     * Wraps the caused exception in a {@link RuntimeException} if its not already such an exception.
-     *
-     * @param      e the caused exception
-     * @return       the wrapper exception
-     * @deprecated   Use {@link org.apache.camel.RuntimeCamelException#wrapRuntimeCamelException} instead
-     */
-    @Deprecated
-    public static RuntimeException wrapRuntimeCamelException(Throwable e) {
-        try {
-            Class<? extends RuntimeException> clazz = (Class) Class.forName("org.apache.camel.RuntimeException");
-            if (clazz.isInstance(e)) {
-                // don't double wrap
-                return clazz.cast(e);
-            } else {
-                return clazz.getConstructor(Throwable.class).newInstance(e);
-            }
-        } catch (Throwable t) {
-            // ignore
-        }
-        if (e instanceof RuntimeException) {
-            // don't double wrap
-            return (RuntimeException) e;
-        } else {
-            return new RuntimeException(e);
-        }
+        return value instanceof Float && ((Float) value).isNaN()
+                || value instanceof Double && ((Double) value).isNaN();
     }
 
     /**
      * Turns the input array to a list of objects.
-     * 
+     *
      * @param  objects an array of objects or null
      * @return         an object list
      */
     public static List<Object> asList(Object[] objects) {
         return objects != null ? Arrays.asList(objects) : Collections.emptyList();
+    }
+
+    /**
+     * Adds the value to the list at the given index
+     */
+    public static void addListByIndex(List<Object> list, int idx, Object value) {
+        if (idx < list.size()) {
+            list.set(idx, value);
+        } else if (idx == list.size()) {
+            list.add(value);
+        } else {
+            // If the list implementation is based on an array, we
+            // can increase tha capacity to the required value to
+            // avoid potential re-allocation when invoking List::add.
+            //
+            // Note that ArrayList is the default List impl that
+            // is automatically created if the property is null.
+            if (list instanceof ArrayList) {
+                ((ArrayList<?>) list).ensureCapacity(idx + 1);
+            }
+            while (list.size() < idx) {
+                list.add(null);
+            }
+            list.add(idx, value);
+        }
+    }
+
+    /**
+     * Checks whether the given string is a valid boolean value (i.e.; either "true" or "false") ignoring its case
+     *
+     * @param  str the string to evaluate
+     * @return     true if it is a valid boolean value or false otherwise
+     */
+    public static boolean isBoolean(String str) {
+        return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private static final class Holder {
+        static final Logger LOG = LoggerFactory.getLogger(Holder.class);
+    }
+
+    private static Logger logger() {
+        return Holder.LOG;
     }
 
 }

@@ -27,7 +27,8 @@ import org.apache.camel.spi.CamelEvent.RouteEvent;
  */
 public abstract class AbstractRouteEvent extends EventObject implements RouteEvent {
     private static final long serialVersionUID = 1L;
-    private Route route;
+    private final Route route;
+    private long timestamp;
 
     public AbstractRouteEvent(Route source) {
         super(source);
@@ -38,4 +39,15 @@ public abstract class AbstractRouteEvent extends EventObject implements RouteEve
     public Route getRoute() {
         return route;
     }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

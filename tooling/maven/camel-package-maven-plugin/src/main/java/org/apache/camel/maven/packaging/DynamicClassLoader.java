@@ -56,11 +56,11 @@ class DynamicClassLoader extends URLClassLoader {
         return new DynamicClassLoader(urls, tccl != null ? tccl : DynamicClassLoader.class.getClassLoader());
     }
 
-    public Class defineClass(String name, byte[] data) {
+    public Class<?> defineClass(String name, byte[] data) {
         return super.defineClass(name, data, 0, data.length);
     }
 
-    public Class generateDummyClass(String clazzName) {
+    public Class<?> generateDummyClass(String clazzName) {
         try {
             return loadClass(clazzName);
         } catch (ClassNotFoundException e) {

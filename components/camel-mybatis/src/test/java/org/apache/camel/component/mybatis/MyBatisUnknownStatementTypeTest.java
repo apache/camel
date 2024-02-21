@@ -35,7 +35,7 @@ public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
     public void testStatementTypeNotSet() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mybatis:selectAllAccounts");
             }
         });

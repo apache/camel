@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
+@Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
         extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest {
 
@@ -30,12 +34,12 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
 
     @Override
     @Test
-    public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
+    public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
         template.sendBody(testingEndpoint, "Hello World");
 
         // as we do not handle new exception, then the exception propagates back
         // and causes the transaction to rollback, and we can find the message in the ActiveMQ DLQ
-        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
+        Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
         assertEquals("Hello World", dlqBody);
     }
 

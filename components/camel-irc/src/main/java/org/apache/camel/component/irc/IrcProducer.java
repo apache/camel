@@ -54,7 +54,7 @@ public class IrcProducer extends DefaultProducer {
             reconnect();
         }
         if (connection == null || !connection.isConnected()) {
-            throw new RuntimeCamelException("Lost connection to " + connection.getHost());
+            throw new RuntimeCamelException("Lost connection" + (connection == null ? "" : " to " + connection.getHost()));
         }
 
         if (msg != null) {
@@ -89,7 +89,7 @@ public class IrcProducer extends DefaultProducer {
                 LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(),
                         getEndpoint().getConfiguration().getNickname());
             }
-            getEndpoint().getComponent().closeConnection(getEndpoint().getConfiguration().getCacheKey(), connection);
+            getEndpoint().getComponent().closeConnection(connection);
             connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
         }
         connection.addIRCEventListener(listener);
@@ -99,7 +99,8 @@ public class IrcProducer extends DefaultProducer {
         try {
             Thread.sleep(getEndpoint().getConfiguration().getCommandTimeout());
         } catch (InterruptedException ex) {
-            // ignore
+            LOG.info("Interrupted while sleeping before sending commands");
+            Thread.currentThread().interrupt();
         }
         getEndpoint().joinChannels();
     }
@@ -146,7 +147,7 @@ public class IrcProducer extends DefaultProducer {
 
         @Override
         public void onError(int num, String msg) {
-            IrcProducer.this.getEndpoint().handleIrcError(num, msg);
+            IrcProducer.this.getEndpoint().handleIrcError(num);
         }
 
     }

@@ -23,16 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // get the request URL and copy it to the request body
                         String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
                         exchange.getMessage().setBody(uri);

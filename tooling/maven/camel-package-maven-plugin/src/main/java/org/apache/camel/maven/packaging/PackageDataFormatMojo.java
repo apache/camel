@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,11 +51,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
@@ -222,8 +221,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                                 .collect(Collectors.toSet());
                         List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
                         options.removeIf(o -> !names.contains(o.getName()));
-                        names.removeAll(options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList()));
-                        names.removeAll(Arrays.asList("id"));
+                        options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList())
+                                .forEach(names::remove);
+                        names.removeAll(List.of("id"));
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
@@ -342,46 +342,43 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
             if ("type".equals(option.getName()) && "bindy".equals(model.getModelName())) {
                 switch (name) {
-                    case "bindy-csv":
+                    case "bindyCsv":
                         option.setDefaultValue("Csv");
                         break;
-                    case "bindy-fixed":
+                    case "bindyFixed":
                         option.setDefaultValue("Fixed");
                         break;
-                    case "bindy-kvp":
+                    case "bindyKvp":
                         option.setDefaultValue("KeyValue");
                         break;
                     default:
                 }
 
             }
-            if ("objectMapper".equals(option.getName()) && "json-johnzon".equals(name)) {
+            if ("objectMapper".equals(option.getName()) && "johnzon".equals(name)) {
                 option.setDisplayName("Mapper");
                 option.setDescription("Lookup and use the existing Mapper with the given id.");
             }
-            if ("objectMapper".equals(option.getName()) && "json-jsonb".equals(name)) {
+            if ("objectMapper".equals(option.getName()) && "jsonb".equals(name)) {
                 option.setDisplayName("Jsonb instance");
                 option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
-                    case "json-gson":
+                    case "gson":
                         option.setDefaultValue("Gson");
                         break;
-                    case "json-jackson":
+                    case "jackson":
                         option.setDefaultValue("Jackson");
                         break;
-                    case "json-johnzon":
+                    case "johnzon":
                         option.setDefaultValue("Johnzon");
                         break;
-                    case "json-jsonb":
+                    case "jsonb":
                         option.setDefaultValue("JSON-B");
                         break;
                     case "json-fastson":
                         option.setDefaultValue("Fastjson");
-                        break;
-                    case "json-xstream":
-                        option.setDefaultValue("XStream");
                         break;
                     default:
                 }
@@ -399,7 +396,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
         String name = file.getName();
         if (name.charAt(0) != '.') {
-            if (buffer.length() > 0) {
+            if (!buffer.isEmpty()) {
                 buffer.append(" ");
             }
             buffer.append(name);
@@ -425,58 +422,65 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelName(String name) {
         // special for some data formats
-        if ("json-gson".equals(name) || "json-jackson".equals(name) || "json-johnzon".equals(name)
-                || "json-xstream".equals(name) || "json-fastjson".equals(name) || "json-jsonb".equals(name)) {
+        if ("gson".equals(name) || "jackson".equals(name) || "johnzon".equals(name)
+                || "fastjson".equals(name) || "jsonb".equals(name)) {
             return "json";
-        } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
+        } else if ("bindyCsv".equals(name) || "bindyFixed".equals(name) || "bindyKvp".equals(name)) {
             return "bindy";
-        } else if ("yaml-snakeyaml".equals(name)) {
+        } else if ("snakeYaml".equals(name)) {
             return "yaml";
+        } else if ("avroJackson".equals(name)) {
+            return "avro";
+        } else if ("protobufJackson".equals(name)) {
+            return "protobuf";
         }
         return name;
     }
 
     private static String asModelFirstVersion(String name, String firstVersion) {
         switch (name) {
-            case "json-gson":
+            case "gson":
                 return "2.10.0";
-            case "json-jackson":
+            case "jackson":
                 return "2.0.0";
-            case "json-johnzon":
+            case "johnzon":
                 return "2.18.0";
-            case "json-jsonb":
+            case "jsonb":
                 return "3.7.0";
-            case "json-xstream":
-                return "2.0.0";
-            case "json-fastjson":
+            case "fastjson":
                 return "2.20.0";
+            case "avroJackson":
+                return "3.10.0";
+            case "protobufJackson":
+                return "3.10.0";
             default:
                 return firstVersion;
         }
     }
 
-    // TODO: split json / bindy into multiple jsons descriptors
     private static String asModelTitle(String name, String title) {
         // special for some data formats
-        if ("json-gson".equals(name)) {
+        if ("gson".equals(name)) {
             return "JSON Gson";
-        } else if ("json-jackson".equals(name)) {
+        } else if ("jackson".equals(name)) {
             return "JSON Jackson";
-        } else if ("json-johnzon".equals(name)) {
+        } else if ("avroJackson".equals(name)) {
+            return "Avro Jackson";
+        } else if ("protobufJackson".equals(name)) {
+            return "Protobuf Jackson";
+        } else if ("johnzon".equals(name)) {
             return "JSON Johnzon";
-        } else if ("json-jsonb".equals(name)) {
+        } else if ("jsonb".equals(name)) {
             return "JSON JSON-B";
-        } else if ("json-xstream".equals(name)) {
-            return "JSON XStream";
-        } else if ("json-fastjson".equals(name)) {
+        } else if ("fastjson".equals(name)) {
             return "JSON Fastjson";
-        } else if ("bindy-csv".equals(name)) {
+        } else if ("bindyCsv".equals(name)) {
             return "Bindy CSV";
-        } else if ("bindy-fixed".equals(name)) {
+        } else if ("bindyFixed".equals(name)) {
             return "Bindy Fixed Length";
-        } else if ("bindy-kvp".equals(name)) {
+        } else if ("bindyKvp".equals(name)) {
             return "Bindy Key Value Pair";
-        } else if ("yaml-snakeyaml".equals(name)) {
+        } else if ("snakeYaml".equals(name)) {
             return "YAML SnakeYAML";
         }
         return title;

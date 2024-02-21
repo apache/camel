@@ -27,7 +27,7 @@ public interface ServiceHealth {
      * Gets a key/value metadata associated with the service.
      */
     default Map<String, String> getMetadata() {
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     /**

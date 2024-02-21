@@ -1,0 +1,143 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "OpenApi Simple PetStore",
+        "version": "1.0.0",
+        "description": "Minimal example for testing."
+    },
+    "paths": {
+        "/pet": {
+            "put": {
+                "description":  "Update Pet Data",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Pet"
+                            }
+                        },
+                        "text/xml": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Pet"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            },
+                            "text/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "description": "Updated pet."
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "description": "Created pet."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Pet": {
+                "required": [
+                    "name",
+                    "photoUrls"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "format": "int64",
+                        "type": "integer"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/Category"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "doggie"
+                    },
+                    "photoUrls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "xml": {
+                            "name": "photoUrl",
+                            "wrapped": true
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        },
+                        "xml": {
+                            "name": "tag",
+                            "wrapped": true
+                        }
+                    },
+                    "status": {
+                        "description": "pet status in the store",
+                        "enum": [
+                            "available",
+                            "pending",
+                            "sold"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "Pet"
+                }
+            },
+            "Category": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "format": "int64",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "Category"
+                }
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "format": "int64",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "Tag"
+                }
+            }
+        }
+    }
+}

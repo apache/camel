@@ -1,0 +1,1 @@
+../../../../../components/camel-fastjson/src/main/docs/fastjson-dataformat.adoc

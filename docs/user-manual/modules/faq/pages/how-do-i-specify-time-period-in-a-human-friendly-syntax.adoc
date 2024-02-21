@@ -1,4 +1,3 @@
-[[HowdoIspecifytimeperiodinahumanfriendlysyntax-HowdoIspecifytimeperiodinahumanfriendlysyntax]]
 = How do I specify time period in a human friendly syntax?
 
 *Since Camel 2.3*

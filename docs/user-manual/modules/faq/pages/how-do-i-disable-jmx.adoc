@@ -1,5 +1,13 @@
-[[HowdoIdisableJMX-HowdoIdisableJMX]]
 = How do I disable JMX?
+
+== How do I disable JMX since Camel 3.x
+
+JMX is disabled by default, and only enabled if `camel-management`
+is on the classpath. So an easy way to disable JMX is to _not_ include this JAR.
+
+You can also turn off JMX as shown below.
+
+== How do I disable JMX in Camel 2.x
 
 You can disable JMX instrumentation agent by setting Java VM system
 property as follow. The property value is treated as boolean.

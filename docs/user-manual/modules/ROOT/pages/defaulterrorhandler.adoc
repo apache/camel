@@ -1,14 +1,14 @@
-[[DefaultErrorHandler-DefaultErrorHandler]]
 = DefaultErrorHandler
 
-This is the new default error handler in Camel 2.0 onwards.
+This is the default xref:error-handler.adoc[Error Handler] in Camel.
 
-It has the same power as the xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel],
+The default xref:error-handler.adoc[Error Handler] has the same power
+as the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel],
 however it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 
-The DefaultErrorHandler is configured differently from
-xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter Channel] as
+The `DefaultErrorHandler` is configured differently from
+xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] as
 it is configured to:
 
 * not redeliver
@@ -20,14 +20,15 @@ to the caller and the xref:exchange.adoc[Exchange] ends immediately.
 However, you can use the xref:exception-clause.adoc[Exception Clause] to
 catch a given exception and lower the exception by marking it as
 handled. If so, the exception will *not* be sent back to the caller, and
-the xref:exchange.adoc[Exchange] continues to be routed.
+the xref:exchange.adoc[Exchange] will succeed, but *not continue* being routed.
+See the _difference_ between `handled` and `continued` in the
+xref:exception-clause.adoc[Exception Clause] documentation.
 
-[[DefaultErrorHandler-Example]]
 == Example
 
-In this route below, any exception thrown in, eg the `validateOrder`
-bean, will be propagated back to the caller via the jetty endpoint. It
-will return an HTTP error message back to the client.
+In this route below, any exception thrown in, such as the `validateOrder`
+bean, will be propagated back to the caller via the jetty endpoint, which
+then returns an HTTP error message back to the client.
 
 [source,java]
 ----
@@ -36,9 +37,9 @@ from("jetty:http://localhost/myservice/order")
   .to("jms:queue:order");
 ----
 
-We can add an *onException* in case we want to catch certain exceptions
+We can add an `onException` in case we want to catch certain exceptions
 and route them differently, for instance to catch a
-*ValidationException* and return a fixed response to the caller.
+`ValidationException` and return a fixed response to the caller.
 
 [source,java]
 ----
@@ -52,9 +53,9 @@ from("jetty:http://localhost/myservice/order")
 ----
 
 When the `ValidationException` is thrown from the `validateOrder` bean,
-it is intercepted by the DefaultErrorHandler that lets the
-`onException(ValidationException.class)` handle it, so the
-xref:exchange.adoc[Exchange] is routed to this onException route, and
+it is intercepted by Camel error handler which lets the
+`onException(ValidationException.class)` handle the exception.
+The xref:exchange.adoc[Exchange] is routed to this onException route, and
 since we use `handled(true)`, then the original exception is cleared,
 and we transform the message into a fixed response that is returned to
 jetty endpoint that returns it to the original caller.

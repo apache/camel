@@ -72,16 +72,16 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
 
         template.sendBody("direct:start", MESSAGE.getBytes("UTF8"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context().getRegistry(Registry.class).bind("rfc5426FrameDecoder", new Rfc5425FrameDecoder());
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 

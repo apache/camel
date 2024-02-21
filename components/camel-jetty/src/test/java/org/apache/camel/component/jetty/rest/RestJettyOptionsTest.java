@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestJettyOptionsTest extends BaseJettyTest {
 
     @Test
-    public void testJettyServerOptions() throws Exception {
+    public void testJettyServerOptions() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v1/customers", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
             }
         });
@@ -47,10 +47,10 @@ public class RestJettyOptionsTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyServerMultipleOptions() throws Exception {
+    public void testJettyServerMultipleOptions() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v2/options", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
             }
         });
@@ -61,10 +61,10 @@ public class RestJettyOptionsTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 

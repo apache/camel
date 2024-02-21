@@ -1,18 +1,20 @@
-[[digitalocean-component]]
 = DigitalOcean Component
-:docTitle: DigitalOcean
-:artifactId: camel-digitalocean
+:doctitle: DigitalOcean
+:shortname: digitalocean
+:artifactid: camel-digitalocean
 :description: Manage Droplets and resources within the DigitalOcean cloud.
 :since: 2.19
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/digitalocean.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: digitalocean
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
+The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
 == Prerequisites
 
@@ -22,75 +24,29 @@ You must have a valid DigitalOcean account and a valid OAuth token. You can gene
 
 The **DigitalOcean Component** uses the following URI format:
 
-```
+----
 digitalocean://endpoint?[options]
-```
+----
+
 where `endpoint` is a DigitalOcean resource type.
 
-Example : to list your droplets:
 
-```
-digitalocean://droplets?operation=list&oAuthToken=XXXXXX&page=1&perPage=10
-```
+// component-configure options: START
 
-The DigitalOcean component only supports producer endpoints so you cannot use this component at the beginning of a route to listen to messages in a channel.
-
-
-== Options
-
+// component-configure options: END
 
 // component options: START
-The DigitalOcean component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-The DigitalOcean endpoint is configured using URI syntax:
 
-----
-digitalocean:operation
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *operation* | The operation to perform to the given resource. There are 36 enums and the value can be one of: create, update, delete, list, ownList, get, listBackups, listActions, listNeighbors, listSnapshots, listKernels, listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild, rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach, assign, unassign, tag, untag |  | DigitalOceanOperations
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *page* (producer) | Use for pagination. Force the page number. | 1 | Integer
-| *perPage* (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
-| *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. There are 11 enums and the value can be one of: account, actions, blockStorages, droplets, mages, snapshots, keys, regions, sizes, floatingIPs, tags |  | DigitalOceanResources
-| *digitalOceanClient* (advanced) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
-| *httpProxyHost* (proxy) | Set a proxy host if needed |  | String
-| *httpProxyPassword* (proxy) | Set a proxy password if needed |  | String
-| *httpProxyPort* (proxy) | Set a proxy port if needed |  | Integer
-| *httpProxyUser* (proxy) | Set a proxy host if needed |  | String
-| *oAuthToken* (security) | DigitalOcean OAuth Token |  | String
-|===
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 You have to provide an **operation** value for each endpoint, with the `operation` URI option or the `CamelDigitalOceanOperation` message header.
 
@@ -106,7 +62,8 @@ All message bodies returned are using objects provided by the **digitalocean-api
 
 == API Rate Limits
 
-DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the https://developers.digitalocean.com/documentation/v2/#rate-limit[API Rate Limits documentation].
+DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting.
+ou can find the per-method limits in the https://developers.digitalocean.com/documentation/v2/#rate-limit[API Rate Limits documentation].
 
 
 == Account endpoint
@@ -123,7 +80,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 |===
 | operation | Description | Headers | Result
 | `list`
-| list all of the Block Storage volumes available on your account
+| list all the Block Storage volumes available on your account
 |
 | `List<com.myjeeva.digitalocean.pojo.Volume>`
 
@@ -316,9 +273,9 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | operation | Description | Headers | Result
 | `list` | list images available on your account | `CamelDigitalOceanType`* _DigitalOceanImageTypes_ | `List<com.myjeeva.digitalocean.pojo.Image>`
 | `ownList` | retrieve only the private images of a user | | `List<com.myjeeva.digitalocean.pojo.Image>`
-| `listActions` |  retrieve all actions that have been executed on a Image | `CamelDigitalOceanId` _Integer_ | `List<com.myjeeva.digitalocean.pojo.Action>`
+| `listActions` |  retrieve all actions that have been executed on an Image | `CamelDigitalOceanId` _Integer_ | `List<com.myjeeva.digitalocean.pojo.Action>`
 | `get` | retrieve information about an image (public or private) by id| `CamelDigitalOceanId` _Integer_| `com.myjeeva.digitalocean.pojo.Image`
-| `get` | retrieve information about an public image by slug| `CamelDigitalOceanDropletImage` _String_| `com.myjeeva.digitalocean.pojo.Image`
+| `get` | retrieve information about a public image by slug| `CamelDigitalOceanDropletImage` _String_| `com.myjeeva.digitalocean.pojo.Image`
 
 | `update`
 | update an image
@@ -342,7 +299,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | operation | Description | Headers | Result
-| `list` | list all of the snapshots available on your account | `CamelDigitalOceanType`* _DigitalOceanSnapshotTypes_ | `List<com.myjeeva.digitalocean.pojo.Snapshot>`
+| `list` | list all the snapshots available on your account | `CamelDigitalOceanType`* _DigitalOceanSnapshotTypes_ | `List<com.myjeeva.digitalocean.pojo.Snapshot>`
 | `get` | retrieve information about a snapshot| `CamelDigitalOceanId` _Integer_| `com.myjeeva.digitalocean.pojo.Snapshot`
 | `delete` | delete an snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Delete`
 |===
@@ -352,7 +309,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | operation | Description | Headers | Result
-| `list` |  list all of the keys in your account | | `List<com.myjeeva.digitalocean.pojo.Key>`
+| `list` |  list all the keys in your account | | `List<com.myjeeva.digitalocean.pojo.Key>`
 | `get` | retrieve information about a key by id| `CamelDigitalOceanId` _Integer_| `com.myjeeva.digitalocean.pojo.Key`
 | `get` | retrieve information about a key by fingerprint| `CamelDigitalOceanKeyFingerprint` _String_| `com.myjeeva.digitalocean.pojo.Key`
 
@@ -377,7 +334,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | operation | Description | Headers | Result
-| `list` |  list all of the regions that are available | | `List<com.myjeeva.digitalocean.pojo.Region>`
+| `list` |  list all the regions that are available | | `List<com.myjeeva.digitalocean.pojo.Region>`
 |===
 
 == Sizes endpoint
@@ -385,7 +342,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | operation | Description | Headers | Result
-| `list` |  list all of the sizes that are available | | `List<com.myjeeva.digitalocean.pojo.Size>`
+| `list` |  list all the sizes that are available | | `List<com.myjeeva.digitalocean.pojo.Size>`
 |===
 
 == Floating IPs endpoint
@@ -393,7 +350,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | operation | Description | Headers | Result
-| `list` |  list all of the Floating IPs available on your account | | `List<com.myjeeva.digitalocean.pojo.FloatingIP>`
+| `list` |  list all the Floating IPs available on your account | | `List<com.myjeeva.digitalocean.pojo.FloatingIP>`
 | `create` |  create a new Floating IP assigned to a Droplet | `CamelDigitalOceanId` _Integer_ | `List<com.myjeeva.digitalocean.pojo.FloatingIP>`
 | `create` |  create a new Floating IP assigned to a Region | `CamelDigitalOceanRegion` _String_ | `List<com.myjeeva.digitalocean.pojo.FloatingIP>`
 | `get` | retrieve information about a Floating IP| `CamelDigitalOceanFloatingIPAddress` _String_| `com.myjeeva.digitalocean.pojo.Key`
@@ -405,7 +362,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
   `CamelDigitalOceanDropletId` _Integer_
 | `com.myjeeva.digitalocean.pojo.Action`
 
-| `unassign` | unassign a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `com.myjeeva.digitalocean.pojo.Action`
+| `unassign` | un-assign a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `com.myjeeva.digitalocean.pojo.Action`
 | `listActions` |  retrieve all actions that have been executed on a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `List<com.myjeeva.digitalocean.pojo.Action>`
 |===
 
@@ -430,15 +387,17 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 
 Get your account info
 
-```
+[source,java]
+----
 from("direct:getAccountInfo")
     .setHeader(DigitalOceanConstants.OPERATION, constant(DigitalOceanOperations.get))
     .to("digitalocean:account?oAuthToken=XXXXXX")
-```
+----
 
 Create a droplet
 
-```
+[source,java]
+----
 from("direct:createDroplet")
     .setHeader(DigitalOceanConstants.OPERATION, constant("create"))
     .setHeader(DigitalOceanHeaders.NAME, constant("myDroplet"))
@@ -446,31 +405,35 @@ from("direct:createDroplet")
     .setHeader(DigitalOceanHeaders.DROPLET_IMAGE, constant("ubuntu-14-04-x64"))
     .setHeader(DigitalOceanHeaders.DROPLET_SIZE, constant("512mb"))
     .to("digitalocean:droplet?oAuthToken=XXXXXX")
-```
+----
 
 List all your droplets
 
-```
+[source,java]
+----
 from("direct:getDroplets")
     .setHeader(DigitalOceanConstants.OPERATION, constant("list"))
     .to("digitalocean:droplets?oAuthToken=XXXXXX")
-```
+----
 
 Retrieve information for the Droplet (dropletId = 34772987)
 
-```
+[source,java]
+----
 from("direct:getDroplet")
     .setHeader(DigitalOceanConstants.OPERATION, constant("get"))
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?oAuthToken=XXXXXX")
-```
+----
 
 Shutdown  information for the Droplet (dropletId = 34772987)
 
-```
+[source,java]
+----
 from("direct:shutdown")
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
-```
+----
 
-include::camel-spring-boot::page$digitalocean-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

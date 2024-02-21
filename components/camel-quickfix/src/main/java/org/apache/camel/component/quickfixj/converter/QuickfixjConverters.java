@@ -87,7 +87,7 @@ public final class QuickfixjConverters {
 
     @Converter
     public static InputStream toInputStream(Message value, Exchange exchange)
-            throws InvalidMessage, ConfigError, UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         if (exchange != null) {
             String charsetName = ExchangeHelper.getCharsetName(exchange);
             if (charsetName != null) {
@@ -100,7 +100,7 @@ public final class QuickfixjConverters {
     }
 
     private static DataDictionary getDataDictionary(Exchange exchange) throws ConfigError {
-        Object dictionaryValue = exchange.getProperties().get(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
+        Object dictionaryValue = exchange.getProperty(QuickfixjEndpoint.DATA_DICTIONARY_KEY);
 
         DataDictionary dataDictionary = null;
         if (dictionaryValue instanceof DataDictionary) {

@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("file:target/data/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait till the exchange is done which means the file should then have been deleted
         oneExchangeDone.matchesWaitTime();
@@ -59,10 +60,10 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
                         .marshal().gzipDeflater()
                         .to("file:target/data/gzip/out?fileName=${file:name}.gz")

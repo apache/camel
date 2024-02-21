@@ -39,7 +39,7 @@ public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
 
         template.sendBodyAndHeader("direct:start", "not an account", TEST_CASE_HEADER_NAME, account);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -47,10 +47,10 @@ public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis:insertAccount?statementType=Insert&inputHeader=" + TEST_CASE_HEADER_NAME)
                         .to("mock:result");

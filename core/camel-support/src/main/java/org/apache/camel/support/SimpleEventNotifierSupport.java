@@ -31,12 +31,14 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class SimpleEventNotifierSupport extends ServiceSupport implements EventNotifier {
 
+    boolean ignoreCamelContextInitEvents;
     boolean ignoreCamelContextEvents;
     boolean ignoreRouteEvents;
     boolean ignoreServiceEvents;
     boolean ignoreExchangeEvents;
     boolean ignoreExchangeCreatedEvent;
     boolean ignoreExchangeCompletedEvent;
+    boolean ignoreExchangeAsyncProcessingStartedEvents = true; // special need for camel-tracing/camel-opentelemetry
     boolean ignoreExchangeFailedEvents;
     boolean ignoreExchangeRedeliveryEvents;
     boolean ignoreExchangeSendingEvents;
@@ -71,6 +73,16 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     @Override
     public boolean isDisabled() {
         return false;
+    }
+
+    @Override
+    public boolean isIgnoreCamelContextInitEvents() {
+        return ignoreCamelContextInitEvents;
+    }
+
+    @Override
+    public void setIgnoreCamelContextInitEvents(boolean ignoreCamelContextInitEvents) {
+        this.ignoreCamelContextInitEvents = ignoreCamelContextInitEvents;
     }
 
     @Override
@@ -179,12 +191,12 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
+    public boolean isIgnoreExchangeAsyncProcessingStartedEvents() {
+        return ignoreExchangeAsyncProcessingStartedEvents;
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // noop
+    public void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents) {
+        this.ignoreExchangeAsyncProcessingStartedEvents = ignoreExchangeAsyncProcessingStartedEvents;
     }
 }

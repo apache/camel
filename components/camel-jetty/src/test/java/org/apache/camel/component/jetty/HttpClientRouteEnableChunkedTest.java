@@ -61,7 +61,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
 
@@ -72,7 +72,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
@@ -80,7 +80,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
                 from("direct:start2").to("http://localhost:{{port}}/hello").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
                         exchange.getMessage().setBody(bis);
                     }

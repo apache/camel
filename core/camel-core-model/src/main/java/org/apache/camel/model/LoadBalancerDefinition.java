@@ -16,21 +16,13 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
-import org.apache.camel.spi.Metadata;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Balances message processing among a number of nodes
  */
-@Metadata(label = "eip,routing")
-@XmlType(name = "loadBalancer")
-@XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("rawtypes")
-public class LoadBalancerDefinition extends IdentifiedType {
+public abstract class LoadBalancerDefinition extends IdentifiedType {
+
     @XmlTransient
     private String loadBalancerTypeName;
 

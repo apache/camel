@@ -52,7 +52,7 @@ public class MainListenerTest {
         main.completed();
         thread.join();
         assertEquals(Arrays.asList("beforeInitialize", "beforeConfigure", "afterConfigure",
-                "configure", "beforeStart", "afterStart", "beforeStop", "afterStop"), events);
+                "beforeStart", "afterStart", "beforeStop", "afterStop"), events);
     }
 
     @Test

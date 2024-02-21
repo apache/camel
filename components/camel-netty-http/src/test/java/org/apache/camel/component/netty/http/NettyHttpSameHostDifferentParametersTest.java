@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,14 +38,14 @@ public class NettyHttpSameHostDifferentParametersTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param2=value2", "Hello Camel", String.class);
         assertEquals("param2=value2", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:foo")
                         .transform().header(Exchange.HTTP_QUERY);

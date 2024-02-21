@@ -18,16 +18,16 @@ package org.apache.camel.component.reactive.streams;
 
 import io.reactivex.Flowable;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EventTypeTest extends CamelTestSupport {
+public class EventTypeTest extends BaseReactiveTest {
 
     @Test
     public void testOnCompleteHeaderForwarded() throws Exception {
@@ -119,7 +119,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flowable.just(1)
                 .map(n -> {
@@ -154,7 +154,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flowable.just(1)
                 .map(n -> {

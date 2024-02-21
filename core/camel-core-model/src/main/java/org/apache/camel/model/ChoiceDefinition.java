@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
@@ -36,19 +38,26 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Routes messages based on a series of predicates
+ * Route messages based on a series of predicates
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")
+@XmlType(propOrder = { "whenClauses", "otherwise" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
-    @XmlElementRef
-    @AsPredicate
-    private List<WhenDefinition> whenClauses = new ArrayList<>();
-    @XmlElement
-    private OtherwiseDefinition otherwise;
 
     private transient boolean onlyWhenOrOtherwise = true;
+
+    @XmlElementRef(name = "when")
+    @AsPredicate
+    @Metadata(description = "Sets the when nodes")
+    private List<WhenDefinition> whenClauses = new ArrayList<>();
+    @XmlElement
+    @Metadata(description = "Sets the otherwise node")
+    private OtherwiseDefinition otherwise;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String precondition;
 
     public ChoiceDefinition() {
     }
@@ -58,7 +67,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
         // wrap the outputs into a list where we can on the inside control the
         // when/otherwise
         // but make it appear as a list on the outside
-        return new AbstractList<ProcessorDefinition<?>>() {
+        return new AbstractList<>() {
 
             public ProcessorDefinition<?> get(int index) {
                 if (index < whenClauses.size()) {
@@ -70,6 +79,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
 
+            @Override
             public boolean add(ProcessorDefinition<?> def) {
                 if (def instanceof WhenDefinition) {
                     return whenClauses.add((WhenDefinition) def);
@@ -86,11 +96,13 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 return whenClauses.size() + (otherwise == null ? 0 : 1);
             }
 
+            @Override
             public void clear() {
                 whenClauses.clear();
                 otherwise = null;
             }
 
+            @Override
             public ProcessorDefinition<?> set(int index, ProcessorDefinition<?> element) {
                 if (index < whenClauses.size()) {
                     if (element instanceof WhenDefinition) {
@@ -106,6 +118,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
 
+            @Override
             public ProcessorDefinition<?> remove(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.remove(index);
@@ -140,6 +153,18 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
         super.addOutput(output);
     }
 
+    public String getPrecondition() {
+        return precondition;
+    }
+
+    /**
+     * Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are
+     * evaluated during startup to keep at runtime only the branch that matched.
+     */
+    public void setPrecondition(String precondition) {
+        this.precondition = precondition;
+    }
+
     @Override
     public ProcessorDefinition<?> end() {
         // we end a block so only when or otherwise is supported
@@ -156,6 +181,28 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Indicates that this Choice EIP is in precondition mode, its branches (when/otherwise) are then evaluated during
+     * startup to keep at runtime only the branch that matched.
+     *
+     * @return the builder
+     */
+    public ChoiceDefinition precondition() {
+        return precondition(true);
+    }
+
+    /**
+     * Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are
+     * evaluated during startup to keep at runtime only the branch that matched.
+     *
+     * @param  precondition the flag indicating if it is in precondition mode or not.
+     * @return              the builder
+     */
+    public ChoiceDefinition precondition(boolean precondition) {
+        setPrecondition(Boolean.toString(precondition));
+        return this;
+    }
 
     /**
      * Sets the predicate for the when node
@@ -231,7 +278,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     }
 
     /**
-     * Sets the when clauses
+     * Sets the when nodes
      */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
@@ -259,14 +306,10 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             if (pre instanceof ExpressionClause) {
                 ExpressionClause<?> clause = (ExpressionClause<?>) pre;
                 if (clause.getExpressionType() != null) {
-                    // if using the Java DSL then the expression may have been
-                    // set using the
-                    // ExpressionClause which is a fancy builder to define
-                    // expressions and predicates
-                    // using fluent builders in the DSL. However we need
-                    // afterwards a callback to
-                    // reset the expression to the expression type the
-                    // ExpressionClause did build for us
+                    // if using the Java DSL then the expression may have been set using the
+                    // ExpressionClause which is a fancy builder to define expressions and predicates
+                    // using fluent builders in the DSL. However, we need afterwards a callback to
+                    // reset the expression to the expression type the ExpressionClause did build for us
                     ExpressionFactory model = clause.getExpressionType();
                     if (model instanceof ExpressionDefinition) {
                         when.setExpression((ExpressionDefinition) model);

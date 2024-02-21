@@ -41,7 +41,7 @@ public class HazelcastSedaInOnlyTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         mock.reset();
     }
 

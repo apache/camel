@@ -31,7 +31,7 @@ public class MinaVmTest extends BaseMinaTest {
         template.sendBodyAndHeader(String.format("mina:vm://localhost:%1$s?sync=false&minaLogger=true", getPort()), body,
                 "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MinaVmTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:vm://localhost:%1$s?sync=false&minaLogger=true", getPort()))
+                fromF("mina:vm://localhost:%1$s?sync=false&minaLogger=true", getPort())
                         .to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
             }
         };

@@ -24,14 +24,34 @@ package org.apache.camel.util;
  */
 public final class CamelURIParser {
 
+    public static final String[] URI_ALREADY_NORMALIZED = new String[] {};
+
     private CamelURIParser() {
+    }
+
+    /**
+     * Parses the URI (in fast mode).
+     *
+     * If this parser cannot parse the uri then <tt>null</tt> is returned. And instead the follow code can be used:
+     *
+     * <pre>
+     * URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
+     * </pre>
+     *
+     * @param  uri the uri
+     *
+     * @return     <tt>null</tt> if not possible to parse, if the uri is already normalized, then
+     *             {@link #URI_ALREADY_NORMALIZED} is returned, or an array[3] with scheme,path,query
+     */
+    public static String[] fastParseUri(String uri) {
+        return doParseUri(uri, true);
     }
 
     /**
      * Parses the URI.
      *
      * If this parser cannot parse the uri then <tt>null</tt> is returned. And instead the follow code can be used:
-     * 
+     *
      * <pre>
      * URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
      * </pre>
@@ -41,6 +61,10 @@ public final class CamelURIParser {
      * @return     <tt>null</tt> if not possible to parse, or an array[3] with scheme,path,query
      */
     public static String[] parseUri(String uri) {
+        return doParseUri(uri, false);
+    }
+
+    private static String[] doParseUri(String uri, boolean fastParse) {
         int schemeStart = 0;
         int schemeEnd = 0;
         int pathStart = 0;
@@ -84,6 +108,17 @@ public final class CamelURIParser {
 
         String scheme = null;
         if (schemeEnd != 0) {
+
+            // optimized if there are no query and the uri is already in camel style
+            if (fastParse && queryStart == 0 && pathStart + 1 < len) {
+                char ch = uri.charAt(schemeEnd);
+                char ch2 = uri.charAt(pathStart);
+                char ch3 = uri.charAt(pathStart + 1);
+                if (ch == ':' && ch2 == '/' && ch3 == '/') {
+                    return URI_ALREADY_NORMALIZED;
+                }
+            }
+
             scheme = uri.substring(schemeStart, schemeEnd);
         }
         if (scheme == null) {

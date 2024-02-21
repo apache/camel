@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "micrometer-prometheus",
+    "title": "Micrometer Prometheus",
+    "description": "Camel Micrometer Prometheus for Camel Main",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-micrometer-prometheus",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

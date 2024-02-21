@@ -1,0 +1,18 @@
+{
+  "id" : "4adf6297-55fa-472b-8e08-b9060f6440b2",
+  "name" : "domains_create_response.json",
+  "request" : {
+    "url" : "/v3/domains",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 201,
+    "body" : "{\"domain\":{\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/domains\/98c110ae41c249189c9d5c25d8377b65\"},\"enabled\":true,\"description\":\"Domain used for CRUD tests\",\"name\":\"Domain_CRUD\",\"id\":\"98c110ae41c249189c9d5c25d8377b65\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "4adf6297-55fa-472b-8e08-b9060f6440b2",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

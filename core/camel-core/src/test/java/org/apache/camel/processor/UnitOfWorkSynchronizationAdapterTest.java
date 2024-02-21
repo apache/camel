@@ -30,7 +30,7 @@ public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
                 from("seda:async").to("direct:foo");
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        log.info("Received: " + exchange);
+                        log.info("Received: {}", exchange);
 
                         exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
                             @Override

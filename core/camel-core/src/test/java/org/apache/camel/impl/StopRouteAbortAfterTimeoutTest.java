@@ -22,18 +22,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledOnOs(OS.WINDOWS)
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        // doesnt test to well on all Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
 
@@ -48,7 +46,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
         // confirm that route is still running
         assertFalse(stopRouteResponse, "stopRoute response should be False");
-        assertEquals(true, context.getRouteController().getRouteStatus("start").isStarted(), "route should still be started");
+        assertTrue(context.getRouteController().getRouteStatus("start").isStarted(), "route should still be started");
 
         // send some more messages through the route
         for (int i = 5; i < 10; i++) {
@@ -60,11 +58,6 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        // doesnt test to well on all Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
         // send some message through the route
@@ -78,7 +71,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
         // the route should have been forced stopped
         assertTrue(stopRouteResponse, "stopRoute response should be True");
-        assertEquals(true, context.getRouteController().getRouteStatus("start").isStopped(), "route should be stopped");
+        assertTrue(context.getRouteController().getRouteStatus("start").isStopped(), "route should be stopped");
 
         int before = mockEP.getExchanges().size();
 

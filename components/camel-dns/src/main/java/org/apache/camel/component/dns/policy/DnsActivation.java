@@ -30,7 +30,7 @@ import javax.naming.directory.InitialDirContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* 
+/*
  * Check if a hostname resolves to a specified cname or an ip
  */
 public class DnsActivation {
@@ -86,7 +86,7 @@ public class DnsActivation {
 
         List<String> resolved = new ArrayList<>();
         while (!hostnames.isEmpty()) {
-            NamingEnumeration attributeEnumeration = null;
+            NamingEnumeration<?> attributeEnumeration = null;
             try {
                 String hostname = hostnames.remove(0);
                 InetAddress inetAddress = InetAddress.getByName(hostname);

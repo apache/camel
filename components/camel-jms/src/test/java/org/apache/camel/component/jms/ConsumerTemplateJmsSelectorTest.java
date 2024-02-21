@@ -16,41 +16,37 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConsumerTemplateJmsSelectorTest extends CamelTestSupport {
+public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
 
     @Test
-    public void testJmsSelector() throws Exception {
+    public void testJmsSelector() {
         // must start CamelContext because use route builder is false
         context.start();
 
-        template.sendBodyAndHeader("activemq:foo", "Hello World", "foo", "123");
-        template.sendBodyAndHeader("activemq:foo", "Bye World", "foo", "456");
+        template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Bye World", "foo", "456");
 
-        String body = consumer.receiveBody("activemq:foo?selector=foo='456'", 5000, String.class);
+        String body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest?selector=foo='456'", 5000, String.class);
         assertEquals("Bye World", body);
 
-        body = consumer.receiveBody("activemq:foo", 5000, String.class);
+        body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest", 5000, String.class);
         assertEquals("Hello World", body);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent to rember the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+    protected void createConnectionFactory(CamelContext camelContext) {
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
-        return camelContext;
     }
 
     @Override

@@ -28,21 +28,21 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.BodyPart;
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
-import javax.mail.internet.ParseException;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
+import jakarta.mail.Session;
+import jakarta.mail.internet.ContentType;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
+import jakarta.mail.internet.ParseException;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -58,7 +58,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Dataformat("mime-multipart")
+@Dataformat("mimeMultipart")
 public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
@@ -69,7 +69,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String multipartSubType = "mixed";
     private boolean multipartWithoutAttachment;
     private boolean headersInline;
-    private Pattern includeHeaders;
+    private String includeHeaders;
+    private Pattern includeHeadersPattern;
     private boolean binaryContent;
 
     public void setBinaryContent(boolean binaryContent) {
@@ -81,7 +82,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     }
 
     public void setIncludeHeaders(String includeHeaders) {
-        this.includeHeaders = Pattern.compile(includeHeaders, Pattern.CASE_INSENSITIVE);
+        this.includeHeaders = includeHeaders;
     }
 
     public void setMultipartWithoutAttachment(boolean multipartWithoutAttachment) {
@@ -107,6 +108,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
             if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+                List<String> idsToRemove = new ArrayList<>();
                 for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
                         .entrySet()) {
                     String attachmentFilename = entry.getKey();
@@ -119,6 +121,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                     part.setHeader(CONTENT_TYPE, ct);
                     if (!contentType.match("text/*") && binaryContent) {
                         part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
+                    } else {
+                        setContentTransferEncoding(part, contentType);
                     }
                     // Set headers to the attachment
                     for (String headerName : attachment.getHeaderNames()) {
@@ -128,15 +132,18 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         }
                     }
                     mp.addBodyPart(part);
-                    exchange.getMessage(AttachmentMessage.class).removeAttachment(attachmentFilename);
+                    idsToRemove.add(attachmentFilename);
+                }
+                for (String id : idsToRemove) {
+                    exchange.getMessage(AttachmentMessage.class).removeAttachment(id);
                 }
             }
             mm.setContent(mp);
             // copy headers if required and if the content can be converted into
             // a String
-            if (headersInline && includeHeaders != null) {
+            if (headersInline && includeHeadersPattern != null) {
                 for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                    if (includeHeaders.matcher(entry.getKey()).matches()) {
+                    if (includeHeadersPattern.matcher(entry.getKey()).matches()) {
                         String headerStr = ExchangeHelper.convertToType(exchange, String.class, entry.getValue());
                         if (headerStr != null) {
                             mm.setHeader(entry.getKey(), headerStr);
@@ -156,7 +163,6 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                         headers.add(h.getName());
                     }
                 }
-                mm.saveChanges();
             }
             mm.writeTo(stream, headers.toArray(new String[0]));
         } else {
@@ -183,6 +189,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private void writeBodyPart(byte[] bodyContent, Part part, ContentType contentType) throws MessagingException {
         DataSource ds = new ByteArrayDataSource(bodyContent, contentType.toString());
         part.setDataHandler(new DataHandler(ds));
+        setContentTransferEncoding(part, contentType);
+    }
+
+    private void setContentTransferEncoding(Part part, ContentType contentType) throws MessagingException {
         part.setHeader(CONTENT_TYPE, contentType.toString());
         if (contentType.match("text/*")) {
             part.setHeader(CONTENT_TRANSFER_ENCODING, "8bit");
@@ -203,7 +213,6 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             mimeMessage = new MimeBodyPart(stream);
             camelMessage = exchange.getMessage();
             MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
-            contentType = mimeMessage.getHeader(CONTENT_TYPE, null);
             // write the MIME headers not generated by javamail as Camel headers
             Enumeration<?> headersEnum = mimeMessage.getNonMatchingHeaders(STANDARD_HEADERS);
             while (headersEnum.hasMoreElements()) {
@@ -243,7 +252,6 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             dh = mimeMessage.getDataHandler();
             if (dh != null) {
                 content = dh.getContent();
-                contentType = dh.getContentType();
             }
         } catch (MessagingException e) {
             LOG.warn("cannot parse message, no unmarshalling done");
@@ -304,8 +312,16 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         }
         // or a generated content id
         if (key == null) {
-            key = UUID.randomUUID().toString() + "@camel.apache.org";
+            key = UUID.randomUUID() + "@camel.apache.org";
         }
         return MimeUtility.decodeText(key);
     }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (includeHeaders != null) {
+            this.includeHeadersPattern = Pattern.compile(includeHeaders, Pattern.CASE_INSENSITIVE);
+        }
+    }
+
 }

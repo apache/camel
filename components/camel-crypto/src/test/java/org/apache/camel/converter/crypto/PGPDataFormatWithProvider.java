@@ -20,7 +20,7 @@ public class PGPDataFormatWithProvider extends PGPDataFormatTest {
 
     @Override
     protected String getProvider() {
-        return "BC"; //"IAIK"; 
+        return "BC"; //"IAIK";
     }
 
 }

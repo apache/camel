@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +32,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -372,11 +374,12 @@ public class ServiceCallConfigurationTest {
 
             assertTrue(lb.getServiceDiscovery() instanceof StaticServiceDiscovery);
 
+            Exchange exchange = new DefaultExchange(context);
             List<ServiceDefinition> services1 = lb.getServiceDiscovery().getServices("hello-service");
-            assertEquals(2, filter.apply(services1).size());
+            assertEquals(2, filter.apply(exchange, services1).size());
 
             List<ServiceDefinition> services2 = lb.getServiceDiscovery().getServices("hello-svc");
-            assertEquals(1, filter.apply(services2).size());
+            assertEquals(1, filter.apply(exchange, services2).size());
 
         } finally {
             if (context != null) {

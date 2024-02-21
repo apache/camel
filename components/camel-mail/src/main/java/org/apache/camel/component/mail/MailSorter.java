@@ -18,15 +18,14 @@ package org.apache.camel.component.mail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 
-import com.sun.mail.imap.SortTerm;
+import org.eclipse.angus.mail.imap.SortTerm;
 
 /**
  * Utility class for sorting of mail messages
@@ -84,26 +83,23 @@ public final class MailSorter {
      *                                order
      */
     private static void sortMessages(Message[] messages, final List<SortTermWithDescending> sortTermsWithDescending) {
-        Arrays.sort(messages, new Comparator<Message>() {
-            @Override
-            public int compare(Message m1, Message m2) {
-                try {
-                    for (SortTermWithDescending reversableTerm : sortTermsWithDescending) {
-                        int comparison = compareMessageProperty(m1, m2, reversableTerm.getTerm());
-                        // Descending
-                        if (reversableTerm.isDescending()) {
-                            comparison = -comparison;
-                        }
-                        // Abort on first non-equal
-                        if (comparison != 0) {
-                            return comparison;
-                        }
+        Arrays.sort(messages, (Message m1, Message m2) -> {
+            try {
+                for (SortTermWithDescending reversableTerm : sortTermsWithDescending) {
+                    int comparison = compareMessageProperty(m1, m2, reversableTerm.getTerm());
+                    // Descending
+                    if (reversableTerm.isDescending()) {
+                        comparison = -comparison;
                     }
-                    // Equal
-                    return 0;
-                } catch (MessagingException e) {
-                    throw new IllegalArgumentException(e);
+                    // Abort on first non-equal
+                    if (comparison != 0) {
+                        return comparison;
+                    }
                 }
+                // Equal
+                return 0;
+            } catch (MessagingException e) {
+                throw new IllegalArgumentException(e);
             }
         });
     }
@@ -111,11 +107,11 @@ public final class MailSorter {
     /**
      * Compare the value of the property of the two messages.
      *
-     * @param  msg1                          Message 1
-     * @param  msg2                          Message 2
-     * @param  property                      Property to compare
-     * @return                               msg1.property.compareTo(msg2.property)
-     * @throws javax.mail.MessagingException If message data could not be read.
+     * @param  msg1                            Message 1
+     * @param  msg2                            Message 2
+     * @param  property                        Property to compare
+     * @return                                 msg1.property.compareTo(msg2.property)
+     * @throws jakarta.mail.MessagingException If message data could not be read.
      */
     private static int compareMessageProperty(Message msg1, Message msg2, SortTerm property) throws MessagingException {
         if (property.equals(SortTerm.TO)) {

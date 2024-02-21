@@ -21,6 +21,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XsltEndpoint target = (XsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "deleteoutputfile":
@@ -46,6 +48,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": target.setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
         case "uriresolver":
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": target.setXsltMessageLogger(property(camelContext, org.apache.camel.component.xslt.XsltMessageLogger.class, value)); return true;
         default: return false;
         }
     }
@@ -53,6 +57,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
         case "deleteoutputfile":
@@ -78,6 +84,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": return org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class;
         case "uriresolver":
         case "uriResolver": return javax.xml.transform.URIResolver.class;
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": return org.apache.camel.component.xslt.XsltMessageLogger.class;
         default: return null;
         }
     }
@@ -86,6 +94,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XsltEndpoint target = (XsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "deleteoutputfile":
@@ -111,6 +121,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": return target.getTransformerFactoryConfigurationStrategy();
         case "uriresolver":
         case "uriResolver": return target.getUriResolver();
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": return target.getXsltMessageLogger();
         default: return null;
         }
     }

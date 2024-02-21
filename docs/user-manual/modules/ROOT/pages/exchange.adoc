@@ -1,12 +1,20 @@
-[[Exchange-MessageExchange]]
 = Message Exchange
 
-To support various message exchange patterns
-like one way Event Message and
-Request Reply messages Camel uses an Exchange
-interface which has a *pattern* property which can be set to *InOnly*
-for an Event Message which has a single inbound
-Message, or *InOut* for a
-Request Reply where there is an inbound and
-outbound Message.
+A request message and its corresponding reply or exception message is represented in Camel using the `Exchange` interface.
+This interface provides an abstraction for this pattern of communication between systems.
+The presence of a reply message is optional and depends on the xref:exchange-pattern.adoc[exchange pattern] used in the integration.
+Thanks to this, Apache Camel can support different integration patterns such as:
 
+* xref:components:eips:event-message.adoc[Event Messages]: messages that have only an inbound message
+* xref:components:eips:requestReply-eip.adoc[Request and Reply]: messages that have an inbound and an outbound message.
+
+== Learn More About Exchanges
+
+* xref:manual::exchange-pooling.adoc[Exchange Pooling]
+* xref:manual::using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
+
+== Implementation Details
+
+There are concrete classes that implement the `Exchange` interface for each Camel-supported communications technology. For example, the `JmsExchange` class provides a JMS-specific implementation of the `Exchange` interface. The public API of the `Exchange` interface is limited intentionally: we expect that each class that implements this interface will provide its own technology-specific operations.
+
+Application-level programmers rarely access the `Exchange` interface (or classes that implement it) directly. However, many classes in Camel are generic types that are instantiated on (a class that implements) `Exchange`. Because of this, the `Exchange` interface appears a lot in the generic signatures of classes and methods.

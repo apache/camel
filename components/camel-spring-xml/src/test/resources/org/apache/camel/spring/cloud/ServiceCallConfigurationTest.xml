@@ -26,6 +26,7 @@
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <serviceCallConfiguration id="conf1">
       <staticServiceDiscovery>

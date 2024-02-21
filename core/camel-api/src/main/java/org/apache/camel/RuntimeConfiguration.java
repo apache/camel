@@ -23,7 +23,7 @@ package org.apache.camel;
 public interface RuntimeConfiguration {
 
     /**
-     * Sets whether stream caching is enabled or not (default is disabled).
+     * Sets whether stream caching is enabled or not (default is enabled).
      *
      * @param cache whether stream caching is enabled or not
      */
@@ -37,7 +37,9 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
-     * Sets whether tracing is enabled or not (default is disabled).
+     * Returns whether tracing enabled
+     *
+     * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.
      *
      * @param tracing whether to enable tracing.
      */
@@ -46,7 +48,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether tracing enabled
      *
-     * To use tracing then this must be enabled on startup to be installed in the CamelContext.
+     * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.
      *
      * @return <tt>true</tt> if tracing is enabled
      */
@@ -114,14 +116,14 @@ public interface RuntimeConfiguration {
 
     /**
      * Sets whether security mask for Logging is enabled or not (default is disabled).
-     * 
+     *
      * @param logMask <tt>true</tt> if mask is enabled
      */
     void setLogMask(Boolean logMask);
 
     /**
      * Gets whether security mask for Logging is enabled or not.
-     * 
+     *
      * @return <tt>true</tt> if mask is enabled
      */
     Boolean isLogMask();
@@ -135,7 +137,7 @@ public interface RuntimeConfiguration {
 
     /**
      * Returns whether to log exhausted message body with message history.
-     * 
+     *
      * @return <tt>true</tt> if logging of message body is enabled
      */
     Boolean isLogExhaustedMessageBody();

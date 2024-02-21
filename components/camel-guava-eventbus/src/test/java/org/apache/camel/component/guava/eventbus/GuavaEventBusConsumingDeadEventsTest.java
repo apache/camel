@@ -22,6 +22,7 @@ import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -33,10 +34,10 @@ public class GuavaEventBusConsumingDeadEventsTest extends CamelTestSupport {
     EventBus eventBus = new EventBus();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener")
                         .to("mock:customListenerEvents");
 
@@ -56,9 +57,9 @@ public class GuavaEventBusConsumingDeadEventsTest extends CamelTestSupport {
 
         // Then
         getMockEndpoint("mock:customListenerEvents").setExpectedMessageCount(0);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         getMockEndpoint("mock:deadEvents").setExpectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(message,
                 getMockEndpoint("mock:deadEvents").getExchanges().get(0).getIn().getBody(DeadEvent.class).getEvent());
     }

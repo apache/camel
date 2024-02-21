@@ -50,7 +50,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
 
         assertEquals(4, order.size());
         assertEquals("seda://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
@@ -78,7 +78,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         };
     }
 
-    public class MyServiceBean extends ServiceSupport implements Processor {
+    public static class MyServiceBean extends ServiceSupport implements Processor {
 
         private String name;
         private boolean started;

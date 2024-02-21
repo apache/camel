@@ -35,13 +35,15 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
 
         // START SNIPPET: e2
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/storedProcedureTest.sql").build();
         // END SNIPPET: e2
 
         reg.bind("jdbc/myDataSource", db);
@@ -53,7 +55,9 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -63,17 +67,17 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
 
         template.requestBody("direct:query", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertNotNull(exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
 
                 from("direct:query").to("sql-stored:NILADIC()?dataSource=#jdbc/myDataSource").to("mock:query");

@@ -40,7 +40,7 @@ public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
         // those 2 options not allowed together
         try {
             template.sendBodyAndHeader("direct:start", "Hello World", "foo",
-                    "file://target/data/test?fileExist=Append&tempPrefix=hello");
+                    fileUri("?fileExist=Append&tempPrefix=hello"));
             fail("Should fail");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultHttpRegistry implements HttpRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
-    private static Map<String, HttpRegistry> registries = new HashMap<>();
+    private static final Map<String, HttpRegistry> registries = new HashMap<>();
 
     private final Object lock = new Object();
 
@@ -46,12 +46,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
      * Lookup or create a new registry if none exists with the given name
      */
     public static synchronized HttpRegistry getHttpRegistry(String name) {
-        HttpRegistry answer = registries.get(name);
-        if (answer == null) {
-            answer = new DefaultHttpRegistry();
-            registries.put(name, answer);
-        }
-        return answer;
+        return registries.computeIfAbsent(name, k -> new DefaultHttpRegistry());
     }
 
     /**
@@ -89,13 +84,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
 
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
-        CamelServlet camelServlet = provider;
-        camelServlet.setServletName((String) properties.get("servlet-name"));
-        register(camelServlet);
-    }
-
-    public void unregister(HttpRegistryProvider provider, Map<String, Object> properties) {
-        unregister(provider);
+        provider.setServletName((String) properties.get("servlet-name"));
+        register(provider);
     }
 
     @Override

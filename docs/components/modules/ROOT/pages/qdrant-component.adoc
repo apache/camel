@@ -1,0 +1,1 @@
+../../../../../components/camel-qdrant/src/main/docs/qdrant-component.adoc

@@ -91,12 +91,12 @@ public class JsonStreamTest {
 
     @Test
     public void oneChar() throws Exception {
-        test("json_stream/oneChar", "UTF-8", "1");
+        test("json_stream/oneChar.txt", "UTF-8", "1");
     }
 
     @Test
     public void fourChar() throws Exception {
-        test("json_stream/fourChar", "UTF-8", "1234");
+        test("json_stream/fourChar.txt", "UTF-8", "1234");
     }
 
     private void test(String file, String encoding) throws Exception {

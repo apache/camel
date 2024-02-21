@@ -47,6 +47,9 @@ public class AggregatorLockingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // in case of blocked thread then retry
+                errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(1));
+
                 from("seda:a?concurrentConsumers=2").aggregate(header("myId"), new UseLatestAggregationStrategy())
                         .completionSize(1)
                         // N.B. *no* parallelProcessing() nor optimisticLocking() !
@@ -64,7 +67,7 @@ public class AggregatorLockingTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 latch.countDown();
                                 // block until the other thread counts down as well
-                                if (!latch.await(5, TimeUnit.SECONDS)) {
+                                if (!latch.await(1, TimeUnit.SECONDS)) {
                                     throw new RuntimeException("Took too long; assume threads are blocked and fail test");
                                 }
                             }

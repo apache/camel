@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  * Expose gRPC endpoints and access external gRPC endpoints.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service",
-             category = { Category.RPC })
+             category = { Category.RPC }, headersClass = GrpcConstants.class)
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;
@@ -38,7 +38,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
     private String serviceName;
     private String servicePackage;
 
-    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) throws Exception {
+    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }
@@ -49,6 +49,9 @@ public class GrpcEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        if (configuration.isToRouteControlledStreamObserver()) {
+            return new GrpcProducerToRouteControlledStreamObserver(this);
+        }
         GrpcProducer producer = new GrpcProducer(this, configuration);
         if (configuration.isSynchronous()) {
             return new SynchronousDelegateProducer(producer);

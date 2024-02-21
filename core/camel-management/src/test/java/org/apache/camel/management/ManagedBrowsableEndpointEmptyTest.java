@@ -21,20 +21,19 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 
     @Test
     public void testBrowseableEndpointEmpty() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out
                 = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 0 }, new String[] { "java.lang.Integer" });

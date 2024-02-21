@@ -64,7 +64,7 @@ public class CanonicalOutputStream extends FilterOutputStream {
     }
 
     @Override
-    public void write(byte buf[], int off, int len) throws IOException {
+    public void write(byte[] buf, int off, int len) throws IOException {
         for (int i = off; i != off + len; i++) {
             this.write(buf[i]);
         }

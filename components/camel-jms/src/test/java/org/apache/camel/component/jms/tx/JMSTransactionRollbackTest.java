@@ -18,14 +18,15 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
-public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMSTransactionRollbackTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -38,14 +39,14 @@ public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:before").expectedMessageCount(6);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionRollbackTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class MyProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             throw new IllegalArgumentException("Forced Exception");
         }
     }

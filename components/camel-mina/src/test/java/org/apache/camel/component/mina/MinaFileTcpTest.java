@@ -28,7 +28,7 @@ public class MinaFileTcpTest extends BaseMinaTest {
         endpoint.expectedMessageCount(1);
         endpoint.message(0).body().startsWith("Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -37,10 +37,10 @@ public class MinaFileTcpTest extends BaseMinaTest {
 
             public void configure() {
                 // lets setup a server
-                from(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort())).to("mock:results");
+                fromF("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort()).to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt")
-                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort()));
+                        .toF("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort());
             }
         };
     }

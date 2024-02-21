@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import java.util.Map;
+
+import org.apache.camel.Headers;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
-public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
+public class SpringJmsRoutingSlipInOutTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -35,9 +38,33 @@ public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
     public void testInOutRoutingSlip() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Result-Done-B-A-Hello");
 
-        template.sendBody("activemq:queue:start", "Hello");
+        template.sendBody("activemq:queue:SpringJmsRoutingSlipInOutTest.start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    public static final class MyBean {
+
+        public void createSlip(@Headers Map<String, Object> headers) {
+            headers.put("mySlip",
+                    "activemq:queue:SpringJmsRoutingSlipInOutTest.a,activemq:queue:SpringJmsRoutingSlipInOutTest.b");
+        }
+
+        public String backFromSlip(String body) {
+            return "Done-" + body;
+        }
+
+        public String doA(String body) {
+            return "A-" + body;
+        }
+
+        public String doB(String body) {
+            return "B-" + body;
+        }
+
+        public String doResult(String body) {
+            return "Result-" + body;
+        }
     }
 
 }

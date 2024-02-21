@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -43,11 +41,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
+public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements RuntimeEndpointRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRuntimeEndpointRegistry.class);
-
-    private CamelContext camelContext;
 
     // route id -> endpoint urls
     private Map<String, Set<String>> inputs;
@@ -57,16 +53,6 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private volatile boolean extended;
     private EndpointUtilizationStatistics inputUtilization;
     private EndpointUtilizationStatistics outputUtilization;
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
 
     @Override
     public boolean isEnabled() {
@@ -116,16 +102,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue()) {
-                Long hits = 0L;
-                if (extended) {
-                    String key = asUtilizationKey(routeId, uri);
-                    if (key != null) {
-                        hits = inputUtilization.getStatistics().get(key);
-                        if (hits == null) {
-                            hits = 0L;
-                        }
-                    }
-                }
+                Long hits = getHits(routeId, uri, inputUtilization);
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
             }
         }
@@ -134,21 +111,26 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue().keySet()) {
-                Long hits = 0L;
-                if (extended) {
-                    String key = asUtilizationKey(routeId, uri);
-                    if (key != null) {
-                        hits = outputUtilization.getStatistics().get(key);
-                        if (hits == null) {
-                            hits = 0L;
-                        }
-                    }
-                }
+                Long hits = getHits(routeId, uri, outputUtilization);
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
             }
         }
 
         return answer;
+    }
+
+    private Long getHits(String routeId, String uri, EndpointUtilizationStatistics statistics) {
+        Long hits = 0L;
+        if (extended) {
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                hits = statistics.getStatistics().get(key);
+                if (hits == null) {
+                    hits = 0L;
+                }
+            }
+        }
+        return hits;
     }
 
     @Override
@@ -188,7 +170,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     protected void doInit() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext", this);
+        ObjectHelper.notNull(getCamelContext(), "camelContext", this);
 
         if (inputs == null) {
             inputs = new HashMap<>();
@@ -205,11 +187,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
         }
         if (extended) {
-            LOG.info(
+            LOG.debug(
                     "Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})",
                     limit);
         } else {
-            LOG.info(
+            LOG.debug(
                     "Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})",
                     limit);
         }
@@ -273,8 +255,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String uri = endpoint.getEndpointUri();
 
             Map<String, String> uris = outputs.get(routeId);
-            if (uris != null && !uris.containsKey(uri)) {
-                uris.put(uri, uri);
+            if (uris != null) {
+                uris.putIfAbsent(uri, uri);
             }
             if (extended) {
                 String key = asUtilizationKey(routeId, uri);

@@ -22,7 +22,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +60,7 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
-                context.adapt(ExtendedCamelContext.class).addInterceptStrategy(interceptor);
+                context.getCamelContextExtension().addInterceptStrategy(interceptor);
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

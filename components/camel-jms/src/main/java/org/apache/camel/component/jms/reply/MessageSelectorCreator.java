@@ -34,6 +34,7 @@ public class MessageSelectorCreator {
     protected final ConcurrentSkipListSet<String> correlationIds;
     protected volatile boolean dirty = true;
     protected StringBuilder expression;
+    private final Object lock = new Object();
 
     public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {
         this.timeoutMap = timeoutMap;
@@ -44,43 +45,47 @@ public class MessageSelectorCreator {
         this.correlationIds = new ConcurrentSkipListSet<>();
     }
 
-    public synchronized String get() {
-        if (!dirty) {
-            return expression.toString();
-        }
+    public String get() {
+        synchronized (lock) {
+            if (!dirty) {
+                return expression.toString();
+            }
 
-        expression = new StringBuilder("JMSCorrelationID='");
+            expression = new StringBuilder("JMSCorrelationID='");
 
-        if (correlationIds.size() == 0) {
-            // no id's so use a dummy to select nothing
-            expression.append("CamelDummyJmsMessageSelector'");
-        } else {
-            boolean first = true;
-            for (String value : correlationIds) {
-                if (!first) {
-                    expression.append(" OR JMSCorrelationID='");
-                }
-                expression.append(value).append("'");
-                if (first) {
-                    first = false;
+            if (correlationIds.isEmpty()) {
+                // no id's so use a dummy to select nothing
+                expression.append("CamelDummyJmsMessageSelector'");
+            } else {
+                boolean first = true;
+                for (String value : correlationIds) {
+                    if (!first) {
+                        expression.append(" OR JMSCorrelationID='");
+                    }
+                    expression.append(value).append("'");
+                    if (first) {
+                        first = false;
+                    }
                 }
             }
+
+            String answer = expression.toString();
+
+            dirty = false;
+            return answer;
         }
-
-        String answer = expression.toString();
-
-        dirty = false;
-        return answer;
     }
 
     // Changes to live correlation-ids invalidate existing message selector
     private void timeoutEvent(TimeoutMap.Listener.Type type, String cid) {
-        if (type == Put) {
-            correlationIds.add(cid);
-        } else if (type == Remove || type == Evict) {
-            correlationIds.remove(cid);
+        synchronized (lock) {
+            if (type == Put) {
+                correlationIds.add(cid);
+            } else if (type == Remove || type == Evict) {
+                correlationIds.remove(cid);
+            }
+            dirty = true;
         }
-        dirty = true;
     }
 
 }

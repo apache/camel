@@ -19,7 +19,6 @@ package org.apache.camel.component.nitrite;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -27,7 +26,7 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class AbstractNitriteTest extends CamelTestSupport implements BeforeEachCallback {
+public abstract class AbstractNitriteTest extends CamelTestSupport implements BeforeEachCallback {
 
     protected String testMethodName;
 
@@ -55,7 +54,7 @@ public class AbstractNitriteTest extends CamelTestSupport implements BeforeEachC
                 return 0;
             }
             return Long.compare(timestamp1, timestamp2);
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
 }

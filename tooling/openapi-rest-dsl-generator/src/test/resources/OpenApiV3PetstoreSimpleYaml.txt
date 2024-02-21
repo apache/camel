@@ -1,0 +1,10 @@
+- rest:
+    put:
+    - path: "/pet"
+      consumes: "application/json,text/xml"
+      produces: "application/json,text/xml"
+      param:
+      - name: "body"
+        required: true
+        type: "body"
+      to: "direct:rest1"

@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactor.engine;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
@@ -32,7 +33,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnCompleteHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnComplete=true")
                         .to("mock:endpoint");
             }
@@ -55,7 +56,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnCompleteHeaderNotForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -76,7 +77,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnNextHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -101,7 +102,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnErrorHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnError=true")
                         .to("mock:endpoint");
             }
@@ -111,7 +112,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flux.just(1)
                 .map(n -> {
@@ -135,7 +136,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnErrorHeaderNotForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -145,7 +146,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
 
         context.start();
 
-        RuntimeException ex = new RuntimeException("1");
+        RuntimeException ex = new RuntimeCamelException("1");
 
         Flux.just(1)
                 .map(n -> {

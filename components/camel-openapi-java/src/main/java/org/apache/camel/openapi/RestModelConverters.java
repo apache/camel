@@ -16,78 +16,131 @@
  */
 package org.apache.camel.openapi;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import io.apicurio.datamodels.core.models.Extension;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.models.OasSchema;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Definitions;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 
 /**
- * A Camel extended {@link ModelConverters} where we appending vendor extensions to include the java class name of the
- * model classes.
+ * A Camel extended {@link ModelConverters} where we are appending vendor extensions to include the java class name of
+ * the model classes.
  */
+@SuppressWarnings("rawtypes")
 public class RestModelConverters {
 
-    public List<? extends OasSchema> readClass(OasDocument oasDocument, Class<?> clazz) {
+    private static final ModelConverters MODEL31_CONVERTERS;
+
+    static {
+        MODEL31_CONVERTERS = ModelConverters.getInstance(true);
+        MODEL31_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver(true)));
+    }
+
+    private static final ModelConverters MODEL30_CONVERTERS;
+
+    static {
+        MODEL30_CONVERTERS = ModelConverters.getInstance();
+        MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
+    }
+
+    private static final ModelConverters MODEL20_CONVERTERS;
+
+    static {
+        MODEL20_CONVERTERS = ModelConverters.getInstance();
+        MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
+    }
+
+    private final boolean openapi31;
+
+    public RestModelConverters(boolean openapi31) {
+        this.openapi31 = openapi31;
+    }
+
+    public List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz) {
         if (clazz.equals(java.io.File.class)) {
             // File is a special type in OAS2 / OAS3 (no model)
             return null;
-        } else if (oasDocument instanceof Oas20Document) {
-            return readClassOas20((Oas20Document) oasDocument, clazz);
-        } else if (oasDocument instanceof Oas30Document) {
-            return readClassOas30((Oas30Document) oasDocument, clazz);
         } else {
-            return null;
+            return readClassOpenApi3(clazz);
         }
     }
 
-    private List<? extends OasSchema> readClassOas30(Oas30Document oasDocument, Class<?> clazz) {
+    private List<? extends Schema<?>> readClassOpenApi3(Class<?> clazz) {
         String name = clazz.getName();
         if (!name.contains(".")) {
             return null;
         }
-        if (oasDocument.components == null) {
-            oasDocument.components = oasDocument.createComponents();
-        }
-        Oas30SchemaDefinition model = oasDocument.components.createSchemaDefinition(clazz.getSimpleName());
-        oasDocument.components.addSchemaDefinition(clazz.getSimpleName(), model);
-        model.type = clazz.getSimpleName();
-        Extension extension = model.createExtension();
-        extension.name = "x-className";
-        Map<String, String> value = new HashMap<String, String>();
-        value.put("type", "string");
-        value.put("format", name);
-        extension.value = value;
-        model.addExtension("x-className", extension);
-        return oasDocument.components.getSchemaDefinitions();
+
+        ModelConverters modelConverters = openapi31 ? MODEL31_CONVERTERS : MODEL30_CONVERTERS;
+        Map<String, Schema> swaggerModel = modelConverters.readAll(clazz);
+        List<Schema<?>> modelSchemas = new java.util.ArrayList<>();
+        swaggerModel.forEach((key, schema) -> {
+            schema.setName(key);
+            modelSchemas.add(schema);
+        });
+        return modelSchemas;
     }
 
-    private List<? extends OasSchema> readClassOas20(Oas20Document oasDocument, Class<?> clazz) {
-        String name = clazz.getName();
-        if (!name.contains(".")) {
-            return null;
+    private static class FqnModelResolver extends ModelResolver {
+        public FqnModelResolver() {
+            this(false);
         }
-        if (oasDocument.definitions == null) {
-            oasDocument.definitions = oasDocument.createDefinitions();
+
+        public FqnModelResolver(boolean openapi31) {
+            this(new ObjectMapper());
+            openapi31(openapi31);
         }
-        Oas20Definitions resolved = oasDocument.definitions;
-        Oas20SchemaDefinition model = resolved.createSchemaDefinition(clazz.getSimpleName());
-        resolved.addDefinition(clazz.getSimpleName(), model);
-        model.type = clazz.getSimpleName();
-        Extension extension = model.createExtension();
-        extension.name = "x-className";
-        Map<String, String> value = new HashMap<String, String>();
-        value.put("type", "string");
-        value.put("format", name);
-        extension.value = value;
-        model.addExtension("x-className", extension);
-        return resolved.getDefinitions();
+
+        public FqnModelResolver(ObjectMapper mapper) {
+            super(mapper);
+            this._typeNameResolver.setUseFqn(true);
+        }
+    }
+
+    private static class ClassNameExtensionModelResolver extends ModelResolver {
+        private final ModelResolver delegate;
+
+        public ClassNameExtensionModelResolver() {
+            this(new ModelResolver(new ObjectMapper()));
+            ModelResolver.composedModelPropertiesAsSibling = true;
+        }
+
+        public ClassNameExtensionModelResolver(ModelResolver delegate) {
+            super(delegate.objectMapper());
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+            Schema<?> result = delegate.resolve(annotatedType, context, next);
+
+            if (result != null && Objects.equals("object", result.getType())) {
+                JavaType type;
+                if (annotatedType.getType() instanceof JavaType) {
+                    type = (JavaType) annotatedType.getType();
+                } else {
+                    type = _mapper.constructType(annotatedType.getType());
+                }
+
+                if (!type.isContainerType()) {
+                    Map<String, String> value = new java.util.HashMap<>();
+                    value.put("type", "string");
+                    value.put("format", type.getRawClass().getName());
+                    result.addExtension("x-className", value);
+                    // OpenAPI 3: would it be better to set the classname directly as "format" ?
+                    // result.setFormat(type.getRawClass().getName());
+                }
+            }
+            return result;
+        }
     }
 }

@@ -17,12 +17,11 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -37,7 +36,6 @@
         <module>camel-test-infra-kafka</module>
         <module>camel-test-infra-parent</module>
         <module>camel-test-infra-aws-common</module>
-        <module>camel-test-infra-aws-v1</module>
         <module>camel-test-infra-aws-v2</module>
         <module>camel-test-infra-cassandra</module>
         <module>camel-test-infra-elasticsearch</module>
@@ -51,19 +49,17 @@
         <module>camel-test-infra-messaging-common</module>
         <module>camel-test-infra-artemis</module>
         <module>camel-test-infra-dispatch-router</module>
-        <module>camel-test-infra-hdfs</module>
         <module>camel-test-infra-jdbc</module>
         <module>camel-test-infra-arangodb</module>
         <module>camel-test-infra-consul</module>
         <module>camel-test-infra-google-pubsub</module>
-        <module>camel-test-infra-etcd</module>
-        <module>camel-test-infra-hbase</module>
         <module>camel-test-infra-infinispan</module>
+        <module>camel-test-infra-microprofile-lra</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
-        <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
+        <module>camel-test-infra-rocketmq</module>
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>
@@ -71,5 +67,16 @@
         <module>camel-test-infra-ftp</module>
         <module>camel-test-infra-fhir</module>
         <module>camel-test-infra-mosquitto</module>
+        <module>camel-test-infra-chatscript</module>
+        <module>camel-test-infra-openldap</module>
+        <module>camel-test-infra-ignite</module>
+        <module>camel-test-infra-hashicorp-vault</module>
+        <module>camel-test-infra-jetty</module>
+        <module>camel-test-infra-etcd3</module>
+        <module>camel-test-infra-core</module>
+        <module>camel-test-infra-opensearch</module>
+        <module>camel-test-infra-smb</module>
+        <module>camel-test-infra-cli</module>
+        <module>camel-test-infra-qdrant</module>
     </modules>
 </project>

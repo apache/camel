@@ -26,12 +26,7 @@ import org.junit.jupiter.api.Test;
 public class FileConsumeRootDirManualTest extends ContextTestSupport {
 
     @Test
-    public void testSkipMe() {
-        // noop
-    }
-
-    // manual test
-    public void xxxTestPollRootDirectory() throws Exception {
+    public void testPollRootDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 

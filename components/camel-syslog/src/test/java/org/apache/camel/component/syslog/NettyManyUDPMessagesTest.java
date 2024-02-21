@@ -47,7 +47,7 @@ public class NettyManyUDPMessagesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendingManyMessages() throws Exception, InterruptedException {
+    public void testSendingManyMessages() throws Exception {
         MockEndpoint stop1 = getMockEndpoint("mock:stop1");
         MockEndpoint stop2 = getMockEndpoint("mock:stop2");
         stop2.expectedMessageCount(messageCount);
@@ -68,13 +68,13 @@ public class NettyManyUDPMessagesTest extends CamelTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 //context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();

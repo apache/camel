@@ -21,9 +21,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.directory.api.ldap.model.constants.SupportedSaslMechanisms;
 import org.apache.directory.api.util.Network;
 import org.apache.directory.api.util.Strings;
@@ -134,7 +136,7 @@ public final class ServerAnnotationProcessor {
                             .getDeclaredConstructor().newInstance();
                     ldapServer.addExtendedOperationHandler(extOpHandler);
                 } catch (Exception e) {
-                    throw new RuntimeException(I18n.err(I18n.ERR_690, extOpClass.getName()), e);
+                    throw new RuntimeCamelException(I18n.err(I18n.ERR_690, extOpClass.getName()), e);
                 }
             }
 
@@ -144,7 +146,7 @@ public final class ServerAnnotationProcessor {
                             .getDeclaredConstructor().newInstance();
                     ldapServer.addSaslMechanismHandler(saslMech.name(), handler);
                 } catch (Exception e) {
-                    throw new RuntimeException(
+                    throw new RuntimeCamelException(
                             I18n.err(I18n.ERR_691, saslMech.name(), saslMech.implClass().getName()), e);
                 }
             }
@@ -155,20 +157,17 @@ public final class ServerAnnotationProcessor {
             if (ntlmHandler != null) {
                 Class<?> ntlmProviderClass = createLdapServer.ntlmProvider();
                 // default value is a invalid Object.class
-                if ((ntlmProviderClass != null) && (ntlmProviderClass != Object.class)) {
+                if (ntlmProviderClass != null && ntlmProviderClass != Object.class) {
                     try {
                         ntlmHandler.setNtlmProvider((NtlmProvider) ntlmProviderClass
                                 .getDeclaredConstructor().newInstance());
                     } catch (Exception e) {
-                        throw new RuntimeException(I18n.err(I18n.ERR_692), e);
+                        throw new RuntimeCamelException(I18n.err(I18n.ERR_692), e);
                     }
                 }
             }
 
-            List<String> realms = new ArrayList<String>();
-            for (String s : createLdapServer.saslRealms()) {
-                realms.add(s);
-            }
+            List<String> realms = new ArrayList<>(Arrays.asList(createLdapServer.saslRealms()));
 
             ldapServer.setSaslRealms(realms);
 
@@ -439,8 +438,7 @@ public final class ServerAnnotationProcessor {
         return port;
     }
 
-    public static KdcServer getKdcServer(Description description, DirectoryService directoryService)
-            throws Exception {
+    public static KdcServer getKdcServer(Description description, DirectoryService directoryService) {
         CreateKdcServer createLdapServer = description.getAnnotation(CreateKdcServer.class);
 
         return createKdcServer(createLdapServer, directoryService);

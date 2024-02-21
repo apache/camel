@@ -19,7 +19,10 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,9 @@ import org.slf4j.LoggerFactory;
 public class JettyAsyncThrottleTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyAsyncThrottleTest.class);
+
+    @RegisterExtension
+    protected AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
     @Test
     public void testJettyAsync() throws Exception {
@@ -40,23 +46,20 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
         template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
         template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         int size = getMockEndpoint("mock:result").getReceivedExchanges().size();
 
         for (int i = 0; i < size; i++) {
             Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(i);
-            LOG.info("Reply " + exchange);
+            LOG.info("Reply {}", exchange);
         }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                int port2 = getNextPort();
-                int port3 = getNextPort();
-
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance()
                         .failover().to("http://localhost:" + port2 + "/foo")
                         .to("http://localhost:" + port3 + "/bar").end().to("mock:result");

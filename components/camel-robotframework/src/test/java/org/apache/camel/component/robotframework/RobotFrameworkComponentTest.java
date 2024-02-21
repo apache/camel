@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.robotframework;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,7 +37,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:setVariableCamelBody", "Hello Robot");
         template.sendBody("direct:assertRobotCamelInputAsString", "Hello Robot");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -59,7 +57,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:setVariableCamelBody", 1);
         template.sendBody("direct:assertRobotCamelInputAsNumeric", 1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -76,7 +74,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:setVariableCamelBodyAndHeader", "Hello Robot", "stringKey", "headerValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -90,7 +88,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBodyAndProperty("direct:setVariableCamelBodyAndProperty", "Hello Robot", "stringKey", "propertyValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -104,7 +102,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBody("direct:setVariableCamelBodyResourceUri", "Hello Robot");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -112,11 +110,11 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 RobotFrameworkComponent rf = context.getComponent("robotframework", RobotFrameworkComponent.class);
-                rf.getConfiguration().setOutputDirectory(new File("target"));
+                rf.getConfiguration().setOutputDirectory("target");
 
                 from("direct:setVariableCamelBody").to(
                         "robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot?xunitFile=target/out.xml")

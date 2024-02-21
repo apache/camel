@@ -38,7 +38,7 @@ public class JmsToCxfInOutTest {
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property place holder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("JmsToCxfInOutTest.port", Integer.toString(port));
     }
 

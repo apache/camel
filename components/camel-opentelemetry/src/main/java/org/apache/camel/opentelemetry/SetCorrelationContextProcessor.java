@@ -28,9 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author rvargasp
- */
 public class SetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetCorrelationContextProcessor.class);
@@ -41,10 +38,8 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     private final Expression expression;
 
     public SetCorrelationContextProcessor(String baggageName, Expression expression) {
-        this.baggageName = baggageName;
-        this.expression = expression;
-        ObjectHelper.notNull(baggageName, "baggageName");
-        ObjectHelper.notNull(expression, "expression");
+        this.baggageName = ObjectHelper.notNull(baggageName, "baggageName");
+        this.expression = ObjectHelper.notNull(expression, "expression");
     }
 
     @Override
@@ -55,7 +50,8 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
                 String item = expression.evaluate(exchange, String.class);
                 camelSpan.setCorrelationContextItem(baggageName, item);
             } else {
-                LOG.warn("OpenTelemetry: could not find managed span for exchange={}", exchange);
+                // avoid spamming logs
+                LOG.debug("OpenTelemetry: Cannot find managed span for Exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -65,11 +61,6 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return id;
     }
 
     @Override
@@ -98,7 +89,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     }
 
     public String getBaggageName() {
-        return baggageName.toString();
+        return baggageName;
     }
 
     public Expression getExpression() {
@@ -106,12 +97,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
+    public String toString() {
+        return id;
     }
 }

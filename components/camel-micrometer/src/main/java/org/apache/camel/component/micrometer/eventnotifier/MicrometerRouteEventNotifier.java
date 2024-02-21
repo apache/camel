@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Gauge;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
+import org.apache.camel.spi.CamelEvent.RouteReloadedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
@@ -30,6 +31,10 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
 
     private final AtomicLong routesAdded = new AtomicLong();
     private final AtomicLong routesRunning = new AtomicLong();
+    private final AtomicLong routesReloaded = new AtomicLong();
+    private Gauge gaugeAdded;
+    private Gauge gaugeRunning;
+    private Gauge gaugeReloaded;
     private MicrometerRouteEventNotifierNamingStrategy namingStrategy = MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerRouteEventNotifier() {
@@ -47,14 +52,34 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Gauge.builder(namingStrategy.getRouteAddedName(), routesAdded, value -> Long.valueOf(value.get()).doubleValue())
+
+        gaugeAdded = Gauge.builder(namingStrategy.getRouteAddedName(), routesAdded, value -> (double) value.get())
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
-        Gauge.builder(namingStrategy.getRouteRunningName(), routesRunning, value -> Long.valueOf(value.get()).doubleValue())
+        gaugeRunning = Gauge.builder(namingStrategy.getRouteRunningName(), routesRunning, value -> (double) value.get())
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
+        gaugeReloaded = Gauge.builder(namingStrategy.getRouteReloadedName(), routesReloaded, value -> (double) value.get())
+                .baseUnit("routes")
+                .tags(namingStrategy.getTags(getCamelContext()))
+                .register(getMeterRegistry());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (gaugeAdded != null) {
+            getMeterRegistry().remove(gaugeAdded);
+        }
+        if (gaugeRunning != null) {
+            getMeterRegistry().remove(gaugeRunning);
+        }
+        if (gaugeReloaded != null) {
+            getMeterRegistry().remove(gaugeReloaded);
+        }
     }
 
     @Override
@@ -67,6 +92,8 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
             routesRunning.incrementAndGet();
         } else if (eventObject instanceof RouteStoppedEvent) {
             routesRunning.decrementAndGet();
+        } else if (eventObject instanceof RouteReloadedEvent) {
+            routesReloaded.incrementAndGet();
         }
     }
 }

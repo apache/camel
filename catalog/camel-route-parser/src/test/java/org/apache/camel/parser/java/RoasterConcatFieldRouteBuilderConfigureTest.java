@@ -42,13 +42,13 @@ public class RoasterConcatFieldRouteBuilderConfigureTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals("ftp:localhost:{{ftpPort}}/myapp?password=admin&username=admin", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
         }
         assertEquals("log:b", list.get(0).getElement());
     }

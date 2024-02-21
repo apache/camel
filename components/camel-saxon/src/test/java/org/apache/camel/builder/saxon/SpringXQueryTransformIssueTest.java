@@ -18,11 +18,11 @@ package org.apache.camel.builder.saxon;
 
 import java.io.FileInputStream;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXQueryTransformIssueTest extends CamelSpringTestSupport {
 
@@ -34,11 +34,11 @@ public class SpringXQueryTransformIssueTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/builder/saxon/SpringXQueryTransformIssueTest.xml");
+        return newAppContext("SpringXQueryTransformIssueTest.xml");
     }
 }

@@ -48,7 +48,8 @@ public class SpelRouteTest extends ContextTestSupport {
             public void configure() {
                 from("direct:test").setBody(spel("Hello #{message.body}! What a beautiful #{request.headers['dayOrNight']}"))
                         .to("mock:result");
-                from("direct:loop").loop(4).setBody(spel("#{body + ':' + properties['CamelLoopIndex']}")).to("mock:loopResult");
+                from("direct:loop").loop(4).setBody(spel("#{body + ':' + getProperty('CamelLoopIndex')}"))
+                        .to("mock:loopResult");
             }
         };
     }

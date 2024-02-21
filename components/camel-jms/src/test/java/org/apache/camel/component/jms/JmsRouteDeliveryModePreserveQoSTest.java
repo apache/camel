@@ -18,32 +18,29 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
+import jakarta.jms.DeliveryMode;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for preserveMessageQos with delivery mode
  */
-public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
+public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testSendDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:foo?preserveMessageQos=true", "Hello World");
+        template.sendBody("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should be persistent by default
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -53,13 +50,14 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
     @Test
     public void testSendNonPersistent() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World", "JMSDeliveryMode",
                 DeliveryMode.NON_PERSISTENT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve non persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -69,13 +67,14 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
     @Test
     public void testSendNonPersistentAsString() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World", "JMSDeliveryMode",
                 "NON_PERSISTENT");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve non persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -85,13 +84,14 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
     @Test
     public void testSendPersistent() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World", "JMSDeliveryMode",
                 DeliveryMode.PERSISTENT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -101,13 +101,14 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
     @Test
     public void testSendPersistentAsString() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true",
+                "Hello World", "JMSDeliveryMode",
                 "PERSISTENT");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -116,8 +117,9 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
     }
 
     @Test
+    @Disabled("Artemis does not fallback to deliveryMode 1 automatically, therefore disabling the test")
     public void testNonJmsDeliveryMode() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Beer is good...");
 
         // since we're using activemq, we really cannot set a delivery mode to something other
@@ -131,12 +133,12 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
         template.sendBody("direct:nonJmsDeliveryMode", "Beer is good...");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testNonJmsDeliveryModeDisableExplicityQos() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Beer is good...");
 
         // in this test, we're using explicitQosEnabled=false so we will not rely on our
@@ -146,12 +148,13 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
         template.sendBody("direct:noExplicitNonJmsDeliveryMode", "Beer is good...");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
+    @Disabled("Artemis does not fallback to deliveryMode 1 automatically, therefore disabling the test")
     public void testNonJmsDeliveryModePreserveQos() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:bar");
+        MockEndpoint mock = getMockEndpoint("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
         mock.expectedBodiesReceived("Beer is good...");
 
         // in this test, we can only pass if we are "preserving" existing deliveryMode.
@@ -164,34 +167,25 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE,
                 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo")
-                        .to("activemq:queue:bar?preserveMessageQos=true");
+            public void configure() {
+                from("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo")
+                        .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?preserveMessageQos=true");
 
-                from("activemq:queue:bar")
-                        .to("mock:bar");
+                from("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar")
+                        .to("mock:JmsRouteDeliveryModePreserveQoSTest.bar");
 
-                from("direct:nonJmsDeliveryMode").to("activemq:queue:bar?deliveryMode=3");
-                from("direct:noExplicitNonJmsDeliveryMode").to("activemq:queue:bar?deliveryMode=3&explicitQosEnabled=false");
-                from("direct:preserveQosNonJmsDeliveryMode").to("activemq:queue:bar?preserveMessageQos=true");
+                from("direct:nonJmsDeliveryMode").to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3");
+                from("direct:noExplicitNonJmsDeliveryMode")
+                        .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?deliveryMode=3&explicitQosEnabled=false");
+                from("direct:preserveQosNonJmsDeliveryMode")
+                        .to("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.bar?preserveMessageQos=true");
             }
         };
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -24,6 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -49,6 +52,9 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
     protected SalesforceSession session;
     protected SalesforceHttpClient httpClient;
     protected SalesforceLoginConfig loginConfig;
+    protected Map<String, Class<?>> classMap;
+    protected Map<String, Class<?>> eventClassMap;
+
     protected boolean rawPayload;
 
     public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
@@ -69,6 +75,12 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
         httpClient = endpoint.getConfiguration().getHttpClient();
         if (httpClient == null) {
             httpClient = component.getHttpClient();
+        }
+        if (classMap == null) {
+            this.classMap = endpoint.getComponent().getClassMap();
+        }
+        if (eventClassMap == null) {
+            this.eventClassMap = endpoint.getComponent().getEventClassMap();
         }
     }
 
@@ -151,4 +163,53 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
         return propValue;
     }
 
+    // Given a parameter value as List or a CSV String, will return a List<String>
+    protected List<String> getListParameter(
+            final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional)
+            throws SalesforceException {
+
+        Object val = getParameter(propName, exchange, convertInBody, optional, Object.class);
+        if (val instanceof String) {
+            return Arrays.asList(((String) val).split(","));
+        }
+        if (val instanceof List) {
+            return (List<String>) val;
+        } else {
+            throw new SalesforceException("Expected " + propName + " parameter to be a List or CSV String.", 0);
+        }
+    }
+
+    protected Class<?> getSObjectClass(Exchange exchange) throws SalesforceException {
+        final String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, IS_OPTIONAL);
+        return getSObjectClass(sObjectName, className);
+    }
+
+    /**
+     *
+     * @param  sObjectName         if provided, will attempt to look up class by simple name
+     * @param  className           if provided, will attempt to look up class by fully qualified name
+     * @return                     Class, if found.
+     * @throws SalesforceException if unable to find class by whichever parameter was non-null
+     */
+    protected Class<?> getSObjectClass(String sObjectName, String className) throws SalesforceException {
+        Class<?> sObjectClass = null;
+        if (sObjectName != null) {
+            sObjectClass = classMap.get(sObjectName);
+            if (sObjectClass == null) {
+                throw new SalesforceException(
+                        String.format("SObject class not found for sObjectName: %s", sObjectName));
+            }
+        }
+        if (className != null) {
+            try {
+                sObjectClass
+                        = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
+            } catch (ClassNotFoundException e) {
+                throw new SalesforceException(
+                        String.format("SObject class not found %s", className), e);
+            }
+        }
+        return sObjectClass;
+    }
 }

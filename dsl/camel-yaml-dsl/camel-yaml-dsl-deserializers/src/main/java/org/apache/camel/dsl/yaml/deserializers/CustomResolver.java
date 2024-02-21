@@ -17,16 +17,34 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
+import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 
 public class CustomResolver implements YamlDeserializerResolver {
+    public static final Logger LOG = LoggerFactory.getLogger(CustomResolver.class);
+
     @Override
     public int getOrder() {
         return YamlDeserializerResolver.ORDER_DEFAULT;
     }
 
+    private final BeansDeserializer beansDeserializer;
+
+    public CustomResolver(BeansDeserializer beansDeserializer) {
+        this.beansDeserializer = beansDeserializer;
+    }
+
     @Override
     public ConstructNode resolve(String id) {
+        if (id != null && id.contains("-")) {
+            LOG.warn(
+                    "The kebab-case '{}' is deprecated and it will be removed in the next version. Use the camelCase '{}' instead.",
+                    id, StringHelper.dashToCamelCase(id));
+        }
+
+        id = org.apache.camel.util.StringHelper.dashToCamelCase(id);
         switch (id) {
             //
             // Route
@@ -38,6 +56,22 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "route":
             case "org.apache.camel.model.RouteDefinition":
                 return new RouteDefinitionDeserializer();
+            case "routeConfiguration":
+            case "org.apache.camel.model.RouteConfigurationDefinition":
+                return new RouteConfigurationDefinitionDeserializer();
+            case "routeTemplate":
+            case "org.apache.camel.model.RouteTemplateDefinition":
+                return new RouteTemplateDefinitionDeserializer();
+            case "templatedRoute":
+            case "org.apache.camel.model.TemplatedRouteDefinition":
+                return new TemplatedRouteDefinitionDeserializer();
+            case "org.apache.camel.model.RouteTemplateBeanDefinition":
+                return new RouteTemplateBeanDefinitionDeserializer();
+            case "org.apache.camel.model.TemplatedRouteBeanDefinition":
+                return new TemplatedRouteBeanDefinitionDeserializer();
+            case "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition":
+                return new OutputAwareFromDefinitionDeserializer();
+
             //
             // Expression
             //
@@ -51,13 +85,14 @@ public class CustomResolver implements YamlDeserializerResolver {
             // Misc
             //
             case "beans":
-                return new BeansDeserializer();
-            case "error-handler":
+                return beansDeserializer;
+            case "errorHandler":
                 return new ErrorHandlerBuilderDeserializer();
-            //case "do-try":
-            //    return new TryDefinitionDeserializer();
             case "org.apache.camel.model.ProcessorDefinition":
                 return new ProcessorDefinitionDeserializer();
+            case "kamelet":
+            case "org.apache.camel.model.KameletDefinition":
+                return new KameletDeserializer();
             default:
                 return null;
         }

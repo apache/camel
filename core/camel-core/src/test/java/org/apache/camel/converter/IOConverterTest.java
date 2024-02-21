@@ -16,9 +16,21 @@
  */
 package org.apache.camel.converter;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -29,7 +41,10 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for {@link IOConverter}
@@ -60,8 +75,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToOutputStreamFile() throws Exception {
-        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/data/test/hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         OutputStream os = IOConverter.toOutputStream(file);
         assertIsInstanceOf(BufferedOutputStream.class, os);
@@ -70,8 +85,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToWriterFile() throws Exception {
-        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/data/test/hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         Writer writer = IOConverter.toWriter(file, null);
         assertIsInstanceOf(BufferedWriter.class, writer);
@@ -133,8 +148,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToByteArrayFile() throws Exception {
-        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/data/test/hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         byte[] data = IOConverter.toByteArray(file);
         assertNotNull(data);
@@ -246,9 +261,18 @@ public class IOConverterTest extends ContextTestSupport {
         Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
         assertNotNull(p);
         assertTrue(p.size() >= 8, "Should be 8 or more properties, was " + p.size());
-        String root = (String) p.get("rootLogger.level");
-        assertNotNull(root);
-        assertTrue(root.contains("INFO"));
+        String fn = (String) p.get("appender.file.fileName");
+        assertNotNull(fn);
+        assertTrue(fn.contains("camel-core-test.log"));
+    }
+
+    @Test
+    public void testToPathFromFile() throws Exception {
+        File file = new File("src/test/resources/log4j2.properties");
+        Path p = IOConverter.toPath(file);
+        assertNotNull(p);
+        assertEquals(file.getName(), p.getFileName().toString());
+        assertEquals("log4j2.properties", p.getFileName().toString());
     }
 
 }

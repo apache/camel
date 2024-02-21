@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,13 +41,13 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().withRouteControllerLoggingLevel(LoggingLevel.OFF)
-                .withRouteControllerSuperviseEnabled(true)
-                .withRouteControllerBackOffDelay(25)
-                .withRouteControllerBackOffMaxAttempts(3)
-                .withRouteControllerInitialDelay(100)
-                .withRouteControllerThreadPoolSize(2)
-                .withRouteControllerExcludeRoutes("timer*");
+        main.configure().routeControllerConfig()
+                .withEnabled(true)
+                .withBackOffDelay(25)
+                .withBackOffMaxAttempts(3)
+                .withInitialDelay(100)
+                .withThreadPoolSize(2)
+                .withExcludeRoutes("timer*");
         main.start();
 
         MockEndpoint mock = main.getCamelContext().getEndpoint("mock:foo", MockEndpoint.class);
@@ -88,11 +87,11 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().setRouteControllerSuperviseEnabled(true);
-        main.configure().setRouteControllerBackOffDelay(25);
-        main.configure().setRouteControllerBackOffMaxAttempts(10);
-        main.configure().setRouteControllerInitialDelay(100);
-        main.configure().setRouteControllerThreadPoolSize(2);
+        main.configure().routeControllerConfig().setEnabled(true);
+        main.configure().routeControllerConfig().setBackOffDelay(25);
+        main.configure().routeControllerConfig().setBackOffMaxAttempts(10);
+        main.configure().routeControllerConfig().setInitialDelay(100);
+        main.configure().routeControllerConfig().setThreadPoolSize(2);
 
         main.start();
 
@@ -162,7 +161,7 @@ public class MainSupervisingRouteControllerTest {
         }
     }
 
-    private class MyJmsConsumer extends SedaConsumer {
+    private static class MyJmsConsumer extends SedaConsumer {
 
         private int counter;
 

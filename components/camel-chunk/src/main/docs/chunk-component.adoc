@@ -1,12 +1,14 @@
-[[chunk-component]]
 = Chunk Component
-:docTitle: Chunk
-:artifactId: camel-chunk
+:doctitle: Chunk
+:shortname: chunk
+:artifactid: camel-chunk
 :description: Transform messages using Chunk templating engine.
 :since: 2.15
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/chunk.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: chunk
 
 *Since Camel {since}*
 
@@ -17,21 +19,9 @@ http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
 This can be ideal when using Templating to
 generate responses for requests.
 
-Maven users will need to add the following dependency to
-their `pom.xml` for this component:
-
-[source,xml]
----------------------------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-chunk</artifactId>
-    <version>x.x.x</version> <!-- use the same version as your Camel core version -->
-</dependency>
----------------------------------------------------------------------------------
 
 == URI format
 
-[source,java]
 ----------------------------
 chunk:templateName[?options]
 ----------------------------
@@ -39,69 +29,24 @@ chunk:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke.
 
-You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+You can append query options to the URI in the following format: `?option=value&option=value&...`
 
-== Options
 
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Chunk component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The Chunk endpoint is configured using URI syntax:
 
-----
-chunk:resourceUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
-|===
-
-
-=== Query Parameters (9 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
-| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
-| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *encoding* (producer) | Define the encoding of the body |  | String
-| *extension* (producer) | Define the file extension of the template |  | String
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *themeFolder* (producer) | Define the themes folder to scan |  | String
-| *themeLayer* (producer) | Define the theme layer to elaborate |  | String
-| *themeSubfolder* (producer) | Define the themes subfolder to scan |  | String
-|===
 // endpoint options: END
 
 
-
-Chunk component will look for a specific template in _themes_ folder
+Chunk component will look for a specific template in the _themes_ folder
 with extensions _.chtml_ or _.cxml. _If you need to specify a different
 folder or extensions, you will need to use the specific options listed
 above.
@@ -120,6 +65,8 @@ a `Map`). The `Exchange` is transferred as:
 
 |`exchange.properties` |The `Exchange` properties.
 
+|`variables` |The variables
+
 |`headers` |The headers of the In message.
 
 |`camelContext` |The Camel Context.
@@ -135,22 +82,16 @@ a `Map`). The `Exchange` is transferred as:
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
-headers is set then Camel uses this over the endpoint configured
+headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
-[width="100%",cols="20%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Type |Description |Support Version
-
-|ChunkConstants.CHUNK_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
-configured. |
-
-|ChunkConstants.CHUNK_TEMPLATE |String |The template to use instead of the endpoint configured. |
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 --------------------------
@@ -162,7 +103,7 @@ To use a Chunk template to formulate a response for a message for InOut
 message exchanges (where there is a `JMSReplyTo` header).
 
 If you want to use InOnly and consume the message and send it to another
-destination you could use:
+destination, you could use:
 
 [source,java]
 -----------------------------
@@ -189,17 +130,16 @@ from("direct:in").
 to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=chunk");
 ---------------------------------------------------------------------------------------
 
-In this example Chunk component will look for the file
-_file_example.chunk_ in the folder _template/subfolder._
+In this example, the Chunk component will look for the file
+`file_example.chunk` in the folder `template/subfolder`.
 
 == The Email Sample
 
-In this sample we want to use Chunk templating for an order confirmation
-email. The email template is laid out in Chunk as:
+In this sample, we want to use Chunk templating for an order confirmation email.
+The email template is laid out in Chunk as:
 
-[source,java]
+[source,text]
 ----------------------------------------------
- 
 Dear {$headers.lastName}, {$headers.firstName}
 
 Thanks for the order of {$headers.item}.
@@ -209,4 +149,5 @@ Regards Camel Riders Bookstore
 ----------------------------------------------
 
 
-include::camel-spring-boot::page$chunk-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

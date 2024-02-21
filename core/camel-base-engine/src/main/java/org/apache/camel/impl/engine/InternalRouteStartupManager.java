@@ -50,17 +50,13 @@ import org.slf4j.LoggerFactory;
  * <p>
  * This code has been refactored out of {@link AbstractCamelContext} to its own class.
  */
-class InternalRouteStartupManager {
+final class InternalRouteStartupManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(InternalRouteStartupManager.class);
 
     private final ThreadLocal<Route> setupRoute = new ThreadLocal<>();
-    private final AbstractCamelContext abstractCamelContext;
     private final CamelLogger routeLogger = new CamelLogger(LOG);
-
-    public InternalRouteStartupManager(AbstractCamelContext abstractCamelContext) {
-        this.abstractCamelContext = abstractCamelContext;
-    }
+    private int defaultRouteStartupOrder = 1000;
 
     /**
      * If Camel is currently starting up a route then this returns the route.
@@ -75,13 +71,13 @@ class InternalRouteStartupManager {
      * @param  routeServices the routes to initialize
      * @throws Exception     is thrown if error initializing routes
      */
-    protected void doInitRoutes(Map<String, RouteService> routeServices)
+    public void doInitRoutes(AbstractCamelContext camelContext, Map<String, RouteService> routeServices)
             throws Exception {
 
-        abstractCamelContext.setStartingRoutes(true);
+        camelContext.setStartingRoutes(true);
         try {
             for (RouteService routeService : routeServices.values()) {
-                StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+                StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
                         "Init Route");
                 try {
                     LOG.debug("Initializing route id: {}", routeService.getId());
@@ -92,11 +88,11 @@ class InternalRouteStartupManager {
                     routeService.setUp();
                 } finally {
                     setupRoute.remove();
-                    abstractCamelContext.getStartupStepRecorder().endStep(step);
+                    camelContext.getStartupStepRecorder().endStep(step);
                 }
             }
         } finally {
-            abstractCamelContext.setStartingRoutes(false);
+            camelContext.setStartingRoutes(false);
         }
     }
 
@@ -112,10 +108,11 @@ class InternalRouteStartupManager {
      * @throws Exception      is thrown if error starting routes
      */
     protected void doStartOrResumeRoutes(
+            AbstractCamelContext camelContext,
             Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer,
             boolean addingRoutes)
             throws Exception {
-        abstractCamelContext.setStartingRoutes(true);
+        camelContext.setStartingRoutes(true);
         try {
             // filter out already started routes
             Map<String, RouteService> filtered = new LinkedHashMap<>();
@@ -144,10 +141,10 @@ class InternalRouteStartupManager {
             }
 
             // the context is in last phase of staring, so lets start the routes
-            safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
+            safelyStartRouteServices(camelContext, checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
 
         } finally {
-            abstractCamelContext.setStartingRoutes(false);
+            camelContext.setStartingRoutes(false);
         }
     }
 
@@ -166,6 +163,7 @@ class InternalRouteStartupManager {
      * @throws Exception      is thrown if error starting the routes
      */
     protected synchronized void safelyStartRouteServices(
+            AbstractCamelContext camelContext,
             boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             Collection<RouteService> routeServices)
             throws Exception {
@@ -177,77 +175,79 @@ class InternalRouteStartupManager {
 
         // figure out the order in which the routes should be started
         for (RouteService routeService : routeServices) {
-            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService);
+            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(camelContext, routeService);
             // check for clash before we add it as input
             if (checkClash) {
-                doCheckStartupOrderClash(order, inputs);
+                doCheckStartupOrderClash(camelContext, order, inputs);
             }
             inputs.put(order.getStartupOrder(), order);
         }
 
         // warm up routes before we start them
-        doWarmUpRoutes(inputs, startConsumer);
+        doWarmUpRoutes(camelContext, inputs, startConsumer);
 
         // sort the startup listeners so they are started in the right order
-        abstractCamelContext.getStartupListeners().sort(OrderedComparator.get());
+        camelContext.getStartupListeners().sort(OrderedComparator.get());
         // now call the startup listeners where the routes has been warmed up
         // (only the actual route consumer has not yet been started)
-        for (StartupListener startup : abstractCamelContext.getStartupListeners()) {
-            startup.onCamelContextStarted(abstractCamelContext.getCamelContextReference(), abstractCamelContext.isStarted());
+        for (StartupListener startup : camelContext.getStartupListeners()) {
+            startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
         }
         // because the consumers may also register startup listeners we need to
         // reset
         // the already started listeners
-        List<StartupListener> backup = new ArrayList<>(abstractCamelContext.getStartupListeners());
-        abstractCamelContext.getStartupListeners().clear();
+        List<StartupListener> backup = new ArrayList<>(camelContext.getStartupListeners());
+        camelContext.getStartupListeners().clear();
 
         // now start the consumers
         if (startConsumer) {
             if (resumeConsumer) {
                 // and now resume the routes
-                doResumeRouteConsumers(inputs, addingRoutes);
+                doResumeRouteConsumers(camelContext, inputs, addingRoutes);
             } else {
                 // and now start the routes
                 // and check for clash with multiple consumers of the same
                 // endpoints which is not allowed
-                doStartRouteConsumers(inputs, addingRoutes);
+                doStartRouteConsumers(camelContext, inputs, addingRoutes);
             }
         }
 
         // sort the startup listeners so they are started in the right order
-        abstractCamelContext.getStartupListeners().sort(OrderedComparator.get());
+        camelContext.getStartupListeners().sort(OrderedComparator.get());
         // now the consumers that was just started may also add new
         // StartupListeners (such as timer)
         // so we need to ensure they get started as well
-        for (StartupListener startup : abstractCamelContext.getStartupListeners()) {
-            startup.onCamelContextStarted(abstractCamelContext.getCamelContextReference(), abstractCamelContext.isStarted());
+        for (StartupListener startup : camelContext.getStartupListeners()) {
+            startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
         }
         // and add the previous started startup listeners to the list so we have
         // them all
-        abstractCamelContext.getStartupListeners().addAll(0, backup);
+        camelContext.getStartupListeners().addAll(0, backup);
 
         // inputs no longer needed
         inputs.clear();
     }
 
     /**
-     * @see #safelyStartRouteServices(boolean, boolean, boolean, boolean, Collection)
+     * @see #safelyStartRouteServices(AbstractCamelContext, boolean, boolean, boolean, boolean, Collection)
      */
-    protected synchronized void safelyStartRouteServices(
+    public synchronized void safelyStartRouteServices(
+            AbstractCamelContext camelContext,
             boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             RouteService... routeServices)
             throws Exception {
-        safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, Arrays.asList(routeServices));
+        safelyStartRouteServices(camelContext, checkClash, startConsumer, resumeConsumer, addingRoutes,
+                Arrays.asList(routeServices));
     }
 
-    DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService) {
+    DefaultRouteStartupOrder doPrepareRouteToBeStarted(AbstractCamelContext camelContext, RouteService routeService) {
         // add the inputs from this route service to the list to start
         // afterwards
         // should be ordered according to the startup number
         Integer startupOrder = routeService.getRoute().getStartupOrder();
         if (startupOrder == null) {
             // auto assign a default startup order
-            startupOrder = abstractCamelContext.defaultRouteStartupOrder++;
+            startupOrder = defaultRouteStartupOrder++;
         }
 
         // create holder object that contains information about this route to be
@@ -256,7 +256,8 @@ class InternalRouteStartupManager {
         return new DefaultRouteStartupOrder(startupOrder, route, routeService);
     }
 
-    boolean doCheckStartupOrderClash(DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs)
+    boolean doCheckStartupOrderClash(
+            AbstractCamelContext camelContext, DefaultRouteStartupOrder answer, Map<Integer, DefaultRouteStartupOrder> inputs)
             throws FailedToStartRouteException {
         // check for clash by startupOrder id
         DefaultRouteStartupOrder other = inputs.get(answer.getStartupOrder());
@@ -267,7 +268,7 @@ class InternalRouteStartupManager {
                             .getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
         }
         // check in existing already started as well
-        for (RouteStartupOrder order : abstractCamelContext.getRouteStartupOrder()) {
+        for (RouteStartupOrder order : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
             String otherId = order.getRoute().getId();
             if (answer.getRoute().getId().equals(otherId)) {
                 // its the same route id so skip clash check as its the same
@@ -283,7 +284,8 @@ class InternalRouteStartupManager {
         return true;
     }
 
-    void doWarmUpRoutes(Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup) throws FailedToStartRouteException {
+    void doWarmUpRoutes(AbstractCamelContext camelContext, Map<Integer, DefaultRouteStartupOrder> inputs, boolean autoStartup)
+            throws FailedToStartRouteException {
         // now prepare the routes by starting its services before we start the
         // input
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
@@ -296,7 +298,7 @@ class InternalRouteStartupManager {
             // will then be prepared in time before we start inputs which will
             // consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
-            StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+            StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
                     "Warump Route");
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
@@ -306,24 +308,29 @@ class InternalRouteStartupManager {
                 routeService.warmUp();
             } finally {
                 setupRoute.remove();
-                abstractCamelContext.getStartupStepRecorder().endStep(step);
+                camelContext.getStartupStepRecorder().endStep(step);
             }
         }
     }
 
-    void doResumeRouteConsumers(Map<Integer, DefaultRouteStartupOrder> inputs, boolean addingRoutes) throws Exception {
-        doStartOrResumeRouteConsumers(inputs, true, addingRoutes);
+    void doResumeRouteConsumers(
+            AbstractCamelContext camelContext, Map<Integer, DefaultRouteStartupOrder> inputs, boolean addingRoutes)
+            throws Exception {
+        doStartOrResumeRouteConsumers(camelContext, inputs, true, addingRoutes);
     }
 
-    void doStartRouteConsumers(Map<Integer, DefaultRouteStartupOrder> inputs, boolean addingRoutes) throws Exception {
-        doStartOrResumeRouteConsumers(inputs, false, addingRoutes);
+    void doStartRouteConsumers(
+            AbstractCamelContext camelContext, Map<Integer, DefaultRouteStartupOrder> inputs, boolean addingRoutes)
+            throws Exception {
+        doStartOrResumeRouteConsumers(camelContext, inputs, false, addingRoutes);
     }
 
-    private LoggingLevel getRouteLoggerLogLevel() {
-        return abstractCamelContext.getRouteController().getLoggingLevel();
+    private LoggingLevel getRouteLoggerLogLevel(AbstractCamelContext camelContext) {
+        return camelContext.getRouteController().getLoggingLevel();
     }
 
     private void doStartOrResumeRouteConsumers(
+            AbstractCamelContext camelContext,
             Map<Integer, DefaultRouteStartupOrder> inputs, boolean resumeOnly, boolean addingRoute)
             throws Exception {
         List<Endpoint> routeInputs = new ArrayList<>();
@@ -339,11 +346,11 @@ class InternalRouteStartupManager {
             if (addingRoute && !autoStartup) {
                 routeLogger.log(
                         "Skipping starting of route " + routeService.getId() + " as it's configured with autoStartup=false",
-                        getRouteLoggerLogLevel());
+                        getRouteLoggerLogLevel(camelContext));
                 continue;
             }
 
-            StartupStep step = abstractCamelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
+            StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
                     "Start Route");
 
             // do some preparation before starting the consumer on the route
@@ -360,13 +367,13 @@ class InternalRouteStartupManager {
                 // check for multiple consumer violations with existing routes
                 // which have already been started, or is currently starting
                 List<Endpoint> existingEndpoints = new ArrayList<>();
-                for (Route existingRoute : abstractCamelContext.getRoutes()) {
+                for (Route existingRoute : camelContext.getRoutes()) {
                     if (route.getId().equals(existingRoute.getId())) {
                         // skip ourselves
                         continue;
                     }
                     Endpoint existing = existingRoute.getEndpoint();
-                    ServiceStatus status = abstractCamelContext.getRouteStatus(existingRoute.getId());
+                    ServiceStatus status = camelContext.getRouteStatus(existingRoute.getId());
                     if (status != null && (status.isStarted() || status.isStarting())) {
                         existingEndpoints.add(existing);
                     }
@@ -391,14 +398,14 @@ class InternalRouteStartupManager {
                     String uri = endpoint.getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
                     routeLogger.log("Route: " + route.getId() + " resumed and consuming from: " + uri,
-                            getRouteLoggerLogLevel());
+                            getRouteLoggerLogLevel(camelContext));
                 } else {
                     // when starting we should invoke the lifecycle strategies
-                    for (LifecycleStrategy strategy : abstractCamelContext.getLifecycleStrategies()) {
-                        strategy.onServiceAdd(abstractCamelContext.getCamelContextReference(), consumer, route);
+                    for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                        strategy.onServiceAdd(camelContext.getCamelContextReference(), consumer, route);
                     }
                     try {
-                        abstractCamelContext.startService(consumer);
+                        camelContext.startService(consumer);
                         route.getProperties().remove("route.start.exception");
                     } catch (Exception e) {
                         route.getProperties().put("route.start.exception", e);
@@ -409,7 +416,7 @@ class InternalRouteStartupManager {
                     String uri = endpoint.getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
                     routeLogger.log("Route: " + route.getId() + " started and consuming from: " + uri,
-                            getRouteLoggerLogLevel());
+                            getRouteLoggerLogLevel(camelContext));
                 }
 
                 routeInputs.add(endpoint);
@@ -419,14 +426,14 @@ class InternalRouteStartupManager {
                 // but only add if we haven't already registered it before (we
                 // dont want to double add when restarting)
                 boolean found = false;
-                for (RouteStartupOrder other : abstractCamelContext.getRouteStartupOrder()) {
+                for (RouteStartupOrder other : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
                     if (other.getRoute().getId().equals(route.getId())) {
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    abstractCamelContext.getRouteStartupOrder().add(entry.getValue());
+                    camelContext.getCamelContextExtension().getRouteStartupOrder().add(entry.getValue());
                 }
             }
 
@@ -444,7 +451,7 @@ class InternalRouteStartupManager {
                 }
             }
 
-            abstractCamelContext.getStartupStepRecorder().endStep(step);
+            camelContext.getStartupStepRecorder().endStep(step);
         }
     }
 
@@ -466,6 +473,10 @@ class InternalRouteStartupManager {
         }
 
         return true;
+    }
+
+    int incrementRouteStartupOrder() {
+        return defaultRouteStartupOrder++;
     }
 
 }

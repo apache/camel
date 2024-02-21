@@ -1,4 +1,3 @@
-[[HowshouldIinvokemyPOJOsorSpringServices-HowshouldIinvokemyPOJOsorSpringServices]]
 = How should I invoke my POJOs or Spring Services?
 
 The various options are described in detail in

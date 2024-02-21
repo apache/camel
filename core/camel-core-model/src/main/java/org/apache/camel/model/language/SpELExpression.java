@@ -16,19 +16,20 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
+ * Evaluates a Spring expression (SpEL).
  */
 @Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL")
 @XmlRootElement(name = "spel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SpELExpression extends ExpressionDefinition {
+public class SpELExpression extends TypedExpressionDefinition {
 
     public SpELExpression() {
     }
@@ -37,8 +38,24 @@ public class SpELExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private SpELExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "spel";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link SpELExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, SpELExpression> {
+
+        @Override
+        public SpELExpression end() {
+            return new SpELExpression(this);
+        }
     }
 }

@@ -18,6 +18,10 @@ package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
+@Deprecated
 public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
 
     String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
@@ -29,4 +33,5 @@ public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
     boolean isSupportTransacted();
 
     void setSupportTransacted(boolean supportTransacted);
+
 }

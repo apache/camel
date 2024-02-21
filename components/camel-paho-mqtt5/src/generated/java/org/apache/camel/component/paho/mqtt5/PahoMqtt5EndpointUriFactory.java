@@ -19,45 +19,48 @@ public class PahoMqtt5EndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
-        props.add("serverURIs");
-        props.add("customWebSocketHeaders");
-        props.add("willMqttProperties");
-        props.add("receiveMaximum");
-        props.add("cleanStart");
+        Set<String> props = new HashSet<>(33);
         props.add("automaticReconnect");
-        props.add("password");
         props.add("bridgeErrorHandler");
-        props.add("sslClientProps");
-        props.add("qos");
-        props.add("willTopic");
-        props.add("filePersistenceDirectory");
-        props.add("client");
-        props.add("connectionTimeout");
-        props.add("executorServiceTimeout");
-        props.add("httpsHostnameVerificationEnabled");
-        props.add("clientId");
-        props.add("socketFactory");
-        props.add("exchangePattern");
-        props.add("userName");
-        props.add("keepAliveInterval");
-        props.add("maxReconnectDelay");
         props.add("brokerUrl");
-        props.add("retained");
+        props.add("cleanStart");
+        props.add("client");
+        props.add("clientId");
+        props.add("connectionTimeout");
+        props.add("customWebSocketHeaders");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("executorServiceTimeout");
+        props.add("filePersistenceDirectory");
+        props.add("httpsHostnameVerificationEnabled");
+        props.add("keepAliveInterval");
         props.add("lazyStartProducer");
-        props.add("willQos");
+        props.add("maxReconnectDelay");
+        props.add("password");
+        props.add("persistence");
+        props.add("qos");
+        props.add("receiveMaximum");
+        props.add("retained");
+        props.add("serverURIs");
+        props.add("sessionExpiryInterval");
+        props.add("socketFactory");
+        props.add("sslClientProps");
         props.add("sslHostnameVerifier");
         props.add("topic");
-        props.add("persistence");
+        props.add("userName");
+        props.add("willMqttProperties");
         props.add("willPayload");
+        props.add("willQos");
         props.add("willRetained");
-        props.add("exceptionHandler");
+        props.add("willTopic");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -85,6 +88,11 @@ public class PahoMqtt5EndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

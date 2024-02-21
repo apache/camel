@@ -16,8 +16,8 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Represents the kind of options for what to do with the current task when shutting down.
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * <li>CompleteCurrentTaskOnly - Is the <b>default</b> behavior where a route consumer will be shutdown as fast as
  * possible. Allowing it to complete its current task, but not to pickup pending tasks (if any).</li>
  * <li>CompleteAllTasks - Allows a route consumer to continue to complete all pending tasks (if any).</li>
- * 
+ *
  * </ul>
  * <b>Notice:</b> Most consumers only have a single task, but {@link org.apache.camel.BatchConsumer} can have many tasks
  * and thus this option mostly applies to this kind of consumer.

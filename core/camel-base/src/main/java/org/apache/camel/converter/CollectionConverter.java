@@ -99,9 +99,7 @@ public final class CollectionConverter {
 
     @Converter(order = 6)
     public static Set<Object> toSet(Object[] array) {
-        Set<Object> answer = new HashSet<>();
-        answer.addAll(Arrays.asList(array));
-        return answer;
+        return new HashSet<>(Arrays.asList(array));
     }
 
     @Converter(order = 7)

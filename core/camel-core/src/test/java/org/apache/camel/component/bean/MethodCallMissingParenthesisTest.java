@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MethodCallMissingParenthesisTest extends ContextTestSupport {
 
@@ -52,20 +52,19 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
     public void testMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform()
                         .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}").to("mock:result");
             }
         });
         context.start();
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Method should end with parenthesis, was doSomething(${body}, ${header.foo}", iae.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
+                "Method should end with parenthesis, was doSomething(${body}, ${header.foo}");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        assertEquals("Method should end with parenthesis, was doSomething(${body}, ${header.foo}", iae.getMessage());
     }
 
     @Test
@@ -80,15 +79,14 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         });
         context.start();
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals(
-                    "Method name must start with a valid java identifier at position: 0 in method: --doSomething(${body}, ${header.foo})",
-                    iae.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
+                "Should throw exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        assertEquals(
+                "Method name must start with a valid java identifier at position: 0 in method: --doSomething(${body}, ${header.foo})",
+                iae.getMessage());
     }
 
     public String doSomething(String body, String header) {

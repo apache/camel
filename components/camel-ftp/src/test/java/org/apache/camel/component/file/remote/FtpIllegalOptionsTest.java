@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FtpIllegalOptionsTest extends CamelTestSupport {
 
     @Test
-    public void testIllegalOptionsFileEndpoint() throws Exception {
+    public void testIllegalOptionsFileEndpoint() {
         Endpoint fileEndpoint = context.getEndpoint("file://target?move=../done/${file:name}&delete=true");
         assertThrows(IllegalArgumentException.class, () -> fileEndpoint.createConsumer(exchange -> {
         }));
     }
 
     @Test
-    public void testIllegalOptionsFtpEndpoint() throws Exception {
+    public void testIllegalOptionsFtpEndpoint() {
         Endpoint ftpEndpoint = context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true");
         assertThrows(IllegalArgumentException.class, () -> ftpEndpoint.createConsumer(exchange -> {
         }));

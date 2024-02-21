@@ -32,11 +32,11 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProxyRouteTest.class);
 
-    private int size = 10;
+    private final int size = 10;
 
     @Test
-    public void testHttpProxy() throws Exception {
-        LOG.info("Sending " + size + " messages to a http endpoint which is proxied/bridged");
+    public void testHttpProxy() {
+        LOG.info("Sending {} messages to a http endpoint which is proxied/bridged", size);
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < size; i++) {
@@ -44,11 +44,11 @@ public class HttpProxyRouteTest extends BaseJettyTest {
             assertEquals("Bye " + i, out);
         }
 
-        LOG.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Time taken: {}", TimeUtils.printDuration(watch.taken(), true));
     }
 
     @Test
-    public void testHttpProxyWithDifferentPath() throws Exception {
+    public void testHttpProxyWithDifferentPath() {
         String out = template.requestBody("http://localhost:{{port}}/proxy", null, String.class);
         assertEquals("/otherEndpoint", out);
 
@@ -57,13 +57,13 @@ public class HttpProxyRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpProxyHostHeader() throws Exception {
+    public void testHttpProxyHostHeader() {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
         assertEquals("localhost:" + getPort2(), out, "Get a wrong host header");
     }
 
     @Test
-    public void testHttpProxyFormHeader() throws Exception {
+    public void testHttpProxyFormHeader() {
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password",
                 Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
                 String.class);
@@ -71,7 +71,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty://http://localhost:{{port}}")
@@ -92,7 +92,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
                 // check the from request
                 from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // just take out the message body and send it back
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);

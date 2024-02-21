@@ -72,15 +72,15 @@ public class RequestReplyExample {
             @Override
             public void configure() throws Exception {
                 // Synchronize the logon so we don't start sending status requests too early
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET")
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET")
                         .filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon))
                         .bean(new CountDownLatchDecrementer("logon", logonLatch));
 
                 // Incoming status requests are passed to the order status service and afterwards we print out that
                 // order status being delivered using the json printer.
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
                         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
-                        .to("log://OrderStatusRequestLog?showAll=true&showOut=true&multiline=true")
+                        .to("log://OrderStatusRequestLog?showAll=true&multiline=true")
                         .bean(new MarketOrderStatusService())
                         .bean(new QuickfixjMessageJsonPrinter());
 
@@ -116,7 +116,7 @@ public class RequestReplyExample {
                 sb.append('\n');
                 line = orderStatusReply.readLine();
             }
-            LOG.info("Web reply:\n" + sb);
+            LOG.info("Web reply:\n{}", sb);
         }
         orderStatusReply.close();
 
@@ -155,7 +155,7 @@ public class RequestReplyExample {
         private static final Logger LOG = LoggerFactory.getLogger(MarketOrderStatusService.class);
 
         public ExecutionReport getOrderStatus(OrderStatusRequest request) throws FieldNotFound {
-            LOG.info("Received order status request for orderId=" + request.getOrderID().getValue());
+            LOG.info("Received order status request for orderId={}", request.getOrderID().getValue());
             return new ExecutionReport(
                     request.getOrderID(),
                     new ExecID(UUID.randomUUID().toString()),
@@ -172,7 +172,7 @@ public class RequestReplyExample {
 
     public static class FixSessionRouter {
         public String route(@Header("sessionID") String sessionID) {
-            return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
+            return String.format("quickfix:examples/inprocess.qf.cfg?sessionID=%s", sessionID);
         }
     }
 }

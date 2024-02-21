@@ -23,7 +23,13 @@ import org.apache.camel.model.language.ExpressionDefinition;
  */
 public interface HasExpressionType {
 
+    /**
+     * Gets the expression definition
+     */
     ExpressionDefinition getExpressionType();
 
+    /**
+     * Sets the expression definition
+     */
     void setExpressionType(ExpressionDefinition expressionType);
 }

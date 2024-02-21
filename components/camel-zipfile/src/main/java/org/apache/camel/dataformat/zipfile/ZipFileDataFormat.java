@@ -40,7 +40,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
 /**
  * Zip file data format. See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
-@Dataformat("zipfile")
+@Dataformat("zipFile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
@@ -53,7 +53,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public String getDataFormatName() {
-        return "zipfile";
+        return "zipFile";
     }
 
     @Override
@@ -64,7 +64,13 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             // generate the file name as the camel file component would do
             filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
         } else {
-            filename = Paths.get(filepath).getFileName().toString(); // remove any path elements
+            Path filenamePath = Paths.get(filepath).getFileName();
+            if (filenamePath != null) {
+                filename = filenamePath.toString(); // remove any path elements
+            } else {
+                // TODO do some logging
+                return;
+            }
         }
 
         ZipOutputStream zos = new ZipOutputStream(stream);

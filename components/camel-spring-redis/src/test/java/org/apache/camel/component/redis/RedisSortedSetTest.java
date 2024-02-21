@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -150,7 +151,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
                 RedisConstants.END, 3);
 
         verify(zSetOperations).rangeWithScores("key", 1, 3);
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test
@@ -247,7 +248,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
                 RedisConstants.END, 3);
 
         verify(zSetOperations).reverseRangeWithScores("key", 1, 3);
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test

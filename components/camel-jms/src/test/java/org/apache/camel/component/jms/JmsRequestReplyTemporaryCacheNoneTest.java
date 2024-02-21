@@ -16,50 +16,52 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
-public class JmsRequestReplyTemporaryCacheNoneTest extends CamelTestSupport {
+public class JmsRequestReplyTemporaryCacheNoneTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder createRouteBuilder() {
+        return null;
     }
 
     @Test
     public void testNotAllowed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:start").to("activemq:queue:hello?replyToCacheLevelName=CACHE_NONE");
+            public void configure() {
+                from("direct:start")
+                        .to("activemq:queue:JmsRequestReplyTemporaryCacheNoneTest?replyToCacheLevelName=CACHE_NONE");
 
-                from("activemq:queue:hello").process(exchange -> {
+                from("activemq:queue:JmsRequestReplyTemporaryCacheNoneTest").process(exchange -> {
                     exchange.getIn().setBody("Bye World");
                     assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
@@ -76,5 +78,17 @@ public class JmsRequestReplyTemporaryCacheNoneTest extends CamelTestSupport {
                     "ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION",
                     iae.getMessage());
         }
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

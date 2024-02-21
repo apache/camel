@@ -16,26 +16,29 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
+                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectInOutProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.ReconnectInOutProducerTest";
 
     @Override
     protected boolean useJmx() {
@@ -69,7 +72,7 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

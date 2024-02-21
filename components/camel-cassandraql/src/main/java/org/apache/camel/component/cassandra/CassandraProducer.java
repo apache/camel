@@ -78,8 +78,7 @@ public class CassandraProducer extends DefaultProducer {
             cqlParams = null;
         } else if (objectArrayClazz.isInstance(cqlParamsObj)) {
             cqlParams = objectArrayClazz.cast(cqlParamsObj);
-        } else if (cqlParamsObj instanceof Collection) {
-            final Collection cqlParamsColl = (Collection) cqlParamsObj;
+        } else if (cqlParamsObj instanceof Collection<?> cqlParamsColl) {
             cqlParams = cqlParamsColl.toArray();
         } else {
             cqlParams = new Object[] { cqlParamsObj };

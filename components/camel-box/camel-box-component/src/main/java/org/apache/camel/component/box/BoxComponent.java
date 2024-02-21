@@ -36,11 +36,11 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     BoxAPIConnection boxConnection;
 
     public BoxComponent() {
-        super(BoxEndpoint.class, BoxApiName.class, BoxApiCollection.getCollection());
+        super(BoxApiName.class, BoxApiCollection.getCollection());
     }
 
     public BoxComponent(CamelContext context) {
-        super(context, BoxEndpoint.class, BoxApiName.class, BoxApiCollection.getCollection());
+        super(context, BoxApiName.class, BoxApiCollection.getCollection());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
 
     /**
      * To use a shared connection
-     * 
+     *
      * @return the shared connection
      */
     public BoxAPIConnection getBoxConnection() {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-servlet</artifactId>
@@ -33,10 +33,7 @@
     <description>Camel servlet transport support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}",
-            javax.servlet.*;version="${servlet-version-range}"
-        </camel.osgi.import.before.defaults>
+        <camel.surefire.fork.vmargs>--add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED</camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
@@ -50,9 +47,9 @@
             <artifactId>camel-http-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -83,13 +80,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- for testing rest-dsl -->
@@ -105,7 +98,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-swagger-java</artifactId>
+            <artifactId>camel-openapi-java</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -117,6 +110,12 @@
             <groupId>io.undertow</groupId>
             <artifactId>undertow-servlet</artifactId>
             <version>${undertow-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -28,287 +28,313 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CronScheduledRoutePolicyTest extends CamelTestSupport {
+public class CronScheduledRoutePolicyTest {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    @Nested
+    class CronTest1 extends NoBuilderTest {
+        @Test
+        public void testScheduledStartRoutePolicyWithTwoRoutes() throws Exception {
+            MockEndpoint success1 = context.getEndpoint("mock:success1", MockEndpoint.class);
+            MockEndpoint success2 = context.getEndpoint("mock:success2", MockEndpoint.class);
+            success1.expectedMessageCount(1);
+            success2.expectedMessageCount(1);
+
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteStartTime("*/3 * * * * ?");
+
+                    from("direct:start1")
+                            .routeId("test1")
+                            .routePolicy(policy)
+                            .to("mock:success1");
+
+                    from("direct:start2")
+                            .routeId("test2")
+                            .routePolicy(policy)
+                            .to("mock:success2");
+                }
+            });
+            context.start();
+            context.getRouteController().stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
+            context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
+
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(
+                            () -> {
+                                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
+                                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
+                            });
+            template.sendBody("direct:start1", "Ready or not, Here, I come");
+            template.sendBody("direct:start2", "Ready or not, Here, I come");
+
+            success1.assertIsSatisfied();
+            success2.assertIsSatisfied();
+        }
     }
 
-    @Test
-    public void testScheduledStartRoutePolicyWithTwoRoutes() throws Exception {
-        MockEndpoint success1 = context.getEndpoint("mock:success1", MockEndpoint.class);
-        MockEndpoint success2 = context.getEndpoint("mock:success2", MockEndpoint.class);
-        success1.expectedMessageCount(1);
-        success2.expectedMessageCount(1);
+    @Nested
+    class CronTest2 extends NoBuilderTest {
+        @Test
+        public void testScheduledStopRoutePolicyWithTwoRoutes() throws Exception {
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteStopTime("*/3 * * * * ?");
+                    policy.setRouteStopGracePeriod(0);
+                    policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                    from("direct:start1")
+                            .routeId("test1")
+                            .routePolicy(policy)
+                            .to("mock:unreachable");
 
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteStartTime("*/3 * * * * ?");
+                    from("direct:start2")
+                            .routeId("test2")
+                            .routePolicy(policy)
+                            .to("mock:unreachable");
+                }
+            });
+            context.start();
 
-                from("direct:start1")
-                        .routeId("test1")
-                        .routePolicy(policy)
-                        .to("mock:success1");
-
-                from("direct:start2")
-                        .routeId("test2")
-                        .routePolicy(policy)
-                        .to("mock:success2");
-            }
-        });
-        context.start();
-        context.getRouteController().stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
-        context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
-
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
-        template.sendBody("direct:start1", "Ready or not, Here, I come");
-        template.sendBody("direct:start2", "Ready or not, Here, I come");
-
-        success1.assertIsSatisfied();
-        success2.assertIsSatisfied();
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(
+                            () -> {
+                                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
+                                assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
+                            });
+        }
     }
 
-    @Test
-    public void testScheduledStopRoutePolicyWithTwoRoutes() throws Exception {
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteStopTime("*/3 * * * * ?");
-                policy.setRouteStopGracePeriod(0);
-                policy.setTimeUnit(TimeUnit.MILLISECONDS);
+    @Nested
+    class CronTest3 extends NoBuilderTest {
+        @Test
+        public void testScheduledStartRoutePolicy() throws Exception {
+            MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+            success.expectedMessageCount(1);
 
-                from("direct:start1")
-                        .routeId("test1")
-                        .routePolicy(policy)
-                        .to("mock:unreachable");
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
 
-                from("direct:start2")
-                        .routeId("test2")
-                        .routePolicy(policy)
-                        .to("mock:unreachable");
-            }
-        });
-        context.start();
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteStartTime("*/3 * * * * ?");
 
-        Thread.sleep(5000);
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy)
+                            .to("mock:success");
+                }
+            });
+            context.start();
+            context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(
+                            () -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
+            template.sendBody("direct:start", "Ready or not, Here, I come");
+
+            context.getComponent("quartz", QuartzComponent.class).stop();
+            success.assertIsSatisfied();
+        }
     }
 
-    @Test
-    public void testScheduledStartRoutePolicy() throws Exception {
-        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
-        success.expectedMessageCount(1);
+    @Nested
+    class CronTest4 extends NoBuilderTest {
+        @Test
+        public void testScheduledStopRoutePolicy() throws Exception {
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteStopTime("*/3 * * * * ?");
+                    policy.setRouteStopGracePeriod(0);
+                    policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy)
+                            .to("mock:unreachable");
+                }
+            });
+            context.start();
 
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteStartTime("*/3 * * * * ?");
-
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .to("mock:success");
-            }
-        });
-        context.start();
-        context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
-
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
-        template.sendBody("direct:start", "Ready or not, Here, I come");
-
-        context.getComponent("quartz", QuartzComponent.class).stop();
-        success.assertIsSatisfied();
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(
+                            () -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
+        }
     }
 
-    @Test
-    public void testScheduledStopRoutePolicy() throws Exception {
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteStopTime("*/3 * * * * ?");
-                policy.setRouteStopGracePeriod(0);
-                policy.setTimeUnit(TimeUnit.MILLISECONDS);
+    @Nested
+    class CronTest5 extends NoBuilderTest {
+        @Test
+        public void testScheduledStartAndStopRoutePolicy() throws Exception {
+            MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+            success.expectedMessageCount(1);
 
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .to("mock:unreachable");
-            }
-        });
-        context.start();
+            final CountDownLatch startedLatch = new CountDownLatch(1);
+            final CountDownLatch stoppedLatch = new CountDownLatch(1);
 
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy() {
+
+                        @Override
+                        public void onStart(final Route route) {
+                            super.onStart(route);
+
+                            startedLatch.countDown();
+                        }
+
+                        @Override
+                        public void onStop(final Route route) {
+                            super.onStop(route);
+
+                            stoppedLatch.countDown();
+                        }
+                    };
+                    policy.setRouteStartTime("*/3 * * * * ?");
+                    policy.setRouteStopTime("*/6 * * * * ?");
+                    policy.setRouteStopGracePeriod(0);
+
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy)
+                            .noAutoStartup()
+                            .to("mock:success");
+                }
+            });
+            context.start();
+
+            startedLatch.await(5000, TimeUnit.SECONDS);
+
+            ServiceStatus startedStatus = context.getRouteController().getRouteStatus("test");
+            assertTrue(startedStatus == ServiceStatus.Started || startedStatus == ServiceStatus.Starting);
+            template.sendBody("direct:start", "Ready or not, Here, I come");
+
+            stoppedLatch.await(5000, TimeUnit.SECONDS);
+
+            ServiceStatus stoppedStatus = context.getRouteController().getRouteStatus("test");
+            assertTrue(stoppedStatus == ServiceStatus.Stopped || stoppedStatus == ServiceStatus.Stopping);
+
+            success.assertIsSatisfied();
+        }
     }
 
-    @Test
-    public void testScheduledStartAndStopRoutePolicy() throws Exception {
-        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
-        success.expectedMessageCount(1);
+    @Nested
+    class CronTest6 extends NoBuilderTest {
+        @Test
+        public void testScheduledStopRoutePolicyWithExtraPolicy() throws Exception {
+            final MyRoutePolicy myPolicy = new MyRoutePolicy();
 
-        final CountDownLatch startedLatch = new CountDownLatch(1);
-        final CountDownLatch stoppedLatch = new CountDownLatch(1);
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteStopTime("*/3 * * * * ?");
+                    policy.setRouteStopGracePeriod(0);
+                    policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy() {
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy, myPolicy)
+                            .to("mock:unreachable");
+                }
+            });
+            context.start();
 
-                    @Override
-                    public void onStart(final Route route) {
-                        super.onStart(route);
-
-                        startedLatch.countDown();
-                    }
-
-                    @Override
-                    public void onStop(final Route route) {
-                        super.onStop(route);
-
-                        stoppedLatch.countDown();
-                    }
-                };
-                policy.setRouteStartTime("*/3 * * * * ?");
-                policy.setRouteStopTime("*/6 * * * * ?");
-                policy.setRouteStopGracePeriod(0);
-
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .noAutoStartup()
-                        .to("mock:success");
-            }
-        });
-        context.start();
-
-        startedLatch.await(5000, TimeUnit.SECONDS);
-
-        ServiceStatus startedStatus = context.getRouteController().getRouteStatus("test");
-        assertTrue(startedStatus == ServiceStatus.Started || startedStatus == ServiceStatus.Starting);
-        template.sendBody("direct:start", "Ready or not, Here, I come");
-
-        stoppedLatch.await(5000, TimeUnit.SECONDS);
-
-        ServiceStatus stoppedStatus = context.getRouteController().getRouteStatus("test");
-        assertTrue(stoppedStatus == ServiceStatus.Stopped || stoppedStatus == ServiceStatus.Stopping);
-
-        success.assertIsSatisfied();
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(
+                            () -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
+            assertTrue(myPolicy.isStart(), "Should have called onStart");
+            assertTrue(myPolicy.isStop(), "Should have called onStop");
+        }
     }
 
-    @Test
-    public void testScheduledStopRoutePolicyWithExtraPolicy() throws Exception {
-        final MyRoutePolicy myPolicy = new MyRoutePolicy();
+    @Nested
+    class CronTest7 extends NoBuilderTest {
+        @Test
+        public void testScheduledSuspendRoutePolicy() throws Exception {
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteSuspendTime("*/3 * * * * ?");
 
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteStopTime("*/3 * * * * ?");
-                policy.setRouteStopGracePeriod(0);
-                policy.setTimeUnit(TimeUnit.MILLISECONDS);
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy)
+                            .to("mock:unreachable");
+                }
+            });
+            context.start();
 
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy, myPolicy)
-                        .to("mock:unreachable");
-            }
-        });
-        context.start();
-
-        Thread.sleep(5000);
-
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
-        assertTrue(myPolicy.isStart(), "Should have called onStart");
-        assertTrue(myPolicy.isStop(), "Should have called onStop");
+            // when suspending its only the consumer that suspends
+            // there is a ticket to improve this
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> {
+                        Consumer consumer = context.getRoute("test").getConsumer();
+                        SuspendableService ss = (SuspendableService) consumer;
+                        assertTrue(ss.isSuspended(), "Consumer should be suspended");
+                    });
+        }
     }
 
-    @Test
-    public void testScheduledSuspendRoutePolicy() throws Exception {
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteSuspendTime("*/3 * * * * ?");
+    @Nested
+    class CronTest8 extends NoBuilderTest {
+        @Test
+        public void testScheduledResumeRoutePolicy() throws Exception {
+            MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+            success.expectedMessageCount(1);
 
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .to("mock:unreachable");
-            }
-        });
-        context.start();
+            context.getComponent("direct", DirectComponent.class).setBlock(false);
+            context.getComponent("quartz", QuartzComponent.class)
+                    .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                    policy.setRouteResumeTime("*/3 * * * * ?");
 
-        Thread.sleep(5000);
+                    from("direct:start")
+                            .routeId("test")
+                            .routePolicy(policy)
+                            .to("mock:success");
+                }
+            });
+            context.start();
 
-        // when suspending its only the consumer that suspends
-        // there is a ticket to improve this
-        Consumer consumer = context.getRoute("test").getConsumer();
-        SuspendableService ss = (SuspendableService) consumer;
-        assertTrue(ss.isSuspended(), "Consumer should be suspended");
-    }
+            ServiceHelper.suspendService(context.getRoute("test").getConsumer());
 
-    @Test
-    public void testScheduledResumeRoutePolicy() throws Exception {
-        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
-        success.expectedMessageCount(1);
+            Thread.sleep(5000);
+            template.sendBody("direct:start", "Ready or not, Here, I come");
 
-        context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class)
-                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
-                policy.setRouteResumeTime("*/3 * * * * ?");
-
-                from("direct:start")
-                        .routeId("test")
-                        .routePolicy(policy)
-                        .to("mock:success");
-            }
-        });
-        context.start();
-
-        ServiceHelper.suspendService(context.getRoute("test").getConsumer());
-
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
-
-        template.sendBody("direct:start", "Ready or not, Here, I come");
-
-        success.assertIsSatisfied();
+            success.assertIsSatisfied();
+        }
     }
 
 }

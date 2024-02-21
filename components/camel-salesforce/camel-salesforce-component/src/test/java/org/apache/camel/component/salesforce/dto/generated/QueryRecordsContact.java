@@ -16,20 +16,7 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
-public class QueryRecordsContact extends AbstractQueryRecordsBase {
-    @XStreamImplicit
-    private List<Contact> records;
-
-    public List<Contact> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<Contact> records) {
-        this.records = records;
-    }
+public class QueryRecordsContact extends AbstractQueryRecordsBase<Contact> {
 }

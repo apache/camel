@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedThrottlingExceptionRoutePolicyMBean;
@@ -35,6 +37,17 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
 
     public ThrottlingExceptionRoutePolicy getPolicy() {
         return policy;
+    }
+
+    @Override
+    public String[] getExceptionTypes() {
+        if (policy.getThrottledExceptions() != null) {
+            List<String> types = policy.getThrottledExceptions().stream().map(Class::getName)
+                    .toList();
+            return types.toArray(new String[0]);
+        } else {
+            return null;
+        }
     }
 
     @Override

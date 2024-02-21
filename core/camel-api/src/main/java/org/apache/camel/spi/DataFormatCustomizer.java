@@ -204,7 +204,7 @@ public interface DataFormatCustomizer extends Ordered {
             if (type.equals(DataFormat.class)) {
                 return this.condition != null
                         ? this.condition
-                        : new BiPredicate<String, DataFormat>() {
+                        : new BiPredicate<>() {
                             @Override
                             public boolean test(String s, DataFormat language) {
                                 return true;
@@ -213,7 +213,7 @@ public interface DataFormatCustomizer extends Ordered {
             }
 
             if (condition == null) {
-                return new BiPredicate<String, DataFormat>() {
+                return new BiPredicate<>() {
                     @Override
                     public boolean test(String name, DataFormat target) {
                         return type.isAssignableFrom(target.getClass());
@@ -221,7 +221,7 @@ public interface DataFormatCustomizer extends Ordered {
                 };
             }
 
-            return new BiPredicate<String, DataFormat>() {
+            return new BiPredicate<>() {
                 @Override
                 public boolean test(String name, DataFormat target) {
                     return type.isAssignableFrom(target.getClass()) && condition.test(name, target);

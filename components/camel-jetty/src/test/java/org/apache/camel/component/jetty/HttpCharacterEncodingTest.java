@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpCharacterEncodingTest extends BaseJettyTest {
 
     @Test
-    public void testSendToJetty() throws Exception {
+    public void testSendToJetty() {
         Exchange exchange = template.send("http://localhost:{{port}}/myapp/myservice", new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World Thai Elephant \u0E08");
                 exchange.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
             }
@@ -41,17 +41,17 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 

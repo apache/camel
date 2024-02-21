@@ -16,64 +16,80 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  *
  */
-public class FileRouteJmsPreMoveTest extends CamelTestSupport {
+public class FileRouteJmsPreMoveTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
-    @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
-        super.setUp();
+        deleteDirectory("target/FileRouteJmsPreMoveTest/inbox");
+        deleteDirectory("target/FileRouteJmsPreMoveTest/outbox");
     }
 
     @Test
     public void testPreMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedFileExists("target/outbox/hello.txt", "Hello World");
+        getMockEndpoint("mock:result").expectedFileExists("target/FileRouteJmsPreMoveTest/outbox/hello.txt", "Hello World");
 
-        template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/FileRouteJmsPreMoveTest/inbox", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("file://target/inbox?preMove=transfer").to("activemq:queue:hello");
+            public void configure() {
+                from("file://target/FileRouteJmsPreMoveTest/inbox?preMove=transfer")
+                        .to("activemq:queue:FileRouteJmsPreMoveTest");
 
-                from("activemq:queue:hello")
+                from("activemq:queue:FileRouteJmsPreMoveTest")
                         .to("log:outbox")
-                        .to("file://target/outbox")
+                        .to("file://target/FileRouteJmsPreMoveTest/outbox")
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

@@ -44,6 +44,18 @@ public class QuickfixjProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        getEndpoint().addProducer();
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        getEndpoint().removeProducer();
+        super.doStop();
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             getEndpoint().ensureInitialized();
@@ -57,7 +69,7 @@ public class QuickfixjProducer extends DefaultProducer {
         Message message = camelMessage.getBody(Message.class);
         LOG.debug("Sending FIX message: {}", message);
 
-        SessionID messageSessionID = getEndpoint().getSessionID();
+        SessionID messageSessionID = getEndpoint().getSID();
         if (messageSessionID == null) {
             messageSessionID = MessageUtils.getSessionID(message);
         }
@@ -71,7 +83,7 @@ public class QuickfixjProducer extends DefaultProducer {
 
         if (exchange.getPattern().isOutCapable()) {
             MessageCorrelator messageCorrelator = getEndpoint().getEngine().getMessageCorrelator();
-            callable = messageCorrelator.getReply(getEndpoint().getSessionID(), exchange);
+            callable = messageCorrelator.getReply(exchange);
         }
 
         if (!session.send(message)) {
@@ -80,8 +92,8 @@ public class QuickfixjProducer extends DefaultProducer {
 
         if (callable != null) {
             Message reply = callable.call();
-            exchange.getOut().getHeaders().putAll(camelMessage.getHeaders());
-            exchange.getOut().setBody(reply);
+            exchange.getMessage().getHeaders().putAll(camelMessage.getHeaders());
+            exchange.getMessage().setBody(reply);
         }
     }
 

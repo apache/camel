@@ -18,10 +18,13 @@
 package org.apache.camel.component.xj;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonToken;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
 
 public final class XJConstants {
 
@@ -46,6 +49,8 @@ public final class XJConstants {
      * converting to xml the attribute holds the type that was in the original json document.
      */
     public static final String TYPE_HINT_TYPE = "type";
+    @Metadata(description = "The XSLT file name", javaType = "String")
+    public static final String XSLT_FILE_NAME = Exchange.XSLT_FILE_NAME;
 
     /**
      * Mapping from json-types to typehint names
@@ -65,7 +70,7 @@ public final class XJConstants {
     static final String JSON_WRITER_MIXED_CONTENT_TEXT_KEY = "#text";
 
     static {
-        final Map<JsonToken, String> jsonTypeTypeMap = new HashMap<>();
+        final Map<JsonToken, String> jsonTypeTypeMap = new EnumMap<>(JsonToken.class);
         jsonTypeTypeMap.put(JsonToken.START_OBJECT, "object");
         jsonTypeTypeMap.put(JsonToken.END_OBJECT, "object");
         jsonTypeTypeMap.put(JsonToken.START_ARRAY, "array");

@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- intercept incoming message arriving on either seda:foo or seda:bar endpoints as we use regex -->
         <interceptFrom uri="seda:(foo|bar)">
             <to uri="mock:intercept"/>

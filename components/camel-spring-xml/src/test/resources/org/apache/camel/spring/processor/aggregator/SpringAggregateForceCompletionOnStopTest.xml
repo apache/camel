@@ -25,9 +25,10 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route id="foo">
             <from uri="direct:forceCompletionTrue"/>
-            <aggregate strategyRef="aggregatorStrategy" forceCompletionOnStop="true" completionSize="10">
+            <aggregate aggregationStrategy="aggregatorStrategy" forceCompletionOnStop="true" completionSize="10">
                 <correlationExpression><header>id</header></correlationExpression>
                 <delay><constant>100</constant></delay>
                 <process ref="myCompletionProcessor"/>
@@ -36,7 +37,7 @@
 
         <route id="bar">
             <from uri="direct:forceCompletionFalse"/>
-            <aggregate strategyRef="aggregatorStrategy" completionSize="10">
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="10">
                 <correlationExpression><header>id</header></correlationExpression>
                 <delay><constant>100</constant></delay>
                 <process ref="myCompletionProcessor"/>

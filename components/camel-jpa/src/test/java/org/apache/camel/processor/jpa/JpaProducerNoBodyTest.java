@@ -29,7 +29,7 @@ public class JpaProducerNoBodyTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
-    public void testRouteJpa() throws Exception {
+    public void testRouteJpa() {
         try {
             template.sendBody("direct:start", null);
             fail("Should have thrown an exception");

@@ -19,18 +19,27 @@ package org.apache.camel.component.jms.issues;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsHeaderAsObjectTest extends AbstractJMSTest {
 
-public class JmsHeaderAsObjectTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSendHeaderAsPrimitiveOnly() throws Exception {
@@ -42,7 +51,7 @@ public class JmsHeaderAsObjectTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("number", 23);
-        template.sendBodyAndHeaders("activemq:in", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:JmsHeaderAsObjectTest", "Hello World", headers);
 
         mock.assertIsSatisfied();
     }
@@ -62,25 +71,34 @@ public class JmsHeaderAsObjectTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("order", order);
-        template.sendBodyAndHeaders("activemq:in", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:JmsHeaderAsObjectTest", "Hello World", headers);
 
         mock.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:in").to("mock:result");
+            public void configure() {
+                from("activemq:JmsHeaderAsObjectTest").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

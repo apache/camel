@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,13 +25,20 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedQueueInOutProducerTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Produce
     protected ProducerTemplate template;
@@ -49,13 +56,13 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
         }
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                = new ActiveMQConnectionFactory(service.serviceAddress());
         CamelContext camelContext = super.createCamelContext();
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -64,15 +71,15 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("sjms:queue:test.queue?transacted=true")
+                        .to("sjms:queue:test.queue.TransactedQueueInOutProducerTest?transacted=true")
                         // request/reply is not transacted
-                        .to(ExchangePattern.InOut, "sjms:queue:test.transform")
-                        .to("sjms:queue:test.queue2?transacted=true")
+                        .to(ExchangePattern.InOut, "sjms:queue:test.transform.TransactedQueueInOutProducerTest")
+                        .to("sjms:queue:test.queue2.TransactedQueueInOutProducerTest?transacted=true")
                         .process(
                                 new Processor() {
                                     @Override
@@ -86,13 +93,13 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
                                     }
                                 });
 
-                from("sjms:queue:test.queue?transacted=true")
+                from("sjms:queue:test.queue.TransactedQueueInOutProducerTest?transacted=true")
                         .to("mock:result");
 
-                from("sjms:queue:test.queue2?transacted=true")
+                from("sjms:queue:test.queue2.TransactedQueueInOutProducerTest?transacted=true")
                         .to("mock:result2");
 
-                from("sjms:queue:test.transform")
+                from("sjms:queue:test.transform.TransactedQueueInOutProducerTest")
                         .transform(body().prepend("Changed "));
             }
         };

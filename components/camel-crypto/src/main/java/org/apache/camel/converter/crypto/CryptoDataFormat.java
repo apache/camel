@@ -227,16 +227,20 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         return shouldAppendHMAC ? new HMACAccumulator(key, macAlgorithm, cryptoProvider, bufferSize) : new HMACAccumulator() {
             byte[] empty = new byte[0];
 
+            @Override
             public void encryptUpdate(byte[] buffer, int read) {
             }
 
+            @Override
             public void decryptUpdate(byte[] buffer, int read) throws IOException {
                 outputStream.write(buffer, 0, read);
             }
 
+            @Override
             public void validate() {
             }
 
+            @Override
             public byte[] getCalculatedMac() {
                 return empty;
             }

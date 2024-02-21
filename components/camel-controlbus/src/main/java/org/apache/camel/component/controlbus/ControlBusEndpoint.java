@@ -38,17 +38,17 @@ import org.apache.camel.support.DefaultEndpoint;
  * statistics.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language",
-             producerOnly = true, category = { Category.CORE, Category.MONITORING })
+             remote = false, producerOnly = true, category = { Category.CORE, Category.MONITORING })
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language")
     @Metadata(required = true)
     private String command;
-    @UriPath(enums = "bean,constant,el,exchangeProperty,file,groovy,header,jsonpath,mvel,ognl,ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
+    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath,mvel,ognl,python,ref,simple,spel,tokenize,xpath,xquery,xtokenize")
     private Language language;
     @UriParam
     private String routeId;
-    @UriParam(enums = "start,stop,suspend,resume,restart,status,stats")
+    @UriParam(enums = "start,stop,fail,suspend,resume,restart,status,stats")
     private String action;
     @UriParam(defaultValue = "1000")
     private int restartDelay = 1000;
@@ -114,10 +114,10 @@ public class ControlBusEndpoint extends DefaultEndpoint {
      * To denote an action that can be either: start, stop, or status.
      * <p/>
      * To either start or stop a route, or to get the status of the route as output in the message body. You can use
-     * suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards
-     * you can use stats to get performance statics returned in XML format; the routeId option can be used to define
-     * which route to get the performance stats for, if routeId is not defined, then you get statistics for the entire
-     * CamelContext. The restart action will restart the route.
+     * suspend and resume to either suspend or resume a route. You can use stats to get performance statics returned in
+     * XML format; the routeId option can be used to define which route to get the performance stats for, if routeId is
+     * not defined, then you get statistics for the entire CamelContext. The restart action will restart the route. And
+     * the fail action will stop and mark the route as failed (stopped due to an exception)
      */
     public void setAction(String action) {
         this.action = action;

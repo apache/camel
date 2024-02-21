@@ -62,7 +62,7 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
         };
     }
 
-    public final class MyCustomStrategy extends ServiceSupport implements AggregationStrategy {
+    public static final class MyCustomStrategy extends ServiceSupport implements AggregationStrategy {
 
         public boolean stop;
         public boolean start;

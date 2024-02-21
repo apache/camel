@@ -19,6 +19,7 @@ package org.apache.camel.component.irc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeFactory;
@@ -34,7 +35,9 @@ import static org.mockito.Mockito.when;
 
 public class IrcConsumerTest {
 
-    private ExtendedCamelContext context;
+    private CamelContext context;
+    private ExtendedCamelContext ecc;
+
     private ExchangeFactory exchangeFactory;
     private IRCConnection connection;
     private Processor processor;
@@ -50,7 +53,8 @@ public class IrcConsumerTest {
         processor = mock(Processor.class);
         configuration = mock(IrcConfiguration.class);
         listener = mock(IRCEventAdapter.class);
-        context = mock(ExtendedCamelContext.class);
+        context = mock(CamelContext.class);
+        ecc = mock(ExtendedCamelContext.class);
         exchangeFactory = mock(ExchangeFactory.class);
 
         List<IrcChannel> channels = new ArrayList<>();
@@ -61,8 +65,8 @@ public class IrcConsumerTest {
         when(endpoint.getConfiguration()).thenReturn(configuration);
 
         when(endpoint.getCamelContext()).thenReturn(context);
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
-        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(context.getCamelContextExtension()).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         consumer = new IrcConsumer(endpoint, processor, connection);

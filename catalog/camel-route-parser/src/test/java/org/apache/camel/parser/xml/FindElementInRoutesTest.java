@@ -39,7 +39,7 @@ public class FindElementInRoutesTest {
         Element element = CamelXmlHelper.getSelectedCamelElementNode(key, is);
         assertNotNull(element, "Could not find Element for key " + key);
 
-        LOG.info("Found element " + element.getTagName());
+        LOG.info("Found element {}", element.getTagName());
     }
 
 }

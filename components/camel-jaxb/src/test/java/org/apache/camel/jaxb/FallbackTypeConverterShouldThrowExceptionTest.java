@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -43,7 +44,7 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
 
         template.sendBody("direct:a", foo);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(0, failed.get());
         assertEquals(0, failed2.get());
@@ -57,7 +58,7 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
 
         template.sendBody("direct:a", camel);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(1, failed.get());
         assertEquals(0, failed2.get());
@@ -71,21 +72,21 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
 
         template.sendBody("direct:a", bar);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(1, failed.get());
         assertEquals(0, failed2.get());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder(context) {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             exchange.getIn().getBody(Foo.class);
                         } catch (TypeConversionException e) {
@@ -94,7 +95,7 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
                     }
                 }).to("mock:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             exchange.getIn().getBody(List.class);
                         } catch (TypeConversionException e) {

@@ -16,20 +16,16 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
 
@@ -37,33 +33,29 @@ import org.apache.camel.spi.Metadata;
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
  * message.
  */
-@Metadata(label = "eip,endpoint,routing")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
+
     @XmlTransient
-    private Processor newExchangeProcessor;
-    @XmlAttribute(name = "processorRef")
-    private String newExchangeProcessorRef;
-    @XmlElement(name = "body")
-    private ExpressionSubElementDefinition newExchangeExpression;
-    @XmlElementRef
-    private List<SetHeaderDefinition> headers = new ArrayList<>();
+    private ExecutorService executorServiceBean;
     @XmlTransient
-    private ExecutorService executorService;
+    private Processor onPrepareProcessor;
+
     @XmlAttribute
-    private String executorServiceRef;
-    @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String copy;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String dynamicUri;
     @XmlAttribute
-    private String onPrepareRef;
-    @XmlTransient
-    private Processor onPrepare;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    private String onPrepare;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String executorService;
 
     public WireTapDefinition() {
     }
@@ -91,7 +83,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @Override
     @SuppressWarnings("unchecked")
     public Type end() {
-        // allow end() to return to previous type so you can continue in the DSL
+        // allow end() to return to previous type, so you can continue in the DSL
         return (Type) super.end();
     }
 
@@ -112,20 +104,20 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
     /**
      * Uses a custom thread pool
      *
-     * @param  executorServiceRef reference to lookup a custom {@link ExecutorService} to use as thread pool for sending
-     *                            tapped exchanges
-     * @return                    the builder
+     * @param  executorService reference to lookup a custom {@link ExecutorService} to use as thread pool for sending
+     *                         tapped exchanges
+     * @return                 the builder
      */
     @Override
-    public WireTapDefinition<Type> executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public WireTapDefinition<Type> executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -187,77 +179,26 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  expression expression that creates the new body to send
-     * @return            the builder
-     * @see               #newExchangeHeader(String, org.apache.camel.Expression)
-     */
-    public WireTapDefinition<Type> newExchangeBody(Expression expression) {
-        setNewExchangeExpression(new ExpressionSubElementDefinition(expression));
-        return this;
-    }
-
-    /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  ref reference to the {@link Processor} to lookup in the {@link org.apache.camel.spi.Registry} to be used
-     *             for preparing the new exchange to send
-     * @return     the builder
-     */
-    public WireTapDefinition<Type> newExchangeRef(String ref) {
-        setNewExchangeProcessorRef(ref);
-        return this;
-    }
-
-    /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
-     *
-     * @param  processor processor preparing the new exchange to send
-     * @return           the builder
-     * @see              #newExchangeHeader(String, org.apache.camel.Expression)
-     */
-    public WireTapDefinition<Type> newExchange(Processor processor) {
-        setNewExchangeProcessor(processor);
-        return this;
-    }
-
-    /**
-     * Sets a header on the <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}.
-     * <p/>
-     * Use this together with the {@link #newExchangeBody(org.apache.camel.Expression)} or
-     * {@link #newExchange(org.apache.camel.Processor)} methods.
-     *
-     * @param  headerName the header name
-     * @param  expression the expression setting the header value
-     * @return            the builder
-     */
-    public WireTapDefinition<Type> newExchangeHeader(String headerName, Expression expression) {
-        headers.add(new SetHeaderDefinition(headerName, expression));
-        return this;
-    }
-
-    /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
      * @param  onPrepare the processor
      * @return           the builder
      */
     public WireTapDefinition<Type> onPrepare(Processor onPrepare) {
-        setOnPrepare(onPrepare);
+        this.onPrepareProcessor = onPrepare;
         return this;
     }
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
-     * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
-     * @return              the builder
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return           the builder
      */
-    public WireTapDefinition<Type> onPrepareRef(String onPrepareRef) {
-        setOnPrepareRef(onPrepareRef);
+    public WireTapDefinition<Type> onPrepare(String onPrepare) {
+        setOnPrepare(onPrepare);
         return this;
     }
 
@@ -266,7 +207,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * producers, when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -275,7 +216,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      *
      * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return           the builder
@@ -290,7 +231,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * producers, when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -299,7 +240,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      *
      * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return           the builder
@@ -311,7 +252,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalid endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
@@ -320,8 +261,46 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         return this;
     }
 
+    /**
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
+     *
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * {@link Message}, however the headers from the {@link Message} will still be used as well. In other words, the
+     * variable is used instead of the message body, but everything else is as usual.
+     */
+    public WireTapDefinition<Type> variableReceive(String variableReceive) {
+        throw new IllegalArgumentException("WireTap does not support variableReceive");
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public WireTapDefinition<Type> variableSend(String variableSend) {
+        setVariableSend(variableSend);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
+
+    public Processor getOnPrepareProcessor() {
+        return onPrepareProcessor;
+    }
+
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
 
     @Override
     public String getUri() {
@@ -329,65 +308,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the simple language.
      */
     @Override
     public void setUri(String uri) {
         super.setUri(uri);
-    }
-
-    public Processor getNewExchangeProcessor() {
-        return newExchangeProcessor;
-    }
-
-    /**
-     * To use a Processor for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeProcessor(Processor processor) {
-        this.newExchangeProcessor = processor;
-    }
-
-    public String getNewExchangeProcessorRef() {
-        return newExchangeProcessorRef;
-    }
-
-    /**
-     * Reference to a Processor to use for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeProcessorRef(String ref) {
-        this.newExchangeProcessorRef = ref;
-    }
-
-    public ExpressionSubElementDefinition getNewExchangeExpression() {
-        return newExchangeExpression;
-    }
-
-    /**
-     * Uses the expression for creating a new body as the message to use for wire tapping
-     */
-    public void setNewExchangeExpression(ExpressionSubElementDefinition newExchangeExpression) {
-        this.newExchangeExpression = newExchangeExpression;
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 
     public String getCopy() {
@@ -406,28 +331,19 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         this.dynamicUri = dynamicUri;
     }
 
-    public String getOnPrepareRef() {
-        return onPrepareRef;
-    }
-
-    public void setOnPrepareRef(String onPrepareRef) {
-        this.onPrepareRef = onPrepareRef;
-    }
-
-    public Processor getOnPrepare() {
+    public String getOnPrepare() {
         return onPrepare;
     }
 
-    public void setOnPrepare(Processor onPrepare) {
+    public void setOnPrepare(String onPrepare) {
         this.onPrepare = onPrepare;
     }
 
-    public List<SetHeaderDefinition> getHeaders() {
-        return headers;
+    public String getExecutorService() {
+        return executorService;
     }
 
-    public void setHeaders(List<SetHeaderDefinition> headers) {
-        this.headers = headers;
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
-
 }

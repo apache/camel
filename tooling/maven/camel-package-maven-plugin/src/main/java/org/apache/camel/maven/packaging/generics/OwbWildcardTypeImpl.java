@@ -21,8 +21,8 @@ import java.lang.reflect.WildcardType;
 
 public class OwbWildcardTypeImpl implements WildcardType {
 
-    private Type[] upperBounds;
-    private Type[] lowerBounds;
+    private final Type[] upperBounds;
+    private final Type[] lowerBounds;
 
     public OwbWildcardTypeImpl(Type[] upperBounds, Type[] lowerBounds) {
         this.upperBounds = upperBounds.clone();

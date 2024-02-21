@@ -43,7 +43,7 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // make sure that the thread pool will be shutdown
-        List<Processor> list = context.getRoute("route1").filter("foo");
+        List<Processor> list = getProcessors("foo");
         RecipientList rl = (RecipientList) list.get(0);
         assertNotNull(rl);
 

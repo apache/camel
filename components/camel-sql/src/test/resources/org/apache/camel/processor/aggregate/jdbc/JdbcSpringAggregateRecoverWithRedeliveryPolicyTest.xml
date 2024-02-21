@@ -29,8 +29,6 @@
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="JdbcSpringDataSource.xml" />
-
     <bean id="repoQuickRecovery" parent="repo1">
         <!-- scan 2 times per second -->
         <property name="recoveryInterval" value="500"/>
@@ -48,7 +46,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- aggregate using our strategy and jdbc repo, and complete when we have 5 messages aggregated -->
-            <aggregate strategyRef="myAggregatorStrategy" aggregationRepositoryRef="repoQuickRecovery" completionSize="5">
+            <aggregate aggregationStrategy="myAggregatorStrategy" aggregationRepository="repoQuickRecovery" completionSize="5">
                 <!-- correlate by header with the key id -->
                 <correlationExpression><header>id</header></correlationExpression>
                 <!-- send aggregated messages out here -->

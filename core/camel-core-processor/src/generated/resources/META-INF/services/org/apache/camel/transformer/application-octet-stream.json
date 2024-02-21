@@ -1,0 +1,13 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "application-octet-stream",
+    "title": "Application Octet Stream",
+    "deprecated": false,
+    "javaType": "org.apache.camel.processor.transformer.ByteArrayDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

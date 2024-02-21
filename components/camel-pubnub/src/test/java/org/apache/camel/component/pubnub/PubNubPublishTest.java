@@ -43,11 +43,11 @@ public class PubNubPublishTest extends PubNubTestBase {
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
         template.sendBody("direct:publish", new Hello("Hi"));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testPublishEmptyBody() throws Exception {
+    public void testPublishEmptyBody() {
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:publish", null));
     }
@@ -60,11 +60,11 @@ public class PubNubPublishTest extends PubNubTestBase {
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 
         template.sendBodyAndHeader("direct:publish", "Hi", PubNubConstants.OPERATION, "FIRE");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish").to(endpoint).to("mock:result");

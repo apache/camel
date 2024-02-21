@@ -38,11 +38,16 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Dataformat("avro")
+@Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
+                              "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
+                              "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
+                              "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
@@ -153,8 +158,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
         reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
-        Object result = reader.read(null, decoder);
-        return result;
+        return reader.read(null, decoder);
     }
 
 }

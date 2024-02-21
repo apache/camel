@@ -40,6 +40,8 @@ import org.apache.ignite.events.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
+
 /**
  * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from an Ignite cluster by creating a local
  * event listener.
@@ -47,8 +49,8 @@ import org.slf4j.LoggerFactory;
  * This endpoint only supports consumers. The Exchanges created by this consumer put the received Event object into the
  * body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId",
-             category = { Category.MESSAGING, Category.EVENTBUS },
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_EVENTS, title = "Ignite Events", syntax = "ignite-events:endpointId",
+             category = { Category.MESSAGING, Category.CACHE, Category.CLUSTERING },
              consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
@@ -76,27 +78,27 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // Initialize the Consumer.
-        IgniteEvents events = createIgniteEvents();
-        IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, events);
+        IgniteEvents igniteEvents = createIgniteEvents();
+        IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, igniteEvents);
         configureConsumer(consumer);
 
-        LOG.info("Created Ignite Events consumer for event types: {}.", events);
+        LOG.info("Created Ignite Events consumer for event types: {}.", igniteEvents);
 
         return consumer;
     }
 
     private IgniteEvents createIgniteEvents() {
         Ignite ignite = ignite();
-        IgniteEvents events;
+        IgniteEvents igniteEvents;
         if (clusterGroupExpression == null) {
             LOG.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
-            events = ignite.events();
+            igniteEvents = ignite.events();
         } else {
             ClusterGroup group = clusterGroupExpression.getClusterGroup(ignite);
             LOG.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
-            events = ignite.events(group);
+            igniteEvents = ignite.events(group);
         }
-        return events;
+        return igniteEvents;
     }
 
     /**

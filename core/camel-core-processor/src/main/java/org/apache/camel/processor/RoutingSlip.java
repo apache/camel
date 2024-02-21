@@ -23,10 +23,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
@@ -185,7 +184,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         }
 
         Expression exp = expression;
-        Object slip = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
+        Object slip = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
         if (slip != null) {
             if (slip instanceof Expression) {
                 exp = (Expression) slip;
@@ -238,9 +237,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         }
 
         // ensure the slip is empty when we start
-        if (current.hasProperties()) {
-            current.setProperty(Exchange.SLIP_ENDPOINT, null);
-        }
+        current.removeProperty(ExchangePropertyKey.SLIP_ENDPOINT);
 
         while (iter.hasNext(current)) {
 
@@ -290,7 +287,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                 if (e != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
                     }
                     current.setException(null);
                 }
@@ -327,7 +324,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            CamelContext ecc = exchange.getContext();
             String uri;
             if (recipient instanceof String) {
                 uri = (String) recipient;
@@ -336,7 +333,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint
-            return ecc.normalizeUri(uri);
+            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
         return null;
     }
@@ -348,8 +345,8 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
-                return ecc.hasEndpoint(nu);
+                CamelContext ecc = exchange.getContext();
+                return ecc.getCamelContextExtension().hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
                 return exchange.getContext().hasEndpoint(uri);
@@ -366,7 +363,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                     : ExchangeHelper.resolveEndpoint(exchange, recipient);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoints()) {
-                LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
             } else {
                 throw e;
             }
@@ -394,7 +391,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
         AsyncProcessor answer = processor;
 
-        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
+        boolean tryBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
         if (!tryBlock && route != null && errorHandler != null) {
@@ -433,14 +430,15 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
 
             // set property which endpoint we send to and the producer that can do it
-            ex.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
-            ex.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
-            ex.setProperty(Exchange.SLIP_PRODUCER, p);
+            ex.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
+            ex.setProperty(ExchangePropertyKey.SLIP_ENDPOINT, endpoint.getEndpointUri());
+            // routing slip needs to have access to the producer
+            ex.setProperty(ExchangePropertyKey.SLIP_PRODUCER, p);
 
             return target.process(ex, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // cleanup producer after usage
-                    ex.removeProperty(Exchange.SLIP_PRODUCER);
+                    ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
 
                     // we only have to handle async completion of the routing slip
                     if (doneSync) {
@@ -463,7 +461,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
                                     if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.",
+                                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint,
                                                 e);
                                     }
                                     current.setException(null);
@@ -529,7 +527,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
                         // copy results back to the original exchange
                         ExchangeHelper.copyResults(original, current);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         ex.setException(e);
                     }
 
@@ -571,13 +569,6 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     }
 
     /**
-     * Returns the outbound message if available. Otherwise return the inbound message.
-     */
-    private Message getResultMessage(Exchange exchange) {
-        return exchange.getMessage();
-    }
-
-    /**
      * Creates the embedded processor to use when wrapping this routing slip in an error handler.
      */
     public AsyncProcessor newRoutingSlipProcessorForErrorHandler() {
@@ -588,11 +579,11 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
      * Embedded processor that routes to the routing slip that has been set via the exchange property
      * {@link Exchange#SLIP_PRODUCER}.
      */
-    private final class RoutingSlipProcessor extends AsyncProcessorSupport {
+    private static final class RoutingSlipProcessor extends AsyncProcessorSupport {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            AsyncProcessor producer = exchange.getProperty(Exchange.SLIP_PRODUCER, AsyncProcessor.class);
+            AsyncProcessor producer = exchange.getProperty(ExchangePropertyKey.SLIP_PRODUCER, AsyncProcessor.class);
             return producer.process(exchange, callback);
         }
 

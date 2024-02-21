@@ -42,9 +42,6 @@ public class RestConfigurationDetails {
     private String producerApiDoc;
     private String contextPath;
     private String apiContextPath;
-    private String apiContextRouteId;
-    private String apiContextIdPattern;
-    private String apiContextListening;
     private String apiVendorExtension;
     private String hostNameResolver;
     private String bindingMode;
@@ -189,30 +186,6 @@ public class RestConfigurationDetails {
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
-    }
-
-    public String getApiContextRouteId() {
-        return apiContextRouteId;
-    }
-
-    public void setApiContextRouteId(String apiContextRouteId) {
-        this.apiContextRouteId = apiContextRouteId;
-    }
-
-    public String getApiContextIdPattern() {
-        return apiContextIdPattern;
-    }
-
-    public void setApiContextIdPattern(String apiContextIdPattern) {
-        this.apiContextIdPattern = apiContextIdPattern;
-    }
-
-    public String getApiContextListening() {
-        return apiContextListening;
-    }
-
-    public void setApiContextListening(String apiContextListening) {
-        this.apiContextListening = apiContextListening;
     }
 
     public String getApiVendorExtension() {

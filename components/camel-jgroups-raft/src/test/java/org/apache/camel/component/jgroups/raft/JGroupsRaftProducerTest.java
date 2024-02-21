@@ -34,10 +34,10 @@ public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
     private static final String MESSAGE = "MESSAGE";
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(CONFIGURED_ENDPOINT_URI);
                 from("direct:start2").to(CONFIGURED_ENDPOINT_URI2);
                 from("direct:start3").to(CONFIGURED_ENDPOINT_URI3);

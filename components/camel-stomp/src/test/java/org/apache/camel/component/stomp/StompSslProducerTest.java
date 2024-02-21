@@ -30,7 +30,8 @@ public class StompSslProducerTest extends StompProducerTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                        .toF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters", getPort());
+                        .toF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
+                                sslServicePort);
             }
         };
     }

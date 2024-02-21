@@ -86,6 +86,17 @@ public class UnmarshalProcessorTest extends TestSupport {
                 "UnmarshalProcessor did not make use of the returned object being returned while unmarshalling");
     }
 
+    @Test
+    public void testAllowNullBody() throws Exception {
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), null);
+        Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange), true);
+
+        processor.process(exchange);
+
+        assertNull(exchange.getMessage().getBody(), "UnmarshalProcessor should allow null body");
+        assertNull(exchange.getException(), "UnmarshalProcessor should allow null body");
+    }
+
     private static class MyDataFormat extends ServiceSupport implements DataFormat {
 
         private final Object object;

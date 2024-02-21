@@ -20,9 +20,7 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,22 +40,6 @@ public class RestErrorTest {
 
         final RestError gotWithStatusCode = reader.<RestError> readValue(
                 "{\"statusCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
-        assertEquals(gotWithStatusCode, error);
-    }
-
-    @Test
-    public void shouldDeserializeFromXml() {
-        final XStream xStream = XStreamUtils.createXStream(RestError.class);
-        xStream.alias("errors", RestError.class);
-
-        final RestError gotWithErrorCode = (RestError) xStream
-                .fromXML(
-                        "<errors><fields>field1</fields><fields>field2</fields><message>message</message><errorCode>errorCode</errorCode></errors>");
-        assertEquals(gotWithErrorCode, error);
-
-        final RestError gotWithStatusCode = (RestError) xStream
-                .fromXML(
-                        "<errors><fields>field1</fields><fields>field2</fields><message>message</message><statusCode>errorCode</statusCode></errors>");
         assertEquals(gotWithStatusCode, error);
     }
 }

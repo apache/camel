@@ -22,7 +22,7 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedThroughputLoggerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "The received number of messages")
-    int getReceivedCounter();
+    long getReceivedCounter();
 
     @ManagedAttribute(description = "The average throughput")
     double getAverage();

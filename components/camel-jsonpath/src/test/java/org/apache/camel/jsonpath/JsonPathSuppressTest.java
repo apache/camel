@@ -17,6 +17,7 @@
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ public class JsonPathSuppressTest extends CamelTestSupport {
 
         template.sendBody("direct:start", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,14 +44,14 @@ public class JsonPathSuppressTest extends CamelTestSupport {
 
         template.sendBody("direct:start", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when().jsonpath("person.middlename", true)

@@ -32,11 +32,11 @@ public class AsyncClientMethodCallback implements AsyncMethodCallback {
 
     @Override
     public void onComplete(Object response) {
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         if (response == null) {
-            exchange.getOut().setBody(response);
+            exchange.getMessage().setBody(response);
         } else {
-            exchange.getOut().setBody(response, response.getClass());
+            exchange.getMessage().setBody(response, response.getClass());
         }
         callback.done(false);
     }

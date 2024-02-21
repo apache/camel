@@ -19,34 +19,36 @@ public class JCacheEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(24);
+        props.add("action");
+        props.add("bridgeErrorHandler");
+        props.add("cacheConfiguration");
+        props.add("cacheConfigurationProperties");
+        props.add("cacheLoaderFactory");
+        props.add("cacheName");
         props.add("cacheWriterFactory");
-        props.add("expiryPolicyFactory");
-        props.add("writeThrough");
-        props.add("filteredEvents");
-        props.add("statisticsEnabled");
-        props.add("synchronous");
-        props.add("exchangePattern");
-        props.add("lookupProviders");
-        props.add("storeByValue");
         props.add("cachingProvider");
         props.add("configurationUri");
-        props.add("cacheConfigurationProperties");
-        props.add("cacheConfiguration");
+        props.add("createCacheIfNotExists");
         props.add("eventFilters");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("expiryPolicyFactory");
+        props.add("filteredEvents");
         props.add("lazyStartProducer");
-        props.add("cacheName");
-        props.add("bridgeErrorHandler");
+        props.add("lookupProviders");
         props.add("managementEnabled");
         props.add("oldValueRequired");
-        props.add("cacheLoaderFactory");
-        props.add("action");
-        props.add("createCacheIfNotExists");
         props.add("readThrough");
-        props.add("exceptionHandler");
+        props.add("statisticsEnabled");
+        props.add("storeByValue");
+        props.add("synchronous");
+        props.add("writeThrough");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -74,6 +76,11 @@ public class JCacheEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

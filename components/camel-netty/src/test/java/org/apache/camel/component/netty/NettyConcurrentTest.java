@@ -79,7 +79,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder",
                             index, String.class);
                     LOG.debug("Sent {} received {}", index, reply);
@@ -91,7 +91,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         }
 
         notify.matches(60, TimeUnit.SECONDS);
-        LOG.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
+        LOG.info("Took {} millis to process {} messages using {} client threads.", watch.taken(), files, poolSize);
         assertEquals(files, responses.size());
 
         // get all responses
@@ -106,12 +106,12 @@ public class NettyConcurrentTest extends BaseNettyTest {
     }
 
     @BindToRegistry("encoder")
-    public ChannelHandler getEncoder() throws Exception {
+    public ChannelHandler getEncoder() {
         return new ShareableChannelHandlerFactory(new ObjectEncoder());
     }
 
     @BindToRegistry("decoder")
-    public ChannelHandler getDecoder() throws Exception {
+    public ChannelHandler getDecoder() {
         return new DefaultChannelHandlerFactory() {
             @Override
             public ChannelHandler newChannelHandler() {
@@ -121,13 +121,13 @@ public class NettyConcurrentTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 }).to("log:progress?groupSize=1000");
             }

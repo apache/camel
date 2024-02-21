@@ -47,7 +47,7 @@ public class CounterEndpointTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.COUNTER, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
@@ -58,7 +58,7 @@ public class CounterEndpointTest {
     }
 
     @Test
-    public void testCounterEndpoint() throws Exception {
+    public void testCounterEndpoint() {
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getIncrement(), is(nullValue()));
@@ -73,24 +73,24 @@ public class CounterEndpointTest {
     }
 
     @Test
-    public void testGetIncrement() throws Exception {
+    public void testGetIncrement() {
         assertThat(endpoint.getIncrement(), is(nullValue()));
     }
 
     @Test
-    public void testSetIncrement() throws Exception {
+    public void testSetIncrement() {
         assertThat(endpoint.getIncrement(), is(nullValue()));
         endpoint.setIncrement(VALUE);
         assertThat(endpoint.getIncrement(), is(VALUE));
     }
 
     @Test
-    public void testGetDecrement() throws Exception {
+    public void testGetDecrement() {
         assertThat(endpoint.getDecrement(), is(nullValue()));
     }
 
     @Test
-    public void testSetDecrement() throws Exception {
+    public void testSetDecrement() {
         assertThat(endpoint.getDecrement(), is(nullValue()));
         endpoint.setDecrement(VALUE);
         assertThat(endpoint.getDecrement(), is(VALUE));

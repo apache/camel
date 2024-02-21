@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zendesk</artifactId>
@@ -49,6 +49,7 @@
         <dependency>
             <groupId>com.cloudbees.thirdparty</groupId>
             <artifactId>zendesk-java-client</artifactId>
+            <version>${zendesk-client-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -57,17 +58,9 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -84,7 +77,7 @@
                                     <apiName />
                                     <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
                                     <fromJavasource>
-                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets|createMappe
+                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets|recoverSuspendedTickets|createMapper|getSearchResults
                                         </excludeMethods>
                                     </fromJavasource>
                                     <substitutions>
@@ -167,7 +160,7 @@
                                             <replacement>triggerId0</replacement>
                                         </substitution>
                                         <substitution>
-                                            <method>createUploadArticle</method>
+                                            <method>createUploadArticle|showArticleTranslation</method>
                                             <argType>long</argType>
                                             <argName>articleId</argName>
                                             <replacement>articleId0</replacement>
@@ -184,6 +177,30 @@
                                             <argName>params</argName>
                                             <replacement>parameters</replacement>
                                         </substitution>
+                                        <substitution>
+                                            <method>getUsersByExternalIds</method>
+                                            <argType>long</argType>
+                                            <argName>externalId</argName>
+                                            <replacement>externalId0</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>getTriggers</method>
+                                            <argType>java.lang.String</argType>
+                                            <argName>categoryId</argName>
+                                            <replacement>categoryId0</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>showCategoryTranslation</method>
+                                            <argType>long</argType>
+                                            <argName>categoryId</argName>
+                                            <replacement>categoryId1</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>showSectionTranslation</method>
+                                            <argType>long</argType>
+                                            <argName>sectionId</argName>
+                                            <replacement>sectionId0</replacement>
+                                        </substitution>
                                     </substitutions>
                                 </api>
                             </apis>
@@ -198,20 +215,6 @@
                         <classifier>sources</classifier>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-configurer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-configurer</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -229,33 +232,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
     </build>
-
-    <profiles>
-        <profile>
-            <id>zendesk-test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

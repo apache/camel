@@ -20,10 +20,13 @@
 <!-- Configures the Camel Context-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 ">
+    <context:component-scan base-package="library"/>
 
     <camelContext id="main" xmlns="http://camel.apache.org/schema/spring">
         <route id="basicTransform">
@@ -98,10 +101,10 @@
                 </datasonnet>
             </transform>
 
-                    <to uri="mock:direct:end"/>
-                </route>
+            <to uri="mock:direct:end"/>
+        </route>
 
-                <route id="namedImports">
+        <route id="namedImports">
             <from uri="direct:namedImports"/>
             <transform>
                 <datasonnet bodyMediaType="application/json" outputMediaType="application/json"
@@ -115,6 +118,14 @@
             <transform>
                 <datasonnet bodyMediaType="application/x-java-object" outputMediaType="application/json"
                             resultType="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
+            </transform>
+            <to uri="mock:direct:end"/>
+        </route>
+
+        <route id="readJavaDatasonnetHeader">
+            <from uri="direct:readJavaDatasonnetHeader"/>
+            <transform>
+                <datasonnet outputMediaType="application/json" resultType="java.lang.String">resource:classpath:readJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -164,6 +175,28 @@
                 </datasonnet>
             </setBody>
 
+            <to uri="mock:direct:end"/>
+        </route>
+
+        <route id="registryLibraries">
+            <from uri="direct:registryLibraries"/>
+            <setBody>
+                <datasonnet outputMediaType="application/json" resultType="java.lang.String">
+                    {
+                        test: testlib.sayHello()
+                    }
+                </datasonnet>
+            </setBody>
+
+            <to uri="mock:direct:end"/>
+        </route>
+
+        <route id="transformEmptyBody">
+            <from uri="direct:transformEmptyBody"/>
+            <transform>
+                <datasonnet bodyMediaType="application/xml" outputMediaType="application/json"
+                            resultType="java.lang.String">{ "hello": "world" }</datasonnet>
+            </transform>
             <to uri="mock:direct:end"/>
         </route>
 

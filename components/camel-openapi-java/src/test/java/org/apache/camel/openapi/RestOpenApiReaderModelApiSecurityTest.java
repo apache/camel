@@ -16,17 +16,15 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +43,10 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
     private Object dummy = new Object();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/user").tag("dude").description("User rest service")
                         // setup security definitions
                         .securityDefinitions().oauth2("petstore_auth")
@@ -89,15 +87,11 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
 
         log.info(json);
 
@@ -113,7 +107,6 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         assertTrue(json.contains("\"api_key\" : [ ]"));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
-        assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
@@ -121,8 +114,9 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         context.stop();
     }
 
-    @Test
-    public void testReaderReadV3() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0" })
+    public void testReaderReadV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
@@ -130,18 +124,14 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
         assertTrue(json.contains("securitySchemes"));
@@ -157,7 +147,6 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         assertTrue(json.contains("\"api_key\" : [ ]"));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/components/schemas/User\""));
-        assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));

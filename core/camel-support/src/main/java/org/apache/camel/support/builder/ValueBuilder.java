@@ -29,7 +29,7 @@ import org.apache.camel.Predicate;
  * A builder of expressions or predicates based on values.
  */
 public class ValueBuilder implements Expression, Predicate {
-    private Expression expression;
+    private final Expression expression;
     private boolean not;
 
     public ValueBuilder(Expression expression) {
@@ -42,12 +42,24 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     @Override
+    public void initPredicate(CamelContext context) {
+        if (expression instanceof Predicate) {
+            ((Predicate) expression).initPredicate(context);
+        } else {
+            expression.init(context);
+        }
+    }
+
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         return expression.evaluate(exchange, type);
     }
 
     @Override
     public boolean matches(Exchange exchange) {
+        if (expression instanceof Predicate) {
+            return ((Predicate) expression).matches(exchange);
+        }
         return PredicateBuilder.toPredicate(getExpression()).matches(exchange);
     }
 
@@ -122,7 +134,7 @@ public class ValueBuilder implements Expression, Predicate {
             Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
             predicates.add(predicate);
         }
-        return in(predicates.toArray(new Predicate[predicates.size()]));
+        return in(predicates.toArray(new Predicate[0]));
     }
 
     public Predicate in(Predicate... predicates) {
@@ -141,7 +153,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Create a predicate that the left hand expression contains the value of the right hand expression
-     * 
+     *
      * @param  value the element which is compared to be contained within this expression
      * @return       a predicate which evaluates to true if the given value expression is contained within this
      *               expression value
@@ -153,7 +165,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Creates a predicate which is true if this expression matches the given regular expression
-     * 
+     *
      * @param  regex the regular expression to match
      * @return       a predicate which evaluates to true if the expression matches the regex
      */
@@ -174,7 +186,7 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     public ValueBuilder tokenize(String token, int group, boolean skipFirst) {
-        return tokenize(token, "" + group, skipFirst);
+        return tokenize(token, Integer.toString(group), skipFirst);
     }
 
     public ValueBuilder tokenize(String token, String group, boolean skipFirst) {
@@ -213,7 +225,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to the given type using the registered type converters
-     * 
+     *
      * @param  type the type to convert the value to
      * @return      the current builder
      */
@@ -224,7 +236,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to a String using the registered type converters
-     * 
+     *
      * @return the current builder
      */
     public ValueBuilder convertToString() {
@@ -262,6 +274,17 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder sort(Comparator<?> comparator) {
         Expression newExp = ExpressionBuilder.sortExpression(expression, comparator);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Invokes the method with the given name (supports OGNL syntax).
+     *
+     * @param  methodName name of method to invoke.
+     * @return            the current builder
+     */
+    public ValueBuilder method(String methodName) {
+        Expression newExp = ExpressionBuilder.beanExpression(expression, methodName);
         return onNewValueBuilder(newExp);
     }
 

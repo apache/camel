@@ -37,7 +37,7 @@ public class DisruptorAsyncRouteTest extends CamelTestSupport {
         assertEquals("OK", out);
         // END SNIPPET: e2
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

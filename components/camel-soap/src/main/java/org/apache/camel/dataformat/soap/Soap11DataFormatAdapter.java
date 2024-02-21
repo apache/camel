@@ -24,15 +24,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBIntrospector;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.WebFault;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
@@ -51,16 +53,16 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
     private static final QName FAULT_CODE_SERVER = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Receiver");
 
-    private final SoapJaxbDataFormat dataFormat;
+    private final SoapDataFormat dataFormat;
     private final ObjectFactory objectFactory;
 
-    public Soap11DataFormatAdapter(SoapJaxbDataFormat dataFormat) {
+    public Soap11DataFormatAdapter(SoapDataFormat dataFormat) {
         this.dataFormat = dataFormat;
         this.objectFactory = new ObjectFactory();
     }
 
     @Override
-    public SoapJaxbDataFormat getDataFormat() {
+    public SoapDataFormat getDataFormat() {
         return dataFormat;
     }
 
@@ -69,7 +71,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         Body body = objectFactory.createBody();
         Header header = objectFactory.createHeader();
 
-        Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        Throwable exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
         if (exception == null) {
             exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         }
@@ -82,12 +84,12 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         } else {
             if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
                 List<Object> inboundSoapHeaders
-                        = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                        = (List<Object>) exchange.getIn().getHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
                 if (null != inboundSoapHeaders) {
                     headerContent.addAll(inboundSoapHeaders);
                 }
             }
-            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction, headerContent);
+            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction);
         }
 
         for (Object elem : bodyContent) {
@@ -101,14 +103,13 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
             envelope.setHeader(header);
         }
         envelope.setBody(body);
-        JAXBElement<Envelope> envelopeEl = objectFactory.createEnvelope(envelope);
-        return envelopeEl;
+        return objectFactory.createEnvelope(envelope);
     }
 
     /**
      * Creates a SOAP fault from the exception and populates the message as well as the detail. The detail object is
      * read from the method getFaultInfo of the throwable if present
-     * 
+     *
      * @param  exception the cause exception
      * @return           SOAP fault from given Throwable
      */
@@ -160,7 +161,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
                 } else {
                     returnHeaders = anyHeaderElements;
                 }
-                exchange.getOut().setHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
+                exchange.getOut().setHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
             }
         }
 
@@ -173,7 +174,8 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         Object payloadEl = anyElement.get(0);
         Object payload = JAXBIntrospector.getValue(payloadEl);
         if (payload instanceof Fault) {
-            Exception exception = createExceptionFromFault((Fault) payload);
+            String soapAction = exchange.getProperty(Exchange.SOAP_ACTION, String.class);
+            Exception exception = createExceptionFromFault(soapAction, (Fault) payload);
             exchange.setException(exception);
             return null;
         } else {
@@ -185,11 +187,11 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
      * Creates an exception and eventually an embedded bean that contains the fault detail. The exception class is
      * determined by using the elementNameStrategy. The qName of the fault detail should match the WebFault annotation
      * of the Exception class. If no fault detail is set a SOAPFaultException is created.
-     * 
+     *
      * @param  fault Soap fault
      * @return       created Exception
      */
-    private Exception createExceptionFromFault(Fault fault) {
+    private Exception createExceptionFromFault(String soapAction, Fault fault) {
         String message = fault.getFaultstring();
 
         Detail faultDetail = fault.getDetail();
@@ -213,7 +215,8 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
 
         JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass
-                = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
+                = getDataFormat().getElementNameStrategy().findExceptionForSoapActionAndFaultName(soapAction,
+                        detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 

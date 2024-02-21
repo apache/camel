@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestJettyPojoInOutTest extends BaseJettyTest {
 
     @Test
-    public void testJettyPojoInOut() throws Exception {
+    public void testJettyPojoInOut() {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", body, String.class);
 
@@ -36,7 +36,7 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyGetRequest() throws Exception {
+    public void testJettyGetRequest() {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", null, String.class);
 
         assertNotNull(out);
@@ -44,10 +44,10 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
@@ -55,7 +55,8 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         // just return the default country here
-                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route()
+                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).to("direct:lives");
+                from("direct:lives")
                         .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();

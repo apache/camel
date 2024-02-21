@@ -19,38 +19,38 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
-        props.add("backoffMultiplier");
-        props.add("initialDelay");
-        props.add("scheduler");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
+        Set<String> props = new HashSet<>(24);
         props.add("backoffErrorThreshold");
-        props.add("throttleEntries");
-        props.add("greedy");
-        props.add("splitEntries");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sortEntries");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
+        props.add("delay");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("feedHeader");
-        props.add("backoffIdleThreshold");
-        props.add("filter");
-        props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
-        props.add("lastUpdate");
         props.add("feedUri");
-        props.add("exceptionHandler");
-        props.add("username");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("pollStrategy");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("sortEntries");
+        props.add("splitEntries");
+        props.add("startScheduler");
+        props.add("throttleEntries");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -78,6 +78,11 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

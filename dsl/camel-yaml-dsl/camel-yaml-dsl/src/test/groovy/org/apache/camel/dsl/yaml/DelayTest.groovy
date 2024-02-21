@@ -20,12 +20,13 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.DelayDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class DelayTest extends YamlTestSupport {
 
     def "delay definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], DelayDefinition) {
                 asyncDelayed == 'true'
@@ -54,6 +55,16 @@ class DelayTest extends YamlTestSupport {
                               expression: 
                                 simple: "${body}"
                               async-delayed: true
+                          - to: "mock:result"
+                    '''),
+                asResource('expression-camelCase', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - delay: 
+                              expression: 
+                                simple: "${body}"
+                              asyncDelayed: true
                           - to: "mock:result"
                     ''')
             ]

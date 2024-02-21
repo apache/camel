@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,51 +38,80 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
-public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
+public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
-    public void testJmsRequestReplyExclusiveFixedReplyTo() throws Exception {
+    public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "E"));
+        assertEquals("Hello A", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "A"));
+        assertEquals("Hello B", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "B"));
+        assertEquals("Hello C", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "C"));
+        assertEquals("Hello D", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "D"));
+        assertEquals("Hello E", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "E"));
 
         long delta = watch.taken();
         assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);
     }
 
     @Test
-    public void testInvalidConfiguration() throws Exception {
+    public void testInvalidConfiguration() {
         try {
-            template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Temporary", "Hello World");
+            template.requestBody(
+                    "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Temporary",
+                    "Hello World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.",
+            assertEquals(
+                    "ReplyToType Temporary is not supported when replyTo JmsRequestReplyExclusiveReplyToTest.reply is also configured.",
                     e.getCause().getCause().getMessage());
         }
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo")
+            public void configure() {
+                from("activemq:queue:JmsRequestReplyExclusiveReplyToTest")
                         .transform(body().prepend("Hello "));
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

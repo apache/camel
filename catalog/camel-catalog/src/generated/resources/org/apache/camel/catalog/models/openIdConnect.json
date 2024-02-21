@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "openIdConnect",
+    "title": "Open Id Connect",
+    "description": "Rest security OpenID Connect definition",
+    "deprecated": false,
+    "label": "rest,security,configuration",
+    "javaType": "org.apache.camel.model.rest.OpenIdConnectDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "description": { "index": 0, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." },
+    "key": { "index": 1, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "url": { "index": 2, "kind": "attribute", "displayName": "Url", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "OpenId Connect URL to discover OAuth2 configuration values." }
+  }
+}

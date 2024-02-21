@@ -16,39 +16,26 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * Represents the component that manages {@link MllpEndpoint}.
- */
 @Component("mllp")
 public class MllpComponent extends DefaultComponent {
-    public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
-    public static final String MLLP_LOG_PHI_MAX_BYTES_PROPERTY = "org.apache.camel.component.mllp.logPHI.maxBytes";
-    public static final String MLLP_DEFAULT_CHARSET_PROPERTY = "org.apache.camel.component.mllp.charset.default";
-    public static final boolean DEFAULT_LOG_PHI = true;
-    public static final int DEFAULT_LOG_PHI_MAX_BYTES = 5120;
-
-    static Logger log = LoggerFactory.getLogger(MllpComponent.class);
 
     @Metadata(label = "advanced", defaultValue = "true")
-    static Boolean logPhi;
+    private boolean logPhi = true;
     @Metadata(label = "advanced", defaultValue = "5120")
-    static Integer logPhiMaxBytes;
+    private int logPhiMaxBytes = 5120;
     @Metadata(label = "advanced", defaultValue = "ISO-8859-1")
-    static Charset defaultCharset;
-
-    MllpConfiguration configuration;
+    private String defaultCharset = "ISO_8859_1";
+    @Metadata
+    private MllpConfiguration configuration;
 
     public MllpComponent() {
         // bridge error handler by default
@@ -66,144 +53,53 @@ public class MllpComponent extends DefaultComponent {
         MllpEndpoint endpoint
                 = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
 
-        setProperties(endpoint, parameters);
+        endpoint.setCharsetName(getDefaultCharset());
 
         // Make sure it has a host - may just be a port
         int colonIndex = remaining.indexOf(':');
-        if (-1 != colonIndex) {
+        if (colonIndex != -1) {
             endpoint.setHostname(remaining.substring(0, colonIndex));
-            endpoint.setPort(Integer.parseInt(remaining.substring(colonIndex + 1)));
+            endpoint.setPort(CamelContextHelper.parseInt(getCamelContext(), remaining.substring(colonIndex + 1)));
         } else {
             // No host specified - leave the default host and set the port
-            endpoint.setPort(Integer.parseInt(remaining));
+            endpoint.setPort(CamelContextHelper.parseInt(getCamelContext(), remaining));
         }
 
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
-    public static boolean hasLogPhi() {
-        return logPhi != null;
-    }
-
-    public static boolean isLogPhi() {
-        if (hasLogPhi()) {
-            return logPhi;
-        }
-
-        boolean answer = DEFAULT_LOG_PHI;
-        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
-
-        if (logPhiProperty != null) {
-            answer = Boolean.parseBoolean(logPhiProperty);
-        }
-
-        return answer;
+    public Boolean getLogPhi() {
+        return logPhi;
     }
 
     /**
-     * Set the component to log PHI data.
-     *
-     * @param logPhi true enables PHI logging; false disables it.
+     * Whether to log PHI
      */
-    public static void setLogPhi(Boolean logPhi) {
-        MllpComponent.logPhi = logPhi;
+    public void setLogPhi(Boolean logPhi) {
+        this.logPhi = logPhi;
     }
 
-    public static boolean hasLogPhiMaxBytes() {
-        return logPhiMaxBytes != null;
-    }
-
-    public static int getLogPhiMaxBytes() {
-        if (hasLogPhiMaxBytes()) {
-            return logPhiMaxBytes;
-        }
-
-        int answer = DEFAULT_LOG_PHI_MAX_BYTES;
-        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY);
-
-        if (logPhiProperty != null && !logPhiProperty.isEmpty()) {
-            try {
-                answer = Integer.parseInt(logPhiProperty);
-            } catch (NumberFormatException numberFormatException) {
-                log.warn("Invalid Integer value '{}' for system property {} - using default value of {}", logPhiProperty,
-                        MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
-                // use DEFAULT_LOG_PHI_MAX_BYTES for a invalid entry
-            }
-        }
-
-        return answer;
+    public int getLogPhiMaxBytes() {
+        return logPhiMaxBytes;
     }
 
     /**
      * Set the maximum number of bytes of PHI that will be logged in a log entry.
-     *
-     * @param logPhiMaxBytes the maximum number of bytes to log.
      */
-    public static void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
-        MllpComponent.logPhiMaxBytes = logPhiMaxBytes;
+    public void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
+        this.logPhiMaxBytes = logPhiMaxBytes;
     }
 
-    public static boolean hasDefaultCharset() {
-        return defaultCharset != null;
-    }
-
-    public static Charset getDefaultCharset() {
-        if (hasDefaultCharset()) {
-            return defaultCharset;
-        }
-
-        String defaultCharacterSetNamePropertyValue = System.getProperty(MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY);
-
-        if (defaultCharacterSetNamePropertyValue != null && !defaultCharacterSetNamePropertyValue.isEmpty()) {
-            try {
-                if (Charset.isSupported(defaultCharacterSetNamePropertyValue)) {
-                    defaultCharset = Charset.forName(defaultCharacterSetNamePropertyValue);
-                } else {
-                    defaultCharset = StandardCharsets.ISO_8859_1;
-                    log.warn("Unsupported character set name '{}' in system property {} - using character set {} as default",
-                            defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
-                }
-            } catch (Exception charsetEx) {
-                defaultCharset = StandardCharsets.ISO_8859_1;
-                log.warn(
-                        "Exception encountered determining character set for '{}' found in  system property {} - using default value of {}",
-                        defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
-            }
-        } else {
-            defaultCharset = StandardCharsets.ISO_8859_1;
-        }
-
+    public String getDefaultCharset() {
         return defaultCharset;
     }
 
     /**
      * Set the default character set to use for byte[] to/from String conversions.
-     *
-     * @param defaultCharacterSetName the name of the Java Charset.
      */
-    public static void setDefaultCharset(String defaultCharacterSetName) {
-        if (defaultCharacterSetName != null && !defaultCharacterSetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(defaultCharacterSetName)) {
-                    MllpComponent.defaultCharset = Charset.forName(defaultCharacterSetName);
-                } else {
-                    log.warn(
-                            "Unsupported character set name '{}' in system property {} - continuing to use character set {} as default",
-                            defaultCharacterSetName, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
-                }
-            } catch (Exception charsetEx) {
-                MllpComponent.defaultCharset = StandardCharsets.ISO_8859_1;
-                log.warn(
-                        "Exception encountered determining character set for '{}' - continuing to use character set {} as default",
-                        defaultCharacterSetName, defaultCharset);
-            }
-        }
-    }
-
-    public static void setDefaultCharset(Charset defaultCharset) {
-        if (defaultCharset != null) {
-            MllpComponent.defaultCharset = defaultCharset;
-        }
+    public void setDefaultCharset(String name) {
+        this.defaultCharset = name;
     }
 
     public boolean hasConfiguration() {
@@ -216,8 +112,6 @@ public class MllpComponent extends DefaultComponent {
 
     /**
      * Sets the default configuration to use when creating MLLP endpoints.
-     *
-     * @param configuration the default configuration.
      */
     public void setConfiguration(MllpConfiguration configuration) {
         this.configuration = configuration;

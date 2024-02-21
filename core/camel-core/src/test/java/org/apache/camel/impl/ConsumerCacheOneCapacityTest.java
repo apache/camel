@@ -26,7 +26,10 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
 
@@ -37,7 +40,7 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
 
         assertEquals(0, cache.size(), "Size should be 0");
 
-        Endpoint endpoint = context.getEndpoint("file:target/data/foo?fileName=foo.txt&initialDelay=0&delay=10");
+        Endpoint endpoint = context.getEndpoint(fileUri("?fileName=foo.txt&initialDelay=0&delay=10"));
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         assertNotNull(consumer);
         assertEquals("Started", ((ServiceSupport) consumer).getStatus().name());
@@ -45,7 +48,8 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
         // let it run a poll
         consumer.receive(50);
 
-        boolean found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));
+        boolean found
+                = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains(testDirectory().toString()));
         assertFalse(found, "Should not find file consumer thread");
 
         cache.releasePollingConsumer(endpoint, consumer);
@@ -60,7 +64,7 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
                 .untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport) consumer).getStatus().name()));
 
         // should not be a file consumer thread
-        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));
+        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains(testDirectory().toString()));
         assertFalse(found, "Should not find file consumer thread");
     }
 

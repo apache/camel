@@ -49,7 +49,7 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // ensure stream is spooled to disk
-                context.getStreamCachingStrategy().setSpoolDirectory("target/tmp");
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
                 from("seda:parallel?concurrentConsumers=5").streamCaching().split(xpath("//person/city")).to("mock:result");

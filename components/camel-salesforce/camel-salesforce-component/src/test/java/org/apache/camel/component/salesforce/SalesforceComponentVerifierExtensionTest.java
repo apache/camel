@@ -48,6 +48,7 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testUsernamePasswordParameters() {
         HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("operationName", "subscribe");
         parameters.put("clientId", "clientId");
         parameters.put("clientSecret", "clientSecret");
         parameters.put("userName", "userName");
@@ -62,6 +63,7 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testRefreshTokenParameters() {
         Map<String, Object> parameters = new HashMap<>();
+        parameters.put("operationName", "subscribe");
         parameters.put("clientId", "clientId");
         parameters.put("clientSecret", "clientSecret");
         parameters.put("refreshToken", "refreshToken");
@@ -75,6 +77,7 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testWrongParameters() {
         HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("operationName", "subscribe");
         parameters.put("clientId", "clientId");
         parameters.put("clientSecret", "clientSecret");
         parameters.put("password", "password");

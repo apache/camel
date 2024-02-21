@@ -29,7 +29,7 @@ public class DisruptorVmConcurrentConsumersTest extends AbstractVmTestSupport {
 
         template2.sendBody("disruptor-vm:foo?concurrentConsumers=5", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

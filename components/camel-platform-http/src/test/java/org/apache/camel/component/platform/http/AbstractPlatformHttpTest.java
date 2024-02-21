@@ -53,9 +53,13 @@ abstract class AbstractPlatformHttpTest {
     protected RouteBuilder routes() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
             }
         };
+    }
+
+    protected CamelContext getContext() {
+        return ctx;
     }
 
     @AfterAll

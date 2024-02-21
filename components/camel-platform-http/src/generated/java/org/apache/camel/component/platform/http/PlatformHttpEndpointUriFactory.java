@@ -19,21 +19,25 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
-        props.add("fileNameExtWhitelist");
-        props.add("path");
+        Set<String> props = new HashSet<>(13);
         props.add("bridgeErrorHandler");
-        props.add("httpMethodRestrict");
-        props.add("headerFilterStrategy");
-        props.add("matchOnUriPrefix");
-        props.add("produces");
-        props.add("exchangePattern");
-        props.add("exceptionHandler");
-        props.add("platformHttpEngine");
         props.add("consumes");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fileNameExtWhitelist");
+        props.add("headerFilterStrategy");
+        props.add("httpMethodRestrict");
+        props.add("matchOnUriPrefix");
+        props.add("muteException");
+        props.add("path");
+        props.add("platformHttpEngine");
+        props.add("produces");
+        props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +65,11 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

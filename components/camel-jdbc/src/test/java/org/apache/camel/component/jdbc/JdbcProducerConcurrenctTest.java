@@ -57,7 +57,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
-                public List<?> call() throws Exception {
+                public List<?> call() {
                     int id = (index % 2) + 1;
                     return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'",
                             List.class);
@@ -66,7 +66,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
@@ -82,9 +82,9 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:testdb").to("mock:result");
             }
         };

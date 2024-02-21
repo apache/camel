@@ -23,8 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
@@ -36,17 +36,14 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
     }
 
     public void sendXmlMessage(String uri, String message) {
-        try {
-            template.sendBody("direct:start1", message);
-            fail("expect an exception here");
-        } catch (Exception ex) {
-            // expect an exception here
-            boolean b1 = ex instanceof CamelExecutionException;
-            assertTrue(b1, "Get a wrong exception");
-            boolean b = ex.getCause() instanceof TransformerException;
-            assertTrue(b, "Get a wrong exception cause");
-        }
+        Exception ex = assertThrows(Exception.class, () -> template.sendBody("direct:start1", message),
+                "Expected an exception here");
 
+        // expect an exception here
+        boolean b1 = ex instanceof CamelExecutionException;
+        assertTrue(b1, "Get a wrong exception");
+        boolean b = ex.getCause() instanceof TransformerException;
+        assertTrue(b, "Get a wrong exception cause");
     }
 
     @Override

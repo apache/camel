@@ -19,17 +19,21 @@ public class InfluxDbEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
-        props.add("lazyStartProducer");
+        Set<String> props = new HashSet<>(9);
+        props.add("autoCreateDatabase");
+        props.add("batch");
+        props.add("checkDatabaseExistence");
         props.add("connectionBean");
         props.add("databaseName");
-        props.add("query");
-        props.add("batch");
-        props.add("retentionPolicy");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("query");
+        props.add("retentionPolicy");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +61,11 @@ public class InfluxDbEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

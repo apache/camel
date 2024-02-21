@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
 
@@ -41,11 +41,7 @@ public class InOnlyMessageSentCallback implements MessageSentCallback {
         if (exchange != null) {
             String id = getJMSMessageID(message);
             if (id != null) {
-                if (exchange.hasOut()) {
-                    exchange.getOut().setHeader("JMSMessageID", id);
-                } else {
-                    exchange.getIn().setHeader("JMSMessageID", id);
-                }
+                exchange.getMessage().setHeader(JmsConstants.JMS_HEADER_MESSAGE_ID, id);
             }
         }
     }

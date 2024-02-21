@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
@@ -31,6 +32,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractReifier implements BeanRepository {
@@ -46,6 +48,10 @@ public abstract class AbstractReifier implements BeanRepository {
     public AbstractReifier(CamelContext camelContext) {
         this.route = null;
         this.camelContext = ObjectHelper.notNull(camelContext, "CamelContext");
+    }
+
+    protected CamelContext getCamelContext() {
+        return camelContext;
     }
 
     protected String parseString(String text) {
@@ -137,25 +143,37 @@ public abstract class AbstractReifier implements BeanRepository {
         return camelContext.getRegistry();
     }
 
-    public <T> T mandatoryLookup(String name, Class<T> beanType) {
-        return CamelContextHelper.mandatoryLookup(camelContext, name, beanType);
-    }
-
-    public <T> T findSingleByType(Class<T> type) {
-        return CamelContextHelper.findByType(camelContext, type);
+    public <T> T mandatoryLookup(String name, Class<T> type) {
+        Object obj = lookupByNameAndType(name, type);
+        if (obj == null) {
+            throw new NoSuchBeanException(name, type.getName());
+        }
+        return type.cast(obj);
     }
 
     @Override
     public Object lookupByName(String name) {
-        return getRegistry().lookupByName(name);
-    }
+        if (name == null) {
+            return null;
+        }
 
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
+        if (EndpointHelper.isReferenceParameter(name)) {
+            return EndpointHelper.resolveReferenceParameter(camelContext, name, Object.class, false);
+        } else {
+            return getRegistry().lookupByName(name);
+        }
     }
 
     public <T> T lookupByNameAndType(String name, Class<T> type) {
-        return getRegistry().lookupByNameAndType(name, type);
+        if (name == null) {
+            return null;
+        }
+
+        if (EndpointHelper.isReferenceParameter(name)) {
+            return EndpointHelper.resolveReferenceParameter(camelContext, name, type, false);
+        } else {
+            return getRegistry().lookupByNameAndType(name, type);
+        }
     }
 
     @Override

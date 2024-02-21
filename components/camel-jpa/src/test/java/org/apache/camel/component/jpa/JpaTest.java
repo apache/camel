@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -49,6 +49,7 @@ public class JpaTest {
     private static final Logger LOG = LoggerFactory.getLogger(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
+    protected JpaComponent component;
     protected JpaEndpoint endpoint;
     protected JpaEndpoint listEndpoint;
     protected EntityManager entityManager;
@@ -77,7 +78,7 @@ public class JpaTest {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                LOG.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: {}", e.getIn());
                 receivedExchange = e;
                 // should have a EntityManager
                 EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
@@ -96,7 +97,7 @@ public class JpaTest {
     }
 
     @Test
-    public void testProducerInsertsList() throws Exception {
+    public void testProducerInsertsList() {
         // lets produce some objects
         template.send(listEndpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -121,9 +122,11 @@ public class JpaTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         camelContext.start();
         template = camelContext.createProducerTemplate();
+
+        setUpComponent();
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull(value, "Could not find endpoint!");
@@ -132,8 +135,10 @@ public class JpaTest {
 
         listEndpoint = camelContext.getEndpoint(getEndpointUri() + "&entityType=java.util.List", JpaEndpoint.class);
 
-        transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
@@ -152,8 +157,12 @@ public class JpaTest {
         return "jpa://" + SendEmail.class.getName();
     }
 
+    protected void setUpComponent() {
+        // no set up in this test
+    }
+
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ServiceHelper.stopService(consumer, template);
         camelContext.stop();
     }

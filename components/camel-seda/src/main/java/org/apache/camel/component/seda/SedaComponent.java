@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,8 @@ public class SedaComponent extends DefaultComponent {
     private boolean defaultDiscardWhenFull;
     @Metadata(label = "producer")
     private long defaultOfferTimeout;
+    @Metadata(label = "consumer,advanced", defaultValue = "1000")
+    private int defaultPollTimeout = 1000;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
     private final Map<String, Integer> customSize = new HashMap<>();
@@ -127,6 +130,18 @@ public class SedaComponent extends DefaultComponent {
      */
     public void setDefaultOfferTimeout(long defaultOfferTimeout) {
         this.defaultOfferTimeout = defaultOfferTimeout;
+    }
+
+    public int getDefaultPollTimeout() {
+        return defaultPollTimeout;
+    }
+
+    /**
+     * The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is
+     * allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     */
+    public void setDefaultPollTimeout(int defaultPollTimeout) {
+        this.defaultPollTimeout = defaultPollTimeout;
     }
 
     public synchronized QueueReference getOrCreateQueue(
@@ -227,6 +242,7 @@ public class SedaComponent extends DefaultComponent {
         } else {
             answer = createEndpoint(uri, this, queue, consumers);
         }
+        answer.setName(remaining);
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);
@@ -234,6 +250,8 @@ public class SedaComponent extends DefaultComponent {
         boolean discardWhenFull = getAndRemoveParameter(parameters, "discardWhenFull", Boolean.class, defaultDiscardWhenFull);
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
+        // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
+        int pollTimeout = getAndRemoveParameter(parameters, "pollTimeout", int.class, defaultPollTimeout);
 
         // using custom size?
         Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
@@ -251,6 +269,7 @@ public class SedaComponent extends DefaultComponent {
         answer.setDiscardWhenFull(discardWhenFull);
         answer.setConcurrentConsumers(consumers);
         answer.setLimitConcurrentConsumers(limitConcurrentConsumers);
+        answer.setPollTimeout(pollTimeout);
         setProperties(answer, parameters);
         return answer;
     }
@@ -266,11 +285,7 @@ public class SedaComponent extends DefaultComponent {
     }
 
     public String getQueueKey(String uri) {
-        if (uri.contains("?")) {
-            // strip parameters
-            uri = uri.substring(0, uri.indexOf('?'));
-        }
-        return uri;
+        return StringHelper.before(uri, "?", uri);
     }
 
     @Override

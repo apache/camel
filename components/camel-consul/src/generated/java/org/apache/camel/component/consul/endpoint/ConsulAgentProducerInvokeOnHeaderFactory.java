@@ -20,8 +20,12 @@ public class ConsulAgentProducerInvokeOnHeaderFactory implements InvokeOnHeaderS
         case "AGENT": return target.invokeAgent(exchange.getMessage());
         case "checks":
         case "CHECKS": return target.invokeChecks(exchange.getMessage());
+        case "deregister":
+        case "DEREGISTER": target.invokeDeregister(exchange.getMessage()); return null;
         case "members":
         case "MEMBERS": return target.invokeMembers(exchange.getMessage());
+        case "register":
+        case "REGISTER": target.invokeRegister(exchange.getMessage()); return null;
         case "services":
         case "SERVICES": return target.invokeServices(exchange.getMessage());
         default: return null;

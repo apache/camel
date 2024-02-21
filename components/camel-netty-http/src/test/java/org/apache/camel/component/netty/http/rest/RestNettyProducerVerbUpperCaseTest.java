@@ -27,17 +27,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
 
     @Test
-    public void testVerbUpperCase() throws Exception {
+    public void testVerbUpperCase() {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertNotNull(out);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
@@ -46,8 +46,9 @@ public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);

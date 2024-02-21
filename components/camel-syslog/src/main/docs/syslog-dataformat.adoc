@@ -1,11 +1,13 @@
-[[syslog-dataformat]]
 = Syslog DataFormat
-:docTitle: Syslog
-:artifactId: camel-syslog
+:doctitle: Syslog
+:shortname: syslog
+:artifactid: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/syslog.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: syslog
 
 *Since Camel {since}*
 
@@ -22,7 +24,7 @@ String
 * Integration with the xref:ROOT:mina-component.adoc[camel-mina] component.
 * Integration with the xref:ROOT:netty-component.adoc[camel-netty] component.
 * Encoder and decoder for
-the xref:ROOT:netty-component.adoc[Netty Component] component.
+the xref:ROOT:netty-component.adoc[Netty component].
 * Support for RFC5424 also.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -44,8 +46,8 @@ Syslog uses the user datagram protocol (UDP)
 as its underlying transport layer mechanism.  
 The UDP port that has been assigned to syslog is 514.
 
-To expose a Syslog listener service we reuse the existing
-xref:ROOT:mina-component.adoc[Mina Component] component or xref:ROOT:netty-component.adoc[Netty Component]
+To expose a Syslog listener service, we reuse the existing
+xref:ROOT:mina-component.adoc[Mina Component] or xref:ROOT:netty-component.adoc[Netty Component]
 where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
@@ -53,15 +55,15 @@ renamed to `SyslogDataFormat`.
 == Options
 
 // dataformat options: START
-The Syslog dataformat has no options.
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == RFC5424 Syslog protocol
 
 *Since Camel 2.14*
 
-To expose a Syslog listener service we reuse the
-existing xref:ROOT:mina-component.adoc[Mina Component] component
+To expose a Syslog listener service, we reuse the
+existing xref:ROOT:mina-component.adoc[Mina Component]
 or xref:ROOT:netty-component.adoc[Netty Component] where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 
@@ -129,4 +131,5 @@ The same route using xref:ROOT:mina-component.adoc[Mina Component]
 -------------------------------------------------------------------------
 
 
-include::camel-spring-boot::page$syslog-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

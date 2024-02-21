@@ -24,7 +24,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -56,7 +56,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
     public TryProcessor(CamelContext camelContext, Processor tryProcessor, List<Processor> catchClauses,
                         Processor finallyProcessor) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.tryProcessor = tryProcessor;
         this.catchClauses = catchClauses;
         this.finallyProcessor = finallyProcessor;
@@ -89,14 +89,14 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
             this.exchange = exchange;
             this.callback = callback;
             this.processors = next().iterator();
-            this.lastHandled = exchange.getProperty(Exchange.EXCEPTION_HANDLED);
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);
+            this.lastHandled = exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
+            exchange.removeProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
         }
 
         @Override
         public void run() {
             if (continueRouting(processors, exchange)) {
-                exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
+                exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
                 ExchangeHelper.prepareOutToIn(exchange);
 
                 // process the next processor
@@ -108,8 +108,8 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
                 async.process(exchange, doneSync -> reactiveExecutor.schedule(this));
             } else {
                 ExchangeHelper.prepareOutToIn(exchange);
-                exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
-                exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
+                exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, lastHandled);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
@@ -141,6 +141,14 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(tryProcessor, catchClauses, finallyProcessor);
+    }
+
+    public List<Processor> getCatchClauses() {
+        return catchClauses;
+    }
+
+    public Processor getFinallyProcessor() {
+        return finallyProcessor;
     }
 
     @Override

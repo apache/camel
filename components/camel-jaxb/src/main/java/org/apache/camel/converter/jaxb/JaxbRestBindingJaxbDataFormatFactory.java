@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
@@ -40,7 +40,7 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
             DataFormat jaxb, DataFormat outJaxb)
             throws Exception {
         // lookup configurer
-        PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
                 .resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");
@@ -97,8 +97,7 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
         outBuilder.bind();
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder)
-            throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties

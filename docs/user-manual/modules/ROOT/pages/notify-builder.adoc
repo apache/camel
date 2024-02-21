@@ -1,0 +1,223 @@
+= Notify Builder
+
+The `NotifyBuilder` is a builder from the `org.apache.camel.builder` package which allows you to build expressions and then test or wait for that condition to occur.
+The expressions are based around notifications about xref:exchange.adoc[Exchange] being routed.
+So what does that mean?
+
+It means that you can build an expressions which can tell you when Camel is finished with routing 5 messages etc.
+You may want to use this when testing a route which you cannot or will not use xref:components::mock-component.adoc[Mocks].
+
+NOTE: The `NotifyBuilder` is only intended for testing purposes and you can only use this with Java coding.
+
+== Basic example using NotifyBuilder
+
+Suppose we have a very simple route:
+
+[source,java]
+----
+from("jms:queue:quotes")
+    .to("bean:quotes");
+----
+
+Imagine the route being more complex, and a production ready route.
+
+Now you want to test this route without using mocks or the likes.
+We want to test that it could process a message send to that queue.
+By using the `NotifyBuilder` we can build an expression which expresses when that condition occurred.
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder().whenDone(1).create();
+
+// now use some API to send a message etc. Maybe you cannot use Camel's ProducerTemplate
+// now we want to wait until the message has been routed and completed
+
+boolean done = notify.matches(10, TimeUnit.SECONDS);
+assertTrue("Should be done", done);
+
+// now maybe use some API to see that the message did as expected
+----
+
+This is a very basic example where we configured the `NotifyBuilder`
+to match when any `Exchange` is done.
+
+The builder has many more methods to set more complex expressions, which even can be stacked using and, or, not operations.
+
+== NotifyBuilder API
+
+The `NotifyBuilder` has many methods that allow you to build even more complex expressions.
+The table below list the most commonly used methods.
+
+[width="100%",cols="1m,4",options="header",]
+|=======================================================================
+|Method |Description
+| from(endpointUri) | Matches only when Exchanges are incoming from that particular endpoint. The endpointUri can be a pattern, which is the same pattern matching used by Intercept.
+| fromRoute(routeId) | Matches only when Exchanges are incoming from that particular route. The routeId can be a pattern, which is the same pattern matching used by Intercept.
+| filter(predicate) | Filters out unwanted Exchanges (only messages passing (true) the predicate is used).
+| wereSentTo(endpointUri) | Matches only when Exchanges has at any point been sent to the given endpoint. The endpointUri can be a pattern, which is the same pattern matching used by Intercept.
+| whenDone(number)| Matches when X number or more messages is done.
+| whenComplete(number) | Matches when X number or more messages is complete.
+| whenFailed(number) | Matches when X number or more messages is failed.
+| whenBodiesDone(bodies) | Matches when the message bodies are done in the same order. This method is non strict which means that it will disregard any additional done messages.
+| whenAnyDoneMatches(predicate) | Matches if any one of the done messages matched the Predicate.
+| create | Creates the notifier. After you have created it you can use the matches methods.
+| matches | Tests whether the notifier currently matches. This operation returns immediately. This method is to be used after you have created the expression.
+| matches(timeout) | Waits until the notifier matches or times out. Returns `true` if matches, or `false` if time-out occurs. This operation returns immediately. This method is to be used after you have created the expression.
+| matchesWaitTime | Wait until the builder matches or timeout. The timeout value used is based on the highest result wait time configured on any of mock endpoints being used. If no mock endpoint was used, then the default timeout value is 10 seconds. This method is convenient to use in unit tests when you use mocks. Then you don't have to specify the timeout value explicit.
+|=======================================================================
+
+`NotifyBuilder` has more than 30 methods. For full list of methods then see the https://www.javadoc.io/doc/org.apache.camel/camel-core-model/current/org/apache/camel/builder/NotifyBuilder.html[javadoc for NotifyBuilder].
+
+TIP: You can create multiple instances of `NotifyBuilder` if you want to be notified
+of different conditions. `NotifyBuilder` also supports using binary operations
+(and, or, not) to stack together multiple conditions.
+
+=== Difference between done, completed and failed
+
+The `NotifyBuilder` identifies three ways a message can complete:
+
+- _Done_ - The message is done, regardless of whether it completes or fails.
+- _Completed_ - The message completes with success (no failure).
+- _Failed_ - The message fails (for example an exception is thrown and not handled).
+
+The names of these three ways are also incorporated in the names of the builder methods: `whenDone`, `whenCompleted`, and `whenFailed`.
+
+=== Examples
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("direct:foo").whenDone(5)
+    .create();
+----
+
+Here we want to match when the direct:foo endpoint have done 5 messages.
+
+You may also want to be notified when an message is done by the index, for example the very first message. To do that you can simply do:
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .whenDoneByIndex(0)
+    .create();
+----
+
+This ensures that the notifier only matches exactly when the first message is done.
+
+If you use `whenDone(1)` instead, then the notifier matches when at least one message is done.
+There could be use cases where `whenDone(1)` would match even if the first message hasn't been done yet,
+as other message in between could be done ahead of the first message.
+That is why `whenDoneByIndex` was added to support this scenario.
+
+Here we want to match when the direct:foo endpoint have done 5 messages which contains the word 'test' in the body.
+The filter accepts a xref:predicate.adoc[Predicate].
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("direct:foo").filter(body().contains("test")).whenDone(5)
+    .create();
+----
+
+Here we just say that at least one message should be done received from any JMS endpoint (notice the wildcard matching).
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("jms:*").whenDone(1)
+    .create();
+----
+
+Here, we just say that at least three message should be done received from any of myCoolRoutes (notice the wildcard matching).
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+.fromRoute("myCoolRoutes*").whenDone(3)
+.create();
+----
+
+Here both 5 foo messages and 7 bar messages must be done. Notice the use of the and operator.
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("direct:foo").whenDone(5)
+    .and().from("direct:bar").whenDone(7)
+    .create();
+----
+
+Here we expect to receive two messages whose body is Hello World then Bye World.
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("direct:foo").whenBodiesReceived("Hello World", "Bye World")
+    .create();
+----
+
+Here we expect to receive a message which contains Camel in the body.
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .whenAnyReceivedMatches(body().contains("Camel"))
+    .create();
+----
+
+=== Using mock endpoint for fine-grained expectations
+
+[source,java]
+----
+// let's use a mock to set the expressions as it got many great assertions for that
+// notice we use mock:assert which does NOT exist in the route, it's just a pseudo name
+MockEndpoint mock = getMockEndpoint("mock:assert");
+mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+
+NotifyBuilder notify = new NotifyBuilder(context)
+    .from("direct:foo").whenReceivedSatisfied(mock)
+    .create();
+----
+
+Here we combine a xref:components::mock-component.adoc[Mock] with the `NotifyBuilder`.
+We use the mock to set fine-grained expectations such as we should receive 3 messages in any order. Then using the builder we can tell that those messages should be received from the direct:foo endpoint. You can combine multiple expressions as much as you like.
+However, we suggest using the mock for fine-grained expectations that you may already know how to use. You can also specify that the Exchanges must have been sent to a given endpoint.
+
+=== Using wereSentTo
+
+For example in the following we expect the message to be sent to mock:bar
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .wereSentTo("mock:bar")
+    .create();
+----
+
+You can combine this with any of the other expectations, such as, to only match if 3+ messages are done, and were sent to the mock:bar endpoint:
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .whenDone(3).wereSentTo("mock:bar")
+    .create();
+----
+
+You can add additional `wereSentTo`, such as the following two:
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .wereSentTo("activemq:queue:foo").wereSentTo("activemq:queue:bar")
+.create();
+----
+
+As well as you can expect a number of messages to be done, and a message to fail, which has to be sent to another endpoint:
+
+[source,java]
+----
+NotifyBuilder notify = new NotifyBuilder(context)
+    .whenDone(3).wereSentTo("activemq:queue:goodOrder")
+    .and().whenFailed(1).wereSentTo("activemq:queue:badOrder")
+    .create();
+----

@@ -35,14 +35,17 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name",
-             consumerOnly = true, category = { Category.CORE, Category.SCHEDULING })
+             remote = false, consumerOnly = true, category = { Category.CORE, Category.SCHEDULING },
+             headersClass = SchedulerConstants.class)
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String name;
+    @UriParam
+    private boolean includeMetadata;
     @UriParam(defaultValue = "1", label = "scheduler")
-    private int concurrentTasks = 1;
+    private int poolSize = 1;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
@@ -80,17 +83,28 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         this.name = name;
     }
 
-    public int getConcurrentTasks() {
-        return concurrentTasks;
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
     }
 
     /**
-     * Number of threads used by the scheduling thread pool.
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     */
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * Number of core threads in the thread pool used by the scheduling thread pool.
      * <p/>
      * Is by default using a single thread
      */
-    public void setConcurrentTasks(int concurrentTasks) {
-        this.concurrentTasks = concurrentTasks;
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 
     public boolean isSynchronous() {

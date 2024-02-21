@@ -65,16 +65,6 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
-        String answer = null;
-        if (block != null) {
-            answer = block.createCode(expression);
-        }
-        // use double quote as this become used as string literals in the generated code
-        if (answer == null) {
-            answer = "\"\"";
-        } else {
-            answer = "\"" + answer + "\"";
-        }
-        return answer;
+        return BaseSimpleNode.createCode(expression, block);
     }
 }

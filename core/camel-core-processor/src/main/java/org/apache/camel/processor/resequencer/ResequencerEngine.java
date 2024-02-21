@@ -60,7 +60,7 @@ public class ResequencerEngine<E> {
     /**
      * A sequence of elements for sorting purposes.
      */
-    private Sequence<Element<E>> sequence;
+    private final Sequence<Element<E>> sequence;
 
     /**
      * A timer for scheduling timeout notifications.
@@ -247,7 +247,7 @@ public class ResequencerEngine<E> {
         if (sequence.isEmpty()) {
             return false;
         }
-        // inspect element with lowest sequence value
+        // inspect element with the lowest sequence value
         Element<E> element = sequence.first();
 
         // if element is scheduled do not deliver and return

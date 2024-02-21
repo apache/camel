@@ -1,4 +1,3 @@
-[[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-HowdoIsetthemaxcharswhendebugloggingmessagesinCamel]]
 = How do I set the max chars when debug logging messages in Camel?
 
 *Since Camel 2.0*

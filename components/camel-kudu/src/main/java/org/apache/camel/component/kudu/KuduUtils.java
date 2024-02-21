@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
+import org.apache.kudu.client.KuduPredicate;
 import org.apache.kudu.client.KuduScanner;
 import org.apache.kudu.client.KuduScannerIterator;
 import org.apache.kudu.client.KuduTable;
@@ -41,14 +44,14 @@ public final class KuduUtils {
     /**
      * Convert results to a more Java friendly type
      */
-    public static List<Map<String, Object>> scannerToList(KuduTable table, KuduScanner scanner) {
+    public static List<Map<String, Object>> scannerToList(KuduScanner scanner) {
         KuduScannerIterator it = scanner.iterator();
-        List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> res = new ArrayList<>();
         while (it.hasNext()) {
             RowResult row = it.next();
-            Map<String, Object> r = new HashMap<String, Object>();
+            Map<String, Object> r = new HashMap<>();
             res.add(r);
-            for (ColumnSchema columnSchema : table.getSchema().getColumns()) {
+            for (ColumnSchema columnSchema : scanner.getProjectionSchema().getColumns()) {
                 final String name = columnSchema.getName();
                 r.put(name, row.getObject(name));
             }
@@ -57,18 +60,26 @@ public final class KuduUtils {
     }
 
     public static List<Map<String, Object>> doScan(String tableName, KuduClient connection) throws KuduException {
+        return doScan(tableName, connection, null, null, -1);
+    }
+
+    public static List<Map<String, Object>> doScan(
+            String tableName, KuduClient connection, List<String> columnNames,
+            KuduPredicate predicate, long limit)
+            throws KuduException {
         LOG.trace("Scanning table {}", tableName);
         KuduTable table = connection.openTable(tableName);
 
-        List<String> projectColumns = new ArrayList<>(1);
-
-        for (ColumnSchema columnSchema : table.getSchema().getColumns()) {
-            projectColumns.add(columnSchema.getName());
+        KuduScanner.KuduScannerBuilder builder = connection.newScannerBuilder(table);
+        if (predicate != null) {
+            builder.addPredicate(predicate);
         }
-
-        KuduScanner scanner = connection.newScannerBuilder(table)
-                .setProjectedColumnNames(projectColumns)
-                .build();
-        return KuduUtils.scannerToList(table, scanner);
+        if (-1 < limit) {
+            builder.limit(limit);
+        }
+        List<String> projectColumns = Optional.ofNullable(columnNames).orElse(
+                table.getSchema().getColumns().stream().map(ColumnSchema::getName).collect(Collectors.toList()));
+        KuduScanner scanner = builder.setProjectedColumnNames(projectColumns).build();
+        return KuduUtils.scannerToList(scanner);
     }
 }

@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,21 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/filemove");
-        super.setUp();
-    }
-
     @Test
     public void testStoreFileExchangeBodyIsFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedFileExists("target/data/filemove/testStoreFile");
+        mock.expectedFileExists(testFile("testStoreFile"));
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
-        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile);
+        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH,
+                temporaryFile.getAbsolutePath());
 
         mock.assertIsSatisfied();
         assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
@@ -55,13 +48,14 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
     @Test
     public void testStoreFileExchangeBodyIsWrappedFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedFileExists("target/data/filemove/testStoreFile");
+        mock.expectedFileExists(testFile("testStoreFile"));
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
         GenericFile<File> body = new GenericFile<>();
         body.setFile(temporaryFile);
-        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile);
+        template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH,
+                temporaryFile.getAbsolutePath());
 
         mock.assertIsSatisfied();
         assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
@@ -71,7 +65,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("file://target/data/filemove/?fileName=testStoreFile").to("mock:result");
+                from("direct:in").to(fileUri("?fileName=testStoreFile")).to("mock:result");
             }
         };
     }

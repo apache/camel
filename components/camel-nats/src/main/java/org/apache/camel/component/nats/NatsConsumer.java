@@ -26,6 +26,7 @@ import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -55,53 +56,54 @@ public class NatsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting Nats Consumer");
-        executor = getEndpoint().createExecutor();
+        this.executor = this.getEndpoint().createExecutor();
 
         LOG.debug("Getting Nats Connection");
-        connection = getEndpoint().getConfiguration().getConnection() != null
-                ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
+        this.connection = this.getEndpoint().getConfiguration().getConnection() != null
+                ? this.getEndpoint().getConfiguration().getConnection()
+                : this.getEndpoint().getConnection();
 
-        executor.submit(new NatsConsumingTask(connection, getEndpoint().getConfiguration()));
+        this.executor.submit(new NatsConsumingTask(this.connection, this.getEndpoint().getConfiguration()));
     }
 
     @Override
     protected void doStop() throws Exception {
-        NatsConfiguration configuration = getEndpoint().getConfiguration();
+        final NatsConfiguration configuration = this.getEndpoint().getConfiguration();
 
-        if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(connection)) {
+        if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(this.connection)) {
             LOG.debug("Flushing Messages before stopping");
-            connection.flush(Duration.ofMillis(configuration.getFlushTimeout()));
+            this.connection.flush(Duration.ofMillis(configuration.getFlushTimeout()));
         }
 
-        if (ObjectHelper.isNotEmpty(dispatcher)) {
+        if (ObjectHelper.isNotEmpty(this.dispatcher)) {
             try {
-                dispatcher.unsubscribe(configuration.getTopic());
-            } catch (Exception e) {
-                getExceptionHandler().handleException("Error during unsubscribing", e);
+                this.dispatcher.unsubscribe(configuration.getTopic());
+            } catch (final Exception e) {
+                this.getExceptionHandler().handleException("Error during unsubscribing", e);
             }
         }
 
         LOG.debug("Stopping Nats Consumer");
-        if (executor != null) {
-            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+        if (this.executor != null) {
+            if (this.getEndpoint() != null && this.getEndpoint().getCamelContext() != null) {
+                this.getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(this.executor);
             } else {
-                executor.shutdownNow();
+                this.executor.shutdownNow();
             }
         }
-        executor = null;
+        this.executor = null;
 
-        if (ObjectHelper.isEmpty(configuration.getConnection()) && ObjectHelper.isNotEmpty(connection)) {
+        if (ObjectHelper.isEmpty(configuration.getConnection()) && ObjectHelper.isNotEmpty(this.connection)) {
             LOG.debug("Closing Nats Connection");
-            if (!connection.getStatus().equals(Status.CLOSED)) {
-                connection.close();
+            if (!this.connection.getStatus().equals(Status.CLOSED)) {
+                this.connection.close();
             }
         }
         super.doStop();
     }
 
     public boolean isActive() {
-        return active;
+        return this.active;
     }
 
     public void setActive(boolean active) {
@@ -121,29 +123,33 @@ public class NatsConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
-                dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
-                if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
-                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic(),
-                            getEndpoint().getConfiguration().getQueueName());
-                    if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(),
-                                Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
+                NatsConsumer.this.dispatcher = this.connection.createDispatcher(new CamelNatsMessageHandler());
+                if (ObjectHelper.isNotEmpty(this.configuration.getQueueName())) {
+                    NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(
+                            NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
+                            NatsConsumer.this.getEndpoint().getConfiguration().getQueueName());
+                    if (ObjectHelper.isNotEmpty(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages())) {
+                        NatsConsumer.this.dispatcher.unsubscribe(
+                                NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
+                                Integer.parseInt(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages()));
                     }
-                    if (dispatcher.isActive()) {
-                        setActive(true);
+                    if (NatsConsumer.this.dispatcher.isActive()) {
+                        NatsConsumer.this.setActive(true);
                     }
                 } else {
-                    dispatcher = dispatcher.subscribe(getEndpoint().getConfiguration().getTopic());
-                    if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMaxMessages())) {
-                        dispatcher.unsubscribe(getEndpoint().getConfiguration().getTopic(),
-                                Integer.parseInt(getEndpoint().getConfiguration().getMaxMessages()));
+                    NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher
+                            .subscribe(NatsConsumer.this.getEndpoint().getConfiguration().getTopic());
+                    if (ObjectHelper.isNotEmpty(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages())) {
+                        NatsConsumer.this.dispatcher.unsubscribe(
+                                NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
+                                Integer.parseInt(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages()));
                     }
-                    if (dispatcher.isActive()) {
-                        setActive(true);
+                    if (NatsConsumer.this.dispatcher.isActive()) {
+                        NatsConsumer.this.setActive(true);
                     }
                 }
-            } catch (Exception e) {
-                getExceptionHandler().handleException("Error during processing", e);
+            } catch (final Exception e) {
+                NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
             }
 
         }
@@ -153,7 +159,7 @@ public class NatsConsumer extends DefaultConsumer {
             @Override
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
-                Exchange exchange = createExchange(false);
+                final Exchange exchange = NatsConsumer.this.createExchange(false);
                 try {
                     exchange.getIn().setBody(msg.getData());
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
@@ -161,23 +167,40 @@ public class NatsConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
                     exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
                     exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
-
-                    processor.process(exchange);
+                    if (msg.getHeaders() != null) {
+                        final HeaderFilterStrategy strategy = NatsConsumer.this.getEndpoint()
+                                .getConfiguration()
+                                .getHeaderFilterStrategy();
+                        msg.getHeaders().entrySet().forEach(entry -> {
+                            if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                                if (entry.getValue().size() == 1) {
+                                    // going from camel to nats add all headers in lists, so we extract them in the opposite
+                                    // way if it contains a single value
+                                    exchange.getIn().setHeader(entry.getKey(), entry.getValue().get(0));
+                                } else {
+                                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                                }
+                            } else {
+                                LOG.debug("Excluding header {} as per strategy", entry.getKey());
+                            }
+                        });
+                    }
+                    NatsConsumer.this.processor.process(exchange);
 
                     // is there a reply?
-                    if (!configuration.isReplyToDisabled()
+                    if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
                             && msg.getReplyTo() != null && msg.getConnection() != null) {
-                        Connection con = msg.getConnection();
-                        byte[] data = exchange.getMessage().getBody(byte[].class);
+                        final Connection con = msg.getConnection();
+                        final byte[] data = exchange.getMessage().getBody(byte[].class);
                         if (data != null) {
                             LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
                             con.publish(msg.getReplyTo(), data);
                         }
                     }
-                } catch (Exception e) {
-                    getExceptionHandler().handleException("Error during processing", exchange, e);
+                } catch (final Exception e) {
+                    NatsConsumer.this.getExceptionHandler().handleException("Error during processing", exchange, e);
                 } finally {
-                    releaseExchange(exchange, false);
+                    NatsConsumer.this.releaseExchange(exchange, false);
                 }
             }
         }

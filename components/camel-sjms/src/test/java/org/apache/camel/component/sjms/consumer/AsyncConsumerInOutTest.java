@@ -16,19 +16,26 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  *
  */
 public class AsyncConsumerInOutTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {
@@ -38,10 +45,10 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
         // process the 2nd message on the queue
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye Camel");
 
-        template.sendBody("sjms:queue:start", "Hello Camel");
-        template.sendBody("sjms:queue:start", "Hello World");
+        template.sendBody("sjms:queue:start.ArtemisService", "Hello Camel");
+        template.sendBody("sjms:queue:start.ArtemisService", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
         camelContext.addComponent("async", new MyAsyncComponent());
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false&broker.useJmx=false");
+                service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
@@ -60,22 +67,22 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable async in only mode on the consumer
-                from("sjms:queue:start?asyncConsumer=true")
+                from("sjms:queue:start.ArtemisService?asyncConsumer=true")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?replyTo=response.queue")
+                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test.ArtemisService?replyTo=response.queue")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.test?asyncConsumer=true")
+                from("sjms:queue:in.out.test.ArtemisService?asyncConsumer=true")
                         .to("log:camel")
                         .transform(constant("Bye Camel"));
             }

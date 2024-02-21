@@ -19,7 +19,7 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
-public class BaseQuartzTest extends CamelTestSupport {
+public abstract class BaseQuartzTest extends CamelTestSupport {
 
     @Override
     protected boolean useJmx() {

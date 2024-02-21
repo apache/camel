@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.servicenow.releases.helsinki;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,7 +34,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_R
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPDATE;
 
 class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
-    HelsinkiServiceNowTableProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    HelsinkiServiceNowTableProcessor(ServiceNowEndpoint endpoint) {
         super(endpoint);
 
         addDispatcher(ACTION_RETRIEVE, this::retrieveRecord);
@@ -100,7 +100,6 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
         final String apiVersion = getApiVersion(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
         final Class<?> responseModel = getResponseModel(in, tableName);
-        final String sysId = getSysID(in);
 
         validateBody(in, requestModel);
 

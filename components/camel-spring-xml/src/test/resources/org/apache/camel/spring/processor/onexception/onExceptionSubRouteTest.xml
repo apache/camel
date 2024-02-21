@@ -26,18 +26,19 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- setup our error handler as the deal letter channel -->
-    <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="deadLetter" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
     </bean>
 
     <!-- the default error handler used in the 2nd route -->
-    <bean id="defaultErrorHandler" class="org.apache.camel.builder.DefaultErrorHandlerBuilder"/>
+    <bean id="defaultErrorHandler" class="org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder"/>
 
     <!-- this is our POJO bean with our business logic defined as a plain spring bean -->
     <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
 
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route errorHandlerRef="deadLetter">
             <from uri="direct:start"/>

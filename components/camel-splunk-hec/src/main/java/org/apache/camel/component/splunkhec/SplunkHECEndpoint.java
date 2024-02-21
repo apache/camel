@@ -29,23 +29,23 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.commons.validator.routines.DomainValidator;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
- * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
+ * The splunk component allows publishing events in Splunk using the HTTP Event Collector.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
-             syntax = "splunk-hec:splunkURL/token", category = { Category.LOG, Category.MONITORING })
+             syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
+             headersClass = SplunkHECConstants.class)
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
-    private static final Pattern URI_PARSER
-            = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
+    private static final Pattern SPLUNK_URL_PATTERN = Pattern.compile("^(.*?):(\\d+)$");
+    private static final Pattern SPLUNK_TOKEN_PATTERN = Pattern.compile("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
 
     @UriPath
     @Metadata(required = true)
     private String splunkURL;
-    @UriPath(label = "security")
-    @Metadata(required = true)
-    private String token;
+
     @UriParam
     private SplunkHECConfiguration configuration;
 
@@ -55,16 +55,37 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     public SplunkHECEndpoint(String uri, SplunkHECComponent component, SplunkHECConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        Matcher match = URI_PARSER.matcher(uri);
-        if (!match.matches() || !DomainValidator.getInstance(true).isValid(match.group(1))) {
-            throw new IllegalArgumentException("Invalid URI: " + uri);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        Matcher splunkUrlMatch = SPLUNK_URL_PATTERN.matcher(splunkURL);
+
+        if (!splunkUrlMatch.matches()) {
+            throw new IllegalArgumentException("Invalid Splunk URL provided");
         }
-        int port = Integer.parseInt(match.group(2));
+
+        String hostname = splunkUrlMatch.group(1);
+        int port = Integer.parseInt(splunkUrlMatch.group(2));
+
+        if (!DomainValidator.getInstance(true).isValid(hostname)
+                && !InetAddressValidator.getInstance().isValidInet4Address(hostname)) {
+            throw new IllegalArgumentException("Invalid hostname: " + hostname);
+        }
         if (port < 1 || port > 65535) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
-        splunkURL = match.group(1) + ":" + port;
-        token = match.group(3);
+
+        String token = getConfiguration().getToken();
+        if (token == null) {
+            throw new IllegalArgumentException("A token must be defined");
+        }
+
+        if (!SPLUNK_TOKEN_PATTERN.matcher(token).matches()) {
+            throw new IllegalArgumentException("Invalid Splunk HEC token provided");
+        }
     }
 
     @Override
@@ -86,21 +107,10 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      */
     public void setSplunkURL(String splunkURL) {
         this.splunkURL = splunkURL;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * Splunk authorization token
-     */
-    public void setToken(String token) {
-        this.token = token;
     }
 
 }

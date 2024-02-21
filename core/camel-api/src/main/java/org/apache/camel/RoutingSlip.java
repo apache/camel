@@ -49,7 +49,7 @@ public @interface RoutingSlip {
     String delimiter() default ",";
 
     /**
-     * Whether to ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Whether to ignore the invalid endpoint exception when try to create a producer with that endpoint
      */
     boolean ignoreInvalidEndpoints() default false;
 
@@ -58,7 +58,7 @@ public @interface RoutingSlip {
      * producers when using this routing slip, when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -67,7 +67,7 @@ public @interface RoutingSlip {
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      */
     int cacheSize() default 0;
 

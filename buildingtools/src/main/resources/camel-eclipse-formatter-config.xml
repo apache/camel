@@ -19,9 +19,6 @@
 -->
 <profiles version="8">
     <profile name="Camel Java Conventions" version="8" kind="CodeFormatterProfile">
-        <setting id="org.apache.camel.formatter.java.exclusion_pattern"
-                 value="\b((from|fromF)\([^;]*\.end[^;]*?\)|rest\([^;]*?\));"/>
-
         <setting id="org.eclipse.jdt.core.formatter.align_assignment_statements_on_columns" value="false"/>
         <setting id="org.eclipse.jdt.core.formatter.align_fields_grouping_blank_lines" value="2147483647"/>
         <setting id="org.eclipse.jdt.core.formatter.align_type_members_on_columns" value="false"/>
@@ -134,7 +131,7 @@
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_local_variable" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_method" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_package" value="insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_parameter" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_parameter" value="do not insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_type" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_label" value="do not insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_opening_brace_in_array_initializer" value="do not insert"/>

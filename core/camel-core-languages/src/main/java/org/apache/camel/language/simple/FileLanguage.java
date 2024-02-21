@@ -19,7 +19,7 @@ package org.apache.camel.language.simple;
 import org.apache.camel.spi.annotations.Language;
 
 /**
- *
+ * The Camel file language.
  */
 @Language("file")
 public class FileLanguage extends SimpleLanguage {

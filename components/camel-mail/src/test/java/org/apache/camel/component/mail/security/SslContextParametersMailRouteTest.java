@@ -24,6 +24,7 @@ import javax.net.ssl.SSLHandshakeException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.MailConstants;
 import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -71,7 +72,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
-        headers.put("Reply-to", email);
+        headers.put(MailConstants.MAIL_REPLY_TO, email);
         headers.put("Subject", "SSL/TLS Test");
 
         template.sendBodyAndHeaders("direct:in", "Test Email Body", headers);
@@ -95,7 +96,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
-        headers.put("Reply-to", email);
+        headers.put(MailConstants.MAIL_REPLY_TO, email);
         headers.put("Subject", "SSL/TLS Test");
 
         try {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.cometd;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:input1", person, "testHeading", "value");
         template.requestBodyAndHeader("direct:input2", person, "testHeading", "value");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

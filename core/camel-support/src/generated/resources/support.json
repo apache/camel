@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "support",
+    "title": "Support",
+    "description": "The Camel Support",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

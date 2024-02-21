@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
@@ -52,11 +53,11 @@ public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProv
 
         assertEquals("user", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testSecuredNotAllowed() throws Exception {
+    public void testSecuredNotAllowed() {
         securityConfiguration.setRoleToAssign("admin");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
@@ -73,10 +74,10 @@ public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProv
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
                         .to("mock:input")
                         .transform(simple("${in.header." + PRINCIPAL_PARAMETER + "}"));

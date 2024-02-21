@@ -210,18 +210,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // noop
-    }
-
     public boolean isStartScheduler() {
         return startScheduler;
     }

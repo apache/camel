@@ -25,8 +25,11 @@ import com.box.sdk.BoxFile;
 import com.box.sdk.BoxTask;
 import com.box.sdk.BoxTaskAssignment;
 import com.box.sdk.BoxUser;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box tasks.
@@ -42,7 +45,7 @@ public class BoxTasksManager {
 
     /**
      * Create tasks manager to manage the tasks of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxTasksManager(BoxAPIConnection boxConnection) {
@@ -51,30 +54,28 @@ public class BoxTasksManager {
 
     /**
      * Get a list of any tasks on file.
-     * 
+     *
      * @param  fileId - the id of file.
      * @return        The list of tasks on file.
      */
     public List<BoxTask.Info> getFileTasks(String fileId) {
         try {
             LOG.debug("Getting tasks of file(id={})", fileId);
-            if (fileId == null) {
-                throw new IllegalArgumentException("Parameter 'fileId' can not be null");
-            }
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
 
             BoxFile file = new BoxFile(boxConnection, fileId);
 
             return file.getTasks();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Add task to file.
-     * 
+     *
      * @param  fileId  - the id of file to add task to.
      * @param  action  - the action the task assignee will be prompted to do.
      * @param  dueAt   - - the day at which this task is due.
@@ -84,68 +85,58 @@ public class BoxTasksManager {
     public BoxTask addFileTask(String fileId, BoxTask.Action action, Date dueAt, String message) {
         try {
             LOG.debug("Adding task to file(id={}) to '{}'", fileId, message);
-            if (fileId == null) {
-                throw new IllegalArgumentException("Parameter 'fileId' can not be null");
-            }
-            if (action == null) {
-                throw new IllegalArgumentException("Parameter 'action' can not be null");
-            }
-            if (dueAt == null) {
-                throw new IllegalArgumentException("Parameter 'dueAt' can not be null");
-            }
+            BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
+            BoxHelper.notNull(action, BoxHelper.ACTION);
+            BoxHelper.notNull(dueAt, BoxHelper.DUE_AT);
 
             BoxFile fileToAddTaskOn = new BoxFile(boxConnection, fileId);
             return fileToAddTaskOn.addTask(action, message, dueAt).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Delete task.
-     * 
+     *
      * @param taskId - the id of task to delete.
      */
     public void deleteTask(String taskId) {
         try {
             LOG.debug("Deleting task(id={})", taskId);
-            if (taskId == null) {
-                throw new IllegalArgumentException("Parameter 'taskId' can not be null");
-            }
+            BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Get task information.
-     * 
+     *
      * @param  taskId - the id of task.
      * @return        The task information.
      */
     public BoxTask.Info getTaskInfo(String taskId) {
         try {
             LOG.debug("Getting info for task(id={})", taskId);
-            if (taskId == null) {
-                throw new IllegalArgumentException("Parameter 'taskId' can not be null");
-            }
+            BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
 
             BoxTask task = new BoxTask(boxConnection, taskId);
 
             return task.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Update task information.
-     * 
+     *
      * @param  taskId - the id of task.
      * @param  info   - the updated information
      * @return        The updated task.
@@ -153,49 +144,43 @@ public class BoxTasksManager {
     public BoxTask updateTaskInfo(String taskId, BoxTask.Info info) {
         try {
             LOG.debug("Updating info for task(id={})", taskId);
-            if (taskId == null) {
-                throw new IllegalArgumentException("Parameter 'taskId' can not be null");
-            }
-            if (info == null) {
-                throw new IllegalArgumentException("Parameter 'info' can not be null");
-            }
+            BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
+            BoxHelper.notNull(info, BoxHelper.INFO);
 
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.updateInfo(info);
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Get a list of any assignments for task.
-     * 
+     *
      * @param  taskId - the id of task.
      * @return        The list of assignments for task.
      */
     public List<BoxTaskAssignment.Info> getTaskAssignments(String taskId) {
         try {
             LOG.debug("Getting assignments for task(id={})", taskId);
-            if (taskId == null) {
-                throw new IllegalArgumentException("Parameter 'taskId' can not be null");
-            }
+            BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
 
             BoxTask file = new BoxTask(boxConnection, taskId);
 
             return file.getAssignments();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Add assignment for task.
-     * 
+     *
      * @param  taskId   - the id of task to add assignment for.
      * @param  assignTo - the user to assign to task.
      * @return          The assigned task.
@@ -204,12 +189,9 @@ public class BoxTasksManager {
                                // == null)' clause is dead code.
     public BoxTask addAssignmentToTask(String taskId, BoxUser assignTo) {
         try {
-            if (taskId == null) {
-                throw new IllegalArgumentException("Parameter 'commentId' can not be null");
-            }
-            if (assignTo == null) {
-                throw new IllegalArgumentException("Parameter 'assignTo' can not be null");
-            }
+            BoxHelper.notNull(taskId, BoxHelper.TASK_ID);
+            BoxHelper.notNull(assignTo, BoxHelper.ASSIGN_TO);
+
             LOG.debug("Assigning task(id={}) to user(id={})", taskId, assignTo.getID());
 
             BoxTask task = new BoxTask(boxConnection, taskId);
@@ -217,30 +199,28 @@ public class BoxTasksManager {
 
             return task;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Get task assignment information.
-     * 
+     *
      * @param  taskAssignmentId - the id of task assignment.
      * @return                  The task assignment information.
      */
     public BoxTaskAssignment.Info getTaskAssignmentInfo(String taskAssignmentId) {
         try {
             LOG.debug("Getting info for task(id={})", taskAssignmentId);
-            if (taskAssignmentId == null) {
-                throw new IllegalArgumentException("Parameter 'taskAssignmentId' can not be null");
-            }
+            BoxHelper.notNull(taskAssignmentId, BoxHelper.TASK_ASSIGNMENT_ID);
 
             BoxTaskAssignment taskAssignment = new BoxTaskAssignment(boxConnection, taskAssignmentId);
 
             return taskAssignment.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -282,20 +262,19 @@ public class BoxTasksManager {
 
     /**
      * Delete task assignment.
-     * 
+     *
      * @param taskAssignmentId - the id of task assignment to delete.
      */
     public void deleteTaskAssignment(String taskAssignmentId) {
         try {
             LOG.debug("Deleting task(id={})", taskAssignmentId);
-            if (taskAssignmentId == null) {
-                throw new IllegalArgumentException("Parameter 'taskAssignmentId' can not be null");
-            }
+            BoxHelper.notNull(taskAssignmentId, BoxHelper.TASK_ASSIGNMENT_ID);
+
             BoxTaskAssignment taskAssignment = new BoxTaskAssignment(boxConnection, taskAssignmentId);
             taskAssignment.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 }

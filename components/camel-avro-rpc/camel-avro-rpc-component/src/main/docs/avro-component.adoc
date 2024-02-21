@@ -1,0 +1,231 @@
+= Avro RPC Component
+:doctitle: Avro RPC
+:shortname: avro
+:artifactid: camel-avro-rpc
+:description: Produce or consume Apache Avro RPC services.
+:since: 2.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: avro-rpc
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component provides support for Apache Avro's rpc, by
+providing producers and consumers endpoint for using avro over netty or
+http. Before Camel 3.2 this functionality was a part of camel-avro component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-avro-rpc</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Apache Avro Overview
+
+Avro allows you to define message types and a protocol using a json like
+format and then generate java code for the specified types and messages.
+An example of how a schema looks like is below.
+
+[source,json]
+------------------------------------------------------------------------------------------
+{"namespace": "org.apache.camel.avro.generated",
+ "protocol": "KeyValueProtocol",
+
+ "types": [
+     {"name": "Key", "type": "record",
+      "fields": [
+          {"name": "key",   "type": "string"}
+      ]
+     },
+     {"name": "Value", "type": "record",
+      "fields": [
+          {"name": "value",   "type": "string"}
+      ]
+     }
+ ],
+
+ "messages": {
+     "put": {
+         "request": [{"name": "key", "type": "Key"}, {"name": "value", "type": "Value"} ],
+         "response": "null"
+     },
+     "get": {
+         "request": [{"name": "key", "type": "Key"}],
+         "response": "Value"
+     }
+ }
+}
+------------------------------------------------------------------------------------------
+
+You can easily generate classes from a schema, using maven, ant etc.
+More details can be found at the
+http://avro.apache.org/docs/current/[Apache Avro documentation].
+
+However, it doesn't enforce a schema-first approach, and you can create
+schema for your existing classes.
+You can use existing protocol interfaces to make RCP calls.
+You should use interface for the protocol itself and POJO beans or primitive/String classes for parameter
+and result types. Here is an example of the class that corresponds to
+the schema above:
+
+[source,java]
+--------------------------------------------------------------
+package org.apache.camel.avro.reflection;
+
+public interface KeyValueProtocol {
+    void put(String key, Value value);
+    Value get(String key);
+}
+
+class Value {
+    private String value;
+    public String getValue() { return value; }
+    public void setValue(String value) { this.value = value; }
+}
+--------------------------------------------------------------
+
+_Note: Existing classes can be used only for RPC (see below), not in
+data format._
+
+== Using Avro RPC in Camel
+
+As mentioned above, Avro also provides RPC support over multiple
+transports such as http and netty. Camel provides consumers and
+producers for these two transports.
+
+----------------------------------------
+avro:[transport]:[host]:[port][?options]
+----------------------------------------
+
+The supported transport values are currently http or netty.
+
+[NOTE]
+====
+You can specify the message name right in the URI:
+
+------------------------------------------------------
+avro:[transport]:[host]:[port][/messageName][?options]
+------------------------------------------------------
+====
+
+For consumers, this allows you to have multiple routes attached to the
+same socket. Dispatching to the correct route will be done by the avro
+component automatically. Route with no messageName specified (if any)
+will be used as default.
+
+When using camel producers for avro ipc, the "in" message body needs to
+contain the parameters of the operation specified in the avro protocol.
+The response will be added in the body of the "out" message.
+
+In a similar manner when using camel avro consumers for avro ipc, the
+request parameters will be placed inside the "in" message body of the
+created exchange. Once the exchange is processed, the body of the
+"out" message will be sent as a response.
+
+*Note:* By default, consumer parameters are wrapped into an array. If you've
+got only one parameter, *since 2.12* you can use `singleParameter` URI
+option to receive it directly in the "in" message body without array
+wrapping.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Examples
+
+An example of using camel avro producers via http:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
+---------------------------------------------------------------------------------------------------------------------------
+
+In the example above you need to fill `CamelAvroMessageName` header.
+
+You can use the following syntax to call constant messages:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
+-------------------------------------------------------------------------------------------------------------------------------
+
+An example of consuming messages using camel avro consumers via netty:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <choice>
+                <when>
+                    <el>${in.headers.CamelAvroMessageName == 'put'}</el>
+                    <process ref="putProcessor"/>
+                </when>
+                <when>
+                    <el>${in.headers.CamelAvroMessageName == 'get'}</el>
+                    <process ref="getProcessor"/>
+                </when>
+            </choice>
+        </route>
+------------------------------------------------------------------------------------------------------------------------------
+
+You can set up two distinct routes to perform the same task:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol">
+            <process ref="putProcessor"/>
+        </route>
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true"/>
+            <process ref="getProcessor"/>
+        </route>
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the example above, get takes only one parameter, so `singleParameter`
+is used and `getProcessor` will receive Value class directly in body,
+while `putProcessor` will receive an array of size 2 with `String` key and
+`Value` value filled as array contents.
+
+
+== Avro via HTTP SPI
+
+The Avro RPC component offers the `org.apache.camel.component.avro.spi.AvroRpcHttpServerFactory` service provider interface (SPI) so that various platforms can provide their own implementation based on their native HTTP server.
+
+The default implementation available in `org.apache.camel:camel-avro-jetty` is based on `org.apache.avro:avro-ipc-jetty`.
+
+
+
+include::spring-boot:partial$starter.adoc[]

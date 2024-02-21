@@ -20,6 +20,7 @@ import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reactive.vertx.VertXThreadPoolFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,23 +48,23 @@ public class SplitCustomThreadPoolTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "A,B,C,D,E,F,G,H,I,J");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         vertx.close();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // register a custom thread pool profile with id myLowPool
                 context.getExecutorServiceManager().registerThreadPoolProfile(
                         new ThreadPoolProfileBuilder("myLowPool").poolSize(2).maxPoolSize(10).build());
 
                 from("direct:start")
                         .to("log:foo")
-                        .split(body()).executorServiceRef("myLowPool")
+                        .split(body()).executorService("myLowPool")
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();

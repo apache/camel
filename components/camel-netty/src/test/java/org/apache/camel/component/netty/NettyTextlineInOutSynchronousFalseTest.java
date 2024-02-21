@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,26 +37,26 @@ public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
         String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should not same threads");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:before")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         })

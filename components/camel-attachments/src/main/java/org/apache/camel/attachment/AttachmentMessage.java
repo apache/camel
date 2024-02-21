@@ -19,12 +19,12 @@ package org.apache.camel.attachment;
 import java.util.Map;
 import java.util.Set;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.camel.Message;
 
 /**
- * Extended {@link Message} for Java Attachment Support (with javax.activation).
+ * Extended {@link Message} for Java Attachment Support (with jakarta.activation).
  */
 public interface AttachmentMessage extends Message {
 

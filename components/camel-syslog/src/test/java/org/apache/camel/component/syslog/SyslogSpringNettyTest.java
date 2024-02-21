@@ -72,6 +72,6 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

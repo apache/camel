@@ -19,14 +19,14 @@ package org.apache.camel.model.language;
 import java.util.List;
 import java.util.StringJoiner;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.PredicateFactory;
+import org.apache.camel.builder.LanguageBuilder;
 import org.apache.camel.model.HasExpressionType;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExpressionFactoryAware;
@@ -52,6 +53,14 @@ import org.apache.camel.util.ObjectHelper;
 public class ExpressionDefinition
         implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware,
         HasExpressionType {
+
+    @XmlTransient
+    private Predicate predicate;
+    @XmlTransient
+    private Expression expressionValue;
+    @XmlTransient
+    private ExpressionDefinition expressionType;
+
     @XmlAttribute
     @XmlID
     private String id;
@@ -59,14 +68,8 @@ public class ExpressionDefinition
     @Metadata(required = true)
     private String expression;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String trim;
-    @XmlTransient
-    private Predicate predicate;
-    @XmlTransient
-    private Expression expressionValue;
-    @XmlTransient
-    private ExpressionDefinition expressionType;
 
     public ExpressionDefinition() {
     }
@@ -81,6 +84,13 @@ public class ExpressionDefinition
 
     public ExpressionDefinition(Expression expression) {
         this.expressionValue = expression;
+    }
+
+    protected ExpressionDefinition(AbstractBuilder<?, ?> builder) {
+        this.id = builder.id;
+        this.expression = builder.expression;
+        this.trim = builder.trim;
+        this.predicate = builder.predicate;
     }
 
     public static String getLabel(List<ExpressionDefinition> expressions) {
@@ -209,11 +219,11 @@ public class ExpressionDefinition
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        return camelContext.adapt(ModelCamelContext.class).createExpression(this);
+        return ((ModelCamelContext) camelContext).createExpression(this);
     }
 
     public Predicate createPredicate(CamelContext camelContext) {
-        return camelContext.adapt(ModelCamelContext.class).createPredicate(this);
+        return ((ModelCamelContext) camelContext).createPredicate(this);
     }
 
     //
@@ -256,6 +266,57 @@ public class ExpressionDefinition
     public void initPredicate(CamelContext context) {
         if (predicate == null) {
             predicate = createPredicate(context);
+        }
+    }
+
+    /**
+     * {@code AbstractBuilder} is the base expression builder.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractBuilder<T extends AbstractBuilder<T, E>, E extends ExpressionDefinition>
+            implements LanguageBuilder<E> {
+
+        private String id;
+        private String expression;
+        private String trim;
+        private Predicate predicate;
+
+        /**
+         * Sets the id of this node
+         */
+        public T id(String id) {
+            this.id = id;
+            return (T) this;
+        }
+
+        /**
+         * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+         */
+        public T trim(String trim) {
+            this.trim = trim;
+            return (T) this;
+        }
+
+        /**
+         * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+         */
+        public T trim(boolean trim) {
+            this.trim = Boolean.toString(trim);
+            return (T) this;
+        }
+
+        /**
+         * The expression value in your chosen language syntax
+         */
+        public T expression(String expression) {
+            this.expression = expression;
+            return (T) this;
+        }
+
+        public T predicate(Predicate predicate) {
+            this.predicate = predicate;
+            return (T) this;
         }
     }
 }

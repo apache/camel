@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.ognl;
 
+import ognl.ClassResolver;
 import ognl.Ognl;
 import ognl.OgnlContext;
 import ognl.OgnlException;
@@ -25,7 +26,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.support.ExpressionSupport;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link org.apache.camel.Expression}
+ * An OGNL {@link org.apache.camel.Expression}
  */
 public class OgnlExpression extends ExpressionSupport {
 
@@ -33,7 +34,7 @@ public class OgnlExpression extends ExpressionSupport {
     private final Class<?> type;
     private Object expression;
 
-    public OgnlExpression(OgnlLanguage language, String expressionString, Class<?> type) {
+    public OgnlExpression(String expressionString, Class<?> type) {
         this.expressionString = expressionString;
         this.type = type;
         try {
@@ -44,16 +45,16 @@ public class OgnlExpression extends ExpressionSupport {
     }
 
     public static OgnlExpression ognl(String expression) {
-        return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
+        return new OgnlExpression(expression, Object.class);
     }
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
-        OgnlContext oglContext = new OgnlContext();
-        // setup the class resolver from camel
-        oglContext.setClassResolver(new CamelClassResolver(exchange.getContext().getClassResolver()));
+        ClassResolver cr = new CamelClassResolver(exchange.getContext().getClassResolver());
+        RootObject root = new RootObject(exchange);
+        OgnlContext oglContext = Ognl.createDefaultContext(root, cr);
         try {
-            Object value = Ognl.getValue(expression, oglContext, new RootObject(exchange));
+            Object value = Ognl.getValue(expression, oglContext, root);
             return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);

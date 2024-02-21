@@ -62,7 +62,7 @@ public interface JmsConstants {
     String JMS_REDELIVERED = "JMSRedelivered";
 
     /**
-     * The JMS Reply To {@link javax.jms.Destination} set by the publishing Client
+     * The JMS Reply To {@link jakarta.jms.Destination} set by the publishing Client
      */
     String JMS_REPLY_TO = "JMSReplyTo";
 

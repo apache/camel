@@ -19,36 +19,43 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.TextMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.TextMessage;
 
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Header;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
+public class JmsRequestReplyManualReplyTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static volatile String tempName;
-    private CountDownLatch latch = new CountDownLatch(1);
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+    private final CountDownLatch latch = new CountDownLatch(1);
     private JmsTemplate jms;
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Consume("activemq:queue:foo")
-    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) throws Exception {
+    @Consume("activemq:queue:JmsRequestReplyManualReplyTest")
+    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) {
         assertEquals("Hello World", body);
 
         String endpointName = "activemq:" + jmsReplyTo.toString();
@@ -65,7 +72,7 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
         context.start();
 
         // send using pure JMS API to set a custom JMSReplyTo
-        jms.send(new ActiveMQQueue("foo"), session -> {
+        jms.send(new ActiveMQQueue("JmsRequestReplyManualReplyTest"), session -> {
             TextMessage msg = session.createTextMessage("Hello World");
             msg.setJMSReplyTo(new ActiveMQQueue("bar"));
             return msg;
@@ -77,14 +84,33 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        jms = new JmsTemplate(connectionFactory);
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+
+        jms = new JmsTemplate(connectionFactory);
+        return component;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return null;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

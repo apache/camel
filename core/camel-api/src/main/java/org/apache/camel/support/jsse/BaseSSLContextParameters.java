@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.SecureRandom;
@@ -57,16 +56,16 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseSSLContextParameters extends JsseParameters {
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_INCLUDE
-            = Collections.unmodifiableList(Arrays.asList(".*"));
+            = List.of(".*");
 
-    protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE = Collections
-            .unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*"));
+    protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE
+            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE
-            = Collections.unmodifiableList(Arrays.asList(".*"));
+            = List.of(".*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE
-            = Collections.unmodifiableList(Arrays.asList("SSL.*"));
+            = List.of("SSL.*");
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
 
@@ -130,7 +129,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * context in which they are applied.
      * <p/>
      * These values override any filters supplied in {@link #setCipherSuitesFilter(FilterParameters)}
-     * 
+     *
      * @param cipherSuites the suite configuration
      */
     public void setCipherSuites(CipherSuitesParameters cipherSuites) {
@@ -156,7 +155,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values are ignored if {@link #setCipherSuites(CipherSuitesParameters)} is called with a non {@code null}
      * argument.
-     * 
+     *
      * @param cipherSuitesFilter the filter configuration
      */
     public void setCipherSuitesFilter(FilterParameters cipherSuitesFilter) {
@@ -204,7 +203,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values are ignored if {@link #setSecureSocketProtocols(SecureSocketProtocolsParameters)} is called with a
      * non-{@code null} argument.
-     * 
+     *
      * @param secureSocketProtocolsFilter the filter configuration
      */
     public void setSecureSocketProtocolsFilter(FilterParameters secureSocketProtocolsFilter) {
@@ -244,7 +243,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Configures the actual {@link SSLContext} itself with direct setter calls. This method differs from configuration
      * options that are handled by a configurer instance in that the options are part of the context itself and are not
      * part of some factory or instance object returned by the context.
-     * 
+     *
      * @param  context                  the context to configure
      *
      * @throws GeneralSecurityException if there is an error configuring the context
@@ -286,7 +285,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * the list.
      *
      * @param  context the context that serves as the factory for {@code SSLEngine} instances
-     * 
+     *
      * @return         the needed configurers
      */
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
@@ -323,7 +322,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
+        Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
 
             @Override
             public SSLEngine configure(SSLEngine engine) {
@@ -345,7 +344,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(engine.getSSLParameters().getProtocols()),
@@ -365,7 +364,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 engine.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
 
                 return engine;
             }
@@ -386,16 +385,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code SSLSocketFactory} does not contain any configuration options that are non-proprietary.
      *
      * @param  context the context that serves as the factory for {@code SSLSocketFactory} instances
-     * 
+     *
      * @return         the needed configurers
-     * 
+     *
      * @see            #getSSLSocketFactorySSLSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
 
         final List<Configurer<SSLSocket>> sslSocketConfigurers = this.getSSLSocketFactorySSLSocketConfigurers(context);
 
-        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = new Configurer<SSLSocketFactory>() {
+        Configurer<SSLSocketFactory> sslSocketFactoryConfigurer = new Configurer<>() {
 
             @Override
             public SSLSocketFactory configure(SSLSocketFactory factory) {
@@ -420,9 +419,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * method as {@code SSLServerSocketFactory} does not contain any configuration options that are non-proprietary.
      *
      * @param  context the context that serves as the factory for {@code SSLServerSocketFactory} instances
-     * 
+     *
      * @return         the needed configurers
-     * 
+     *
      * @see            #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
@@ -430,7 +429,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         final List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
                 = this.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
 
-        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = new Configurer<SSLServerSocketFactory>() {
+        Configurer<SSLServerSocketFactory> sslServerSocketFactoryConfigurer = new Configurer<>() {
 
             @Override
             public SSLServerSocketFactory configure(SSLServerSocketFactory factory) {
@@ -452,7 +451,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@link SSLSocketFactory}, see {@link #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)} for
      * configurers related to sockets produced by a {@link SSLServerSocketFactory}. The configurers are to be applied in
      * the order in which they appear in the list.
-     * 
+     *
      * @param  context the context that serves as the factory for {@code SSLSocketFactory} instances
      *
      * @return         the needed configurers
@@ -490,7 +489,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLSocket> sslSocketConfigurer = new Configurer<SSLSocket>() {
+        Configurer<SSLSocket> sslSocketConfigurer = new Configurer<>() {
 
             @Override
             public SSLSocket configure(SSLSocket socket) {
@@ -517,7 +516,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
@@ -537,7 +536,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
                 return socket;
             }
         };
@@ -554,7 +553,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@link SSLServerSocketFactory}, see {@link #getSSLSocketFactorySSLSocketConfigurers(SSLContext)} for configurers
      * related to sockets produced by a {@link SSLSocketFactory}. The configurers are to be applied in the order in
      * which they appear in the list.
-     * 
+     *
      * @param  context the context that serves as the factory for {@code SSLServerSocketFactory} instances
      * @return         the needed configurers
      */
@@ -591,7 +590,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         //////
 
-        Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
+        Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
 
             @Override
             public SSLServerSocket configure(SSLServerSocket socket) {
@@ -613,7 +612,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
@@ -633,7 +632,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
                 return socket;
             }
         };
@@ -678,7 +677,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code defaultPatterns} if patterns is {@code null} and {@code applyDefaults} is true.</li>
      * <li>Are provided in currentValues if if patterns is {@code null} and {@code applyDefaults} is false.</li>
      * </ol>
-     * 
+     *
      * @param  explicitValues  the optional explicit values to use
      * @param  availableValues the available values to filter from
      * @param  patterns        the optional patterns to use when {@code explicitValues} is not used
@@ -686,7 +685,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *                         used
      * @param  applyDefaults   flag indicating whether or not to apply defaults in the event that no explicit values and
      *                         no patterns apply
-     * 
+     *
      * @return                 the filtered values
      *
      * @see                    #filter(Collection, Collection, List, List)
@@ -722,7 +721,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code explicitValues} (returns them regardless of if they appear in {@code availableValues} or not) if
      * {@code explicitValues} is not {@code null} or as match the patterns in {@code includePatterns} and do not match
      * the patterns in {@code excludePatterns} if {@code explicitValues} is {@code null}.
-     * 
+     *
      * @param  explicitValues  the optional explicit values to use
      * @param  availableValues the available values to filter from if {@code explicitValues} is {@code null}
      * @param  includePatterns the patterns to use for inclusion filtering, required if {@code explicitValues} is
@@ -778,7 +777,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     /**
      * Configures a {@code T} based on the related configuration options.
      */
-    interface Configurer<T> {
+    protected interface Configurer<T> {
 
         /**
          * Configures a {@code T} based on the related configuration options. The return value from this method may be
@@ -804,7 +803,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         @Override
         public String toString() {
             return String.format("SSLContext[hash=%h, provider=%s, protocol=%s, needClientAuth=%s, "
-                                 + "wantClientAuth=%s\n\tdefaultProtocols=%s\n\tdefaultCipherSuites=%s\n\tsupportedProtocols=%s\n\tsupportedCipherSuites=%s\n]",
+                                 + "wantClientAuth=%s%n\tdefaultProtocols=%s%n\tdefaultCipherSuites=%s%n\tsupportedProtocols=%s%n\tsupportedCipherSuites=%s%n]",
                     hashCode(), getProvider(), getProtocol(), getDefaultSSLParameters().getNeedClientAuth(),
                     getDefaultSSLParameters().getWantClientAuth(),
                     collectionAsCommaDelimitedString(getDefaultSSLParameters().getProtocols()),
@@ -895,7 +894,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLEngine} based on the configurers in instance. The return value from this method may
          * be {@code engine} or it may be a decorated instance there of. Consequently, any subsequent actions on
          * {@code engine} must be performed using the returned value.
-         * 
+         *
          * @param  engine the engine to configure
          * @return        {@code engine} or a decorated instance there of
          */
@@ -913,7 +912,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLSocketFactory} based on the configurers in this instance. The return value from this
          * method may be {@code factory} or it may be a decorated instance there of. Consequently, any subsequent
          * actions on {@code factory} must be performed using the returned value.
-         * 
+         *
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */
@@ -931,7 +930,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLServerSocketFactory} based on the configurers in this instance. The return value from
          * this method may be {@code factory} or it may be a decorated instance there of. Consequently, any subsequent
          * actions on {@code factory} must be performed using the returned value.
-         * 
+         *
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */
@@ -1043,12 +1042,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         public Socket createSocket(
                 Socket s, String host,
                 int port, boolean autoClose)
-                throws IOException, UnknownHostException {
+                throws IOException {
             return configureSocket(sslSocketFactory.createSocket(s, host, port, autoClose));
         }
 
         @Override
-        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+        public Socket createSocket(String host, int port) throws IOException {
             return configureSocket(sslSocketFactory.createSocket(host, port));
         }
 
@@ -1056,7 +1055,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         public Socket createSocket(
                 String host, int port,
                 InetAddress localHost, int localPort)
-                throws IOException, UnknownHostException {
+                throws IOException {
             return configureSocket(sslSocketFactory.createSocket(host, port, localHost, localPort));
         }
 

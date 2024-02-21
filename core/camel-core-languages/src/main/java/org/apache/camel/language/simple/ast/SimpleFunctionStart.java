@@ -53,7 +53,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public String toString() {
-        // output a nice toString so it makes debugging easier as we can see the entire block
+        // output a nice toString, so it makes debugging easier, so we can see the entire block
         return "${" + block + "}";
     }
 
@@ -171,7 +171,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         StringBuilder sb = new StringBuilder();
         boolean quoteEmbeddedFunctions = false;
 
-        // we need to concat the block so we have the expression
+        // we need to concat the block, so we have the expression
         for (SimpleNode child : block.getChildren()) {
             if (child instanceof LiteralNode) {
                 String text = ((LiteralNode) child).getText();

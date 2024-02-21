@@ -18,10 +18,18 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="      http://www.springframework.org/schema/beans      http://www.springframework.org/schema/beans/spring-beans.xsd      http://camel.apache.org/schema/spring      http://camel.apache.org/schema/spring/camel-spring.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://camel.apache.org/schema/spring
+     http://camel.apache.org/schema/spring/camel-spring.xsd">
+
   <camelContext id="camelContext-8b6febc1-7092-4b97-8847-38f4482d2ca2" xmlns="http://camel.apache.org/schema/spring">
     <routeBuilder ref="myBuilder"/>
   </camelContext>
+
   <bean
     class="org.apache.camel.dataformat.bindy.csv.BindySingleQuotesWithDoubleQuotesInFieldCsvUnmarshallTest$ContextConfig" id="myBuilder"/>
+
 </beans>

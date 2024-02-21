@@ -18,12 +18,15 @@ package org.apache.camel.component.kafka.serde;
 
 import java.nio.ByteBuffer;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer {
+public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaHeaderSerializer.class);
+    private CamelContext camelContext;
 
     @Override
     public byte[] serialize(final String key, final Object value) {
@@ -46,9 +49,26 @@ public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer {
         } else if (value instanceof byte[]) {
             return (byte[]) value;
         }
+        if (camelContext != null) {
+            byte[] converted = camelContext.getTypeConverter().tryConvertTo(byte[].class, value);
+            if (converted != null) {
+                return converted;
+            }
+        }
+
         LOG.debug("Cannot propagate header value of type[{}], skipping... "
                   + "Supported types: String, Integer, Long, Double, byte[].",
                 value != null ? value.getClass() : "null");
         return null;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 }

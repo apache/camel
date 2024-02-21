@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ public class DisruptorInOutWithErrorTest extends CamelTestSupport {
             assertEquals("Damn I cannot do this", e.getCause().getMessage());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

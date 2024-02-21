@@ -45,7 +45,8 @@ public class CoAPCORSTest extends CoAPTestSupport {
             public void configure() {
                 restConfiguration().component("coap").port(PORT).enableCORS(true);
 
-                rest().get("/rest").route().setBody(constant(COAP_RESPONSE));
+                rest().get("/rest").to("direct:rest");
+                from("direct:rest").setBody(constant(COAP_RESPONSE));
             }
         };
     }

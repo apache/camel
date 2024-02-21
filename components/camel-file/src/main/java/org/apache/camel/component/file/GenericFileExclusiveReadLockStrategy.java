@@ -122,7 +122,7 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * Logging level used when a read lock could not be acquired.
      * <p/>
      * The default logging level is WARN
-     * 
+     *
      * @param readLockLoggingLevel LoggingLevel
      */
     void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel);

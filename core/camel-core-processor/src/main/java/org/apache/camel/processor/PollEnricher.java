@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -24,20 +26,22 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
@@ -63,37 +67,42 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
+    private HeadersMapFactory headersMapFactory;
+    private volatile String scheme;
     private String id;
     private String routeId;
+    private String variableReceive;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
-    private final String destination;
+    private final String uri;
     private long timeout;
     private boolean aggregateOnException;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
+    private boolean autoStartupComponents = true;
 
     /**
      * Creates a new {@link PollEnricher}.
      *
      * @param expression expression to use to compute the endpoint to poll from.
+     * @param uri        the endpoint to poll from.
      * @param timeout    timeout in millis
      */
-    public PollEnricher(Expression expression, long timeout) {
+    public PollEnricher(Expression expression, String uri, long timeout) {
         this.expression = expression;
-        this.destination = null;
+        this.uri = uri;
         this.timeout = timeout;
     }
 
     /**
      * Creates a new {@link PollEnricher}.
      *
-     * @param destination the endpoint to poll from.
-     * @param timeout     timeout in millis
+     * @param uri     the endpoint to poll from.
+     * @param timeout timeout in millis
      */
-    public PollEnricher(String destination, long timeout) {
+    public PollEnricher(String uri, long timeout) {
         this.expression = null;
-        this.destination = destination;
+        this.uri = uri;
         this.timeout = timeout;
     }
 
@@ -148,6 +157,14 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.aggregationStrategy = aggregationStrategy;
     }
 
+    public String getVariableReceive() {
+        return variableReceive;
+    }
+
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
+
     public long getTimeout() {
         return timeout;
     }
@@ -171,13 +188,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.aggregateOnException = aggregateOnException;
     }
 
-    /**
-     * Sets the default aggregation strategy for this poll enricher.
-     */
-    public void setDefaultAggregationStrategy() {
-        this.aggregationStrategy = defaultAggregationStrategy();
-    }
-
     public int getCacheSize() {
         return cacheSize;
     }
@@ -194,16 +204,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
-    @Override
-    protected void doInit() throws Exception {
-        if (destination != null) {
-            Endpoint endpoint = getExistingEndpoint(camelContext, destination);
-            if (endpoint == null) {
-                endpoint = resolveEndpoint(camelContext, destination, cacheSize < 0);
-            }
-        } else if (expression != null) {
-            expression.init(camelContext);
-        }
+    public boolean isAutoStartupComponents() {
+        return autoStartupComponents;
+    }
+
+    public void setAutoStartupComponents(boolean autoStartupComponents) {
+        this.autoStartupComponents = autoStartupComponents;
     }
 
     /**
@@ -233,7 +239,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         Object recipient = null;
         boolean prototype = cacheSize < 0;
         try {
-            recipient = destination != null ? destination : expression.evaluate(exchange, Object.class);
+            // favour using expression to compute the recipient endpoint
+            recipient = expression != null ? expression.evaluate(exchange, Object.class) : uri;
             recipient = prepareRecipient(exchange, recipient);
             Endpoint existing = getExistingEndpoint(camelContext, recipient);
             if (existing == null) {
@@ -245,7 +252,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             }
             // acquire the consumer from the cache
             consumer = consumerCache.acquirePollingConsumer(endpoint);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (isIgnoreInvalidEndpoint()) {
                 LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
             } else {
@@ -279,7 +286,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 LOG.debug("Consumer receiveNoWait: {}", consumer);
                 resourceExchange = consumer.receiveNoWait();
             } else {
-                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                }
                 resourceExchange = consumer.receive(timeout);
             }
 
@@ -312,8 +321,24 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             cause = resourceExchange.getException();
         }
 
+        // if we should store the received message body in a variable,
+        // then we need to preserve the original message body
+        Object originalBody = null;
+        Map<String, Object> originalHeaders = null;
+        if (variableReceive != null) {
+            try {
+                originalBody = exchange.getMessage().getBody();
+                // do a defensive copy of the headers
+                originalHeaders = headersMapFactory.newMap(exchange.getMessage().getHeaders());
+            } catch (Exception throwable) {
+                exchange.setException(throwable);
+                callback.done(true);
+                return true;
+            }
+        }
+
         try {
-            if (!isAggregateOnException() && (resourceExchange != null && resourceExchange.isFailed())) {
+            if (!isAggregateOnException() && resourceExchange != null && resourceExchange.isFailed()) {
                 // copy resource exchange onto original exchange (preserving pattern)
                 // and preserve redelivery headers
                 copyResultsPreservePattern(exchange, resourceExchange);
@@ -325,11 +350,17 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // must catch any exception from aggregation
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
+                    if (variableReceive != null) {
+                        // result should be stored in variable instead of message body
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
+                        exchange.getMessage().setBody(originalBody);
+                        exchange.getMessage().setHeaders(originalHeaders);
+                    }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
                     // handover any synchronization
                     if (resourceExchange != null) {
-                        resourceExchange.adapt(ExtendedExchange.class).handoverCompletions(exchange);
+                        resourceExchange.getExchangeExtension().handoverCompletions(exchange);
                     }
                 }
             }
@@ -339,7 +370,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // restore caused exception
                 exchange.setException(cause);
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {
@@ -353,9 +384,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 }
             }
 
-            // set header with the uri of the endpoint enriched so we can use that for tracing etc
-            exchange.getMessage().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-        } catch (Throwable e) {
+            // set property with the uri of the endpoint enriched so we can use that for tracing etc
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+
+        } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             callback.done(true);
             return true;
@@ -373,7 +405,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            CamelContext ecc = exchange.getContext();
             String uri;
             if (recipient instanceof String) {
                 uri = (String) recipient;
@@ -382,7 +414,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint
-            return ecc.normalizeUri(uri);
+            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
         return null;
     }
@@ -394,7 +426,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+                ExtendedCamelContext ecc = context.getCamelContextExtension();
                 return ecc.hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
@@ -428,25 +460,50 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
     }
 
-    private static AggregationStrategy defaultAggregationStrategy() {
-        return new CopyAggregationStrategy();
-    }
-
     @Override
     public String toString() {
         return id;
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doBuild() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
-        if (aggregationStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        if (aggregationStrategy == null) {
+            aggregationStrategy = new CopyAggregationStrategy();
         }
+        CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
+        ServiceHelper.buildService(consumerCache, aggregationStrategy);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (expression != null) {
+            expression.init(camelContext);
+        }
+
+        if (isAutoStartupComponents() && uri != null) {
+            // in case path has property placeholders then try to let property component resolve those
+            String u = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+            // find out which component it is
+            scheme = ExchangeHelper.resolveScheme(u);
+        }
+
+        headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
+
+        ServiceHelper.initService(consumerCache, aggregationStrategy);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // ensure the component is started
+        if (autoStartupComponents && scheme != null) {
+            camelContext.getComponent(scheme);
+        }
+
         ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 

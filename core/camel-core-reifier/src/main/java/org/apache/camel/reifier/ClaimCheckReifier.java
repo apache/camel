@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.function.BiFunction;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
@@ -25,6 +27,7 @@ import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -57,7 +60,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
         // validate filter, we cannot have both +/- at the same time
         if (filter != null) {
-            Iterable it = ObjectHelper.createIterable(filter, ",");
+            Iterable<?> it = ObjectHelper.createIterable(filter, ",");
             boolean includeBody = false;
             boolean excludeBody = false;
             for (Object o : it) {
@@ -108,23 +111,23 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        String ref = parseString(definition.getAggregationStrategy());
+        if (strategy == null && ref != null) {
+            Object aggStrategy = lookupByName(ref);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                strategy = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
             } else if (aggStrategy != null) {
                 strategy = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 
-        if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware) strategy).setCamelContext(camelContext);
-        }
-
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
     }
 

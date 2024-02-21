@@ -19,77 +19,81 @@ public class MinioEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(64);
-        props.add("bucketName");
-        props.add("serverSideEncryption");
-        props.add("prefix");
-        props.add("initialDelay");
-        props.add("secure");
-        props.add("useVersion1");
-        props.add("notMatchETag");
-        props.add("unModifiedSince");
-        props.add("pojoRequest");
-        props.add("proxyPort");
-        props.add("bridgeErrorHandler");
-        props.add("startAfter");
-        props.add("delimiter");
-        props.add("objectLock");
-        props.add("greedy");
-        props.add("maxMessagesPerPoll");
-        props.add("scheduledExecutorService");
-        props.add("bypassGovernanceMode");
-        props.add("repeatCount");
-        props.add("offset");
-        props.add("moveAfterRead");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("backoffIdleThreshold");
-        props.add("destinationObjectName");
-        props.add("versionId");
-        props.add("lazyStartProducer");
-        props.add("delay");
-        props.add("includeBody");
-        props.add("startScheduler");
         props.add("accessKey");
-        props.add("deleteAfterWrite");
-        props.add("region");
         props.add("autoCloseBody");
-        props.add("exceptionHandler");
-        props.add("customHttpClient");
-        props.add("backoffMultiplier");
-        props.add("includeVersions");
-        props.add("matchETag");
-        props.add("recursive");
-        props.add("scheduler");
-        props.add("endpoint");
-        props.add("storageClass");
-        props.add("modifiedSince");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("serverSideEncryptionCustomerKey");
-        props.add("policy");
-        props.add("maxConnections");
-        props.add("timeUnit");
         props.add("autoCreateBucket");
-        props.add("secretKey");
-        props.add("length");
-        props.add("exchangePattern");
-        props.add("keyName");
-        props.add("includeFolders");
-        props.add("destinationBucketName");
-        props.add("minioClient");
-        props.add("pollStrategy");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
+        props.add("bucketName");
+        props.add("bypassGovernanceMode");
+        props.add("customHttpClient");
+        props.add("delay");
         props.add("deleteAfterRead");
+        props.add("deleteAfterWrite");
+        props.add("delimiter");
+        props.add("destinationBucketName");
+        props.add("destinationObjectName");
+        props.add("endpoint");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("includeBody");
+        props.add("includeFolders");
         props.add("includeUserMetadata");
+        props.add("includeVersions");
+        props.add("initialDelay");
+        props.add("keyName");
+        props.add("lazyStartProducer");
+        props.add("length");
+        props.add("matchETag");
+        props.add("maxConnections");
+        props.add("maxMessagesPerPoll");
+        props.add("minioClient");
+        props.add("modifiedSince");
+        props.add("moveAfterRead");
+        props.add("notMatchETag");
+        props.add("objectLock");
         props.add("objectName");
+        props.add("offset");
         props.add("operation");
+        props.add("pojoRequest");
+        props.add("policy");
+        props.add("pollStrategy");
+        props.add("prefix");
+        props.add("proxyPort");
+        props.add("recursive");
+        props.add("region");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("secretKey");
+        props.add("secure");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("serverSideEncryption");
+        props.add("serverSideEncryptionCustomerKey");
+        props.add("startAfter");
+        props.add("startScheduler");
+        props.add("storageClass");
+        props.add("timeUnit");
+        props.add("unModifiedSince");
+        props.add("useFixedDelay");
+        props.add("useVersion1");
+        props.add("versionId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("secretKey");
         secretProps.add("accessKey");
+        secretProps.add("secretKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -117,6 +121,11 @@ public class MinioEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

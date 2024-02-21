@@ -19,6 +19,10 @@ package org.apache.camel.model.errorhandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
+@Deprecated
 public interface DeadLetterChannelProperties extends DefaultErrorHandlerProperties {
 
     // has no additional configurations

@@ -19,6 +19,7 @@ package org.apache.camel.component.infinispan;
 import java.security.SecureRandom;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.FluentProducerTemplate;
@@ -178,7 +179,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishMapWithLifespan() throws Exception {
+    default void publishMapWithLifespan() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.MAP, CollectionHelper.mapOf(KEY_ONE, VALUE_ONE, KEY_TWO, VALUE_TWO))
@@ -194,7 +195,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishMapWithLifespanAndMaxIdleTime() throws Exception {
+    default void publishMapWithLifespanAndMaxIdleTime() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.MAP, CollectionHelper.mapOf(KEY_ONE, VALUE_ONE, KEY_TWO, VALUE_TWO))
@@ -392,7 +393,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishKeyAndValueWithLifespan() throws Exception {
+    default void publishKeyAndValueWithLifespan() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
@@ -407,7 +408,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void getOrDefault() throws Exception {
+    default void getOrDefault() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
@@ -437,7 +438,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void putOperationReturnsThePreviousValue() throws Exception {
+    default void putOperationReturnsThePreviousValue() {
         getCache().put(KEY_ONE, "existing value");
 
         String result = fluentTemplate()
@@ -660,18 +661,18 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void replaceAValueByKeyAsyncWithOldValue() {
+    default void replaceAValueByKeyAsyncWithOldValue() throws ExecutionException, InterruptedException {
         getCache().put(KEY_ONE, VALUE_ONE);
 
-        Boolean result = fluentTemplate()
+        CompletableFuture<Boolean> result = fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
                 .withHeader(InfinispanConstants.VALUE, VALUE_TWO)
                 .withHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE)
                 .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACEASYNC)
-                .request(Boolean.class);
+                .request(CompletableFuture.class);
 
-        assertTrue(result);
+        assertEquals(Boolean.TRUE, result.get());
         assertEquals(VALUE_TWO, getCache().get(KEY_ONE));
     }
 

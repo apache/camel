@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class JettyImageFileTest extends BaseJettyTest {
 
-    private void sendImageContent(boolean usingGZip) throws Exception {
+    private void sendImageContent(boolean usingGZip) {
         Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         if (usingGZip) {
@@ -46,27 +46,27 @@ public class JettyImageFileTest extends BaseJettyTest {
     }
 
     @Test
-    public void testImageContentType() throws Exception {
+    public void testImageContentType() {
         sendImageContent(false);
     }
 
     @Test
-    public void testImageContentWithGZip() throws Exception {
+    public void testImageContentWithGZip() {
         sendImageContent(true);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyImageService());
             }
         };
     }
 
-    public class MyImageService implements Processor {
+    public static class MyImageService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody(new File("src/test/data/logo.jpeg"));
             exchange.getMessage().setHeader("Content-Type", "image/jpeg");
         }

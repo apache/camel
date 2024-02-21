@@ -22,6 +22,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +38,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -98,14 +100,19 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private void processClasses(IndexView index) {
         Map<String, Set<String>> byPackage = new HashMap<>();
 
-        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class).map(Class::getName).map(DotName::createSimple)
+        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class)
+                .map(Class::getName).map(DotName::createSimple)
                 .map(index::getAnnotations).flatMap(Collection::stream)
                 .map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString)
                 .forEach(name -> {
                     int idx = name.lastIndexOf('.');
                     String p = name.substring(0, idx);
                     String c = name.substring(idx + 1);
-                    byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
+                    // we should skip this model as we do not want this in the JAXB model
+                    boolean skip = "WhenSkipSendToEndpointDefinition".equals(c);
+                    if (!skip) {
+                        byPackage.computeIfAbsent(p, s -> new TreeSet<>()).add(c);
+                    }
                 });
 
         Path jaxbIndexDir = jaxbIndexOutDir.toPath();
@@ -116,8 +123,8 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
                     .anyMatch(Files::isRegularFile)) {
                 continue;
             }
-            StringBuilder sb = new StringBuilder();
-            sb.append("# " + GENERATED_MSG + NL);
+            StringBuilder sb = new StringBuilder(256);
+            sb.append("# ").append(GENERATED_MSG).append(NL);
             for (String s : entry.getValue()) {
                 sb.append(s);
                 sb.append(NL);
@@ -132,6 +139,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     }
 
     private IndexView createIndex(List<String> locations) throws MojoExecutionException {
+
         if (index.exists()) {
             try (InputStream is = new FileInputStream(index)) {
                 IndexReader r = new IndexReader(is);
@@ -153,11 +161,10 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private Path asFolder(String p) {
         if (p.endsWith(".jar")) {
             File fp = new File(p);
-            try {
-                Map<String, String> env = new HashMap<>();
-                return FileSystems.newFileSystem(URI.create("jar:" + fp.toURI().toString()), env).getPath("/");
+            try (FileSystem fs = FileSystems.newFileSystem(URI.create("jar:" + fp.toURI()), Collections.emptyMap())) {
+                return fs.getPath("/");
             } catch (FileSystemAlreadyExistsException e) {
-                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI().toString())).getPath("/");
+                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI())).getPath("/");
             } catch (IOException e) {
                 throw new IOError(e);
             }

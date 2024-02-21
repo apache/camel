@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -82,7 +82,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: idempotent
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
@@ -101,7 +101,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // all 3 messages should be in jpa repo
         Set<String> ids = new HashSet<>();
@@ -123,13 +123,13 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
                         jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damn I cannot handle id 2");
@@ -151,7 +151,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // only message 1 and 3 should be in jpa repo
         Set<String> ids = new HashSet<>();

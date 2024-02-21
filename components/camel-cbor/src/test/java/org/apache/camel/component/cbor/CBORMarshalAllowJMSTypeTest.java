@@ -43,7 +43,7 @@ public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
         byte[] payload = objectMapper.writeValueAsBytes(author);
         template.sendBodyAndHeader("direct:backPojo", payload, "JMSType", Author.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Author pojo = mock.getReceivedExchanges().get(0).getIn().getBody(Author.class);
         assertNotNull(pojo);

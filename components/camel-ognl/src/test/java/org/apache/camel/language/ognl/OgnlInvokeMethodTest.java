@@ -36,14 +36,14 @@ public class OgnlInvokeMethodTest extends CamelTestSupport {
         Animal animal = new Animal("Tony the Tiger", 12);
         template.sendBody("direct:start", animal);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("name").ognl("request.body.name")
                         .setHeader("dangerous").ognl("request.body.isDangerous()")

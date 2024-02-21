@@ -1,4 +1,3 @@
-[[HowdoInamemyroutes-HowdoInamemyroutes]]
 = How do I name my routes?
 
 You can assign names to your routes in Java DSL using `routeId`:
@@ -17,4 +16,17 @@ And in Spring XML using the `id` attribute:
     <from uri="direct:start"/>
     <to uri="mock:bar"/>
 </route>
+----
+
+Same example for YAML using the `id` attribute:
+
+[source,yaml]
+----
+- route:
+    id: myRoute
+    from:
+        uri: direct:start
+        steps:        
+        - to:
+            uri: mock:bar
 ----

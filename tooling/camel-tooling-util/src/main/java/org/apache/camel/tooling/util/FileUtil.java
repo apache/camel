@@ -83,10 +83,7 @@ public final class FileUtil {
             Files.delete(path);
             return true;
         } else {
-            byte[] olddata = new byte[0];
-            if (Files.exists(path) && Files.isReadable(path)) {
-                olddata = Files.readAllBytes(path);
-            }
+            final byte[] olddata = readFile(path);
             if (Arrays.equals(olddata, newdata)) {
                 return false;
             }
@@ -95,6 +92,14 @@ public final class FileUtil {
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         }
+    }
+
+    private static byte[] readFile(Path path) throws IOException {
+        if (Files.isReadable(path)) {
+            return Files.readAllBytes(path);
+        }
+
+        return new byte[0];
     }
 
     /**

@@ -1,0 +1,168 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Component Check
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+    paths:
+      - 'parent/**'
+      - 'core/**'
+      - 'components/**'
+  workflow_run:
+    workflows: [ "PR Build (Camel 3.x)" ]
+    types:
+      - completed
+
+permissions: {}
+jobs:
+  process:
+    if: github.repository == 'apache/camel'
+    permissions:
+      pull-requests: write # to comment on a pull request
+      actions: read # to download artifact
+
+    name: Process
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        if: |
+          github.event_name == 'pull_request_target' &&
+            (github.event.action == 'opened' ||
+             github.event.action == 'reopened')
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `:star2: Thank you for your contribution to the Apache Camel project! :star2: 
+            
+            :robot: CI automation will test this PR automatically.
+            
+            :camel: Apache Camel Committers, please review the following items:
+            
+            * First-time contributors **require MANUAL approval** for the GitHub Actions to run
+            
+            * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
+            
+            * You can label PRs using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
+            
+            * Build and test logs are available in the Summary page. **Only** [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary. 
+            
+            * :warning: Be careful when sharing logs. Review their contents before sharing them publicly.`
+            
+            })
+      - name: 'Download artifact'
+        uses: actions/github-script@v7
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+# Secure download based on:
+# - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+# - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "test-logs"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/test-logs.zip', Buffer.from(download.data));
+      - run: unzip test-logs.zip
+        if: |
+          github.event_name == 'workflow_run'
+      - uses: actions/github-script@v7
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let fs = require('fs');
+            let issue_number = Number(fs.readFileSync('./pr_number'));
+            let componentsTotal = Number(fs.readFileSync('./components-total'));
+            let componentsTested = Number(fs.readFileSync('./components-tested'));
+            let componentsFailures = Number(fs.readFileSync('./components-failures'));
+            let componentsSuccesses = Number(fs.readFileSync('./components-successes'));
+                                
+            var message = ""
+
+            if (componentsTested === 0) {
+              if (componentsTotal === 0) {
+                message = ":no_entry_sign: There are (likely) no components to be tested in this PR"
+              } else {
+                if (componentsTotal > 20) {
+                  message = `:leftwards_arrow_with_hook: There are either **too many** changes to be tested in this PR or the code **needs be rebased**: (${componentsTotal} components likely to be affected)`
+                }
+              }
+            } else {
+              message = `### Components test results:
+            
+            | Total | Tested | Failed :x: | Passed :white_check_mark: | 
+            | --- | --- | --- |  --- |
+            | ${componentsTotal} | ${componentsTested} | ${componentsFailures} | ${componentsSuccesses} |`
+            }
+
+            await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue_number,
+                  body: message
+            });
+      - uses: actions/github-script@v7
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let fs = require('fs');
+            let issue_number = Number(fs.readFileSync('./pr_number'));
+            let coreTested = Number(fs.readFileSync('./core-tested'));
+            let coreFailures = Number(fs.readFileSync('./core-failures'));
+            let coreSuccesses = Number(fs.readFileSync('./core-successes'));
+            
+            var message = ""
+            
+            if (coreTested === 0) {
+              message = ":no_entry_sign: There are (likely) no changes in core core to be tested in this PR"
+            } else {
+              message = `### Core test results:
+            
+            | Tested | Failed :x: | Passed :white_check_mark: | 
+            | --- | --- |  --- |
+            | ${coreTested} | ${coreFailures} | ${coreSuccesses} |`
+            }
+            
+            await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue_number,
+                  body: message
+            });

@@ -20,11 +20,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 
 /**
  * A default implementation of {@link Injector} which just uses reflection to instantiate new objects using their zero
@@ -33,10 +34,12 @@ import org.apache.camel.support.ObjectHelper;
 public class DefaultInjector implements Injector {
 
     // use the reflection injector
-    private final CamelBeanPostProcessor postProcessor;
+    protected final CamelContext camelContext;
+    protected final CamelBeanPostProcessor postProcessor;
 
     public DefaultInjector(CamelContext context) {
-        postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        this.camelContext = context;
+        this.postProcessor = PluginHelper.getBeanPostProcessor(camelContext);
     }
 
     @Override
@@ -46,16 +49,25 @@ public class DefaultInjector implements Injector {
 
     @Override
     public <T> T newInstance(Class<T> type, String factoryMethod) {
+        return newInstance(type, null, factoryMethod);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+        Class<?> target = factoryClass != null ? factoryClass : type;
         T answer = null;
         try {
             // lookup factory method
-            Method fm = type.getMethod(factoryMethod);
-            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+            Method fm = target.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers())
+                    && fm.getReturnType() != Void.class) {
                 Object obj = fm.invoke(null);
                 answer = type.cast(obj);
             }
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(answer, camelContext);
         } catch (Exception e) {
-            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + target, e);
         }
         return answer;
     }
@@ -63,13 +75,10 @@ public class DefaultInjector implements Injector {
     @Override
     public <T> T newInstance(Class<T> type, boolean postProcessBean) {
         T answer = ObjectHelper.newInstance(type);
-        if (answer != null && postProcessBean) {
-            try {
-                postProcessor.postProcessBeforeInitialization(answer, answer.getClass().getName());
-                postProcessor.postProcessAfterInitialization(answer, answer.getClass().getName());
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error during post processing of bean: " + answer, e);
-            }
+        // inject camel context if needed
+        CamelContextAware.trySetCamelContext(answer, camelContext);
+        if (postProcessBean) {
+            applyBeanPostProcessing(answer);
         }
         return answer;
     }
@@ -77,5 +86,14 @@ public class DefaultInjector implements Injector {
     @Override
     public boolean supportsAutoWiring() {
         return false;
+    }
+
+    protected <T> void applyBeanPostProcessing(T bean) {
+        try {
+            postProcessor.postProcessBeforeInitialization(bean, bean.getClass().getName());
+            postProcessor.postProcessAfterInitialization(bean, bean.getClass().getName());
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error during post processing of bean: " + bean, e);
+        }
     }
 }

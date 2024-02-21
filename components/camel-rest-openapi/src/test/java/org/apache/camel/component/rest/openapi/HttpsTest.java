@@ -27,10 +27,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
@@ -64,9 +65,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsTest extends CamelTestSupport {
 
     protected static WireMockServer petstore = new WireMockServer(
-            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+            wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
                     .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-                    .keystorePassword("changeit"));
+                    .keystorePassword("changeit").keyManagerPassword("changeit"));
 
     static final Object NO_BODY = null;
 
@@ -83,7 +84,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @BeforeEach
@@ -105,8 +106,8 @@ public abstract class HttpsTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -126,7 +127,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -143,10 +144,10 @@ public abstract class HttpsTest extends CamelTestSupport {
 
     public static Iterable<String> knownProducers() {
         final List<String> producers = new ArrayList<>(Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS));
-
         // skip http due security certificate testing problems
+        producers.remove("undertow");
+        producers.remove("vertx-http");
         producers.remove("http");
-
         return producers;
     }
 
@@ -178,7 +179,7 @@ public abstract class HttpsTest extends CamelTestSupport {
         final CipherSuitesParameters cipherSuites = new CipherSuitesParameters();
         cipherSuites.setCipherSuite(Collections.singletonList("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"));
         sslContextParameters.setCipherSuites(cipherSuites);
-        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         return sslContextParameters;
     }
 

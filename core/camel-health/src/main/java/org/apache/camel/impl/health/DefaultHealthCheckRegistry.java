@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -24,21 +25,24 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link HealthCheckRegistry}.
  */
-@JdkService(HealthCheckRegistry.FACTORY)
+@org.apache.camel.spi.annotations.HealthCheck(HealthCheckRegistry.NAME)
 @DeferredContextBinding
 public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
@@ -48,6 +52,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
     private boolean enabled = true;
+    private String excludePattern;
+    private String exposureLevel = "default";
+    private HealthCheck.State initialState = HealthCheck.State.DOWN;
+    private volatile boolean loadHealthChecksDone;
 
     public DefaultHealthCheckRegistry() {
         this(null);
@@ -56,7 +64,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public DefaultHealthCheckRegistry(CamelContext camelContext) {
         this.checks = new CopyOnWriteArraySet<>();
         this.repositories = new CopyOnWriteArraySet<>();
-        this.repositories.add(new HealthCheckRegistryRepository());
 
         setCamelContext(camelContext);
     }
@@ -82,20 +89,64 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    @Override
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
+    }
+
+    @Override
+    public String getExposureLevel() {
+        return exposureLevel;
+    }
+
+    @Override
+    public void setExposureLevel(String exposureLevel) {
+        this.exposureLevel = exposureLevel;
+    }
+
+    public HealthCheck.State getInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(HealthCheck.State initialState) {
+        this.initialState = initialState;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
 
+        Optional<HealthCheckRepository> hcr = repositories.stream()
+                .filter(repository -> repository instanceof HealthCheckRegistryRepository)
+                .findFirst();
+
+        if (hcr.isEmpty()) {
+            register(new HealthCheckRegistryRepository());
+        }
+
         for (HealthCheck check : checks) {
-            if (check instanceof CamelContextAware) {
-                ((CamelContextAware) check).setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(check, camelContext);
         }
 
         for (HealthCheckRepository repository : repositories) {
-            if (repository instanceof CamelContextAware) {
-                ((CamelContextAware) repository).setCamelContext(camelContext);
-            }
+            CamelContextAware.trySetCamelContext(repository, camelContext);
         }
+
+        ServiceHelper.initService(repositories, checks);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(repositories, checks);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(repositories, checks);
     }
 
     // ************************************
@@ -118,47 +169,28 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (answer == null) {
             answer = resolveHealthCheckRepositoryById(id);
         }
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(camelContext);
-        }
+        CamelContextAware.trySetCamelContext(answer, camelContext);
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     private HealthCheck resolveHealthCheckById(String id) {
         HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
         if (answer == null) {
-            // discover via classpath (try first via -health-check and then id as-is)
-            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheck> clazz
-                    = (Class<? extends HealthCheck>) ff.findOptionalClass(id + "-health-check").orElse(null);
-            if (clazz == null) {
-                clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id).orElse(null);
-            }
-            if (clazz != null) {
-                answer = camelContext.getInjector().newInstance(clazz);
-            }
+            HealthCheckResolver resolver = PluginHelper.getHealthCheckResolver(camelContext);
+            answer = resolver.resolveHealthCheck(id);
         }
 
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     private HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
         HealthCheckRepository answer = repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
-            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
-            Class<? extends HealthCheckRepository> clazz = (Class<? extends HealthCheckRepository>) ff
-                    .findOptionalClass(id + "-health-check-repository").orElse(null);
-            if (clazz == null) {
-                clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id).orElse(null);
-            }
-            if (clazz != null) {
-                answer = camelContext.getInjector().newInstance(clazz);
-            }
+            HealthCheckResolver resolver = PluginHelper.getHealthCheckResolver(camelContext);
+            answer = resolver.resolveHealthCheckRepository(id);
         }
 
         return answer;
@@ -170,6 +202,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         checkIfAccepted(obj);
 
+        // inject context
+        CamelContextAware.trySetCamelContext(obj, camelContext);
+
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
             // do we have this already
@@ -178,10 +213,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             }
             result = checks.add(healthCheck);
             if (result) {
-                if (obj instanceof CamelContextAware) {
-                    ((CamelContextAware) obj).setCamelContext(camelContext);
-                }
-
+                CamelContextAware.trySetCamelContext(obj, camelContext);
                 LOG.debug("HealthCheck with id {} successfully registered", healthCheck.getId());
             }
         } else {
@@ -192,12 +224,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             }
             result = this.repositories.add(repository);
             if (result) {
-                if (repository instanceof CamelContextAware) {
-                    ((CamelContextAware) repository).setCamelContext(camelContext);
-                }
-
+                CamelContextAware.trySetCamelContext(repository, camelContext);
                 LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
             }
+        }
+
+        // ensure the check is started if we are already started (such as added later)
+        if (isStarted()) {
+            ServiceHelper.startService(obj);
         }
 
         return result;
@@ -221,6 +255,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             if (result) {
                 LOG.debug("HealthCheckRepository with id {} successfully un-registered", repository.getId());
             }
+        }
+
+        if (result) {
+            ServiceHelper.stopService(obj);
         }
 
         return result;
@@ -249,6 +287,48 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                     repositories.stream().flatMap(HealthCheckRepository::stream)).distinct();
         }
         return Stream.empty();
+    }
+
+    @Override
+    public void loadHealthChecks() {
+        StopWatch watch = new StopWatch();
+
+        if (!loadHealthChecksDone) {
+            loadHealthChecksDone = true;
+            DefaultHealthChecksLoader loader = new DefaultHealthChecksLoader(camelContext);
+            Collection<HealthCheck> col = loader.loadHealthChecks();
+            // register loaded health-checks
+            col.forEach(this::register);
+            if (!col.isEmpty()) {
+                String time = TimeUtils.printDuration(watch.taken(), true);
+                LOG.debug("Health checks (scanned: {}) loaded in {}", col.size(), time);
+            }
+        }
+    }
+
+    @Override
+    public boolean isExcluded(HealthCheck healthCheck) {
+        if (excludePattern != null) {
+            String[] s = excludePattern.split(",");
+
+            String id = healthCheck.getId();
+            if (PatternHelper.matchPatterns(id, s)) {
+                return true;
+            }
+            // special for route, consumer and producer health checks
+            if (id.startsWith("route:")) {
+                id = id.substring(6);
+                return PatternHelper.matchPatterns(id, s);
+            } else if (id.startsWith("consumer:")) {
+                id = id.substring(9);
+                return PatternHelper.matchPatterns(id, s);
+            } else if (id.startsWith("producer:")) {
+                id = id.substring(9);
+                return PatternHelper.matchPatterns(id, s);
+            }
+        }
+
+        return false;
     }
 
     private void checkIfAccepted(Object obj) {

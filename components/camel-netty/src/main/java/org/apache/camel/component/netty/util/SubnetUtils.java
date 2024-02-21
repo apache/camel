@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * A class that performs some subnet calculations given a network address and a subnet mask.
- * 
+ *
  * @see "http://www.faqs.org/rfcs/rfc1519.html" This class is copied from apache common net
  */
 public class SubnetUtils {
@@ -42,7 +42,7 @@ public class SubnetUtils {
 
     /**
      * Constructor that takes a CIDR-notation string, e.g. "192.168.0.1/16"
-     * 
+     *
      * @param  cidrNotation             A CIDR-notation string, e.g. "192.168.0.1/16"
      * @throws IllegalArgumentException if the parameter is invalid, i.e. does not match n.n.n.n/m where n=1-3 decimal
      *                                  digits, m = 1-3 decimal digits in range 1-32
@@ -53,7 +53,7 @@ public class SubnetUtils {
 
     /**
      * Constructor that takes a dotted decimal address and a dotted decimal mask.
-     * 
+     *
      * @param  address                  An IP address, e.g. "192.168.0.1"
      * @param  mask                     A dotted decimal netmask e.g. "255.255.0.0"
      * @throws IllegalArgumentException if the address or mask is invalid, i.e. does not match n.n.n.n where n=1-3
@@ -66,7 +66,7 @@ public class SubnetUtils {
     /**
      * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()} includes the network and
      * broadcast addresses.
-     * 
+     *
      * @since  2.2
      * @return true if the hostcount includes the network and broadcast addresses
      */
@@ -77,7 +77,7 @@ public class SubnetUtils {
     /**
      * Set to <code>true</code> if you want the return value of {@link SubnetInfo#getAddressCount()} to include the
      * network and broadcast addresses.
-     * 
+     *
      * @param inclusiveHostCount true if network and broadcast addresses are to be included
      * @since                    2.2
      */
@@ -134,7 +134,7 @@ public class SubnetUtils {
         /**
          * Returns true if the parameter <code>address</code> is in the range of usable endpoint addresses for this
          * subnet. This excludes the network and broadcast adresses.
-         * 
+         *
          * @param  address A dot-delimited IPv4 address, e.g. "192.168.0.1"
          * @return         True if in range, false otherwise
          */
@@ -192,7 +192,7 @@ public class SubnetUtils {
 
         /**
          * Get the count of available addresses. Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
-         * 
+         *
          * @return                      the count of addresses, may be zero.
          * @throws     RuntimeException if the correct count is greater than {@code Integer.MAX_VALUE}
          * @deprecated                  use {@link #getAddressCountLong()} instead
@@ -209,7 +209,7 @@ public class SubnetUtils {
 
         /**
          * Get the count of available addresses. Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
-         * 
+         *
          * @return the count of addresses, may be zero.
          */
         public long getAddressCountLong() {
@@ -245,7 +245,7 @@ public class SubnetUtils {
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @since 2.2
          */
         @Override
@@ -264,7 +264,7 @@ public class SubnetUtils {
 
     /**
      * Return a {@link SubnetInfo} instance that contains subnet-specific statistics
-     * 
+     *
      * @return new instance
      */
     public final SubnetInfo getInfo() {
@@ -325,7 +325,7 @@ public class SubnetUtils {
      * Convert a packed integer address into a 4-element array
      */
     private int[] toArray(int val) {
-        int ret[] = new int[4];
+        int[] ret = new int[4];
         for (int j = 3; j >= 0; --j) {
             ret[j] |= (val >>> 8 * (3 - j)) & 0xff;
         }

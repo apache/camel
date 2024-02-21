@@ -27,7 +27,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * composite contains
  */
 public class CompositePackageScanFilter implements PackageScanFilter {
-    private Set<PackageScanFilter> filters;
+    private final Set<PackageScanFilter> filters;
 
     public CompositePackageScanFilter() {
         filters = new LinkedHashSet<>();

@@ -28,10 +28,10 @@ public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
 
     public static final String REMOTE_FILE_INPUT_STREAM = "CamelRemoteFileInputStream";
 
-    public RemoteFileComponent() {
+    protected RemoteFileComponent() {
     }
 
-    public RemoteFileComponent(CamelContext context) {
+    protected RemoteFileComponent(CamelContext context) {
         super(context);
     }
 }

@@ -35,7 +35,6 @@ import javax.management.openmbean.TabularType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -175,7 +174,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
         DelayedMonoPublisher<Exchange> publisher = new DelayedMonoPublisher<>(this.workerPool);
 
-        data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+        data.getExchangeExtension().addOnCompletion(new Synchronization() {
             @Override
             public void onComplete(Exchange exchange) {
                 publisher.setData(exchange);

@@ -75,7 +75,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             String routeId = "mllp-sender";
 
@@ -119,7 +119,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         Thread.sleep((long) (IDLE_TIMEOUT * 1.1));
 
@@ -154,7 +154,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         log.debug("Breakpoint");
     }

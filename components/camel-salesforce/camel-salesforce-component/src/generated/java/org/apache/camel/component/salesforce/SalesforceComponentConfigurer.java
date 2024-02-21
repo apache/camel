@@ -28,6 +28,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": getOrCreateConfig(target).setAllOrNone(property(camelContext, boolean.class, value)); return true;
         case "apexmethod":
         case "apexMethod": getOrCreateConfig(target).setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
@@ -57,6 +59,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": getOrCreateConfig(target).setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "eventname":
+        case "eventName": getOrCreateConfig(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventschemaformat":
+        case "eventSchemaFormat": getOrCreateConfig(target).setEventSchemaFormat(property(camelContext, org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class, value)); return true;
+        case "eventschemaid":
+        case "eventSchemaId": getOrCreateConfig(target).setEventSchemaId(property(camelContext, java.lang.String.class, value)); return true;
+        case "fallbackreplayid":
+        case "fallBackReplayId": getOrCreateConfig(target).setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "format": getOrCreateConfig(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": getOrCreateConfig(target).setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -92,6 +102,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": target.setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "httprequestbuffersize":
         case "httpRequestBufferSize": target.setHttpRequestBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httprequesttimeout":
+        case "httpRequestTimeout": target.setHttpRequestTimeout(property(camelContext, long.class, value)); return true;
         case "includedetails":
         case "includeDetails": getOrCreateConfig(target).setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "initialreplayidmap":
@@ -102,12 +114,15 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": target.setInstanceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "jobid":
         case "jobId": getOrCreateConfig(target).setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtaudience":
+        case "jwtAudience": target.setJwtAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "lazylogin":
         case "lazyLogin": target.setLazyLogin(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": getOrCreateConfig(target).setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "locator": getOrCreateConfig(target).setLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "loginconfig":
         case "loginConfig": target.setLoginConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceLoginConfig.class, value)); return true;
         case "loginurl":
@@ -116,6 +131,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": target.setLongPollingTransportProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "maxbackoff":
         case "maxBackoff": getOrCreateConfig(target).setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "maxrecords":
+        case "maxRecords": getOrCreateConfig(target).setMaxRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "notfoundbehaviour":
         case "notFoundBehaviour": getOrCreateConfig(target).setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":
@@ -142,12 +159,32 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": getOrCreateConfig(target).setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": getOrCreateConfig(target).setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": getOrCreateConfig(target).setPubSubBatchSize(property(camelContext, int.class, value)); return true;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": getOrCreateConfig(target).setPubSubDeserializeType(property(camelContext, org.apache.camel.component.salesforce.PubSubDeserializeType.class, value)); return true;
+        case "pubsubhost":
+        case "pubSubHost": target.setPubSubHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": getOrCreateConfig(target).setPubSubPojoClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubport":
+        case "pubSubPort": target.setPubSubPort(property(camelContext, int.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": getOrCreateConfig(target).setRawHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawmethod":
+        case "rawMethod": getOrCreateConfig(target).setRawMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "rawpath":
+        case "rawPath": getOrCreateConfig(target).setRawPath(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
         case "rawPayload": getOrCreateConfig(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawqueryparameters":
+        case "rawQueryParameters": getOrCreateConfig(target).setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "replaypreset":
+        case "replayPreset": getOrCreateConfig(target).setReplayPreset(property(camelContext, com.salesforce.eventbus.protobuf.ReplayPreset.class, value)); return true;
         case "reportid":
         case "reportId": getOrCreateConfig(target).setReportId(property(camelContext, java.lang.String.class, value)); return true;
         case "reportmetadata":
@@ -174,12 +211,18 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": getOrCreateConfig(target).setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "streamqueryresult":
+        case "streamQueryResult": getOrCreateConfig(target).setStreamQueryResult(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": getOrCreateConfig(target).setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username":
         case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": target.setWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "workerpoolsize":
+        case "workerPoolSize": target.setWorkerPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -187,6 +230,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return boolean.class;
         case "apexmethod":
         case "apexMethod": return java.lang.String.class;
         case "apexqueryparams":
@@ -216,6 +261,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
         case "defaultReplayId": return java.lang.Long.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "eventschemaformat":
+        case "eventSchemaFormat": return org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum.class;
+        case "eventschemaid":
+        case "eventSchemaId": return java.lang.String.class;
+        case "fallbackreplayid":
+        case "fallBackReplayId": return java.lang.Long.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
         case "httpclient":
         case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
@@ -251,6 +304,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": return java.lang.String.class;
         case "httprequestbuffersize":
         case "httpRequestBufferSize": return java.lang.Integer.class;
+        case "httprequesttimeout":
+        case "httpRequestTimeout": return long.class;
         case "includedetails":
         case "includeDetails": return java.lang.Boolean.class;
         case "initialreplayidmap":
@@ -261,12 +316,15 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return java.lang.String.class;
         case "jobid":
         case "jobId": return java.lang.String.class;
+        case "jwtaudience":
+        case "jwtAudience": return java.lang.String.class;
         case "keystore": return org.apache.camel.support.jsse.KeyStoreParameters.class;
         case "lazylogin":
         case "lazyLogin": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "limit": return java.lang.Integer.class;
+        case "locator": return java.lang.String.class;
         case "loginconfig":
         case "loginConfig": return org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
         case "loginurl":
@@ -275,6 +333,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": return java.util.Map.class;
         case "maxbackoff":
         case "maxBackoff": return long.class;
+        case "maxrecords":
+        case "maxRecords": return java.lang.Integer.class;
         case "notfoundbehaviour":
         case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
         case "notifyforfields":
@@ -301,12 +361,32 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": return java.lang.String.class;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return java.lang.String.class;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return int.class;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return org.apache.camel.component.salesforce.PubSubDeserializeType.class;
+        case "pubsubhost":
+        case "pubSubHost": return java.lang.String.class;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return java.lang.String.class;
+        case "pubsubport":
+        case "pubSubPort": return int.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return java.lang.String.class;
+        case "rawmethod":
+        case "rawMethod": return java.lang.String.class;
+        case "rawpath":
+        case "rawPath": return java.lang.String.class;
         case "rawpayload":
         case "rawPayload": return boolean.class;
+        case "rawqueryparameters":
+        case "rawQueryParameters": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "replaypreset":
+        case "replayPreset": return com.salesforce.eventbus.protobuf.ReplayPreset.class;
         case "reportid":
         case "reportId": return java.lang.String.class;
         case "reportmetadata":
@@ -333,12 +413,18 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "streamqueryresult":
+        case "streamQueryResult": return java.lang.Boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "username":
         case "userName": return java.lang.String.class;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return int.class;
+        case "workerpoolsize":
+        case "workerPoolSize": return int.class;
         default: return null;
         }
     }
@@ -347,6 +433,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allornone":
+        case "allOrNone": return getOrCreateConfig(target).isAllOrNone();
         case "apexmethod":
         case "apexMethod": return getOrCreateConfig(target).getApexMethod();
         case "apexqueryparams":
@@ -376,6 +464,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "contentType": return getOrCreateConfig(target).getContentType();
         case "defaultreplayid":
         case "defaultReplayId": return getOrCreateConfig(target).getDefaultReplayId();
+        case "eventname":
+        case "eventName": return getOrCreateConfig(target).getEventName();
+        case "eventschemaformat":
+        case "eventSchemaFormat": return getOrCreateConfig(target).getEventSchemaFormat();
+        case "eventschemaid":
+        case "eventSchemaId": return getOrCreateConfig(target).getEventSchemaId();
+        case "fallbackreplayid":
+        case "fallBackReplayId": return getOrCreateConfig(target).getFallBackReplayId();
         case "format": return getOrCreateConfig(target).getFormat();
         case "httpclient":
         case "httpClient": return getOrCreateConfig(target).getHttpClient();
@@ -411,6 +507,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": return target.getHttpProxyUsername();
         case "httprequestbuffersize":
         case "httpRequestBufferSize": return target.getHttpRequestBufferSize();
+        case "httprequesttimeout":
+        case "httpRequestTimeout": return target.getHttpRequestTimeout();
         case "includedetails":
         case "includeDetails": return getOrCreateConfig(target).getIncludeDetails();
         case "initialreplayidmap":
@@ -421,12 +519,15 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "instanceUrl": return target.getInstanceUrl();
         case "jobid":
         case "jobId": return getOrCreateConfig(target).getJobId();
+        case "jwtaudience":
+        case "jwtAudience": return target.getJwtAudience();
         case "keystore": return target.getKeystore();
         case "lazylogin":
         case "lazyLogin": return target.isLazyLogin();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "limit": return getOrCreateConfig(target).getLimit();
+        case "locator": return getOrCreateConfig(target).getLocator();
         case "loginconfig":
         case "loginConfig": return target.getLoginConfig();
         case "loginurl":
@@ -435,6 +536,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longPollingTransportProperties": return target.getLongPollingTransportProperties();
         case "maxbackoff":
         case "maxBackoff": return getOrCreateConfig(target).getMaxBackoff();
+        case "maxrecords":
+        case "maxRecords": return getOrCreateConfig(target).getMaxRecords();
         case "notfoundbehaviour":
         case "notFoundBehaviour": return getOrCreateConfig(target).getNotFoundBehaviour();
         case "notifyforfields":
@@ -461,12 +564,32 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": return getOrCreateConfig(target).getPkChunkingParent();
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return getOrCreateConfig(target).getPkChunkingStartRow();
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return getOrCreateConfig(target).getPubSubBatchSize();
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return getOrCreateConfig(target).getPubSubDeserializeType();
+        case "pubsubhost":
+        case "pubSubHost": return target.getPubSubHost();
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return getOrCreateConfig(target).getPubSubPojoClass();
+        case "pubsubport":
+        case "pubSubPort": return target.getPubSubPort();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
+        case "rawhttpheaders":
+        case "rawHttpHeaders": return getOrCreateConfig(target).getRawHttpHeaders();
+        case "rawmethod":
+        case "rawMethod": return getOrCreateConfig(target).getRawMethod();
+        case "rawpath":
+        case "rawPath": return getOrCreateConfig(target).getRawPath();
         case "rawpayload":
         case "rawPayload": return getOrCreateConfig(target).isRawPayload();
+        case "rawqueryparameters":
+        case "rawQueryParameters": return getOrCreateConfig(target).getRawQueryParameters();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "replaypreset":
+        case "replayPreset": return getOrCreateConfig(target).getReplayPreset();
         case "reportid":
         case "reportId": return getOrCreateConfig(target).getReportId();
         case "reportmetadata":
@@ -493,12 +616,18 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": return getOrCreateConfig(target).getSObjectSearch();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
+        case "streamqueryresult":
+        case "streamQueryResult": return getOrCreateConfig(target).getStreamQueryResult();
         case "updatetopic":
         case "updateTopic": return getOrCreateConfig(target).isUpdateTopic();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
         case "userName": return target.getUserName();
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return target.getWorkerPoolMaxSize();
+        case "workerpoolsize":
+        case "workerPoolSize": return target.getWorkerPoolSize();
         default: return null;
         }
     }

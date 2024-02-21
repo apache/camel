@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-soap</artifactId>
@@ -32,11 +32,7 @@
     <description>Camel SOAP support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            javax.xml.bind*;version="[2.2,3.0)",
-            javax.xml.ws*;version="[0.0,3)",
-            javax.xml.soap*;version="[1.3,2)"
-        </camel.osgi.import.before.defaults>
+        <camel.surefire.fork.additional-vmargs>--add-opens java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -53,8 +49,36 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>${jakarta-xml-ws-api-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
+            <version>${jakarta-jws-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>3.0.3</version>
+            <exclusions>
+                <exclusion>
+                   <!--Get dependency from jaxb-runtime-->
+                   <groupId>org.jvnet.staxex</groupId>
+                   <artifactId>stax-ex</artifactId>
+                 </exclusion>
+            </exclusions>
+         </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -74,22 +98,18 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf</artifactId>
+            <artifactId>camel-cxf-spring-transport</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-saxon</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>camel-cxf-soap</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -117,8 +137,6 @@
                             <goal>xsdtojava-tests</goal>
                         </goals>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <xsdOptions>
                                 <xsdOption>
@@ -142,6 +160,39 @@
                             </xsdOptions>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${basedir}/target/xjc</sourceRoot>
+                            <extensions>
+                                <extension>net.java.dev.jaxb2-commons:jaxb-fluent-api:2.1.8</extension>
+                            </extensions>
+                            <xsdOptions>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/soap.xsd</xsd>
+                                    <extensionArgs>
+                                        <extensionArg>-Xfluent-api</extensionArg>
+                                    </extensionArgs>
+                                </xsdOption>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/soap12.xsd</xsd>
+                                    <extensionArgs>
+                                        <extensionArg>-Xfluent-api</extensionArg>
+                                    </extensionArgs>
+                                </xsdOption>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/xml.xsd</xsd>
+                                    <extensionArgs>
+                                        <extensionArg>-Xfluent-api</extensionArg>
+                                    </extensionArgs>
+                                </xsdOption>
+                            </xsdOptions>
+                        </configuration>
+                        <goals>
+                            <goal>xsdtojava</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -152,11 +203,9 @@
                         <id>generate-sources-wsdl</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
-                                <frontEnd>jaxws21</frontEnd>
+                                <frontEnd>jaxws</frontEnd>
                             </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>
@@ -184,6 +233,11 @@
                                         </bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/TestService.wsdl
+                                    </wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>
@@ -201,79 +255,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jdk8-build</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jvnet.jaxb2.maven2</groupId>
-                        <artifactId>maven-jaxb2-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- TODO: This is a temporary workaround until org.codehaus.mojo:jaxb2-maven-plugin supports JDK9.
-            (https://github.com/mojohaus/jaxb2-maven-plugin/issues/43). We need to add the plugin back
-            once we are sure it works on both JDK8 and JDK9.
-            See https://issues.apache.org/jira/browse/CAMEL-10141 for more info. -->
-            <id>jdk9s-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.cxf</groupId>
-                        <artifactId>cxf-xjc-plugin</artifactId>
-                        <version>${cxf-xjc-plugin-version}</version>
-                        <configuration>
-                            <extensions>
-                                <extension>net.java.dev.jaxb2-commons:jaxb-fluent-api:2.1.8</extension>
-                            </extensions>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>generate-sources</id>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <fork>${cxf.codegenplugin.forkmode}</fork>
-                                    <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
-                                    <sourceRoot>${basedir}/target/xjc</sourceRoot>
-                                    <xsdOptions>
-                                        <xsdOption>
-                                            <xsd>${basedir}/src/main/resources/soap.xsd</xsd>
-                                            <extensionArgs>
-                                                <extensionArg>-Xfluent-api</extensionArg>
-                                            </extensionArgs>
-                                        </xsdOption>
-                                        <xsdOption>
-                                            <xsd>${basedir}/src/main/resources/soap12.xsd</xsd>
-                                            <extensionArgs>
-                                                <extensionArg>-Xfluent-api</extensionArg>
-                                            </extensionArgs>
-                                        </xsdOption>
-                                        <xsdOption>
-                                            <xsd>${basedir}/src/main/resources/xml.xsd</xsd>
-                                            <extensionArgs>
-                                                <extensionArg>-Xfluent-api</extensionArg>
-                                            </extensionArgs>
-                                        </xsdOption>
-                                    </xsdOptions>
-                                </configuration>
-                                <goals>
-                                    <goal>xsdtojava</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

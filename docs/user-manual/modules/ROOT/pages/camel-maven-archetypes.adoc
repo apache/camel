@@ -1,18 +1,12 @@
-[[CamelMavenArchetypes-CamelMavenArchetypes]]
 = Camel Maven Archetypes
 
 Camel is distributed with the following archetypes for Maven end users.
 
-[[CamelMavenArchetypes-ArchetypeSupported]]
 == Archetype Supported
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Archetype |Description
-
-|camel-archetype-blueprint |This archetype is used to
-create a new Maven project for Camel routes to be running in OSGi using
-Blueprint.
 
 |camel-archetype-api-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
@@ -50,27 +44,28 @@ create a new Maven project for Camel routes using Endpoint DSL.
 
 The maven coordinates for these archetypes is the following:
 
-[source,syntaxhighlighter-pre]
+[source,xml]
 ----
+<dependency>
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>${archetype-name}</artifactId>
   <version>${camel-version}</version>
+</dependency>
 ----
 
-[[CamelMavenArchetypes-Snapshotarchetypes]]
-== Snapshot archetypes
+=== Snapshot Archetypes
 
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to
 look for it. For example, say someone wanted to create a Java based
-project based on Camel 3.8.0-SNAPSHOT. He'd need to use the following command
+project based on Camel 3.21.0-SNAPSHOT. He'd need to use the following command
 
-[source,shell]
+[source,bash]
 ----
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
   -DarchetypeArtifactId=camel-archetype-java \
-  -DarchetypeVersion=3.8.0-SNAPSHOT 
+  -DarchetypeVersion=3.21.0-SNAPSHOT
 ----
 
 When the project is created, you may need to add another repository to
@@ -91,9 +86,3 @@ camel-maven-plugin
 </pluginRepositories>
 ----
 
-[[CamelMavenArchetypes-Examples]]
-== Examples
-
-See xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
-Spring based Camel Route] for a sample how to use the
-camel-archetype-java and camel-archetype-spring.

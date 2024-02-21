@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jta</artifactId>
@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.4.0</firstVersion>
         <title>JTA</title>
+        <label>database</label>
     </properties>
 
     <dependencies>
@@ -47,6 +48,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>${jakarta-transaction-api-version}</version>
+        </dependency>
     </dependencies>
 </project>

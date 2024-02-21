@@ -24,6 +24,7 @@ public final class RabbitMQProperties {
     public static final String RABBITMQ_CONNECTION_AMQP = "rabbitmq.connection.amqp";
     public static final String RABBITMQ_CONNECTION_AMQP_URL = "rabbitmq.connection.amqp.url";
     public static final String RABBITMQ_CONNECTION_HTTP = "rabbitmq.connection.http";
+    public static final String RABBITMQ_CONTAINER = "rabbitmq.container";
 
     private RabbitMQProperties() {
 

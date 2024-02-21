@@ -1,93 +1,83 @@
-[[to-eip]]
 = To EIP
-:docTitle: To
+:doctitle: To
+:shortname: to
 :description: Sends the message to a static endpoint
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-See message related documentation
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
+Endpoint] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns] using the
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
+interface.
 
-* xref:message.adoc[Message]
-* xref:message-bus.adoc[Message Bus]
-* xref:message-channel.adoc[Message Channel]
-* xref:message-endpoint.adoc[Message Endpoint]
-* xref:message-router.adoc[Message Router]
-* xref:message-translator.adoc[Message Translator]
+How does an application connect to a messaging channel to send and receive messages?
+
+image::eip/MessageEndpointSolution.gif[image]
+
+Connect an application to a messaging channel using a Message Endpoint, a client of the messaging system that the application can then use to send or receive messages.
+
+In Camel the To EIP is used for sending xref:message.adoc[messages] to static xref:message-endpoint.adoc[endpoints].
+
+The To and xref:toD-eip.adoc[ToD] EIPs are the most common patterns to use in Camel xref:manual:ROOT:routes.adoc[routes].
 
 == Options
 
 // eip options: START
-The To EIP supports 2 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *uri* | *Required* Sets the uri of the endpoint to send to. |  | String
-| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Exchange properties
 
-The following example route demonstrates the use of a file consumer endpoint and a JMS producer endpoint.
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
+== Different between To and ToD
+
+The `to` is used for sending messages to a static xref:message-endpoint.adoc[endpoint].
+In other words `to` sends message only to the *same* endpoint.
+
+The `toD` is used for sending message to a dynamic xref:message-endpoint.adoc[endpoint].
+The dynamic endpoint is evaluated _on-demand_ by an xref:manual:ROOT:expression.adoc[Expression].
+By default, the xref:components:languages:simple-language.adoc[Simple] expression is used to compute
+the dynamic endpoint URI.
+
+== Using To
+
+The following example route demonstrates the use of a xref:ROOT:file-component.adoc[File] consumer endpoint and a xref:ROOT:jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://local/router/messages/foo")
+from("file:messages/foo")
     .to("jms:queue:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="file://local/router/messages/foo"/>
+    <from uri="file:messages/foo"/>
     <to uri="jms:queue:foo"/>
 </route>
 ----
 
-== to-eip with pattern
-
-Instead of using `inOnly` and `inOut` you may want to keep using `to`
-where you can specify the exchange pattern as shown:
-
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:startInOnly")
-  .to(ExchangePattern.InOnly, "bean:process");
-
-from("direct:startInOut")
-  .to(ExchangePattern.InOut, "bean:process");
+- from:
+    uri: file:messages/foo
+    steps:
+      - to:
+          uri: jms:queue:foo
 ----
-
-
-And here is how to do it in XML:
-
-[source,xml]
-----
-<route>
-  <from uri="direct:startInOnly"/>
-  <inOnly uri="bean:process"/>
-</route>
-
-<route>
-  <from uri="direct:startInOut"/>
-  <inOut uri="bean:process"/>
-</route>
-----
-
-And here we use `<to>` with the `pattern` attribute to set the exchange pattern:
-
-[source,xml]
-----
-<route>
-  <from uri="direct:startInOnly"/>
-  <to pattern="InOnly" uri="bean:process"/>
-</route>
-
-<route>
-  <from uri="direct:startInOut"/>
-  <to pattern="InOut" uri="bean:process"/>
-</route>
-----
+====

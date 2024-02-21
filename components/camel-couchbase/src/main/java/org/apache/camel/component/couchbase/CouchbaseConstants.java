@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.couchbase;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Couchbase Constants and default connection parameters
  */
@@ -29,11 +31,19 @@ public interface CouchbaseConstants {
     String COUCHBASE_DELETE = "CCB_DEL";
     String DEFAULT_DESIGN_DOCUMENT_NAME = "beer";
     String DEFAULT_VIEWNAME = "brewery_beers";
+    @Metadata(label = "consumer", description = "The key", javaType = "String")
     String HEADER_KEY = "CCB_KEY";
+    @Metadata(description = "The document id", javaType = "String")
     String HEADER_ID = "CCB_ID";
+    @Metadata(label = "producer", description = "The expiry for the document in seconds", javaType = "String")
     String HEADER_TTL = "CCB_TTL";
+    @Metadata(label = "consumer", description = "The design document name", javaType = "String")
     String HEADER_DESIGN_DOCUMENT_NAME = "CCB_DDN";
+    @Metadata(label = "consumer", description = "The view name", javaType = "String")
     String HEADER_VIEWNAME = "CCB_VN";
+
+    @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
+    String COUCHBASE_RESUME_ACTION = "CamelCqlResumeQuery";
 
     int DEFAULT_PRODUCER_RETRIES = 2;
     int DEFAULT_PAUSE_BETWEEN_RETRIES = 5000;

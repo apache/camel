@@ -22,14 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_REPLICATION_CONTROLLERS;
 
 /**
  * Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_REPLICATION_CONTROLLERS,
              title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component,

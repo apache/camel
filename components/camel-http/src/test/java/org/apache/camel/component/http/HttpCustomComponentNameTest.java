@@ -34,7 +34,7 @@ public class HttpCustomComponentNameTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCustomName() throws Exception {
+    public void testCustomName() {
         context.start();
 
         int port = AvailablePortFinder.getNextAvailable();

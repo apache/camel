@@ -50,7 +50,7 @@ public final class ExecResultConverter {
     }
 
     @Converter
-    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException, IOException {
+    public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws IOException {
         try (InputStream stream = toInputStream(result)) {
             return IOUtils.toByteArray(stream);
         }
@@ -90,7 +90,7 @@ public final class ExecResultConverter {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, is);
         } else {
             // use Void to indicate we cannot convert it
-            // (prevents Camel from using a fallback converter which may convert a String from the instance name)  
+            // (prevents Camel from using a fallback converter which may convert a String from the instance name)
             return (T) MISS_VALUE;
         }
     }

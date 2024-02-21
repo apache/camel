@@ -18,6 +18,7 @@ package org.apache.camel.example;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
@@ -28,11 +29,11 @@ public class DataFormatDataSetTest extends CamelTestSupport {
 
     @Test
     public void testConcurrentMarshall() throws Exception {
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");
         bean.setAmount(23);

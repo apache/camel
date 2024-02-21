@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-salesforce</artifactId>
@@ -33,13 +33,6 @@
     <description>Camel Salesforce support</description>
 
     <properties>
-        <camel.osgi.import.additional>
-            javax.xml.bind*;version="[2.2,3.0)",
-            com.thoughtworks.xstream.*;version="[1.4.7,2)",
-            org.eclipse.jetty.*;version="[9.4,10)",
-            org.mortbay.cometd.*;version="[6.1,7)"
-        </camel.osgi.import.additional>
-        <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
         <salesforce.component.root>..</salesforce.component.root>
     </properties>
 
@@ -54,22 +47,22 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util-ajax</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-io</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -86,12 +79,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <!-- json schema -->
         <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>jakarta.xml.bind</groupId>
@@ -101,37 +93,55 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jsonSchema</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.validation</groupId>
-                    <artifactId>validation-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>jackson-module-jsonSchema-jakarta</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
         </dependency>
         <dependency>
             <groupId>org.cometd.java</groupId>
-            <artifactId>cometd-java-client</artifactId>
+            <artifactId>cometd-java-client-http-jetty</artifactId>
             <version>${cometd-java-client-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation-api-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl-version}</version>
+        </dependency>
+        <!-- Pub/Sub API dependencies -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tech.allegro.schema.json2avro</groupId>
+            <artifactId>converter</artifactId>
+            <version>0.2.15</version>
         </dependency>
 
         <!-- logging -->
@@ -145,16 +155,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>${commons-csv-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -175,24 +175,25 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty9-version}</version>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-servlet</artifactId>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-proxy</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -216,7 +217,14 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>${okclient-version}</version>
+            <version>${squareup-okhttp-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${squareup-okhttp-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -233,16 +241,14 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.1</version>
+            </extension>
+        </extensions>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
@@ -256,12 +262,54 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-maven-plugin-version}</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Remove it once https://github.com/grpc/grpc-java/issues/9179 is resolved -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <replace token= "@javax.annotation.Generated"
+                                         value="@jakarta.annotation.Generated"
+                                         dir="target/generated-sources/protobuf/grpc-java">
+                                    <include name="**/*.java"/>
+                                </replace>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
             <id>integration</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -282,7 +330,7 @@
                                             </files>
                                             <message><![CDATA[Salesforce Migration Tool required
 
-You need to download the Salesforce Migration Tool (ZIP file) and 
+You need to download the Salesforce Migration Tool (ZIP file) and
 extract the `ant-salesforce.jar` out of it to:
 
 ${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
@@ -306,6 +354,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>${maven-resources-plugin-version}</version>
@@ -396,7 +445,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                             <dependency>
                                 <groupId>org.apache.ant</groupId>
                                 <artifactId>ant</artifactId>
-                                <version>1.10.9</version>
+                                <version>1.10.14</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -416,9 +465,10 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <reuseForks>true</reuseForks>
                                     <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                                     <includes>
-                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*ManualIT.java</include>
                                     </includes>
-                                    <excludedGroups>org.apache.camel.component.salesforce.Standalone</excludedGroups>
+                                    <excludedGroups>standalone</excludedGroups>
+                                    <forkedProcessExitTimeoutInSeconds>240</forkedProcessExitTimeoutInSeconds>
                                 </configuration>
                             </execution>
                             <execution>
@@ -431,9 +481,9 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     <childDelegation>false</childDelegation>
                                     <useFile>true</useFile>
                                     <includes>
-                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*ManualIT.java</include>
                                     </includes>
-                                    <groups>org.apache.camel.component.salesforce.Standalone</groups>
+                                    <groups>standalone</groups>
                                 </configuration>
                             </execution>
                         </executions>

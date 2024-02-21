@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute")
+                from(fileUri("?sortBy=file:name&delay=10&synchronous=false")).routeId("myRoute")
                         .noAutoStartup().threads(1, 10).maxQueueSize(0)
                         .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
             }
@@ -73,21 +75,21 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             Integer count = ent.getValue();
             if (count > 1) {
                 found++;
-                log.info(ent.getKey() + " :: " + count);
+                log.info("{} :: {}", ent.getKey(), count);
             }
         }
 
         assertEquals(0, found, "Should not contain duplicates");
     }
 
-    private static void createManyFiles(int number) throws Exception {
-        deleteDirectory("target/data/manyfiles");
-        createDirectory("target/data/manyfiles");
+    private void createManyFiles(int number) throws Exception {
+        Path dir = testDirectory();
         for (int i = 0; i < number; i++) {
-            String pad = String.format("%04d", i);
-            PrintWriter writer = new PrintWriter("target/data/manyfiles/newFile-" + pad, "UTF-8");
-            writer.println(pad);
-            writer.close();
+            String fileNamesSuffix = String.format("%04d", i);
+            String pad = String.format("%04d%n", i);
+            try (Writer writer = Files.newBufferedWriter(dir.resolve("newFile-" + fileNamesSuffix))) {
+                writer.write(pad);
+            }
         }
     }
 
@@ -100,14 +102,14 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            Integer integer = duplicate.get(exchange.toString());
+            Integer integer = duplicate.get(exchange.getExchangeId());
             if (integer == null) {
-                duplicate.put(exchange.toString(), 1);
+                duplicate.put(exchange.getExchangeId(), 1);
             } else {
                 integer++;
-                duplicate.put(exchange.toString(), integer);
+                duplicate.put(exchange.getExchangeId(), integer);
             }
-            log.info("Process called for-" + exchange);
+            log.info("Process called for-{}", exchange.getExchangeId());
             Thread.sleep(20);
         }
 

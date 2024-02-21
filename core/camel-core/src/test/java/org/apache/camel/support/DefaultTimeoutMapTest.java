@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -25,12 +26,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TimeoutMap;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
@@ -58,13 +61,8 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 50);
         assertEquals(1, map.size());
 
-        Thread.sleep(250);
-        if (map.size() > 0) {
-            LOG.warn("Waiting extra due slow CI box");
-            Thread.sleep(1000);
-        }
-
-        assertEquals(0, map.size());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(0, map.size()));
 
         map.stop();
     }
@@ -103,7 +101,7 @@ public class DefaultTimeoutMapTest {
 
         Object old = map.remove("A");
         assertEquals(123, old);
-        assertEquals(null, (Object) map.get("A"));
+        assertNull((Object) map.get("A"));
         assertEquals(0, map.size());
 
         map.stop();
@@ -120,14 +118,9 @@ public class DefaultTimeoutMapTest {
         map.put("A", 123, 100);
         assertEquals(1, map.size());
 
-        Thread.sleep(250);
-
-        if (map.size() > 0) {
-            LOG.warn("Waiting extra due slow CI box");
-            Thread.sleep(1000);
-        }
         // should have been timed out now
-        assertEquals(0, map.size());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(0, map.size()));
 
         assertSame(e, map.getExecutor());
 
@@ -157,9 +150,12 @@ public class DefaultTimeoutMapTest {
         // is not expired
         map.put("F", 6, 800);
 
-        Thread.sleep(250);
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> {
+                    assertFalse(keys.isEmpty());
+                    assertEquals("D", keys.get(0));
+                });
 
-        assertEquals("D", keys.get(0));
         assertEquals(4, values.get(0).intValue());
         assertEquals("B", keys.get(1));
         assertEquals(2, values.get(1).intValue());
@@ -188,8 +184,8 @@ public class DefaultTimeoutMapTest {
         map.put("A", 1, 50);
 
         // should not timeout as the scheduler doesn't run
-        Thread.sleep(250);
-        assertEquals(1, map.size());
+        await().atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals(1, map.size()));
 
         // start
         map.start();

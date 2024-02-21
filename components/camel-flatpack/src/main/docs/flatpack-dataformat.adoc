@@ -1,11 +1,13 @@
-[[flatpack-dataformat]]
 = Flatpack DataFormat
-:docTitle: Flatpack
-:artifactId: camel-flatpack
+:doctitle: Flatpack
+:shortname: flatpack
+:artifactid: camel-flatpack
 :description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.
 :since: 2.1
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/flatpack.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: flatpack
 
 *Since Camel {since}*
 
@@ -28,22 +30,7 @@ trailers for the marshal operation.
 == Options
 
 // dataformat options: START
-The Flatpack dataformat supports 8 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
-| fixed | false | Boolean | Delimited or fixed. Is by default false = delimited
-| ignoreFirstRecord | true | Boolean | Whether the first line is ignored for delimited files (for the column headers). Is by default true.
-| textQualifier |  | String | If the text is qualified with a character. Uses quote character by default.
-| delimiter | , | String | The delimiter char (could be ; , or similar)
-| allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
-| ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
-| parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
-|===
+include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 == Usage
@@ -99,4 +86,5 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-include::camel-spring-boot::page$flatpack-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

@@ -16,12 +16,17 @@
  */
 package org.apache.camel.main;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MainBeansTest {
@@ -55,6 +60,214 @@ public class MainBeansTest {
 
         assertEquals(123, myBQF.getCounter());
         assertEquals("Donkey", myFoo.getName());
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMap() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo", "#class:java.util.HashMap");
+        main.addProperty("camel.beans.foo.database", "mydb");
+        main.addProperty("camel.beans.foo.username", "scott");
+        main.addProperty("camel.beans.foo.password", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMapSquareClass() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo", "#class:java.util.HashMap");
+        main.addProperty("camel.beans.foo[database]", "mydb");
+        main.addProperty("camel.beans.foo[username]", "scott");
+        main.addProperty("camel.beans.foo[password]", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMapSquare() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo[database]", "mydb");
+        main.addProperty("camel.beans.foo[username]", "scott");
+        main.addProperty("camel.beans.foo[password]", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansListSquare() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a list bean (un-ordered)
+        main.addProperty("camel.beans.myprojects[0]", "Camel");
+        main.addProperty("camel.beans.myprojects[2]", "Quarkus");
+        main.addProperty("camel.beans.myprojects[1]", "Kafka");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myprojects");
+        assertNotNull(bean);
+        assertInstanceOf(List.class, bean);
+
+        List<?> list = (List<?>) bean;
+        assertEquals(3, list.size());
+        assertEquals("Camel", list.get(0));
+        assertEquals("Kafka", list.get(1));
+        assertEquals("Quarkus", list.get(2));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMapSquareDotKey() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.ldapserver['java.naming.provider.url']", "ldaps://ldap.local:636");
+        main.addProperty("camel.beans.ldapserver['java.naming.security.principal']", "scott");
+        main.addProperty("camel.beans.ldapserver['java.naming.security.credentials']", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map ldapserver = camelContext.getRegistry().lookupByNameAndType("ldapserver", Map.class);
+        assertNotNull(ldapserver);
+
+        assertEquals(3, ldapserver.size());
+        assertEquals("ldaps://ldap.local:636", ldapserver.get("java.naming.provider.url"));
+        assertEquals("scott", ldapserver.get("java.naming.security.principal"));
+        assertEquals("tiger", ldapserver.get("java.naming.security.credentials"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansDottedHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory.hostName", "localhost");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.get("hostName"));
+        assertEquals("localhost", factory.getHostName());
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansSquareHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory[hostName]", "localhost");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.getHostName());
+        assertEquals("localhost", factory.get("hostName"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansDottedAndSquareHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory.hostName", "localhost");
+        main.addProperty("camel.beans.myfactory[region]", "emea");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.get("hostName"));
+        assertEquals("localhost", factory.getHostName());
+        assertEquals("emea", factory.get("region"));
 
         main.stop();
     }

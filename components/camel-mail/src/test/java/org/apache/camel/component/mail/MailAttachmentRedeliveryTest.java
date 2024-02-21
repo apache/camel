@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -29,10 +29,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for Camel attachments and Mail attachments.
  */
 public class MailAttachmentRedeliveryTest extends CamelTestSupport {
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     private final List<String> names = new ArrayList<>();
 
@@ -51,7 +53,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
-        Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
+        Endpoint endpoint = context.getEndpoint(james.uriPrefix(Protocol.smtp));
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         Exchange exchange = endpoint.createExchange();
@@ -98,17 +100,17 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
-                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
                         .process(new Processor() {
                             private int counter;
 
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Map<String, DataHandler> map = exchange.getIn(AttachmentMessage.class).getAttachments();
                                 assertNotNull(map);
                                 assertEquals(1, map.size());

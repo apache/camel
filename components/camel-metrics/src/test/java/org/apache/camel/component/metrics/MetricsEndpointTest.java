@@ -57,10 +57,10 @@ public class MetricsEndpointTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.METER, METRICS_NAME) {
             @Override
-            public Producer createProducer() throws Exception {
+            public Producer createProducer() {
                 return null;
             }
 
@@ -73,34 +73,34 @@ public class MetricsEndpointTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testAbstractMetricsEndpoint() throws Exception {
+    public void testAbstractMetricsEndpoint() {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getRegistry(), is(registry));
     }
 
     @Test
-    public void testCreateConsumer() throws Exception {
+    public void testCreateConsumer() {
         assertThrows(RuntimeCamelException.class,
                 () -> endpoint.createConsumer(processor));
     }
 
     @Test
-    public void testIsSingleton() throws Exception {
+    public void testIsSingleton() {
         assertThat(endpoint.isSingleton(), is(true));
     }
 
     @Test
-    public void testGetRegistry() throws Exception {
+    public void testGetRegistry() {
         assertThat(endpoint.getRegistry(), is(registry));
     }
 
     @Test
-    public void testGetMetricsName() throws Exception {
+    public void testGetMetricsName() {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
     }
 }

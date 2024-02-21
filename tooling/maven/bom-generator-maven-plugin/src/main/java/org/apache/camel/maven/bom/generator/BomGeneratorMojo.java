@@ -50,7 +50,7 @@ import org.apache.camel.tooling.util.FileUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -63,7 +63,10 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 
 /**
  * Generate BOM by flattening the current project's dependency management section and applying exclusions.
@@ -76,6 +79,12 @@ public class BomGeneratorMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
+
+    /**
+     * The maven session.
+     */
+    @Parameter(defaultValue = "${session}", required = true, readonly = true)
+    private MavenSession session;
 
     /**
      * The source pom template file.
@@ -92,13 +101,13 @@ public class BomGeneratorMojo extends AbstractMojo {
     /**
      * The user configuration
      */
-    @Parameter(readonly = true)
+    @Parameter
     protected DependencySet dependencies;
 
     /**
      * The conflict checks configured by the user
      */
-    @Parameter(readonly = true)
+    @Parameter
     protected ExternalBomConflictCheckSet checkConflicts;
 
     /**
@@ -142,9 +151,7 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             writePom(pom);
 
-        } catch (MojoFailureException ex) {
-            throw ex;
-        } catch (MojoExecutionException ex) {
+        } catch (MojoFailureException | MojoExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot generate the output BOM file", ex);
@@ -170,6 +177,8 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         for (Dependency dep : dependencyList) {
             boolean accept = inclusions.matches(dep) && !exclusions.matches(dep);
+            // skip test-jar
+            accept &= !"test-jar".equals(dep.getType());
             getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM"));
 
             if (accept) {
@@ -224,6 +233,16 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -328,7 +347,7 @@ public class BomGeneratorMojo extends AbstractMojo {
             }
         }
 
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             StringBuilder msg = new StringBuilder();
             msg.append("Found ").append(errors.size())
                     .append(" conflicts between the current managed dependencies and the external BOMS:\n");
@@ -411,10 +430,14 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
 
         Artifact art = artifactFactory.createArtifact(groupId, artifactId, version, "runtime", type);
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+        buildingRequest
+                .setRemoteRepositories(remoteRepositories)
+                .setLocalRepository(localRepository);
 
-        artifactResolver.resolve(art, remoteRepositories, localRepository);
-
-        return art;
+        return artifactResolver
+                .resolveArtifact(buildingRequest, art)
+                .getArtifact();
     }
 
     private MavenProject loadExternalProjectPom(File pomFile) throws Exception {

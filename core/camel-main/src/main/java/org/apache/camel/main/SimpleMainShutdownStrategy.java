@@ -25,12 +25,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base class for {@link MainShutdownStrategy}.
+ */
 public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(SimpleMainShutdownStrategy.class);
 
     private final Set<ShutdownEventListener> listeners = new LinkedHashSet<>();
     private final AtomicBoolean completed;
-    private final CountDownLatch latch;
+    private final AtomicBoolean timeoutEnabled = new AtomicBoolean();
+    private final AtomicBoolean restarting = new AtomicBoolean();
+    private volatile CountDownLatch latch;
+    private int extraShutdownTimeout = 15;
 
     public SimpleMainShutdownStrategy() {
         this.completed = new AtomicBoolean();
@@ -50,13 +56,13 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     @Override
     public boolean shutdown() {
         if (completed.compareAndSet(false, true)) {
-            LOG.debug("Setting shutdown completed state from false to true");
+            LOG.debug("Shutdown called");
             latch.countDown();
             for (ShutdownEventListener l : listeners) {
                 try {
                     LOG.trace("ShutdownEventListener: {}", l);
                     l.onShutdown();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ignore as we must continue
                     LOG.debug("Error during ShutdownEventListener: {}. This exception is ignored.", l, e);
                 }
@@ -74,8 +80,39 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     }
 
     @Override
-    public void await(long timeout, TimeUnit unit) throws InterruptedException {
-        LOG.debug("Await shutdown to complete with timeout: {} {}", timeout, unit);
-        latch.await(timeout, unit);
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        timeoutEnabled.set(true);
+
+        while (true) {
+            LOG.debug("Await shutdown to complete with timeout: {} {}", timeout, unit);
+            boolean zero = latch.await(timeout, unit);
+            if (zero && restarting.compareAndSet(true, false)) {
+                // re-create new latch to restart
+                LOG.debug("Restarting await shutdown to complete with timeout: {} {}", timeout, unit);
+                latch = new CountDownLatch(1);
+            } else {
+                return zero;
+            }
+        }
+    }
+
+    @Override
+    public void restartAwait() {
+        // only restart if timeout is in use
+        if (timeoutEnabled.get()) {
+            LOG.trace("Restarting await with timeout");
+            restarting.set(true);
+            latch.countDown();
+        }
+    }
+
+    @Override
+    public int getExtraShutdownTimeout() {
+        return extraShutdownTimeout;
+    }
+
+    @Override
+    public void setExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
     }
 }

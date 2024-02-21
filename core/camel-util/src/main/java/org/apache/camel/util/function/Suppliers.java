@@ -37,7 +37,7 @@ public final class Suppliers {
      */
     public static <T> Supplier<T> memorize(Supplier<T> supplier) {
         final AtomicReference<T> valueHolder = new AtomicReference<>();
-        return new Supplier<T>() {
+        return new Supplier<>() {
             @Override
             public T get() {
                 T supplied = valueHolder.get();
@@ -66,7 +66,7 @@ public final class Suppliers {
      */
     public static <T> Supplier<T> memorize(ThrowingSupplier<T, ? extends Exception> supplier, Consumer<Exception> consumer) {
         final AtomicReference<T> valueHolder = new AtomicReference<>();
-        return new Supplier<T>() {
+        return new Supplier<>() {
             @Override
             public T get() {
                 T supplied = valueHolder.get();
@@ -96,7 +96,7 @@ public final class Suppliers {
      * @return       the supplied {@code value}.
      */
     public static <T> Supplier<T> constant(T value) {
-        return new Supplier<T>() {
+        return new Supplier<>() {
             @Override
             public T get() {
                 return value;

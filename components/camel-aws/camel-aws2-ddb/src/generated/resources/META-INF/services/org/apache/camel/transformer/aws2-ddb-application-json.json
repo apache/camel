@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "aws2-ddb:application-json",
+    "title": "Aws2 Ddb (Application Json)",
+    "description": "Prepares the message to perform a DynamoDB operation with the aws2-ddb component",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.aws2.ddb.transform.Ddb2JsonDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-ddb",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

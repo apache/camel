@@ -19,58 +19,63 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(47);
+        props.add("accessToken");
+        props.add("amount");
+        props.add("apiName");
+        props.add("associationFilterId");
+        props.add("challenge");
+        props.add("cloneRequest");
+        props.add("connectRequest");
+        props.add("content");
+        props.add("currencyRequest");
+        props.add("customerId");
+        props.add("deleteRequest");
+        props.add("disputeId");
+        props.add("documentId");
+        props.add("environment");
+        props.add("evidenceId");
+        props.add("fileEvidenceRequest");
+        props.add("grantRequest");
+        props.add("groupByCustomField");
+        props.add("httpLogLevel");
+        props.add("httpLogName");
+        props.add("httpReadTimeout");
+        props.add("id");
+        props.add("inBody");
+        props.add("lazyStartProducer");
+        props.add("logHandlerEnabled");
+        props.add("merchantId");
+        props.add("methodName");
+        props.add("packageTrackingRequest");
+        props.add("page");
+        props.add("payload");
+        props.add("paymentMethodNonce");
+        props.add("paymentMethodToken");
+        props.add("privateKey");
+        props.add("proxyHost");
+        props.add("proxyPort");
+        props.add("publicKey");
+        props.add("query");
+        props.add("refundRequest");
         props.add("request");
         props.add("searchRequest");
-        props.add("apiName");
-        props.add("httpReadTimeout");
-        props.add("signature");
-        props.add("groupByCustomField");
-        props.add("publicKey");
-        props.add("httpLogName");
-        props.add("content");
-        props.add("grantRequest");
-        props.add("logHandlerEnabled");
-        props.add("proxyPort");
-        props.add("textEvidenceRequest");
-        props.add("fileEvidenceRequest");
-        props.add("associationFilterId");
-        props.add("paymentMethodToken");
-        props.add("merchantId");
-        props.add("payload");
-        props.add("customerId");
-        props.add("httpLogLevel");
-        props.add("id");
-        props.add("submitForSettlement");
-        props.add("currencyRequest");
-        props.add("amount");
-        props.add("query");
-        props.add("methodName");
         props.add("settlementDate");
-        props.add("accessToken");
-        props.add("proxyHost");
-        props.add("token");
-        props.add("privateKey");
-        props.add("environment");
-        props.add("lazyStartProducer");
-        props.add("refundRequest");
-        props.add("disputeId");
-        props.add("evidenceId");
-        props.add("paymentMethodNonce");
-        props.add("challenge");
-        props.add("documentId");
-        props.add("page");
+        props.add("signature");
+        props.add("submitForSettlement");
         props.add("subscriptionId");
-        props.add("inBody");
-        props.add("deleteRequest");
-        props.add("cloneRequest");
+        props.add("textEvidenceRequest");
+        props.add("token");
+        props.add("transactionRequest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("accessToken");
         secretProps.add("privateKey");
         secretProps.add("publicKey");
-        secretProps.add("accessToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -99,6 +104,11 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

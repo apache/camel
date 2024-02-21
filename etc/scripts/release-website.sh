@@ -22,11 +22,10 @@ mkdir ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
-COMPLIST=( "camel-spring:spring"
-  "camel-cxf:cxf"
-  "camel-spring-integration:spring/integration"
-  "camel-spring-security:spring-security"
-  "karaf/camel-blueprint:blueprint" )
+COMPLIST=( "camel-spring-xml:spring-xml"
+  "camel-cxf-spring-rest:cxf/jaxrs"
+  "camel-cxf-spring-soap:cxf/jaxws"
+  "camel-spring-security:spring-security" )
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
 GIT_WEBSITE_URL="https://gitbox.apache.org/repos/asf/camel-website.git"
@@ -70,31 +69,13 @@ echo "##########################################################################
 for comp in ${COMPLIST[*]}; do
   src=${comp%:*}
   dest=${comp#*:}
+  mkdir -p ${SITE_DIR}/${VERSION}/camel-website/static/schema/${dest}/
   cp ${DOWNLOAD}/${VERSION}/org/apache/camel/${src}/${VERSION}/*.xsd ${SITE_DIR}/${VERSION}/camel-website/static/schema/${dest}/
   # update_latest_released_schema("${SITE_DIR}/content/schema/${dest}/")
 done
 echo
 
-echo "################################################################################"
-echo "                  DOWNLOADING MANUALS FROM APACHE REPOSITORY                     "
-echo "################################################################################"
-wget -e robots=off --wait 3 --no-check-certificate \
- -r -np "--reject=txt" "--accept=html,pdf" "--follow-tags=" \
- -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
- "http://repository.apache.org/content/repositories/releases/org/apache/camel/camel-manual/${VERSION}/"
-
-echo "################################################################################"
-echo "                           CHECKOUT MANUAL WEBSITE                             "
-echo "################################################################################"
-cd "${SITE_DIR}/${VERSION}" && svn co --non-interactive "${WEBSITE_URL}/manual/"
-
-echo "################################################################################"
-echo "                           PUBLISH CAMEL MANUAL                                "
-echo "################################################################################"
-cp ${DOWNLOAD}/${VERSION}/org/apache/camel/camel-manual/${VERSION}/camel-manual-${VERSION}.* ${SITE_DIR}/${VERSION}/manual/
-echo
-
-echo "NOTE: Manual steps required! Check the schemas and manual files for new artifacts,"
+echo "NOTE: Manual steps required! Check the schemas for new artifacts,"
 echo "      add them to the repository as required and commit your changes. This step"
 echo "      is intentionally not automated at this point to avoid errors."
 echo
@@ -102,9 +83,5 @@ echo "cd ${SITE_DIR}/${VERSION}/camel-website/"
 echo "git status"
 echo "git add <schema-${VERSION}-qualifier>.xsd"
 echo "git commit -m \"Add XML schemas for Camel ${VERSION}\""
-echo
-echo "cd ${SITE_DIR}/${VERSION}/manual/"
-echo "svn status"
-echo "svn add camel-manual-${VERSION}.html"
-echo "svn ci -m \"Uploading released manuals for camel-${VERSION}\""
+echo "git push"
 echo

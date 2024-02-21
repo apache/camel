@@ -26,8 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +42,10 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnsharableCodecsConflictsTest.class);
 
-    private Processor processor = new P();
+    @RegisterExtension
+    protected AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
-    private int port1;
-    private int port2;
+    private Processor processor = new P();
 
     @BindToRegistry("length-decoder")
     private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
@@ -63,15 +65,15 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(new String(sPort2) + "9");
 
-        Socket server1 = getSocket("localhost", port1);
-        Socket server2 = getSocket("localhost", port2);
+        Socket server1 = getSocket("localhost", port.getPort());
+        Socket server2 = getSocket("localhost", port2.getPort());
 
         try {
             sendSopBuffer(bodyPort2, server2);
             sendSopBuffer(bodyPort1, server1);
             sendSopBuffer(new String("9").getBytes(), server2);
         } catch (Exception e) {
-            LOG.error("", e);
+            LOG.error("{}", e.getMessage(), e);
         } finally {
             server1.close();
             server2.close();
@@ -81,15 +83,12 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
+            public void configure() {
+                from("netty:tcp://localhost:" + port.getPort() + "?decoders=#length-decoder&sync=false").process(processor);
 
-                from("netty:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false").process(processor);
-
-                from("netty:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false").process(processor)
+                from("netty:tcp://localhost:" + port2.getPort() + "?decoders=#length-decoder2&sync=false").process(processor)
                         .to("mock:result");
             }
         };
@@ -116,8 +115,8 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     class P implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(exchange.getIn().getBody(String.class));
+        public void process(Exchange exchange) {
+            exchange.getMessage().setBody(exchange.getIn().getBody(String.class));
         }
     }
 

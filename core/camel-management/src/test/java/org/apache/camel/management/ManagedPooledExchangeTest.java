@@ -24,17 +24,21 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedPooledExchangeTest extends ManagementTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();
@@ -47,18 +51,13 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         PooledExchangeFactory pef = new PooledExchangeFactory();
         pef.setStatisticsEnabled(true);
         pef.setCapacity(123);
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(pef);
+        context.getCamelContextExtension().setExchangeFactory(pef);
 
         return context;
     }
 
     @Test
     public void testSameExchange() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
         mock.expectedPropertyValuesReceivedInAnyOrder("myprop", 1, 3, 5);
@@ -76,7 +75,7 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
 
         // get the object name for the delayer
         ObjectName on
-                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultExchangeFactoryManager");
+                = getCamelObjectName(TYPE_SERVICE, "DefaultExchangeFactoryManager");
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
@@ -87,21 +86,23 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         Integer cap = (Integer) mbeanServer.getAttribute(on, "Capacity");
         assertEquals(123, cap.intValue());
 
-        // also only 1 exchange pooled
-        con = (Integer) mbeanServer.getAttribute(on, "TotalPooled");
-        assertEquals(1, con.intValue());
+        Awaitility.await().untilAsserted(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "TotalCreated");
+            assertEquals(1, num.intValue());
 
-        Long num = (Long) mbeanServer.getAttribute(on, "TotalCreated");
-        assertEquals(1, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalAcquired");
+            assertEquals(2, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalAcquired");
-        assertEquals(2, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalReleased");
+            assertEquals(3, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalReleased");
-        assertEquals(3, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalDiscarded");
+            assertEquals(0, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalDiscarded");
-        assertEquals(0, num.intValue());
+            Integer num2 = (Integer) mbeanServer.getAttribute(on, "TotalPooled");
+            assertEquals(1, num2.intValue());
+        });
+
     }
 
     @Override
@@ -116,12 +117,14 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 // should be same exchange instance as its pooled
-                                Exchange old = ref.get();
-                                if (old == null) {
-                                    ref.set(exchange);
-                                    exchange.getMessage().setHeader("first", true);
-                                } else {
-                                    assertSame(old, exchange);
+                                synchronized (this) {
+                                    Exchange old = ref.get();
+                                    if (old == null) {
+                                        ref.set(exchange);
+                                        exchange.getMessage().setHeader("first", true);
+                                    } else {
+                                        assertSame(old, exchange);
+                                    }
                                 }
                             }
                         })

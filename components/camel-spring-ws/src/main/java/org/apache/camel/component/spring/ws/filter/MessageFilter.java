@@ -21,7 +21,7 @@ import org.springframework.ws.WebServiceMessage;
 
 /**
  * A strategy instance that filters a WebServiceMessage response.
- * 
+ *
  * This class provides an additional configuration that can be managed in your Spring's context.
  */
 public interface MessageFilter {
@@ -36,7 +36,7 @@ public interface MessageFilter {
 
     /**
      * Calls filter for a consumer
-     * 
+     *
      * @param exchange the exchange
      * @param response provided by the consumer
      */

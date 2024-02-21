@@ -23,7 +23,7 @@ import static java.lang.String.format;
 /**
  * <code>setdataOperation</code> sets the content of a ZooKeeper node. An optional version may be specified that the
  * node must currently have for the operation to succeed.
- * 
+ *
  * @see {@link ZooKeeper#setData(String, byte[], int)}
  */
 
@@ -47,6 +47,9 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
                 }
             }
             return new OperationResult<>(true, null, true);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return new OperationResult<>(e);
         } catch (Exception e) {
             return new OperationResult<>(e);
         }

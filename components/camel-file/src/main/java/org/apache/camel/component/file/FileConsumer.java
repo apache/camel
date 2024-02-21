@@ -31,6 +31,12 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
+import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.support.resume.Resumables;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -39,9 +45,10 @@ import org.slf4j.LoggerFactory;
 /**
  * File consumer.
  */
-public class FileConsumer extends GenericFileConsumer<File> {
+public class FileConsumer extends GenericFileConsumer<File> implements ResumeAware<ResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumer.class);
+    private ResumeStrategy resumeStrategy;
     private String endpointPath;
     private Set<String> extendedAttributes;
 
@@ -65,50 +72,28 @@ public class FileConsumer extends GenericFileConsumer<File> {
         return exchange;
     }
 
-    @Override
-    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
-        LOG.trace("pollDirectory from fileName: {}", fileName);
-
+    private boolean pollDirectory(File directory, List<GenericFile<File>> fileList, int depth) {
         depth++;
-
-        File directory = new File(fileName);
-        if (!directory.exists() || !directory.isDirectory()) {
-            LOG.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
-            if (getEndpoint().isDirectoryMustExist()) {
-                throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
-            }
-            return true;
-        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
         }
-        File[] dirFiles = directory.listFiles();
-        if (dirFiles == null || dirFiles.length == 0) {
-            // no files in this directory to poll
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("No files found in directory: {}", directory.getPath());
-            }
+        final File[] files = listFiles(directory);
+        if (files == null || files.length == 0) {
             return true;
-        } else {
-            // we found some files
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
-            }
-        }
-        List<File> files = Arrays.asList(dirFiles);
-        if (getEndpoint().isPreSort()) {
-            files.sort(Comparator.comparing(File::getAbsoluteFile));
         }
 
-        for (File file : dirFiles) {
+        if (getEndpoint().isPreSort()) {
+            Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
+        }
+
+        for (File file : files) {
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
                 return false;
             }
 
-            // trace log as Windows/Unix can have different views what the file
-            // is?
+            // trace log as Windows/Unix can have different views what the file is
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
                         file.isDirectory(), file.isFile(),
@@ -119,18 +104,34 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf
                     = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
+            if (resumeStrategy != null) {
+                ResumeAdapter adapter = resumeStrategy.getAdapter();
+                LOG.trace("Checking the resume adapter: {}", adapter);
+                if (adapter instanceof FileOffsetResumeAdapter) {
+                    LOG.trace("The resume adapter is for offsets: {}", adapter);
+                    ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
+                    adapter.resume();
+                }
+
+                if (adapter instanceof DirectoryEntriesResumeAdapter) {
+                    LOG.trace("Running the resume process for file {}", file);
+                    if (((DirectoryEntriesResumeAdapter) adapter).resume(file)) {
+                        LOG.trace("Skipping file {} because it has been marked previously consumed", file);
+                        continue;
+                    }
+                }
+            }
+
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
-                    // recursive scan and add the sub files and folders
-                    String subDirectory = fileName + File.separator + file.getName();
-                    boolean canPollMore = pollDirectory(subDirectory, fileList, depth);
+                    boolean canPollMore = pollDirectory(file, fileList, depth);
                     if (!canPollMore) {
                         return false;
                     }
                 }
             } else {
                 // Windows can report false to a file on a share so regard it
-                // always as a file (if its not a directory)
+                // always as a file (if it is not a directory)
                 if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
                     LOG.trace("Adding valid file: {}", file);
                     // matched file so add
@@ -138,31 +139,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
                         Path path = file.toPath();
                         Map<String, Object> allAttributes = new HashMap<>();
                         for (String attribute : extendedAttributes) {
-                            try {
-                                String prefix = null;
-                                if (attribute.endsWith(":*")) {
-                                    prefix = attribute.substring(0, attribute.length() - 1);
-                                } else if (attribute.equals("*")) {
-                                    prefix = "basic:";
-                                }
-
-                                if (ObjectHelper.isNotEmpty(prefix)) {
-                                    Map<String, Object> attributes = Files.readAttributes(path, attribute);
-                                    if (attributes != null) {
-                                        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-                                            allAttributes.put(prefix + entry.getKey(), entry.getValue());
-                                        }
-                                    }
-                                } else if (!attribute.contains(":")) {
-                                    allAttributes.put("basic:" + attribute, Files.getAttribute(path, attribute));
-                                } else {
-                                    allAttributes.put(attribute, Files.getAttribute(path, attribute));
-                                }
-                            } catch (IOException e) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Unable to read attribute {} on file {}", attribute, file, e);
-                                }
-                            }
+                            readAttributes(file, path, allAttributes, attribute);
                         }
 
                         gf.setExtendedAttributes(allAttributes);
@@ -178,7 +155,73 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<File> file, String doneFileName, List<File> files) {
+    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
+        LOG.trace("pollDirectory from fileName: {}", fileName);
+
+        File directory = new File(fileName);
+        if (!directory.exists() || !directory.isDirectory()) {
+            LOG.debug("Cannot poll as directory does not exist or its not a directory: {}", directory);
+            if (getEndpoint().isDirectoryMustExist()) {
+                throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
+            }
+            return true;
+        }
+
+        return pollDirectory(directory, fileList, depth);
+    }
+
+    private File[] listFiles(File directory) {
+        if (!getEndpoint().isIncludeHiddenDirs() && directory.isHidden()) {
+            return null;
+        }
+        final File[] dirFiles = directory.listFiles();
+
+        if (dirFiles == null || dirFiles.length == 0) {
+            // no files in this directory to poll
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("No files found in directory: {}", directory.getPath());
+            }
+            return null;
+        } else {
+            // we found some files
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
+            }
+        }
+
+        return dirFiles;
+    }
+
+    private void readAttributes(File file, Path path, Map<String, Object> allAttributes, String attribute) {
+        try {
+            String prefix = null;
+            if (attribute.endsWith(":*")) {
+                prefix = attribute.substring(0, attribute.length() - 1);
+            } else if (attribute.equals("*")) {
+                prefix = "basic:";
+            }
+
+            if (ObjectHelper.isNotEmpty(prefix)) {
+                Map<String, Object> attributes = Files.readAttributes(path, attribute);
+                if (attributes != null) {
+                    for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+                        allAttributes.put(prefix + entry.getKey(), entry.getValue());
+                    }
+                }
+            } else if (!attribute.contains(":")) {
+                allAttributes.put("basic:" + attribute, Files.getAttribute(path, attribute));
+            } else {
+                allAttributes.put(attribute, Files.getAttribute(path, attribute));
+            }
+        } catch (IOException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to read attribute {} on file {}", attribute, file, e);
+            }
+        }
+    }
+
+    @Override
+    protected boolean isMatched(GenericFile<File> file, String doneFileName, File[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
         // the done file name must be among the files
         for (File f : files) {
@@ -207,7 +250,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
-        answer.setFileLength(file.length());
         answer.setDirectory(file.isDirectory());
         // must use FileUtil.isAbsolute to have consistent check for whether the
         // file is
@@ -220,7 +262,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         // to return a consistent answer for all OS platforms.
         answer.setAbsolute(FileUtil.isAbsolute(file));
         answer.setAbsoluteFilePath(file.getAbsolutePath());
-        answer.setLastModified(file.lastModified());
+
+        // file length and last modified are loaded lazily
+        answer.setFileLengthSupplier(file::length);
+        answer.setLastModifiedSupplier(file::lastModified);
 
         // compute the file path as relative to the starting directory
         File path;
@@ -256,11 +301,13 @@ public class FileConsumer extends GenericFileConsumer<File> {
         file.setFileLength(length);
         file.setLastModified(modified);
         if (length >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, length);
+            message.setHeader(FileConstants.FILE_LENGTH, length);
         }
         if (modified >= 0) {
-            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+            message.setHeader(FileConstants.FILE_LAST_MODIFIED, modified);
         }
+
+        message.setHeader(FileConstants.INITIAL_OFFSET, Resumables.of(upToDateFile, file.getLastOffsetValue()));
     }
 
     @Override
@@ -268,9 +315,50 @@ public class FileConsumer extends GenericFileConsumer<File> {
         return (FileEndpoint) super.getEndpoint();
     }
 
+    @Override
+    protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
+        if (isDirectory) {
+            String name = file.getFileNameOnly();
+            if (!name.startsWith(".")) {
+                return true;
+            }
+            return getEndpoint().isIncludeHiddenDirs() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
+        }
+
+        if (getEndpoint().isIncludeHiddenFiles()) {
+            return true;
+        } else {
+            return super.isMatchedHiddenFile(file, isDirectory);
+        }
+    }
+
     private boolean fileHasMoved(GenericFile<File> file) {
         // GenericFile's absolute path is always up to date whereas the
         // underlying file is not
         return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (resumeStrategy != null) {
+            resumeStrategy.loadCache();
+        }
+
+        super.doStart();
+    }
+
+    @Override
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    @Override
+    public String adapterFactoryService() {
+        return "file-adapter-factory";
     }
 }

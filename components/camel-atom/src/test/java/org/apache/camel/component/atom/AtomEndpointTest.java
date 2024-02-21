@@ -17,10 +17,13 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Unit test for AtomPollingConsumer
  */
+@DisabledOnOs(OS.AIX)
 public class AtomEndpointTest extends AtomPollingConsumerTest {
 
     @Override

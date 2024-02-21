@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.grpc.ClientInterceptor;
+import io.grpc.ServerInterceptor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -38,6 +39,9 @@ public class GrpcComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         if (config.isAutoDiscoverClientInterceptors()) {
             checkAndSetRegistryClientInterceptors(config);
+        }
+        if (config.isAutoDiscoverServerInterceptors()) {
+            checkAndSetRegistryServerInterceptors(config);
         }
         return endpoint;
     }
@@ -56,6 +60,13 @@ public class GrpcComponent extends DefaultComponent {
         Set<ClientInterceptor> clientInterceptors = getCamelContext().getRegistry().findByType(ClientInterceptor.class);
         if (!clientInterceptors.isEmpty()) {
             configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
+        }
+    }
+
+    private void checkAndSetRegistryServerInterceptors(GrpcConfiguration configuration) {
+        Set<ServerInterceptor> serverInterceptors = getCamelContext().getRegistry().findByType(ServerInterceptor.class);
+        if (!serverInterceptors.isEmpty()) {
+            configuration.setServerInterceptors(new ArrayList<>(serverInterceptors));
         }
     }
 }

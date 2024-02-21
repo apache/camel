@@ -68,7 +68,7 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
      * <li>Factories that support one or more classes</li>
      * <li>Factories that support no specific class (e.g. {@link EnumFormatFactory})</li>
      * </ul>
-     * 
+     *
      * @param  formatFactories
      * @return                 the DefaultFactoryRegistry instance
      */
@@ -123,11 +123,6 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
     }
 
     private List<FormatFactoryInterface> getByClass(Class<?> clazz) {
-        List<FormatFactoryInterface> result = classBasedFactories.get(clazz);
-        if (result == null) {
-            result = new ArrayList<>();
-            classBasedFactories.put(clazz, result);
-        }
-        return result;
+        return classBasedFactories.computeIfAbsent(clazz, k -> new ArrayList<>());
     }
 }

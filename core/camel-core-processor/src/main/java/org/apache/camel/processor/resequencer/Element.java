@@ -25,7 +25,7 @@ class Element<E> implements TimeoutHandler {
     /**
      * The contained object.
      */
-    private E object;
+    private final E object;
 
     /**
      * Not <code>null</code> if this element is currently beeing scheduled for timing out.
@@ -34,7 +34,7 @@ class Element<E> implements TimeoutHandler {
 
     /**
      * Creates a new container instance.
-     * 
+     *
      * @param object contained object.
      */
     Element(E object) {
@@ -43,7 +43,7 @@ class Element<E> implements TimeoutHandler {
 
     /**
      * Returns the contained object.
-     * 
+     *
      * @return the contained object.
      */
     public E getObject() {
@@ -52,7 +52,7 @@ class Element<E> implements TimeoutHandler {
 
     /**
      * Returns <code>true</code> if this element is currently scheduled for timing out.
-     * 
+     *
      * @return <code>true</code> if scheduled or <code>false</code> if not scheduled or already timed-out.
      */
     public synchronized boolean scheduled() {
@@ -62,7 +62,7 @@ class Element<E> implements TimeoutHandler {
     /**
      * Schedules the given timeout task. Before this methods calls the {@link Timeout#schedule()} method it sets this
      * element as timeout listener.
-     * 
+     *
      * @param t a timeout task.
      */
     public synchronized void schedule(Timeout t) {
@@ -84,7 +84,7 @@ class Element<E> implements TimeoutHandler {
 
     /**
      * Marks this element as timed-out.
-     * 
+     *
      * @param t timeout task that caused the notification.
      */
     @Override

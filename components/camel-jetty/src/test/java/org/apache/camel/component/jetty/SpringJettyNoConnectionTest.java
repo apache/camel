@@ -17,12 +17,14 @@
 package org.apache.camel.component.jetty;
 
 import java.net.ConnectException;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +32,22 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
 
+    @RegisterExtension
+    protected AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jetty/jetty-noconnection.xml");
+        return newAppContext("jetty-noconnection.xml");
+    }
+
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("port", port.toString());
+        return map;
     }
 
     @Test
-    public void testConnectionOk() throws Exception {
+    public void testConnectionOk() {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Bye World", reply);
     }

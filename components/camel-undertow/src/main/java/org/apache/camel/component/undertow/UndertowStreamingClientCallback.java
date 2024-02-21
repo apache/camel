@@ -32,7 +32,7 @@ import org.xnio.channels.StreamSinkChannel;
 
 class UndertowStreamingClientCallback extends UndertowClientCallback {
 
-    private InputStream bodyStream;
+    private final InputStream bodyStream;
 
     UndertowStreamingClientCallback(Exchange exchange, AsyncCallback callback,
                                     UndertowEndpoint endpoint, ClientRequest request,

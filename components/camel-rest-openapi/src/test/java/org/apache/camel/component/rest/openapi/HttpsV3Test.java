@@ -18,6 +18,7 @@ package org.apache.camel.component.rest.openapi;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,10 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
@@ -64,9 +66,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsV3Test extends CamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(
-            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+            wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
                     .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-                    .keystorePassword("changeit"));
+                    .keystorePassword("changeit").keyManagerPassword("changeit"));
 
     static final Object NO_BODY = null;
 
@@ -83,7 +85,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @BeforeEach
@@ -105,8 +107,8 @@ public abstract class HttpsV3Test extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -118,15 +120,22 @@ public abstract class HttpsV3Test extends CamelTestSupport {
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);
-        component.setHost("https://localhost:" + petstore.httpsPort());
-        component.setSpecificationUri(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json").toURI());
+        final String host = "https://localhost:" + petstore.httpsPort();
+        component.setHost(host);
+        // Workaround bug resolving relative references with file URLs in swagger parser
+        component.setSpecificationUri(new URI(host + getSpecName()));
+        //        component.setSpecificationUri(HttpsV3Test.class.getResource(getSpecName()).toURI());
         camelContext.addComponent("petStore", component);
 
         return camelContext;
     }
 
+    protected String getSpecName() {
+        return "/openapi-v3.json";
+    }
+
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -144,15 +153,20 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     public static Iterable<String> knownProducers() {
         final List<String> producers = new ArrayList<>(Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS));
         // skip http due security certificate testing problems
+        producers.remove("vertx-http");
         producers.remove("http");
         return producers;
     }
 
     @BeforeAll
-    public static void setupStubs() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/openapi.json")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi.json").toURI())))));
+    public static void makeSwaggerTrustLocalhost() {
+        System.setProperty("io.swagger.v3.parser.util.RemoteUrl.trustAll", "true");
+    }
 
+    @BeforeAll
+    public static void setupStubs() throws IOException, URISyntaxException {
+        petstore.stubFor(get(urlEqualTo("/openapi-v3.json")).willReturn(aResponse().withBody(
+                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi-v3.json").toURI())))));
         petstore.stubFor(
                 get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
@@ -176,7 +190,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
         final CipherSuitesParameters cipherSuites = new CipherSuitesParameters();
         cipherSuites.setCipherSuite(Collections.singletonList("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"));
         sslContextParameters.setCipherSuites(cipherSuites);
-        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         return sslContextParameters;
     }
 

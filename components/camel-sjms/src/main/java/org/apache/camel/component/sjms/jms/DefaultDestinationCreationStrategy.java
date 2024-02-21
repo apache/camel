@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 
 import org.apache.camel.util.URISupport;
 
@@ -26,7 +26,7 @@ import org.apache.camel.util.URISupport;
  * Default implementation of DestinationCreationStrategy, delegates to Session.createTopic and Session.createQueue.
  *
  * @see org.apache.camel.component.sjms.jms.DestinationCreationStrategy
- * @see javax.jms.Session
+ * @see jakarta.jms.Session
  */
 public class DefaultDestinationCreationStrategy implements DestinationCreationStrategy {
 

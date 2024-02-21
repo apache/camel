@@ -16,17 +16,22 @@
  */
 package org.apache.camel.spring.xml;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractSecureRandomParametersFactoryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * Cryptographically strong random number generator
+ */
+@Metadata(label = "security,configuration")
 @XmlRootElement(name = "secureRandomParameters")
 public class SecureRandomParametersFactoryBean extends AbstractSecureRandomParametersFactoryBean
         implements FactoryBean<SecureRandomParameters>, ApplicationContextAware {

@@ -33,6 +33,12 @@ public class HttpConfiguration implements Serializable {
     private String authUsername;
     @Metadata(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+    @Metadata(label = "producer,security", secret = true, description = "OAuth2 client id")
+    private String oauth2ClientId;
+    @Metadata(label = "producer,security", secret = true, description = "OAuth2 client secret")
+    private String oauth2ClientSecret;
+    @Metadata(label = "producer,security", description = "OAuth2 token endpoint")
+    private String oauth2TokenEndpoint;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @Metadata(label = "producer,security", description = "Authentication host to use with NTML")
@@ -220,4 +226,38 @@ public class HttpConfiguration implements Serializable {
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
+
+    public String getOauth2ClientId() {
+        return this.oauth2ClientId;
+    }
+
+    /**
+     * OAuth2 Client id
+     */
+    public void setOauth2ClientId(String oauth2ClientId) {
+        this.oauth2ClientId = oauth2ClientId;
+    }
+
+    public String getOauth2ClientSecret() {
+        return this.oauth2ClientSecret;
+    }
+
+    /**
+     * OAuth2 Client secret
+     */
+    public void setOauth2ClientSecret(String oauth2ClientSecret) {
+        this.oauth2ClientSecret = oauth2ClientSecret;
+    }
+
+    public String getOauth2TokenEndpoint() {
+        return this.oauth2TokenEndpoint;
+    }
+
+    /**
+     * OAuth2 token endpoint
+     */
+    public void setOauth2TokenEndpoint(String oauth2TokenEndpoint) {
+        this.oauth2TokenEndpoint = oauth2TokenEndpoint;
+    }
+
 }

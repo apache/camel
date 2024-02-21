@@ -39,24 +39,18 @@ public final class PubNubGeoLocationExample {
 
     static class GeoLocationRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:geotimer")
                     .process(exchange -> exchange.getIn().setBody(new Foo("bar", "TEXT")))
-                    .to("pubnub:eon-maps-geolocation-input?operation=fire&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey="
+                    .to("pubnub:eon-maps-geolocation-input?uuid=camel&operation=fire&publishKey=" + PUBNUB_PUBLISH_KEY
+                        + "&subscribeKey="
                         + PUBNUB_SUBSCRIBE_KEY);
 
-            from("pubnub:eon-map-geolocation-output?subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+            from("pubnub:eon-map-geolocation-output?uuid=camel&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
                     .log("${body}");
         }
     }
 
-    static class Foo {
-        String foo;
-        String text;
-
-        Foo(String foo, String text) {
-            this.foo = foo;
-            this.text = text;
-        }
+    record Foo(String foo, String text) {
     }
 }

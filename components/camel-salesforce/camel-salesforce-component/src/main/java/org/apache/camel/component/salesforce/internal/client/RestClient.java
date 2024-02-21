@@ -250,4 +250,22 @@ public interface RestClient {
      * @param callback {@link ResponseCallback} to handle response or exception
      */
     void approvals(Map<String, List<String>> headers, ResponseCallback callback);
+
+    /**
+     *
+     * @param eventName Name of event
+     * @param headers   additional HTTP headers to send
+     * @param callback  {@link ResponseCallback} to handle response or exception
+     */
+    void getEventSchemaByEventName(
+            String eventName, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback);
+
+    /**
+     *
+     * @param schemaId Id of Schema
+     * @param headers  additional HTTP headers to send
+     * @param callback {@link ResponseCallback} to handle response or exception
+     */
+    void getEventSchemaBySchemaId(
+            String schemaId, String payloadFormat, Map<String, List<String>> headers, ResponseCallback callback);
 }

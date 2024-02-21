@@ -200,7 +200,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // set values
         final String type = this.params.getType().toString();
 
-        // create code image  
+        // create code image
         final BitMatrix matrix = writer.encode(
                 payload,
                 this.params.getFormat(),
@@ -240,7 +240,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
-        LOG.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
+        LOG.info("Added '{}' with value '{}' to writer hint map.", hintType, value);
     }
 
     /**
@@ -256,9 +256,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final EncodeHintType hintType) {
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
+            LOG.info("Removed '{}' from writer hint map.", hintType);
         } else {
-            LOG.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
+            LOG.warn("Could not find encode hint type '{}' in writer hint map.", hintType);
         }
     }
 
@@ -268,9 +268,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final DecodeHintType hintType) {
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
+            LOG.info("Removed '{}' from reader hint map.", hintType);
         } else {
-            LOG.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
+            LOG.warn("Could not find decode hint type '{}' in reader hint map.", hintType);
         }
     }
 

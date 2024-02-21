@@ -27,15 +27,21 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A {@link StreamCache} for {@link java.io.ByteArrayInputStream}
+ * A {@link StreamCache} for {@link java.io.ByteArrayInputStream}.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
+    private final ByteArrayInputStream bais;
     private final int length;
     private byte[] byteArrayForCopy;
 
     public ByteArrayInputStreamCache(ByteArrayInputStream in) {
         super(in);
+        this.bais = in;
         this.length = in.available();
     }
 
@@ -74,5 +80,10 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
     @Override
     public long length() {
         return length;
+    }
+
+    @Override
+    public long position() {
+        return length - bais.available();
     }
 }

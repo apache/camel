@@ -19,18 +19,22 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathHeaderNameTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
+                var jp = expression().jsonpath().expression("$..store.book.length()").resultType(int.class)
+                        .source("header:myHeader").end();
+
                 from("direct:start")
-                        .setHeader("number").jsonpath("$..store.book.length()", false, int.class, "myHeader")
+                        .setHeader("number", jp)
                         .to("mock:result");
             }
         };
@@ -39,12 +43,12 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
     @Test
     public void testAuthors() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedHeaderReceived("number", "2");
+        getMockEndpoint("mock:result").expectedHeaderReceived("number", "3");
 
         Object file = new File("src/test/resources/books.json");
         template.sendBodyAndHeader("direct:start", "Hello World", "myHeader", file);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

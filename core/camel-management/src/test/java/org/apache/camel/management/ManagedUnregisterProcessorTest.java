@@ -23,19 +23,17 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedUnregisterProcessorTest extends ManagementTestSupport {
 
     @Test
     public void testUnregisterProcessor() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
@@ -45,10 +43,10 @@ public class ManagedUnregisterProcessorTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String id = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", id);
+        assertEquals(context.getManagementName(), id);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        assertEquals("route1", routeId);
+        assertEquals(context.getRoutes().get(0).getId(), routeId);
     }
 
     @Override

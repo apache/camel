@@ -20,10 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
+                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectConsumerTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer";
+    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer.ReconnectConsumerTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -43,10 +46,10 @@ public class ReconnectConsumerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(SJMS_QUEUE_NAME).to(MOCK_RESULT);
             }
         };

@@ -46,6 +46,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "buffersize":
         case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
@@ -196,7 +198,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": target.getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
         case "streamdownload":
         case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tempfilename":
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
@@ -249,6 +250,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "buffersize":
         case "bufferSize": return int.class;
         case "charset": return java.lang.String.class;
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return java.lang.String.class;
         case "chmod": return java.lang.String.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
@@ -399,7 +402,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": return boolean.class;
         case "streamdownload":
         case "streamDownload": return boolean.class;
-        case "synchronous": return boolean.class;
         case "tempfilename":
         case "tempFileName": return java.lang.String.class;
         case "tempprefix":
@@ -453,6 +455,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "buffersize":
         case "bufferSize": return target.getBufferSize();
         case "charset": return target.getCharset();
+        case "checksumfilealgorithm":
+        case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "chmod": return target.getConfiguration().getChmod();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
@@ -603,7 +607,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "stepwise": return target.getConfiguration().isStepwise();
         case "streamdownload":
         case "streamDownload": return target.getConfiguration().isStreamDownload();
-        case "synchronous": return target.isSynchronous();
         case "tempfilename":
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":

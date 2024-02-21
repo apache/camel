@@ -21,7 +21,7 @@ import org.zendesk.client.v2.Zendesk;
 
 /**
  * ZendeskHelper.
- * 
+ *
  * <p>
  * Utility class for creating Zendesk API Connections
  */

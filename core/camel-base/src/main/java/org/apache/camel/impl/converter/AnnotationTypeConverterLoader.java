@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -65,13 +66,19 @@ import static java.lang.reflect.Modifier.isStatic;
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    protected PackageScanClassResolver resolver;
-    protected Set<Class<?>> visitedClasses = new HashSet<>();
-    protected Set<String> visitedURIs = new HashSet<>();
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
+    protected final PackageScanClassResolver resolver;
+    protected final Set<Class<?>> visitedClasses = new HashSet<>();
+    protected final Set<String> visitedURIs = new HashSet<>();
+    private final String basePackage;
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
+        this(resolver, null);
+    }
+
+    public AnnotationTypeConverterLoader(PackageScanClassResolver resolver, String basePackage) {
         this.resolver = resolver;
+        this.basePackage = basePackage;
     }
 
     @Override
@@ -117,12 +124,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 LOG.trace("Found converter packages to scan: {}", String.join(", ", packageNames));
             }
             Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
-            if (scannedClasses.isEmpty()) {
-                throw new TypeConverterLoaderException(
-                        "Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
+            if (!scannedClasses.isEmpty()) {
+                LOG.debug("Found {} packages with {} @Converter classes to load", packageNames.length, scannedClasses.size());
+                classes.addAll(scannedClasses);
             }
-            LOG.debug("Found {} packages with {} @Converter classes to load", packageNames.length, scannedClasses.size());
-            classes.addAll(scannedClasses);
         }
 
         // load all the found classes into the type converter registry
@@ -179,7 +184,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             // class found, so no need to load it with another class loader
                         }
                         break;
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // do nothing here
                     }
                 }
@@ -194,7 +199,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
 
         // return the packages which is not FQN classes
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     /**
@@ -206,12 +211,16 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      */
     protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<>();
+        if (basePackage != null) {
+            String[] pks = basePackage.split(",");
+            packages.addAll(Arrays.asList(pks));
+        }
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         if (ccl != null) {
             findPackages(packages, ccl);
         }
         findPackages(packages, getClass().getClassLoader());
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException {
@@ -231,7 +240,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             break;
                         }
                         line = line.trim();
-                        if (line.startsWith("#") || line.length() == 0) {
+                        if (line.startsWith("#") || line.isEmpty()) {
                             continue;
                         }
                         tokenize(packages, line);
@@ -250,7 +259,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         StringTokenizer iter = new StringTokenizer(line, ",");
         while (iter.hasMoreTokens()) {
             String name = iter.nextToken().trim();
-            if (name.length() > 0) {
+            if (!name.isEmpty()) {
                 packages.add(name);
             }
         }
@@ -391,8 +400,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 1
-                || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
+        return parameterTypes.length == 1 || parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1]);
     }
 
     protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
@@ -406,9 +414,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidFallbackConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) && (parameterTypes.length == 3
-                || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
-                        && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
+        return parameterTypes.length == 3 || parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1])
+                && TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]);
     }
 
     /**
@@ -428,7 +435,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
         }
 
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
 }

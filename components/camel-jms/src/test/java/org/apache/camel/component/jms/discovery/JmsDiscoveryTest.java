@@ -16,25 +16,34 @@
  */
 package org.apache.camel.component.jms.discovery;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class JmsDiscoveryTest extends CamelTestSupport {
-    protected MyRegistry myRegistry = new MyRegistry();
+public class JmsDiscoveryTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected final MyRegistry myRegistry = new MyRegistry();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testDiscovery() throws Exception {
@@ -44,35 +53,28 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         // force shutdown after 5 seconds as otherwise the bean will keep generating a new input
         context.getShutdownStrategy().setTimeout(5);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // sleep a little
-        Thread.sleep(1000);
-
-        Map<String, Map<?, ?>> map = new HashMap<>(myRegistry.getServices());
-        assertTrue(map.size() >= 1, "There should be 1 or more, was: " + map.size());
+        Awaitility.await().atMost(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(myRegistry.getServices()).hasSizeGreaterThanOrEqualTo(1));
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.getRegistry().bind("service1", new MyService("service1"));
+        context.getRegistry().bind("registry", myRegistry);
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
-        registry.bind("service1", new MyService("service1"));
-        registry.bind("registry", myRegistry);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // lets setup the heartbeats
                 from("timer:heartbeats?delay=100")
                         .to("bean:service1?method=status")
@@ -85,5 +87,17 @@ public class JmsDiscoveryTest extends CamelTestSupport {
                         .to("bean:registry?method=onEvent", "mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

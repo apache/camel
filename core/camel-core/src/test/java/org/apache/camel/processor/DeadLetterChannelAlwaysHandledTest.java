@@ -69,7 +69,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
         };
     }
 
-    private final class MyExceptionHandler implements ExceptionHandler {
+    private static final class MyExceptionHandler implements ExceptionHandler {
 
         @Override
         public void handleException(Throwable exception) {

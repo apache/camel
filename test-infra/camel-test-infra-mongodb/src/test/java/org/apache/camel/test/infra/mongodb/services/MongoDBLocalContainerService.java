@@ -17,11 +17,13 @@
 
 package org.apache.camel.test.infra.mongodb.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class MongoDBLocalContainerService implements MongoDBService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerService.class);
@@ -29,26 +31,35 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
     private final MongoDBContainer container;
 
     public MongoDBLocalContainerService() {
-        this(System.getProperty("mongodb.container"));
+        this(LocalPropertyResolver.getProperty(MongoDBLocalContainerService.class, MongoDBProperties.MONGODB_CONTAINER));
     }
 
-    public MongoDBLocalContainerService(String containerName) {
-        if (containerName == null || containerName.isEmpty()) {
-            container = new MongoDBContainer();
+    public MongoDBLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public MongoDBLocalContainerService(MongoDBContainer container) {
+        this.container = container;
+    }
+
+    protected MongoDBContainer initContainer(String imageName) {
+        if (imageName == null || imageName.isEmpty()) {
+            return new MongoDBContainer();
         } else {
-            container = new MongoDBContainer(containerName);
+            return new MongoDBContainer(
+                    DockerImageName.parse(imageName).asCompatibleSubstituteFor("mongo"));
         }
     }
 
     @Override
     public String getReplicaSetUrl() {
-        return String.format("mongodb://%s:%s", container.getContainerIpAddress(),
+        return String.format("mongodb://%s:%s", container.getHost(),
                 container.getMappedPort(DEFAULT_MONGODB_PORT));
     }
 
     @Override
     public String getConnectionAddress() {
-        return container.getContainerIpAddress() + ":" + container.getMappedPort(DEFAULT_MONGODB_PORT);
+        return container.getHost() + ":" + container.getMappedPort(DEFAULT_MONGODB_PORT);
     }
 
     @Override

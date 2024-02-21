@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&needClientAuth=true&keyStoreFormat=JKS"
                      + "&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
-                             .to("mock:target");
+                        .to("mock:target");
             }
         });
         context.start();
@@ -60,10 +61,10 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
         Exception ex = response.getException();
 
         assertTrue(response.isFailed(), "should have failed");
-        assertNotNull(ex.getCause());
-        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getCause().getClass(), "exception expected");
+        assertNotNull(ex);
+        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getClass(), "SSLHandshakeException expected");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

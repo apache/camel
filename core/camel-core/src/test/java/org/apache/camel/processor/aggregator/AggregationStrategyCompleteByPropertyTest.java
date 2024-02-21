@@ -61,7 +61,7 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         };
     }
 
-    private final class MyCompletionStrategy implements AggregationStrategy {
+    private static final class MyCompletionStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sf.flatpack.DataSet;
+import net.sf.flatpack.Record;
 import org.apache.camel.Converter;
 
 @Converter(generateLoader = true)
@@ -39,9 +40,14 @@ public final class FlatpackConverter {
     }
 
     @Converter
-    public static Map<String, Object> toMap(DataSet dataSet) {
+    public static Map<String, Object> toMap(Record recordObj) {
         Map<String, Object> map = new HashMap<>();
-        putValues(map, dataSet);
+        if (recordObj instanceof DataSet dataSet) {
+            putValues(map, dataSet);
+        } else {
+            putValues(map, recordObj);
+        }
+
         return map;
     }
 
@@ -57,6 +63,12 @@ public final class FlatpackConverter {
         }
 
         return answer;
+    }
+
+    @Converter
+    public static String toString(DataSet dataSet) {
+        // force using toString from DataSet as we do not want conversion of each element
+        return dataSet.toString();
     }
 
     @Converter
@@ -95,14 +107,26 @@ public final class FlatpackConverter {
         }
     }
 
+    /**
+     * Puts the values of the record into the map
+     */
+    private static void putValues(Map<String, Object> map, Record recordObj) {
+        String[] columns = recordObj.getColumns();
+
+        for (String column : columns) {
+            String value = recordObj.getString(column);
+            map.put(column, value);
+        }
+    }
+
     private static Element createDatasetRecord(DataSet dataSet, Document doc) {
-        Element record;
+        Element element;
         if (dataSet.isRecordID(FlatpackComponent.HEADER_ID)) {
-            record = doc.createElement("DatasetHeader");
+            element = doc.createElement("DatasetHeader");
         } else if (dataSet.isRecordID(FlatpackComponent.TRAILER_ID)) {
-            record = doc.createElement("DatasetTrailer");
+            element = doc.createElement("DatasetTrailer");
         } else {
-            record = doc.createElement("DatasetRecord");
+            element = doc.createElement("DatasetRecord");
         }
 
         String[] columns = getColumns(dataSet);
@@ -114,10 +138,10 @@ public final class FlatpackConverter {
             columnElement.setAttribute("name", column);
             columnElement.setTextContent(value);
 
-            record.appendChild(columnElement);
+            element.appendChild(columnElement);
         }
 
-        return record;
+        return element;
     }
 
     private static String[] getColumns(DataSet dataSet) {

@@ -25,20 +25,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
-    private String data = "abcdefg";
+    private final String data = "abcdefg";
 
     @Test
-    public void testTwoWayStreaming() throws Exception {
+    public void testTwoWayStreaming() {
         Exchange exchange = template.request("undertow:http://localhost:{{port}}/client", null);
 
         assertEquals(data, new String((byte[]) exchange.getMessage().getBody()));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 getContext().setStreamCaching(true);
                 getContext().getStreamCachingStrategy().setSpoolThreshold(3);

@@ -19,14 +19,15 @@ package org.apache.camel.component.zookeepermaster;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
+import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport implements GroupListener {
+public class ZookeeperGroupListenerSupport<T extends NodeState> extends ZookeeperGroupSupport<T> implements GroupListener<T> {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ZookeeperGroupListenerSupport.class);
-    private Group<CamelNodeState> singleton;
+    private static final Logger LOG = LoggerFactory.getLogger(ZookeeperGroupListenerSupport.class);
+    private Group<T> singleton;
     private final String clusterPath;
     private final Endpoint endpoint;
     private final Runnable onLockAcquired;
@@ -40,7 +41,7 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
         this.onDisconnected = onDisconnected;
     }
 
-    public void updateState(CamelNodeState state) {
+    public void updateState(T state) {
         singleton.update(state);
     }
 
@@ -63,12 +64,12 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
         return clusterPath;
     }
 
-    public Group<CamelNodeState> getGroup() {
+    public Group<T> getGroup() {
         return singleton;
     }
 
     @Override
-    public void groupEvent(Group group, GroupEvent event) {
+    public void groupEvent(Group<T> group, GroupEvent event) {
         switch (event) {
             case CONNECTED:
                 break;

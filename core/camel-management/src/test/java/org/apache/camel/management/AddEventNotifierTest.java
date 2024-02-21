@@ -26,9 +26,12 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(OS.AIX)
 public class AddEventNotifierTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();

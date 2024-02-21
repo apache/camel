@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -66,7 +67,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
@@ -75,9 +76,9 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to(result);
 
             }
         };
@@ -94,7 +95,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
                     Thread.sleep(15000);
                     tmpSocket.close();
                 } catch (Exception ex) {
-                    throw new RuntimeException("Exception caught in dummy listener", ex);
+                    throw new RuntimeCamelException("Exception caught in dummy listener", ex);
                 }
             }
 
@@ -108,7 +109,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
 }

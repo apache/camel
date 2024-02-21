@@ -16,26 +16,34 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
  * one destination to another
  */
-public class LarsIssueTest extends CamelTestSupport {
+public class LarsIssueTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(LarsIssueTest.class);
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSendSomeMessages() throws Exception {
@@ -44,34 +52,41 @@ public class LarsIssueTest extends CamelTestSupport {
         String body2 = "Goodbye world!";
         endpoint.expectedBodiesReceived(body1, body2);
 
-        template.sendBody("activemq:queue:foo.bar", body1);
-        template.sendBody("activemq:queue:foo.bar", body2);
+        template.sendBody("activemq:queue:LarsIssueTest.bar", body1);
+        template.sendBody("activemq:queue:LarsIssueTest.bar", body2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                Processor myProcessor = e -> LOG.info(">>>> Received exchange: " + e);
+            public void configure() {
+                Processor myProcessor = e -> LOG.info(">>>> Received exchange: {}", e);
 
                 // lets enable CACHE_CONSUMER so that the consumer stays around in JMX
                 // as the default due to the spring bug means we keep creating & closing consumers
-                from("activemq:queue:foo.bar?cacheLevelName=CACHE_CONSUMER")
+                from("activemq:queue:LarsIssueTest.bar?cacheLevelName=CACHE_CONSUMER")
                         .process(myProcessor)
                         .to("mock:results");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

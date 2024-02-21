@@ -30,7 +30,20 @@ public class HttpRestHeaderFilterStrategyTest {
     public void shouldDecideOnApplingHeaderFilterToTemplateTokens() {
         final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
                 "{uriToken1}{uriToken2}",
-                "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%7D%26");
+                "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%3F%7D%26");
+
+        assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("queryToken1", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("queryToken2", "value", NOT_USED));
+        assertFalse(strategy.applyFilterToCamelHeaders("unknown", "value", NOT_USED));
+    }
+
+    @Test
+    public void shouldDecideOnApplingHeaderFilterToTemplateTokensUnencoded() {
+        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
+                "{uriToken1}{uriToken2}",
+                "q1={queryToken1}&q2={queryToken2?}&");
 
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));

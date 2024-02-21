@@ -1,11 +1,16 @@
-[[bean-eip]]
 = Bean EIP
-:docTitle: Bean
-:description: Calls a java bean
+:doctitle: Bean
+:shortname: bean
+:description: Calls a Java bean
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-The Bean EIP binds beans to Camel message exchanges.
+The Bean EIP is used for invoking a method on a bean, and the returned value
+is the new message body.
+
+The Bean EIP is similar to the xref:ROOT:bean-component.adoc[Bean] component
+which also is used for invoking beans, but in the form as a Camel component.
 
 == URI Format
 
@@ -15,85 +20,161 @@ bean:beanID[?options]
 ----
 
 Where *beanID* can be any string which is used to look up the bean in
-the xref:latest@manual:ROOT:registry.adoc[Registry]
+the xref:manual::registry.adoc[Registry].
 
 == EIP options
 
 // eip options: START
-The Bean EIP supports 5 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ref* | Sets a reference to a bean to use |  | String
-| *method* | Sets the method name on the bean to use |  | String
-| *beanType* | Sets the Class of the bean |  | String
-| *cache* | *Deprecated* Use singleton option instead | true | Boolean
-| *scope* | Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. so when using prototype scope then this depends on the bean registry implementation. | Singleton | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 === Bean scope
 
 When using `singleton` scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.
 The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
+
 When using `request` scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean
-while processing a request and you want to call the same bean instance multiple times while processing the request.
+while processing a request, and you want to call the same bean instance multiple times while processing the request.
 The bean does not have to be thread-safe as the instance is only called from the same request.
-When using `prototype` scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated
+
+When using `prototype` scope, then the bean will be looked up or created per call. However, in case of lookup then this is delegated
 to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope.
-so when using `prototype` then this depends on the delegated registry.
+However, when using `prototype` then behaviour is dependent on the delegated registry (such as Spring, Quarkus or CDI).
 
-== Bean as endpoint
+== Example
 
-Camel also supports invoking xref:components::bean-component.adoc[Bean] as an Endpoint. In the
-route below:
+The Bean EIP can be used directly in the routes as shown below:
 
-What happens is that when the exchange is routed to the `myBean` Camel
-will use the xref:latest@manual:ROOT:bean-binding.adoc[Bean Binding] to invoke the bean. +
- The source for the bean is just a plain POJO:
-
-Camel will use xref:latest@manual:ROOT:bean-binding.adoc[Bean Binding] to invoke the
-`sayHello` method, by converting the Exchange's In body to the `String`
-type and storing the output of the method on the Exchange Out body.
-
-== Java DSL bean syntax
-
-Java DSL comes with syntactic sugar for the xref:components::bean-component.adoc[Bean]
-component. Instead of specifying the bean explicitly as the endpoint
-(i.e. `to("bean:beanName")`) you can use the following syntax:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Send message to the bean endpoint
-// and invoke method resolved using Bean Binding.
-from("direct:start").beanRef("beanName");
+// lookup bean from registry and invoke the given method by the name
+from("direct:foo").bean("myBean", "myMethod");
 
-// Send message to the bean endpoint
-// and invoke given method.
-from("direct:start").beanRef("beanName", "methodName");
+// lookup bean from registry and invoke best matching method
+from("direct:bar").bean("myBean");
 ----
 
-Instead of passing name of the reference to the bean (so that Camel will
-lookup for it in the registry), you can specify the bean itself:
+XML:: With Spring XML you can declare the bean using `<bean>` as shown:
++
+[source,xml]
+----
+<bean id="myBean" class="com.foo.ExampleBean"/>
+----
++
+And in XML DSL you can call this bean:
++
+[source,xml]
+----
+<routes>
+    <route>
+      <from uri="direct:foo"/>
+      <bean ref="myBean" method="myMethod"/>
+    </route>
+    <route>
+      <from uri="direct:bar"/>
+      <bean ref="myBean"/>
+    </route>
+</routes>
+----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - bean:
+          ref: myBean
+          method: myMethod
+- from:
+    uri: direct:start
+    steps:
+      - bean:
+          ref: myBean
+- beans:
+    - name: myBean
+      type: com.foo.ExampleBean
+----
+====
+
+Instead of passing name of the reference to the bean (so that Camel will
+lookup for it in the registry), you can provide the bean:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Send message to the given bean instance.
-from("direct:start").bean(new ExampleBean());
+from("direct:foo").bean(new ExampleBean());
 
 // Explicit selection of bean method to be invoked.
-from("direct:start").bean(new ExampleBean(), "methodName");
+from("direct:bar").bean(new ExampleBean(), "myMethod");
 
-// Camel will create the instance of bean and cache it for you.
-from("direct:start").bean(ExampleBean.class);
+// Camel will create a singleton instance of the bean, and reuse the instance for following calls (see scope)
+from("direct:cheese").bean(ExampleBean.class);
 ----
+
+XML::
++
+[source,xml]
+----
+<routes>
+    <route>
+      <from uri="direct:foo"/>
+      <bean beanType="com.foo.ExampleBean" method="myMethod"/>
+    </route>
+    <route>
+      <from uri="direct:bar"/>
+      <bean beanType="com.foo.ExampleBean"/>
+    </route>
+    <route>
+      <from uri="direct:cheese"/>
+      <bean beanType="com.foo.ExampleBean"/>
+    </route>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:foo
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+          method: myMethod
+- from:
+    uri: direct:bar
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+- from:
+    uri: direct:cheese
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+----
+====
 
 == Bean binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
 constructed from the xref:message.adoc[Message] are all defined by the
-xref:latest@manual:ROOT:bean-binding.adoc[Bean Binding] mechanism which is used throughout
-all of the various xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration]
+xref:manual::bean-binding.adoc[Bean Binding] mechanism which is used throughout
+all the various xref:manual::bean-integration.adoc[Bean Integration]
 mechanisms in Camel.

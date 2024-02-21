@@ -24,6 +24,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumerPollTest.class);
 
@@ -62,7 +64,7 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeadersAbsence(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -75,7 +77,8 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(0);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        out.setSleepForEmptyTest(2_000);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

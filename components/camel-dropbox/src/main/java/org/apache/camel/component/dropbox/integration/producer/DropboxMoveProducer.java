@@ -21,8 +21,8 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxHelper;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 
 public class DropboxMoveProducer extends DropboxProducer {
@@ -41,7 +41,7 @@ public class DropboxMoveProducer extends DropboxProducer {
         DropboxMoveResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
                 .move(remotePath, newRemotePath);
 
-        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), result.getOldPath());
+        exchange.getIn().setHeader(DropboxConstants.MOVED_PATH, result.getOldPath());
         exchange.getIn().setBody(result.getNewPath());
     }
 

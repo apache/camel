@@ -16,23 +16,44 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.NormalizedEndpointUri;
 
-public final class NormalizedUri implements NormalizedEndpointUri {
+/**
+ * Implementation of {@link NormalizedEndpointUri}.
+ *
+ * Use the {@link #newNormalizedUri(String, boolean)} as factory method.
+ */
+public final class NormalizedUri extends ValueHolder<String> implements NormalizedEndpointUri {
 
-    private final String uri;
+    // must extend ValueHolder to let this class be used as key for Camels endpoint registry
 
-    public NormalizedUri(String uri) {
-        this.uri = uri;
+    private NormalizedUri(String value) {
+        super(value);
+    }
+
+    /**
+     * Creates a new {@link NormalizedUri} instance
+     *
+     * @param  uri        the uri
+     * @param  normalized whether its already normalized
+     * @return            the created normalized uri
+     */
+    public static NormalizedUri newNormalizedUri(String uri, boolean normalized) {
+        if (normalized) {
+            return new NormalizedUri(uri);
+        } else {
+            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri));
+        }
     }
 
     @Override
     public String getUri() {
-        return uri;
+        return get();
     }
 
     @Override
     public String toString() {
-        return uri;
+        return get();
     }
 }

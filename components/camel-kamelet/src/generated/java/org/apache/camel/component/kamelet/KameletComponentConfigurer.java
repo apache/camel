@@ -28,13 +28,23 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "noerrorhandler":
+        case "noErrorHandler": target.setNoErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "routeproperties":
         case "routeProperties": target.setRouteProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "routetemplateloaderlistener":
+        case "routeTemplateLoaderListener": target.setRouteTemplateLoaderListener(property(camelContext, org.apache.camel.spi.RouteTemplateLoaderListener.class, value)); return true;
         case "templateproperties":
         case "templateProperties": target.setTemplateProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"routeTemplateLoaderListener"};
     }
 
     @Override
@@ -47,8 +57,13 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "location": return java.lang.String.class;
+        case "noerrorhandler":
+        case "noErrorHandler": return boolean.class;
         case "routeproperties":
         case "routeProperties": return java.util.Map.class;
+        case "routetemplateloaderlistener":
+        case "routeTemplateLoaderListener": return org.apache.camel.spi.RouteTemplateLoaderListener.class;
         case "templateproperties":
         case "templateProperties": return java.util.Map.class;
         case "timeout": return long.class;
@@ -67,8 +82,13 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "location": return target.getLocation();
+        case "noerrorhandler":
+        case "noErrorHandler": return target.isNoErrorHandler();
         case "routeproperties":
         case "routeProperties": return target.getRouteProperties();
+        case "routetemplateloaderlistener":
+        case "routeTemplateLoaderListener": return target.getRouteTemplateLoaderListener();
         case "templateproperties":
         case "templateProperties": return target.getTemplateProperties();
         case "timeout": return target.getTimeout();

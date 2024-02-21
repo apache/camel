@@ -11,12 +11,12 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro",
-    "version": "3.9.0-SNAPSHOT",
+    "version": "4.5.0-SNAPSHOT",
     "modelName": "avro",
     "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat"
   },
   "properties": {
-    "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "instanceClassName": { "index": 1, "kind": "attribute", "displayName": "Instance Class Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" }
   }
 }

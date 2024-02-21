@@ -43,12 +43,12 @@ public class ObjectSerializationTest extends BaseNettyTest {
     private static volatile int port2;
 
     @BeforeAll
-    public static void initPort2() throws Exception {
+    public static void initPort2() {
         port2 = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
-    public void testObjectSerializationFailureByDefault() throws Exception {
+    public void testObjectSerializationFailureByDefault() {
         Date date = new Date();
         try {
             template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
@@ -59,7 +59,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
     }
 
     @Test
-    public void testObjectSerializationAllowedViaDecoder() throws Exception {
+    public void testObjectSerializationAllowedViaDecoder() {
         Date date = new Date();
         Date receivedDate = template
                 .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
@@ -68,7 +68,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
 
     @Override
     @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
@@ -78,12 +78,12 @@ public class ObjectSerializationTest extends BaseNettyTest {
     }
 
     @BindToRegistry("encoder")
-    public ChannelHandler getEncoder() throws Exception {
+    public ChannelHandler getEncoder() {
         return new ShareableChannelHandlerFactory(new ObjectEncoder());
     }
 
     @BindToRegistry("decoder")
-    public ChannelHandler getDecoder() throws Exception {
+    public ChannelHandler getDecoder() {
         return new DefaultChannelHandlerFactory() {
             @Override
             public ChannelHandler newChannelHandler() {
@@ -93,23 +93,23 @@ public class ObjectSerializationTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Object obj = exchange.getIn().getBody();
-                                exchange.getOut().setBody(obj);
+                                exchange.getMessage().setBody(obj);
                             }
                         });
 
                 from("netty:tcp://localhost:{{port2}}?sync=true&decoders=#decoder&encoders=#encoder")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Object obj = exchange.getIn().getBody();
-                                exchange.getOut().setBody(obj);
+                                exchange.getMessage().setBody(obj);
                             }
                         });
             }

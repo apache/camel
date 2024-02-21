@@ -28,12 +28,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -43,6 +43,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,14 +84,31 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         this.servletName = config.getServletName();
 
         final String asyncParam = config.getInitParameter(ASYNC_PARAM);
-        this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
+        this.async = asyncParam != null && ObjectHelper.toBoolean(asyncParam);
         this.forceAwait = Boolean.parseBoolean(config.getInitParameter(FORCE_AWAIT_PARAM));
         this.executorRef = config.getInitParameter(EXECUTOR_REF_PARAM);
         log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) {
+        log.trace("Service: {}", request);
+        try {
+            handleService(request, response);
+        } catch (Exception e) {
+            // do not leak exception back to caller
+            log.warn("Error handling request due to: {}", e.getMessage(), e);
+            try {
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+        }
+    }
+
+    protected void handleService(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isAsync()) {
             if (executorRef != null) {
                 HttpConsumer consumer = doResolve(req, resp); // can be done sync
@@ -132,7 +150,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     }
 
     private void onError(HttpServletResponse resp, Exception e) {
-        //An error shouldn't occur as we should handle most of error in doService
+        //An error shouldn't occur as we should handle most error in doService
         log.error("Error processing request", e);
         try {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -202,10 +220,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
      * This is the logical implementation to handle request with {@link CamelServlet} This is where most exceptions
      * should be handled
      *
-     * @param  request          the {@link HttpServletRequest}
-     * @param  response         the {@link HttpServletResponse}
-     * @throws ServletException
-     * @throws IOException
+     * @param request  the {@link HttpServletRequest}
+     * @param response the {@link HttpServletResponse}
      */
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
@@ -390,7 +406,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
 
     /**
      * @deprecated use
-     *             {@link ServletResolveConsumerStrategy#resolve(javax.servlet.http.HttpServletRequest, java.util.Map)}
+     *             {@link ServletResolveConsumerStrategy#resolve(jakarta.servlet.http.HttpServletRequest, java.util.Map)}
      */
     @Deprecated
     protected HttpConsumer resolve(HttpServletRequest request) {
@@ -400,13 +416,19 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     @Override
     public void connect(HttpConsumer consumer) {
         log.debug("Connecting consumer: {}", consumer);
-        consumers.put(consumer.getEndpoint().getEndpointUri(), consumer);
+        String endpointUri = consumer.getEndpoint().getEndpointUri();
+        if (consumers.containsKey(endpointUri)) {
+            throw new IllegalStateException("Duplicate request path for " + endpointUri);
+        }
+        consumers.put(endpointUri, consumer);
+        RestConsumerContextPathMatcher.register(consumer.getPath());
     }
 
     @Override
     public void disconnect(HttpConsumer consumer) {
         log.debug("Disconnecting consumer: {}", consumer);
         consumers.remove(consumer.getEndpoint().getEndpointUri());
+        RestConsumerContextPathMatcher.unRegister(consumer.getPath());
     }
 
     @Override
@@ -454,7 +476,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             Thread.currentThread().setContextClassLoader(appCtxCl);
             if (log.isTraceEnabled()) {
                 log.trace("Overrode TCCL for exchangeId {} to {} on thread {}",
-                        new Object[] { exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName() });
+                        exchange.getExchangeId(), appCtxCl, Thread.currentThread().getName());
             }
             return oldClassLoader;
         }
@@ -471,7 +493,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         Thread.currentThread().setContextClassLoader(oldTccl);
         if (log.isTraceEnabled()) {
             log.trace("Restored TCCL for exchangeId {} to {} on thread {}",
-                    new String[] { exchange.getExchangeId(), oldTccl.toString(), Thread.currentThread().getName() });
+                    exchange.getExchangeId(), oldTccl, Thread.currentThread().getName());
         }
     }
 

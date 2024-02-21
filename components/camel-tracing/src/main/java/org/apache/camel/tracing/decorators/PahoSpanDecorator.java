@@ -16,11 +16,24 @@
  */
 package org.apache.camel.tracing.decorators;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
 public class PahoSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getComponent() {
         return "paho";
+    }
+
+    @Override
+    protected String getDestination(Exchange exchange, Endpoint endpoint) {
+        // when using toD for dynamic destination then extract from header
+        String destination = exchange.getMessage().getHeader("CamelPahoOverrideTopic", String.class);
+        if (destination == null) {
+            destination = super.getDestination(exchange, endpoint);
+        }
+        return destination;
     }
 
     @Override

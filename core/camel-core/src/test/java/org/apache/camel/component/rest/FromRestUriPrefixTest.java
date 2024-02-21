@@ -36,9 +36,9 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
         assertNotNull(rest);
         assertEquals("/say/", rest.getPath());
         assertEquals(3, rest.getVerbs().size());
-        assertEquals("/hello", rest.getVerbs().get(0).getUri());
-        assertEquals("/bye", rest.getVerbs().get(1).getUri());
-        assertEquals("/hi", rest.getVerbs().get(2).getUri());
+        assertEquals("/hello", rest.getVerbs().get(0).getPath());
+        assertEquals("/bye", rest.getVerbs().get(1).getPath());
+        assertEquals("/hi", rest.getVerbs().get(2).getPath());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
@@ -62,7 +62,7 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                // we have logic to cleanup those paths so there is only one /
+                // we have logic to clean up those paths so there is only one /
                 // between the paths
                 rest("/say/").get("/hello").to("direct:hello").get("/bye").consumes("application/json").to("direct:bye")
                         .post("/hi").to("mock:update");

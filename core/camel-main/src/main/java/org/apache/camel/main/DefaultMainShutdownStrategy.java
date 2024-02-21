@@ -66,9 +66,9 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     @Override
-    public void await(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
         installHangupInterceptor();
-        super.await(timeout, unit);
+        return super.await(timeout, unit);
     }
 
     private void handleHangup() {
@@ -89,15 +89,17 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 };
                 tracker.open();
 
-                // use timeout from camel shutdown strategy and add 5 second extra to allow camel to shutdown graceful
-                long max = 5000 + main.getCamelContext().getShutdownStrategy().getTimeUnit()
-                        .toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
+                // use timeout from camel shutdown strategy and add extra to allow camel to shut down graceful
+                long max = TimeUnit.SECONDS.toMillis(getExtraShutdownTimeout())
+                           + main.getCamelContext().getShutdownStrategy().getTimeUnit()
+                                   .toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
                 int waits = 0;
                 boolean done = false;
                 StopWatch watch = new StopWatch();
                 while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
-                    String msg = "Waiting for CamelContext to graceful shutdown, elapsed: "
-                                 + TimeUtils.printDuration(watch.taken());
+                    String msg = "Waiting for CamelContext to graceful shutdown (max:"
+                                 + TimeUtils.printDuration(max, true) + ", elapsed:"
+                                 + TimeUtils.printDuration(watch.taken(), true) + ")";
                     if (waits > 0 && waits % 5 == 0) {
                         // do some info logging every 5th time
                         LOG.info(msg);
@@ -106,11 +108,16 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                     }
                     waits++;
                     try {
-                        // wait 1 sec and loop and log activity so we can see we are waiting
+                        // wait 1 sec and loop and log activity, so we can see we are waiting
                         done = latch.await(1000, TimeUnit.MILLISECONDS);
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
+                }
+                boolean success = done || main.getCamelContext().isStopped();
+                if (!success) {
+                    LOG.warn("CamelContext not yet shutdown completely after: {}. Forcing shutdown.",
+                            TimeUtils.printDuration(watch.taken(), true));
                 }
                 tracker.close();
             }

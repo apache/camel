@@ -35,7 +35,7 @@ public class MyBatisBeanSelectListTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Account james = (Account) list.get(0);
@@ -45,10 +45,10 @@ public class MyBatisBeanSelectListTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis-bean:AccountService:selectBeanAllAccounts")
                         .to("mock:result");

@@ -35,7 +35,7 @@ public class JacksonMarshalAllowJMSTypeTest extends CamelTestSupport {
         String json = "{\"name\":\"Camel\"}";
         template.sendBodyAndHeader("direct:backPojo", json, "JMSType", TestPojo.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
         assertNotNull(pojo);
@@ -43,11 +43,11 @@ public class JacksonMarshalAllowJMSTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonDataFormat format = new JacksonDataFormat();
                 format.setAllowJmsType(true);
 

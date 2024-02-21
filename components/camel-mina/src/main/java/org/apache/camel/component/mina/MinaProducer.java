@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultProducer;
@@ -89,11 +90,11 @@ public class MinaProducer extends DefaultProducer {
 
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
-            setupSocketProtocol(protocol);
+            setupSocketProtocol();
         } else if (configuration.isDatagramProtocol()) {
-            setupDatagramProtocol(protocol);
+            setupDatagramProtocol();
         } else if (protocol.equals("vm")) {
-            setupVmProtocol(protocol);
+            setupVmProtocol();
         }
         handler = new ResponseHandler();
         connector.setHandler(handler);
@@ -131,7 +132,7 @@ public class MinaProducer extends DefaultProducer {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME,
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
@@ -171,6 +172,7 @@ public class MinaProducer extends DefaultProducer {
             LOG.debug("Waiting for response using timeout {} millis.", timeout);
             boolean done = responseLatch.await(timeout, TimeUnit.MILLISECONDS);
             if (!done) {
+                maybeDisconnectOnTimeout();
                 throw new ExchangeTimedOutException(exchange, timeout);
             }
 
@@ -179,6 +181,7 @@ public class MinaProducer extends DefaultProducer {
                 throw new CamelExchangeException("Error occurred in ResponseHandler", exchange, handler.getCause());
             } else if (!handler.isMessageReceived()) {
                 // no message received
+                maybeDisconnectOnTimeout();
                 throw new ExchangeTimedOutException(exchange, timeout);
             } else {
                 // set the result on either IN or OUT on the original exchange depending on its pattern
@@ -188,6 +191,16 @@ public class MinaProducer extends DefaultProducer {
                     MinaPayloadHelper.setIn(exchange, handler.getMessage());
                 }
             }
+        }
+    }
+
+    protected void maybeDisconnectOnTimeout() throws InterruptedException {
+        if (session == null) {
+            return;
+        }
+        if (configuration.isDisconnectOnNoReply()) {
+            LOG.debug("Closing session when timed out at address: {}", address);
+            closeSessionIfNeededAndAwaitCloseInHandler(session);
         }
     }
 
@@ -280,7 +293,7 @@ public class MinaProducer extends DefaultProducer {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void setupVmProtocol(String uri) {
+    protected void setupVmProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
@@ -299,7 +312,7 @@ public class MinaProducer extends DefaultProducer {
         configureCodecFactory("MinaProducer", connector);
     }
 
-    protected void setupSocketProtocol(String uri) throws Exception {
+    protected void setupSocketProtocol() throws Exception {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
@@ -324,9 +337,7 @@ public class MinaProducer extends DefaultProducer {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
-                    configuration.isAutoStartTls());
-            filter.setUseClientMode(true);
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("MinaProducer", connector);
@@ -364,7 +375,7 @@ public class MinaProducer extends DefaultProducer {
         }
     }
 
-    protected void setupDatagramProtocol(String uri) {
+    protected void setupDatagramProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         boolean transferExchange = configuration.isTransferExchange();
         List<IoFilter> filters = configuration.getFilters();

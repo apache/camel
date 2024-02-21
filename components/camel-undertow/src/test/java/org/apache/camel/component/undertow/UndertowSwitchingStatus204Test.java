@@ -19,12 +19,12 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,16 +35,17 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
 
     @Test
     public void testSwitchNoBodyTo204ViaHttpEmptyBody() throws Exception {
-        HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        HttpGet request = new HttpGet("http://localhost:" + getPort() + "/foo");
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
-        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
-        assertNull(httpResponse.getEntity());
+            assertEquals(204, httpResponse.getCode());
+            assertNull(httpResponse.getEntity());
+        }
     }
 
     @Test
-    public void testSwitchingNoBodyTo204NettyHttpViaCamelEmptyBody() throws Exception {
+    public void testSwitchingNoBodyTo204NettyHttpViaCamelEmptyBody() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("undertow:http://localhost:{{port}}/foo", inExchange);
 
@@ -54,7 +55,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Test
-    public void testSwitchingNoBodyTo204ViaCamelRouteEmptyBody() throws Exception {
+    public void testSwitchingNoBodyTo204ViaCamelRouteEmptyBody() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foo", inExchange);
 
@@ -66,16 +67,17 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     @Test
     public void testNoSwitchingHasBodyViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test
-    public void testNoSwitchingHasBodyNettyHttpViaCamelNoContent() throws Exception {
+    public void testNoSwitchingHasBodyNettyHttpViaCamelNoContent() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("undertow:http://localhost:{{port}}/bar", inExchange);
 
@@ -85,7 +87,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Test
-    public void testNoSwitchingHasBodyViaCamelRouteNoContent() throws Exception {
+    public void testNoSwitchingHasBodyViaCamelRouteNoContent() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
@@ -97,16 +99,17 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     @Test
     public void testNoSwitchingHasCodeViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test
-    public void testNoSwitchingHasCodeNettyHttpViaCamelNoContent() throws Exception {
+    public void testNoSwitchingHasCodeNettyHttpViaCamelNoContent() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("undertow:http://localhost:{{port}}/foobar", inExchange);
 
@@ -116,7 +119,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Test
-    public void testNoSwitchingHasCodeViaCamelRouteNoContent() throws Exception {
+    public void testNoSwitchingHasCodeViaCamelRouteNoContent() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foobar", inExchange);
 
@@ -126,10 +129,10 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("undertow:http://localhost:{{port}}/foo")
                         .setBody().constant("");

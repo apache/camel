@@ -60,7 +60,7 @@ public class GaugeProducerTest {
     private GaugeProducer producer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         lenient().when(endpoint.getRegistry()).thenReturn(registry);
         lenient().when(endpoint.getSubject()).thenReturn(VALUE);
         lenient().when(endpoint.getMetricsName()).thenReturn(METRICS_NAME);
@@ -69,12 +69,12 @@ public class GaugeProducerTest {
     }
 
     @Test
-    public void testGaugeProducer() throws Exception {
+    public void testGaugeProducer() {
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() {
         verify(registry, times(1)).register(eq(METRICS_NAME), argThat(new ArgumentMatcher<CamelMetricsGauge>() {
             @Override
             public boolean matches(CamelMetricsGauge argument) {

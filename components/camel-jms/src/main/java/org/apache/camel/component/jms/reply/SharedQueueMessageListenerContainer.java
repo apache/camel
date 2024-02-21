@@ -45,32 +45,28 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
         super(endpoint, endpoint.isAllowReplyManagerQuickStop());
         this.fixedMessageSelector = fixedMessageSelector;
+        // must use cache level consumer for fixed message selector
+        setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
     }
 
     /**
      * Use a dynamic JMS message selector
      *
      * @param endpoint the endpoint
-     * @param creator  the create to create the dynamic selector
+     * @param creator  the creator to create the dynamic selector
      */
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
         super(endpoint, endpoint.isAllowReplyManagerQuickStop());
         this.creator = creator;
+        // must use cache level session for dynamic message selector,
+        // as otherwise the dynamic message selector will not be updated on-the-fly
+        setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
     }
 
+    // override this method and return the appropriate selector
     @Override
     public String getMessageSelector() {
-        // override this method and return the appropriate selector
-        String id = null;
-        if (fixedMessageSelector != null) {
-            id = fixedMessageSelector;
-        } else if (creator != null) {
-            id = creator.get();
-        }
-        if (logger.isTraceEnabled()) {
-            logger.trace("Using MessageSelector[" + id + "]");
-        }
-        return id;
+        return JmsReplyHelper.getMessageSelector(fixedMessageSelector, creator);
     }
 
 }

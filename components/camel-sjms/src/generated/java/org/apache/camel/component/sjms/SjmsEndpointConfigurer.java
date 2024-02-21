@@ -40,7 +40,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "connectionfactory":
-        case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionFactory": target.setConnectionFactory(property(camelContext, jakarta.jms.ConnectionFactory.class, value)); return true;
         case "deliverymode":
         case "deliveryMode": target.setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deliverypersistent":
@@ -60,7 +60,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exceptionlistener":
-        case "exceptionListener": target.setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "exceptionListener": target.setExceptionListener(property(camelContext, jakarta.jms.ExceptionListener.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "explicitqosenabled":
@@ -132,7 +132,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
         case "connectionfactory":
-        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionFactory": return jakarta.jms.ConnectionFactory.class;
         case "deliverymode":
         case "deliveryMode": return java.lang.Integer.class;
         case "deliverypersistent":
@@ -152,7 +152,7 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exceptionlistener":
-        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exceptionListener": return jakarta.jms.ExceptionListener.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "explicitqosenabled":

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class NettyConsumerExceptionHandler implements ExceptionHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerExceptionHandler.class);
     private final CamelLogger logger;
     private final LoggingLevel closedLoggingLevel;
 

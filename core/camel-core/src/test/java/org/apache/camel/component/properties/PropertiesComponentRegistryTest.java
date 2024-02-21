@@ -25,7 +25,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
@@ -48,7 +52,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         DefaultRegistry reg = new DefaultRegistry();
         reg.bind("foo", foo);
         reg.bind("bar", bar);
-        context.setRegistry(reg);
+        context.getCamelContextExtension().setRegistry(reg);
 
         context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
 
@@ -82,20 +86,18 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentRegistryLookupNameAndType() throws Exception {
+    public void testPropertiesComponentRegistryLookupNameAndType() {
         context.start();
 
         assertSame(foo, context.getRegistry().lookupByNameAndType("{{bean.foo}}", MyFooBean.class));
         assertSame(bar, context.getRegistry().lookupByNameAndType("{{bean.bar}}", MyDummyBean.class));
 
-        try {
-            context.getRegistry().lookupByNameAndType("{{bean.unknown}}", MyDummyBean.class);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
-                    cause.getMessage());
-        }
-    }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> context.getRegistry().lookupByNameAndType("{{bean.unknown}}", MyDummyBean.class),
+                "Should have thrown exception");
 
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                cause.getMessage());
+    }
 }

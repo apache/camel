@@ -98,13 +98,13 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         };
     }
 
-    private class MyStrategy extends LifecycleStrategySupport {
+    private static class MyStrategy extends LifecycleStrategySupport {
 
         private AtomicInteger contextStartCounter = new AtomicInteger();
         private AtomicInteger removeCounter = new AtomicInteger();
 
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             contextStartCounter.incrementAndGet();
         }
 

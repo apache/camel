@@ -1,0 +1,20 @@
+= Camel Spring Boot Starter for extending openapi-java with the Springdoc UI
+:doctitle: Springdoc
+//This may not be correct.  It appears on the included starter.adoc
+:shortname: openapi-java with springdoc
+:artifactid: openapi-java
+:description: Springdoc Swagger UI for openapi-java in spring boot
+:since: 3.14
+//:supportlevel: Stable
+//Manually maintained attributes
+:camel-spring-boot-name: springdoc
+:starter-artifactid: camel-springdoc-starter
+
+*Since Camel {since}*
+
+This is available only as a Camel spring boot starter.
+It supplies support for using the Springdoc Swagger UI with openapi-java.
+
+//Should the same options etc as openapi-java appear here??
+
+include::spring-boot:partial$starter.adoc[]

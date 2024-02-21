@@ -19,61 +19,80 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(51);
-        props.add("initialReplayIdMap");
-        props.add("notifyForOperations");
-        props.add("sObjectQuery");
-        props.add("notifyForOperationCreate");
-        props.add("sObjectClass");
-        props.add("compositeMethod");
+        Set<String> props = new HashSet<>(68);
+        props.add("allOrNone");
         props.add("apexMethod");
+        props.add("apexQueryParams");
+        props.add("apexUrl");
         props.add("apiVersion");
-        props.add("bridgeErrorHandler");
-        props.add("reportMetadata");
-        props.add("limit");
-        props.add("queryLocator");
-        props.add("contentType");
-        props.add("sObjectFields");
-        props.add("sObjectName");
-        props.add("sObjectBlobFieldName");
         props.add("backoffIncrement");
-        props.add("format");
-        props.add("sObjectId");
+        props.add("batchId");
+        props.add("bridgeErrorHandler");
+        props.add("compositeMethod");
+        props.add("contentType");
         props.add("defaultReplayId");
+        props.add("eventName");
+        props.add("eventSchemaFormat");
+        props.add("eventSchemaId");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fallBackReplayId");
+        props.add("format");
+        props.add("httpClient");
+        props.add("includeDetails");
+        props.add("initialReplayIdMap");
+        props.add("instanceId");
         props.add("jobId");
         props.add("lazyStartProducer");
-        props.add("objectMapper");
-        props.add("sObjectSearch");
-        props.add("notifyForOperationUpdate");
-        props.add("sObjectIdName");
-        props.add("replayId");
-        props.add("exceptionHandler");
-        props.add("pkChunkingParent");
-        props.add("batchId");
-        props.add("notifyForOperationUndelete");
-        props.add("apexUrl");
-        props.add("updateTopic");
-        props.add("instanceId");
-        props.add("notifyForFields");
-        props.add("sObjectIdValue");
-        props.add("apexQueryParams");
-        props.add("includeDetails");
-        props.add("pkChunkingChunkSize");
-        props.add("pkChunkingStartRow");
-        props.add("httpClient");
+        props.add("limit");
+        props.add("locator");
         props.add("maxBackoff");
-        props.add("rawPayload");
-        props.add("reportId");
-        props.add("resultId");
-        props.add("exchangePattern");
+        props.add("maxRecords");
+        props.add("notFoundBehaviour");
+        props.add("notifyForFields");
+        props.add("notifyForOperationCreate");
+        props.add("notifyForOperationDelete");
+        props.add("notifyForOperationUndelete");
+        props.add("notifyForOperationUpdate");
+        props.add("notifyForOperations");
+        props.add("objectMapper");
         props.add("operationName");
         props.add("pkChunking");
-        props.add("notFoundBehaviour");
+        props.add("pkChunkingChunkSize");
+        props.add("pkChunkingParent");
+        props.add("pkChunkingStartRow");
+        props.add("pubSubBatchSize");
+        props.add("pubSubDeserializeType");
+        props.add("pubSubPojoClass");
+        props.add("pubSubReplayId");
+        props.add("queryLocator");
+        props.add("rawHttpHeaders");
+        props.add("rawMethod");
+        props.add("rawPath");
+        props.add("rawPayload");
+        props.add("rawQueryParameters");
+        props.add("replayId");
+        props.add("replayPreset");
+        props.add("reportId");
+        props.add("reportMetadata");
+        props.add("resultId");
+        props.add("sObjectBlobFieldName");
+        props.add("sObjectClass");
+        props.add("sObjectFields");
+        props.add("sObjectId");
+        props.add("sObjectIdName");
+        props.add("sObjectIdValue");
+        props.add("sObjectName");
+        props.add("sObjectQuery");
+        props.add("sObjectSearch");
+        props.add("streamQueryResult");
         props.add("topicName");
-        props.add("notifyForOperationDelete");
+        props.add("updateTopic");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -88,7 +107,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "operationName", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "operationName", null, true, copy);
         uri = buildPathParameter(syntax, uri, "topicName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
@@ -102,6 +121,11 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

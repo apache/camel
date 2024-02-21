@@ -23,6 +23,8 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nettyhttpbinding":
         case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "securityconfiguration":
@@ -36,6 +38,8 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "nettyhttpbinding":
         case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
         case "securityconfiguration":
@@ -50,6 +54,8 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "nettyhttpbinding":
         case "nettyHttpBinding": return target.getNettyHttpBinding();
         case "securityconfiguration":

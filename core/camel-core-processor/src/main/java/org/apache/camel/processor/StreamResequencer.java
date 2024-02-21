@@ -38,6 +38,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -79,7 +80,7 @@ public class StreamResequencer extends AsyncProcessorSupport
 
     /**
      * Creates a new {@link StreamResequencer} instance.
-     * 
+     *
      * @param processor  next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
@@ -117,7 +118,7 @@ public class StreamResequencer extends AsyncProcessorSupport
      * resequencer at a given point in time. If the capacity if reached, polling from the endpoint will be skipped for
      * <code>timeout</code> milliseconds giving exchanges the possibility to time out and to be delivered after the
      * waiting period.
-     * 
+     *
      * @return this resequencer's capacity.
      */
     public int getCapacity() {
@@ -128,7 +129,7 @@ public class StreamResequencer extends AsyncProcessorSupport
      * Returns this resequencer's timeout. This sets the resequencer engine's timeout via
      * {@link ResequencerEngine#setTimeout(long)}. This value is also used to define the polling timeout from the
      * endpoint.
-     * 
+     *
      * @return this resequencer's timeout. (Processor)
      * @see    ResequencerEngine#setTimeout(long)
      */
@@ -228,7 +229,7 @@ public class StreamResequencer extends AsyncProcessorSupport
 
     /**
      * Sends the <code>exchange</code> to the next <code>processor</code>.
-     * 
+     *
      * @param exchange exchange to send.
      */
     @Override
@@ -242,7 +243,8 @@ public class StreamResequencer extends AsyncProcessorSupport
             try {
                 Thread.sleep(getTimeout());
             } catch (InterruptedException e) {
-                // we was interrupted so break out
+                Thread.currentThread().interrupt();
+                // we were interrupted so break out
                 exchange.setException(e);
                 callback.done(true);
                 return true;
@@ -250,7 +252,9 @@ public class StreamResequencer extends AsyncProcessorSupport
         }
 
         try {
-            engine.insert(exchange);
+            // need to make defensive copy that are put on the sequencer queue
+            Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
+            engine.insert(copy);
             delivery.request();
         } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
@@ -282,8 +286,8 @@ public class StreamResequencer extends AsyncProcessorSupport
 
     class Delivery extends Thread {
 
-        private Lock deliveryRequestLock = new ReentrantLock();
-        private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
+        private final Lock deliveryRequestLock = new ReentrantLock();
+        private final Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
 
         Delivery() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Resequencer Delivery"));
@@ -300,12 +304,13 @@ public class StreamResequencer extends AsyncProcessorSupport
                         deliveryRequestLock.unlock();
                     }
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
                 try {
                     engine.deliver();
-                } catch (Throwable t) {
-                    // a fail safe to handle all exceptions being thrown
+                } catch (Exception t) {
+                    // a fail-safe to handle all exceptions being thrown
                     getExceptionHandler().handleException(t);
                 }
             }

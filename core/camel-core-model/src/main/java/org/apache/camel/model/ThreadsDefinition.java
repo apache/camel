@@ -19,11 +19,11 @@ package org.apache.camel.model;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -38,9 +38,11 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
         implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
+
     @XmlAttribute
-    private String executorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String executorService;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String poolSize;
@@ -51,24 +53,24 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     @Metadata(javaType = "java.lang.Long")
     private String keepAliveTime;
     @XmlAttribute
-    @Metadata(javaType = "java.util.concurrent.TimeUnit",
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
               enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns,DiscardOldest,Discard")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+              enums = "Abort,CallerRuns")
     private String rejectedPolicy;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true")
     private String callerRunsWhenRejected;
 
     public ThreadsDefinition() {
@@ -95,7 +97,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
      */
     @Override
     public ThreadsDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -103,8 +105,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
      * To refer to a custom thread pool or use a thread pool profile (as overlay)
      */
     @Override
-    public ThreadsDefinition executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public ThreadsDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -304,23 +306,13 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     }
 
     @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
     }
 
     @Override
     public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+        return executorService;
     }
 
     public String getPoolSize() {
@@ -393,5 +385,13 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 }

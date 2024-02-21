@@ -30,12 +30,21 @@ public class ByteArrayInputStreamCacheTest extends ContextTestSupport {
     @Test
     public void testByteArrayInputStream() throws Exception {
         ByteArrayInputStreamCache cache = new ByteArrayInputStreamCache(new ByteArrayInputStream("<foo>bar</foo>".getBytes()));
-
+        assertEquals(0, cache.position());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         cache.writeTo(bos);
-
         String s = context.getTypeConverter().convertTo(String.class, bos);
         assertEquals("<foo>bar</foo>", s);
+        assertEquals(14, cache.position());
+
+        // reset and try again
+        cache.reset();
+        assertEquals(0, cache.position());
+        bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+        s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("<foo>bar</foo>", s);
+        assertEquals(14, cache.position());
 
         IOHelper.close(cache, bos);
     }

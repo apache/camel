@@ -80,7 +80,7 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
         };
     }
 
-    @org.apache.camel.RecipientList(onPrepareRef = "myPrepare")
+    @org.apache.camel.RecipientList(onPrepare = "myPrepare")
     public static String doSomething() {
         return "direct:a,direct:b";
     }

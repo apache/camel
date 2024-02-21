@@ -16,31 +16,28 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Evaluate a jOOR (Java compiled once at runtime) expression language.
+ * Evaluates a jOOR (Java compiled once at runtime) expression.
  */
 @Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
 @XmlRootElement(name = "joor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JoorExpression extends ExpressionDefinition {
+@Deprecated
+public class JoorExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String preCompile;
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String singleQuotes;
 
     public JoorExpression() {
@@ -48,6 +45,12 @@ public class JoorExpression extends ExpressionDefinition {
 
     public JoorExpression(String expression) {
         super(expression);
+    }
+
+    private JoorExpression(Builder builder) {
+        super(builder);
+        this.preCompile = builder.preCompile;
+        this.singleQuotes = builder.singleQuotes;
     }
 
     @Override
@@ -79,26 +82,54 @@ public class JoorExpression extends ExpressionDefinition {
         this.singleQuotes = singleQuotes;
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
     /**
-     * Sets the class of the result type (type from output)
+     * {@code Builder} is a specific builder for {@link JoorExpression}.
      */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, JoorExpression> {
 
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
+        private String preCompile;
+        private String singleQuotes;
 
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
+        /**
+         * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then
+         * the expression is reloaded and compiled on each evaluation.
+         */
+        public Builder preCompile(String preCompile) {
+            this.preCompile = preCompile;
+            return this;
+        }
 
+        /**
+         * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then
+         * the expression is reloaded and compiled on each evaluation.
+         */
+        public Builder preCompile(boolean preCompile) {
+            this.preCompile = Boolean.toString(preCompile);
+            return this;
+        }
+
+        /**
+         * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work
+         * with strings inside strings.
+         */
+        public Builder singleQuotes(String singleQuotes) {
+            this.singleQuotes = singleQuotes;
+            return this;
+        }
+
+        /**
+         * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work
+         * with strings inside strings.
+         */
+        public Builder singleQuotes(boolean singleQuotes) {
+            this.singleQuotes = Boolean.toString(singleQuotes);
+            return this;
+        }
+
+        @Override
+        public JoorExpression end() {
+            return new JoorExpression(this);
+        }
+    }
 }

@@ -24,14 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
@@ -70,7 +66,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * </blockquote> This will build a composite of two insert operations.
  */
-@XStreamAlias("batch")
 public final class SObjectComposite implements Serializable {
 
     public enum Method {
@@ -90,12 +85,10 @@ public final class SObjectComposite implements Serializable {
 
     private final boolean allOrNone;
 
-    @XStreamOmitField
     private final String apiPrefix;
 
     private final List<CompositeRequest> compositeRequests = new ArrayList<>();
 
-    @XStreamOmitField
     private final Version version;
 
     /**
@@ -209,7 +202,9 @@ public final class SObjectComposite implements Serializable {
      * {@code CreatedBy}. To fetch fields from that related object ({@code User} SObject) use: <blockquote>
      *
      * <pre>
-     * {@code batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")}
+     * {@code
+     * batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")
+     * }
      * </pre>
      *
      * </blockquote>
@@ -343,13 +338,12 @@ public final class SObjectComposite implements Serializable {
      */
     @SuppressWarnings("rawtypes")
     public Class[] objectTypes() {
-        final Set<Class<?>> types = Stream
+
+        return Stream
                 .concat(Stream.of(SObjectComposite.class, BatchRequest.class),
                         compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull)
                                 .map(Object::getClass))
-                .collect(Collectors.toSet());
-
-        return types.toArray(new Class[types.size()]);
+                .distinct().toArray(Class[]::new);
     }
 
     void addCompositeRequest(final CompositeRequest compositeRequest) {

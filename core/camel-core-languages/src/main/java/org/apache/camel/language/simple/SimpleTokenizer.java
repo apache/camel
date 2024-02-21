@@ -33,12 +33,14 @@ public final class SimpleTokenizer {
 
     // optimise to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
+    // optimise to be able to quick check for end function
+    private static final String FUNCTION_END = "}";
 
     static {
         // add known tokens
-        KNOWN_TOKENS[0] = new SimpleTokenType(TokenType.functionStart, "${");
-        KNOWN_TOKENS[1] = new SimpleTokenType(TokenType.functionStart, "$simple{");
-        KNOWN_TOKENS[2] = new SimpleTokenType(TokenType.functionEnd, "}");
+        KNOWN_TOKENS[0] = new SimpleTokenType(TokenType.functionStart, FUNCTION_START[0]);
+        KNOWN_TOKENS[1] = new SimpleTokenType(TokenType.functionStart, FUNCTION_START[1]);
+        KNOWN_TOKENS[2] = new SimpleTokenType(TokenType.functionEnd, FUNCTION_END);
         KNOWN_TOKENS[3] = new SimpleTokenType(TokenType.whiteSpace, " ");
         KNOWN_TOKENS[4] = new SimpleTokenType(TokenType.whiteSpace, "\t");
         KNOWN_TOKENS[5] = new SimpleTokenType(TokenType.whiteSpace, "\n");
@@ -89,7 +91,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
-        //binary operator 
+        //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
         KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.minusValue, "-");
@@ -108,6 +110,20 @@ public final class SimpleTokenizer {
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
             return expression.contains(FUNCTION_START[0]) || expression.contains(FUNCTION_START[1]);
+        }
+        return false;
+    }
+
+    /**
+     * Does the expression include an escape tokens.
+     *
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more escape tokens is included in the expression
+     */
+    public static boolean hasEscapeToken(String expression) {
+        if (expression != null) {
+            return expression.contains("\\n") || expression.contains("\\t") || expression.contains("\\r")
+                    || expression.contains("\\}");
         }
         return false;
     }
@@ -154,7 +170,7 @@ public final class SimpleTokenizer {
                 }
                 // is it a dot or comma as part of a floating point number
                 boolean decimalSeparator = '.' == expression.charAt(index) || ',' == expression.charAt(index);
-                if (decimalSeparator && sb.length() > 0) {
+                if (decimalSeparator && !sb.isEmpty()) {
                     char ch = expression.charAt(index);
                     sb.append(ch);
                     index++;
@@ -163,7 +179,7 @@ public final class SimpleTokenizer {
                     continue;
                 }
             }
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 return new SimpleToken(new SimpleTokenType(TokenType.numericValue, sb.toString()), index);
             }
         }
@@ -212,8 +228,7 @@ public final class SimpleTokenizer {
 
         // fallback and create a character token
         char ch = expression.charAt(index);
-        SimpleToken token = new SimpleToken(new SimpleTokenType(TokenType.character, "" + ch), index);
-        return token;
+        return new SimpleToken(new SimpleTokenType(TokenType.character, String.valueOf(ch)), index);
     }
 
     private static boolean acceptType(TokenType type, TokenType... filters) {
@@ -244,6 +259,16 @@ public final class SimpleTokenizer {
             boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
             boolean functionEnd = previous.equals("}");
             return functionEnd && whiteSpace;
+        }
+        if (token.isBinary()) {
+            int len = token.getValue().length();
+            // The binary operator must be used in the format of "exp1 op exp2"
+            if (index < 2 || len >= text.length() - 1) {
+                return false;
+            }
+            String previousOne = expression.substring(index - 1, index);
+            String afterOne = text.substring(len, len + 1);
+            return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
         }
 
         return text.startsWith(token.getValue());

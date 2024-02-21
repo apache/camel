@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.nio.charset.Charset;
 import java.util.Objects;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,53 +39,49 @@ public class MllpConfiguration implements Cloneable {
     ExchangePattern exchangePattern = ExchangePattern.InOut;
 
     // camel-mllp specific URI parameters
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
+    @UriParam(label = "advanced,consumer", defaultValue = "5")
     Integer backlog = 5;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "30000")
+    @UriParam(label = "advanced,consumer", defaultValue = "30000")
     int bindTimeout = 30000;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "5000")
+    @UriParam(label = "advanced,consumer", defaultValue = "5000")
     int bindRetryInterval = 5000;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    @UriParam(label = "advanced,consumer", defaultValue = "false")
     boolean lenientBind;
 
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "60000")
+    @UriParam(label = "advanced,consumer", defaultValue = "60000")
     int acceptTimeout = 60000;
 
-    @UriParam(label = "advanced,producer,tcp,timeout", defaultValue = "30000")
+    @UriParam(label = "advanced,producer", defaultValue = "30000")
     int connectTimeout = 30000;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "15000")
+    @UriParam(label = "advanced", defaultValue = "15000")
     int receiveTimeout = 15000;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "5")
+    @UriParam(label = "advanced,consumer", defaultValue = "5")
     int maxConcurrentConsumers = 5;
 
-    @Deprecated // use idleTimeout
-    @UriParam(label = "advanced,consumer,tcp,timeout", defaultValue = "null")
-    Integer maxReceiveTimeouts;
-
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "null")
+    @UriParam(label = "advanced,tcp", defaultValue = "null")
     Integer idleTimeout;
 
-    @UriParam(label = "advanced,tcp,timeout", defaultValue = "5000")
+    @UriParam(label = "advanced", defaultValue = "5000")
     int readTimeout = 5000;
 
-    @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
+    @UriParam(label = "advanced,producer", defaultValue = "true")
     Boolean keepAlive = true;
 
-    @UriParam(label = "advanced,producer,tcp", defaultValue = "true")
+    @UriParam(label = "advanced,producer", defaultValue = "true")
     Boolean tcpNoDelay = true;
 
-    @UriParam(label = "advanced,consumer,tcp", defaultValue = "false")
+    @UriParam(label = "advanced,consumer", defaultValue = "false")
     Boolean reuseAddress = false;
 
-    @UriParam(label = "advanced,tcp", defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     Integer receiveBufferSize = 8192;
 
-    @UriParam(label = "advanced,tcp", defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     Integer sendBufferSize = 8192;
 
     @UriParam(defaultValue = "true")
@@ -97,10 +89,6 @@ public class MllpConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "true")
     boolean hl7Headers = true;
-
-    @UriParam(defaultValue = "false")
-    @Deprecated
-    boolean bufferWrites;
 
     @UriParam(defaultValue = "true")
     boolean requireEndOfData = true;
@@ -111,14 +99,18 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     boolean validatePayload;
 
-    @UriParam(label = "codec")
+    @UriParam
     String charsetName;
 
-    public MllpConfiguration() {
-    }
+    @UriParam(label = "advanced,producer", defaultValue = "RESET")
+    MllpIdleTimeoutStrategy idleTimeoutStrategy = MllpIdleTimeoutStrategy.RESET;
 
-    public MllpConfiguration(MllpConfiguration source) {
-        this.copy(source);
+    @UriParam(label = "advanced", defaultValue = "2048")
+    int minBufferSize = 2048;
+    @UriParam(label = "advanced", defaultValue = "" + 0x40000000)
+    int maxBufferSize = 0x40000000;
+
+    public MllpConfiguration() {
     }
 
     public static void copy(MllpConfiguration source, MllpConfiguration target) {
@@ -139,6 +131,7 @@ public class MllpConfiguration implements Cloneable {
             target.connectTimeout = source.connectTimeout;
             target.receiveTimeout = source.receiveTimeout;
             target.idleTimeout = source.idleTimeout;
+            target.idleTimeoutStrategy = source.idleTimeoutStrategy;
             target.readTimeout = source.readTimeout;
             target.keepAlive = source.keepAlive;
             target.tcpNoDelay = source.tcpNoDelay;
@@ -147,7 +140,6 @@ public class MllpConfiguration implements Cloneable {
             target.sendBufferSize = source.sendBufferSize;
             target.autoAck = source.autoAck;
             target.hl7Headers = source.hl7Headers;
-            target.bufferWrites = source.bufferWrites;
             target.requireEndOfData = source.requireEndOfData;
             target.stringPayload = source.stringPayload;
             target.validatePayload = source.validatePayload;
@@ -179,8 +171,6 @@ public class MllpConfiguration implements Cloneable {
      *
      * If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging
      * them at WARN or ERROR level and ignored.
-     *
-     * @param bridgeErrorHandler
      */
     public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
         this.bridgeErrorHandler = bridgeErrorHandler;
@@ -192,8 +182,6 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Sets the exchange pattern when the consumer creates an exchange.
-     *
-     * @param exchangePattern
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
@@ -204,119 +192,11 @@ public class MllpConfiguration implements Cloneable {
     }
 
     public String getCharsetName() {
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return charsetName;
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' configured for the MLLP Endpoint  - returning default charset name {}",
-                        charsetName, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - returning default charset name {}",
-                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset().name();
-    }
-
-    public Charset getCharset() {
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return Charset.forName(charsetName);
-                }
-                LOG.warn("Unsupported character set name '{}' configured for the MLLP Endpoint - returning default charset {}",
-                        charsetName, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - returning default charset {}",
-                        charsetName, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset();
-    }
-
-    public Charset getCharset(Exchange exchange) {
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName, charsetEx);
-            }
-        }
-
-        return getCharset();
-    }
-
-    public Charset getCharset(Exchange exchange, byte[] hl7Bytes) {
-        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
-        if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
-            try {
-                if (Charset.isSupported(exchangeCharsetName)) {
-                    return Charset.forName(exchangeCharsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' specified in the Exchange - checking for configured character set",
-                        exchangeCharsetName, charsetEx);
-            }
-        }
-
-        if (hasCharsetName()) {
-            try {
-                if (Charset.isSupported(charsetName)) {
-                    return Charset.forName(charsetName);
-                }
-                LOG.warn(
-                        "Unsupported character set name '{}' configured for the MLLP Endpoint - checking for character set in payload",
-                        charsetName);
-            } catch (Exception charsetEx) {
-                LOG.warn(
-                        "Ignoring exception determining character set for name '{}' configured for the MLLP Endpoint - checking for character set in payload",
-                        charsetName, charsetEx);
-            }
-        }
-
-        String msh18 = Hl7Util.findMsh18(hl7Bytes);
-        if (msh18 != null && !msh18.isEmpty()) {
-            if (MllpProtocolConstants.MSH18_VALUES.containsKey(msh18)) {
-                return MllpProtocolConstants.MSH18_VALUES.get(msh18);
-            }
-            try {
-                if (Charset.isSupported(msh18)) {
-                    return Charset.forName(msh18);
-                }
-                LOG.info("Unsupported character set name '{}' found in MSH-18 - using default character set {}",
-                        msh18, MllpComponent.getDefaultCharset());
-            } catch (Exception charsetEx) {
-                LOG.info(
-                        "Ignoring exception encountered determining character set for for name '{}' found in MSH-18 - using default character set {}",
-                        msh18, MllpComponent.getDefaultCharset(), charsetEx);
-            }
-        }
-
-        return MllpComponent.getDefaultCharset();
+        return charsetName;
     }
 
     /**
-     * Set the CamelCharsetName property on the exchange
-     *
-     * @param charsetName the charset
+     * Sets the default charset to use
      */
     public void setCharsetName(String charsetName) {
         this.charsetName = charsetName;
@@ -431,44 +311,6 @@ public class MllpConfiguration implements Cloneable {
      */
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         this.maxConcurrentConsumers = maxConcurrentConsumers;
-    }
-
-    /**
-     * Determine if the maxReceiveTimeouts URI parameter has been set
-     *
-     * @return     true if the parameter has been set; false otherwise
-     *
-     * @deprecated Use the idleTimeout URI parameter
-     */
-    @Deprecated
-    public boolean hasMaxReceiveTimeouts() {
-        return maxReceiveTimeouts != null;
-    }
-
-    /**
-     * Retrieve the value of the maxReceiveTimeouts URI parameter.
-     *
-     * @return     the maximum number of receive timeouts before the TCP Socket is reset
-     *
-     * @deprecated Use the idleTimeout URI parameter
-     */
-    @Deprecated
-    public Integer getMaxReceiveTimeouts() {
-        return maxReceiveTimeouts;
-    }
-
-    /**
-     * The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
-     *
-     * @param      maxReceiveTimeouts maximum number of receiveTimeouts
-     *
-     * @deprecated                    Use the idleTimeout URI parameter. For backward compibility, setting this
-     *                                parameter will result in an idle timeout of maxReceiveTimeouts * receiveTimeout.
-     *                                If idleTimeout is also specified, this parameter will be ignored.
-     */
-    @Deprecated
-    public void setMaxReceiveTimeouts(Integer maxReceiveTimeouts) {
-        this.maxReceiveTimeouts = maxReceiveTimeouts;
     }
 
     public boolean hasIdleTimeout() {
@@ -675,20 +517,43 @@ public class MllpConfiguration implements Cloneable {
         this.validatePayload = validatePayload;
     }
 
-    public boolean isBufferWrites() {
-        return bufferWrites;
+    public MllpIdleTimeoutStrategy getIdleTimeoutStrategy() {
+        return idleTimeoutStrategy;
     }
 
     /**
-     * Enable/Disable the buffering of HL7 payloads before writing to the socket.
+     * decide what action to take when idle timeout occurs. Possible values are :
      *
-     * @deprecated              the parameter will be ignored
+     * RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the socket gracefully
      *
-     * @param      bufferWrites enabled if true, otherwise disabled
+     * default is RESET.
+     *
+     * @param idleTimeoutStrategy the strategy to take if idle timeout occurs
      */
-    @Deprecated
-    public void setBufferWrites(boolean bufferWrites) {
-        this.bufferWrites = bufferWrites;
+    public void setIdleTimeoutStrategy(MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+        this.idleTimeoutStrategy = idleTimeoutStrategy;
+    }
+
+    public int getMinBufferSize() {
+        return minBufferSize;
+    }
+
+    /**
+     * Minimum buffer size used when receiving or sending data over the wire.
+     */
+    public void setMinBufferSize(int minBufferSize) {
+        this.minBufferSize = minBufferSize;
+    }
+
+    /**
+     * Maximum buffer size used when receiving or sending data over the wire.
+     */
+    public int getMaxBufferSize() {
+        return maxBufferSize;
+    }
+
+    public void setMaxBufferSize(int maxBufferSize) {
+        this.maxBufferSize = maxBufferSize;
     }
 
     @Override
@@ -702,8 +567,8 @@ public class MllpConfiguration implements Cloneable {
                 connectTimeout,
                 receiveTimeout,
                 maxConcurrentConsumers,
-                maxReceiveTimeouts,
                 idleTimeout,
+                idleTimeoutStrategy,
                 readTimeout,
                 keepAlive,
                 tcpNoDelay,
@@ -712,11 +577,12 @@ public class MllpConfiguration implements Cloneable {
                 sendBufferSize,
                 autoAck,
                 hl7Headers,
-                bufferWrites,
                 requireEndOfData,
                 stringPayload,
                 validatePayload,
-                charsetName);
+                charsetName,
+                minBufferSize,
+                maxBufferSize);
     }
 
     @Override
@@ -741,13 +607,14 @@ public class MllpConfiguration implements Cloneable {
                 && readTimeout == rhs.readTimeout
                 && autoAck == rhs.autoAck
                 && hl7Headers == rhs.hl7Headers
-                && bufferWrites == rhs.bufferWrites
                 && requireEndOfData == rhs.requireEndOfData
                 && stringPayload == rhs.stringPayload
                 && validatePayload == rhs.validatePayload
+                && idleTimeoutStrategy == rhs.idleTimeoutStrategy
+                && minBufferSize == rhs.minBufferSize
+                && maxBufferSize == rhs.maxBufferSize
                 && Objects.equals(backlog, rhs.backlog)
                 && Objects.equals(maxConcurrentConsumers, rhs.maxConcurrentConsumers)
-                && Objects.equals(maxReceiveTimeouts, rhs.maxReceiveTimeouts)
                 && Objects.equals(idleTimeout, rhs.idleTimeout)
                 && Objects.equals(keepAlive, rhs.keepAlive)
                 && Objects.equals(tcpNoDelay, rhs.tcpNoDelay)
@@ -769,8 +636,8 @@ public class MllpConfiguration implements Cloneable {
                + ", connectTimeout=" + connectTimeout
                + ", receiveTimeout=" + receiveTimeout
                + ", maxConcurrentConsumers=" + maxConcurrentConsumers
-               + ", maxReceiveTimeouts=" + maxReceiveTimeouts
                + ", idleTimeout=" + idleTimeout
+               + ", idleTimeoutStrategy=" + idleTimeoutStrategy
                + ", readTimeout=" + readTimeout
                + ", keepAlive=" + keepAlive
                + ", tcpNoDelay=" + tcpNoDelay
@@ -779,10 +646,11 @@ public class MllpConfiguration implements Cloneable {
                + ", sendBufferSize=" + sendBufferSize
                + ", autoAck=" + autoAck
                + ", hl7Headers=" + hl7Headers
-               + ", bufferWrites=" + bufferWrites
                + ", requireEndOfData=" + requireEndOfData
                + ", stringPayload=" + stringPayload
                + ", validatePayload=" + validatePayload
+               + ", minBufferSize=" + minBufferSize
+               + ", maxBufferSize=" + maxBufferSize
                + ", charsetName='" + charsetName + '\''
                + '}';
     }

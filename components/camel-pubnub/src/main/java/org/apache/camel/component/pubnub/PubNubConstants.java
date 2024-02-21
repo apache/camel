@@ -16,9 +16,19 @@
  */
 package org.apache.camel.component.pubnub;
 
-public abstract class PubNubConstants {
+import org.apache.camel.spi.Metadata;
+
+public final class PubNubConstants {
+    @Metadata(label = "producer", description = "The operation to perform.", javaType = "String")
     public static final String OPERATION = "CamelPubNubOperation";
+    @Metadata(description = "The Timestamp for the event.", javaType = "Long")
     public static final String TIMETOKEN = "CamelPubNubTimeToken";
+    @Metadata(label = "consumer", description = "The channel for which the message belongs.", javaType = "String")
     public static final String CHANNEL = "CamelPubNubChannel";
+    @Metadata(label = "producer", description = "UUID to be used as a device identifier.", javaType = "String")
     public static final String UUID = "CamelPubNubUUID";
+
+    private PubNubConstants() {
+
+    }
 }

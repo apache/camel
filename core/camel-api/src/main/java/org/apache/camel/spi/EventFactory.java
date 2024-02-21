@@ -30,6 +30,16 @@ import org.apache.camel.Route;
 public interface EventFactory {
 
     /**
+     * Whether to include timestamp for each event, when the event occurred. This is by default false.
+     */
+    boolean isTimestampEnabled();
+
+    /**
+     * Whether to include timestamp for each event, when the event occurred.
+     */
+    void setTimestampEnabled(boolean timestampEnabled);
+
+    /**
      * Creates an {@link CamelEvent} for Camel is initializing.
      *
      * @param  context camel context
@@ -128,6 +138,34 @@ public interface EventFactory {
     CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context);
 
     /**
+     * Creates an {@link CamelEvent} for {@link CamelContext} being reloaded.
+     *
+     * @param  context camel context
+     * @param  source  the source triggered reload
+     * @return         the reloading event
+     */
+    CamelEvent createCamelContextReloading(CamelContext context, Object source);
+
+    /**
+     * Creates an {@link CamelEvent} for {@link CamelContext} has been reloaded successfully.
+     *
+     * @param  context camel context
+     * @param  source  the source triggered reload
+     * @return         the reloaded event
+     */
+    CamelEvent createCamelContextReloaded(CamelContext context, Object source);
+
+    /**
+     * Creates an {@link CamelEvent} for {@link CamelContext} failed reload.
+     *
+     * @param  context camel context
+     * @param  source  the source triggered reload
+     * @param  cause   the caused of the failure
+     * @return         the reloaded failed event
+     */
+    CamelEvent createCamelContextReloadFailure(CamelContext context, Object source, Throwable cause);
+
+    /**
      * Creates an {@link CamelEvent} for a Service failed to start cleanly
      *
      * @param  context camel context
@@ -194,6 +232,16 @@ public interface EventFactory {
      * @return       the created event
      */
     CamelEvent createRouteRemovedEvent(Route route);
+
+    /**
+     * Creates an {@link CamelEvent} for {@link Route} has been reloaded successfully.
+     *
+     * @param  route the route
+     * @param  index the route index in this batch
+     * @param  total total number of routes being reloaded in this batch
+     * @return       the reloaded event
+     */
+    CamelEvent createRouteReloaded(Route route, int index, int total);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has been created
@@ -273,6 +321,18 @@ public interface EventFactory {
     CamelEvent createExchangeSendingEvent(Exchange exchange, Endpoint endpoint);
 
     /**
+     * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} asynchronous processing has been started.
+     * This is guaranteed to run on the same thread on which {@code RoutePolicySupport.onExchangeBegin} was called
+     * and/or {@code ExchangeSendingEvent} was fired.
+     *
+     * Special event only in use for camel-tracing / camel-opentelemetry. This event is NOT (by default) in use.
+     *
+     * @param  exchange the exchange
+     * @return          the created event
+     */
+    CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange);
+
+    /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has completely been sent to the endpoint
      * (eg after).
      *
@@ -350,5 +410,4 @@ public interface EventFactory {
      * @return         the created event
      */
     CamelEvent createCamelContextResumeFailureEvent(CamelContext context, Throwable cause);
-
 }

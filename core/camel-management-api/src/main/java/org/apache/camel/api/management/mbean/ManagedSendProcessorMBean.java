@@ -26,6 +26,12 @@ public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
 
+    @ManagedAttribute(description = "Variable as the source for the message body to send")
+    String getVariableSend();
+
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
     @ManagedAttribute(description = "Message Exchange Pattern")
     String getMessageExchangePattern();
 

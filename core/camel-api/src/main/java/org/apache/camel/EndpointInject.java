@@ -33,21 +33,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface EndpointInject {
 
     /**
      * The uri of the endpoint
      */
     String value() default "";
-
-    /**
-     * The uri of the endpoint
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri of the endpoint

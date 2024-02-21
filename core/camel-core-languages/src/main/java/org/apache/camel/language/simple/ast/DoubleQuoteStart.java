@@ -61,15 +61,6 @@ public class DoubleQuoteStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
-        String answer = null;
-        if (block != null) {
-            answer = block.createCode(expression);
-        }
-        if (answer == null) {
-            answer = "\"\"";
-        } else {
-            answer = "\"" + answer + "\"";
-        }
-        return answer;
+        return BaseSimpleNode.createCode(expression, block);
     }
 }

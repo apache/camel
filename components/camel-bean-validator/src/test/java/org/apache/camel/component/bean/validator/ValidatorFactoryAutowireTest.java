@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import javax.validation.bootstrap.GenericBootstrap;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
+@DisabledOnOs(AIX)
 public class ValidatorFactoryAutowireTest extends CamelTestSupport {
 
     @BindToRegistry("myValidatorFactory")
@@ -45,7 +46,6 @@ public class ValidatorFactoryAutowireTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureValidatorFactoryAutowired() throws Exception {
         BeanValidatorEndpoint endpoint

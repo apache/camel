@@ -35,7 +35,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
     public Processor createProcessor() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
-        IdempotentRepository idempotentRepository = resolveMessageIdRepository();
+        IdempotentRepository idempotentRepository = resolveIdempotentRepository();
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", definition);
 
         Expression expression = createExpression(definition.getExpression());
@@ -44,7 +44,6 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         boolean eager = parseBoolean(definition.getEager(), true);
         boolean duplicate = parseBoolean(definition.getSkipDuplicate(), true);
         boolean remove = parseBoolean(definition.getRemoveOnFailure(), true);
-
         // these boolean should be false by default
         boolean completionEager = parseBoolean(definition.getCompletionEager(), false);
 
@@ -57,11 +56,12 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      *
      * @return the repository
      */
-    protected <T> IdempotentRepository resolveMessageIdRepository() {
-        if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(
-                    mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
+    protected <T> IdempotentRepository resolveIdempotentRepository() {
+        IdempotentRepository repo = definition.getIdempotentRepositoryBean();
+        String ref = parseString(definition.getIdempotentRepository());
+        if (repo == null && ref != null) {
+            repo = mandatoryLookup(ref, IdempotentRepository.class);
         }
-        return definition.getMessageIdRepository();
+        return repo;
     }
 }

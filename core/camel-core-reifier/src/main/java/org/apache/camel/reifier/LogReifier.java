@@ -16,11 +16,8 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -35,6 +32,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
@@ -56,25 +55,16 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         // get logger explicitly set in the definition
-        Logger logger = definition.getLogger();
+        Logger logger = definition.getLoggerBean();
 
         // get logger which may be set in XML definition
-        if (logger == null && ObjectHelper.isNotEmpty(definition.getLoggerRef())) {
-            logger = mandatoryLookup(definition.getLoggerRef(), Logger.class);
+        if (logger == null && ObjectHelper.isNotEmpty(definition.getLogger())) {
+            logger = mandatoryLookup(definition.getLogger(), Logger.class);
         }
 
         if (logger == null) {
-            // first - try to lookup single instance in the registry, just like
-            // LogComponent
-            Map<String, Logger> availableLoggers = findByTypeWithName(Logger.class);
-            if (availableLoggers.size() == 1) {
-                logger = availableLoggers.values().iterator().next();
-                LOG.debug("Using custom Logger: {}", logger);
-            } else if (availableLoggers.size() > 1) {
-                // we should log about this somewhere...
-                LOG.debug("More than one {} instance found in the registry. Falling back to create logger by name.",
-                        Logger.class.getName());
-            }
+            // first - try to lookup single instance in the registry, just like LogComponent
+            logger = findSingleByType(Logger.class);
         }
 
         if (logger == null) {
@@ -86,8 +76,16 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 }
             }
             if (name == null) {
-                name = route.getRouteId();
-                LOG.debug("LogName is not configured, using route id as logName: {}", name);
+                if (camelContext.isSourceLocationEnabled()) {
+                    name = getLineNumberLoggerName(definition);
+                    if (name != null) {
+                        LOG.debug("LogName is not configured, using source location as logName: {}", name);
+                    }
+                }
+                if (name == null) {
+                    name = route.getRouteId();
+                    LOG.debug("LogName is not configured, using route id as logName: {}", name);
+                }
             }
             logger = LoggerFactory.getLogger(name);
         }
@@ -100,17 +98,17 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         if (exp != null) {
             // dynamic log message via simple expression
             return new LogProcessor(
-                    exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+                    exp, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
         } else {
             // static log message via string message
             return new LogProcessor(
-                    msg, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+                    msg, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
         }
     }
 
     private MaskingFormatter getMaskingFormatter() {
         if (route.isLogMask()) {
-            MaskingFormatter formatter = lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

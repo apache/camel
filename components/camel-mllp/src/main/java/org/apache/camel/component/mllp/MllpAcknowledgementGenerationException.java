@@ -21,16 +21,16 @@ package org.apache.camel.component.mllp;
  */
 public class MllpAcknowledgementGenerationException extends MllpException {
 
-    public MllpAcknowledgementGenerationException(String message) {
-        super(message);
+    public MllpAcknowledgementGenerationException(String message, boolean logPhi) {
+        super(message, logPhi);
     }
 
-    public MllpAcknowledgementGenerationException(String message, byte[] hl7MessageBytes) {
-        super(message, hl7MessageBytes);
+    public MllpAcknowledgementGenerationException(String message, byte[] hl7MessageBytes, boolean logPhi) {
+        super(message, hl7MessageBytes, logPhi);
     }
 
-    public MllpAcknowledgementGenerationException(String message, byte[] hl7MessageBytes, Throwable cause) {
-        super(message, hl7MessageBytes, cause);
+    public MllpAcknowledgementGenerationException(String message, byte[] hl7MessageBytes, Throwable cause, boolean logPhi) {
+        super(message, hl7MessageBytes, cause, logPhi);
     }
 
 }

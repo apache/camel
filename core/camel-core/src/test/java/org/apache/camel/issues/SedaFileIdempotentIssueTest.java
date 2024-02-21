@@ -16,8 +16,8 @@
  */
 package org.apache.camel.issues;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -45,24 +45,19 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        createDirectory("target/data/inbox");
-
-        // create file without using Camel
-        File file = new File("target/data/inbox/hello.txt");
-        FileOutputStream fos = new FileOutputStream(file, true);
-        fos.write("Hello World".getBytes());
-        fos.flush();
-        fos.close();
-
         super.setUp();
+        // create file without using Camel
+        testDirectory("inbox", true);
+        try (OutputStream fos = Files.newOutputStream(testFile("inbox/hello.txt"))) {
+            fos.write("Hello World".getBytes());
+        }
     }
 
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
 
-        repository.setFileStore(new File("target/repo.txt"));
+        repository.setFileStore(testFile("repo.txt").toFile());
         jndi.bind("repo", repository);
         return jndi;
     }
@@ -74,7 +69,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(RuntimeException.class).process(new ShutDown());
 
-                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
+                from(fileUri("inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10"))
                         .to("log:begin").to(ExchangePattern.InOut, "seda:process");
 
                 from("seda:process").throwException(new RuntimeException("Testing with exception"));

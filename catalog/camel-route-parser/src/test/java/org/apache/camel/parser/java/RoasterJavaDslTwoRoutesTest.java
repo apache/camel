@@ -19,6 +19,7 @@ package org.apache.camel.parser.java;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -45,7 +46,7 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java"));
 
-        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
+        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz,
                 "src/test/java/org/apache/camel/parser/java/TwoRoutesRouteBuilder.java", true);
         assertEquals(2, list.size());
 
@@ -62,10 +63,10 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
         assertEquals("org.apache.camel.parser.java.TwoRoutesRouteBuilder", details2.getClassName());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         String tree2 = details2.dump(0);
-        LOG.info("\n" + tree2);
+        LOG.info("\n{}", tree2);
 
         assertTrue(tree.contains("25\tfrom"));
         assertTrue(tree.contains("26\t  log"));
@@ -84,7 +85,7 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
 
         template.sendBody("direct:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

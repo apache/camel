@@ -19,9 +19,10 @@
 -->
 <routes id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
-    <from uri="direct:a"/>
+    <from uri="timer:a"/>
     <loop>
       <constant>8</constant>
+      <log message="looping"/>
     </loop>
   </route>
 </routes>

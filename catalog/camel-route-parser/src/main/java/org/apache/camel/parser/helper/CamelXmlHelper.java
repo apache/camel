@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -121,7 +122,7 @@ public final class CamelXmlHelper {
     }
 
     private static void findAllUrisRecursive(Node node, List<Node> nodes) {
-        // okay its a route so grab all uri attributes we can find
+        // okay it's a route so grab all uri attributes we can find
         String url = getSafeAttribute(node, "uri");
         if (url != null) {
             nodes.add(node);
@@ -167,7 +168,7 @@ public final class CamelXmlHelper {
     }
 
     private static void findAllLanguageExpressionsRecursive(Node node, List<Node> nodes, String language) {
-        // okay its a route so grab if its the language
+        // okay it's a route so grab if it's the language
         if (isNodeName(language, node)) {
             nodes.add(node);
         }
@@ -195,11 +196,10 @@ public final class CamelXmlHelper {
         return selectedElement;
     }
 
-    private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
+    private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) {
         // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
-        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
+        return XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
                 "http://camel.apache.org/schema/spring");
-        return root;
     }
 
     private static Node findCamelNodeInDocument(Document root, String key) {
@@ -216,7 +216,7 @@ public final class CamelXmlHelper {
                         if (first) {
                             first = false;
                             String actual = getIdOrIndex(node, rootNodeCounts);
-                            if (!equal(actual, path)) {
+                            if (!Objects.equals(actual, path)) {
                                 node = null;
                             }
                         } else {
@@ -232,6 +232,7 @@ public final class CamelXmlHelper {
                 }
             }
         }
+        //FIXME : selectedNode is always null
         return selectedNode;
     }
 
@@ -243,7 +244,7 @@ public final class CamelXmlHelper {
                 Node child = childNodes.item(i);
                 if (child instanceof Element) {
                     String actual = getIdOrIndex(child, nodeCounts);
-                    if (equal(actual, path)) {
+                    if (Objects.equals(actual, path)) {
                         return child;
                     }
                 }
@@ -254,8 +255,7 @@ public final class CamelXmlHelper {
 
     private static String getIdOrIndex(Node node, Map<String, Integer> nodeCounts) {
         String answer = null;
-        if (node instanceof Element) {
-            Element element = (Element) node;
+        if (node instanceof Element element) {
             String elementName = element.getTagName();
             if ("routes".equals(elementName)) {
                 elementName = "camelContext";
@@ -292,10 +292,6 @@ public final class CamelXmlHelper {
 
     private static boolean isNodeName(String name, Node node) {
         return name.equals(node.getLocalName()) || name.equals(node.getNodeName());
-    }
-
-    private static boolean equal(Object a, Object b) {
-        return a == b || a != null && a.equals(b);
     }
 
 }

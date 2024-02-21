@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ public class EndpointPrototypeTest extends ContextTestSupport {
 
         // now get a prototype which should not be added
 
-        Endpoint prototype = context.adapt(ExtendedCamelContext.class).getPrototypeEndpoint("mock:bar");
+        Endpoint prototype = context.getCamelContextExtension().getPrototypeEndpoint("mock:bar");
         assertNotNull(prototype);
 
         // and should be started
@@ -91,7 +90,7 @@ public class EndpointPrototypeTest extends ContextTestSupport {
 
         // now get a prototype which should not be added
 
-        Endpoint prototype = context.adapt(ExtendedCamelContext.class).getPrototypeEndpoint("mock:bar");
+        Endpoint prototype = context.getCamelContextExtension().getPrototypeEndpoint("mock:bar");
         assertNotNull(prototype);
 
         // and should be started

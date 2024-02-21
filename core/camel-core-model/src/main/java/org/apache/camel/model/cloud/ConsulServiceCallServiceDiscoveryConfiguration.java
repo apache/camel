@@ -16,18 +16,21 @@
  */
 package org.apache.camel.model.cloud;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "consulServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
+@Deprecated
 public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     private String url;

@@ -23,9 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterEventType;
-import twitter4j.DirectMessage;
-import twitter4j.DirectMessageList;
 import twitter4j.TwitterException;
+import twitter4j.v1.DirectMessage;
+import twitter4j.v1.DirectMessageList;
 
 /**
  * Consumes a user's direct messages
@@ -49,15 +49,15 @@ public class DirectMessageConsumerHandler extends AbstractTwitterConsumerHandler
 
     private DirectMessageList directMessages(String previousCursor, String cursor) throws TwitterException {
         // https://developer.twitter.com/en/docs/direct-messages/sending-and-receiving/api-reference/list-events
-        // if there are more DM to retrieve the the next_cursor parameter is set.
+        // if there are more DM to retrieve the next_cursor parameter is set.
         // however next_cursor is always set in the response, so we must handle pagination correctly
         // after the first call, there is always a second call to check if there is new DM and we compare
         // the previous and current next_cursor, if not equals there is pagination.
         DirectMessageList directMessages;
         if (cursor != null) {
-            directMessages = getTwitter().getDirectMessages(endpoint.getProperties().getCount(), cursor);
+            directMessages = getTwitter().v1().directMessages().getDirectMessages(endpoint.getProperties().getCount(), cursor);
         } else {
-            directMessages = getTwitter().getDirectMessages(endpoint.getProperties().getCount());
+            directMessages = getTwitter().v1().directMessages().getDirectMessages(endpoint.getProperties().getCount());
         }
 
         String nextCursor = directMessages.getNextCursor();

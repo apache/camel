@@ -40,16 +40,16 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.NullSerializer;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
-import com.fasterxml.jackson.module.jsonSchema.types.BooleanSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.NullSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.BooleanSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.IntegerSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.NullSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.NumberSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.SimpleTypeSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.StringSchema;
 import org.apache.camel.component.salesforce.api.FieldsToNullPropertyFilter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
@@ -67,12 +67,16 @@ import static java.util.stream.Collectors.joining;
 /**
  * Factory class for creating {@linkplain com.fasterxml.jackson.databind.ObjectMapper}
  */
-public abstract class JsonUtils {
+public final class JsonUtils {
 
     public static final String SCHEMA4 = "http://json-schema.org/draft-04/schema#";
     public static final String DEFAULT_ID_PREFIX = "urn:jsonschema:org:apache:camel:component:salesforce:dto";
 
     private static final String API_DTO_ID = "org:urn:jsonschema:org:apache:camel:component:salesforce:api:dto";
+
+    private JsonUtils() {
+
+    }
 
     public static ObjectMapper createObjectMapper() {
         // enable date time support including Java 1.8 ZonedDateTime

@@ -1,0 +1,84 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.0",
+    "title" : "Greeting REST API"
+  },
+  "host" : "",
+  "basePath" : "/camel/",
+  "tags" : [ {
+    "name" : "greetings",
+    "description" : "Greeting to {name}"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/greetings/{name}" : {
+      "get" : {
+        "tags" : [ "greetings" ],
+        "operationId" : "greeting-api",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Output type",
+            "schema" : {
+              "$ref" : "#/definitions/Greetings"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "greetings" ],
+        "operationId" : "post-greeting-api",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Output type",
+            "schema" : {
+              "$ref" : "#/definitions/Greetings"
+            }
+          }
+        }
+      }
+    },
+    "/bye/{name}" : {
+      "post" : {
+        "tags" : [ "greetings" ],
+        "operationId" : "bye-api",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Output type",
+            "schema" : {
+              "$ref" : "#/definitions/Greetings"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Greetings" : {
+      "type" : "object",
+      "properties" : {
+        "greetings" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

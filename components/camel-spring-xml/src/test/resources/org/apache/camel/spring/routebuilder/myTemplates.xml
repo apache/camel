@@ -27,8 +27,7 @@
 
     <!-- this is an included XML file where we only the routeTemplateContext -->
     <routeTemplateContext id="myCoolTemplates" xmlns="http://camel.apache.org/schema/spring">
-        <routeTemplate id="myTemplate">
-            <description>blah blah</description>
+        <routeTemplate id="myTemplate" description="blah blah">
             <templateParameter name="foo"/>
             <templateParameter name="bar"/>
             <route>

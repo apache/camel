@@ -20,8 +20,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +68,7 @@ public class TransactionalClientDataSourceAsyncTest extends TransactionalClientD
 
                 // configure to use transaction error handler and pass on the required as it will fetch
                 // the transaction manager from it that it needs
-                TransactionErrorHandlerBuilder teh = new TransactionErrorHandlerBuilder();
+                LegacyTransactionErrorHandlerBuilder teh = new LegacyTransactionErrorHandlerBuilder();
                 teh.setSpringTransactionPolicy(required);
                 errorHandler(teh);
 

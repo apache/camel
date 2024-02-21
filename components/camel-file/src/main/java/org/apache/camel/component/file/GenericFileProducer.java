@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -27,10 +28,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +66,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
-        final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        final String existing = exchange.getIn().getHeader(FileConstants.FILE_NAME, String.class);
 
         // create the target file name
         String target = createFileName(exchange);
@@ -84,7 +87,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // once (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
             // and restore existing file name
-            exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
+            exchange.getIn().setHeader(FileConstants.FILE_NAME, existing);
         }
     }
 
@@ -212,6 +215,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 }
             }
 
+            // any checksum file to write?
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                writeChecksumFile(exchange, target);
+            }
+
             // any done file to write?
             if (endpoint.getDoneFileName() != null) {
                 String doneFileName = endpoint.createDoneFileName(target);
@@ -234,12 +242,33 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
             // let's store the name we really used in the header, so end-users
             // can retrieve it
-            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, target);
+            exchange.getIn().setHeader(FileConstants.FILE_NAME_PRODUCED, target);
         } catch (Exception e) {
             handleFailedWrite(exchange, e);
         }
 
         postWriteCheck(exchange);
+    }
+
+    protected void writeChecksumFile(Exchange exchange, String target) throws Exception {
+        String algorithm = endpoint.getChecksumFileAlgorithm();
+        String checksumFileName = target + "." + algorithm;
+
+        // create exchange with checksum as body to write as the checksum file
+        MessageHelper.resetStreamCache(exchange.getIn());
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+        Exchange checksumExchange = new DefaultExchange(exchange);
+        checksumExchange.getIn().setBody(new DigestUtils(algorithm).digestAsHex(is));
+
+        LOG.trace("Writing checksum file: [{}]", checksumFileName);
+        // delete any existing done file
+        if (operations.existsFile(checksumFileName)) {
+            if (!operations.deleteFile(checksumFileName)) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot delete existing checksum file: " + checksumFileName);
+            }
+        }
+        writeFile(checksumExchange, checksumFileName);
     }
 
     /**
@@ -300,7 +329,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // overrule takes precedence
         Object value;
 
-        Object overrule = exchange.getIn().getHeader(Exchange.OVERRULE_FILE_NAME);
+        Object overrule = exchange.getIn().getHeader(FileConstants.OVERRULE_FILE_NAME);
         if (overrule != null) {
             if (overrule instanceof Expression) {
                 value = overrule;
@@ -308,19 +337,19 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 value = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, overrule);
             }
         } else {
-            value = exchange.getIn().getHeader(Exchange.FILE_NAME);
+            value = exchange.getIn().getHeader(FileConstants.FILE_NAME);
         }
 
         // if we have an overrule then override the existing header to use the
         // overrule computed name from this point forward
         if (overrule != null) {
-            exchange.getIn().setHeader(Exchange.FILE_NAME, value);
+            exchange.getIn().setHeader(FileConstants.FILE_NAME, value);
         }
 
         if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
             LOG.warn(
                     "Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).",
-                    value, Exchange.FILE_NAME);
+                    value, FileConstants.FILE_NAME);
         }
 
         // expression support
@@ -393,13 +422,13 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String answer = fileName;
 
         String tempName;
-        if (exchange.getIn().getHeader(Exchange.FILE_NAME) == null) {
+        if (exchange.getIn().getHeader(FileConstants.FILE_NAME) == null) {
             // its a generated filename then add it to header so we can evaluate
             // the expression
-            exchange.getIn().setHeader(Exchange.FILE_NAME, FileUtil.stripPath(fileName));
+            exchange.getIn().setHeader(FileConstants.FILE_NAME, FileUtil.stripPath(fileName));
             tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
             // and remove it again after evaluation
-            exchange.getIn().removeHeader(Exchange.FILE_NAME);
+            exchange.getIn().removeHeader(FileConstants.FILE_NAME);
         } else {
             tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
         }

@@ -17,34 +17,48 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * Defines a route template (parameterized routes)
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeTemplate")
-@XmlType(propOrder = { "templateParameters", "route" })
+@XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
+public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteTemplateDefinition> implements ResourceAware {
+
+    @XmlTransient
+    private Consumer<RouteTemplateContext> configurer;
 
     @XmlElement(name = "templateParameter")
+    @Metadata(description = "Adds a template parameter the route template uses")
     private List<RouteTemplateParameterDefinition> templateParameters;
+    @XmlElement(name = "templateBean")
+    @Metadata(description = "Adds a local bean the route template uses")
+    private List<RouteTemplateBeanDefinition> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
+    @XmlTransient
+    private Resource resource;
 
     public List<RouteTemplateParameterDefinition> getTemplateParameters() {
         return templateParameters;
@@ -54,12 +68,36 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         this.templateParameters = templateParameters;
     }
 
+    public List<RouteTemplateBeanDefinition> getTemplateBeans() {
+        return templateBeans;
+    }
+
+    public void setTemplateBeans(List<RouteTemplateBeanDefinition> templateBeans) {
+        this.templateBeans = templateBeans;
+    }
+
     public RouteDefinition getRoute() {
         return route;
     }
 
     public void setRoute(RouteDefinition route) {
         this.route = route;
+    }
+
+    public void setConfigurer(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
+    }
+
+    public Consumer<RouteTemplateContext> getConfigurer() {
+        return configurer;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API
@@ -103,15 +141,13 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     @Override
-    public RouteTemplateDefinition description(String text) {
-        DescriptionDefinition def = new DescriptionDefinition();
-        def.setText(text);
-        setDescription(def);
+    public RouteTemplateDefinition description(String description) {
+        setDescription(description);
         return this;
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds a required parameter the route template uses
      *
      * @param name the name of the parameter
      */
@@ -121,7 +157,28 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds an optional parameter the route template uses
+     *
+     * @param name the name of the parameter
+     */
+    public RouteTemplateDefinition templateOptionalParameter(String name) {
+        addTemplateOptionalParameter(name, null);
+        return this;
+    }
+
+    /**
+     * Adds an optional parameter the route template uses
+     *
+     * @param name        the name of the parameter
+     * @param description the description of the parameter
+     */
+    public RouteTemplateDefinition templateOptionalParameter(String name, String description) {
+        addTemplateOptionalParameter(name, description);
+        return this;
+    }
+
+    /**
+     * Adds a parameter (will use default value if not provided) the route template uses
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
@@ -132,10 +189,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     /**
-     * Adds a parameter the route template uses.
+     * Adds a parameter (will use default value if not provided) the route template uses
      *
      * @param name         the name of the parameter
      * @param defaultValue default value of the parameter
+     * @param description  the description of the parameter
      */
     public RouteTemplateDefinition templateParameter(String name, String defaultValue, String description) {
         addTemplateParameter(name, defaultValue, description);
@@ -145,10 +203,161 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     /**
      * Adds the parameters the route template uses.
      *
+     * The keys in the map is the parameter names, and the values are optional default value. If a parameter has no
+     * default value then the parameter is required.
+     *
      * @param parameters the parameters (only name and default values)
      */
     public RouteTemplateDefinition templateParameters(Map<String, String> parameters) {
         parameters.forEach(this::addTemplateParameter);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name the name of the bean
+     * @param type the type of the bean to associate the binding
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name the name of the bean
+     * @param bean the bean, or reference to bean (#class or #type), or a supplier for the bean
+     */
+    @SuppressWarnings("unchecked")
+    public RouteTemplateDefinition templateBean(String name, Object bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        if (bean instanceof RouteTemplateContext.BeanSupplier) {
+            def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
+        } else if (bean instanceof Supplier) {
+            def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
+        } else if (bean instanceof String) {
+            // its a string type
+            def.setType((String) bean);
+        } else {
+            def.setBeanSupplier(ctx -> bean);
+        }
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name the name of the bean
+     * @param bean the supplier for the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Supplier<Object> bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name the name of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean a supplier for the bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type, RouteTemplateContext.BeanSupplier<Object> bean) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        def.setBeanSupplier(bean);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name     the name of the bean
+     * @param language the language to use
+     * @param script   the script to use for creating the local bean
+     */
+    public RouteTemplateDefinition templateBean(String name, String language, String script) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setScriptLanguage(language);
+        def.setScript(script);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses
+     *
+     * @param name     the name of the bean
+     * @param type     the type of the bean to associate the binding
+     * @param language the language to use
+     * @param script   the script to use for creating the local bean
+     */
+    public RouteTemplateDefinition templateBean(String name, Class<?> type, String language, String script) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setName(name);
+        def.setBeanType(type);
+        def.setScriptLanguage(language);
+        def.setScript(script);
+        templateBeans.add(def);
+        return this;
+    }
+
+    /**
+     * Adds a local bean the route template uses (via fluent builder)
+     *
+     * @param  name the name of the bean
+     * @return      fluent builder to choose which language and script to use for creating the bean
+     */
+    public RouteTemplateBeanDefinition templateBean(String name) {
+        if (templateBeans == null) {
+            templateBeans = new ArrayList<>();
+        }
+        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        def.setParent(this);
+        def.setName(name);
+        templateBeans.add(def);
+        return def;
+    }
+
+    /**
+     * Sets a configurer which allows to do configuration while the route template is being used to create a route. This
+     * gives control over the creating process, such as binding local beans and doing other kind of customization.
+     *
+     * @param configurer the configurer with callback to invoke with the given route template context
+     */
+    public RouteTemplateDefinition configure(Consumer<RouteTemplateContext> configurer) {
+        this.configurer = configurer;
         return this;
     }
 
@@ -162,21 +371,24 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         return "RouteTemplate[" + route.getInput().getLabel() + "]";
     }
 
-    /**
-     * Adds a parameter the route template uses.
-     */
     private void addTemplateParameter(String name, String defaultValue) {
         addTemplateParameter(name, defaultValue, null);
     }
 
-    /**
-     * Adds a parameter the route template uses.
-     */
     private void addTemplateParameter(String name, String defaultValue, String description) {
         if (this.templateParameters == null) {
             this.templateParameters = new ArrayList<>();
         }
         this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
+    }
+
+    private void addTemplateOptionalParameter(String name, String description) {
+        if (this.templateParameters == null) {
+            this.templateParameters = new ArrayList<>();
+        }
+        RouteTemplateParameterDefinition def = new RouteTemplateParameterDefinition(name, null, description);
+        def.setRequired(false);
+        this.templateParameters.add(def);
     }
 
     /**
@@ -187,7 +399,10 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
         // must set these first in this order
         copy.setErrorHandlerRef(route.getErrorHandlerRef());
-        copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+        if (route.isErrorHandlerFactorySet()) {
+            // only set factory if not already set
+            copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+        }
 
         // and then copy over the rest
         // (do not copy id as it is used for route template id)
@@ -215,12 +430,14 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         } else {
             copy.setDescription(getDescription());
         }
-
+        copy.setPrecondition(route.getPrecondition());
+        copy.setRouteConfigurationId(route.getRouteConfigurationId());
         return copy;
     }
 
     @FunctionalInterface
     public interface Converter {
+
         /**
          * Default implementation that uses {@link #asRouteDefinition()} to convert a {@link RouteTemplateDefinition} to
          * a {@link RouteDefinition}
@@ -231,14 +448,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
                 return in.asRouteDefinition();
             }
         };
-
-        /**
-         * @deprecated use {@link #apply(RouteTemplateDefinition, Map)}
-         */
-        @Deprecated
-        default RouteDefinition apply(RouteTemplateDefinition in) throws Exception {
-            return apply(in, Collections.emptyMap());
-        }
 
         /**
          * Convert a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.

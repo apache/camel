@@ -1,0 +1,121 @@
+= JTE Component
+:doctitle: JTE
+:shortname: jte
+:artifactid: camel-jte
+:description: Transform messages using a Java based template engine (JTE).
+:since: 4.4
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: jte
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The *jte:* component allows for processing a message using a
+https://jte.gg/[JTE] template. The JTE is a Java Template Engine, which
+means you write templates that resemble Java code, which in fact gets
+transformed into .java source files that gets compiled to have very
+fast performance.
+
+Only use this component if you are familiar with Java programming.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+-------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jte</artifactId>
+    <version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+-------------------------------------------------------------------------------------
+
+== URI format
+
+---------------------------------
+jte:templateName[?options]
+---------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (e.g.:
+`\file://folder/myfile.jte`).
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== JTE Context
+
+Camel will provide exchange information in the JTE context, as a `org.apache.camel.component.jte.Model` class
+with the following information:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself (only if allowContextMapAll=true).
+
+|`headers` |The headers of the message as `java.util.Map`.
+
+|`body` |The message body as `Object`.
+
+|`strBody()` | The message body converted to a String
+
+| `header("key")` | Message header with the given key converted to a String value.
+
+| `exchangeProperty("key")` | Exchange property with the given key converted to a String value (only if allowContextMapAll=true).
+
+|=======================================================================
+
+You can set up your custom JTE data model in the
+message header with the key "*CamelJteDataModel*" just like this
+
+
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set, then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Samples
+
+For example, you could use something like:
+
+[source,java]
+-------------------------------------------
+from("rest:get:item/{id}").
+  to("jte:com/acme/response.jte");
+-------------------------------------------
+
+To use a JTE template to formulate a response to the REST get call:
+
+[source,java]
+----
+@import org.apache.camel.component.jte.Model
+@param Model model
+
+The item ${model.header("id")} is being processed.
+----
+
+
+include::spring-boot:partial$starter.adoc[]

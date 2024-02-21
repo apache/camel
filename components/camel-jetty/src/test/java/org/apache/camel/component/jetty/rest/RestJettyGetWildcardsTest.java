@@ -32,38 +32,43 @@ public class RestJettyGetWildcardsTest extends BaseJettyTest {
     private JettyRestHttpBinding binding = new JettyRestHttpBinding();
 
     @Test
-    public void testJettyProducerGet() throws Exception {
+    public void testJettyProducerGet() {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Test
-    public void testJettyProducerGetWildcards() throws Exception {
+    public void testJettyProducerGetWildcards() {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/456/name=g*", null, String.class);
         assertEquals("456;Goofy", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
                         "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                rest("/users/")
+                        .get("{id}/basic").to("direct:basic")
+                        .get("{id}/{query}").to("direct:query");
+
+                from("direct:basic").to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");
                     }
-                }).endRest().get("{id}/{query}").route().to("mock:query").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                });
+                from("direct:query").to("mock:query").process(new Processor() {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Goofy");
                     }
-                }).endRest();
+                });
             }
         };
     }

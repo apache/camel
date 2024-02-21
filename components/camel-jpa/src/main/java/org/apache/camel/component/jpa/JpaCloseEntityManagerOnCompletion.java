@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;

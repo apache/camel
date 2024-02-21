@@ -16,28 +16,59 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CouchDbServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CouchDbServiceFactory.class);
+    static class SingletonCouchDbService extends SingletonService<CouchDbService> implements CouchDbService {
+        public SingletonCouchDbService(CouchDbService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+    }
 
     private CouchDbServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<CouchDbService> builder() {
+        return new SimpleTestServiceBuilder<>("consul");
+    }
+
     public static CouchDbService createService() {
-        String instanceType = System.getProperty("couchdb.instance.type");
+        return builder()
+                .addLocalMapping(CouchDbLocalContainerService::new)
+                .addRemoteMapping(CouchDbRemoteService::new)
+                .build();
+    }
 
-        if (instanceType == null || instanceType.equals("local-couchdb-container")) {
-            return new CouchDbLocalContainerService();
+    public static CouchDbService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final CouchDbService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CouchDbService> instance = builder();
+
+            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
+                    .addRemoteMapping(CouchDbRemoteService::new);
+
+            INSTANCE = instance.build();
         }
-
-        if (instanceType.equals("remote")) {
-            return new CouchDbRemoteService();
-        }
-
-        LOG.error("CouchDb instance must be one of 'local-couchdb-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid CouchDb instance type");
     }
 }

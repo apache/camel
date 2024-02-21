@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * End user on forum issue
  */
-public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSupport {
+
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class TransactionInterceptSendToEndpointTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -39,7 +44,7 @@ public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSuppo
 
         template.sendBody("activemq:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

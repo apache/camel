@@ -18,7 +18,6 @@ package org.apache.camel.impl.health;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -50,7 +49,7 @@ public class DefaultHealthCheckRegistryTest {
         registry.register(new MyHealthCheck("G1", "2"));
         registry.register(new MyHealthCheck("G2", "3"));
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
@@ -76,7 +75,7 @@ public class DefaultHealthCheckRegistryTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
@@ -103,7 +102,7 @@ public class DefaultHealthCheckRegistryTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
@@ -136,7 +135,7 @@ public class DefaultHealthCheckRegistryTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(4, checks.size());
 
         for (HealthCheck check : checks) {
@@ -172,7 +171,7 @@ public class DefaultHealthCheckRegistryTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(2, checks.size());
 
         for (HealthCheck check : checks) {
@@ -202,8 +201,6 @@ public class DefaultHealthCheckRegistryTest {
 
     private static class MyHealthCheck extends AbstractHealthCheck implements CamelContextAware {
 
-        private CamelContext context;
-
         protected MyHealthCheck(String group, String id) {
             super(group, id);
         }
@@ -213,14 +210,5 @@ public class DefaultHealthCheckRegistryTest {
             builder.up();
         }
 
-        @Override
-        public void setCamelContext(CamelContext camelContext) {
-            this.context = camelContext;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return context;
-        }
     }
 }

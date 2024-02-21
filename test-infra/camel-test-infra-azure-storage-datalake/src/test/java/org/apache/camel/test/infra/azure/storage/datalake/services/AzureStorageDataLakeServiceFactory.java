@@ -18,26 +18,21 @@
 package org.apache.camel.test.infra.azure.storage.datalake.services;
 
 import org.apache.camel.test.infra.azure.common.services.AzureService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageDataLakeServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(AzureStorageDataLakeServiceFactory.class);
 
     private AzureStorageDataLakeServiceFactory() {
 
     }
 
-    public static AzureService createAzureService() {
-        String instanceType = System.getProperty("azure.instance.type");
+    public static SimpleTestServiceBuilder<AzureService> builder() {
+        return new SimpleTestServiceBuilder<>("azure");
+    }
 
-        if (instanceType == null || "remote".equals(instanceType)) {
-            return new AzureStorageDataLakeRemoteService();
-        }
-
-        // add support for azurite in future
-
-        LOG.error("Azure instance supported at present: 'remote'");
-        throw new UnsupportedOperationException(String.format("Invalid Azure instance type: %s", instanceType));
+    public static AzureService createService() {
+        return builder()
+                .addRemoteMapping(AzureStorageDataLakeRemoteService::new)
+                .build();
     }
 }

@@ -16,14 +16,18 @@
  */
 package org.apache.camel.itest.security;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -32,6 +36,7 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -41,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @CamelSpringTest
 @ContextConfiguration(locations = { "camel-context.xml" })
+@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
+           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
     static {
@@ -54,14 +61,14 @@ public class GreeterClientTest {
     protected CamelContext camelContext;
 
     protected String sendMessageWithUsernameToken(String username, String password, String message) throws Exception {
-        final javax.xml.ws.Service svc = javax.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
+        final jakarta.xml.ws.Service svc = jakarta.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
         Client client = ClientProxy.getClient(greeter);
         Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
-        // Set the password type to be plain text, 
+        // Set the password type to be plain text,
         // so we can keep using the password to authenticate with spring security
         props.put("passwordType", "PasswordText");
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);
@@ -120,4 +127,13 @@ public class GreeterClientTest {
         }
     }
 
+    public static boolean isPortAvailable() {
+        try {
+            AvailablePortFinder.probePort(InetAddress.getByName("localhost"), 9000);
+        } catch (IllegalStateException | UnknownHostException e) {
+            return false;
+        }
+
+        return true;
+    }
 }

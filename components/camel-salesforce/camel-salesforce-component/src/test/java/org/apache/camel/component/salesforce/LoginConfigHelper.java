@@ -96,7 +96,7 @@ public final class LoginConfigHelper {
             System.out.println("With authentication information to access a Salesforce instance.");
             System.out.println("You can use:");
             System.out.println();
-            System.out.println("camel/components/camel-salesforce/test-salesforce-login.properties.sample");
+            System.out.println("camel/components/camel-salesforce/test-salesforce-login.sample.properties");
             System.out.println();
             System.out.println("as reference. A free Salesforce developer account can be obtained at:");
             System.out.println();

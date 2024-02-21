@@ -30,10 +30,11 @@
         <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
         <propertyPlaceholder id="properties"
                              ignoreMissingLocation="true" location="classpath:custom.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="{{aggregation.timeout}}">
+            <aggregate aggregationStrategy="latestAggregationStrategy" completionTimeout="{{aggregation.timeout}}">
                 <correlationExpression>
                     <header>cheese</header>
                 </correlationExpression>
@@ -46,7 +47,7 @@
             <setHeader name="visited">
                 <constant>true</constant>
             </setHeader>
-            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">
+            <aggregate aggregationStrategy="latestAggregationStrategy" completionTimeout="1000">
                 <correlationExpression>
                     <header>cheese</header>
                 </correlationExpression>
@@ -56,7 +57,7 @@
 
         <route>
             <from uri="direct:predicate"/>
-            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">
+            <aggregate aggregationStrategy="latestAggregationStrategy" completionTimeout="1000">
                 <correlationExpression>
                     <header>cheese</header>
                 </correlationExpression>

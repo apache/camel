@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 
@@ -48,7 +48,7 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         }
         HttpConsumer answer = consumers.get(path);
 
-        List<HttpConsumer> candidates = resolveCandidates(request, method, consumers);
+        List<HttpConsumer> candidates = resolveCandidates(request, consumers);
         // extra filter by restrict
         candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
@@ -60,14 +60,14 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
     }
 
     private List<HttpConsumer> resolveCandidates(
-            HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
+            HttpServletRequest request, Map<String, HttpConsumer> consumers) {
         String path = request.getPathInfo();
 
         List<HttpConsumer> candidates = new ArrayList<>();
-        for (String key : consumers.keySet()) {
+        for (Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
             //We need to look up the consumer path here
-            String consumerPath = consumers.get(key).getPath();
-            HttpConsumer consumer = consumers.get(key);
+            String consumerPath = entry.getValue().getPath();
+            HttpConsumer consumer = entry.getValue();
             boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
             // Just make sure the we get the right consumer path first
             if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {

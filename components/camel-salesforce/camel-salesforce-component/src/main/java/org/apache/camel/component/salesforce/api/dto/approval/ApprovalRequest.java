@@ -27,8 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -41,7 +39,6 @@ import org.apache.camel.spi.UriParams;
  *      https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_process_approvals.htm</a>
  */
 @UriParams
-@XStreamAlias("requests")
 public final class ApprovalRequest implements Serializable {
 
     public enum Action {
@@ -86,7 +83,6 @@ public final class ApprovalRequest implements Serializable {
 
     @UriParam
     @Metadata(required = true)
-    @XStreamImplicit(itemFieldName = "nextApproverIds")
     private List<String> nextApproverIds;
 
     @UriParam

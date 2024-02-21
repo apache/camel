@@ -7,10 +7,11 @@
     "deprecated": false,
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.DataFormatsDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "dataFormats": { "kind": "element", "displayName": "Data Formats", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.DataFormatDefinition>", "oneOf": [ "any23", "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "fhirJson", "fhirXml", "flatpack", "grok", "gzip", "hl7", "ical", "jacksonxml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "pgp", "protobuf", "rss", "secureXML", "soapjaxb", "syslog", "tarfile", "thrift", "tidyMarkup", "univocity-csv", "univocity-fixed", "univocity-tsv", "xmlrpc", "xstream", "yaml", "zip", "zipfile" ], "deprecated": false, "autowired": false, "secret": false, "description": "A list holding the configured data formats" }
+    "dataFormats": { "index": 0, "kind": "element", "displayName": "Data Formats", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.DataFormatDefinition>", "oneOf": [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "fhirJson", "fhirXml", "flatpack", "grok", "gzipDeflater", "hl7", "ical", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "parquetAvro", "pgp", "protobuf", "rss", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "tidyMarkup", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ], "deprecated": false, "autowired": false, "secret": false, "description": "A list holding the configured data formats" }
   }
 }

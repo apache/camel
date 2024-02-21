@@ -83,6 +83,12 @@ public class FlightRecorderStartupStep extends Event implements StartupStep {
     }
 
     @Override
+    public long getDuration() {
+        // not used by jfr
+        return 0;
+    }
+
+    @Override
     public String getType() {
         return type;
     }

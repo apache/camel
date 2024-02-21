@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "util",
+    "title": "Util",
+    "description": "The Camel Utilities",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-util",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

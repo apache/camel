@@ -44,7 +44,9 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -54,7 +56,9 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -62,7 +66,7 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertTrue(exchanges.size() >= 3);
@@ -84,10 +88,10 @@ public class SqlConsumerOutputTypeSelectListWithClassTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects order by id?outputType=SelectList&outputClass=org.apache.camel.component.sql.ProjectModel&initialDelay=0&delay=50")

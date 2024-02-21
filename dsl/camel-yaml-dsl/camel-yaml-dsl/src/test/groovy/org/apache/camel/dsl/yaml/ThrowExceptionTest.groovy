@@ -18,17 +18,18 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ThrowExceptionDefinition
+import org.junit.jupiter.api.Assertions
 
 class ThrowExceptionTest extends YamlTestSupport {
 
-    def "throw-exception definition"() {
+    def "throwException definition"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - throw-exception:  
-                          exception-type: "java.lang.IllegalArgumentException"
+                      - throwException:  
+                          exceptionType: "java.lang.IllegalArgumentException"
                           message: "test"
             '''
         then:
@@ -36,5 +37,43 @@ class ThrowExceptionTest extends YamlTestSupport {
                 message == 'test'
                 exceptionType == "java.lang.IllegalArgumentException"
             }
+    }
+
+    def "Error: kebab-case: throw-exception"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - throw-exception:
+                          exceptionType: "java.lang.IllegalArgumentException"
+                          message: "test"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: exception-type"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - throwException:
+                          exception-type: "java.lang.IllegalArgumentException"
+                          message: "test"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

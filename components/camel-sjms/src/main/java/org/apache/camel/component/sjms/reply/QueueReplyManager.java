@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.sjms.reply;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.MessageListenerContainer;
@@ -87,7 +87,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public Destination createTemporaryDestination(Session session, boolean topic) throws JMSException {
+        public Destination createTemporaryDestination(Session session, boolean topic) {
             return null;
         }
     }

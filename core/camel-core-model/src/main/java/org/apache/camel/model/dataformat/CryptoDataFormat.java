@@ -16,11 +16,13 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -31,19 +33,23 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     private String algorithm;
     @XmlAttribute
-    private String cryptoProvider;
-    @XmlAttribute
     private String keyRef;
     @XmlAttribute
+    @Metadata(label = "advanced")
+    private String cryptoProvider;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String initVectorRef;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String algorithmParameterRef;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
-    private String buffersize;
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096")
+    private String bufferSize;
     @XmlAttribute
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
@@ -51,11 +57,24 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String inline;
 
     public CryptoDataFormat() {
         super("crypto");
+    }
+
+    private CryptoDataFormat(Builder builder) {
+        this();
+        this.algorithm = builder.algorithm;
+        this.keyRef = builder.keyRef;
+        this.cryptoProvider = builder.cryptoProvider;
+        this.initVectorRef = builder.initVectorRef;
+        this.algorithmParameterRef = builder.algorithmParameterRef;
+        this.bufferSize = builder.bufferSize;
+        this.macAlgorithm = builder.macAlgorithm;
+        this.shouldAppendHMAC = builder.shouldAppendHMAC;
+        this.inline = builder.inline;
     }
 
     public String getAlgorithm() {
@@ -64,7 +83,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
     /**
      * The JCE algorithm name indicating the cryptographic algorithm that will be used.
-     * <p/>
      */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
@@ -116,15 +134,15 @@ public class CryptoDataFormat extends DataFormatDefinition {
         this.algorithmParameterRef = algorithmParameterRef;
     }
 
-    public String getBuffersize() {
-        return buffersize;
+    public String getBufferSize() {
+        return bufferSize;
     }
 
     /**
      * The size of the buffer used in the signature process.
      */
-    public void setBuffersize(String buffersize) {
-        this.buffersize = buffersize;
+    public void setBufferSize(String bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
     public String getMacAlgorithm() {
@@ -160,5 +178,129 @@ public class CryptoDataFormat extends DataFormatDefinition {
      */
     public void setInline(String inline) {
         this.inline = inline;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link CryptoDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CryptoDataFormat> {
+
+        private String algorithm;
+        private String keyRef;
+        private String cryptoProvider;
+        private String initVectorRef;
+        private String algorithmParameterRef;
+        private String bufferSize;
+        private String macAlgorithm = "HmacSHA1";
+        private String shouldAppendHMAC;
+        private String inline;
+
+        /**
+         * The JCE algorithm name indicating the cryptographic algorithm that will be used.
+         */
+        public Builder algorithm(String algorithm) {
+            this.algorithm = algorithm;
+            return this;
+        }
+
+        /**
+         * The name of the JCE Security Provider that should be used.
+         */
+        public Builder cryptoProvider(String cryptoProvider) {
+            this.cryptoProvider = cryptoProvider;
+            return this;
+        }
+
+        /**
+         * Refers to the secret key to lookup from the register to use.
+         */
+        public Builder keyRef(String keyRef) {
+            this.keyRef = keyRef;
+            return this;
+        }
+
+        /**
+         * Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
+         */
+        public Builder initVectorRef(String initVectorRef) {
+            this.initVectorRef = initVectorRef;
+            return this;
+        }
+
+        /**
+         * A JCE AlgorithmParameterSpec used to initialize the Cipher.
+         * <p/>
+         * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
+         */
+        public Builder algorithmParameterRef(String algorithmParameterRef) {
+            this.algorithmParameterRef = algorithmParameterRef;
+            return this;
+        }
+
+        /**
+         * The size of the buffer used in the signature process.
+         */
+        public Builder bufferSize(String bufferSize) {
+            this.bufferSize = bufferSize;
+            return this;
+        }
+
+        /**
+         * The size of the buffer used in the signature process.
+         */
+        public Builder bufferSize(int bufferSize) {
+            this.bufferSize = Integer.toString(bufferSize);
+            return this;
+        }
+
+        /**
+         * The JCE algorithm name indicating the Message Authentication algorithm.
+         */
+        public Builder macAlgorithm(String macAlgorithm) {
+            this.macAlgorithm = macAlgorithm;
+            return this;
+        }
+
+        /**
+         * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
+         */
+        public Builder shouldAppendHMAC(String shouldAppendHMAC) {
+            this.shouldAppendHMAC = shouldAppendHMAC;
+            return this;
+        }
+
+        /**
+         * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
+         */
+        public Builder shouldAppendHMAC(boolean shouldAppendHMAC) {
+            this.shouldAppendHMAC = Boolean.toString(shouldAppendHMAC);
+            return this;
+        }
+
+        /**
+         * Flag indicating that the configured IV should be inlined into the encrypted data stream.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder inline(String inline) {
+            this.inline = inline;
+            return this;
+        }
+
+        /**
+         * Flag indicating that the configured IV should be inlined into the encrypted data stream.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder inline(boolean inline) {
+            this.inline = Boolean.toString(inline);
+            return this;
+        }
+
+        @Override
+        public CryptoDataFormat end() {
+            return new CryptoDataFormat(this);
+        }
     }
 }

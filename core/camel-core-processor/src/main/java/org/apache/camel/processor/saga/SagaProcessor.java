@@ -36,13 +36,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class SagaProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
 
-    protected CamelContext camelContext;
+    protected final CamelSagaService sagaService;
 
-    protected CamelSagaService sagaService;
+    protected final CamelSagaStep step;
 
-    protected CamelSagaStep step;
-
-    protected SagaCompletionMode completionMode;
+    protected final SagaCompletionMode completionMode;
 
     private String id;
     private String routeId;
@@ -50,7 +48,6 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
     public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
                          SagaCompletionMode completionMode, CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
-        this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.completionMode = ObjectHelper.notNull(completionMode, "completionMode");
         this.step = ObjectHelper.notNull(step, "step");
@@ -70,6 +67,7 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
             exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, coordinator.getId());
         } else {
             exchange.getIn().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
+            exchange.getMessage().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
         }
     }
 
@@ -78,12 +76,17 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
             AsyncCallback callback) {
         if (this.completionMode == SagaCompletionMode.AUTO) {
             if (exchange.getException() != null) {
-                coordinator.compensate().whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
-                    setCurrentSagaCoordinator(exchange, previousCoordinator);
+                if (coordinator != null) {
+                    coordinator.compensate(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                        setCurrentSagaCoordinator(exchange, previousCoordinator);
+                        callback.done(false);
+                    }));
+                } else {
+                    // No coordinator available, so no saga available.
                     callback.done(false);
-                }));
+                }
             } else {
-                coordinator.complete().whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                coordinator.complete(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
                     setCurrentSagaCoordinator(exchange, previousCoordinator);
                     callback.done(false);
                 }));

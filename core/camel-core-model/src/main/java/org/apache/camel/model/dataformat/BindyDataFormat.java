@@ -18,12 +18,13 @@ package org.apache.camel.model.dataformat;
 
 import java.util.Locale;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -33,26 +34,38 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class BindyDataFormat extends DataFormatDefinition {
+
+    private Class<?> classType;
+
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue")
     private String type;
-    @XmlAttribute
-    private String classType;
-    @XmlAttribute
-    private String locale;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
-    private String unwrapSingleInstance;
+    @XmlAttribute(name = "classType")
+    private String classTypeAsString;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowEmptyStream;
-    @XmlTransient
-    private Class<?> clazz;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String unwrapSingleInstance;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String locale;
 
     public BindyDataFormat() {
         super("bindy");
+    }
+
+    private BindyDataFormat(Builder builder) {
+        this();
+        this.classType = builder.classType;
+        this.type = builder.type;
+        this.classTypeAsString = builder.classTypeAsString;
+        this.allowEmptyStream = builder.allowEmptyStream;
+        this.unwrapSingleInstance = builder.unwrapSingleInstance;
+        this.locale = builder.locale;
     }
 
     public String getType() {
@@ -67,43 +80,36 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     public String getClassTypeAsString() {
-        return classType;
-    }
-
-    @Override
-    public String getDataFormatName() {
-        if ("Csv".equals(type)) {
-            return "bindy-csv";
-        } else if ("Fixed".equals(type)) {
-            return "bindy-fixed";
-        } else {
-            return "bindy-kvp";
-        }
+        return classTypeAsString;
     }
 
     /**
      * Name of model class to use.
      */
     public void setClassTypeAsString(String classType) {
-        this.classType = classType;
+        this.classTypeAsString = classType;
     }
 
-    /**
-     * Name of model class to use.
-     */
-    public void setClassType(String classType) {
-        setClassTypeAsString(classType);
+    @Override
+    public String getDataFormatName() {
+        if ("Csv".equals(type)) {
+            return "bindyCsv";
+        } else if ("Fixed".equals(type)) {
+            return "bindyFixed";
+        } else {
+            return "bindyKvp";
+        }
     }
 
     /**
      * Name of model class to use.
      */
     public void setClassType(Class<?> classType) {
-        this.clazz = classType;
+        this.classType = classType;
     }
 
     public Class<?> getClassType() {
-        return clazz;
+        return classType;
     }
 
     public String getLocale() {
@@ -169,12 +175,12 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     public BindyDataFormat classType(Class<?> classType) {
-        this.clazz = classType;
+        this.classType = classType;
         return this;
     }
 
     public BindyDataFormat classType(String classType) {
-        this.classType = classType;
+        this.classTypeAsString = classType;
         return this;
     }
 
@@ -206,4 +212,96 @@ public class BindyDataFormat extends DataFormatDefinition {
         return this;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link BindyDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<BindyDataFormat> {
+
+        private Class<?> classType;
+        private String type;
+        private String classTypeAsString;
+        private String allowEmptyStream;
+        private String unwrapSingleInstance;
+        private String locale;
+
+        /**
+         * Whether to use Csv, Fixed, or KeyValue.
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder type(BindyType type) {
+            return type(type.name());
+        }
+
+        /**
+         * Name of model class to use.
+         */
+        public Builder classType(String classTypeAsString) {
+            this.classTypeAsString = classTypeAsString;
+            return this;
+        }
+
+        /**
+         * Name of model class to use.
+         */
+        public Builder classType(Class<?> classType) {
+            this.classType = classType;
+            return this;
+        }
+
+        /**
+         * To configure a default locale to use, such as <tt>us</tt> for united states.
+         * <p/>
+         * To use the JVM platform default locale then use the name <tt>default</tt>
+         */
+        public Builder locale(String locale) {
+            this.locale = locale;
+            return this;
+        }
+
+        /**
+         * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+         * <tt>java.util.List</tt>.
+         */
+        public Builder unwrapSingleInstance(String unwrapSingleInstance) {
+            this.unwrapSingleInstance = unwrapSingleInstance;
+            return this;
+        }
+
+        /**
+         * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+         * <tt>java.util.List</tt>.
+         */
+        public Builder unwrapSingleInstance(boolean unwrapSingleInstance) {
+            this.unwrapSingleInstance = Boolean.toString(unwrapSingleInstance);
+            return this;
+        }
+
+        /**
+         * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body
+         * without records is provided.
+         */
+        public Builder allowEmptyStream(String allowEmptyStream) {
+            this.allowEmptyStream = allowEmptyStream;
+            return this;
+        }
+
+        /**
+         * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body
+         * without records is provided.
+         */
+        public Builder allowEmptyStream(boolean allowEmptyStream) {
+            this.allowEmptyStream = Boolean.toString(allowEmptyStream);
+            return this;
+        }
+
+        @Override
+        public BindyDataFormat end() {
+            return new BindyDataFormat(this);
+        }
+    }
 }

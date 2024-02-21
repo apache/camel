@@ -21,6 +21,8 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTest {
 
     @Override
@@ -30,13 +32,13 @@ public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTe
     }
 
     @Test
-    void testEncryption() throws Exception {
-        doRoundTripEncryptionTests("direct:inline");
+    void testEncryption() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline"));
     }
 
     @Test
-    void testEncryptionWithKeyRingByteArray() throws Exception {
-        doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array");
+    void testEncryptionWithKeyRingByteArray() {
+        assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array"));
     }
 
 }

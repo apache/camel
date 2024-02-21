@@ -6,9 +6,10 @@
     "description": "Distributed tracing common interfaces",
     "deprecated": false,
     "firstVersion": "3.5.0",
+    "label": "monitoring,microservice",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tracing",
-    "version": "3.9.0-SNAPSHOT"
+    "version": "4.5.0-SNAPSHOT"
   }
 }

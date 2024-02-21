@@ -21,18 +21,18 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
-import org.apache.camel.TypeConverters;
 
 /**
  * Registry for type converters.
  * <p/>
  * The utilization {@link Statistics} is by default disabled, as it has a slight performance impact under very high
- * concurrent load. The statistics can be enabled using {@link Statistics#setStatisticsEnabled(boolean)} method.
+ * concurrent load. The statistics can be enabled using
+ * {@link org.apache.camel.CamelContext#setTypeConverterStatisticsEnabled(Boolean)} (boolean)} method.
  */
 public interface TypeConverterRegistry extends StaticService, CamelContextAware {
 
     /**
-     * Utilization statistics of the this registry.
+     * Utilization statistics of the registry.
      */
     interface Statistics {
 
@@ -106,12 +106,12 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
 
     /**
-     * Registers all the type converters from the class, each converter must be implemented as a method and annotated
+     * Registers all the type converters from the instance, each converter must be implemented as a method and annotated
      * with {@link org.apache.camel.Converter}.
      *
-     * @param typeConverters class which implements the type converters
+     * @param typeConverters instance which implements the type converters
      */
-    void addTypeConverters(TypeConverters typeConverters);
+    void addTypeConverters(Object typeConverters);
 
     /**
      * Registers a new fallback type converter
@@ -162,7 +162,7 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
      * type converter.
      * <p/>
-     * The default logging level is <tt>WARN</tt>
+     * The default logging level is <tt>DEBUG</tt>
      */
     LoggingLevel getTypeConverterExistsLoggingLevel();
 
@@ -170,22 +170,32 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * The logging level to use when logging that a type converter already exists when attempting to add a duplicate
      * type converter.
      * <p/>
-     * The default logging level is <tt>WARN</tt>
+     * The default logging level is <tt>DEBUG</tt>
      */
     void setTypeConverterExistsLoggingLevel(LoggingLevel typeConverterExistsLoggingLevel);
 
     /**
      * What should happen when attempting to add a duplicate type converter.
      * <p/>
-     * The default behavior is to override the existing.
+     * The default behavior is to ignore the duplicate.
      */
     TypeConverterExists getTypeConverterExists();
 
     /**
      * What should happen when attempting to add a duplicate type converter.
      * <p/>
-     * The default behavior is to override the existing.
+     * The default behavior is to ignore the duplicate.
      */
     void setTypeConverterExists(TypeConverterExists typeConverterExists);
+
+    /**
+     * Adds a type convertible pair to the registry
+     *
+     * @param typeConvertible A type convertible pair
+     * @param typeConverter   The type converter to associate with the type convertible pair
+     */
+    default void addConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter) {
+
+    }
 
 }

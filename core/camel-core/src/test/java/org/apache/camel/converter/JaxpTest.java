@@ -54,7 +54,7 @@ public class JaxpTest {
                 = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         assertNotNull(document);
 
-        LOG.debug("Found document: " + document);
+        LOG.debug("Found document: {}", document);
 
         // lets now convert back again
 
@@ -69,7 +69,7 @@ public class JaxpTest {
         Source source = converter.convertTo(Source.class, "<hello>world!</hello>");
         assertNotNull(source);
 
-        LOG.debug("Found document: " + source);
+        LOG.debug("Found document: {}", source);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class JaxpTest {
         DOMSource domSource = converter.convertTo(DOMSource.class, streamSource);
         assertNotNull(domSource, "Could not convert to a DOMSource!");
 
-        LOG.debug("Found document: " + domSource);
+        LOG.debug("Found document: {}", domSource);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class JaxpTest {
         Source source = converter.convertTo(DOMSource.class, element);
         assertNotNull(source, "Could not convert from Node to Source!");
 
-        LOG.debug("Found source: " + source);
+        LOG.debug("Found source: {}", source);
 
         InputStream in = converter.convertTo(InputStream.class, source);
         assertNotNull(in, "Could not convert from Source to InputStream!");

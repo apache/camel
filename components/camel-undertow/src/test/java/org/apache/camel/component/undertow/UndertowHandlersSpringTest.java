@@ -18,7 +18,7 @@ package org.apache.camel.component.undertow;
 
 import java.net.URL;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
@@ -55,7 +55,7 @@ public class UndertowHandlersSpringTest {
     }
 
     @AfterAll
-    public static void tearDownJaas() throws Exception {
+    public static void tearDownJaas() {
         System.clearProperty("java.security.auth.login.config");
     }
 

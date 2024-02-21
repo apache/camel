@@ -69,7 +69,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         assertNotNull(routes, "Should have some routes defined");
         assertEquals(1, routes.size(), "Number of routes defined");
         Route route = routes.get(0);
-        log.debug("Found route: " + route);
+        log.debug("Found route: {}", route);
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

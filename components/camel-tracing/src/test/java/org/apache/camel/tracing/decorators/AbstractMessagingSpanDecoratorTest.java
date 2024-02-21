@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -72,6 +73,7 @@ public class AbstractMessagingSpanDecoratorTest {
         decorator.pre(span, null, endpoint);
 
         assertEquals("MyQueue", span.tags().get(Tag.MESSAGE_BUS_DESTINATION.name()));
+        assertEquals("MyQueue", span.tags().get(TagConstants.MESSAGE_BUS_DESTINATION));
     }
 
     @Test
@@ -104,6 +106,7 @@ public class AbstractMessagingSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(messageId, span.tags().get(AbstractMessagingSpanDecorator.MESSAGE_BUS_ID));
+        assertEquals(messageId, span.tags().get(TagConstants.MESSAGE_ID));
     }
 
 }

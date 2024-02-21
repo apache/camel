@@ -31,33 +31,38 @@ public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
     private UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
 
     @Test
-    public void testProducerGet() throws Exception {
+    public void testProducerGet() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Test
-    public void testServletProducerGetWildcards() throws Exception {
+    public void testServletProducerGetWildcards() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/456/name=g*", null, String.class);
         assertEquals("456;Goofy", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/{query}").route().to("log:query").process(exchange -> {
+                rest("/users/")
+                        .get("{id}/{query}").to("direct:query")
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:query").to("log:query").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
                     exchange.getMessage().setBody(id + ";Goofy");
-                }).endRest().get("{id}/basic").route().to("log:input").process(exchange -> {
+                });
+                from("direct:basic").to("log:input").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
                     exchange.getMessage().setBody(id + ";Donald Duck");
-                }).endRest();
+                });
             }
         };
     }

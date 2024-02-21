@@ -27,7 +27,7 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * Utility to hide the complexity of choosing which OutputStream implementation to choose.
  * <p/>
- * Itself masquerades as an OutputStream, but really delegates to a CachedOutputStream of a ByteArrayOutputStream.
+ * Itself masquerades as an OutputStream, but really delegates to a CachedOutputStream or a ByteArrayOutputStream.
  */
 public final class OutputStreamBuilder extends OutputStream {
 

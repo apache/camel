@@ -26,7 +26,7 @@ public class MyProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        LOG.debug("Called with exchange: " + exchange);
+        LOG.debug("Called with exchange: {}", exchange);
     }
 
     @Override

@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +34,6 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.CompositeApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultCompositeApiClient;
 import org.apache.camel.support.service.ServiceHelper;
@@ -52,7 +50,6 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     }
 
     private CompositeApiClient compositeClient;
-    private PayloadFormat format;
 
     public CompositeApiProcessor(final SalesforceEndpoint endpoint) {
         super(endpoint);
@@ -64,12 +61,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
         final String apiVersion = configuration.getApiVersion();
 
-        format = configuration.getFormat();
-
-        if (!EnumSet.of(PayloadFormat.JSON, PayloadFormat.XML).contains(format)) {
-            throw new SalesforceException("Unsupported format: " + format, 0);
-        }
-        compositeClient = new DefaultCompositeApiClient(configuration, format, apiVersion, session, httpClient, loginConfig);
+        compositeClient = new DefaultCompositeApiClient(configuration, apiVersion, session, httpClient, loginConfig);
         ServiceHelper.startService(compositeClient);
     }
 

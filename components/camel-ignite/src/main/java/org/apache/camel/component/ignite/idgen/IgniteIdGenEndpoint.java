@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
+import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,14 +33,16 @@ import org.apache.ignite.IgniteAtomicSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
+
 /**
  * Interact with <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators
  * </a>.
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name",
-             category = { Category.COMPUTE }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_IDGEN, title = "Ignite ID Generator", syntax = "ignite-idgen:name",
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
@@ -58,7 +61,7 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
     private IgniteIdGenOperation operation;
 
     public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                               IgniteIdGenComponent igniteComponent) throws Exception {
+                               IgniteIdGenComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 

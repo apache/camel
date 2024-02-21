@@ -16,22 +16,20 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.http.NoHttpResponseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
-
-    private int port1;
-    private int port2;
 
     @Test
     public void testTwoServerPorts() throws Exception {
@@ -39,9 +37,9 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         CamelContext contextB = new DefaultCamelContext();
         contextB.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Hi " + in);
                     }
@@ -61,30 +59,22 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         reply = template.requestBody("direct:a", "Earth", String.class);
         assertEquals("Bye Earth", reply);
 
-        try {
-            reply = template.requestBody("direct:b", "Moon", String.class);
-            // expert the exception here
-            fail("Expert the exception here");
-        } catch (Exception ex) {
-            assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
-        }
-
+        Exception ex = assertThrows(Exception.class,
+                () -> template.requestBody("direct:b", "Moon", String.class));
+        assertInstanceOf(IOException.class, ex.getCause(), "Should get the IOException");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
+            public void configure() {
                 from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
                 from("direct:b").to("http://localhost:" + port2 + "/myotherapp");
 
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Bye " + in);
                     }

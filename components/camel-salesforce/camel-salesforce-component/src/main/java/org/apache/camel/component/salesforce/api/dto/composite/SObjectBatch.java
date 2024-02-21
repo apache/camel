@@ -23,13 +23,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.UrlUtils;
@@ -66,7 +63,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * </blockquote> This will build a batch of three operations, one to create new Account, one to delete an Account, and
  * one to get two fields from an Account.
  */
-@XStreamAlias("batch")
 public final class SObjectBatch implements Serializable {
 
     private static final String SOBJECT_TYPE_PARAM = "type";
@@ -82,12 +78,10 @@ public final class SObjectBatch implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamOmitField
     private final String apiPrefix;
 
     private final List<BatchRequest> batchRequests = new ArrayList<>();
 
-    @XStreamOmitField
     private final Version version;
 
     /**
@@ -207,7 +201,9 @@ public final class SObjectBatch implements Serializable {
      * {@code CreatedBy}. To fetch fields from that related object ({@code User} SObject) use: <blockquote>
      *
      * <pre>
-     * {@code batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")}
+     * {@code
+     * batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")
+     * }
      * </pre>
      *
      * </blockquote>
@@ -353,12 +349,12 @@ public final class SObjectBatch implements Serializable {
      * @return all object types in this batch
      */
     public Class[] objectTypes() {
-        final Set<Class<?>> types = Stream
-                .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
-                        batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull).map(Object::getClass))
-                .collect(Collectors.toSet());
 
-        return types.toArray(new Class[types.size()]);
+        return Stream
+                .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
+                        batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull)
+                                .map(Object::getClass))
+                .distinct().toArray(Class[]::new);
     }
 
     void addBatchRequest(final BatchRequest batchRequest) {

@@ -20,19 +20,21 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
- * Utility class for {@link javax.jms.Message}.
+ * Utility class for {@link jakarta.jms.Message}.
  */
 public final class JmsMessageHelper {
 
@@ -42,10 +44,10 @@ public final class JmsMessageHelper {
     /**
      * Removes the property from the JMS message.
      *
-     * @param  jmsMessage             the JMS message
-     * @param  name                   name of the property to remove
-     * @return                        the old value of the property or <tt>null</tt> if not exists
-     * @throws javax.jms.JMSException can be thrown
+     * @param  jmsMessage               the JMS message
+     * @param  name                     name of the property to remove
+     * @return                          the old value of the property or <tt>null</tt> if not exists
+     * @throws jakarta.jms.JMSException can be thrown
      */
     public static Object removeJmsProperty(Message jmsMessage, String name) throws JMSException {
         // check if the property exists
@@ -103,7 +105,7 @@ public final class JmsMessageHelper {
      *
      * @param  jmsMessage   the JMS message
      * @param  name         name of the property to get
-     * @return              the property value, or <tt>null</tt> if does not exists
+     * @return              the property value, or <tt>null</tt> if does not exist
      * @throws JMSException can be thrown
      */
     public static Object getProperty(Message jmsMessage, String name) throws JMSException {
@@ -329,6 +331,28 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * For a given message, evaluates what is the redelivery state for it and gives the appropriate {@link MessageTrait}
+     * for that redelivery state
+     *
+     * @param  message the message to evalute
+     * @return         The appropriate MessageTrait for the redelivery state (one of MessageTrait.UNDEFINED_REDELIVERY,
+     *                 MessageTrait.IS_REDELIVERY or MessageTrait.NON_REDELIVERY).
+     */
+    public static RedeliveryTraitPayload evalRedeliveryMessageTrait(Message message) {
+        final Boolean redelivered = JmsMessageHelper.getJMSRedelivered(message);
+
+        if (redelivered == null) {
+            return RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
+        }
+
+        if (Boolean.TRUE.equals(redelivered)) {
+            return RedeliveryTraitPayload.IS_REDELIVERY;
+        }
+
+        return RedeliveryTraitPayload.NON_REDELIVERY;
+    }
+
+    /**
      * Gets the JMSMessageID from the message.
      *
      * @param  message the message
@@ -347,10 +371,10 @@ public final class JmsMessageHelper {
     /**
      * Sets the JMSDeliveryMode on the message.
      *
-     * @param  exchange               the exchange
-     * @param  message                the message
-     * @param  deliveryMode           the delivery mode, either as a String or integer
-     * @throws javax.jms.JMSException is thrown if error setting the delivery mode
+     * @param  exchange                 the exchange
+     * @param  message                  the message
+     * @param  deliveryMode             the delivery mode, either as a String or integer
+     * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
         Integer mode = null;
@@ -382,6 +406,22 @@ public final class JmsMessageHelper {
             message.setJMSDeliveryMode(mode);
             message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
         }
+    }
+
+    /**
+     * Gets the JMSCorrelationID from the message.
+     *
+     * @param  message the message
+     * @return         the JMSCorrelationID, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSCorrelationID(Message message) {
+        try {
+            return message.getJMSCorrelationID();
+        } catch (JMSException e) {
+            // ignore
+        }
+
+        return null;
     }
 
     /**

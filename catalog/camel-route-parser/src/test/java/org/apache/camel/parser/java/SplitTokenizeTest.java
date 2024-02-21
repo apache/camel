@@ -30,7 +30,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
 
         template.sendBody("direct:a", "Claus,James,Willem");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:b", "Hello World", "myHeader", "Claus,James,Willem");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
 
         template.sendBody("direct:c", "Claus James Willem");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
 
         template.sendBody("direct:d", "[Claus][James][Willem]");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
         String xml = "<persons><person>Claus</person><person>James</person><person>Willem</person></persons>";
         template.sendBody("direct:e", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<person attr='/' />");
         template.sendBody("direct:e", xml);
         mock.assertIsSatisfied();
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SplitTokenizeTest extends CamelTestSupport {
         String xml = "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
         template.sendBody("direct:f", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -105,13 +105,13 @@ public class SplitTokenizeTest extends CamelTestSupport {
                         .split().tokenize(",")
                         .to("mock:split");
 
+                var byHeader = expression().tokenize().token(",").source("header:myHeader").end();
                 from("direct:b")
-                        .split().tokenize(",", "myHeader")
+                        .split(byHeader)
                         .to("mock:split");
 
                 from("direct:c")
-                        .split().tokenize("(\\W+)\\s*", null, true)
-                        .to("mock:split");
+                        .split().tokenize("(\\W+)\\s*", true).to("mock:split");
 
                 from("direct:d")
                         .split().tokenizePair("[", "]", true)

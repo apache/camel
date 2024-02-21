@@ -43,7 +43,7 @@ public class JmsJaxbTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class JmsJaxbTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "<foo/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class JmsJaxbTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "<purchaseOrder name='Beer' amount='2.0' price='1.99'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

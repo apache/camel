@@ -20,7 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
@@ -35,6 +36,13 @@ import org.springframework.ws.soap.SoapMessage;
  * This class populates a SOAP header and attachments in the WebServiceMessage instance.
  */
 public class BasicMessageFilter implements MessageFilter {
+
+    /**
+     * Whether a header is valid
+     */
+    protected boolean validHeaderName(String name) {
+        return !"Content-Type".equalsIgnoreCase(name);
+    }
 
     @Override
     public void filterProducer(Exchange exchange, WebServiceMessage response) {
@@ -53,9 +61,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * If applicable this method adds a SOAP headers and attachments.
-     * 
-     * @param inOrOut
-     * @param response
      */
     protected void processHeaderAndAttachments(AttachmentMessage inOrOut, WebServiceMessage response) {
 
@@ -68,9 +73,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * If applicable this method adds a SOAP header.
-     * 
-     * @param inOrOut
-     * @param soapMessage
      */
     protected void processSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         boolean isHeaderAvailable = inOrOut != null && inOrOut.getHeaders() != null && !inOrOut.getHeaders().isEmpty();
@@ -100,18 +102,21 @@ public class BasicMessageFilter implements MessageFilter {
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION);
-        // This gets repeated again in the below 'for loop' and gets added as attribute to soapenv:header. 
+        // This gets repeated in the below 'for loop' and gets added as attribute to soapenv:header.
         // This would have already been processed in SpringWebserviceProducer/Consumer instance.
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER);
 
         // Replaced local constant 'BreadcrumbId' with the actual constant key in header 'breadcrumbId'
-        // from org.apache.camel.Exchange.BREADCRUMB_ID. Because of this case mismatch, this key never
+        // from org.apache.camel.SpringWebserviceConstants.BREADCRUMB_ID. Because of this case mismatch, this key never
         // gets removed from header rather gets added to soapHeader all the time.
-        headerKeySet.remove(Exchange.BREADCRUMB_ID);
+        headerKeySet.remove(SpringWebserviceConstants.BREADCRUMB_ID);
 
         for (String name : headerKeySet) {
-            Object value = headers.get(name);
+            if (!validHeaderName(name)) {
+                continue;
+            }
 
+            Object value = headers.get(name);
             if (value instanceof QName) {
                 soapHeader.addHeaderElement((QName) value);
             } else {
@@ -124,9 +129,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * Populate SOAP attachments from in or out exchange message. This the convenient method for overriding.
-     * 
-     * @param inOrOut
-     * @param response
      */
     protected void doProcessSoapAttachments(AttachmentMessage inOrOut, SoapMessage response) {
         if (inOrOut.hasAttachments()) {

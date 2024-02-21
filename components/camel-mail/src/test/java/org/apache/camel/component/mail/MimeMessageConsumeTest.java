@@ -18,35 +18,37 @@ package org.apache.camel.component.mail;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.activation.URLDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
+import jakarta.activation.URLDataSource;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MimeMessageConsumeTest extends CamelTestSupport {
+    private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
+    private static final MailboxUser james4 = Mailbox.getOrCreateUser("james4", "secret");
     private String body = "hello world!";
 
     @Test
@@ -56,15 +58,13 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "localhost");
-        Session session = Session.getInstance(properties, null);
+        Session session = Mailbox.getSmtpSession();
 
         MimeMessage message = new MimeMessage(session);
         populateMimeMessageBody(message);
         message.setRecipients(Message.RecipientType.TO, "james3@localhost");
 
-        Transport.send(message);
+        Transport.send(message, james3.getLogin(), james3.getPassword());
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
@@ -136,8 +136,10 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james3@localhost?initialDelay=100&delay=100").removeHeader("to").to("smtp://james4@localhost");
-                from("pop3://james4@localhost?initialDelay=200&delay=100").convertBodyTo(String.class).to("mock:result");
+                from(james3.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").removeHeader("to")
+                        .to(james4.uriPrefix(Protocol.smtp));
+                from(james4.uriPrefix(Protocol.pop3) + "&initialDelay=200&delay=100").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

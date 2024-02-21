@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.FromDefinition;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -40,6 +42,12 @@ public final class Kamelet {
     public static final String SINK_ID = "sink";
     public static final String PARAM_ROUTE_ID = "routeId";
     public static final String PARAM_TEMPLATE_ID = "templateId";
+    public static final String PARAM_LOCATION = "location";
+    public static final String DEFAULT_LOCATION = "classpath:/kamelets";
+    public static final String NO_ERROR_HANDLER = "noErrorHandler";
+
+    // use a running counter as uuid
+    private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
     private Kamelet() {
     }
@@ -84,37 +92,50 @@ public final class Kamelet {
             answer = StringHelper.after(remaining, "/");
         }
         if (answer == null) {
-            answer = extractTemplateId(context, remaining, parameters) + "-" + context.getUuidGenerator().generateUuid();
+            answer = extractTemplateId(context, remaining, parameters) + "-" + UUID.generateUuid();
         }
 
         return answer;
     }
 
+    public static String extractLocation(CamelContext context, Map<String, Object> parameters) {
+        Object param = parameters.get(PARAM_LOCATION);
+        if (param != null) {
+            return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
+        }
+        return null;
+    }
+
     public static void extractKameletProperties(CamelContext context, Map<String, Object> properties, String... elements) {
         PropertiesComponent pc = context.getPropertiesComponent();
-        String prefix = Kamelet.PROPERTIES_PREFIX;
+        StringBuilder prefixBuffer = new StringBuilder(Kamelet.PROPERTIES_PREFIX);
 
         for (String element : elements) {
             if (element == null) {
                 continue;
             }
+            prefixBuffer.append(element).append('.');
 
-            prefix = prefix + element + ".";
-
-            Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefix));
+            Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefixBuffer.toString()));
             for (String name : prefixed.stringPropertyNames()) {
-                properties.put(name.substring(prefix.length()), prefixed.getProperty(name));
+                properties.put(name.substring(prefixBuffer.toString().length()), prefixed.getProperty(name));
             }
         }
     }
 
     public static RouteDefinition templateToRoute(RouteTemplateDefinition in, Map<String, Object> parameters) {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
+        final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
 
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
 
         RouteDefinition def = in.asRouteDefinition();
+        def.setLocation(in.getLocation());
+        def.setLineNumber(in.getLineNumber());
         def.setId(rid);
+        if (noErrorHandler) {
+            def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
+        }
 
         if (def.getInput() == null) {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
@@ -123,16 +144,28 @@ public final class Kamelet {
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
-            def.setInput(null);
-            def.setInput(new FromDefinition("kamelet:source?" + PARAM_ROUTE_ID + "=" + rid));
+            def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
         }
 
-        Iterator<ToDefinition> it = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
-        while (it.hasNext()) {
-            ToDefinition to = it.next();
+        // there must be at least one sink
+        int line = -1;
+        boolean sink = false;
+        Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
+        for (ToDefinition to : col) {
             if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
-                to.setUri("kamelet:sink?" + PARAM_ROUTE_ID + "=" + rid);
+                to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+                sink = true;
             }
+            line = to.getLineNumber();
+        }
+        if (!sink) {
+            // this is appended and is used to go back to the kamelet that called me
+            ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+            to.setLocation(def.getInput().getLocation());
+            if (line != -1) {
+                to.setLineNumber(line + 1);
+            }
+            def.getOutputs().add(to);
         }
 
         return def;

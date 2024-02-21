@@ -20,15 +20,20 @@ import java.util.Set;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class MicrometerUtils {
+public final class MicrometerUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerUtils.class);
+
+    private MicrometerUtils() {
+    }
 
     public static Meter.Type getByName(String meterName) {
         switch (meterName) {
@@ -56,31 +61,59 @@ public abstract class MicrometerUtils {
         }
     }
 
-    public static MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String registryName) {
-        LOG.debug("Looking up MeterRegistry from Camel Registry for name \"{}\"", registryName);
-        MeterRegistry result = getMeterRegistryFromCamelRegistry(camelRegistry, registryName);
+    public static MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String name) {
+        MeterRegistry result = getMeterRegistryFromCamelRegistry(camelRegistry, name);
         if (result == null) {
-            LOG.debug("MeterRegistry not found from Camel Registry for name \"{}\"", registryName);
-            LOG.info("Creating new default MeterRegistry");
+            LOG.debug("Creating new MeterRegistry: {}", name);
             result = createMeterRegistry();
+            // enlist in registry so it can be reused
+            camelRegistry.bind(name, result);
+        } else {
+            LOG.debug("Using existing MeterRegistry: {}", name);
         }
         return result;
     }
 
     public static MeterRegistry getMeterRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
-        MeterRegistry registry = camelRegistry.lookupByNameAndType(registryName, MeterRegistry.class);
+        MeterRegistry registry = getMeterRegistryFromCamelRegistry(camelRegistry, registryName,
+                CompositeMeterRegistry.class);
         if (registry != null) {
             return registry;
-        } else {
-            Set<MeterRegistry> registries = camelRegistry.findByType(MeterRegistry.class);
-            if (registries.size() == 1) {
-                return registries.iterator().next();
-            }
         }
-        return null;
+
+        return getMeterRegistryFromCamelRegistry(camelRegistry, registryName, MeterRegistry.class);
     }
 
     public static MeterRegistry createMeterRegistry() {
         return new SimpleMeterRegistry();
+    }
+
+    /**
+     * Converts the name to the legacy name
+     *
+     * @param  name the name
+     * @return      in legacy format (CamelCase with upper cased first letter)
+     */
+    public static String legacyName(String name) {
+        // "camel.route.policy" -> "camelRoutePolicy"
+        name = name.replace('.', '-');
+        name = StringHelper.dashToCamelCase(name);
+        // upper case first letter
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    private static MeterRegistry getMeterRegistryFromCamelRegistry(
+            Registry camelRegistry, String registryName,
+            Class<? extends MeterRegistry> registryType) {
+        MeterRegistry registry = camelRegistry.lookupByNameAndType(registryName, registryType);
+        if (registry != null) {
+            return registry;
+        } else {
+            Set<? extends MeterRegistry> registries = camelRegistry.findByType(registryType);
+            if (registries != null && registries.size() == 1) {
+                return registryType.cast(registries.iterator().next());
+            }
+        }
+        return null;
     }
 }

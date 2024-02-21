@@ -34,7 +34,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
-        return (predicate != null) ? predicate.test(exchange) : false;
+        return predicate != null && predicate.test(exchange);
     }
 
     // *******************************
@@ -45,7 +45,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
      * Define a {@link org.apache.camel.Predicate} which targets the Exchange.
      */
     public T exchange(final Predicate<Exchange> predicate) {
-        this.predicate = predicate::test;
+        this.predicate = predicate;
         return parent;
     }
 
@@ -55,18 +55,18 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     /**
      * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Message. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
-     *     .choice()
+     *         .choice()
      *         .when()
-     *            .message(m -> m.getBody() != null)
-     *            .log("Received ${body}")
-     *     .endChoice()
+     *         .message(m -> m.getBody() != null)
+     *         .log("Received ${body}")
+     *         .endChoice()
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public T message(final Predicate<Message> predicate) {
@@ -79,18 +79,18 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     /**
      * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
-     *     .choice()
+     *         .choice()
      *         .when()
-     *            .body(b -> b != null)
-     *            .log("Received ${body}")
-     *     .endChoice()
+     *         .body(b -> b != null)
+     *         .log("Received ${body}")
+     *         .endChoice()
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public T body(final Predicate<Object> predicate) {
@@ -99,18 +99,18 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     /**
      * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
-     *     .choice()
+     *         .choice()
      *         .when()
-     *            .body(Long.class, b -> (b & 1) == 0)
-     *            .log("Received even number ${body}")
-     *     .endChoice()
+     *         .body(Long.class, b -> (b & 1) == 0)
+     *         .log("Received even number ${body}")
+     *         .endChoice()
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public <B> T body(final Class<B> type, final Predicate<B> predicate) {
@@ -119,18 +119,18 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     /**
      * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body and its Headers. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
-     *     .choice()
+     *         .choice()
      *         .when()
-     *            .body((b, h) -> b != null || h.containsKy("ToProcess"))
-     *            .log("Received ${body}")
-     *     .endChoice()
+     *         .body((b, h) -> b != null || h.containsKy("ToProcess"))
+     *         .log("Received ${body}")
+     *         .endChoice()
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public T body(final BiPredicate<Object, Map<String, Object>> predicate) {
@@ -140,18 +140,18 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     /**
      * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body and its Headers.
      * <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
-     *     .choice()
+     *         .choice()
      *         .when()
-     *            .body(String.class, (b, h) -> b != null && !b.isEmpty() || h.containsKy("ToProcess"))
-     *            .log("Received ${body}")
-     *     .endChoice()
+     *         .body(String.class, (b, h) -> b != null && !b.isEmpty() || h.containsKy("ToProcess"))
+     *         .log("Received ${body}")
+     *         .endChoice()
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public <B> T body(final Class<B> type, final BiPredicate<B, Map<String, Object>> predicate) {

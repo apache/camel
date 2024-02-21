@@ -55,13 +55,8 @@ public class BeanReturnCallableTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        public Callable doSomething() {
-            return new Callable() {
-                @Override
-                public Object call() throws Exception {
-                    return "I was called";
-                }
-            };
+        public Callable<String> doSomething() {
+            return () -> "I was called";
         }
     }
 

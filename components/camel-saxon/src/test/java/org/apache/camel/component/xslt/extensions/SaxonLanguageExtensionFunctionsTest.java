@@ -33,14 +33,14 @@ public class SaxonLanguageExtensionFunctionsTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<body>test</body>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Configuration conf = new Configuration();
                 conf.registerExtensionFunction(new XQueryWithExtensionTest.SimpleExtension());
 

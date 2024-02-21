@@ -27,7 +27,7 @@
     <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
 
     <!-- setup our error handler as the deal letter channel -->
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="errorHandler" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:error"/>
     </bean>
 

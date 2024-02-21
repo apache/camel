@@ -18,8 +18,8 @@ package org.apache.camel.http.common;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,18 +39,19 @@ public interface HttpBinding {
      * @param request the request
      * @param message the message to populate with data from request
      */
-    void readRequest(HttpServletRequest request, HttpMessage message);
+    void readRequest(HttpServletRequest request, Message message);
 
     /**
-     * Parses the body from a {@link org.apache.camel.http.common.HttpMessage}
+     * Parses the body from servlet request
      *
-     * @param  httpMessage         the http message
+     * @param  request             the request
+     * @param  message             the message
      * @return                     the parsed body returned as either a {@link java.io.InputStream} or a
      *                             {@link java.io.Reader} depending on the {@link #setUseReaderForPayload(boolean)}
      *                             property.
      * @throws java.io.IOException can be thrown
      */
-    Object parseBody(HttpMessage httpMessage) throws IOException;
+    Object parseBody(HttpServletRequest request, Message message) throws IOException;
 
     /**
      * Writes the exchange to the servlet response.
@@ -106,9 +107,9 @@ public interface HttpBinding {
     boolean isUseReaderForPayload();
 
     /**
-     * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages
-     * in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
-     * {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
+     * Should the {@link jakarta.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input
+     * messages in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
+     * {@link jakarta.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
      * <p/>
      * Is default <tt>false</tt>.
      *
@@ -132,6 +133,12 @@ public interface HttpBinding {
      * exception's stack trace.
      */
     boolean isMuteException();
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged when
+     * the exception stack trace is not sent in the response's body.
+     */
+    boolean isLogException();
 
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
@@ -184,6 +191,12 @@ public interface HttpBinding {
      * exception's stack trace.
      */
     void setMuteException(boolean muteException);
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged when
+     * the exception stack trace is not sent in the response's body.
+     */
+    void setLogException(boolean logException);
 
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object

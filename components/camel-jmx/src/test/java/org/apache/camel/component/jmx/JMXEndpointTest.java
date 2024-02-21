@@ -40,12 +40,12 @@ public class JMXEndpointTest {
     DefaultCamelContext context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         context = new DefaultCamelContext();
     }
 
     @Test
-    public void setObjectNameThrowsWhenObjectPropertiesIsSet() throws Exception {
+    public void setObjectNameThrowsWhenObjectPropertiesIsSet() {
         JMXEndpoint ep = new JMXEndpoint("urn:ignored", new JMXComponent());
         ep.setObjectProperties(new Hashtable<String, String>());
         try {
@@ -58,13 +58,13 @@ public class JMXEndpointTest {
     }
 
     @Test
-    public void defaultsToXml() throws Exception {
+    public void defaultsToXml() {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         assertTrue(ep.isXML());
     }
 
     @Test
-    public void formatRaw() throws Exception {
+    public void formatRaw() {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&format=raw",
                 JMXEndpoint.class);
         assertFalse(ep.isXML());
@@ -96,14 +96,14 @@ public class JMXEndpointTest {
     }
 
     @Test
-    public void platformServer() throws Exception {
+    public void platformServer() {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName", JMXEndpoint.class);
         assertTrue(ep.isPlatformServer());
         assertEquals("platform", ep.getServerURL());
     }
 
     @Test
-    public void remoteServer() throws Exception {
+    public void remoteServer() {
         JMXEndpoint ep = context.getEndpoint(
                 "jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi?objectDomain=FooDomain&key.name=theObjectName",
                 JMXEndpoint.class);
@@ -128,7 +128,7 @@ public class JMXEndpointTest {
     }
 
     @Test
-    public void credentials() throws Exception {
+    public void credentials() {
         JMXEndpoint ep = context.getEndpoint(
                 "jmx:platform?objectDomain=FooDomain&key.name=theObjectName&user=user1&password=1234", JMXEndpoint.class);
         assertEquals("user1", ep.getUser());

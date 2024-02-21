@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.main.BaseMainSupport;
@@ -47,14 +48,14 @@ public final class ZooKeeperMasterMain {
                     context.setNameStrategy(new ExplicitCamelContextNameStrategy("camel-" + nodeId));
                     context.addService(service);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeCamelException(e);
                 }
             }
         });
 
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final int delay = 1 + ThreadLocalRandom.current().nextInt(10);
                 final int period = 1 + ThreadLocalRandom.current().nextInt(5);
 

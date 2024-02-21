@@ -21,12 +21,14 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.ConversationType;
 import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.slack.helper.SlackHelper;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.util.ObjectHelper;
 
@@ -73,6 +75,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
         String webhookUrl = (String) parameters.get("webhookUrl");
+        String serverUrl = (String) parameters.get("serverUrl");
 
         if (ObjectHelper.isNotEmpty(webhookUrl)) {
 
@@ -82,8 +85,9 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
                 slackMessage = new SlackMessage();
                 slackMessage.setText("Test connection");
 
+                SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
                 WebhookResponse response
-                        = Slack.getInstance(new CustomSlackHttpClient()).send(webhookUrl, GSON.toJson(slackMessage));
+                        = Slack.getInstance(config, new CustomSlackHttpClient()).send(webhookUrl, GSON.toJson(slackMessage));
 
                 // 2xx is OK, anything else we regard as failure
                 if (response.getCode() < 200 || response.getCode() > 299) {
@@ -101,7 +105,8 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
             String token = (String) parameters.get("token");
 
             try {
-                ConversationsListResponse response = Slack.getInstance(new CustomSlackHttpClient()).methods(token)
+                SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
+                ConversationsListResponse response = Slack.getInstance(config, new CustomSlackHttpClient()).methods(token)
                         .conversationsList(req -> req
                                 .types(Collections.singletonList(ConversationType.PUBLIC_CHANNEL))
                                 .limit(1));

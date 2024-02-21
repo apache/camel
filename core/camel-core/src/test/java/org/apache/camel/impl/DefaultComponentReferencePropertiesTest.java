@@ -36,14 +36,17 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for reference properties
  */
 public class DefaultComponentReferencePropertiesTest extends ContextTestSupport {
 
-    public final class MyEndpoint extends DefaultEndpoint {
+    public static final class MyEndpoint extends DefaultEndpoint {
 
         private Expression expression;
         private String stringExpression;
@@ -90,7 +93,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
     }
 
-    public final class MyComponent extends DefaultComponent {
+    public static final class MyComponent extends DefaultComponent {
 
         private MyComponent(CamelContext context) {
             super(context);
@@ -191,25 +194,21 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     }
 
     @Test
-    public void testTypoInParameter() throws Exception {
+    public void testTypoInParameter() {
         MyComponent component = new MyComponent(context);
-        try {
-            component.createEndpoint("foo://?xxxexpression=#hello");
-            fail("Should have throw a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
+
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> component.createEndpoint("foo://?xxxexpression=#hello"),
+                "Should have throw a ResolveEndpointFailedException");
     }
 
     @Test
-    public void testTypoInParameterValue() throws Exception {
+    public void testTypoInParameterValue() {
         MyComponent component = new MyComponent(context);
-        try {
-            component.createEndpoint("foo://?special=#dummy");
-            fail("Should have throw a Exception");
-        } catch (Exception e) {
-            // ok
-        }
+
+        assertThrows(Exception.class,
+                () -> component.createEndpoint("foo://?special=#dummy"),
+                "Should have throw a Exception");
     }
 
 }

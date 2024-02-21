@@ -16,33 +16,49 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.builder.Namespaces;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware such as {@link XPathExpression} or
  * {@link XQueryExpression}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
+public abstract class NamespaceAwareExpression extends SingleInputTypedExpressionDefinition implements NamespaceAware {
+
+    @XmlElement(name = "namespace")
+    @Metadata(label = "common")
+    private List<PropertyDefinition> namespace;
     @XmlTransient
     private Map<String, String> namespaces;
 
-    public NamespaceAwareExpression() {
+    protected NamespaceAwareExpression() {
     }
 
-    public NamespaceAwareExpression(String expression) {
+    protected NamespaceAwareExpression(String expression) {
         super(expression);
+    }
+
+    protected NamespaceAwareExpression(AbstractNamespaceAwareBuilder<?, ?> builder) {
+        super(builder);
+        this.namespace = builder.namespace;
+        this.namespaces = builder.namespaces;
     }
 
     @Override
     public Map<String, String> getNamespaces() {
-        return namespaces;
+        return getNamespaceAsMap();
     }
 
     /**
@@ -55,4 +71,67 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
         this.namespaces = namespaces;
     }
 
+    public List<PropertyDefinition> getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Injects the XML Namespaces of prefix -> uri mappings
+     */
+    public void setNamespace(List<PropertyDefinition> namespace) {
+        this.namespace = namespace;
+    }
+
+    public Map<String, String> getNamespaceAsMap() {
+        if (namespaces == null && namespace != null) {
+            namespaces = new HashMap<>();
+        }
+        if (namespace != null) {
+            for (PropertyDefinition def : namespace) {
+                namespaces.put(def.getKey(), def.getValue());
+            }
+        }
+        return namespaces;
+    }
+
+    /**
+     * {@code NamespaceAwareBuilder} is the base namespace aware expression builder.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractNamespaceAwareBuilder<
+            T extends AbstractNamespaceAwareBuilder<T, E>, E extends NamespaceAwareExpression>
+            extends AbstractBuilder<T, E> {
+
+        private List<PropertyDefinition> namespace;
+        private Map<String, String> namespaces;
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         *
+         * @param namespaces the XML namespaces
+         */
+        public T namespaces(Namespaces namespaces) {
+            this.namespaces = namespaces.getNamespaces();
+            return (T) this;
+        }
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         *
+         * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
+         */
+        public T namespaces(Map<String, String> namespaces) {
+            this.namespaces = namespaces;
+            return (T) this;
+        }
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         */
+        public T namespace(List<PropertyDefinition> namespace) {
+            this.namespace = namespace;
+            return (T) this;
+        }
+    }
 }

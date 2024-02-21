@@ -19,56 +19,58 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(46);
-        props.add("asyncConsumer");
-        props.add("mapJmsMessage");
-        props.add("synchronous");
-        props.add("includeAllJMSXProperties");
-        props.add("explicitQosEnabled");
-        props.add("transacted");
-        props.add("eagerLoadingOfProperties");
-        props.add("autoStartup");
-        props.add("timeToLive");
-        props.add("bridgeErrorHandler");
-        props.add("jmsKeyFormatStrategy");
-        props.add("deliveryMode");
-        props.add("headerFilterStrategy");
-        props.add("transferException");
-        props.add("exceptionListener");
-        props.add("destinationName");
-        props.add("messageCreatedStrategy");
-        props.add("asyncStopListener");
-        props.add("destinationType");
-        props.add("asyncStartListener");
-        props.add("eagerPoisonBody");
-        props.add("requestTimeout");
-        props.add("allowNullBody");
-        props.add("replyToDeliveryPersistent");
-        props.add("disableReplyTo");
-        props.add("replyToConcurrentConsumers");
-        props.add("clientId");
-        props.add("recoveryInterval");
-        props.add("destinationCreationStrategy");
-        props.add("exchangePattern");
-        props.add("disableTimeToLive");
-        props.add("messageSelector");
-        props.add("deliveryPersistent");
-        props.add("priority");
-        props.add("preserveMessageQos");
-        props.add("concurrentConsumers");
         props.add("acknowledgementMode");
-        props.add("replyToType");
-        props.add("lazyStartProducer");
+        props.add("allowNullBody");
+        props.add("asyncConsumer");
+        props.add("asyncStartListener");
+        props.add("asyncStopListener");
+        props.add("autoStartup");
+        props.add("bridgeErrorHandler");
+        props.add("clientId");
+        props.add("concurrentConsumers");
         props.add("connectionFactory");
-        props.add("testConnectionOnStartup");
-        props.add("replyTo");
-        props.add("replyToOverride");
+        props.add("deliveryMode");
+        props.add("deliveryPersistent");
+        props.add("destinationCreationStrategy");
+        props.add("destinationName");
+        props.add("destinationType");
+        props.add("disableReplyTo");
+        props.add("disableTimeToLive");
         props.add("durableSubscriptionName");
-        props.add("replyToSameDestinationAllowed");
+        props.add("eagerLoadingOfProperties");
+        props.add("eagerPoisonBody");
         props.add("exceptionHandler");
+        props.add("exceptionListener");
+        props.add("exchangePattern");
+        props.add("explicitQosEnabled");
+        props.add("headerFilterStrategy");
+        props.add("includeAllJMSXProperties");
+        props.add("jmsKeyFormatStrategy");
+        props.add("lazyStartProducer");
+        props.add("mapJmsMessage");
+        props.add("messageCreatedStrategy");
+        props.add("messageSelector");
+        props.add("preserveMessageQos");
+        props.add("priority");
+        props.add("recoveryInterval");
+        props.add("replyTo");
+        props.add("replyToConcurrentConsumers");
+        props.add("replyToDeliveryPersistent");
+        props.add("replyToOverride");
+        props.add("replyToSameDestinationAllowed");
+        props.add("replyToType");
+        props.add("requestTimeout");
+        props.add("synchronous");
+        props.add("testConnectionOnStartup");
+        props.add("timeToLive");
+        props.add("transacted");
+        props.add("transferException");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -97,6 +99,11 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

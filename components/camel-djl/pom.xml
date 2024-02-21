@@ -16,19 +16,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-djl</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Deep Java Library</name>
     <description>Camel Deep Java Library support</description>
+
+    <properties>
+        <!-- DJL requires native components only available on x86 -->
+        <skipTests.ppc64le>true</skipTests.ppc64le>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipTests.aarch64>true</skipTests.aarch64>
+        <skipITs.aarch64>true</skipITs.aarch64>
+    </properties>
 
     <dependencies>
         <!-- camel -->
@@ -113,13 +124,6 @@
             <artifactId>tensorflow-native-auto</artifactId>
             <version>${djl-tensorflow-native-version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- testing -->

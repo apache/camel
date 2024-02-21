@@ -50,7 +50,7 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
     private final String provider;
 
     /**
-     * 
+     *
      * @param  secretKeyRing secret key ring as byte array
      * @param  password      password for the private keys, assuming that all private keys have the same password
      * @param  provider

@@ -23,10 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirMetaApiMethod;
-import org.hl7.fhir.dstu3.model.Meta;
-import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseMetaType;
+import org.hl7.fhir.r4.model.Meta;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirMeta} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirMetaIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirMetaIT.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirMetaApiMethod.class).getName();
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         //assert no meta
         Meta meta = fhirClient.meta().get(Meta.class).fromResource(this.patient.getIdElement()).execute();
         assertEquals(0, meta.getTag().size());
@@ -57,13 +60,13 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://ADD", null, headers);
 
-        LOG.debug("add: " + result);
+        LOG.debug("add: {}", result);
         assertNotNull(result, "add result");
         assertEquals(1, result.getTag().size());
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         //assert no meta
         Meta meta = fhirClient.meta().get(Meta.class).fromResource(this.patient.getIdElement()).execute();
         assertEquals(0, meta.getTag().size());
@@ -82,13 +85,13 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://DELETE", null, headers);
 
-        LOG.debug("delete: " + result);
+        LOG.debug("delete: {}", result);
         assertNotNull(result, "delete result");
         assertEquals(0, result.getTag().size());
     }
 
     @Test
-    public void testGetFromResource() throws Exception {
+    public void testGetFromResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.metaType", Meta.class);
@@ -97,21 +100,21 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_RESOURCE", null, headers);
 
-        LOG.debug("getFromResource: " + result);
+        LOG.debug("getFromResource: {}", result);
         assertNotNull(result, "getFromResource result");
         assertEquals(0, result.getTag().size());
     }
 
     @Test
-    public void testGetFromServer() throws Exception {
+    public void testGetFromServer() {
         // using Class message body for single parameter "metaType"
         IBaseMetaType result = requestBody("direct://GET_FROM_SERVER", Meta.class);
         assertNotNull(result, "getFromServer result");
-        LOG.debug("getFromServer: " + result);
+        LOG.debug("getFromServer: {}", result);
     }
 
     @Test
-    public void testGetFromType() throws Exception {
+    public void testGetFromType() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.metaType", Meta.class);
@@ -120,12 +123,12 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
-        LOG.debug("getFromType: " + result);
+        LOG.debug("getFromType: {}", result);
         assertNotNull(result, "getFromType result");
     }
 
     @Test
-    public void testGetFromTypePreferResponseType() throws Exception {
+    public void testGetFromTypePreferResponseType() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.metaType", Meta.class);
@@ -135,12 +138,12 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
 
         Meta result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
-        LOG.debug("getFromType: " + result);
+        LOG.debug("getFromType: {}", result);
         assertNotNull(result, "getFromType result");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for add

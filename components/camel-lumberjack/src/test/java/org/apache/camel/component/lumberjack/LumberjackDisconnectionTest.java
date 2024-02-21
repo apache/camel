@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -60,7 +61,7 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         List<Integer> windows = Arrays.asList(15, 10);
 
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, null, windows);
+        List<Integer> responses = LumberjackUtil.sendMessages(port, null, windows, false);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
@@ -76,10 +77,10 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             count++;
             if (count == 4) {
-                throw new RuntimeException("Ooops");
+                throw new RuntimeCamelException("Ooops");
             }
         }
     }

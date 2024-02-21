@@ -19,7 +19,7 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class UndertowPrefixMatchingTest extends BaseUndertowTest {
 
     @Test
-    public void passOnExactPath() throws Exception {
+    public void passOnExactPath() {
         template.requestBody("http://localhost:{{port}}/myapp/suffix", "Hello Camel!");
         getMockEndpoint("mock:myapp").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 200);
     }
 
     @Test
-    public void failsOnPrefixPath() throws Exception {
+    public void failsOnPrefixPath() {
         try {
             template.requestBody("http://localhost:{{port}}/myapp", "Hello Camel!");
             fail("Should fail, something is wrong");
@@ -46,13 +46,13 @@ public class UndertowPrefixMatchingTest extends BaseUndertowTest {
     }
 
     @Test
-    public void passOnPrefixPath() throws Exception {
+    public void passOnPrefixPath() {
         template.requestBody("http://localhost:{{port}}/bar/somethingNotImportant", "Hello Camel!");
         getMockEndpoint("mock:myapp").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 200);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp/suffix")

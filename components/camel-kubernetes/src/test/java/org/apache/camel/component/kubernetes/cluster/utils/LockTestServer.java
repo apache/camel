@@ -30,10 +30,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.RequestConfig;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
 import okhttp3.Headers;
 import okhttp3.mockwebserver.RecordedRequest;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +74,16 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                                 .build())
                 .always();
 
+    }
+
+    @Override
+    public NamespacedKubernetesClient createClient() {
+        // Avoid exponential retry backoff from slowing down tests
+        NamespacedKubernetesClient namespacedKubernetesClient = super.createClient();
+        RequestConfig requestConfig = namespacedKubernetesClient.getConfiguration().getRequestConfig();
+        requestConfig.setRequestRetryBackoffInterval(1000);
+        requestConfig.setRequestRetryBackoffLimit(0);
+        return namespacedKubernetesClient;
     }
 
     public void addSimulator(ResourceLockSimulator<?> paramLockSimulator) {
@@ -111,6 +124,10 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                                     || !lockSimulator.getResourceName().equals(resource.getMetadata().getName())) {
                                 LOG.error("Illegal resource received");
                                 return 500;
+                            }
+
+                            if (resource.getMetadata().getNamespace() == null) {
+                                resource.getMetadata().setNamespace("test");
                             }
 
                             boolean done = lockSimulator.setResource(resource, true);
@@ -272,7 +289,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
             try {
                 Thread.sleep(delayRequests);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }

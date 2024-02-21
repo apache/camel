@@ -24,7 +24,6 @@ public class SpringFromRestGetInterceptTest extends FromRestGetInterceptTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        System.setProperty("CamelSedaPollTimeout", "10");
         return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetInterceptTest.xml");
     }
 

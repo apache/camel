@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.jms;
 
+import org.junit.jupiter.api.Disabled;
+
 /**
  * With the passthrough option
  */
+@Disabled("Characters like - or . have to be escaped in Artemis like JmsRouteWithCustomKeyFormatStrategyTest#40, the passthrough doesn't do this automatically")
 public class JmsRouteWithPassThroughKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
     @Override
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=passthrough";
+        return "activemq:queue:JmsRouteWithPassThroughKeyFormatStrategyTest?jmsKeyFormatStrategy=passthrough";
     }
 }

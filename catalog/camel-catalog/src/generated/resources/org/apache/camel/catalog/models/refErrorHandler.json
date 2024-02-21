@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "refErrorHandler",
+    "title": "Ref Error Handler",
+    "description": "References to an existing or custom error handler.",
+    "deprecated": false,
+    "label": "configuration,error",
+    "javaType": "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "ref": { "index": 1, "kind": "attribute", "displayName": "Ref", "required": false, "type": "object", "javaType": "org.apache.camel.ErrorHandlerFactory", "deprecated": false, "autowired": false, "secret": false, "description": "References to an existing or custom error handler." }
+  }
+}

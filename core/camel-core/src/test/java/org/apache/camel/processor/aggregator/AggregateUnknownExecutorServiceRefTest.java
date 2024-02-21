@@ -42,7 +42,7 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
                             // use an unknown executor service ref should fail
-                            .completionSize(3).executorServiceRef("myUnknownProfile").to("log:foo").to("mock:aggregated");
+                            .completionSize(3).executorService("myUnknownProfile").to("log:foo").to("mock:aggregated");
                 }
             });
             context.start();

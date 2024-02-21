@@ -1,13 +1,11 @@
-[[BeanIntegration-BeanIntegration]]
 = Bean Integration
 
-Camel supports the integration of beans and POJOs in a number of ways
+Camel supports the integration of beans and POJOs in a number of ways.
 
-[[BeanIntegration-Annotations]]
 == Annotations
 
 If a bean is defined in Spring XML or scanned using
-the Spring component scanning mechanism and a *<camelContext>* is used
+the Spring component scanning mechanism, and a *<camelContext>* is used
 or a `CamelBeanPostProcessor` then we process a number of Camel
 annotations to do various things such as injecting resources or
 producing, consuming or routing messages.
@@ -19,22 +17,25 @@ The following annotations is supported and inject by Camel's
 |=======================================================================
 |Annotation |Description
 |`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO Producing].
-|`@BeanInject` |To inject a bean obtained from the Registry. See xref:bean-injection.adoc[Bean Injection].
+|`@BeanInject` |To inject a bean obtained from the xref:registry.adoc[Registry]. See xref:bean-injection.adoc[Bean Injection].
+|`@BeanConfigInject` |To inject a configuration bean obtained from the xref:registry.adoc[Registry]. The bean is a POJO that represents
+a set of configuration options, which is automatic configured with values loaded via Camel xref:using-propertyplaceholder.adoc[Property Placeholders].
 |`@PropertyInject` |To inject a value using property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See xref:pojo-producing.adoc[POJO Producing].
 |`@Consume` |To inject a consumer on a method. See xref:pojo-consuming.adoc[POJO Consuming].
 |`@BindToRegistry` |Used for binding a bean to the registry.
   If no name is specified then the bean will have its name auto computed based on the class name,
  field name, or method name where the annotation is configured.
+|`@DeferredContextBinding` | Used to indicate that if the target type is `CamelContextAware` then the `CamelContext` is deferred and injected later; after the bootstrap of Camel so the `CamelContext` is ready for use.
 |=======================================================================
 
 See more details at:
 
 * xref:pojo-consuming.adoc[POJO Consuming] to consume and possibly route messages from Camel
 * xref:pojo-producing.adoc[POJO Producing] to make it easy to produce camel messages from your POJOs
-* `@DynamicRouter` Annotation for creating a xref:{eip-vc}:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
-* `@RecipientList` Annotation for creating a xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] from a POJO method
-* `@RoutingSlip` Annotation for creating a xref:{eip-vc}:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
+* `@DynamicRouter` Annotation for creating a xref:components:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
+* `@RecipientList` Annotation for creating a xref:components:eips:recipientList-eip.adoc[Recipient List] from a POJO method
+* `@RoutingSlip` Annotation for creating a xref:components:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
 * xref:bean-injection.adoc[Bean Injection] to inject Camel related resources into your POJOs
 * xref:using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
   describes how the pattern annotations can be used to change
@@ -42,37 +43,56 @@ See more details at:
 
 *Example*
 
-See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-pojo-messaging[POJO Messaging Example]
+See the https://github.com/apache/camel-examples/tree/main/pojo-messaging[POJO Messaging Example]
 for how to use the annotations for routing and messaging.
 
-[[BeanIntegration-BeanComponent]]
-== Bean Component
+== Using @PropertyInject
 
-The xref:components::bean-component.adoc[Bean] component allows one to invoke a particular
-method. Alternately the xref:components::bean-component.adoc[Bean] component supports the
-creation of a proxy via `ProxyHelper` to a Java interface; which allows to hide sending data
-to the endpoint via an interface. See more at xref:hiding-middleware.adoc[Hiding Middleware].
+Camel allows injecting property placeholders in POJOs using
+the `@PropertyInject` annotation which can be set on fields and setter
+methods. For example, you can use that with `RouteBuilder` classes,
+such as shown below:
 
-[[BeanIntegration-SpringRemoting]]
-== Spring Remoting
+[source,java]
+----
+public class MyRouteBuilder extends RouteBuilder {
 
-We support a Spring Remoting provider which
-uses Camel as the underlying transport mechanism. The nice thing about
-this approach is we can use any of the Camel transport
-Components to communicate between beans. It also
-means we can use Content Based Router
-and the other xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] in between the beans; in particular we can use
-Message Translator to be able to convert
-what the on-the-wire messages look like in addition to adding various
-headers and so forth.
+    @PropertyInject("hello")
+    private String greeting;
 
-*Bean binding*
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .transform().constant(greeting)
+            .to("{{result}}");
+    }
+}
+----
 
-Whenever Camel invokes a bean method via one of the above methods
-(xref:components::bean-component.adoc[Bean] component, or POJO Consuming) then the
-*Bean Binding* mechanism is used to figure out
-what method to use (if it is not explicit) and how to bind the
-Message to the parameters possibly using the
-Parameter Binding Annotations
-or using a method name option.
+Notice we have annotated the greeting field with `@PropertyInject` and
+define it to use the key `hello`. Camel will then lookup the property
+with this key and inject its value, converted to a String type.
+
+You can also use multiple placeholders and text in the key, for example
+we can do:
+
+[source,java]
+----
+@PropertyInject("Hello {{name}} how are you?")
+private String greeting;
+----
+
+This will lookup the placeholder with they key `name`.
+
+You can also add a default value if the key does not exist, such as:
+
+[source,java]
+----
+@PropertyInject(value = "myTimeout", defaultValue = "5000")
+private int timeout;
+----
+
+== See Also
+
+** xref:bean-injection.adoc[Bean Injection]
+** xref:bean-binding.adoc[Bean Binding]

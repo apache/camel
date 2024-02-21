@@ -16,13 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.function.Supplier;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -36,34 +34,43 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends ExpressionNode {
+public class PollEnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<PollEnrichDefinition> {
+
+    @XmlTransient
+    private AggregationStrategy aggregationStrategyBean;
+
+    @XmlAttribute
+    private String variableReceive;
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    private String aggregationStrategy;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String aggregationStrategyMethodName;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String aggregateOnException;
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "-1")
     private String timeout;
-    @XmlAttribute(name = "strategyRef")
-    private String aggregationStrategyRef;
-    @XmlAttribute(name = "strategyMethodName")
-    private String aggregationStrategyMethodName;
-    @XmlAttribute(name = "strategyMethodAllowNull")
-    @Metadata(javaType = "java.lang.Boolean")
-    private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String aggregateOnException;
-    @XmlTransient
-    private AggregationStrategy aggregationStrategy;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String autoStartComponents;
 
     public PollEnrichDefinition() {
     }
 
     public PollEnrichDefinition(AggregationStrategy aggregationStrategy, long timeout) {
-        this.aggregationStrategy = aggregationStrategy;
+        this.aggregationStrategyBean = aggregationStrategy;
         this.timeout = Long.toString(timeout);
     }
 
@@ -106,11 +113,34 @@ public class PollEnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
-     * message. By default Camel will use the reply from the external service as outgoing message.
+     * Timeout in millis when polling from the external service.
+     * <p/>
+     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * <ul>
+     * <li>negative value - Waits until a message is available and then returns it. Warning that this method could block
+     * indefinitely if no messages are available.</li>
+     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a
+     * message exchange is not available yet.</li>
+     * <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a
+     * message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * </ul>
+     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a
+     * timeout value
      */
-    public PollEnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy);
+    public PollEnrichDefinition timeout(String timeout) {
+        setTimeout(timeout);
+        return this;
+    }
+
+    /**
+     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
+     * the received message body via variables.
+     *
+     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
+     * the current {@link org.apache.camel.Message}.
+     */
+    public PollEnrichDefinition variableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
         return this;
     }
 
@@ -118,8 +148,9 @@ public class PollEnrichDefinition extends ExpressionNode {
      * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
-    public PollEnrichDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
+    @Override
+    public PollEnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
         return this;
     }
 
@@ -127,8 +158,9 @@ public class PollEnrichDefinition extends ExpressionNode {
      * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
-    public PollEnrichDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setAggregationStrategyRef(aggregationStrategyRef);
+    @Override
+    public PollEnrichDefinition aggregationStrategy(String aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
         return this;
     }
 
@@ -166,7 +198,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * consumers when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -190,7 +222,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * consumers when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -219,6 +251,16 @@ public class PollEnrichDefinition extends ExpressionNode {
         return this;
     }
 
+    /**
+     * Whether to auto startup components when poll enricher is starting up.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition autoStartComponents(String autoStartComponents) {
+        setAutoStartComponents(autoStartComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -231,6 +273,16 @@ public class PollEnrichDefinition extends ExpressionNode {
         super.setExpression(expression);
     }
 
+    @Override
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
+
+    @Override
+    public String getAggregationStrategyRef() {
+        return aggregationStrategy;
+    }
+
     public String getTimeout() {
         return timeout;
     }
@@ -239,12 +291,24 @@ public class PollEnrichDefinition extends ExpressionNode {
         this.timeout = timeout;
     }
 
-    public String getAggregationStrategyRef() {
-        return aggregationStrategyRef;
+    public String getVariableReceive() {
+        return variableReceive;
     }
 
-    public void setAggregationStrategyRef(String aggregationStrategyRef) {
-        this.aggregationStrategyRef = aggregationStrategyRef;
+    public void setVariableReceive(String variableReceive) {
+        this.variableReceive = variableReceive;
+    }
+
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(String aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
     }
 
     public String getAggregationStrategyMethodName() {
@@ -261,14 +325,6 @@ public class PollEnrichDefinition extends ExpressionNode {
 
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
-    }
-
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
-    }
-
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     public String getAggregateOnException() {
@@ -293,5 +349,13 @@ public class PollEnrichDefinition extends ExpressionNode {
 
     public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
+    public String getAutoStartComponents() {
+        return autoStartComponents;
+    }
+
+    public void setAutoStartComponents(String autoStartComponents) {
+        this.autoStartComponents = autoStartComponents;
     }
 }

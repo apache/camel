@@ -21,6 +21,7 @@ public final class FhirProperties {
     public static final String SERVICE_BASE_URL = "fhir.service.base.url";
     public static final String SERVICE_HOST = "fhir.service.host";
     public static final String SERVICE_PORT = "fhir.service.port";
+    public static final String FHIR_CONTAINER = "fhir.container";
 
     public static final int DEFAULT_SERVICE_PORT = 8080;
 

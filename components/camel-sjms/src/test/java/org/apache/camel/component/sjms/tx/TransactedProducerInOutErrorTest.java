@@ -47,16 +47,16 @@ public class TransactedProducerInOutErrorTest {
         LOG.info("Exception was thrown as expected", t);
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
-                        .to("sjms:queue:test-in?replyTo=test-out&exchangePattern=InOut&transacted=true")
+                        .to("sjms:queue:test-in.TransactedProducerInOutErrorTest?replyTo=test-out&exchangePattern=InOut&transacted=true")
                         .to("mock:result");
 
-                from("sjms:queue:test-in?exchangePattern=InOut")
+                from("sjms:queue:test-in.TransactedProducerInOutErrorTest?exchangePattern=InOut")
                         .log("Using ${threadName} to process ${body}")
                         .transform(body().prepend("Bye "));
             }

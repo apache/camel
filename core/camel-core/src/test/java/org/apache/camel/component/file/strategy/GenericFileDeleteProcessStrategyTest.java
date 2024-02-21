@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
@@ -25,10 +23,10 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky on some OS as java.io.delete can
@@ -39,7 +37,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static int existsCounter;
     private static int deleteCounter;
 
-    private static class MyGenericFileOperations implements GenericFileOperations<Object> {
+    private class MyGenericFileOperations implements GenericFileOperations<Object> {
 
         @Override
         public GenericFile<Object> newGenericFile() {
@@ -60,7 +58,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public boolean existsFile(String name) throws GenericFileOperationFailedException {
             existsCounter++;
             // The file name should be normalized
-            if (FileUtil.normalizePath("target/data/foo/boom.txt").equals(name)) {
+            if (FileUtil.normalizePath(testFile("boom.txt").toString()).equals(name)) {
                 // test that we can newer delete this file
                 return true;
             }
@@ -107,12 +105,12 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public List<Object> listFiles() throws GenericFileOperationFailedException {
+        public Object[] listFiles() throws GenericFileOperationFailedException {
             return null;
         }
 
         @Override
-        public List<Object> listFiles(String path) throws GenericFileOperationFailedException {
+        public Object[] listFiles(String path) throws GenericFileOperationFailedException {
             return null;
         }
     }
@@ -123,11 +121,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint(fileUri(), GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/data/foo/me.txt");
+        file.setAbsoluteFilePath(testFile("me.txt").toString());
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
@@ -142,19 +140,17 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint(fileUri(), GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/data/foo/boom.txt");
+        file.setAbsoluteFilePath(testFile("boom.txt").toString());
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
-        try {
-            strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
-            fail("Should have thrown an exception");
-        } catch (GenericFileOperationFailedException e) {
-            // expected
-        }
+
+        Assertions.assertThrows(GenericFileOperationFailedException.class,
+                () -> strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file),
+                "Should have thrown an exception");
 
         assertEquals(3, deleteCounter, "Should have tried to delete file 3 times");
         assertEquals(3, existsCounter, "Should have tried to delete file 3 times");

@@ -21,7 +21,7 @@ import java.util.TimerTask;
 
 /**
  * A timer task that notifies handlers about scheduled timeouts.
- * 
+ *
  * @see Timer
  * @see TimerTask
  */
@@ -29,14 +29,14 @@ public class Timeout extends TimerTask {
 
     private TimeoutHandler timeoutHandler;
 
-    private Timer timer;
+    private final Timer timer;
 
-    private long timeout;
+    private final long timeout;
 
     /**
      * Creates a new timeout task using the given {@link Timer} instance and timeout value. The task is not scheduled
      * immediately. It will be scheduled by calling this task's {@link #schedule()} method.
-     * 
+     *
      * @param timer   a timer
      * @param timeout a timeout value.
      */
@@ -47,7 +47,7 @@ public class Timeout extends TimerTask {
 
     /**
      * Returns the timeout handler that has been registered for notification.
-     * 
+     *
      * @return the timeout handler.
      */
     public TimeoutHandler getTimeoutHandlers() {
@@ -56,7 +56,7 @@ public class Timeout extends TimerTask {
 
     /**
      * Sets a timeout handler for receiving timeout notifications.
-     * 
+     *
      * @param timeoutHandler a timeout handler.
      */
     public void setTimeoutHandler(TimeoutHandler timeoutHandler) {

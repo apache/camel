@@ -85,7 +85,7 @@ public class XMLSplitRowsTest {
                 }
             }
             assertTrue(firstNameFound);
-            LOG.info("Result: " + counter + " = " + record);
+            LOG.info("Result: {} = {}", counter, record);
             counter++;
         }
 

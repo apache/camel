@@ -73,6 +73,6 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

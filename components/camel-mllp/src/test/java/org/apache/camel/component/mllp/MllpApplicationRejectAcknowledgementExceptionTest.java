@@ -33,11 +33,11 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+    public void testConstructorOne() {
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpApplicationRejectAcknowledgementException.EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -48,11 +48,11 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+    public void testConstructorTwo() {
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpApplicationRejectAcknowledgementException.EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -63,11 +63,11 @@ public class MllpApplicationRejectAcknowledgementExceptionTest extends MllpExcep
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGetAcknowledgmentType() throws Exception {
-        instance = new MllpApplicationRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+    public void testGetAcknowledgmentType() {
+        instance = new MllpApplicationRejectAcknowledgementException(
+                HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("AR", instance.getAcknowledgmentType());
     }

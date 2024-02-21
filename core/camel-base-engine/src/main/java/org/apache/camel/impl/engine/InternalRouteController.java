@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.SupervisingRouteController;
 
 /**
@@ -73,8 +74,46 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public void stopAllRoutes() throws Exception {
+        abstractCamelContext.stopAllRoutes();
+    }
+
+    @Override
+    public void removeAllRoutes() throws Exception {
+        abstractCamelContext.removeAllRoutes();
+    }
+
+    @Override
+    public void reloadAllRoutes() throws Exception {
+        // lock model as we need to preserve the model definitions
+        // during removing routes because we need to create new processors from the models
+        abstractCamelContext.setLockModel(true);
+        try {
+            abstractCamelContext.removeAllRoutes();
+            // remove endpoints, so we can start on a fresh
+            abstractCamelContext.getEndpointRegistry().clear();
+        } finally {
+            abstractCamelContext.setLockModel(false);
+        }
+        // remove left-over route created from templates (model should not be locked for templates to be removed)
+        abstractCamelContext.removeRouteDefinitionsFromTemplate();
+        // start all routes again
+        abstractCamelContext.startRouteDefinitions();
+    }
+
+    @Override
+    public boolean isReloadingRoutes() {
+        return abstractCamelContext.isLockModel();
+    }
+
+    @Override
     public boolean isStartingRoutes() {
         return abstractCamelContext.isStartingRoutes();
+    }
+
+    @Override
+    public boolean hasUnhealthyRoutes() {
+        return false;
     }
 
     @Override
@@ -93,13 +132,23 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public void stopRoute(String routeId, Throwable cause) throws Exception {
+        Route route = abstractCamelContext.getRoute(routeId);
+        if (route != null) {
+            abstractCamelContext.stopRoute(routeId);
+            // and mark the route as failed and unhealthy (DOWN)
+            route.setLastError(new DefaultRouteError(RouteError.Phase.STOP, cause, true));
+        }
+    }
+
+    @Override
     public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         abstractCamelContext.stopRoute(routeId, timeout, timeUnit);
     }
 
     @Override
     public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        return abstractCamelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
+        return abstractCamelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout, LoggingLevel.INFO);
     }
 
     @Override

@@ -21,14 +21,16 @@ import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.NotifyBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -39,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  */
-public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public abstract class AbstractTransactionTest extends AbstractSpringJMSTestSupport {
 
     @Override
     @AfterEach
@@ -55,11 +58,11 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
     }
 
-    protected void assertResult() throws InterruptedException {
+    protected void assertResult() {
         // should be 1 completed and 1 failed
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
-        template.sendBody("activemq:queue:foo", "blah");
+        template.sendBody("activemq:queue:AbstractTransactionTest", "blah");
 
         notify.matchesWaitTime();
 

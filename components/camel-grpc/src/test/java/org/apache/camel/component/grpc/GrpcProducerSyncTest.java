@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Stopwatch;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,15 +56,15 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
-            LOG.info("gRPC server stoped");
+            LOG.info("gRPC server stopped");
         }
     }
 
     @Test
-    public void testPingSyncSyncMethodInvocation() throws Exception {
+    public void testPingSyncSyncMethodInvocation() {
         LOG.info("gRPC PingSyncSync method test start");
         // Testing simple sync method invoke with host and port parameters
         PingRequest pingRequest
@@ -82,26 +80,26 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         pongResponse = template.requestBody("direct:grpc-sync-proto-method-name", pingRequest);
         assertNotNull(pongResponse);
         assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse) pongResponse).getPongId(), GRPC_TEST_PING_ID);
+        assertEquals(GRPC_TEST_PING_ID, ((PongResponse) pongResponse).getPongId());
     }
 
     @Test
-    public void testPingSyncSyncMultipleInvocation() throws Exception {
-        final Stopwatch stopwatch = Stopwatch.createStarted();
+    public void testPingSyncSyncMultipleInvocation() {
+        final StopWatch stopwatch = new StopWatch();
         // Multiple sync methods call for average performance estimation
         for (int id = 0; id < MULTIPLE_RUN_TEST_COUNT; id++) {
             PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE + id).setPingId(id).build();
             Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
             assertEquals(((PongResponse) pongResponse).getPongId(), id);
         }
-        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}",
-                stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
-                Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+        LOG.info("Multiple sync invocation time {} milliseconds, average operations/sec {}",
+                stopwatch.taken(),
+                Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.taken()));
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testPingSyncAsyncMethodInvocation() throws Exception {
+    public void testPingSyncAsyncMethodInvocation() {
         LOG.info("gRPC PingSyncAsync method test start");
         // Testing simple method with sync request and asyc response in synchronous invocation style
         PingRequest pingRequest
@@ -115,7 +113,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

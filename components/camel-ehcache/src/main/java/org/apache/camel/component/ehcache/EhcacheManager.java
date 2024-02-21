@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.ehcache.Cache;
@@ -33,7 +33,7 @@ import org.ehcache.spi.service.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EhcacheManager implements Service {
+public class EhcacheManager extends ServiceSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheManager.class);
 
     private final EhcacheConfiguration configuration;
@@ -52,15 +52,26 @@ public class EhcacheManager implements Service {
                 });
     }
 
-    @Override
-    public synchronized void start() {
+    protected void incRef() {
         refCount.retain();
     }
 
-    @Override
-    public synchronized void stop() {
+    protected void decRef() {
         refCount.release();
-        userCaches.values().forEach(UserManagedCache::close);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (userCaches != null && !userCaches.isEmpty()) {
+            for (UserManagedCache cache : userCaches.values()) {
+                try {
+                    cache.close();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            userCaches.clear();
+        }
     }
 
     @SuppressWarnings("unchecked")

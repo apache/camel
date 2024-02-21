@@ -1,0 +1,224 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.14 to 3.15
+
+IMPORTANT: Java 8 is no longer supported. Camel 3.15 onwards requires Java 11 or 17.
+
+=== Removed components
+
+The `camel-kamelet-reify` and `camel-spring-javaconfig` has been removed.
+
+=== Removed Maven Archetypes
+
+The `camel-archetype-endpointdsl` has been removed.
+
+=== API changes
+
+Added `getScheme` method to `org.apache.camel.spi.Resource`.
+
+=== Core Dependency changes
+
+As part of CAMEL-17429 and CAMEL-17435, the following dependencies are no longer included by default on all the Camel modules:
+
+ * com.sun.xml.messaging.saaj:saaj-impl
+ * jakarta.xml.bind:jakarta.xml.bind-api
+ * javax.annotation:javax.annotation-api
+ * javax.xml.soap:javax.xml.soap-api
+ * javax.xml.ws:jaxws-api
+ * org.apache.geronimo.specs:geronimo-jta_1.1_spec
+ * org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec
+ * org.glassfish.jaxb:jaxb-runtime
+
+These dependencies were included on the specific modules and components that required them on a per-case basis.
+
+Applications with dependency on any of those, but using them transitively, should be modified to include them.
+
+=== camel-core
+
+Removed the deprecated `Classic` value from `startupSummaryLevel` enums.
+
+The deprecated `propertyName` on `removeProperty` EIP has been removed, use `name` instead.
+
+=== Data Formats
+
+The data formats naming has been made consistent to use Camel Case:
+
+[width="100%",cols="1m,1m",options="header"]
+|====
+| Old Name | New Name
+| bindy-csv | bindyCsv
+| bindy-fixed | bindyFixed
+| bindy-kvp | bindyKvp
+| customDataFormat | custom
+| gzip-deflater | gzipDeflater
+| jacksonxml | jacksonXml
+| json-fastjson | fastjson
+| json-gson | gson
+| json-jackson | jackson
+| json-johnzon | johnzon
+| json-jsonb | jsonb
+| json-xstream | xstreamJson
+| mime-multipart | mimeMultipart
+| protobuf-jackson | protobufJackson
+| secureXML | xmlSecurity
+| soapjaxb | soap
+| tarfile | tarFile
+| univociy-csv | univociyCsv
+| univociy-fixed | univociyFixed
+| univociy-tsv | univociyTsv
+| yaml-snakeyaml | snakeYaml
+| zip-deflater | zipDeflater
+| zipfile | zipFile
+|====
+
+The Spring Boot auto-configuration names has also been renamed
+(uses dash case as this is Spring Boot naming style):
+
+[width="100%",cols="1m,1m",options="header"]
+|====
+| Old Name | New Name
+| camel.dataformat.fhirjson | camel.dataformat.fhir-json
+| camel.dataformat.fhirxml | camel.dataformat.fhir-xml
+| camel.dataformat.gzipdeflater | camel.dataformat.gzip-deflater
+| camel.dataformat.jacksonxml | camel.dataformat.jackson-xml
+| camel.dataformat.jsonapi | camel.dataformat.json-api
+| camel.dataformat.mimemultipart | camel.dataformat.mime-multipart
+| camel.dataformat.securexml | camel.dataformat.xml-security
+| camel.dataformat.tarfile | camel.dataformat.tar-file
+| camel.dataformat.tidymarkup | camel.dataformat.tidy-markup
+| camel.dataformat.univocitycsv | camel.dataformat.univocity-csv
+| camel.dataformat.univocityfixed | camel.dataformat.univocity-fixed
+| camel.dataformat.univocitytsv | camel.dataformat.univocity-tsv
+| camel.dataformat.yaml-snakeyaml | camel.dataformat.snake-yaml
+| camel.dataformat.zipdeflater | camel.dataformat.zip-deflater
+| camel.dataformat.zipfile | camel.dataformat.zip-file
+|====
+
+==== Message History
+
+The message history output has changed to include source column, which refers to the Java class/XML file
+from the DSL the message was at the given time. (line precise error reporting).
+
+This default formatting are (Source, ID, Processor, Elapsed):
+
+[source,properties]
+----
+MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
+----
+
+If you are using custom sizes then you need to adjust accordingly.
+
+=== camel-endpointdsl
+
+The Endpoint DSL is now more type-safe, where previously an option would be declared as `Object` type,
+is now declared using its actual type, such as `javax.sql.DataSource`.
+
+Option that are enums is now using the real enum FQN class name, instead of a duplicate enum
+class that was embedded inside the Endpoint DSL. For example when using `aws2sq` the
+namingStrategy enum is changed from `org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory`
+to `org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum` class name.
+
+=== camel-management
+
+The route controller MBeans are moved from `routecontrollers` to the existing `services`
+node in the JMX MBean tree.
+
+Removed deprecated operations on `CamelContextMBean` and `CamelRouteMBean`.
+
+=== camel-util
+
+Deleted the `replaceAll` method of `org.apache.camel.util.StringHelper`. Please use the `replace` method of `java.lang.String` instead, as it is much faster from Java 11 onward.
+
+=== camel-yaml-dsl
+
+Removed `steps` from `route` because steps should only be configured on `from` making
+the DSL consistent and similar to Java DSL.
+
+Before it was possible to do:
+
+[source,yaml]
+----
+- route:
+    id: demo-route
+    from:
+      uri: "timer:info"
+    steps:
+      - log: "message"
+----
+
+This should correctly be done with `steps` as child of `from`:
+
+[source,yaml]
+----
+- route:
+    id: demo-route
+    from:
+      uri: "timer:info"
+      steps:
+        - log: "message"
+----
+
+The `tod` EIP name has been removed, the correct names to use is `toD`.
+
+=== camel-jbang
+
+The JBang app that was previously named `CamelJBang` is now named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
+
+=== camel-debezium
+
+Upgraded to Debezium 1.8 which requires Java 11 and Kafka Client 3.0 JARs.
+
+=== camel-cdi
+
+The legacy XML in `camel-cdi` with `<camelContext>` is deprecated, instead the XML DSL route loader should be used.
+
+JTA support is moved out of `camel-cdi` to its own `camel-cdi-jta` module.
+
+The `org.apache.camel.cdi.Main` class has moved from `camel-cdi` to `camel-cdi-main` JAR.
+
+=== camel-kafka
+
+The following classes were moved from `org.apache.camel.component.kafka` to `org.apache.camel.component.kafka.consumer`:
+
+* `DefaultKafkaManualAsyncCommit`
+* `DefaultKafkaManualAsyncCommitFactory`
+* `DefaultKafkaManualSyncCommit`
+* `DefaultKafkaManualSyncCommitFactory`
+* `KafkaAsyncManualCommit`
+* `KafkaManualCommit`
+* `KafkaManualCommitFactory`
+
+The signature for `KafkaManualCommitFactory` and its classes has been adjusted to abstract some runtime parameters. The old signature is still available but will be removed in 3.16.0.
+
+=== camel-karaf
+
+The `camel-endpointdsl` and `camel-componentdsl` is no longer supported on Apache Karaf.
+
+The `camel-osg-activator`, `camel-google-calendar`, `camel-google-drive`, `camel-google-mail`, `camel-google-sheets`, and `camel-jooq` has been removed.
+
+=== camel-netty / camel-netty-http
+
+The netty producer has migrated from commons-poll v1 to v2.
+The option `producerPoolMaxActive` is renamed to `producerPoolMaxTotal`.
+
+=== camel-quartz
+
+Removed the option `startDelaySeconds` as this does not work correctly and causes problems if in use.
+
+=== camel-rabbitmq
+
+The rabbitmq producer has migrated from commons-poll v1 to v2.
+
+=== camel-openapi-java
+
+The contextPath specified in the REST configuration is no longer added to the paths of the operations in the generated openapi specification.
+
+=== camel-google-drive
+
+The `camel-google-drive` component has upgraded to the latest version of `google-api-services-drive`. This means that support for access to the Google Drive Realtime APIs 
+via URIs like `google-drive:drive-realtime` has been removed. Google deprecated and retired the realtime APIs some time ago.  

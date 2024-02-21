@@ -17,14 +17,14 @@
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class HealthyServiceFilter implements ServiceFilter {
     @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
-        return services.stream().filter(s -> s.getHealth().isHealthy()).collect(Collectors.toList());
+    public List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services) {
+        return services.stream().filter(s -> s.getHealth().isHealthy()).toList();
     }
 }

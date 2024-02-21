@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.controlbus;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -73,7 +75,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    protected void processByLanguage(Exchange exchange, Language language) throws Exception {
+    protected void processByLanguage(Exchange exchange, Language language) {
         LanguageTask task = new LanguageTask(exchange, language);
         if (getEndpoint().isAsync()) {
             getEndpoint().getComponent().getExecutorService().submit(task);
@@ -82,7 +84,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         }
     }
 
-    protected void processByAction(Exchange exchange) throws Exception {
+    protected void processByAction(Exchange exchange) {
         ActionTask task = new ActionTask(exchange);
         if (getEndpoint().isAsync()) {
             getEndpoint().getComponent().getExecutorService().submit(task);
@@ -163,6 +165,17 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                 } else if ("stop".equals(action)) {
                     LOG.debug("Stopping route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().stopRoute(id);
+                } else if ("fail".equals(action)) {
+                    LOG.debug("Stopping and failing route: {}", id);
+                    // is there any caused exception from the exchange to mark the route as failed due
+                    Throwable cause = exchange.getException();
+                    if (cause == null) {
+                        cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                    }
+                    if (cause == null) {
+                        cause = new RejectedExecutionException("Route " + id + " is forced stopped and marked as failed");
+                    }
+                    getEndpoint().getCamelContext().getRouteController().stopRoute(id, cause);
                 } else if ("suspend".equals(action)) {
                     LOG.debug("Suspending route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().suspendRoute(id);
@@ -178,7 +191,8 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                             LOG.debug("Sleeping {} ms before starting route: {}", delay, id);
                             Thread.sleep(delay);
                         } catch (InterruptedException e) {
-                            // ignore
+                            LOG.info("Interrupted while waiting before starting the route");
+                            Thread.currentThread().interrupt();
                         }
                     }
                     getEndpoint().getCamelContext().getRouteController().startRoute(id);

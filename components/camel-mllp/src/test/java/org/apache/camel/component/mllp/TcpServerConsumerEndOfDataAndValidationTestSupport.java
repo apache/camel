@@ -37,6 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mllp.MllpExceptionTestSupport.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,7 +74,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
 
         return context;
     }
@@ -86,7 +86,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidMessageException.class)
@@ -98,9 +98,9 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT,
                         validatePayload(), requireEndOfData())
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to(complete);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to(complete);
             }
         };
     }
@@ -117,7 +117,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
     @Override
     public void tearDown() throws Exception {
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         super.tearDown();
     }
@@ -202,7 +202,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         assertTrue(notify2.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS), "Remaining exchanges did not complete");
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         assertTrue(acknowledgement1.contains("MSA|AA|00001"), "Should be acknowledgment for message 1");
         assertTrue(acknowledgement2.contains("MSA|AA|00002"), "Should be acknowledgment for message 2");
@@ -270,7 +270,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     @Test
     public abstract void testInvalidMessage() throws Exception;
 
-    protected void runInvalidMessage() throws Exception {
+    protected void runInvalidMessage() {
         setExpectedCounts();
 
         mllpClient.sendFramedData("INVALID PAYLOAD");
@@ -337,14 +337,14 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                             "PID" + MllpProtocolConstants.START_OF_BLOCK)
                     : Hl7TestMessageGenerator.generateMessage(i + 1);
 
-            log.debug("Sending message {}", Hl7Util.convertToPrintFriendlyString(message));
+            log.debug("Sending message {}", new Hl7Util(5120, LOG_PHI_TRUE).convertToPrintFriendlyString(message));
 
             mllpClient.sendMessageAndWaitForAcknowledgement(message);
         }
     }
 
     @Test
-    public abstract void testMessageContainingEmbeddedEndOfBlock() throws Exception;
+    public abstract void testMessageContainingEmbeddedEndOfBlock();
 
     @Test
     public abstract void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception;
@@ -368,15 +368,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                 assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS),
                         "Exchange containing invalid message should have completed");
                 // The component may reset the connection in this case, so reconnect if needed
-                /*
-                // TODO: Figure out why this isn't working
-                try {
-                    mllpClient.checkConnection();
-                } catch (MllpJUnitResourceException checkConnectionEx) {
-                    mllpClient.disconnect();
-                    mllpClient.connect();
-                }
-                */
                 mllpClient.disconnect();
                 mllpClient.connect();
             } else {
@@ -415,7 +406,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public void testInitialMessageWithoutEndOfDataByte() throws Exception {
+    public void testInitialMessageWithoutEndOfDataByte() {
         setExpectedCounts();
 
         mllpClient.setSendEndOfData(false);

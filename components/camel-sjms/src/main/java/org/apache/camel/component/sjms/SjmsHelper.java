@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 public final class SjmsHelper {
 
@@ -76,7 +76,7 @@ public final class SjmsHelper {
     public static void commitIfNecessary(Session session) throws JMSException {
         try {
             session.commit();
-        } catch (javax.jms.TransactionInProgressException | javax.jms.IllegalStateException ex) {
+        } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
             // ignore
         }
     }
@@ -88,7 +88,7 @@ public final class SjmsHelper {
             } else if (message != null && session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
                 message.acknowledge();
             }
-        } catch (javax.jms.TransactionInProgressException | javax.jms.IllegalStateException ex) {
+        } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
             // ignore
         }
     }
@@ -97,13 +97,13 @@ public final class SjmsHelper {
         if (session.getTransacted()) {
             try {
                 session.rollback();
-            } catch (javax.jms.TransactionInProgressException | javax.jms.IllegalStateException ex) {
+            } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
                 // ignore
             }
         } else if (session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
             try {
                 session.recover();
-            } catch (javax.jms.IllegalStateException ex) {
+            } catch (jakarta.jms.IllegalStateException ex) {
                 // ignore
             }
         }

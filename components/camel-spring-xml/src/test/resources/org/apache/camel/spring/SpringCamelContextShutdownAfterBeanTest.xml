@@ -37,13 +37,13 @@
   <camelContext id="myCamel" shutdownEager="false" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="seda:start"/>
-      <to uri="bean:a?cache=false"/>
-      <to uri="bean:b?cache=false"/>
+      <to uri="bean:a?scope=Prototype"/>
+      <to uri="bean:b?scope=Prototype"/>
       <to uri="mock:first"/>
       <delay>
         <constant>1000</constant>
       </delay>
-      <to uri="bean:c?cache=false"/>
+      <to uri="bean:c?scope=Prototype"/>
       <to uri="mock:result"/>
     </route>
   </camelContext>

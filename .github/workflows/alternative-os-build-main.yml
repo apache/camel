@@ -1,0 +1,56 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Alternative OS Build (Camel 4)
+
+on:
+  schedule:
+    # Every 45th minute every 3 hours during working days
+    - cron: '45 */3 * * 1-5'
+    # Every 6 hours during weekends ... we don't want to be flooded with emails
+    - cron: '30 */6 * * 6,0'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.repository == 'apache/camel'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, windows-2019]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up JDK ${{ matrix.os }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: mvn sourcecheck ${{ matrix.os }}
+        run: ./mvnw -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -Dquickly verify
+      - name: Archive logs ${{ matrix.os }}
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-${{ matrix.os }}
+          path: build.log
+          retention-days: 2

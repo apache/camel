@@ -28,8 +28,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test that data format receives callback if its a service / CamelContextAware
@@ -40,7 +40,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
     @Test
     public void testMarshal() throws Exception {
-        assertEquals(true, my.isStarted());
+        assertTrue(my.isStarted());
         assertSame(context, my.getCamelContext());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hi Camel");
@@ -51,13 +51,13 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
         context.stop();
 
-        assertEquals(true, my.isStopped());
+        assertTrue(my.isStopped());
         assertSame(context, my.getCamelContext());
     }
 
     @Test
     public void testUnmarshal() throws Exception {
-        assertEquals(true, my.isStarted());
+        assertTrue(my.isStarted());
         assertSame(context, my.getCamelContext());
 
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
@@ -68,7 +68,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
         context.stop();
 
-        assertEquals(true, my.isStopped());
+        assertTrue(my.isStopped());
         assertSame(context, my.getCamelContext());
     }
 

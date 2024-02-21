@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
@@ -28,6 +27,7 @@ import org.apache.camel.support.ResolverHelper;
  * Default data format resolver
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
+
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
     private FactoryFinder dataformatFactory;
@@ -55,7 +55,7 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         Class<?> type;
         try {
             if (dataformatFactory == null) {
-                dataformatFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
+                dataformatFactory = context.getCamelContextExtension().getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
             }
             type = dataformatFactory.findClass(name).orElse(null);
         } catch (Exception e) {

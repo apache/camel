@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <template id="camelTemplate"/>
 
         <route>
@@ -35,7 +36,7 @@
     </camelContext>
 
     <bean id="inputFile" class="org.apache.camel.component.file.FileEndpoint">
-        <property name="file" value="target/test-default-inbox"/>
+        <property name="file" value="#{systemProperties['testDirectory']}"/>
     </bean>
     <!-- END SNIPPET: example -->
 

@@ -16,53 +16,75 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
+import jakarta.jms.DeliveryMode;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOutNonPersistentTest extends CamelTestSupport {
+public class JmsInOutNonPersistentTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testInOutNonPersistent() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
+        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedBodiesReceived("World");
+        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedHeaderReceived("JMSDeliveryMode",
+                DeliveryMode.NON_PERSISTENT);
         getMockEndpoint("mock:done").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
 
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
+                        .to("activemq:queue:JmsInOutNonPersistentTest.foo?replyTo=queue:JmsInOutNonPersistentTest.bar&deliveryPersistent=false")
                         .to("log:done?showAll=true", "mock:done");
 
-                from("activemq:queue:foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
-                        .to("log:foo?showAll=true", "mock:foo")
+                from("activemq:queue:JmsInOutNonPersistentTest.foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
+                        .to("log:JmsInOutNonPersistentTest.foo?showAll=true", "mock:JmsInOutNonPersistentTest.foo")
                         .transform(body().prepend("Bye "));
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

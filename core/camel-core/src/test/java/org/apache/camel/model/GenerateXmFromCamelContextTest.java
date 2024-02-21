@@ -19,8 +19,8 @@ package org.apache.camel.model;
 import java.io.StringWriter;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +36,7 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         assertEquals(1, list.size(), "Size of list " + list);
         RouteDefinition routeType = list.get(0);
 
-        log.info("Found route: " + routeType);
+        log.info("Found route: {}", routeType);
 
         // now lets marshall it!
         dump(routeType);
@@ -48,10 +48,10 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();
         marshaller.marshal(object, buffer);
-        log.info("Created: " + buffer);
+        log.info("Created: {}", buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
-        assertTrue(out.indexOf("<from uri=\"direct:start\"/>") > 0, "Should contain the description");
+        assertTrue(out.indexOf("<from uri=\"direct:start\"") > 0, "Should contain from");
     }
 
     @Override

@@ -25,7 +25,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <bean id="dead" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="dead" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <!-- move failed messages to the mock:dead dead letter queue -->
         <property name="deadLetterUri" value="mock:dead"/>
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
@@ -42,7 +42,7 @@
     </bean>
     <!-- END SNIPPET: e1 -->
 
-    <bean id="b" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="b" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <!-- move failed messages to the mock:b dead letter queue -->
         <property name="deadLetterUri" value="mock:b"/>
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
@@ -57,7 +57,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="dead">
         <route>
-            <from uri="file://target/data/originalexchange?initialDelay=0&amp;delay=10&amp;noop=true"/>
+            <from uri="file:{{testDirectory}}?initialDelay=0&amp;delay=10&amp;noop=true"/>
             <transform><simple>${in.body} World</simple></transform>
             <process ref="myThrowProcessor"/>
         </route>

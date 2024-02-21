@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestJettyCustomContentTypeTest extends BaseJettyTest {
 
     @Test
-    public void testBlob() throws Exception {
+    public void testBlob() {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/blob", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
 
@@ -40,10 +40,10 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJSon() throws Exception {
+    public void testJSon() {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/lives", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
 
@@ -52,10 +52,10 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable json binding
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 

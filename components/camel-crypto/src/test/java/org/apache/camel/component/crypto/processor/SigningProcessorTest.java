@@ -39,7 +39,7 @@ public class SigningProcessorTest {
 
         DigitalSignatureProcessor processor = new DigitalSignatureProcessor(configuration) {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Noop
             }
         };
@@ -72,7 +72,7 @@ public class SigningProcessorTest {
 
         DigitalSignatureProcessor processor = new DigitalSignatureProcessor(configuration) {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Noop
             }
         };

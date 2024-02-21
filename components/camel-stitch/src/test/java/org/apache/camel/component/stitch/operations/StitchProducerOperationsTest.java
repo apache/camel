@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.stitch.operations;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -294,7 +293,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // noop
         }
     }
@@ -315,7 +314,7 @@ class StitchProducerOperationsTest extends CamelTestSupport {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // noop
         }
     }

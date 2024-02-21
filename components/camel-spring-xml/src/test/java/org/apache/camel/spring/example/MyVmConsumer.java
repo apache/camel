@@ -32,14 +32,14 @@ public class MyVmConsumer {
     @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume("vm:start")
+    @Consume("seda:start")
     public void doSomething(String body, Exchange exchange) {
         ObjectHelper.notNull(destination, "destination");
 
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(exchange.getContext(), "exchange.getContext");
 
-        LOG.info("Received body: " + body);
+        LOG.info("Received body: {}", body);
         destination.sendBody(body);
     }
 

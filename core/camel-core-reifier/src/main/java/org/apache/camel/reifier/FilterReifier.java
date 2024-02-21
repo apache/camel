@@ -35,9 +35,14 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
 
     @Override
     protected FilterProcessor createFilterProcessor() throws Exception {
+        String status = parseString(definition.getStatusPropertyName());
+
         // filter EIP should have child outputs
         Processor childProcessor = this.createChildProcessor(true);
-        return new FilterProcessor(camelContext, createPredicate(), childProcessor);
+
+        FilterProcessor answer = new FilterProcessor(camelContext, createPredicate(), childProcessor);
+        answer.setStatusPropertyName(status);
+        return answer;
     }
 
 }

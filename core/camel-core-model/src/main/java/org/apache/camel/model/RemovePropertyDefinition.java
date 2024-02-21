@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -30,19 +30,20 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
+
     @XmlAttribute(required = true)
-    private String propertyName;
+    private String name;
 
     public RemovePropertyDefinition() {
     }
 
     public RemovePropertyDefinition(String propertyName) {
-        setPropertyName(propertyName);
+        this.name = propertyName;
     }
 
     @Override
     public String toString() {
-        return "RemoveProperty[" + getPropertyName() + "]";
+        return "RemoveProperty[" + name + "]";
     }
 
     @Override
@@ -52,17 +53,17 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
 
     @Override
     public String getLabel() {
-        return "removeProperty[" + getPropertyName() + "]";
+        return "removeProperty[" + name + "]";
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
-     * Name of property to remove
+     * Name of property to remove.
      */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

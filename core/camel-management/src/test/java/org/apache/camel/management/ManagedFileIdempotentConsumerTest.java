@@ -29,25 +29,23 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
-    protected Endpoint startEndpoint;
-    protected MockEndpoint resultEndpoint;
-    private File store = new File("target/data/idempotentfilestore.dat");
+
     private IdempotentRepository repo;
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        Endpoint startEndpoint = resolveMandatoryEndpoint("direct:start");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -63,7 +61,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String path = (String) mbeanServer.getAttribute(on, "FilePath");
-        assertEquals(FileUtil.normalizePath("target/data/idempotentfilestore.dat"), FileUtil.normalizePath(path));
+        assertEquals(FileUtil.normalizePath(testFile("idempotentfilestore.dat").toString()), FileUtil.normalizePath(path));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
@@ -75,13 +73,13 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
 
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
 
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("4", "four");
-        sendMessage("1", "one");
-        sendMessage("3", "three");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "2", "two");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "2", "two");
+        sendMessage(startEndpoint, "4", "four");
+        sendMessage(startEndpoint, "1", "one");
+        sendMessage(startEndpoint, "3", "three");
 
         resultEndpoint.assertIsSatisfied();
 
@@ -109,7 +107,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         assertTrue(repo.contains("4"));
     }
 
-    protected void sendMessage(final Object messageId, final Object body) {
+    protected void sendMessage(final Endpoint startEndpoint, final Object messageId, final Object body) {
         template.send(startEndpoint, exchange -> {
             // now lets fire in a message
             Message in = exchange.getIn();
@@ -119,27 +117,14 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        // delete file store before testing
-        if (store.exists()) {
-            store.delete();
-        }
-
-        repo = FileIdempotentRepository.fileIdempotentRepository(store);
-
-        // let's add 4 to start with
-        repo.add("4");
-
-        super.setUp();
-        startEndpoint = resolveMandatoryEndpoint("direct:start");
-        resultEndpoint = getMockEndpoint("mock:result");
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
+        File store = testFile("idempotentfilestore.dat").toFile();
         return new RouteBuilder() {
             public void configure() {
+                repo = FileIdempotentRepository.fileIdempotentRepository(store);
+                // let's add 4 to start with
+                repo.add("4");
+
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), repo)
                         .to("mock:result");

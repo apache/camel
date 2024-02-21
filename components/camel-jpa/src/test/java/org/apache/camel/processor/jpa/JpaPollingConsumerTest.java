@@ -49,7 +49,7 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
 
         template.sendBodyAndHeader("direct:start", "Hello NAME how are you today?", "name", "Donald%");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

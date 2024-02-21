@@ -37,7 +37,10 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         // the threads name
-        String name = definition.getThreadName() != null ? parseString(definition.getThreadName()) : "Threads";
+        String name = parseString(definition.getThreadName());
+        if (name == null || name.isEmpty()) {
+            name = "Threads";
+        }
         // prefer any explicit configured executor service
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
@@ -71,29 +74,29 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             shutdownThreadPool = true;
         } else {
             if (definition.getThreadName() != null && !definition.getThreadName().equals("Threads")) {
-                throw new IllegalArgumentException("ThreadName and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("ThreadName and executorService options cannot be used together.");
             }
             if (definition.getPoolSize() != null) {
-                throw new IllegalArgumentException("PoolSize and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("PoolSize and executorService options cannot be used together.");
             }
             if (definition.getMaxPoolSize() != null) {
-                throw new IllegalArgumentException("MaxPoolSize and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("MaxPoolSize and executorService options cannot be used together.");
             }
             if (definition.getKeepAliveTime() != null) {
-                throw new IllegalArgumentException("KeepAliveTime and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("KeepAliveTime and executorService options cannot be used together.");
             }
             if (definition.getTimeUnit() != null) {
-                throw new IllegalArgumentException("TimeUnit and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("TimeUnit and executorService options cannot be used together.");
             }
             if (definition.getMaxQueueSize() != null) {
-                throw new IllegalArgumentException("MaxQueueSize and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("MaxQueueSize and executorService options cannot be used together.");
             }
             if (definition.getRejectedPolicy() != null) {
-                throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
+                throw new IllegalArgumentException("RejectedPolicy and executorService options cannot be used together.");
             }
             if (definition.getAllowCoreThreadTimeOut() != null) {
                 throw new IllegalArgumentException(
-                        "AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
+                        "AllowCoreThreadTimeOut and executorService options cannot be used together.");
             }
         }
 
@@ -101,9 +104,10 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
-        if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
+        String ref = parseString(definition.getExecutorService());
+        if (ref != null && definition.getRejectedPolicy() == null) {
             ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager()
-                    .getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
+                    .getThreadPoolProfile(ref);
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }

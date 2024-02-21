@@ -101,8 +101,7 @@ public final class AsteriskConnection {
 
     public ManagerResponse sendAction(ManagerAction action)
             throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
-        ManagerResponse response = managerConnection.sendAction(action);
 
-        return response;
+        return managerConnection.sendAction(action);
     }
 }

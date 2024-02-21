@@ -32,14 +32,14 @@ public class JdbcTransformSimpleTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:hello", "select * from customer order by ID");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:hello")
                         .to("jdbc:testdb")
                         // grab the first row, and the name column

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +27,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
 
     @BindToRegistry("sslContextParameters")
-    public SSLContextParameters loadSSLParams() throws Exception {
+    public SSLContextParameters loadSSLParams() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
@@ -45,9 +43,9 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws URISyntaxException {
+            public void configure() {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 // NOTE: These are here to check that they are properly ignored.
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
@@ -55,7 +53,7 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

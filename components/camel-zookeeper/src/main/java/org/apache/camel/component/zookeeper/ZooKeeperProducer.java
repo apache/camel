@@ -34,7 +34,6 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.String.format;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getAclListFromMessage;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
@@ -77,9 +76,7 @@ public class ZooKeeperProducer extends DefaultProducer {
 
         if (ExchangeHelper.isOutCapable(exchange)) {
             if (isDelete) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(format("Deleting znode '%s', waiting for confirmation", context.node));
-                }
+                LOG.debug("Deleting znode '{}', waiting for confirmation", context.node);
 
                 OperationResult result = synchronouslyDelete(context);
                 if (configuration.isListChildren()) {
@@ -87,9 +84,7 @@ public class ZooKeeperProducer extends DefaultProducer {
                 }
                 updateExchangeWithResult(context, result);
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(format("Storing data to znode '%s', waiting for confirmation", context.node));
-                }
+                LOG.debug("Storing data to znode '{}', waiting for confirmation", context.node);
 
                 OperationResult result = synchronouslySetData(context);
                 if (configuration.isListChildren()) {
@@ -111,7 +106,7 @@ public class ZooKeeperProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         connection = zkm.getConnection();
         if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Starting zookeeper producer of '%s'", configuration.getPath()));
+            LOG.trace("Starting zookeeper producer of '{}'", configuration.getPath());
         }
     }
 
@@ -119,23 +114,21 @@ public class ZooKeeperProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Shutting down zookeeper producer of '%s'", configuration.getPath()));
+            LOG.trace("Shutting down zookeeper producer of '{}'", configuration.getPath());
         }
         zkm.shutdown();
     }
 
     private void asynchronouslyDeleteNode(ZooKeeper connection, ProductionContext context) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(format("Deleting node '%s', not waiting for confirmation", context.node));
-        }
+        LOG.debug("Deleting node '{}', not waiting for confirmation", context.node);
+
         connection.delete(context.node, context.version, new AsyncDeleteCallback(), context);
 
     }
 
     private void asynchronouslySetDataOnNode(ZooKeeper connection, ProductionContext context) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(format("Storing data to node '%s', not waiting for confirmation", context.node));
-        }
+        LOG.debug("Storing data to node '{}', not waiting for confirmation", context.node);
+
         connection.setData(context.node, context.payload, context.version, new AsyncSetDataCallback(), context);
     }
 
@@ -148,7 +141,7 @@ public class ZooKeeperProducer extends DefaultProducer {
             context.exchange.setException(result.getException());
         }
 
-        context.exchange.setOut(out);
+        context.exchange.setMessage(out);
     }
 
     private OperationResult listChildren(ProductionContext context) throws Exception {
@@ -180,17 +173,17 @@ public class ZooKeeperProducer extends DefaultProducer {
         public void processResult(int rc, String node, Object ctx, Stat statistics) {
             if (Code.NONODE.equals(Code.get(rc))) {
                 if (configuration.isCreate()) {
-                    LOG.warn(format("Node '%s' did not exist, creating it...", node));
+                    LOG.warn("Node '{}' did not exist, creating it...", node);
                     ProductionContext context = (ProductionContext) ctx;
                     OperationResult<String> result = null;
                     try {
                         result = createNode(context);
                     } catch (Exception e) {
-                        LOG.error(format("Error trying to create node '%s'", node), e);
+                        LOG.error("Error trying to create node '{}'", node, e);
                     }
 
                     if (result == null || !result.isOk()) {
-                        LOG.error(format("Error creating node '%s'", node), result.getException());
+                        LOG.error("Error creating node '{}'", node, result.getException());
                     }
                 }
             } else {
@@ -202,13 +195,7 @@ public class ZooKeeperProducer extends DefaultProducer {
     private class AsyncDeleteCallback implements VoidCallback {
         @Override
         public void processResult(int rc, String path, Object ctx) {
-            if (LOG.isDebugEnabled()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace(format("Removed data node '%s'", path));
-                } else {
-                    LOG.debug(format("Removed data node '%s'", path));
-                }
-            }
+            LOG.debug("Removed data node '{}'", path);
         }
     }
 
@@ -242,7 +229,7 @@ public class ZooKeeperProducer extends DefaultProducer {
         OperationResult result = setData.get();
 
         if (!result.isOk() && configuration.isCreate() && result.failedDueTo(Code.NONODE)) {
-            LOG.warn(format("Node '%s' did not exist, creating it.", ctx.node));
+            LOG.warn("Node '{}' did not exist, creating it.", ctx.node);
             result = createNode(ctx);
         }
         return result;
@@ -255,7 +242,7 @@ public class ZooKeeperProducer extends DefaultProducer {
         OperationResult result = setData.get();
 
         if (!result.isOk() && configuration.isCreate() && result.failedDueTo(Code.NONODE)) {
-            LOG.warn(format("Node '%s' did not exist, creating it.", ctx.node));
+            LOG.warn("Node '{}' did not exist, creating it.", ctx.node);
             result = createNode(ctx);
         }
         return result;
@@ -264,9 +251,9 @@ public class ZooKeeperProducer extends DefaultProducer {
     private void logStoreComplete(String path, Stat statistics) {
         if (LOG.isDebugEnabled()) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace(format("Stored data to node '%s', and receive statistics %s", path, statistics));
+                LOG.trace("Stored data to node '{}', and receive statistics {}", path, statistics);
             } else {
-                LOG.debug(format("Stored data to node '%s'", path));
+                LOG.debug("Stored data to node '{}'", path);
             }
         }
     }

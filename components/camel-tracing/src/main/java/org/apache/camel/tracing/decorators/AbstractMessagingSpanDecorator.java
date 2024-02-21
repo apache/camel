@@ -25,11 +25,13 @@ import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanKind;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersExtractAdapter;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter;
 
 public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorator {
 
+    @Deprecated
     public static final String MESSAGE_BUS_ID = "message_bus.id";
 
     @Override
@@ -46,6 +48,7 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
         String messageId = getMessageId(exchange);
         if (messageId != null) {
             span.setTag(MESSAGE_BUS_ID, messageId);
+            span.setTag(TagConstants.MESSAGE_ID, messageId);
         }
     }
 

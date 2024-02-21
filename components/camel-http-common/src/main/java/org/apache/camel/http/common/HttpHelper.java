@@ -27,14 +27,16 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
+import org.apache.camel.support.http.HttpUtil;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -54,11 +56,11 @@ public final class HttpHelper {
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        org.apache.camel.http.base.HttpHelper.setCharsetFromContentType(contentType, exchange);
+        HttpUtil.setCharsetFromContentType(contentType, exchange);
     }
 
     public static String getCharsetFromContentType(String contentType) {
-        return org.apache.camel.http.base.HttpHelper.getCharsetFromContentType(contentType);
+        return HttpUtil.getCharsetFromContentType(contentType);
     }
 
     /**
@@ -118,7 +120,7 @@ public final class HttpHelper {
             return null;
         }
 
-        Object answer = null;
+        Object answer;
         ObjectInputStream ois = new CamelObjectInputStream(is, context);
         try {
             answer = ois.readObject();
@@ -139,53 +141,35 @@ public final class HttpHelper {
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
         InputStream is = HttpConverter.toInputStream(request, exchange);
-        // TODO should readRequestBodyFromInputStream() be invoked instead?
-        return readResponseBodyFromInputStream(is, exchange);
-    }
-
-    /**
-     * Reads the request body from the given input stream.
-     *
-     * @param  is          the input stream
-     * @param  exchange    the exchange
-     * @return             the request body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading request body
-     */
-    public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
-        if (is == null) {
-            return null;
-        }
-        boolean disableStreamCaching = !exchange.getContext().isStreamCaching();
-        // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, disableStreamCaching, Boolean.class)) {
-            return is;
+        // when using servlet (camel-servlet and camel-jetty) then they should always use stream caching
+        // as the message body is parsed for url-form and other things, so we need to be able to re-read the message body
+        // however there is an option to turn this off, which is set as exchange property
+        boolean streamCaching = !exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, false, boolean.class);
+        if (streamCaching) {
+            return cacheResponseBodyFromInputStream(is, exchange);
         } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(is, cos);
-            return cos.newStreamCache();
+            return is;
         }
     }
 
     /**
-     * Reads the response body from the given input stream.
+     * Caches the response body from the given input stream, which is needed by
+     * {@link org.apache.camel.PollingConsumer}.
      *
      * @param  is          the input stream
      * @param  exchange    the exchange
-     * @return             the response body, can be <tt>null</tt> if no body
+     * @return             the cached response body
      * @throws IOException is thrown if error reading response body
      */
-    public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
+    public static Object cacheResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
         if (is == null) {
             return null;
         }
-        // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
-            return is;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(is, cos);
-            return cos.newStreamCache();
-        }
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        // do not close IS as it comes from http server such as servlet and the
+        // servlet input stream may be used by others besides Camel
+        IOHelper.copy(is, cos);
+        return cos.newStreamCache();
     }
 
     /**
@@ -220,20 +204,24 @@ public final class HttpHelper {
             if (path.length() > 1 && path.startsWith("/")) {
                 path = path.substring(1);
             }
-            if (path.length() > 0) {
+            if (!path.isEmpty()) {
                 // inject the dynamic path before the query params, if there are any
                 int idx = uri.indexOf('?');
 
                 // if there are no query params
                 if (idx == -1) {
                     // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                    uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
-                    uri = uri.concat(path);
+                    if (uri.endsWith("/") && path.startsWith("/")) {
+                        uri = uri.concat(path.substring(1));
+                    } else {
+                        uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
+                        uri = uri.concat(path);
+                    }
                 } else {
                     // there are query params, so inject the relative path in the right place
                     String base = uri.substring(0, idx);
                     base = base.endsWith("/") ? base : base + "/";
-                    base = base.concat(path);
+                    base = base.concat(path.startsWith("/") ? path.substring(1) : path);
                     uri = base.concat(uri.substring(idx));
                 }
             }
@@ -290,10 +278,8 @@ public final class HttpHelper {
      * @param key     the key
      * @param value   the value
      */
-    @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        org.apache.camel.http.base.HttpHelper.appendHeader(headers, key, value);
-
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**

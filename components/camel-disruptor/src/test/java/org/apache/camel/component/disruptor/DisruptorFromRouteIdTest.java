@@ -37,7 +37,7 @@ public class DisruptorFromRouteIdTest extends CamelTestSupport {
 
         template.sendBody("disruptor:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("foo", foo.getReceivedExchanges().get(0).getFromRouteId());
         assertEquals("disruptor://foo", foo.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());

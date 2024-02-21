@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cloud",
+    "title": "Cloud",
+    "description": "Camel Cloud support",
+    "deprecated": false,
+    "firstVersion": "3.0",
+    "label": "core,cloud",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cloud",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

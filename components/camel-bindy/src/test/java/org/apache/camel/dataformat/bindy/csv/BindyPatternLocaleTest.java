@@ -51,7 +51,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(10f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(1f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -79,14 +79,14 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(0f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyCsvDataFormat bindy = new BindyCsvDataFormat(Unity.class);
 
                 // As recommended, when we use @Datafield Pattern we must

@@ -37,7 +37,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "123\tCamel in Action\t1\n124\tActiveMQ in Action\t2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
@@ -56,7 +56,7 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "123\tCamel in Action\t1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(1, body.size());

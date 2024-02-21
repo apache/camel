@@ -8,10 +8,11 @@
     "firstVersion": "2.6.0",
     "label": "dataformat,transformation,monitoring",
     "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

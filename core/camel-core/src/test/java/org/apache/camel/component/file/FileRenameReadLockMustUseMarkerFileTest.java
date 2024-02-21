@@ -23,20 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/rename");
-        super.setUp();
-    }
 
     @Test
     public void testCamelLockFile() throws Exception {
@@ -45,7 +36,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         mock.expectedBodiesReceived("Bye World");
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("bye.txt");
 
-        template.sendBodyAndHeader("file:target/data/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
         context.getRouteController().startRoute("foo");
@@ -55,8 +46,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         assertTrue(oneExchangeDone.matchesWaitTime());
 
         // and lock file should be deleted
-        File lock = new File("target/data/rename/bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        assertFalse(lock.exists(), "Lock file should not exist: " + lock);
+        assertFileNotExists(testFile("bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX));
     }
 
     @Override
@@ -64,7 +54,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from(fileUri("?readLock=rename&initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

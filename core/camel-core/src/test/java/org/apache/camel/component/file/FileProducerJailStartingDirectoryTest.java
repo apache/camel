@@ -20,33 +20,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/jail");
-        super.setUp();
-    }
 
     @Test
     public void testWriteOutsideStartingDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().contains("as the filename is jailed to the starting directory"));
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt"),
+                "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(iae.getMessage().contains("as the filename is jailed to the starting directory"));
 
         assertMockEndpointsSatisfied();
     }
@@ -66,7 +57,8 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to("file:target/data/jail/outbox")
+                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
+                        .to(fileUri("outbox"))
                         .to("mock:result");
             }
         };

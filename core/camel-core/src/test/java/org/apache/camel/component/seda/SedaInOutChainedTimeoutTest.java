@@ -23,21 +23,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
 
     @Test
-    public void testSedaInOutChainedTimeout() throws Exception {
-        // time timeout after 2 sec should trigger a immediately reply
+    public void testSedaInOutChainedTimeout() {
+        // time timeout after 2 sec should trigger an immediate reply
         StopWatch watch = new StopWatch();
-        try {
-            template.requestBody("seda:a?timeout=5000", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-            assertEquals(2000, cause.getTimeout());
-        }
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("seda:a?timeout=5000", "Hello World"), "Should have thrown an exception");
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
+        assertEquals(2000, cause.getTimeout());
+
         long delta = watch.taken();
 
         assertTrue(delta < 4000, "Should be faster than 4000 millis, was: " + delta);

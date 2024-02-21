@@ -28,7 +28,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
     protected final DropboxEndpoint endpoint;
     protected final DropboxConfiguration configuration;
 
-    public DropboxScheduledPollConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
+    protected DropboxScheduledPollConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
@@ -47,7 +47,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
             //create dropbox client
             configuration.createClient();
 
-            LOG.debug("Consumer DropBox client created");
+            LOG.debug("Consumer Dropbox client created");
         }
 
         super.doStart();
@@ -61,7 +61,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
         if (configuration.getClient() == null) {
             configuration.setClient(null);
 
-            LOG.debug("Consumer DropBox client deleted");
+            LOG.debug("Consumer Dropbox client deleted");
         }
         super.doStop();
     }

@@ -40,7 +40,7 @@ public class JaxbXmlMainTest {
         // will load XML from target/classes when testing
         doTestMain(
                 "org/apache/camel/main/xml/camel-*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/camel-my-templated-route.xml");
     }
 
     @Test
@@ -48,7 +48,7 @@ public class JaxbXmlMainTest {
         // will load XML from target/classes when testing
         doTestMain(
                 "org/apache/camel/main/**/*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/camel-my-templated-route.xml");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class JaxbXmlMainTest {
         // will load XML from target/classes when testing
         doTestMain(
                 "classpath:org/apache/camel/main/xml/camel-*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/camel-my-templated-route.xml");
     }
 
     @Test
@@ -71,14 +71,14 @@ public class JaxbXmlMainTest {
     public void testMainRoutesCollectorScanInDir() throws Exception {
         doTestMain(
                 "file:src/test/resources/org/apache/camel/main/xml/camel-*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/camel-my-templated-route.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
         doTestMain(
                 "file:src/test/resources/**/*.xml",
-                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml");
+                "**/org/apache/camel/dsl/**,**/camel-rests.xml,**/camel-template.xml,**/camel-my-templated-route.xml");
     }
 
     @Test

@@ -20,12 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.GzipDataFormat;
+import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 
-public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
+public class GzipDataFormatReifier extends DataFormatReifier<GzipDeflaterDataFormat> {
 
     public GzipDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (GzipDataFormat) definition);
+        super(camelContext, (GzipDeflaterDataFormat) definition);
     }
 
     @Override

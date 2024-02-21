@@ -16,11 +16,15 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
@@ -39,8 +43,8 @@ public class LRASagaRoutes extends RouteBuilder {
     public void configure() throws Exception {
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPENSATE)
-                .route().id("lra-compensation")
+                .put(PARTICIPANT_PATH_COMPENSATE).to("direct:lra-compensation");
+        from("direct:lra-compensation").routeId("lra-compensation")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
@@ -48,14 +52,13 @@ public class LRASagaRoutes extends RouteBuilder {
                 .end();
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPLETE)
-                .route().id("lra-completion")
+                .put(PARTICIPANT_PATH_COMPLETE).to("direct:lra-completion");
+        from("direct:lra-completion").routeId("lra-completion")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
                 .toD("${header." + URL_COMPLETION_KEY + "}")
                 .end();
-
     }
 
     /**
@@ -74,6 +77,29 @@ public class LRASagaRoutes extends RouteBuilder {
         String completionURI = exchange.getIn().getHeader(URL_COMPLETION_KEY, String.class);
         if (completionURI != null) {
             usedURIs.add(completionURI);
+        }
+
+        // CAMEL-17751: Extract URIs from the CamelHttpQuery header
+        if (usedURIs.isEmpty()) {
+            try {
+                Map<String, Object> queryParams
+                        = URISupport.parseQuery(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
+                if (!queryParams.isEmpty()) {
+                    if (queryParams.get(URL_COMPENSATION_KEY) != null) {
+                        compensationURI = queryParams.get(URL_COMPENSATION_KEY).toString();
+                        usedURIs.add(compensationURI);
+                        exchange.getIn().setHeader(URL_COMPENSATION_KEY, compensationURI);
+                    }
+
+                    if (queryParams.get(URL_COMPLETION_KEY) != null) {
+                        completionURI = queryParams.get(URL_COMPLETION_KEY).toString();
+                        usedURIs.add(completionURI);
+                        exchange.getIn().setHeader(URL_COMPLETION_KEY, completionURI);
+                    }
+                }
+            } catch (URISyntaxException ex) {
+                throw new RuntimeCamelException("URISyntaxException during " + Exchange.HTTP_QUERY + " header parsing");
+            }
         }
 
         for (String uri : usedURIs) {

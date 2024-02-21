@@ -1,11 +1,306 @@
-[[xml-io-dsl-other]]
 = Xml Io Dsl Component
-:docTitle: XML Dsl
-:artifactId: camel-xml-io-dsl
-:description: Camel DSL with YAML
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-io-dsl.adoc[opts=optional]
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: XML Io Dsl
+:artifactid: camel-xml-io-dsl
+:description: Camel DSL with XML
+:since: 3.9
+:supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
 
-See https://camel.apache.org/manual/latest/dsl.html
+*Since Camel {since}*
+
+The `xml-io-dsl` is the Camel optimized XML DSL with a very fast and low overhead XML parser.
+The classic XML DSL was loaded via JAXB that is heavy and overhead.
+
+The JAXB parser is generic and can be used for parsing any XML.
+However, the `xml-io-dsl` is a source code generated parser that is Camel specific and can only parse Camel `.xml`
+route files (not classic Spring `<beans>` XML files).
+
+If you are using Camel XML DSL then its recommended using `xml-io-dsl` instead of `xml-jaxb-dsl`.
+You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main, and Camel K etc.
+
+== Example
+
+The following `my-route.xml` source file:
+
+.my-route.xml
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="timer:tick"/>
+        <setBody>
+            <constant>Hello Camel K!</constant>
+         </setBody>
+        <to uri="log:info"/>
+    </route>
+</routes>
+----
+
+TIP: You can omit the `xmlns` namespace. And if there is only a single route, you can use `<route>` as the root XML tag.
+
+Can then be loaded and run with Camel CLI or Camel K.
+
+.Running with Camel K
+
+[source,bash]
+----
+kamel run my-route.xml
+----
+
+.Running with Camel CLI
+
+[source,bash]
+----
+camel run my-route.xml
+----
+
+*Since Camel 4.0.0*
+
+It is now possible with `xml-io-dsl` to declare some beans to be bound to xref:manual::registry.adoc[Camel Registry] in similar way as with xref:yaml-dsl.adoc[YAML DSL]. Beans may be declared in XML and have their properties (also nested) defined. For example:
+
+[source,xml]
+----
+<camel>
+
+	<bean name="beanFromProps" type="com.acme.MyBean">
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested.field1" value="nf1_p" />
+			<property key="nested.field2" value="nf2_p" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+While keeping all the benefits of fast XML parser used by `xml-io-dsl`, Camel can also process XML elements declared in other XML namespaces and process them separately. With this mechanism it is possible to include XML elements using Spring's `http://www.springframework.org/schema/beans` namespace.
+
+This brings the flexibility of Spring Beans into xref:components:others:main.adoc[Camel Main] without actually running any Spring Application Context (or Spring Boot). When elements from Spring namespace are found, they are used to populate and configure an instance of `org.springframework.beans.factory.support.DefaultListableBeanFactory` and leverage Spring dependency injection to wire the beans together. These beans are then exposed through normal xref:manual::registry.adoc[Camel Registry] and may be used by Camel routes.
+
+Here's an example `camel.xml` file, which defines both the routes and beans used (referred to) by the route definition:
+
+.camel.xml
+[source,xml]
+----
+<camel>
+
+    <beans xmlns="http://www.springframework.org/schema/beans">
+        <bean id="messageString" class="java.lang.String">
+            <constructor-arg index="0" value="Hello"/>
+        </bean>
+
+        <bean id="greeter" class="org.apache.camel.main.app.Greeter">
+            <description>Spring Bean</description>
+            <property name="message">
+                <bean class="org.apache.camel.main.app.GreeterMessage">
+                    <property name="msg" ref="messageString"/>
+                </bean>
+            </property>
+        </bean>
+    </beans>
+
+    <route id="my-route">
+        <from uri="direct:start"/>
+        <bean ref="greeter"/>
+        <to uri="mock:finish"/>
+    </route>
+
+</camel>
+----
+
+A `my-route` route is referring to `greeter` bean which is defined using Spring `<bean>` element.
+
+More examples can be found in xref:manual:ROOT:camel-jbang.adoc#_using_spring_beans_in_camel_xml_dsl[Camel JBang] page.
+
+=== Using bean with constructors
+
+When beans must be created with constructor arguments, then this is made easier in Camel 4.1 onwards.
+
+For example as shown below:
+
+[source,xml]
+----
+<camel>
+
+	<bean name="beanFromProps" type="com.acme.MyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+        <!-- and you can still have properties -->
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested.field1" value="nf1_p" />
+			<property key="nested.field2" value="nf2_p" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+If you use Camel 4.0, then constructor arguments must be defined in the `type` attribute:
+
+[source,xml]
+----
+<bean name="beanFromProps" type="com.acme.MyBean(true, 'Hello World')">
+    <properties>
+        <property key="field1" value="f1_p" />
+        <property key="field2" value="f2_p" />
+        <property key="nested.field1" value="nf1_p" />
+        <property key="nested.field2" value="nf2_p" />
+    </properties>
+</bean>
+----
+
+=== Creating beans from factory method
+
+A bean can also be created from a factory method (public static) as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+When using `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyBean` should be as follows:
+
+[source,java]
+----
+public class MyBean {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static` and from the same class as the created class itself.
+
+=== Creating beans from builder classes
+
+A bean can also be created from another builder class as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          builderClass="com.acme.MyBeanBuilder" builderMethod="createMyBean">
+        <properties>
+          <property key="id" value="123"/>
+          <property key="name" value="Acme"/>
+        </constructors>
+	</bean>
+----
+
+NOTE: The builder class must be `public` and have a no-arg default constructor.
+
+The builder class is then used to create the actual bean by using fluent builder style configuration.
+So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
+at the end. The invocation of this method is done via Java reflection.
+
+=== Creating beans from factory bean
+
+A bean can also be created from a factory bean as shown below:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          factoryBean="com.acme.MyHelper" factoryMethod="createMyBean">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+TIP: `factoryBean` can also refer to an existing bean by bean id instead of FQN classname.
+
+When using `factoryBean` and `factoryMethod` then the arguments to this method is taken from `constructors`.
+So in the example above, this means that class `com.acme.MyHelper` should be as follows:
+
+[source,java]
+----
+public class MyHelper {
+
+    public static MyBean createMyBean(boolean important, String message) {
+        MyBean answer = ...
+        // create and configure the bean
+        return answer;
+    }
+}
+----
+
+NOTE: The factory method must be `public static`.
+
+=== Creating beans using script language
+
+For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.
+This gives flexibility to use a bit of programming to create and configure the bean.
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean" scriptLanguage="groovy">
+        <script>
+      // some groovy script here to create the bean
+      bean = ...
+      ...
+      return bean
+        </script>
+	</bean>
+----
+
+NOTE: When using `script` then constructors and factory bean/method is not in use
+
+=== Using init and destroy methods on beans
+
+Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
+For this you can use `initMethod` and `destroyMethod` that Camel triggers accordingly.
+
+Those methods must be public void and have no arguments, as shown below:
+
+[source,java]
+----
+public class MyBean {
+
+    public void initMe() {
+        // do init work here
+    }
+
+    public void destroyMe() {
+        // do cleanup work here
+    }
+
+}
+----
+
+You then have to declare those methods in XML DSL as follows:
+
+[source,xml]
+----
+	<bean name="myBean" type="com.acme.MyBean"
+          initMethod="initMe" destroyMethod="destroyMe">
+        <constructors>
+          <constructor index="0" value="true"/>
+          <constructor index="1" value="Hello World"/>
+        </constructors>
+	</bean>
+----
+
+The init and destroy methods are optional, so a bean does not have to have both,
+for example you may only have destroy methods.
+
+
+== See Also
+
+See xref:manual:ROOT:dsl.adoc[DSL]

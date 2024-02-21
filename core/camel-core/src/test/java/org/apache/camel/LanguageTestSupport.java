@@ -74,7 +74,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
      * Asserts that the expression evaluates to one of the two given values
      */
     protected void assertExpression(String expressionText, String expectedValue, String orThisExpectedValue) {
-        Object value = evaluateExpression(expressionText, expectedValue);
+        Object value = evaluateExpression(expressionText, expectedValue.getClass());
 
         assertTrue(expectedValue.equals(value) || orThisExpectedValue.equals(value),
                 "Expression: " + expressionText + " on Exchange: " + exchange);
@@ -83,15 +83,15 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
     /**
      * Evaluates the expression
      */
-    protected Object evaluateExpression(String expressionText, String expectedValue) {
+    protected Object evaluateExpression(String expressionText, Class<?> expectedType) {
         Language language = assertResolveLanguage(getLanguageName());
 
         Expression expression = language.createExpression(expressionText);
         assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         Object value;
-        if (expectedValue != null) {
-            value = expression.evaluate(exchange, expectedValue.getClass());
+        if (expectedType != null) {
+            value = expression.evaluate(exchange, expectedType);
         } else {
             value = expression.evaluate(exchange, Object.class);
         }

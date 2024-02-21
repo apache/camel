@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import java.util.Map;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetObjectArgs;
+import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -37,6 +40,13 @@ import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.RemoveObjectsArgs;
 import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
+import io.minio.http.Method;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
 import org.apache.camel.Endpoint;
@@ -47,7 +57,6 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +69,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public class MinioProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioProducer.class);
-
-    private transient String minioProducerToString;
 
     public MinioProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -103,6 +110,12 @@ public class MinioProducer extends DefaultProducer {
                 case getPartialObject:
                     getPartialObject(minioClient, exchange);
                     break;
+                case createDownloadLink:
+                    createPresignedUrl(minioClient, exchange, Method.GET);
+                    break;
+                case createUploadLink:
+                    createPresignedUrl(minioClient, exchange, Method.PUT);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
             }
@@ -110,7 +123,6 @@ public class MinioProducer extends DefaultProducer {
     }
 
     public void putObject(MinioClient minioClient, final Exchange exchange) throws Exception {
-
         if (getConfiguration().isPojoRequest()) {
             PutObjectArgs.Builder payload = exchange.getIn().getMandatoryBody(PutObjectArgs.Builder.class);
             if (isNotEmpty(payload)) {
@@ -127,62 +139,76 @@ public class MinioProducer extends DefaultProducer {
             Map<String, String> objectMetadata = determineMetadata(exchange);
             Map<String, String> extraHeaders = determineExtraHeaders(exchange);
 
-            File filePayload = null;
-            InputStream inputStream;
-            ByteArrayOutputStream baos;
-            Object object = exchange.getIn().getMandatoryBody();
+            // the content-length may already be known
+            long contentLength = Long.parseLong(objectMetadata.getOrDefault(Exchange.CONTENT_LENGTH, "-1"));
 
-            // Need to check if the message body is WrappedFile
-            if (object instanceof WrappedFile) {
-                object = ((WrappedFile<?>) object).getFile();
-            }
-            if (object instanceof File) {
-                filePayload = (File) object;
-                inputStream = new FileInputStream(filePayload);
-            } else {
-                inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
-                if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-                    if (objectMetadata.get("Content-Length").equals("0")
-                            && isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                        LOG.debug(
-                                "The content length is not defined. It needs to be determined by reading the data into memory");
-                        baos = determineLengthInputStream(inputStream);
-                        objectMetadata.put("Content-Length", String.valueOf(baos.size()));
-                        inputStream = new ByteArrayInputStream(baos.toByteArray());
-                    } else {
-                        if (isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                            objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
+            Object object = exchange.getIn().getMandatoryBody();
+            InputStream inputStream = null;
+            File filePayload = null;
+            try {
+                // Need to check if the message body is WrappedFile
+                if (object instanceof WrappedFile) {
+                    object = ((WrappedFile<?>) object).getFile();
+                }
+                if (object instanceof File) {
+                    filePayload = (File) object;
+                    inputStream = new FileInputStream(filePayload);
+                    contentLength = filePayload.length();
+                } else {
+                    inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
+                    if (contentLength <= 0) {
+                        contentLength = determineLengthInputStream(inputStream);
+                        if (contentLength == -1) {
+                            // fallback to read into memory to calculate length
+                            LOG.debug(
+                                    "The content length is not defined. It needs to be determined by reading the data into memory");
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            IOHelper.copyAndCloseInput(inputStream, baos);
+                            byte[] arr = baos.toByteArray();
+                            contentLength = arr.length;
+                            inputStream = new ByteArrayInputStream(arr);
                         }
                     }
                 }
+                if (contentLength > 0) {
+                    objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
+                }
+                doPutObject(exchange, bucketName, objectName, objectMetadata, extraHeaders, inputStream, contentLength);
+            } finally {
+                IOHelper.close(inputStream);
             }
-            PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
-                    .stream(inputStream, inputStream.available(), -1)
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .userMetadata(objectMetadata);
-
-            if (!extraHeaders.isEmpty()) {
-                putObjectRequest.extraHeaders(extraHeaders);
-            }
-
-            LOG.trace("Put object from exchange...");
-
-            ObjectWriteResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build());
-
-            LOG.trace("Received result...");
-
-            Message message = getMessageForResponse(exchange);
-            message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
-            if (isNotEmpty(putObjectResult.versionId())) {
-                message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
-            }
-
-            IOHelper.close(inputStream);
 
             if (getConfiguration().isDeleteAfterWrite() && isNotEmpty(filePayload)) {
                 FileUtil.deleteFile(filePayload);
             }
+        }
+    }
+
+    private void doPutObject(
+            Exchange exchange, String bucketName, String objectName, Map<String, String> objectMetadata,
+            Map<String, String> extraHeaders, InputStream inputStream, long contentLength)
+            throws IOException, ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException,
+            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException {
+        PutObjectArgs.Builder putObjectRequest = PutObjectArgs.builder()
+                .stream(inputStream, contentLength, -1)
+                .bucket(bucketName)
+                .object(objectName)
+                .userMetadata(objectMetadata);
+
+        if (!extraHeaders.isEmpty()) {
+            putObjectRequest.extraHeaders(extraHeaders);
+        }
+
+        LOG.trace("Put object from exchange...");
+
+        ObjectWriteResponse putObjectResult = getEndpoint().getMinioClient().putObject(putObjectRequest.build());
+
+        LOG.trace("Received result...");
+
+        Message message = getMessageForResponse(exchange);
+        message.setHeader(MinioConstants.E_TAG, putObjectResult.etag());
+        if (isNotEmpty(putObjectResult.versionId())) {
+            message.setHeader(MinioConstants.VERSION_ID, putObjectResult.versionId());
         }
     }
 
@@ -267,7 +293,7 @@ public class MinioProducer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             RemoveObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectsArgs.Builder.class);
             if (isNotEmpty(payload)) {
-                minioClient.removeObjects(payload.build());
+                minioClient.removeObjects(payload.build()).iterator().hasNext();
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
@@ -377,6 +403,35 @@ public class MinioProducer extends DefaultProducer {
         }
     }
 
+    private void createPresignedUrl(MinioClient minioClient, Exchange exchange, Method method) throws Exception {
+        int expiry = 60 * 60;
+        Integer expirationInSeconds = exchange.getIn().getHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, Integer.class);
+        Message message = getMessageForResponse(exchange);
+        if (expirationInSeconds != null) {
+            expiry = expirationInSeconds;
+        }
+        if (getConfiguration().isPojoRequest()) {
+            GetPresignedObjectUrlArgs.Builder payload
+                    = exchange.getIn().getMandatoryBody(GetPresignedObjectUrlArgs.Builder.class);
+            if (isNotEmpty(payload)) {
+                GetPresignedObjectUrlArgs args = payload.expiry(expiry).method(method).build();
+                String response = minioClient.getPresignedObjectUrl(args);
+                message.setBody(response);
+            }
+        } else {
+            final String bucketName = determineBucketName(exchange);
+            final String objectName = determineObjectName(exchange);
+            GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .expiry(expiry)
+                    .method(method)
+                    .build();
+            String response = minioClient.getPresignedObjectUrl(args);
+            message.setBody(response);
+        }
+    }
+
     private MinioOperations determineOperation(Exchange exchange) {
         MinioOperations operation = exchange.getIn().getHeader(MinioConstants.MINIO_OPERATION, MinioOperations.class);
         if (isEmpty(operation)) {
@@ -390,7 +445,7 @@ public class MinioProducer extends DefaultProducer {
 
         Long contentLength = exchange.getIn().getHeader(MinioConstants.CONTENT_LENGTH, Long.class);
         if (isNotEmpty(contentLength)) {
-            objectMetadata.put("Content-Length", String.valueOf(contentLength));
+            objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
         }
 
         String contentType = exchange.getIn().getHeader(MinioConstants.CONTENT_TYPE, String.class);
@@ -463,26 +518,30 @@ public class MinioProducer extends DefaultProducer {
         return storageClass;
     }
 
-    private ByteArrayOutputStream determineLengthInputStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[MinioConstants.BYTE_ARRAY_LENGTH];
-        int count;
-        while ((count = inputStream.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
+    private long determineLengthInputStream(InputStream is) throws IOException {
+        if (!is.markSupported()) {
+            return -1;
         }
-        return out;
+        if (is instanceof ByteArrayInputStream) {
+            return is.available();
+        }
+        long size = 0;
+        try {
+            is.mark(MinioConstants.BYTE_ARRAY_LENGTH);
+            int i = is.available();
+            while (i > 0) {
+                long skip = is.skip(i);
+                size += skip;
+                i = is.available();
+            }
+        } finally {
+            is.reset();
+        }
+        return size;
     }
 
     protected MinioConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
-    }
-
-    @Override
-    public String toString() {
-        if (isEmpty(minioProducerToString)) {
-            minioProducerToString = "MinioProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-        }
-        return minioProducerToString;
     }
 
     @Override

@@ -18,23 +18,27 @@ package org.apache.camel.impl.health;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HealthCheckTest {
 
     @Test
     public void testCheck() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
         MyHealthCheck check = new MyHealthCheck();
+        check.setCamelContext(context);
         check.setState(HealthCheck.State.UP);
         // disable
-        check.getConfiguration().setEnabled(false);
+        check.setEnabled(false);
 
         HealthCheck.Result result;
 
@@ -45,100 +49,13 @@ public class HealthCheckTest {
         assertEquals("Disabled", result.getMessage().get());
         assertEquals(false, result.getDetails().get(AbstractHealthCheck.CHECK_ENABLED));
 
-        check.getConfiguration().setEnabled(true);
+        check.setEnabled(true);
 
         result = check.call();
 
         assertEquals(HealthCheck.State.UP, result.getState());
         assertFalse(result.getMessage().isPresent());
         assertFalse(result.getDetails().containsKey(AbstractHealthCheck.CHECK_ENABLED));
-    }
-
-    @Test
-    public void testInterval() throws Exception {
-        MyHealthCheck check = new MyHealthCheck();
-        check.setState(HealthCheck.State.UP);
-        check.getConfiguration().setEnabled(true);
-        check.getConfiguration().setInterval(1000);
-
-        HealthCheck.Result result1 = check.call();
-        assertEquals(HealthCheck.State.UP, result1.getState());
-
-        Thread.sleep(100);
-
-        HealthCheck.Result result2 = check.call();
-        assertEquals(HealthCheck.State.UP, result2.getState());
-        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_TIME),
-                result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-        assertEquals(result1.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT),
-                result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-        assertNotEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME),
-                result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-
-        Thread.sleep(1250);
-
-        HealthCheck.Result result3 = check.call();
-        assertEquals(HealthCheck.State.UP, result3.getState());
-        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_TIME),
-                result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-        assertNotEquals(result2.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT),
-                result3.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-        assertEquals(check.getMetaData().get(AbstractHealthCheck.INVOCATION_ATTEMPT_TIME),
-                result3.getDetails().get(AbstractHealthCheck.INVOCATION_TIME));
-    }
-
-    @Test
-    public void testThreshold() throws Exception {
-        MyHealthCheck check = new MyHealthCheck();
-        check.setState(HealthCheck.State.DOWN);
-        check.getConfiguration().setEnabled(true);
-        check.getConfiguration().setFailureThreshold(3);
-
-        HealthCheck.Result result;
-
-        for (int i = 0; i < check.getConfiguration().getFailureThreshold(); i++) {
-            result = check.call();
-
-            assertEquals(HealthCheck.State.UP, result.getState());
-            assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-            assertEquals(i + 1, result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT));
-        }
-
-        assertEquals(HealthCheck.State.DOWN, check.call().getState());
-    }
-
-    @Test
-    public void testIntervalThreshold() throws Exception {
-        MyHealthCheck check = new MyHealthCheck();
-        check.setState(HealthCheck.State.DOWN);
-        check.getConfiguration().setEnabled(true);
-        check.getConfiguration().setInterval(500);
-        check.getConfiguration().setFailureThreshold(3);
-
-        HealthCheck.Result result;
-        int icount;
-        int fcount;
-
-        for (int i = 0; i < check.getConfiguration().getFailureThreshold(); i++) {
-            result = check.call();
-
-            icount = (int) result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT);
-            fcount = (int) result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT);
-
-            assertEquals(HealthCheck.State.UP, result.getState());
-            assertEquals(i + 1, icount);
-            assertEquals(i + 1, fcount);
-
-            result = check.call();
-
-            assertEquals(HealthCheck.State.UP, result.getState());
-            assertEquals(icount, result.getDetails().get(AbstractHealthCheck.INVOCATION_COUNT));
-            assertEquals(fcount, result.getDetails().get(AbstractHealthCheck.FAILURE_COUNT));
-
-            Thread.sleep(550);
-        }
-
-        assertEquals(HealthCheck.State.DOWN, check.call().getState());
     }
 
     // ********************************

@@ -24,8 +24,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="myProcessor" class="org.apache.camel.processor.SplitSubUnitOfWorkTest$MyProcessor"/>
-
   <!-- START SNIPPET: e1 -->
   <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
 

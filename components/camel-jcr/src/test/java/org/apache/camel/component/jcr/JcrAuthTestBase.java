@@ -44,7 +44,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     protected static final String REPO_PATH = "target/repository";
 
-    private Repository repository;
+    private static Repository repository = new TransientRepository(new File(REPO_PATH));
 
     @Override
     @BeforeEach
@@ -55,8 +55,6 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        repository = new TransientRepository(new File(REPO_PATH));
-
         // set up a user to authenticate
         SessionImpl session = (SessionImpl) repository
                 .login(new SimpleCredentials("admin", "admin".toCharArray()));

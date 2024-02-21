@@ -33,11 +33,11 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
         // the address header overrides the endpoint configuration
         template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, " ");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:address: ?apiKey=" + getApiKey()).to("log:result")

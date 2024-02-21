@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,7 +33,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndDeleteOptions;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
@@ -63,10 +67,12 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.MULTIUPDATE;
 import static org.apache.camel.component.mongodb.MongoDbConstants.NUM_TO_SKIP;
 import static org.apache.camel.component.mongodb.MongoDbConstants.OID;
 import static org.apache.camel.component.mongodb.MongoDbConstants.OPERATION_HEADER;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
 import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_AFFECTED;
 import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_MATCHED;
 import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_PAGE_SIZE;
 import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_TOTAL_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
 import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
 import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
 import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
@@ -78,8 +84,8 @@ public class MongoDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
 
-    private final Map<MongoDbOperation, Processor> operations = new HashMap<>();
-    private MongoDbEndpoint endpoint;
+    private final Map<MongoDbOperation, Processor> operations = new EnumMap<>(MongoDbOperation.class);
+    private final MongoDbEndpoint endpoint;
 
     {
         bind(MongoDbOperation.aggregate, createDoAggregate());
@@ -89,6 +95,9 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.findDistinct, createDoDistinct());
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
+        bind(MongoDbOperation.findOneAndDelete, createDoFindOneAndDelete());
+        bind(MongoDbOperation.findOneAndReplace, createDoFindOneAndReplace());
+        bind(MongoDbOperation.findOneAndUpdate, createDoFindOneAndUpdate());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
         bind(MongoDbOperation.getColStats, createDoGetColStats());
         bind(MongoDbOperation.getDbStats, createDoGetDbStats());
@@ -631,7 +640,11 @@ public class MongoDbProducer extends DefaultProducer {
                     result = dbCol.replaceOne(Filters.where("false"), saveObj, options);
                     exchange.getIn().setHeader(OID, result.getUpsertedId().asObjectId().getValue());
                 } else {
-                    result = dbCol.replaceOne(eq(MONGO_ID, saveObj.get(MONGO_ID)), saveObj, options);
+                    Bson mongoIdQuery = eq(MONGO_ID, saveObj.get(MONGO_ID));
+                    //You can pass sharded key query via CRITERIA header to allow update sharded collection
+                    Bson query = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                    query = query != null ? Filters.and(query, mongoIdQuery) : mongoIdQuery;
+                    result = dbCol.replaceOne(query, saveObj, options);
                     exchange.getIn().setHeader(OID, saveObj.get(MONGO_ID));
                 }
                 return result;
@@ -656,6 +669,111 @@ public class MongoDbProducer extends DefaultProducer {
                 return dbCol.bulkWrite(requests, options);
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for bulk write", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndUpdate() {
+        return exchange -> {
+            try {
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Bson filter = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                Bson update;
+                if (filter == null) {
+                    @SuppressWarnings("unchecked")
+                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    if (saveObj.size() != 2) {
+                        throw new CamelMongoDbException(
+                                "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");
+                    }
+
+                    filter = saveObj.get(0);
+                    update = saveObj.get(1);
+                } else {
+                    update = exchange.getIn().getMandatoryBody(Bson.class);
+                }
+                FindOneAndUpdateOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndUpdateOptions.class);
+                if (options == null) {
+                    options = new FindOneAndUpdateOptions();
+                    Boolean upsert = exchange.getIn().getHeader(UPSERT, Boolean.class);
+                    if (upsert != null) {
+                        options.upsert(upsert);
+                    }
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                    ReturnDocument returnDoc = exchange.getIn().getHeader(RETURN_DOCUMENT, ReturnDocument.class);
+                    if (returnDoc != null) {
+                        options.returnDocument(returnDoc);
+                    }
+                }
+                return dbCol.findOneAndUpdate(filter, update, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndUpdate", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndReplace() {
+        return exchange -> {
+            try {
+                FindOneAndReplaceOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndReplaceOptions.class);
+                if (options == null) {
+                    options = new FindOneAndReplaceOptions();
+                    Boolean upsert = exchange.getIn().getHeader(UPSERT, Boolean.class);
+                    if (upsert != null) {
+                        options.upsert(upsert);
+                    }
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                    ReturnDocument returnDoc = exchange.getIn().getHeader(RETURN_DOCUMENT, ReturnDocument.class);
+                    if (returnDoc != null) {
+                        options.returnDocument(returnDoc);
+                    }
+                }
+
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Document replacement = exchange.getIn().getMandatoryBody(Document.class);
+                Bson filter = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                return dbCol.findOneAndReplace(filter, replacement, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndReplace", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> createDoFindOneAndDelete() {
+        return exchange -> {
+            try {
+                FindOneAndDeleteOptions options = exchange.getIn().getHeader(OPTIONS, FindOneAndDeleteOptions.class);
+                if (options == null) {
+                    options = new FindOneAndDeleteOptions();
+                    Bson sort = exchange.getIn().getHeader(SORT_BY, Bson.class);
+                    if (sort != null) {
+                        options.sort(sort);
+                    }
+                    Bson projection = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
+                    if (projection != null) {
+                        options.projection(projection);
+                    }
+                }
+
+                MongoCollection<Document> dbCol = calculateCollection(exchange);
+                Bson filter = exchange.getIn().getMandatoryBody(Bson.class);
+                return dbCol.findOneAndDelete(filter, options);
+            } catch (InvalidPayloadException e) {
+                throw new CamelMongoDbException("Invalid payload for findOneAndDelete", e);
             }
         };
     }

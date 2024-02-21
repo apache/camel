@@ -1,0 +1,78 @@
+= CamelContext Auto Configuration
+
+The xref:camelcontext.adoc[CamelContext] is autoconfigured when running Camel with either
+xref:components:others:main.adoc[Camel Main], Camel Spring Boot, Camel Quarkus, or Camel K.
+
+== Camel Auto Configuration
+
+Under these runtimes then the auto configuration is performed by shared code from the `camel-main` JAR
+to ensure the configuration is similar on these runtimes.
+
+The auto configuration is executed in several steps:
+
+1. Configure `CamelContext` (and more such as components) from xref:components::properties-component.adoc[properties] from external sources like `application.properties|yaml`
+2. Configure optional services that has been registering in the xref:registry.adoc[Registry]
+
+=== Auto configuration of Properties
+
+This is used for configuring the standard set of options (more than 100 options) which is listed in the _Camel Main Options_ table at xref:components:others:main.adoc[Camel Main].
+
+NOTE: When using Camel on Spring Boot then these options are prefixed with `camel.springboot`, and not `camel.main`.
+
+=== Auto configuration of Optional Services
+
+After configuring the standard options, then Camel will look in the xref:registry.adoc[Registry] for custom
+services to be used. For example to plugin a custom `UnitOfWorkFactory`.
+
+The services can be anything that can be plugged into Camel (typically services that implement an SPI interface `org.apache.camel.spi`).
+
+The following SPI services, can only a single instance (singleton) be in the xref:registry.adoc[Registry].
+
+[width="100%",cols="2m,8",options="header",]
+|=======================================================================
+|SPI |Description
+| AsyncProcessorAwaitManager | To use a custom async processor await manager
+| BacklogTracer | To use a custom backlog tracer
+| ClassResolver | To use a custom class resolver (only needed if you run Camel on a special application server to deal with classloading)
+| Debugger | To use a custom xref:debugger.adoc[debugger]
+| EventFactory | To use a custom event notifier factory
+| ExchangeFactory | To use a custom xref:exchange-pooling.adoc[exchange factory]
+| ExecutorServiceManager | To use a custom xref:threading-model.adoc[thread pool manager]
+| FactoryFinderResolver | To use a custom factory finder resolver (only needed if you run Camel on a special application server to deal with classloading)
+| HealthCheckRegistry | To use a custom xref:health-check.adoc[health check registry]
+| InflightRepository | To use a custom inflight repository
+| ManagementObjectNameStrategy | To use a custom JMX MBean object naming
+| ManagementStrategy | To use a custom JMX management strategy
+| MessageHistoryFactory | To use a custom factory for xref:components:eips:message-history.adoc[message history]
+| ModelJAXBContextFactory | To use a custom `JAXBContext` factory (only needed if you run Camel on a special application server to deal with JAXB classloading)
+| NodeIdFactory | To use a custom factory for creating auto generated node ids
+| ProcessorFactory | To use a custom factory for creating xref:components:eips:enterprise-integration-patterns.adoc[EIP] processors
+| PropertiesComponent | To use a custom properties component
+| ReactiveExecutor | To use a custom reactive engine in the Camel routing engine
+| RouteController | To use a custom xref:route-controller.adoc[route controller]
+| RuntimeEndpointRegistry | To use a custom runtime xref:endpoint.adoc[endpoint] registry
+| ShutdownStrategy | To use a custom xref:graceful-shutdown.adoc[shutdown strategy]
+| StartupStepRecorder | To use a custom startup recorder
+| ThreadPoolFactory | To use a custom xref:threading-model.adoc[thread pool factory]
+| UnitOfWorkFactory | To use a custom unit of work factory
+| UuidGenerator | To use a custom xref:uuidgenerator.adoc[uuid generator]
+|=======================================================================
+
+For the following SPI services, there can be multiple (1..n) implementations in the xref:registry.adoc[Registry].
+
+[width="100%",cols="2m,8",options="header",]
+|=======================================================================
+|SPIs |Description
+| CamelClusterService | Adds all the custom xref:clustering.adoc[camel-cluster services]
+| EndpointStrategy | Adds all the custom xref:endpoint.adoc[endpoint strategies]
+| EventNotifier | Adds all the custom event notifiers
+| GlobalSSLContextParametersSupplier | To use a custom supplier for xref:camel-configuration-utilities.adoc[JSSE (Java Security)]
+| InterceptStrategy | Adds all the custom intercept strategies
+| LifecycleStrategy | Adds all the custom lifecycle strategies
+| LogListener | Adds all the log listeners
+| ModelLifecycleStrategy | Adds all the custom model lifecycle strategies
+| RoutePolicyFactory | Adds all the custom xref:route-policy.adoc[route policy factories]
+| ServiceRegistry | Adds all the custom camel-cloud service registries
+| ThreadPoolProfile | Adds all the xref:threading-model.adoc[thread pool profiles]
+| TypeConverters | Adds all the custom xref:type-converter.adoc[type converters]
+|=======================================================================

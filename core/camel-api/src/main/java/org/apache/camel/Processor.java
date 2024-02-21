@@ -26,11 +26,12 @@ package org.apache.camel;
  * thread-safe way, as the Camel routes can potentially be executed by concurrent threads, and therefore multiple
  * threads can call the same {@link Processor} instance.
  */
+@FunctionalInterface
 public interface Processor {
 
     /**
      * Processes the message exchange
-     * 
+     *
      * @param  exchange  the message exchange
      * @throws Exception if an internal processing error has occurred.
      */

@@ -33,7 +33,7 @@ global with sharing class MerchandiseRestResource {
             throw new InvalidParamException('Missing merchandise id in URL and query params');
         }
     }
-  
+
     @HttpPatch
     global static Merchandise__c doPatch(Merchandise__c merchandise) {
         // lookup merchandise
@@ -53,6 +53,12 @@ global with sharing class MerchandiseRestResource {
 
         update current;
         return current;
+    }
+
+    @HttpPost
+    global static void doPost() {
+        RestContext.response.responseBody = Blob.valueOf('test response');
+        RestContext.response.statusCode = 500;
     }
 
     // Invalid Merchandise Id exception

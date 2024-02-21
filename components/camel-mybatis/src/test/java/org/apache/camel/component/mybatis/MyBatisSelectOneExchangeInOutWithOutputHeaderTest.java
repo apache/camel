@@ -38,17 +38,17 @@ public class MyBatisSelectOneExchangeInOutWithOutputHeaderTest extends MyBatisTe
 
         template.sendBody("direct:start", TEST_ACCOUNT_ID);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account account = mock.getReceivedExchanges().get(0).getIn().getHeader(TEST_CASE_HEADER_NAME, Account.class);
         assertEquals("Claus", account.getFirstName());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .setExchangePattern(ExchangePattern.InOut)

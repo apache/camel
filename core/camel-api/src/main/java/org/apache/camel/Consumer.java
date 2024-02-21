@@ -47,8 +47,23 @@ public interface Consumer extends Service, EndpointAware {
     /**
      * Releases the {@link Exchange} when its completed processing and no longer needed.
      *
+     * @param exchange    the exchange
      * @param autoRelease whether the exchange was created with auto release
      */
     void releaseExchange(Exchange exchange, boolean autoRelease);
+
+    /**
+     * The default callback to use with the consumer when calling the processor using asynchronous routing.
+     *
+     * This implementation will use {@link org.apache.camel.spi.ExceptionHandler} to handle any exception on the
+     * exchange and afterwards release the exchange.
+     *
+     * @param  exchange    the exchange
+     * @param  autoRelease whether the exchange was created with auto release
+     * @return             the default callback
+     */
+    default AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
+        return null;
+    }
 
 }

@@ -35,18 +35,22 @@ import org.slf4j.LoggerFactory;
  * Read from system-in and write to system-out and system-err streams.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
-             category = { Category.FILE, Category.SYSTEM })
+             category = { Category.FILE, Category.CORE }, headersClass = StreamConstants.class)
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
-    @UriPath(enums = "in,out,err,header,file")
+    @UriPath(enums = "in,out,err,header,file,http")
     @Metadata(required = true)
     private String kind;
     @UriParam
     private String fileName;
+    @UriParam(label = "consumer")
+    private String httpUrl;
+    @UriParam(label = "consumer")
+    private String httpHeaders;
     @UriParam(label = "consumer")
     private boolean scanStream;
     @UriParam(label = "consumer")
@@ -69,6 +73,10 @@ public class StreamEndpoint extends DefaultEndpoint {
     private long initialPromptDelay = 2000;
     @UriParam(label = "consumer")
     private int groupLines;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean readLine = true;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean appendNewLine = true;
     @UriParam(label = "producer")
     private int autoCloseCount;
     @UriParam(label = "consumer")
@@ -103,7 +111,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Kind of stream to use such as System.in or System.out.
+     * Kind of stream to use such as System.in, System.out, a file, or a http url.
      */
     public void setKind(String kind) {
         this.kind = kind;
@@ -118,6 +126,30 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getHttpUrl() {
+        return httpUrl;
+    }
+
+    /**
+     * When using stream:http format, this option specifies the http url to stream from.
+     */
+    public void setHttpUrl(String httpUrl) {
+        this.httpUrl = httpUrl;
+    }
+
+    public String getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    /**
+     * When using stream:http format, this option specifies optional http headers, such as Accept: application/json.
+     * Multiple headers can be separated by comma. The format of headers can be either "HEADER=VALUE" or "HEADER:VALUE".
+     * In accordance with the HTTP/1.1 specification, leading and/or trailing whitespace is ignored
+     */
+    public void setHttpHeaders(String httpHeaders) {
+        this.httpHeaders = httpHeaders;
     }
 
     public long getDelay() {
@@ -260,6 +292,18 @@ public class StreamEndpoint extends DefaultEndpoint {
         this.groupLines = groupLines;
     }
 
+    public boolean isReadLine() {
+        return readLine;
+    }
+
+    /**
+     * Whether to read the input stream in line mode (terminate by line breaks). Setting this to false, will instead
+     * read the entire stream until EOL.
+     */
+    public void setReadLine(boolean readLine) {
+        this.readLine = readLine;
+    }
+
     public int getAutoCloseCount() {
         return autoCloseCount;
     }
@@ -270,6 +314,17 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setAutoCloseCount(int autoCloseCount) {
         this.autoCloseCount = autoCloseCount;
+    }
+
+    public boolean isAppendNewLine() {
+        return appendNewLine;
+    }
+
+    /**
+     * Whether to append a new line character at end of output.
+     */
+    public void setAppendNewLine(boolean appendNewLine) {
+        this.appendNewLine = appendNewLine;
     }
 
     public Charset getCharset() {

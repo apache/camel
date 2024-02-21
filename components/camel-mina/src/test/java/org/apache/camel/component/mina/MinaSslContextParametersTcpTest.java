@@ -19,14 +19,10 @@ package org.apache.camel.component.mina;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-
-import static org.junit.jupiter.api.condition.JRE.JAVA_8;
 
 public class MinaSslContextParametersTcpTest extends BaseMinaTest {
 
     @Test
-    @EnabledOnJre(value = { JAVA_8 }, disabledReason = "TODO: investigate why it fails on JDK > 8")
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         Object body = "Hello there!";
@@ -36,7 +32,7 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
                 "mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
                 body, "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -51,8 +47,8 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
             public void configure() {
                 fromF("mina:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
                         getPort())
-                                .to("log:before?showAll=true")
-                                .to("mock:result").to("log:after?showAll=true");
+                        .to("log:before?showAll=true")
+                        .to("mock:result").to("log:after?showAll=true");
             }
         };
     }

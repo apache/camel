@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * queue as a service.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ",
-             category = { Category.CLOUD, Category.MESSAGING })
+             category = { Category.CLOUD, Category.MESSAGING }, headersClass = IronMQConstants.class)
 public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
@@ -58,17 +57,10 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        IronMQConsumer ironMQConsumer = new IronMQConsumer(this, processor);
-        configureConsumer(ironMQConsumer);
-        ironMQConsumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
-        DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
-        scheduler.setDelay(ironMQConsumer.getDelay());
-        scheduler.setUseFixedDelay(ironMQConsumer.isUseFixedDelay());
-        scheduler.setInitialDelay(ironMQConsumer.getInitialDelay());
-        scheduler.setTimeUnit(ironMQConsumer.getTimeUnit());
-        scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
-        ironMQConsumer.setScheduler(scheduler);
-        return ironMQConsumer;
+        IronMQConsumer consumer = new IronMQConsumer(this, processor);
+        configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
+        return consumer;
     }
 
     @Override

@@ -80,7 +80,7 @@ public interface OptimisticLockingAggregationRepository extends AggregationRepos
      * Exchange does not match the Exchange actually stored against the key this method should throw an
      * OptimisticLockingException to indicate that the value of the correlation key has changed from the expected value.
      * <p/>
-     * 
+     *
      * @param  camelContext               the current CamelContext
      * @param  key                        the correlation key
      * @param  exchange                   the exchange to remove

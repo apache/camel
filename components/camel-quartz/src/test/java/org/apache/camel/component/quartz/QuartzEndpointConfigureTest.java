@@ -36,7 +36,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
     @Test
     public void testConfigureGroupAndName() throws Exception {
         QuartzEndpoint endpoint
-                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
+                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=100");
 
         Scheduler scheduler = endpoint.getComponent().getScheduler();
         TriggerKey triggerKey = endpoint.getTriggerKey();
@@ -122,7 +122,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testConfigureNoDoubleSlashNoCron() throws Exception {
+    public void testConfigureNoDoubleSlashNoCron() {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName");
 
         TriggerKey triggerKey = endpoint.getTriggerKey();
@@ -150,7 +150,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testConfigureDeleteJob() throws Exception {
+    public void testConfigureDeleteJob() {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
         assertEquals("0 0 * * * ?", endpoint.getCron(), "cron expression");
         assertTrue(endpoint.isDeleteJob(), "deleteJob");

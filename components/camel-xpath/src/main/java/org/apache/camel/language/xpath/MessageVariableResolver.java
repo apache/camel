@@ -56,12 +56,11 @@ public class MessageVariableResolver implements XPathVariableResolver {
         Object answer = null;
 
         Message in = exchange.get().getIn();
-        if (uri == null || uri.length() == 0) {
+        if (uri == null || uri.isEmpty()) {
             answer = variables.get(localPart);
             if (answer == null) {
-                Message message = in;
-                if (message != null) {
-                    answer = message.getHeader(localPart);
+                if (in != null) {
+                    answer = in.getHeader(localPart);
                 }
                 if (answer == null) {
                     answer = exchange.get().getProperty(localPart);

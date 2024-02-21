@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import com.hazelcast.collection.IQueue;
 import com.hazelcast.collection.ItemEvent;
@@ -28,12 +29,11 @@ import com.hazelcast.core.ItemEventType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -44,13 +44,21 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     @Mock
     private IQueue<String> queue;
 
-    @Captor
-    private ArgumentCaptor<ItemListener<String>> argument;
+    private volatile Consumer<ItemListener<String>> consumer;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
-        when(queue.addItemListener(any(), eq(true))).thenReturn(UUID.randomUUID());
+        when(queue.addItemListener(any(ItemListener.class), eq(true))).thenAnswer(
+                invocationOnMock -> {
+                    // Wait until the consumer is set
+                    while (consumer == null) {
+                        Thread.onSpinWait();
+                    }
+                    consumer.accept(invocationOnMock.getArgument(0, ItemListener.class));
+                    return UUID.randomUUID();
+                });
     }
 
     @Override
@@ -62,28 +70,22 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void add() throws InterruptedException {
+        this.consumer = listener -> listener.itemAdded(new ItemEvent<>("foo", ItemEventType.ADDED, "foo", null));
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        verify(queue).addItemListener(argument.capture(), eq(true));
-        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.ADDED, "foo", null);
-        argument.getValue().itemAdded(event);
-
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
-
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
 
     @Test
     public void remove() throws InterruptedException {
+        this.consumer = listener -> listener.itemRemoved(new ItemEvent<>("foo", ItemEventType.REMOVED, "foo", null));
+
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        verify(queue).addItemListener(argument.capture(), eq(true));
-        final ItemEvent<String> event = new ItemEvent<>("foo", ItemEventType.REMOVED, "foo", null);
-        argument.getValue().itemRemoved(event);
-
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 
@@ -105,7 +107,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     private void checkHeaders(Map<String, Object> headers, String action) {
         assertEquals(action, headers.get(HazelcastConstants.LISTENER_ACTION));
         assertEquals(HazelcastConstants.CACHE_LISTENER, headers.get(HazelcastConstants.LISTENER_TYPE));
-        assertEquals(null, headers.get(HazelcastConstants.OBJECT_ID));
+        assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
 

@@ -42,8 +42,8 @@ public class GenericType {
     }
 
     private final Class clazz;
-    private GenericType[] parameters;
-    private BoundType boundType;
+    private final GenericType[] parameters;
+    private final BoundType boundType;
 
     static {
         PRIMITIVE_CLASSES.put("int", int.class);

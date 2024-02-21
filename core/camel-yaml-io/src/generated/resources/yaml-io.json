@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "yaml-io",
+    "title": "Yaml Io",
+    "description": "Camel YAML IO",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "label": "dsl",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-yaml-io",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

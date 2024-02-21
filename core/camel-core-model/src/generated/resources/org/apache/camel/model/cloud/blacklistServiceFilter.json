@@ -3,15 +3,16 @@
     "kind": "model",
     "name": "blacklistServiceFilter",
     "title": "Blacklist Service Filter",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-filter",
     "javaType": "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "servers": { "kind": "element", "displayName": "Servers", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the server blacklist. Each entry can be a list of servers separated by comma in the format: servicehost:port,servicehost2:port,servicehost3:port" },
-    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "servers": { "index": 1, "kind": "element", "displayName": "Servers", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the server blacklist. Each entry can be a list of servers separated by comma in the format: servicehost:port,servicehost2:port,servicehost3:port" },
+    "properties": { "index": 2, "kind": "element", "displayName": "Properties", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using a different one, then the client properties are defined according to the specific service in use." }
   }
 }

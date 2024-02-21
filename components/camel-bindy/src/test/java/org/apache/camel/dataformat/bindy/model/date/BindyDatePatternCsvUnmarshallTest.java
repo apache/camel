@@ -215,12 +215,12 @@ public class BindyDatePatternCsvUnmarshallTest {
         public Format<?> build(FormattingOptions formattingOptions) {
             return new Format<OrderNumber>() {
                 @Override
-                public String format(OrderNumber object) throws Exception {
+                public String format(OrderNumber object) {
                     return String.valueOf(object.orderNr);
                 }
 
                 @Override
-                public OrderNumber parse(String string) throws Exception {
+                public OrderNumber parse(String string) {
                     return OrderNumber.ofString(string);
                 }
             };

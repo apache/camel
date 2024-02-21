@@ -91,14 +91,14 @@ import org.slf4j.LoggerFactory;
  * and the signature element is added as last child element of the parent element. If a KeyInfo instance is provided by
  * the {@link KeyAccessor} and {@link XmlSignerConfiguration#getAddKeyInfoReference()} is <code>true</code>, then also a
  * reference to the KeyInfo element is added. The generated XML signature has the following structure:
- * 
+ *
  * <pre>
  * {@code
  * <[parent element]>
  *     ...
  *      <Signature Id="[signature_id]">
  *          <SignedInfo>
- *                <Reference URI=""> 
+ *                <Reference URI="">
  *                      <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
  *                      (<Transform>)*
  *                      <DigestMethod>
@@ -120,12 +120,12 @@ import org.slf4j.LoggerFactory;
  * </pre>
  * <p>
  * In the enveloping XML signature case, the generated XML signature has the following structure:
- * 
+ *
  * <pre>
  *  {@code
  *  <Signature Id="[signature_id]">
  *     <SignedInfo>
- *            <Reference URI="#[object_id]" type="[optional_type_value]"> 
+ *            <Reference URI="#[object_id]" type="[optional_type_value]">
  *                  (<Transform>)*
  *                  <DigestMethod>
  *                  <DigestValue>
@@ -141,21 +141,21 @@ import org.slf4j.LoggerFactory;
  *     (<KeyInfo Id="[keyinfo_id]">)?
  *     <Object Id="[object_id]"/>
  *     <!-- further Object elements possible, see XmlSignerConfiguration#setProperties(XmlSignatureProperties) -->
- * </Signature>   
+ * </Signature>
  *  }
  * </pre>
- * 
+ *
  * In the enveloping XML signature case, also message bodies containing plain text are supported. This must be indicated
  * via the header {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} or via the configuration
  * {@link XmlSignerConfiguration#getPlainText()}.
- * 
+ *
  * <p>
  * Detached signatures where the signature element is a sibling element to the signed element are supported. Those
  * elements can be signed which have ID attributes. The elements to be signed must be specified via xpath expressions
  * (see {@link XmlSignerConfiguration#setXpathsToIdAttributes(List)}) and the XML schema must be provided via the schema
  * resource URI (see method {@link XmlSignerConfiguration#setSchemaResourceUri(String)}. Elements with deeper hierarchy
  * level are signed first. This procedure can result in nested signatures.
- * 
+ *
  * <p>
  * In all cases, the digest algorithm is either read from the configuration method
  * {@link XmlSignerConfiguration#getDigestAlgorithm()} or calculated from the signature algorithm (
@@ -272,7 +272,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 Node parent = getParentOfSignature(out, node, contentReferenceUri, signatureType);
 
                 if (parent == null) {
-                    // for enveloping signature, create new document 
+                    // for enveloping signature, create new document
                     parent = XmlSignatureHelper.newDocumentBuilder(Boolean.TRUE).newDocument();
                 }
                 lastParent = parent;
@@ -478,7 +478,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
         Document doc = (Document) messageBodyNode.getParentNode();
         if (SignatureType.detached == sigType) {
-            return getParentForDetachedCase(doc, inMessage, contentReferenceURI);
+            return getParentForDetachedCase(doc, contentReferenceURI);
         } else {
             // enveloped case
             return getParentForEnvelopedCase(doc, inMessage);
@@ -530,7 +530,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri)
+    private Element getParentForDetachedCase(Document doc, String referenceUri)
             throws XmlSignatureException {
         String elementId = referenceUri;
         if (elementId.startsWith("#")) {
@@ -542,7 +542,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
         LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
-                new Object[] { referenceUri, el.getLocalName(), el.getNamespaceURI() });
+                referenceUri, el.getLocalName(), el.getNamespaceURI());
         Element result = getParentElement(el);
         if (result != null) {
             return result;
@@ -596,8 +596,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return referenceList;
     }
 
-    protected List<? extends XMLObject> getObjects(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties)
-            throws Exception {
+    protected List<? extends XMLObject> getObjects(
+            XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties) {
 
         if (SignatureType.enveloped == input.getSignatureType() || SignatureType.detached == input.getSignatureType()) {
             if (properties == null || properties.getObjects() == null) {
@@ -885,7 +885,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
     }
 
-    private String getKeyInfoId(KeyInfo keyInfo) throws Exception {
+    private String getKeyInfoId(KeyInfo keyInfo) {
         if (keyInfo == null) {
             return null;
         }
@@ -894,7 +894,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
     protected void setOutputEncodingToMessageHeader(Message message) {
         if (getConfiguration().getOutputXmlEncoding() != null) {
-            message.setHeader(Exchange.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
+            message.setHeader(XmlSignatureConstants.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
         }
     }
 

@@ -27,6 +27,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties" location="classpath:org/apache/camel/component/properties/myprop.properties" />
+    <jmxAgent id="jmx" disabled="true"/>
 
     <route>
       <from uri="direct:transactedHeader" />

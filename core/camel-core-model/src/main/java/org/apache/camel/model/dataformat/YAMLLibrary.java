@@ -16,8 +16,8 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Supported YAML marshalers.
@@ -25,5 +25,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlEnum
 public enum YAMLLibrary {
-    SnakeYAML
+    SnakeYAML("snakeYaml");
+
+    private final String dataFormatName;
+
+    YAMLLibrary(String dataFormatName) {
+        this.dataFormatName = dataFormatName;
+    }
+
+    public String getDataFormatName() {
+        return dataFormatName;
+    }
+
 }

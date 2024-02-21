@@ -49,7 +49,7 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
         final String correlator = "CORRELATOR";
         RouteBuilder rbOne = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_ONE).routeId("AggregatingRouteOne")
                         .aggregate(header(correlator))
                         .aggregationRepository(repoOne)
@@ -61,7 +61,7 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
 
         RouteBuilder rbTwo = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_TWO).routeId("AggregatingRouteTwo")
                         .aggregate(header(correlator))
                         .aggregationRepository(repoTwo)

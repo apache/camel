@@ -1,12 +1,15 @@
-[[grape-component]]
-= Grape Component
-:docTitle: Grape
-:artifactId: camel-grape
+= Grape Component (deprecated)
+:doctitle: Grape
+:shortname: grape
+:artifactid: camel-grape
 :description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16
-:supportLevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
+:tabs-sync-option:
 :component-header: Only producer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grape.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: grape
 
 *Since Camel {since}*
 
@@ -14,58 +17,28 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/grape.adoc
 
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when
-`CamelContext` is running. In practice with Camel Grape component you
+`CamelContext` is running. In practice with the Camel Grape component you
 can add new components, data formats and beans to your `CamelContext`
 without the restart of the router.
 
 
 == Grape options
 
+// component-configure options: START
+
+// component-configure options: END
+
 // component options: START
-The Grape component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *patchesRepository* (advanced) | Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository |  | PatchesRepository
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
 // endpoint options: START
-The Grape endpoint is configured using URI syntax:
 
-----
-grape:defaultCoordinates
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *defaultCoordinates* | *Required* Maven coordinates to use as default to grab if the message body is empty. |  | String
-|===
-
-
-=== Query Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
-
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Setting up class loader
 
@@ -80,7 +53,7 @@ import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
 CamelContext camelContext = grapeCamelContext(new DefaultCamelContext());
 --------------------------------------------------------------------------------
 
-You can also set up the Groovy class loader used be Camel context by
+You can also set up the Groovy class loader used by the Camel context by
 yourself:
 
 [source,java]
@@ -88,16 +61,7 @@ yourself:
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
 
-== URI format
-
-Grape component supports only producer endpoints.
-
-[source,java]
------------------------------
-grape:defaultMavenCoordinates
------------------------------
-
-For example the following snippet loads Camel FTP component:
+For example, the following snippet loads Camel FTP component:
 
 [source,java]
 ------------------------------------------------
@@ -132,39 +96,26 @@ for this component:
 
 == Default payload type
 
-By default Camel Grape component operates on the String payloads:
+By default, the Camel Grape component operates on the String payloads:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2");
 ------------------------------------------------------------------------------------------------
 
-But of course Camel build-in xref:manual::type-converter.adoc[type conversion
+Of course, Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
-example below Camel automatically converts binary payload into the
+example below, Camel automatically converts binary payload into the
 String:
-
- 
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2".getBytes());
 -----------------------------------------------------------------------------------------------------------
 
-== Headers
-
-The following headers are recognized by the Grape component:
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Java constant |Endpoint type |Value type |Description
-
-|`CamelGrapeCommand` |`GrapeConstants.GRAPE_COMMAND` |Producer |`org.apache.camel.component.grape.GrapeCommand` |The command to be performed by the Grape endpoint. Default to `grab`.
-|=======================================================================
-
 == Loading components at runtime
 
-In order to load the new component at the router runtime, just grab the
+To load the new component at the router runtime, just grab the
 jar containing the given component:
 
 [source,java]
@@ -176,7 +127,7 @@ template.sendBody("stream:out", "msg");
 
 == Loading processors bean at runtime
 
-In order to load the new processor bean  with your custom business login
+To load the new processor bean with your custom business login
 at the router runtime, just grab the jar containing the required bean:
 
 [source,java]
@@ -194,11 +145,10 @@ int price = template.requestBody("bean:com.example.PricingBean?method=currentPro
 After you download new jar, you usually would like to have it loaded by
 the Camel again after the restart of the `CamelContext`. It is certainly
 possible, as Grape component keeps track of the jar files you have
-installed. In order to load again the installed jars on the context
+installed. To load again the installed jars on the context
 startup, use the `GrapeEndpoint.loadPatches()` method in your route: 
 
  
-
 [source,java]
 -------------------------------------------------------------------------
 import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
@@ -216,25 +166,24 @@ camelContext.addRoutes(
   });
 -------------------------------------------------------------------------
 
- 
 
 == Managing the installed jars
 
 If you would like to check what jars have been installed into the given
-`CamelContext`, send message to the grape endpoint with
+`CamelContext`, send a message to the grape endpoint with
 the `CamelGrapeCommand` header set to `GrapeCommand.listPatches`:
 
 [source,java]
 ----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
-        to("grape:list"); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.listPatches)).
+    to("grape:list");
 ----------------------------------------------------------------------------------------
 
-Connecting the to the route defined above using the HTTP client returns
+Connecting to the route defined above using the HTTP client returns
 the list of the jars installed by Grape component:
 
-[source,java]
+[source,bash]
 ---------------------------------------
 $ curl http://my-router.com/patches
 grape:org.apache.camel/camel-ftp/2.15.2
@@ -247,7 +196,9 @@ command:
 
 [source,java]
 -----------------------------------------------------------------------------------------
-      from("netty-http:http://0.0.0.0:80/patches").
-        setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
-        setBody().constant("Installed patches have been deleted."); 
+from("netty-http:http://0.0.0.0:80/patches").
+    setHeader(GrapeConstats.GRAPE_COMMAND, constant(CamelGrapeCommand.clearPatches)).
+    setBody().constant("Installed patches have been deleted.");
 -----------------------------------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]

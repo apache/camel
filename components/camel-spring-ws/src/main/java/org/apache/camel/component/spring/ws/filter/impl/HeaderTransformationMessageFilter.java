@@ -43,17 +43,22 @@ import org.springframework.ws.soap.SoapMessage;
  * Message filter that transforms the header of a soap message
  */
 public class HeaderTransformationMessageFilter implements MessageFilter {
+
     private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     private static final String SOAP_HEADER_TRANSFORMATION_PROBLEM = "Soap header transformation problem";
     private static final Logger LOG = LoggerFactory.getLogger(HeaderTransformationMessageFilter.class);
     private String xslt;
     private boolean saxon;
 
-    /**
-     * @param xslt
-     */
     public HeaderTransformationMessageFilter(String xslt) {
         this.xslt = xslt;
+    }
+
+    /**
+     * Whether a header is valid
+     */
+    protected boolean validHeaderName(String name) {
+        return !"Content-Type".equalsIgnoreCase(name);
     }
 
     @Override
@@ -73,10 +78,6 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Transform the header
-     * 
-     * @param context
-     * @param inOrOut
-     * @param webServiceMessage
      */
     private void processHeader(CamelContext context, Message inOrOut, WebServiceMessage webServiceMessage) {
         if (webServiceMessage instanceof SoapMessage) {
@@ -99,14 +100,15 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Adding the headers of the message as parameter to the transformer
-     * 
-     * @param inOrOut
-     * @param transformer
      */
     private void addParameters(Message inOrOut, Transformer transformer) {
         Map<String, Object> headers = inOrOut.getHeaders();
         for (Map.Entry<String, Object> headerEntry : headers.entrySet()) {
             String key = headerEntry.getKey();
+
+            if (!validHeaderName(key)) {
+                continue;
+            }
 
             // Key's with '$' are not allowed in XSLT
             if (key != null && !key.startsWith("$")) {
@@ -121,7 +123,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
      * @return {@link TransformerFactory}
      */
     private TransformerFactory getTransformerFactory(CamelContext context) {
-        TransformerFactory transformerFactory = null;
+        TransformerFactory transformerFactory;
         if (saxon) {
             transformerFactory = getSaxonTransformerFactory(context);
         } else {
@@ -135,6 +137,16 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
         try {
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (TransformerConfigurationException ex) {
+            // ignore
+        }
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
             // ignore
         }
 
@@ -161,7 +173,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Loading the saxon transformer class
-     * 
+     *
      * @param  context
      * @return
      */

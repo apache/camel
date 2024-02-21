@@ -23,7 +23,7 @@ import org.influxdb.impl.InfluxDBImpl;
 
 import static org.mockito.Mockito.mock;
 
-public class AbstractInfluxDbTest extends CamelTestSupport {
+public abstract class AbstractInfluxDbTest extends CamelTestSupport {
 
     InfluxDB mockedDbConnection = mock(InfluxDBImpl.class);
 

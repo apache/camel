@@ -47,18 +47,18 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
                 "#set( $headers.body = ${body} )\n#set( $headers['in.body'] = $in.body )\n" + "bar");
         inputEndpoint.sendBodyAndHeaders("old_body", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         final Map<String, Object> supplementalContext = new HashMap<>();
         supplementalContext.put("body", "new_body");
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input")
                         .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
                         .to("velocity:template-in-header?allowTemplateFromHeader=true&allowContextMapAll=true")

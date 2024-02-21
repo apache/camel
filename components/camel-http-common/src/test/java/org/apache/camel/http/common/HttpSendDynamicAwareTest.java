@@ -28,7 +28,7 @@ public class HttpSendDynamicAwareTest {
     private HttpSendDynamicAware httpSendDynamicAware;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         this.httpSendDynamicAware = new HttpSendDynamicAware();
     }
 
@@ -78,6 +78,22 @@ public class HttpSendDynamicAwareTest {
         DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:8443/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
         assertEquals("localhost:8443", result[0], "Parse should add port if https and port other than 443 specified");
+    }
+
+    @Test
+    public void testHttpsUndefinedPortEmptyPathParseUri() {
+        this.httpSendDynamicAware.setScheme("https");
+        DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:80/", null, null, null);
+        String[] result = httpSendDynamicAware.parseUri(entry);
+        assertEquals("localhost", result[0], "Parse should not add port if https and not specified");
+    }
+
+    @Test
+    public void testHttpsDefinedPortEmptyPathParseUri() {
+        this.httpSendDynamicAware.setScheme("https");
+        DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:1234/", null, null, null);
+        String[] result = httpSendDynamicAware.parseUri(entry);
+        assertEquals("localhost:1234", result[0], "Parse should not add port if https and not specified");
     }
 
 }

@@ -16,28 +16,21 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class XmppServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(XmppServiceFactory.class);
-
     private XmppServiceFactory() {
 
     }
 
+    public static SimpleTestServiceBuilder<XmppService> builder() {
+        return new SimpleTestServiceBuilder<>("xmpp");
+    }
+
     public static XmppService createService() {
-        String instanceType = System.getProperty("xmpp.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-xmpp-container")) {
-            return new XmppLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new XmppRemoteService();
-        }
-
-        LOG.error("Xmpp instance must be one of 'local-xmpp-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Xmpp instance type");
+        return builder()
+                .addLocalMapping(XmppLocalContainerService::new)
+                .addRemoteMapping(XmppRemoteService::new)
+                .build();
     }
 }

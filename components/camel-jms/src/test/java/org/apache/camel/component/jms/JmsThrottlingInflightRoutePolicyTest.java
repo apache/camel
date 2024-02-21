@@ -16,44 +16,43 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
-public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
-
-    private int size = 200;
+public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testJmsThrottlingInflightRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        int size = 200;
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq-sender:queue:foo", "Message " + i);
+            template.sendBody("activemq-sender:queue:JmsThrottlingInflightRoutePolicyTest", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
                 policy.setResumePercentOfMax(50);
                 policy.setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.Route);
 
-                from("activemq:queue:foo?concurrentConsumers=20").routePolicy(policy)
+                from("activemq:queue:JmsThrottlingInflightRoutePolicyTest?concurrentConsumers=20").routePolicy(policy)
                         .delay(100)
                         .to("log:foo?groupSize=10").to("mock:result");
             }
@@ -61,16 +60,11 @@ public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+    protected void createConnectionFactory(CamelContext camelContext) {
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
 
         // and use another component for sender
         camelContext.addComponent("activemq-sender", jmsComponentTransacted(connectionFactory));
-
-        return camelContext;
     }
-
 }

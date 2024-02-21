@@ -37,7 +37,7 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -59,14 +59,14 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
             // expected
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.xml);
 
                 // use the rest DSL to define the rest services

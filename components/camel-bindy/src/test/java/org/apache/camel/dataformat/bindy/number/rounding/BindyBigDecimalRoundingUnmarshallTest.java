@@ -65,7 +65,7 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .type(BindyType.Csv)
                         .classType(NumberModel.class)

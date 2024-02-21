@@ -19,9 +19,12 @@ package org.apache.camel.management;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
 
     @Test
@@ -35,12 +38,12 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
     }
 
     @Test
-    public void testShouldBeInstrumentedKabom() throws Exception {
+    public void testShouldBeInstrumentedKaboom() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // expected
@@ -50,13 +53,13 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
     }
 
     @Test
-    public void testShouldBeInstrumentedOkAndKabom() throws Exception {
+    public void testShouldBeInstrumentedOkAndKaboom() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // expected
@@ -76,7 +79,7 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
                         .end()
                         .delay(100)
                         .choice()
-                        .when(body().isEqualTo("Kabom")).throwException(new IllegalArgumentException("Kabom"))
+                        .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Kaboom"))
                         .otherwise().to("mock:result")
                         .end();
             }

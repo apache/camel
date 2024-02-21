@@ -18,13 +18,11 @@ package org.apache.camel.dataformat.asn1;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.asn1bean.ber.ReverseByteArrayOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -37,21 +35,17 @@ import org.bouncycastle.asn1.ASN1Primitive;
 
 @Dataformat("asn1")
 public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
     private boolean usingIterator;
-    private String clazzName;
+    private Class<?> unmarshalType;
 
     public ASN1DataFormat() {
         this.usingIterator = false;
     }
 
-    public ASN1DataFormat(String clazzName) {
+    public ASN1DataFormat(Class<?> unmarshalType) {
         this.usingIterator = true;
-        this.clazzName = clazzName;
-    }
-
-    public ASN1DataFormat(Class<?> clazz) {
-        this.usingIterator = true;
-        this.clazzName = clazz.getName();
+        this.unmarshalType = unmarshalType;
     }
 
     @Override
@@ -63,53 +57,50 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream berOut = null;
         if (usingIterator) {
-            if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                encodeGenericTypeObject(exchange, clazz, stream);
+            if (unmarshalType != null) {
+                encodeGenericTypeObject(exchange, stream);
                 return;
             }
-            Object record = exchange.getIn().getBody();
-            if (record instanceof ASN1Primitive) {
-                ASN1Primitive asn1Primitive = ObjectHelper.cast(ASN1Primitive.class, record);
+            Object body = exchange.getIn().getBody();
+            if (body instanceof ASN1Primitive) {
+                ASN1Primitive asn1Primitive = ObjectHelper.cast(ASN1Primitive.class, body);
                 berOut = new ByteArrayInputStream(asn1Primitive.getEncoded());
-            } else if (record instanceof byte[]) {
-                berOut = new ByteArrayInputStream(ObjectHelper.cast(byte[].class, record));
+            } else if (body instanceof byte[]) {
+                berOut = new ByteArrayInputStream(ObjectHelper.cast(byte[].class, body));
             }
         } else {
             byte[] byteInput = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, graph);
             berOut = new ByteArrayInputStream(byteInput);
         }
         try {
-            IOHelper.copy(berOut, stream);
+            if (berOut != null) {
+                IOHelper.copy(berOut, stream);
+            }
         } finally {
             IOHelper.close(berOut, stream);
         }
     }
 
-    private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
-            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, IOException {
+    private void encodeGenericTypeObject(Exchange exchange, OutputStream stream) throws Exception {
         Class<?>[] paramOut = new Class<?>[1];
         paramOut[0] = OutputStream.class;
-        ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
-        Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
-        encodeMethod.invoke(exchange.getIn().getBody(), berOut);
-        stream.write(berOut.getArray());
+        try (ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true)) {
+            Method encodeMethod = exchange.getIn().getBody().getClass().getDeclaredMethod("encode", paramOut);
+            encodeMethod.invoke(exchange.getIn().getBody(), berOut);
+            stream.write(berOut.getArray());
+        }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
-            if (clazzName != null) {
-                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(clazzName);
-                ASN1GenericIterator asn1GenericIterator = new ASN1GenericIterator(clazz, stream);
-                return asn1GenericIterator;
+            if (unmarshalType != null) {
+                return new ASN1GenericIterator(unmarshalType, stream);
             }
-            ASN1MessageIterator asn1MessageIterator = new ASN1MessageIterator(exchange, stream);
-            return asn1MessageIterator;
+            return new ASN1MessageIterator(exchange, stream);
         } else {
-            ASN1Primitive asn1Record = null;
+            ASN1Primitive asn1Record;
             byte[] asn1Bytes;
             try (ASN1InputStream ais = new ASN1InputStream(stream);
                  ByteArrayOutputStream asn1Out = new ByteArrayOutputStream();) {
@@ -131,22 +122,12 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         this.usingIterator = usingIterator;
     }
 
-    public String getClazzName() {
-        return clazzName;
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
     }
 
-    public void setClazzName(String clazzName) {
-        this.clazzName = clazzName;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // no op
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // no op
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
     }
 
 }

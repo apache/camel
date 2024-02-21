@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +31,6 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -57,14 +55,13 @@ import static java.util.Objects.requireNonNull;
  * @see SObjectTree
  * @see RestError
  */
-@XStreamAlias("records")
-@XStreamConverter(SObjectNodeXStreamConverter.class)
 public final class SObjectNode implements Serializable {
 
     private static final String CHILD_PARAM = "child";
 
     private static final String SOBJECT_TYPE_PARAM = "type";
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @JsonUnwrapped
@@ -74,14 +71,13 @@ public final class SObjectNode implements Serializable {
 
     private List<RestError> errors;
 
-    @XStreamOmitField
     private final ReferenceGenerator referenceGenerator;
 
     SObjectNode(final SObjectTree tree, final AbstractSObjectBase object) {
-        this(tree.referenceGenerator, typeOf(object), object);
+        this(tree.referenceGenerator, object);
     }
 
-    private SObjectNode(final ReferenceGenerator referenceGenerator, final String type, final AbstractSObjectBase object) {
+    private SObjectNode(final ReferenceGenerator referenceGenerator, final AbstractSObjectBase object) {
         this.referenceGenerator = requireNonNull(referenceGenerator, "ReferenceGenerator cannot be null");
         this.object = requireNonNull(object, "Root SObject cannot be null");
         object.getAttributes().setReferenceId(referenceGenerator.nextReferenceFor(object));
@@ -127,7 +123,7 @@ public final class SObjectNode implements Serializable {
         ObjectHelper.notNull(labelPlural, "labelPlural");
         ObjectHelper.notNull(child, CHILD_PARAM);
 
-        final SObjectNode node = new SObjectNode(referenceGenerator, typeOf(child), child);
+        final SObjectNode node = new SObjectNode(referenceGenerator, child);
 
         return addChild(labelPlural, node);
     }
@@ -253,11 +249,7 @@ public final class SObjectNode implements Serializable {
     }
 
     SObjectNode addChild(final String labelPlural, final SObjectNode node) {
-        List<SObjectNode> children = records.get(labelPlural);
-        if (children == null) {
-            children = new ArrayList<>();
-            records.put(labelPlural, children);
-        }
+        List<SObjectNode> children = records.computeIfAbsent(labelPlural, k -> new ArrayList<>());
 
         children.add(node);
 
@@ -275,8 +267,8 @@ public final class SObjectNode implements Serializable {
         return object.getAttributes().getType();
     }
 
-    Stream<Class> objectTypes() {
-        return Stream.concat(Stream.of((Class) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
+    Stream<Class<?>> objectTypes() {
+        return Stream.concat(Stream.of((Class<?>) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
     }
 
     void setErrors(final List<RestError> errors) {

@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.spring.xml.CamelRedeliveryPolicyFactoryBean;
-import org.apache.camel.spring.xml.ErrorHandlerType;
+import org.apache.camel.spring.xml.SpringErrorHandlerType;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -45,10 +45,10 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
 
     @Override
     protected Class<?> getBeanClass(Element element) {
-        ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+        SpringErrorHandlerType type = SpringErrorHandlerType.DefaultErrorHandler;
 
         if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
-            type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+            type = SpringErrorHandlerType.valueOf(element.getAttribute("type"));
         }
         return type.getTypeAsClass();
     }
@@ -61,7 +61,6 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         if (attributeName.equals("xmlns") || attributeName.startsWith("xmlns:")) {
             return false;
         }
-        // CHECKSTYLE:OFF
         return !attributeName.equals("type")
                 && !attributeName.equals("onRedeliveryRef")
                 && !attributeName.equals("onRetryWhileRef")
@@ -70,7 +69,6 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                 && !attributeName.equals("redeliveryPolicyRef")
                 && !attributeName.equals("transactionTemplateRef")
                 && !attributeName.equals("transactionManagerRef");
-        // CHECKSTYLE:ON
     }
 
     @Override
@@ -79,13 +77,13 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
 
         String id = element.getAttribute("id");
 
-        ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+        SpringErrorHandlerType type = SpringErrorHandlerType.DefaultErrorHandler;
         if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
-            type = ErrorHandlerType.valueOf(element.getAttribute("type"));
+            type = SpringErrorHandlerType.valueOf(element.getAttribute("type"));
         }
-        if (type.equals(ErrorHandlerType.DefaultErrorHandler)
-                || type.equals(ErrorHandlerType.DeadLetterChannel)
-                || type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+        if (type.equals(SpringErrorHandlerType.DefaultErrorHandler)
+                || type.equals(SpringErrorHandlerType.DeadLetterChannel)
+                || type.equals(SpringErrorHandlerType.TransactionErrorHandler)) {
             NodeList list = element.getChildNodes();
             int size = list.getLength();
             for (int i = 0; i < size; i++) {
@@ -111,7 +109,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             parserRefAttribute(element, "onPrepareFailureRef", "onPrepareFailure", builder);
             parserRefAttribute(element, "onExceptionOccurredRef", "onExceptionOccurred", builder);
             parserRefAttribute(element, "redeliveryPolicyRef", "redeliveryPolicy", builder);
-            if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+            if (type.equals(SpringErrorHandlerType.TransactionErrorHandler)) {
                 parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
                 parserRefAttribute(element, "transactionManagerRef", "transactionManager", builder);
             }
@@ -120,85 +118,87 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         // validate attributes according to type
 
         String deadLetterUri = element.getAttribute("deadLetterUri");
-        if (ObjectHelper.isNotEmpty(deadLetterUri) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+        if (ObjectHelper.isNotEmpty(deadLetterUri) && !type.equals(SpringErrorHandlerType.DeadLetterChannel)) {
             throw new IllegalArgumentException(
                     "Attribute deadLetterUri can only be used if type is "
-                                               + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: "
+                                               + SpringErrorHandlerType.DeadLetterChannel.name()
+                                               + ", in error handler with id: "
                                                + id);
         }
         String deadLetterHandleNewException = element.getAttribute("deadLetterHandleNewException");
-        if (ObjectHelper.isNotEmpty(deadLetterHandleNewException) && !type.equals(ErrorHandlerType.DeadLetterChannel)) {
+        if (ObjectHelper.isNotEmpty(deadLetterHandleNewException) && !type.equals(SpringErrorHandlerType.DeadLetterChannel)) {
             throw new IllegalArgumentException(
                     "Attribute deadLetterHandleNewException can only be used if type is "
-                                               + ErrorHandlerType.DeadLetterChannel.name() + ", in error handler with id: "
+                                               + SpringErrorHandlerType.DeadLetterChannel.name()
+                                               + ", in error handler with id: "
                                                + id);
         }
         String transactionTemplateRef = element.getAttribute("transactionTemplateRef");
-        if (ObjectHelper.isNotEmpty(transactionTemplateRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(transactionTemplateRef) && !type.equals(SpringErrorHandlerType.TransactionErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute transactionTemplateRef can only be used if type is "
-                                               + ErrorHandlerType.TransactionErrorHandler.name()
+                                               + SpringErrorHandlerType.TransactionErrorHandler.name()
                                                + ", in error handler with id: " + id);
         }
         String transactionManagerRef = element.getAttribute("transactionManagerRef");
-        if (ObjectHelper.isNotEmpty(transactionManagerRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(transactionManagerRef) && !type.equals(SpringErrorHandlerType.TransactionErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute transactionManagerRef can only be used if type is "
-                                               + ErrorHandlerType.TransactionErrorHandler.name()
+                                               + SpringErrorHandlerType.TransactionErrorHandler.name()
                                                + ", in error handler with id: " + id);
         }
         String rollbackLoggingLevel = element.getAttribute("rollbackLoggingLevel");
-        if (ObjectHelper.isNotEmpty(rollbackLoggingLevel) && (!type.equals(ErrorHandlerType.TransactionErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(rollbackLoggingLevel) && !type.equals(SpringErrorHandlerType.TransactionErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute rollbackLoggingLevel can only be used if type is "
-                                               + ErrorHandlerType.TransactionErrorHandler.name()
+                                               + SpringErrorHandlerType.TransactionErrorHandler.name()
                                                + ", in error handler with id: " + id);
         }
         String useOriginalMessage = element.getAttribute("useOriginalMessage");
-        if (ObjectHelper.isNotEmpty(useOriginalMessage) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(useOriginalMessage) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute useOriginalMessage is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String useOriginalBody = element.getAttribute("useOriginalBody");
-        if (ObjectHelper.isNotEmpty(useOriginalBody) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(useOriginalBody) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute useOriginalBody is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
-        if (ObjectHelper.isNotEmpty(onRedeliveryRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(onRedeliveryRef) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute onRedeliveryRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String onExceptionOccurredRef = element.getAttribute("onExceptionOccurredRef");
-        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute onExceptionOccurredRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String onPrepareFailureRef = element.getAttribute("onPrepareFailureRef");
-        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler)
-                || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(SpringErrorHandlerType.TransactionErrorHandler)
+                || type.equals(SpringErrorHandlerType.NoErrorHandler))) {
             throw new IllegalArgumentException(
                     "Attribute onPrepareFailureRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String retryWhileRef = element.getAttribute("retryWhileRef");
-        if (ObjectHelper.isNotEmpty(retryWhileRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(retryWhileRef) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute retryWhileRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String redeliveryPolicyRef = element.getAttribute("redeliveryPolicyRef");
-        if (ObjectHelper.isNotEmpty(redeliveryPolicyRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(redeliveryPolicyRef) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute redeliveryPolicyRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
         }
         String executorServiceRef = element.getAttribute("executorServiceRef");
-        if (ObjectHelper.isNotEmpty(executorServiceRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+        if (ObjectHelper.isNotEmpty(executorServiceRef) && type.equals(SpringErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException(
                     "Attribute executorServiceRef is not supported by error handler type: "
                                                + type.name() + ", in error handler with id: " + id);
@@ -218,7 +218,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         }
     }
 
-    protected class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
+    protected static class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
 
         public RedeliveryPolicyDefinitionParser(Class<?> type) {
             super(type, false);

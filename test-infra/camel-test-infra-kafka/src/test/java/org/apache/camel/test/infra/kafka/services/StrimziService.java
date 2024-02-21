@@ -31,18 +31,28 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     private final StrimziContainer strimziContainer;
 
     public StrimziService() {
+        this("zookeeper-" + TestUtils.randomWithRange(1, 100),
+             "strimzi-" + TestUtils.randomWithRange(1, 100));
+    }
+
+    public StrimziService(String zookeeperInstanceName, String strimziInstanceName) {
         Network network = Network.newNetwork();
 
-        String zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
-        zookeeperContainer = new ZookeeperContainer(network, zookeeperInstanceName);
-
-        String strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
-        strimziContainer = new StrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
+        zookeeperContainer = initZookeeperContainer(network, zookeeperInstanceName);
+        strimziContainer = initStrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
     }
 
     public StrimziService(ZookeeperContainer zookeeperContainer, StrimziContainer strimziContainer) {
         this.zookeeperContainer = zookeeperContainer;
         this.strimziContainer = strimziContainer;
+    }
+
+    protected StrimziContainer initStrimziContainer(Network network, String instanceName, String zookeeperInstanceName) {
+        return new StrimziContainer(network, instanceName, zookeeperInstanceName);
+    }
+
+    protected ZookeeperContainer initZookeeperContainer(Network network, String instanceName) {
+        return new ZookeeperContainer(network, instanceName);
     }
 
     protected Integer getKafkaPort() {
@@ -51,7 +61,7 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
 
     @Override
     public String getBootstrapServers() {
-        return strimziContainer.getContainerIpAddress() + ":" + getKafkaPort();
+        return strimziContainer.getHost() + ":" + getKafkaPort();
     }
 
     @Override
@@ -63,7 +73,7 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     public void initialize() {
         zookeeperContainer.start();
 
-        String zookeeperConnect = zookeeperContainer.getContainerIpAddress() + ":" + zookeeperContainer.getZookeeperPort();
+        String zookeeperConnect = zookeeperContainer.getHost() + ":" + zookeeperContainer.getZookeeperPort();
         LOG.info("Apache Zookeeper running at address {}", zookeeperConnect);
 
         strimziContainer.start();

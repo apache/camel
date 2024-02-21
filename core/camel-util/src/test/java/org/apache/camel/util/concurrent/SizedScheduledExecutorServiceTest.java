@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SizedScheduledExecutorServiceTest {
 
     @Test
-    public void testSizedScheduledExecutorService() throws Exception {
+    public void testSizedScheduledExecutorService() {
         ScheduledThreadPoolExecutor delegate = new ScheduledThreadPoolExecutor(5);
 
         SizedScheduledExecutorService sized = new SizedScheduledExecutorService(delegate, 2);
@@ -47,12 +47,10 @@ public class SizedScheduledExecutorServiceTest {
         sized.schedule(task, 2, TimeUnit.SECONDS);
         sized.schedule(task, 3, TimeUnit.SECONDS);
 
-        try {
-            sized.schedule(task, 4, TimeUnit.SECONDS);
-            fail("Should have thrown exception");
-        } catch (RejectedExecutionException e) {
-            assertEquals("Task rejected due queue size limit reached", e.getMessage());
-        }
+        RejectedExecutionException e
+                = assertThrows(RejectedExecutionException.class, () -> sized.schedule(task, 4, TimeUnit.SECONDS),
+                        "Should have thrown a RejectedExecutionException");
+        assertEquals("Task rejected due queue size limit reached", e.getMessage());
 
         sized.shutdownNow();
         assertTrue(sized.isShutdown() || sized.isTerminating(), "Should be shutdown");

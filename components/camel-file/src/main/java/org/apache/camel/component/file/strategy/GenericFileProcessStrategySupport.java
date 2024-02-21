@@ -17,11 +17,11 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileConstants;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
@@ -126,13 +126,12 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 
-    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to)
-            throws IOException {
+    protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) {
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFilePath());
         } catch (GenericFileOperationFailedException e) {
-            // ignore the file does not exists
+            // ignore the file does not exist
         }
 
         // make parent folder if missing
@@ -154,10 +153,13 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     protected void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
-        File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
-        if (local != null && local.exists()) {
-            boolean deleted = FileUtil.deleteFile(local);
-            LOG.trace("Local work file: {} was deleted: {}", local, deleted);
+        String local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, String.class);
+        if (local != null) {
+            File f = new File(local);
+            if (f.exists()) {
+                boolean deleted = FileUtil.deleteFile(f);
+                LOG.trace("Local work file: {} was deleted: {}", local, deleted);
+            }
         }
     }
 

@@ -17,12 +17,15 @@
 package org.apache.camel.component.mybatis;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
@@ -56,14 +59,15 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", new Account[] { account1, account2 });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // need a delay here on slower machines
-        Thread.sleep(1000);
+        List<?> body = await()
+                .atMost(1, TimeUnit.SECONDS)
+                .until(() -> template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class),
+                        Matchers.notNullValue());
 
         // now lets poll that the account has been inserted
-        List<?> body = template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class);
-
         assertEquals(2, body.size(), "Wrong size: " + body);
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
 
@@ -75,9 +79,9 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount").to("mock:results");
                 // END SNIPPET: e1

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TelegramConfigurationTest extends TelegramTestSupport {
 
     @Test
-    public void testChatBotResult() throws Exception {
+    public void testChatBotResult() {
         TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream()
                 .filter(e -> e instanceof TelegramEndpoint).findAny().get();
         TelegramConfiguration config = endpoint.getConfiguration();
@@ -46,10 +46,10 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:telegram")
                         .to("telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234&proxyType=SOCKS5");

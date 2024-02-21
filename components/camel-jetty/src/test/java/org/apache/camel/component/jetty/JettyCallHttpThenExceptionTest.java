@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,12 +34,12 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
 
         Exchange reply = template.request("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("World");
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNotNull(reply);
         assertTrue(reply.getMessage().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));
@@ -47,11 +48,11 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/myserver").to("log:A")
+            public void configure() {
+                from("jetty://http://localhost:{{port}}/myserver?muteException=false").to("log:A")
                         // remove http headers before and after invoking http
                         // service
                         .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*")

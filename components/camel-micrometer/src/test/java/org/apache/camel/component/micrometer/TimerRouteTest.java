@@ -21,20 +21,19 @@ import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
@@ -43,10 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
-@ContextConfiguration(
-                      classes = { TimerRouteTest.TestConfig.class })
-@MockEndpoints
-public class TimerRouteTest {
+public class TimerRouteTest extends CamelSpringTestSupport {
 
     private static final long DELAY = 20L;
 
@@ -62,52 +58,42 @@ public class TimerRouteTest {
     @Produce("direct:in-3")
     private ProducerTemplate producer3;
 
-    private MeterRegistry registry;
+    @BindToRegistry(METRICS_REGISTRY_NAME)
+    private MeterRegistry registry = new SimpleMeterRegistry();
 
-    @Configuration
-    public static class TestConfig extends SingleRouteCamelConfiguration {
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:in-1")
+                        .setHeader(HEADER_METRIC_NAME, constant("B"))
+                        .to("micrometer:timer:A?action=start")
+                        .delay(DELAY)
+                        .setHeader(HEADER_METRIC_NAME, constant("B"))
+                        .to("micrometer:timer:A?action=stop")
+                        .to("mock:out");
 
-        @Bean
-        @Override
-        public RouteBuilder route() {
-            return new RouteBuilder() {
+                from("direct:in-2")
+                        .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.start))
+                        .to("micrometer:timer:A")
+                        .delay(DELAY)
+                        .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.stop))
+                        .to("micrometer:timer:A")
+                        .to("mock:out");
 
-                @Override
-                public void configure() {
-                    from("direct:in-1")
-                            .setHeader(HEADER_METRIC_NAME, constant("B"))
-                            .to("micrometer:timer:A?action=start")
-                            .delay(DELAY)
-                            .setHeader(HEADER_METRIC_NAME, constant("B"))
-                            .to("micrometer:timer:A?action=stop")
-                            .to("mock:out");
-
-                    from("direct:in-2")
-                            .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.start))
-                            .to("micrometer:timer:A")
-                            .delay(DELAY)
-                            .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.stop))
-                            .to("micrometer:timer:A")
-                            .to("mock:out");
-
-                    from("direct:in-3")
-                            .to("micrometer:timer:C?action=start")
-                            .delay(DELAY)
-                            .to("micrometer:timer:C?action=stop&tags=a=${body}")
-                            .to("mock:out");
-                }
-            };
-        }
-
-        @Bean(name = METRICS_REGISTRY_NAME)
-        public MeterRegistry getMetricRegistry() {
-            return new SimpleMeterRegistry();
-        }
+                from("direct:in-3")
+                        .to("micrometer:timer:C?action=start")
+                        .delay(DELAY)
+                        .to("micrometer:timer:C?action=stop&tags=a=${body}")
+                        .to("mock:out");
+            }
+        };
     }
 
-    @BeforeEach
-    public void setup() {
-        registry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(METRICS_REGISTRY_NAME, MeterRegistry.class);
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
     }
 
     @AfterEach

@@ -40,17 +40,26 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.resume.ConsumerListener;
+import org.apache.camel.resume.ConsumerListenerAware;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.resume.AdapterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 
 /**
@@ -66,6 +75,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private NamedNode route;
     private final String routeId;
     private final String routeDescription;
+    private final Resource sourceResource;
+    private final String sourceLocation;
+    private final String sourceLocationShort;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
@@ -83,8 +95,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private ShutdownRunningTask shutdownRunningTask;
     private final Map<String, Processor> onCompletions = new HashMap<>();
     private final Map<String, Processor> onExceptions = new HashMap<>();
+    private ResumeStrategy resumeStrategy;
+    private ConsumerListener<?, ?> consumerListener;
 
     // camel-core-model
+    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     // camel-core-model: must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
     private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
@@ -92,7 +107,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
-    private long startDate;
+    private StopWatch stopWatch = new StopWatch(false);
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;
@@ -100,17 +115,30 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private Consumer consumer;
 
     public DefaultRoute(CamelContext camelContext, NamedNode route, String routeId,
-                        String routeDescription, Endpoint endpoint) {
+                        String routeDescription, Endpoint endpoint, Resource resource) {
         this.camelContext = camelContext;
         this.route = route;
         this.routeId = routeId;
         this.routeDescription = routeDescription;
         this.endpoint = endpoint;
+        this.sourceResource = resource;
+        this.sourceLocation = LoggerHelper.getSourceLocation(route);
+        this.sourceLocationShort = LoggerHelper.getLineNumberLoggerName(route);
     }
 
     @Override
     public String getId() {
         return routeId;
+    }
+
+    @Override
+    public String getNodePrefixId() {
+        return (String) properties.get(Route.NODE_PREFIX_ID_PROPERTY);
+    }
+
+    @Override
+    public boolean isCustomId() {
+        return "true".equals(properties.get(Route.CUSTOM_ID_PROPERTY));
     }
 
     @Override
@@ -129,10 +157,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public long getUptimeMillis() {
-        if (startDate == 0) {
-            return 0;
-        }
-        return System.currentTimeMillis() - startDate;
+        return stopWatch.taken();
     }
 
     @Override
@@ -157,7 +182,29 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public String getConfigurationId() {
+        Object value = properties.get(Route.CONFIGURATION_ID_PROPERTY);
+        return value != null ? (String) value : null;
+    }
+
+    @Override
+    public Resource getSourceResource() {
+        return sourceResource;
+    }
+
+    @Override
+    public String getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
+    public String getSourceLocationShort() {
+        return sourceLocationShort;
+    }
+
+    @Override
     public void initializeServices() throws Exception {
+        services.clear();
         // gather all the services for this route
         gatherServices(services);
     }
@@ -199,13 +246,13 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     protected void doStart() throws Exception {
-        startDate = System.currentTimeMillis();
+        stopWatch.restart();
     }
 
     @Override
     protected void doStop() throws Exception {
         // and clear start date
-        startDate = 0;
+        stopWatch.stop();
     }
 
     @Override
@@ -588,7 +635,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         }
     }
 
-    protected void gatherRootServices(List<Service> services) throws Exception {
+    private void gatherRootServices(List<Service> services) throws Exception {
         Endpoint endpoint = getEndpoint();
         consumer = endpoint.createConsumer(processor);
         if (consumer != null) {
@@ -598,6 +645,16 @@ public class DefaultRoute extends ServiceSupport implements Route {
             }
             if (consumer instanceof RouteIdAware) {
                 ((RouteIdAware) consumer).setRouteId(this.getId());
+            }
+
+            if (consumer instanceof ResumeAware<?> && resumeStrategy != null) {
+                ResumeAdapter resumeAdapter = AdapterHelper.eval(getCamelContext(), (ResumeAware<?>) consumer, resumeStrategy);
+                resumeStrategy.setAdapter(resumeAdapter);
+                ((ResumeAware) consumer).setResumeStrategy(resumeStrategy);
+            }
+
+            if (consumer instanceof ConsumerListenerAware<?>) {
+                ((ConsumerListenerAware) consumer).setConsumerListener(consumerListener);
             }
         }
         if (processor instanceof Service) {
@@ -620,7 +677,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     public Navigate<Processor> navigate() {
         Processor answer = getProcessor();
 
-        // we want navigating routes to be easy, so skip the initial channel
+        // we want to navigate routes to be easy, so skip the initial channel
         // and navigate to its output where it all starts from end user point of view
         if (answer instanceof Navigate) {
             Navigate<Processor> nav = (Navigate<Processor>) answer;
@@ -672,4 +729,13 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    @Override
+    public void setConsumerListener(ConsumerListener<?, ?> consumerListener) {
+        this.consumerListener = consumerListener;
+    }
 }

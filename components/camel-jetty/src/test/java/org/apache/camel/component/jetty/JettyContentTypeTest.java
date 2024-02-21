@@ -53,19 +53,19 @@ public class JettyContentTypeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testSameContentType() throws Exception {
+    public void testSameContentType() {
         sendMessageWithContentType(null, false);
         sendMessageWithContentType("UTF-8", false);
     }
 
     @Test
-    public void testContentTypeWithGZipEncoding() throws Exception {
+    public void testContentTypeWithGZipEncoding() {
         sendMessageWithContentType(null, true);
         sendMessageWithContentType("UTF-8", true);
     }
 
     @Test
-    public void testMixedContentType() throws Exception {
+    public void testMixedContentType() {
         Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
@@ -78,17 +78,17 @@ public class JettyContentTypeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String user = exchange.getIn().getHeader("User", String.class);
             String contentType = ExchangeHelper.getContentType(exchange);
             String body = exchange.getIn().getBody(String.class);

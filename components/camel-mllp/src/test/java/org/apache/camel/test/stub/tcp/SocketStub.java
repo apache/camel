@@ -89,13 +89,13 @@ public class SocketStub extends Socket {
     }
 
     @Override
-    public void setSoLinger(boolean on, int linger) throws SocketException {
+    public void setSoLinger(boolean on, int linger) {
         this.linger = on;
         this.lingerTimeout = linger;
     }
 
     @Override
-    public int getSoLinger() throws SocketException {
+    public int getSoLinger() {
         if (linger) {
             return lingerTimeout;
         }
@@ -148,32 +148,32 @@ public class SocketStub extends Socket {
     }
 
     @Override
-    public synchronized int getReceiveBufferSize() throws SocketException {
+    public synchronized int getReceiveBufferSize() {
         return receiveBufferSize;
     }
 
     @Override
-    public synchronized void setReceiveBufferSize(int size) throws SocketException {
+    public synchronized void setReceiveBufferSize(int size) {
         this.receiveBufferSize = size;
     }
 
     @Override
-    public synchronized int getSendBufferSize() throws SocketException {
+    public synchronized int getSendBufferSize() {
         return sendBufferSize;
     }
 
     @Override
-    public synchronized void setSendBufferSize(int size) throws SocketException {
+    public synchronized void setSendBufferSize(int size) {
         this.sendBufferSize = size;
     }
 
     @Override
-    public synchronized int getSoTimeout() throws SocketException {
+    public synchronized int getSoTimeout() {
         return timeout;
     }
 
     @Override
-    public synchronized void setSoTimeout(int timeout) throws SocketException {
+    public synchronized void setSoTimeout(int timeout) {
         this.timeout = timeout;
     }
 

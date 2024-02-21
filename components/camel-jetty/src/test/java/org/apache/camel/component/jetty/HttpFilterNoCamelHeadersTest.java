@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +43,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         getMockEndpoint("mock:result").message(0).header("CamelDummy").isNull();
 
         Exchange out = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("World");
                 exchange.getIn().setHeader("bar", 123);
             }
@@ -51,14 +52,14 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         assertNotNull(out);
         assertEquals("Bye World", out.getMessage().getBody(String.class));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt"))
                         .to("http://localhost:{{port}}/test/filter").to("mock:result");
 

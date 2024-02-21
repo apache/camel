@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.FactoryFinder;
@@ -145,7 +144,7 @@ public final class ResolverHelper {
             CamelContext camelContext, String factoryPath, String factoryKey, Class<T> factoryClass) {
         return resolveService(
                 camelContext,
-                camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(factoryPath),
+                camelContext.getCamelContextExtension().getFactoryFinder(factoryPath),
                 factoryKey, factoryClass);
     }
 
@@ -161,7 +160,7 @@ public final class ResolverHelper {
             CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
         return resolveService(
                 camelContext,
-                camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder(),
+                camelContext.getCamelContextExtension().getDefaultFactoryFinder(),
                 factoryKey, factoryClass);
     }
 

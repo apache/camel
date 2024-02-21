@@ -60,14 +60,14 @@ public class RestConfiguration {
     private String contextPath;
     private String apiContextPath;
     private String apiContextRouteId;
-    private String apiContextIdPattern;
-    private boolean apiContextListing;
     private boolean apiVendorExtension;
     private RestHostNameResolver hostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
+    private boolean inlineRoutes;
     private boolean enableCORS;
+    private boolean enableNoContentResponse;
     private String jsonDataFormat;
     private String xmlDataFormat;
     private Map<String, Object> componentProperties;
@@ -143,7 +143,7 @@ public class RestConfiguration {
 
     /**
      * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
+     * parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath,
      * and any miss configuration will let Camel fail on startup and report the error(s).
      * <p/>
      * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
@@ -172,7 +172,7 @@ public class RestConfiguration {
     }
 
     /**
-     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * Whether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
      */
@@ -181,11 +181,9 @@ public class RestConfiguration {
     }
 
     /**
-     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * Whether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
-     *
-     * @param useXForwardHeaders whether to use X-Forward headers
      */
     public void setUseXForwardHeaders(boolean useXForwardHeaders) {
         this.useXForwardHeaders = useXForwardHeaders;
@@ -196,7 +194,7 @@ public class RestConfiguration {
     }
 
     /**
-     * To use an specific hostname for the API documentation (eg swagger)
+     * To use a specific hostname for the API documentation (such as swagger or openapi)
      * <p/>
      * This can be used to override the generated host with this configured hostname
      */
@@ -293,36 +291,6 @@ public class RestConfiguration {
         this.apiContextRouteId = apiContextRouteId;
     }
 
-    public String getApiContextIdPattern() {
-        return apiContextIdPattern;
-    }
-
-    /**
-     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     * <p/>
-     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
-     * other value, the pattern uses the rules from
-     * {@link org.apache.camel.support.EndpointHelper#matchPattern(String, String)}
-     *
-     * @param apiContextIdPattern the pattern
-     */
-    public void setApiContextIdPattern(String apiContextIdPattern) {
-        this.apiContextIdPattern = apiContextIdPattern;
-    }
-
-    public boolean isApiContextListing() {
-        return apiContextListing;
-    }
-
-    /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
-     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
-     */
-    public void setApiContextListing(boolean apiContextListing) {
-        this.apiContextListing = apiContextListing;
-    }
-
     public boolean isApiVendorExtension() {
         return apiVendorExtension;
     }
@@ -417,13 +385,12 @@ public class RestConfiguration {
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
-     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
-     * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
-     * returned.
-     * <p/>
-     * The default value is false.
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
     public void setClientRequestValidation(boolean clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
@@ -451,6 +418,38 @@ public class RestConfiguration {
      */
     public void setEnableCORS(boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public boolean isEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+     * <p/>
+     * The default value is <tt>false</tt>.
+     *
+     * @param enableNoContentResponse <tt>true</tt> to enable HTTP 204 response codes
+     */
+    public void setEnableNoContentResponse(boolean enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
+    }
+
+    public boolean isInlineRoutes() {
+        return inlineRoutes;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public void setInlineRoutes(boolean inlineRoutes) {
+        this.inlineRoutes = inlineRoutes;
     }
 
     /**

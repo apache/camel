@@ -44,7 +44,7 @@ public class JsonFileResultHandlerFactory implements ResultHandlerFactory {
      */
     @Override
     public ResultHandler createResult(Exchange exchange) throws Exception {
-        final String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+        final String fileName = ExchangeHelper.getMandatoryHeader(exchange, XJConstants.XSLT_FILE_NAME, String.class);
         return new JsonFileResultHandler(jsonFactory, new File(fileName));
     }
 }

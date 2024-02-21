@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "api",
+    "title": "Api",
+    "description": "The Camel API",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

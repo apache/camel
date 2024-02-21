@@ -19,47 +19,61 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(37);
-        props.add("initialSequenceId");
-        props.add("maxRedeliverCount");
-        props.add("messageRouter");
-        props.add("batchingMaxMessages");
-        props.add("compressionType");
-        props.add("consumerQueueSize");
-        props.add("topicsPattern");
-        props.add("negativeAckRedeliveryDelayMicros");
-        props.add("maxPendingMessagesAcrossPartitions");
+        Set<String> props = new HashSet<>(49);
         props.add("ackGroupTimeMillis");
-        props.add("bridgeErrorHandler");
-        props.add("batchingEnabled");
-        props.add("sendTimeoutMs");
-        props.add("tenant");
-        props.add("batcherBuilder");
-        props.add("blockIfQueueFull");
-        props.add("numberOfConsumers");
-        props.add("batchingMaxPublishDelayMicros");
-        props.add("subscriptionTopicsMode");
-        props.add("producerName");
-        props.add("exchangePattern");
-        props.add("subscriptionInitialPosition");
-        props.add("maxPendingMessages");
-        props.add("messageRoutingMode");
         props.add("ackTimeoutMillis");
-        props.add("consumerNamePrefix");
-        props.add("readCompacted");
-        props.add("lazyStartProducer");
-        props.add("subscriptionType");
-        props.add("subscriptionName");
-        props.add("namespace");
-        props.add("persistence");
-        props.add("topic");
-        props.add("exceptionHandler");
-        props.add("deadLetterTopic");
+        props.add("ackTimeoutRedeliveryBackoff");
         props.add("allowManualAcknowledgement");
+        props.add("authenticationClass");
+        props.add("authenticationParams");
+        props.add("batcherBuilder");
+        props.add("batchingEnabled");
+        props.add("batchingMaxMessages");
+        props.add("batchingMaxPublishDelayMicros");
+        props.add("blockIfQueueFull");
+        props.add("bridgeErrorHandler");
+        props.add("chunkingEnabled");
+        props.add("compressionType");
         props.add("consumerName");
+        props.add("consumerNamePrefix");
+        props.add("consumerQueueSize");
+        props.add("deadLetterTopic");
+        props.add("enableRetry");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("hashingScheme");
+        props.add("initialSequenceId");
+        props.add("keySharedPolicy");
+        props.add("lazyStartProducer");
+        props.add("maxPendingMessages");
+        props.add("maxPendingMessagesAcrossPartitions");
+        props.add("maxRedeliverCount");
+        props.add("messageListener");
+        props.add("messageRouter");
+        props.add("messageRoutingMode");
+        props.add("namespace");
+        props.add("negativeAckRedeliveryBackoff");
+        props.add("negativeAckRedeliveryDelayMicros");
+        props.add("numberOfConsumerThreads");
+        props.add("numberOfConsumers");
+        props.add("persistence");
+        props.add("producerName");
+        props.add("readCompacted");
+        props.add("retryLetterTopic");
+        props.add("sendTimeoutMs");
+        props.add("serviceUrl");
+        props.add("subscriptionInitialPosition");
+        props.add("subscriptionName");
+        props.add("subscriptionTopicsMode");
+        props.add("subscriptionType");
+        props.add("tenant");
+        props.add("topic");
+        props.add("topicsPattern");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -90,6 +104,11 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

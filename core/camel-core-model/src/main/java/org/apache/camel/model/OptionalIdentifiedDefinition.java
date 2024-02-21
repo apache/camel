@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
@@ -33,15 +35,45 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY which is required by camel-spring / camel-blueprint for their namespace parsers
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode, IdAware {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>>
+        implements NamedNode, IdAware, CamelContextAware {
 
+    private CamelContext camelContext;
     private String id;
     private Boolean customId;
-    private DescriptionDefinition description;
+    private String description;
+    private int lineNumber = -1;
+    private String location;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    @XmlTransient
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getNodePrefixId() {
+        // prefix is only for nodes in the route (not the route id)
+        String prefix = null;
+        boolean iAmRoute = this instanceof RouteDefinition;
+        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        if (allowPrefix) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                prefix = route.getNodePrefixId();
+            }
+        }
+        return prefix;
     }
 
     /**
@@ -51,7 +83,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @Metadata(description = "The id of this node")
     public void setId(String id) {
         this.id = id;
-        customId = true;
+        customId = id != null ? true : null;
     }
 
     @Override
@@ -60,7 +92,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         customId = null;
     }
 
-    public DescriptionDefinition getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -69,9 +101,9 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      *
      * @param description sets the text description, use null to not set a text
      */
-    @XmlElement
+    @XmlAttribute
     @Metadata(description = "The description for this node")
-    public void setDescription(DescriptionDefinition description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -80,51 +112,40 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         return null;
     }
 
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    @XmlTransient
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    @XmlTransient
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
     /**
      * Sets the description of this node
      *
-     * @param  text sets the text description, use null to not set a text
-     * @return      the builder
+     * @param  description sets the text description, use null to not set a text
+     * @return             the builder
      */
     @SuppressWarnings("unchecked")
-    public T description(String text) {
-        if (text != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setText(text);
-        }
-        return (T) this;
-    }
-
-    /**
-     * Sets the description of this node
-     *
-     * @param  id   sets the id, use null to not set an id
-     * @param  text sets the text description, use null to not set a text
-     * @param  lang sets the language for the description, use null to not set a language
-     * @return      the builder
-     */
-    @SuppressWarnings("unchecked")
-    public T description(String id, String text, String lang) {
-        if (id != null) {
-            setId(id);
-        }
-        if (text != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setText(text);
-        }
-        if (lang != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setLang(lang);
-        }
+    public T description(String description) {
+        this.description = description;
         return (T) this;
     }
 
@@ -149,6 +170,16 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     public String idOrCreate(NodeIdFactory factory) {
         if (id == null) {
             setGeneratedId(factory.createId(this));
+        }
+
+        // return with prefix if configured
+        boolean iAmRoute = this instanceof RouteDefinition;
+        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        if (allowPrefix) {
+            String prefix = getNodePrefixId();
+            if (prefix != null) {
+                return prefix + id;
+            }
         }
         return id;
     }
@@ -177,7 +208,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      */
     @Override
     public String getDescriptionText() {
-        return (description != null) ? description.getText() : null;
+        return description;
     }
 
     // Implementation methods

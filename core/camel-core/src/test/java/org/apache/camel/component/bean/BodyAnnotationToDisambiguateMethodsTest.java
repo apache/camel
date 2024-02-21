@@ -66,11 +66,11 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
 
         public void foo(@Body String body) {
             this.body = body;
-            LOG.info("foo() method called on " + this);
+            LOG.info("foo() method called on {}", this);
         }
 
         public void wrongMethod(String body) {
-            fail("wrongMethod() called with: " + body);
+            fail("wrongMethod() called with: {}" + body);
         }
     }
 }

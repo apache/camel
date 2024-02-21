@@ -33,7 +33,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.ManagementAgent;
@@ -72,8 +72,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean mask = true;
     private Boolean includeHostName = false;
     private Boolean useHostIPAddress = false;
+    private Boolean updateRouteEnabled = false;
     private String managementNamePattern = "#name#";
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
+    private ManagementMBeansLevel mBeansLevel = ManagementMBeansLevel.Default;
 
     public DefaultManagementAgent() {
     }
@@ -139,6 +141,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS) != null) {
             useHostIPAddress = Boolean.getBoolean(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
             values.put(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, useHostIPAddress);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED) != null) {
+            updateRouteEnabled = Boolean.getBoolean(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED);
+            values.put(JmxSystemPropertyKeys.UPDATE_ROUTE_ENABLED, updateRouteEnabled);
         }
 
         if (!values.isEmpty()) {
@@ -287,6 +293,26 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     @Override
+    public ManagementMBeansLevel getMBeansLevel() {
+        return mBeansLevel;
+    }
+
+    @Override
+    public void setMBeansLevel(ManagementMBeansLevel mBeansLevel) {
+        this.mBeansLevel = mBeansLevel;
+    }
+
+    @Override
+    public Boolean getUpdateRouteEnabled() {
+        return updateRouteEnabled != null && updateRouteEnabled;
+    }
+
+    @Override
+    public void setUpdateRouteEnabled(Boolean updateRouteEnabled) {
+        this.updateRouteEnabled = updateRouteEnabled;
+    }
+
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -333,7 +359,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             return false;
         }
         ObjectName on = mbeansRegistered.get(name);
-        return (on != null && server.isRegistered(on))
+        return on != null && server.isRegistered(on)
                 || server.isRegistered(name);
     }
 
@@ -353,7 +379,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         finalizeSettings();
 
-        assembler = camelContext.adapt(ExtendedCamelContext.class).getManagementMBeanAssembler();
+        assembler = camelContext.getCamelContextExtension().getManagementMBeanAssembler();
         if (assembler == null) {
             assembler = new DefaultManagementMBeanAssembler(camelContext);
         }
@@ -380,7 +406,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
 
         // Using the array to hold the busMBeans to avoid the CurrentModificationException
-        ObjectName[] mBeans = mbeansRegistered.keySet().toArray(new ObjectName[mbeansRegistered.size()]);
+        ObjectName[] mBeans = mbeansRegistered.keySet().toArray(new ObjectName[0]);
         int caught = 0;
         for (ObjectName name : mBeans) {
             try {

@@ -29,7 +29,7 @@ public enum EndpointMappingType {
     URI_PATH("uripath:"),
     BEANNAME("beanname:");
 
-    private String prefix;
+    private final String prefix;
 
     EndpointMappingType(String prefix) {
         this.prefix = prefix;

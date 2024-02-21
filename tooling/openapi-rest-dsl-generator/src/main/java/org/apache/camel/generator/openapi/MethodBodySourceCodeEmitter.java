@@ -50,7 +50,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
 
         final int indent = indentLevelOf(method);
 
-        if (!first) {
+        if (!first || indent == 0) {
             builder.addCode("\n");
         }
 
@@ -74,10 +74,15 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
         return this;
     }
 
+    public void endEmit() {
+        builder.addCode(";\n");
+        first = true;
+    }
+
     @Override
     public MethodSpec result() {
         builder.addCode(String.join("", Collections.nCopies(indentStack.peek(), "$<")));
-        builder.addCode(";\n");
+        builder.addCode("\n");
         return builder.build();
     }
 
@@ -147,7 +152,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
             }
         }
 
-        return arguments.toArray(new Object[arguments.size()]);
+        return arguments.toArray(new Object[0]);
     }
 
     static Object[] extend(final Object first, final Object... others) {

@@ -29,10 +29,10 @@ import org.apache.camel.TypeConverter;
  */
 public final class InputStreamIterator extends InputStream {
     private final TypeConverter converter;
-    private final Iterator it;
+    private final Iterator<?> it;
     private InputStream chunk;
 
-    public InputStreamIterator(TypeConverter converter, Iterator it) {
+    public InputStreamIterator(TypeConverter converter, Iterator<?> it) {
         this.converter = converter;
         this.it = it;
     }

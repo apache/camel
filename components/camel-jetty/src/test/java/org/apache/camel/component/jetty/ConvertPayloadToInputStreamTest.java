@@ -29,7 +29,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testConvertPayloadToInputStream() throws Exception {
@@ -52,7 +52,7 @@ public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");

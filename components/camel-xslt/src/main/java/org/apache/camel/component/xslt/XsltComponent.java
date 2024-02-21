@@ -40,6 +40,8 @@ public class XsltComponent extends DefaultComponent {
     private URIResolver uriResolver;
     @Metadata(label = "advanced")
     private XsltUriResolverFactory uriResolverFactory;
+    @Metadata
+    private boolean allowTemplateFromHeader;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
     @Metadata(label = "advanced")
@@ -71,6 +73,20 @@ public class XsltComponent extends DefaultComponent {
      */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public boolean isContentCache() {
@@ -125,6 +141,7 @@ public class XsltComponent extends DefaultComponent {
             throws Exception {
         XsltEndpoint xslt = (XsltEndpoint) endpoint;
         xslt.setContentCache(isContentCache());
+        xslt.setAllowTemplateFromHeader(isAllowTemplateFromHeader());
 
         // lookup custom resolver to use
         URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);

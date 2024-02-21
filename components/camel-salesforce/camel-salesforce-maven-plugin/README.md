@@ -1,8 +1,14 @@
 # Maven plugin for camel-salesforce component #
 
-This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component). 
+This plugin generates DTOs for use with the [Camel Salesforce Component](https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component).  
 
 ## Usage ##
+              
+This plugin provides three maven goals:
+                         
+* The `generate` goal generates DTOs for use with the REST API.
+* The `generatePubSub` goal generates Apache Avro `SpecificRecord` subclasses for use with the PubSub API.
+* The `schema` goal generates JSON Schemas that correspond to objects used with the REST API.
 
 The plugin configuration has the following properties.
 
@@ -14,6 +20,7 @@ The plugin configuration has the following properties.
 * version - Salesforce Rest API version, defaults to 25.0
 * outputDirectory - Directory where to place generated DTOs, defaults to ${project.build.directory}/generated-sources/camel-salesforce
 * includes - List of SObject types to include
+* topics - List of topics to include, .e.g., `/event/BatchApexErrorEvent`. This property only applies to the `generatePubSub` goal.
 * excludes - List of SObject types to exclude
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude
@@ -104,7 +111,17 @@ The plugin should be configured for the rest of the properties, and can be execu
 
 	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
 
-The generated DTOs use Jackson and XStream annotations. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
+The generated DTOs use Jackson. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
+
+Relationship fields, e.g. `Contact.Account`, will be strongly typed if the referenced SObject type is listed in `includes`. Otherwise, the type of the reference object will be `AbstractDescribedSObjectBase`. Some useful but non-obvious SObjects to include are `RecordType`, `User`, `Group`, and `Name`.  
+
+[Polymorphic relationship fields](https://developer.salesforce.com/docs/atlas.en-us.232.0.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_relationships_and_polymorph_keys.htm) will have the type `AbstractDescribedSObjectBase`, however at runtime, query results
+will be serialized to the specific type if that type was in `includes` and a DTO was generated for it. Note that 
+the query must be written to return type-specific fields, e.g.:
+
+```
+SELECT Id, Name, Typeof Owner WHEN User Then FirstName, LastName, Username End FROM Line_Item__c
+```
 
 You can customize types, i.e. use java.time.LocalDateTime instead of the default java.time.ZonedDateTime by specifying the `customTypes` property like:
 

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SpringSecurityBearerTokenTest extends AbstractSpringSecurityBearerTokenTest {
 
     @Test
-    public void testBearerTokenAccess() throws Exception {
+    public void testBearerTokenAccess() {
         //configure token in mockFilter
         getMockFilter().setJwt(createToken("Alice", "user"));
 
@@ -42,7 +42,7 @@ public class SpringSecurityBearerTokenTest extends AbstractSpringSecurityBearerT
     }
 
     @Test
-    public void testBearerTokenForbidden() throws Exception {
+    public void testBearerTokenForbidden() {
         //configure token in mockFilter
         getMockFilter().setJwt(createToken("Tom", "wrongUser"));
 
@@ -58,7 +58,7 @@ public class SpringSecurityBearerTokenTest extends AbstractSpringSecurityBearerT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/myapp?allowedRoles=user")

@@ -26,25 +26,28 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
 
     private HazelcastInstance hazelcastInstance;
     private ReplicatedMap<Object, Object> map;
 
-    @BeforeEach
+    @BeforeAll
     public void beforeEach() {
         hazelcastInstance = Hazelcast.newHazelcastInstance();
         map = hazelcastInstance.getReplicatedMap("rm");
     }
 
-    @AfterEach
+    @AfterAll
     public void afterEach() {
         if (hazelcastInstance != null) {
             hazelcastInstance.shutdown();
@@ -64,7 +67,7 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         out.expectedMessageCount(1);
 
         map.put("4711", "my-foo");
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -73,12 +76,12 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
      * mail from talip (hazelcast) on 21.02.2011: MultiMap doesn't support eviction yet. We can and should add this feature.
      */
     @Test
-    public void testEvict() throws InterruptedException {
+    public void testEvict() {
         MockEndpoint out = getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
         map.put("4711", "my-foo", 100, TimeUnit.MILLISECONDS);
-        Thread.sleep(150);
-        assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
+        Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).untilAsserted(
+                () -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Test
@@ -87,7 +90,7 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         out.expectedMessageCount(1);
         map.put("4711", "my-foo");
         map.remove("4711");
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

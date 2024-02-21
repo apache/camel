@@ -16,24 +16,10 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
-import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 /**
  * Salesforce QueryRecords DTO for type Report
  */
-public class QueryRecordsReport extends AbstractQueryRecordsBase {
-
-    @XStreamImplicit
-    private List<Report> records;
-
-    public List<Report> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<Report> records) {
-        this.records = records;
-    }
+public class QueryRecordsReport extends AbstractQueryRecordsBase<Report> {
 }

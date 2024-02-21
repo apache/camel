@@ -25,8 +25,11 @@ import org.apache.camel.support.ObjectHelper;
 
 /**
  * A simple implementation of {@link Injector} which just uses reflection to instantiate new objects using their zero
- * argument constructor. For more complex implementations try the Spring or CDI implementations.
+ * argument constructor.
+ *
+ * Use {@link org.apache.camel.impl.engine.DefaultInjector} instead.
  */
+@Deprecated
 public class ReflectionInjector implements Injector {
 
     @Override
@@ -40,11 +43,30 @@ public class ReflectionInjector implements Injector {
         try {
             // lookup factory method
             Method fm = type.getMethod(factoryMethod);
-            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers())
+                    && fm.getReturnType() != Void.TYPE) {
                 answer = (T) fm.invoke(null);
             }
         } catch (Exception e) {
             throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+        }
+        return answer;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+        T answer = null;
+        try {
+            // lookup factory method
+            Method fm = factoryClass.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers())
+                    && fm.getReturnType() != Void.TYPE) {
+                answer = (T) fm.invoke(null);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(
+                    "Error invoking factory method: " + factoryMethod + " on factory class: " + factoryClass, e);
         }
         return answer;
     }

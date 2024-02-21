@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.api.management.mbean.ManagedBacklogTracerMBean;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed BacklogTracer")
@@ -59,6 +59,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public String getCamelManagementName() {
         return camelContext.getManagementName();
+    }
+
+    @Override
+    public boolean isStandby() {
+        return backlogTracer.isStandby();
     }
 
     @Override
@@ -122,6 +127,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public long getQueueSize() {
+        return backlogTracer.getQueueSize();
+    }
+
+    @Override
     public int getBodyMaxChars() {
         return backlogTracer.getBodyMaxChars();
     }
@@ -149,6 +159,36 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         backlogTracer.setBodyIncludeFiles(bodyIncludeFiles);
+    }
+
+    @Override
+    public boolean isIncludeExchangeProperties() {
+        return backlogTracer.isIncludeExchangeProperties();
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        backlogTracer.setIncludeExchangeProperties(includeExchangeProperties);
+    }
+
+    @Override
+    public boolean isIncludeExchangeVariables() {
+        return backlogTracer.isIncludeExchangeVariables();
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        backlogTracer.setIncludeExchangeVariables(includeExchangeVariables);
+    }
+
+    @Override
+    public boolean isTraceRests() {
+        return backlogTracer.isTraceRests();
+    }
+
+    @Override
+    public boolean isTraceTemplates() {
+        return backlogTracer.isTraceTemplates();
     }
 
     @Override

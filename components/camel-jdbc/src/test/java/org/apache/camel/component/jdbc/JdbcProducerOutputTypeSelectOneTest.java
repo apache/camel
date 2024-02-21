@@ -37,7 +37,7 @@ public class JdbcProducerOutputTypeSelectOneTest extends AbstractJdbcTestSupport
 
         template.sendBody("direct:start", "select * from customer where ID = 'cust1'");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Map row = assertIsInstanceOf(Map.class, mock.getReceivedExchanges().get(0).getIn().getBody(Map.class));
         assertEquals("cust1", row.get("ID"));
@@ -45,9 +45,9 @@ public class JdbcProducerOutputTypeSelectOneTest extends AbstractJdbcTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:testdb?outputType=SelectOne").to("mock:result");
             }
         };

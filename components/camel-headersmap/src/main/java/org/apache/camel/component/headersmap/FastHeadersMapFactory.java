@@ -31,12 +31,12 @@ public class FastHeadersMapFactory implements HeadersMapFactory {
 
     @Override
     public Map<String, Object> newMap() {
-        return new CaseInsensitiveMap();
+        return new CaseInsensitiveMap<>();
     }
 
     @Override
     public Map<String, Object> newMap(Map<String, Object> map) {
-        return new CaseInsensitiveMap(map);
+        return new CaseInsensitiveMap<>(map);
     }
 
     @Override

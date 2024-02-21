@@ -25,13 +25,14 @@
     ">
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>      
       <setProperty name="foo">
         <constant>bar</constant>
       </setProperty>
       <to uri="mock:mid"/>
-      <removeProperty propertyName="foo"/>
+      <removeProperty name="foo"/>
       <to uri="mock:end"/>     
     </route>
   </camelContext>

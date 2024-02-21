@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.cassandra.common;
 public final class CassandraProperties {
     public static final String CASSANDRA_CQL3_PORT = "cassandra.cql3.port";
     public static final String CASSANDRA_HOST = "cassandra.host";
+    public static final String CASSANDRA_CONTAINER = "cassandra.container";
 
     private CassandraProperties() {
 

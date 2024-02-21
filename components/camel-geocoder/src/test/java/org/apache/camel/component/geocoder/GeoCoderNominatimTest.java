@@ -33,11 +33,11 @@ public class GeoCoderNominatimTest extends CamelTestSupport {
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Test");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(

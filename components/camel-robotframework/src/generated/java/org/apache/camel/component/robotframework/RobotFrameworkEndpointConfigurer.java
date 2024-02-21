@@ -25,8 +25,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "allowContextMapAll": target.getConfiguration().setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.getConfiguration().setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "argumentfile":
-        case "argumentFile": target.getConfiguration().setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
+        case "argumentfiles":
+        case "argumentFiles": target.getConfiguration().setArgumentFiles(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -42,7 +42,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "criticaltags":
         case "criticalTags": target.getConfiguration().setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "debugfile":
-        case "debugFile": target.getConfiguration().setDebugFile(property(camelContext, java.io.File.class, value)); return true;
+        case "debugFile": target.getConfiguration().setDebugFile(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "document": target.getConfiguration().setDocument(property(camelContext, java.lang.String.class, value)); return true;
         case "dryrun": target.getConfiguration().setDryrun(property(camelContext, boolean.class, value)); return true;
@@ -61,7 +61,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listener": target.getConfiguration().setListener(property(camelContext, java.lang.String.class, value)); return true;
         case "listeners": target.getConfiguration().setListeners(property(camelContext, java.lang.String.class, value)); return true;
-        case "log": target.getConfiguration().setLog(property(camelContext, java.io.File.class, value)); return true;
+        case "log": target.getConfiguration().setLog(property(camelContext, java.lang.String.class, value)); return true;
         case "loglevel":
         case "logLevel": target.getConfiguration().setLogLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "logtitle":
@@ -76,15 +76,15 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "noStatusReturnCode": target.getConfiguration().setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
         case "noncriticaltags":
         case "nonCriticalTags": target.getConfiguration().setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "output": target.getConfiguration().setOutput(property(camelContext, java.io.File.class, value)); return true;
+        case "output": target.getConfiguration().setOutput(property(camelContext, java.lang.String.class, value)); return true;
         case "outputdirectory":
-        case "outputDirectory": target.getConfiguration().setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
+        case "outputDirectory": target.getConfiguration().setOutputDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "randomize": target.getConfiguration().setRandomize(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "report": target.getConfiguration().setReport(property(camelContext, java.io.File.class, value)); return true;
+        case "report": target.getConfiguration().setReport(property(camelContext, java.lang.String.class, value)); return true;
         case "reportbackground":
         case "reportBackground": target.getConfiguration().setReportBackground(property(camelContext, java.lang.String.class, value)); return true;
         case "reporttitle":
@@ -92,7 +92,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "runemptysuite":
         case "runEmptySuite": target.getConfiguration().setRunEmptySuite(property(camelContext, boolean.class, value)); return true;
         case "runfailed":
-        case "runFailed": target.getConfiguration().setRunFailed(property(camelContext, java.io.File.class, value)); return true;
+        case "runFailed": target.getConfiguration().setRunFailed(property(camelContext, java.lang.String.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "runmode":
@@ -137,7 +137,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "warnonskippedfiles":
         case "warnOnSkippedFiles": target.getConfiguration().setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
         case "xunitfile":
-        case "xunitFile": target.getConfiguration().setXunitFile(property(camelContext, java.io.File.class, value)); return true;
+        case "xunitFile": target.getConfiguration().setXunitFile(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -149,8 +149,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "allowContextMapAll": return boolean.class;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return boolean.class;
-        case "argumentfile":
-        case "argumentFile": return java.io.File.class;
+        case "argumentfiles":
+        case "argumentFiles": return java.lang.String.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -166,7 +166,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "criticaltags":
         case "criticalTags": return java.lang.String.class;
         case "debugfile":
-        case "debugFile": return java.io.File.class;
+        case "debugFile": return java.lang.String.class;
         case "delay": return long.class;
         case "document": return java.lang.String.class;
         case "dryrun": return boolean.class;
@@ -185,7 +185,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return boolean.class;
         case "listener": return java.lang.String.class;
         case "listeners": return java.lang.String.class;
-        case "log": return java.io.File.class;
+        case "log": return java.lang.String.class;
         case "loglevel":
         case "logLevel": return java.lang.String.class;
         case "logtitle":
@@ -200,15 +200,15 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "noStatusReturnCode": return boolean.class;
         case "noncriticaltags":
         case "nonCriticalTags": return java.lang.String.class;
-        case "output": return java.io.File.class;
+        case "output": return java.lang.String.class;
         case "outputdirectory":
-        case "outputDirectory": return java.io.File.class;
+        case "outputDirectory": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "randomize": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
-        case "report": return java.io.File.class;
+        case "report": return java.lang.String.class;
         case "reportbackground":
         case "reportBackground": return java.lang.String.class;
         case "reporttitle":
@@ -216,7 +216,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "runemptysuite":
         case "runEmptySuite": return boolean.class;
         case "runfailed":
-        case "runFailed": return java.io.File.class;
+        case "runFailed": return java.lang.String.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "runmode":
@@ -261,7 +261,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "warnonskippedfiles":
         case "warnOnSkippedFiles": return boolean.class;
         case "xunitfile":
-        case "xunitFile": return java.io.File.class;
+        case "xunitFile": return java.lang.String.class;
         default: return null;
         }
     }
@@ -274,8 +274,8 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "allowContextMapAll": return target.getConfiguration().isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.getConfiguration().isAllowTemplateFromHeader();
-        case "argumentfile":
-        case "argumentFile": return target.getConfiguration().getArgumentFile();
+        case "argumentfiles":
+        case "argumentFiles": return target.getConfiguration().getArgumentFiles();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":

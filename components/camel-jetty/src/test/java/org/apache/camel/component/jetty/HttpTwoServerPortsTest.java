@@ -25,11 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTwoServerPortsTest extends BaseJettyTest {
 
-    private int port1;
-    private int port2;
-
     @Test
-    public void testTwoServerPorts() throws Exception {
+    public void testTwoServerPorts() {
         String reply = template.requestBody("direct:a", "World", String.class);
         assertEquals("Bye World", reply);
 
@@ -44,26 +41,23 @@ public class HttpTwoServerPortsTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                port1 = getPort();
-                port2 = getNextPort();
-
+            public void configure() {
                 from("direct:a").to("http://localhost:" + port1 + "/myapp");
 
                 from("direct:b").to("http://localhost:" + port2 + "/myotherapp");
 
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Bye " + in);
                     }
                 });
 
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String in = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Hi " + in);
                     }

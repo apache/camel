@@ -32,21 +32,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ ElementType.METHOD })
 public @interface Consume {
 
     /**
      * The uri to consume from
      */
     String value() default "";
-
-    /**
-     * The uri to consume from
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri to consume from

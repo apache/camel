@@ -18,6 +18,7 @@ package org.apache.camel.jsonpath;
 
 import com.jayway.jsonpath.Option;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class JsonPathBeanTest extends CamelTestSupport {
         String json = "{\"person\" : {\"firstname\" : \"foo\", \"middlename\" : \"foo2\", \"lastname\" : \"bar\"}}";
         getMockEndpoint("mock:result").expectedBodiesReceived("foo foo2 bar");
         template.sendBody("direct:start", json);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -38,7 +39,7 @@ public class JsonPathBeanTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("foo foo2 bar", "bar bar2 foo");
         template.sendBody("direct:start", json);
         template.sendBody("direct:start", json2);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +47,7 @@ public class JsonPathBeanTest extends CamelTestSupport {
         String json = "{\"person\" : {\"firstname\" : \"foo\", \"lastname\" : \"bar\"}}";
         getMockEndpoint("mock:result").expectedBodiesReceived("foo bar");
         template.sendBody("direct:start", json);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

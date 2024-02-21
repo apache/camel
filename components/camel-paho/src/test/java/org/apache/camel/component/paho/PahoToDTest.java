@@ -16,66 +16,61 @@
  */
 package org.apache.camel.component.paho;
 
-import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class PahoToDTest extends CamelTestSupport {
+public class PahoToDTest extends PahoTestSupport {
 
-    BrokerService broker;
-
-    int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-        broker = new BrokerService();
-        broker.setPersistent(false);
-        broker.addConnector("mqtt://localhost:" + mqttPort);
-        broker.start();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        broker.stop();
-    }
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected ProducerTemplate template;
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedBodiesReceived("Hello bar");
+        MockEndpoint beer = getMockEndpoint("mock:beer");
+        beer.expectedBodiesReceived("Hello beer");
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.PahoToDTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.PahoToDTest");
 
-        assertMockEndpointsSatisfied();
+        bar.assertIsSatisfied();
+        beer.assertIsSatisfied();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                PahoComponent paho = context.getComponent("paho", PahoComponent.class);
-                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
+            public void configure() {
+                PahoComponent paho = getContext().getComponent("paho", PahoComponent.class);
+                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + service.brokerPort());
 
                 // route message dynamic using toD
                 from("direct:start").toD("paho:${header.where}");
 
-                from("paho:bar").to("mock:bar");
-                from("paho:beer").to("mock:beer");
+                from("paho:bar.PahoToDTest").to("mock:bar");
+                from("paho:beer.PahoToDTest").to("mock:beer");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        template = getCamelContextExtension().getProducerTemplate();
+    }
 }

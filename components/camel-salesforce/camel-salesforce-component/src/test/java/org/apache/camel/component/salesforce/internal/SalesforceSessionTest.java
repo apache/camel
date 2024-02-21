@@ -24,8 +24,8 @@ import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
@@ -93,14 +93,22 @@ public class SalesforceSessionTest {
         final Request request = mock(Request.class);
         when(client.POST(eq("https://login.salesforce.com/services/oauth2/token"))).thenReturn(request);
 
-        when(request.content(any())).thenReturn(request);
+        when(request.body(any())).thenReturn(request);
         when(request.timeout(anyLong(), any())).thenReturn(request);
 
         final ContentResponse response = mock(ContentResponse.class);
         when(request.send()).thenReturn(response);
 
         when(response.getStatus()).thenReturn(HttpStatus.OK_200);
-        when(response.getContentAsString()).thenReturn("{\"instance_url\": \"https://eu11.salesforce.com\"}");
+        when(response.getContentAsString()).thenReturn("{\n" +
+                                                       "  \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
+                                                       "  \"instance_url\": \"https://eu11.salesforce.com\",\n" +
+                                                       "  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
+                                                       +
+                                                       "  \"token_type\": \"Bearer\",\n" +
+                                                       "  \"issued_at\": \"1674496911543\",\n" +
+                                                       "  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n" +
+                                                       "}");
 
         session.login(null);
         return session;

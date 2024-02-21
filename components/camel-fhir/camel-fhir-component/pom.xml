@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
@@ -37,10 +37,6 @@
         <schemeName>fhir</schemeName>
         <componentPackage>org.apache.camel.component.fhir</componentPackage>
         <outPackage>org.apache.camel.component.fhir.internal</outPackage>
-        <camel.osgi.dynamic>
-            org.hl7.fhir.*
-        </camel.osgi.dynamic>
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
@@ -49,10 +45,23 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
+        <!-- Overrides commons-text in hapi-fhir-base -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
+        </dependency>
+
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-base</artifactId>
             <version>${hapi-fhir-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-text</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -74,6 +83,10 @@
             <version>${hapi-fhir-version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>junit</groupId>
                     <artifactId>junit</artifactId>
                 </exclusion>
@@ -84,6 +97,12 @@
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-r4</artifactId>
             <version>${hapi-fhir-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -98,10 +117,28 @@
             <version>${hapi-fhir-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-dstu2.1</artifactId>
+            <version>${hapi-fhir-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
+            <version>${hapi-fhir-version}</version>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -130,22 +167,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- test infra -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-fhir</artifactId>
@@ -173,7 +195,7 @@
                                 <api>
                                     <apiName>capabilities</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -199,7 +221,7 @@
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>cutoff</nullableOption>
@@ -210,7 +232,7 @@
                                 <api>
                                     <apiName>load-page</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -218,7 +240,7 @@
                                 <api>
                                     <apiName>meta</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -226,7 +248,7 @@
                                 <api>
                                     <apiName>operation</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                         <nullableOption>parameters</nullableOption>
@@ -306,20 +328,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-configurer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-configurer</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -337,64 +345,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <!-- activate test if the docker socket file is accessible -->
-        <profile>
-            <id>fhir-tests-docker-file</id>
-            <activation>
-                <file>
-                    <exists>/var/run/docker.sock</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- activate test if the DOCKER_HOST env var is set -->
-        <profile>
-            <id>fhir-tests-docker-env</id>
-            <activation>
-                <property>
-                    <name>env.DOCKER_HOST</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

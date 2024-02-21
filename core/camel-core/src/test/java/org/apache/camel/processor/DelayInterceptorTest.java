@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,11 +32,11 @@ public class DelayInterceptorTest extends ContextTestSupport {
 
     @Test
     public void testDelayer() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message #" + i);
         }
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         assertTrue(delta > 100, "Should not be that fast to run: " + delta);
         // some OS boxes are slow
         assertTrue(delta < 5000, "Should not take that long to run: " + delta);

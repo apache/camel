@@ -1,66 +1,68 @@
-[[customLoadBalancer-eip]]
 = Custom Load Balancer EIP
-:docTitle: Custom Load Balancer
-:description: Custom load balancer
+:doctitle: Custom Load Balancer
+:shortname: customLoadBalancer
+:description: To use a custom load balancer implementation.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-This EIP allows you to use your own Load Balancer implementation
+This EIP allows you to use your own xref:loadBalance-eip.adoc[Load Balancer] implementation.
 
 // eip options: START
-The Custom Load Balancer EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ref* | *Required* Refers to the custom load balancer to lookup from the registry |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
 
 An example using Java DSL:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     // using our custom load balancer
     .loadBalance(new MyLoadBalancer())
-    .to("mock:x", "mock:y", "mock:z");
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-And the same example using XML DSL:
+XML::
++
 [source,xml]
 ----
 <!-- this is the implementation of our custom load balancer -->
-<bean id="myBalancer" class="org.apache.camel.processor.CustomLoadBalanceTest$MyLoadBalancer"/>
+<bean id="myBalancer" class="com.foo.MyLoadBalancer"/>
 
 <camelContext xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
     <loadBalance>
       <!-- refer to my custom load balancer -->
-      <custom ref="myBalancer"/>
-      <!-- these are the endpoints to balancer -->
-      <to uri="mock:x"/>
-      <to uri="mock:y"/>
-      <to uri="mock:z"/>
+      <customLoadBalancer ref="myBalancer"/>
+      <!-- these are the endpoints to balance -->
+      <to uri="seda:x"/>
+      <to uri="seda:y"/>
+      <to uri="seda:z"/>
     </loadBalance>
   </route>
 </camelContext>
 ----
-
-Notice in the XML DSL above we use `<custom>` which is only available in *Camel 2.8* onwards. In older releases you would have to do as follows instead:
-[source,xml]
-----
-<loadBalance ref="myBalancer">
-  <!-- these are the endpoints to balancer -->
-  <to uri="mock:x"/>
-  <to uri="mock:y"/>
-  <to uri="mock:z"/>
-</loadBalance>
-----
+====
 
 To implement a custom load balancer you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
 The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
+
 [source,java]
 ----
 public static class MyLoadBalancer extends LoadBalancerSupport {
@@ -75,7 +77,7 @@ public static class MyLoadBalancer extends LoadBalancerSupport {
             } else {
                 getProcessors().get(2).process(exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
         callback.done(true);

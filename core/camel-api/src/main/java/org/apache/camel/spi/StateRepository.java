@@ -20,7 +20,7 @@ import org.apache.camel.Service;
 
 /**
  * This {@link StateRepository} holds a set of key/value pairs for defining a particular <em>state</em> of a component.
- * For instance it can be a set of indexes.
+ * For instance, it can be a set of indexes.
  * <p/>
  * An {@link IdempotentRepository} behaves more or less like a {@code Set} whereas this {@link StateRepository} behaves
  * like a {@code Map}.

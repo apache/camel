@@ -28,7 +28,7 @@ public class OrderService {
 
     /**
      * This method handle our order input and return the order
-     * 
+     *
      * @param  headers              the in headers
      * @param  payload              the in payload
      * @return                      the out payload
@@ -46,7 +46,7 @@ public class OrderService {
 
     /**
      * This method creates the response to the caller if the order could not be processed
-     * 
+     *
      * @param  headers the in headers
      * @param  payload the in payload
      * @return         the out payload

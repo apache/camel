@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -97,7 +97,7 @@ public class JpaWithNamedQueryAndParametersTest {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                LOG.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: {}", e.getIn());
                 receivedExchange = e;
                 latch.countDown();
             }
@@ -124,14 +124,14 @@ public class JpaWithNamedQueryAndParametersTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         camelContext = new DefaultCamelContext();
         SimpleRegistry registry = new SimpleRegistry();
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "Willem");
         // bind the params
         registry.bind("params", params);
-        camelContext.setRegistry(registry);
+        camelContext.getCamelContextExtension().setRegistry(registry);
 
         camelContext.start();
 
@@ -142,8 +142,10 @@ public class JpaWithNamedQueryAndParametersTest {
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
         endpoint = (JpaEndpoint) value;
 
-        transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 
     protected String getEndpointUri() {
@@ -151,7 +153,7 @@ public class JpaWithNamedQueryAndParametersTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ServiceHelper.stopService(consumer, template);
         camelContext.stop();
     }

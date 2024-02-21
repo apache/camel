@@ -41,11 +41,11 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
     private TwilioRestClient restClient;
 
     public TwilioComponent() {
-        super(TwilioEndpoint.class, TwilioApiName.class, TwilioApiCollection.getCollection());
+        super(TwilioApiName.class, TwilioApiCollection.getCollection());
     }
 
     public TwilioComponent(CamelContext context) {
-        super(context, TwilioEndpoint.class, TwilioApiName.class, TwilioApiCollection.getCollection());
+        super(context, TwilioApiName.class, TwilioApiCollection.getCollection());
     }
 
     @Override

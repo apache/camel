@@ -16,28 +16,16 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the how FileProducer behaves a bit strangely when generating filenames
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/reports");
-        super.setUp();
-    }
 
     // START SNIPPET: e1
     @Test
@@ -46,29 +34,29 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("This is a good report");
 
-        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file:target/data/reports/report.txt", FileEndpoint.class);
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint(fileUri("reports/report.txt"), FileEndpoint.class);
         String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
 
         template.send("direct:report", exchange);
 
-        File file = new File("target/data/reports/" + id);
-        assertEquals(true, file.exists(), "File should exists");
+        assertFileExists(testFile("reports/" + id));
     }
 
     @Test
     public void testProducerWithHeaderFileName() throws Exception {
         template.sendBody("direct:report2", "This is super good report");
-        File file = new File("target/report-super.txt");
-        assertEquals(true, file.exists(), "File should exists");
+        assertFileExists(testFile("report-super.txt"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:report").to("file:target/data/reports/");
+                from("direct:report")
+                        .to(fileUri("reports"));
 
-                from("direct:report2").setHeader(Exchange.FILE_NAME, constant("report-super.txt")).to("file:target/");
+                from("direct:report2").setHeader(Exchange.FILE_NAME, constant("report-super.txt"))
+                        .to(fileUri());
             }
         };
     }

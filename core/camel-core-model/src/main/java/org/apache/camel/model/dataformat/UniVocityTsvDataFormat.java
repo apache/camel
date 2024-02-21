@@ -16,10 +16,11 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -27,15 +28,21 @@ import org.apache.camel.spi.Metadata;
  * Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity TSV")
-@XmlRootElement(name = "univocity-tsv")
+@XmlRootElement(name = "univocityTsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
+
     @XmlAttribute
-    @Metadata(defaultValue = "\\")
+    @Metadata(label = "advanced", defaultValue = "\\")
     private String escapeChar;
 
     public UniVocityTsvDataFormat() {
-        super("univocity-tsv");
+        super("univocityTsv");
+    }
+
+    private UniVocityTsvDataFormat(Builder builder) {
+        super("univocityTsv", builder);
+        this.escapeChar = builder.escapeChar;
     }
 
     public String getEscapeChar() {
@@ -49,4 +56,25 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
         this.escapeChar = escapeChar;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link UniVocityTsvDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, UniVocityTsvDataFormat> {
+
+        private String escapeChar;
+
+        /**
+         * The escape character.
+         */
+        public Builder escapeChar(String escapeChar) {
+            this.escapeChar = escapeChar;
+            return this;
+        }
+
+        @Override
+        public UniVocityTsvDataFormat end() {
+            return new UniVocityTsvDataFormat(this);
+        }
+    }
 }

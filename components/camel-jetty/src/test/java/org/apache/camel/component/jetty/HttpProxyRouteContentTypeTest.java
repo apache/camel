@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
     @Test
-    public void testHttpProxyWithContentType() throws Exception {
+    public void testHttpProxyWithContentType() {
 
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml",
                 String.class);
@@ -36,7 +36,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty://http://localhost:{{port}}/hello")
@@ -44,7 +44,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
                 from("jetty://http://localhost:{{port}}/bye").process(new Processor() {
 
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
 
                         exchange.getMessage().setBody(ExchangeHelper.getContentType(exchange));
                     }

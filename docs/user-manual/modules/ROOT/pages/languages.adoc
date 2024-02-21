@@ -1,40 +1,16 @@
-[[Languages-Languages]]
 = Languages
 
 To support flexible and powerful
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns], Camel supports various Languages to create an
 xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate]
-within either the xref:dsl.adoc[Routing Domain Specific Language] or the
-xref:xml-configuration.adoc[XML Configuration].
+within the xref:routes.adoc[Routes] and xref:dsl.adoc[DSL]..
 
-== Note
-*Combining Predicates**
+== Supported languages
 
-When creating predicates (expressions that evaluate to `true` or
-`false`), you can combine several predicates -- regardless of the
-language they are built with -- by using the `PredicateBuilder` class.
-For more information, see xref:predicate.adoc[Compound Predicates].
-
-
-== The following is the list of currently supported languages:
-
-* xref:components:languages:bean-language.adoc[Bean Language] for using Java for expressions
-* xref:components:languages:constant-language.adoc[Constant]
-* xref:components:languages:header-language.adoc[Header]
-* xref:components:languages:jsonpath-language.adoc[JSonPath]
-* xref:components:languages:mvel-language.adoc[Mvel]
-* xref:components:languages:ognl-language.adoc[OGNL]
-* xref:components:languages:ref-language.adoc[Ref Language]
-* xref:components:languages:exchangeProperty-language.adoc[ExchangeProperty]
-** xref:components:languages:groovy-language.adoc[Groovy]
-* xref:components:languages:simple-language.adoc[Simple]
-** xref:components:languages:file-language.adoc[File Language]
-* xref:components:languages:spel-language.adoc[Spring Expression Language]
-* xref:components:languages:tokenize-language.adoc[Tokenizer]
-* xref:components:languages:xpath-language.adoc[XPath]
-* xref:components:languages:xquery-language.adoc[XQuery]
+There are about 20 different xref:components:languages:index.adoc[Languages] such
+as scripted programming languages like Groovy, and template based languages like Velocity and Freemarker,
+and XML/JSon languages, and many others.
 
 Most of these languages are also supported used as
-xref:parameter-binding-annotations.adoc[Annotation Based
-Expression Language].
+xref:parameter-binding-annotations.adoc[Annotation Based Expression Language] in Java beans.

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class NettyUDPAsyncTest extends BaseNettyTest {
 
-    private void sendFile(String uri) throws Exception {
+    private void sendFile(String uri) {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class,
@@ -49,10 +49,10 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?sync=false")
                         .to("mock:result")
                         .to("log:Message");

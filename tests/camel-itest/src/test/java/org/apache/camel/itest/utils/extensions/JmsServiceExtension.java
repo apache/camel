@@ -16,44 +16,68 @@
  */
 package org.apache.camel.itest.utils.extensions;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCallback {
+public final class JmsServiceExtension implements Extension {
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsServiceExtension.class);
 
     private static JmsServiceExtension instance;
 
-    private JmsComponent amq;
+    private final JmsComponent amq;
 
     private JmsServiceExtension() throws JMSException {
+        EmbeddedActiveMQ embeddedBrokerService = new EmbeddedActiveMQ();
+
+        Configuration artemisConfiguration = new ConfigurationImpl();
+        artemisConfiguration.setSecurityEnabled(false);
+        artemisConfiguration.setBrokerInstance(new File("target", "artemis-itest-jms"));
+        artemisConfiguration.setJMXManagementEnabled(false);
+        artemisConfiguration.setPersistenceEnabled(false);
+        String brokerURL = "vm://itest-jms";
+        try {
+            artemisConfiguration.addAcceptorConfiguration("in-vm", brokerURL);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            fail("vm acceptor cannot be configured");
+        }
+        artemisConfiguration.addAddressSetting("#",
+                new AddressSettings()
+                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
+                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
+
+        embeddedBrokerService.setConfiguration(artemisConfiguration);
+
+        try {
+            embeddedBrokerService.start();
+            embeddedBrokerService.getActiveMQServer().waitForActivation(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         LOG.info("Creating a new reusable AMQ component");
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory(brokerURL);
 
         amq = jmsComponentAutoAcknowledge(connectionFactory);
 
         connectionFactory.createConnection();
-    }
-
-    @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
-
-    }
-
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
-
     }
 
     public JmsComponent getComponent() {

@@ -16,12 +16,7 @@
  */
 package org.apache.camel.oaipmh.model;
 
-import java.io.IOException;
 import java.util.Optional;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,12 +32,12 @@ public class OAIPMHResponse {
     private String rawResponse;
     private Document xmlResponse;
 
-    public OAIPMHResponse(String rawResponse) throws ParserConfigurationException, SAXException, IOException {
+    public OAIPMHResponse(String rawResponse) {
         this.rawResponse = rawResponse;
         parse();
     }
 
-    private void parse() throws ParserConfigurationException, SAXException, IOException {
+    private void parse() {
         this.xmlResponse = Jsoup.parse(rawResponse, "", Parser.xmlParser());
     }
 

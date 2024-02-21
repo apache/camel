@@ -18,20 +18,21 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.eclipse.angus.mail.imap.SortTerm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * SortUtilTest.
  */
 public class MailSortTermTwoTest extends CamelTestSupport {
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @BindToRegistry("sortAscendingDate")
     private SortTerm[] termAscDate = new SortTerm[] { SortTerm.DATE };
@@ -59,8 +61,8 @@ public class MailSortTermTwoTest extends CamelTestSupport {
 
     @Test
     public void testSortTerm() throws Exception {
-        Mailbox mailbox = Mailbox.get("bill@localhost");
-        assertEquals(3, mailbox.size());
+        Mailbox mailbox = bill.getInbox();
+        assertEquals(3, mailbox.getMessageCount());
 
         // This one has search term set
         MockEndpoint mockDesc = getMockEndpoint("mock:resultDescending");
@@ -68,15 +70,15 @@ public class MailSortTermTwoTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "bill", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), bill.getLogin(), bill.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -107,12 +109,12 @@ public class MailSortTermTwoTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&sortTerm=#sortDescendingDate&initialDelay=100&delay=100")
+                from(bill.uriPrefix(Protocol.imap) + "&sortTerm=#sortDescendingDate&initialDelay=100&delay=100")
                         .to("mock:resultDescending");
             }
         };

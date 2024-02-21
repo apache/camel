@@ -22,13 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NODES;
 
 /**
  * Perform operations on Kubernetes Nodes and get notified on Node changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-nodes", title = "Kubernetes Nodes",
-             syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NODES, title = "Kubernetes Nodes",
+             syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
+             headersClass = KubernetesConstants.class)
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNodesEndpoint(String uri, KubernetesNodesComponent component, KubernetesConfiguration config) {

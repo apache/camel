@@ -19,38 +19,40 @@ public class XmlSignerEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(28);
+        props.add("addKeyInfoReference");
+        props.add("baseUri");
         props.add("canonicalizationMethod");
-        props.add("omitXmlDeclaration");
         props.add("clearHeaders");
-        props.add("outputXmlEncoding");
         props.add("contentObjectId");
-        props.add("parentNamespace");
-        props.add("signatureId");
-        props.add("transformMethods");
-        props.add("parentXpath");
-        props.add("xpathsToIdAttributes");
-        props.add("parentLocalName");
         props.add("contentReferenceType");
-        props.add("uriDereferencer");
+        props.add("contentReferenceUri");
+        props.add("cryptoContextProperties");
+        props.add("digestAlgorithm");
+        props.add("disallowDoctypeDecl");
         props.add("keyAccessor");
-        props.add("prefixForXmlSignatureNamespace");
+        props.add("lazyStartProducer");
+        props.add("name");
+        props.add("omitXmlDeclaration");
+        props.add("outputXmlEncoding");
+        props.add("parentLocalName");
+        props.add("parentNamespace");
+        props.add("parentXpath");
         props.add("plainText");
         props.add("plainTextEncoding");
-        props.add("addKeyInfoReference");
-        props.add("digestAlgorithm");
+        props.add("prefixForXmlSignatureNamespace");
+        props.add("properties");
         props.add("schemaResourceUri");
         props.add("signatureAlgorithm");
-        props.add("lazyStartProducer");
-        props.add("contentReferenceUri");
-        props.add("disallowDoctypeDecl");
-        props.add("baseUri");
-        props.add("name");
-        props.add("cryptoContextProperties");
-        props.add("properties");
+        props.add("signatureId");
+        props.add("transformMethods");
+        props.add("uriDereferencer");
+        props.add("xpathsToIdAttributes");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -78,6 +80,11 @@ public class XmlSignerEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

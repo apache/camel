@@ -39,7 +39,7 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ThriftConfiguration config = new ThriftConfiguration();
 
-        config = parseConfiguration(config, uri, parameters);
+        config = parseConfiguration(config, uri);
         SSLContextParameters sslParameters = config.getSslParameters();
         if (config.getNegotiationType() == ThriftNegotiationType.SSL && sslParameters == null) {
             sslParameters = retrieveGlobalSslContextParameters();
@@ -53,13 +53,13 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * Parses the configuration
-     * 
+     *
      * @return the parsed and valid configuration to use
      */
     protected ThriftConfiguration parseConfiguration(
-            ThriftConfiguration configuration, String remaining, Map<String, Object> parameters)
+            ThriftConfiguration configuration, String remaining)
             throws Exception {
-        configuration.parseURI(new URI(remaining), parameters, this);
+        configuration.parseURI(new URI(remaining));
         return configuration;
     }
 

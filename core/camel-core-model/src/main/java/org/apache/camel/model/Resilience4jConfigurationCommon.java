@@ -18,9 +18,9 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ForkJoinPool;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.spi.Metadata;
 
@@ -28,81 +28,91 @@ import org.apache.camel.spi.Metadata;
 public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String circuitBreakerRef;
+    @Metadata(label = "advanced")
+    private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String configRef;
+    @Metadata(label = "advanced")
+    private String config;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "50", javaType = "java.lang.Float")
+    @Metadata(defaultValue = "50", javaType = "java.lang.Float")
     private String failureRateThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String permittedNumberOfCallsInHalfOpenState;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "100", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String throwExceptionWhenHalfOpenOrOpenState;
+    @XmlAttribute
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String slidingWindowSize;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
+    @Metadata(label = "advanced", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
     private String slidingWindowType;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "100", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String minimumNumberOfCalls;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String writableStackTraceEnabled;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "60", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
     private String waitDurationInOpenState;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String automaticTransitionFromOpenToHalfOpenEnabled;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "100", javaType = "java.lang.Float")
+    @Metadata(label = "advanced", defaultValue = "100", javaType = "java.lang.Float")
     private String slowCallRateThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "60", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
     private String slowCallDurationThreshold;
-    @Metadata(label = "bulkhead", defaultValue = "false", javaType = "java.lang.Boolean")
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
-    @Metadata(label = "bulkhead", defaultValue = "25", javaType = "java.lang.Integer")
+    @XmlAttribute
+    @Metadata(defaultValue = "25", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
-    @Metadata(label = "bulkhead", defaultValue = "0", javaType = "java.lang.Integer")
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer")
     private String bulkheadMaxWaitDuration;
-    @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
-    @Metadata(label = "timeout")
-    private String timeoutExecutorServiceRef;
-    @Metadata(label = "timeout", defaultValue = "1000", javaType = "java.lang.Integer")
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String timeoutExecutorService;
+    @XmlAttribute
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String timeoutDuration;
-    @Metadata(label = "timeout", defaultValue = "true", javaType = "java.lang.Boolean")
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String timeoutCancelRunningFuture;
 
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
-    public String getConfigRef() {
-        return configRef;
+    public String getConfig() {
+        return config;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from
      * the registry.
      */
-    public void setConfigRef(String configRef) {
-        this.configRef = configRef;
+    public void setConfig(String config) {
+        this.config = config;
     }
 
     public String getFailureRateThreshold() {
@@ -130,6 +140,18 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setPermittedNumberOfCallsInHalfOpenState(String permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+    }
+
+    public String getThrowExceptionWhenHalfOpenOrOpenState() {
+        return throwExceptionWhenHalfOpenOrOpenState;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
+     */
+    public void setThrowExceptionWhenHalfOpenOrOpenState(String throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
     }
 
     public String getSlidingWindowSize() {
@@ -303,16 +325,16 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.timeoutEnabled = timeoutEnabled;
     }
 
-    public String getTimeoutExecutorServiceRef() {
-        return timeoutExecutorServiceRef;
+    public String getTimeoutExecutorService() {
+        return timeoutExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by
      * default)
      */
-    public void setTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
-        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
+    public void setTimeoutExecutorService(String timeoutExecutorService) {
+        this.timeoutExecutorService = timeoutExecutorService;
     }
 
     public String getTimeoutDuration() {

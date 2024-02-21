@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class JdbcEndpointTest extends JdbcRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 JdbcEndpoint jdbc = new JdbcEndpoint();

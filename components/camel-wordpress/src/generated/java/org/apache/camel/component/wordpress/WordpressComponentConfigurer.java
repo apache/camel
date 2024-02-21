@@ -37,6 +37,10 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.wordpress.WordpressConfiguration.class, value)); return true;
         case "criteria": getOrCreateConfiguration(target).setCriteria(property(camelContext, java.util.Map.class, value)); return true;
         case "force": getOrCreateConfiguration(target).setForce(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "id": getOrCreateConfiguration(target).setId(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -61,6 +65,10 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "configuration": return org.apache.camel.component.wordpress.WordpressConfiguration.class;
         case "criteria": return java.util.Map.class;
         case "force": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "id": return java.lang.Integer.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -86,6 +94,10 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "configuration": return target.getConfiguration();
         case "criteria": return getOrCreateConfiguration(target).getCriteria();
         case "force": return getOrCreateConfiguration(target).isForce();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "id": return getOrCreateConfiguration(target).getId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

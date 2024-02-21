@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import io.netty.channel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -43,15 +44,15 @@ public class NettyHttpPostDataTest extends BaseNettyTest {
         assertFalse(result.isFailed());
         assertEquals("1", result.getIn().getHeader("x", String.class), "expect the x is 1");
         assertEquals("2", result.getIn().getHeader("y", String.class), "expect the y is 2");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(result.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class).isActive());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input");
             }

@@ -18,15 +18,18 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Simple unit test for transaction client EIP pattern and JMS.
  */
-public class JMSTransactionalClientTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class JMSTransactionalClientTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -43,7 +46,7 @@ public class JMSTransactionalClientTest extends CamelSpringTestSupport {
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionalClientTest", "Hello World");
 
         mock.assertIsSatisfied();
         // END SNIPPET: e1
@@ -54,7 +57,7 @@ public class JMSTransactionalClientTest extends CamelSpringTestSupport {
         private int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if (++count <= 2) {
                 throw new IllegalArgumentException("Forced Exception number " + count + ", please retry");
             }

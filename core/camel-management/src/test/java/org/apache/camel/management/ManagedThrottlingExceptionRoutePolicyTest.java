@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import javax.management.JMX;
@@ -30,20 +32,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSupport {
 
     @Test
     public void testRoutes() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the Camel route
@@ -67,7 +67,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         assertTrue(policy.startsWith("ThrottlingExceptionRoutePolicy"));
 
         // get the RoutePolicy
-        String mbeanName = String.format("org.apache.camel:context=camel-1,name=%s,type=services", policy);
+        String mbeanName
+                = String.format("org.apache.camel:context=" + context.getManagementName() + ",name=%s,type=services", policy);
         set = mbeanServer.queryNames(new ObjectName(mbeanName), null);
         assertEquals(1, set.size());
         on = set.iterator().next();
@@ -84,6 +85,12 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         // state should be closed w/ no failures
         String myState = proxy.currentState();
         assertEquals("State closed, failures 0", myState);
+
+        // exception types
+        String[] types = proxy.getExceptionTypes();
+        assertEquals(2, types.length);
+        assertEquals("java.io.IOException", types[0]);
+        assertEquals("java.lang.UnsupportedOperationException", types[1]);
 
         // the route has no failures
         Integer val = proxy.getCurrentFailures();
@@ -141,7 +148,9 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(10, 1000, 5000, null);
+        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(
+                10, 1000, 5000,
+                List.of(IOException.class, UnsupportedOperationException.class));
         policy.setHalfOpenHandler(new DummyHandler());
 
         return new RouteBuilder() {
@@ -156,18 +165,18 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         };
     }
 
-    class BoomProcess implements Processor {
+    static class BoomProcess implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
             // need to sleep a little to cause last failure to be slow
             Thread.sleep(50);
-            throw new RuntimeException("boom!");
+            throw new IOException("boom!");
         }
 
     }
 
-    class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
+    static class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {

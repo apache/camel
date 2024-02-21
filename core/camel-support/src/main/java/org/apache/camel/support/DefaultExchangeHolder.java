@@ -170,8 +170,8 @@ public class DefaultExchangeHolder implements Serializable {
             }
         }
         if (payload.properties != null) {
-            for (String key : payload.properties.keySet()) {
-                exchange.setProperty(key, payload.properties.get(key));
+            for (Map.Entry<String, Object> entry : payload.properties.entrySet()) {
+                exchange.setProperty(entry.getKey(), entry.getValue());
             }
         }
         exchange.setException(payload.exception);
@@ -230,12 +230,11 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     private Map<String, Object> safeSetProperties(Exchange exchange, boolean allowSerializedHeaders) {
-        if (exchange.hasProperties()) {
-            Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getProperties(),
-                    allowSerializedHeaders);
-            if (map != null && !map.isEmpty()) {
-                properties = new LinkedHashMap<>(map);
-            }
+        // also include the internal properties
+        Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getAllProperties(),
+                allowSerializedHeaders);
+        if (map != null && !map.isEmpty()) {
+            properties = new LinkedHashMap<>(map);
         }
         return null;
     }
@@ -328,9 +327,9 @@ public class DefaultExchangeHolder implements Serializable {
      * <li>Number</li>
      * <li>java.util.Date</li>
      * </ul>
-     * 
+     *
      * We make possible store serialized headers by the boolean field allowSerializedHeaders
-     * 
+     *
      * @param  headerName             the header name
      * @param  headerValue            the header value
      * @param  allowSerializedHeaders the header value
@@ -387,13 +386,13 @@ public class DefaultExchangeHolder implements Serializable {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
                         "Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
-                        new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                        type, key, value, ObjectHelper.classCanonicalName(value));
             }
         } else {
             // log regular at WARN level
             LOG.warn(
                     "Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 
@@ -401,7 +400,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (LOG.isDebugEnabled()) {
             LOG.debug(
                     "Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 
@@ -409,7 +408,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (LOG.isDebugEnabled()) {
             LOG.debug(
                     "Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder.",
-                    new Object[] { type, key, value, ObjectHelper.classCanonicalName(value) });
+                    type, key, value, ObjectHelper.classCanonicalName(value));
         }
     }
 

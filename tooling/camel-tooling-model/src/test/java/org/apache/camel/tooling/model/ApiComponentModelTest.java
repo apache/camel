@@ -20,6 +20,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,6 +51,23 @@ public class ApiComponentModelTest {
         Assertions.assertEquals("creator", amm.getName());
         Assertions.assertEquals("Create a CallCreator to execute create", amm.getDescription());
         Assertions.assertEquals(6, amm.getSignatures().size());
+
+        Map<String, Object> md = model.getMetadata();
+        Assertions.assertNotNull(md);
+        Assertions.assertEquals("foo", md.get("string"));
+        Assertions.assertEquals(BigDecimal.valueOf(42), md.get("number"));
+        Assertions.assertEquals(Boolean.TRUE, md.get("boolean"));
+        Assertions.assertEquals(Arrays.asList("bar", "baz"), md.get("list"));
+        Assertions.assertEquals(new LinkedHashMap<String, Object>() {
+            {
+                put("k1", "v1");
+                put("k2", "v2");
+            }
+        }, md.get("map"));
+
+        String serialized = JsonMapper.createParameterJsonSchema(model);
+        ComponentModel reloadedModel = JsonMapper.generateComponentModel(serialized);
+        Assertions.assertEquals(model.getMetadata(), reloadedModel.getMetadata());
     }
 
     /**

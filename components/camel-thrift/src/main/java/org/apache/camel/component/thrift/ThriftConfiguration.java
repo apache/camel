@@ -17,7 +17,6 @@
 package org.apache.camel.component.thrift;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -185,7 +184,7 @@ public class ThriftConfiguration {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public void parseURI(URI uri, Map<String, Object> parameters, ThriftComponent component) {
+    public void parseURI(URI uri) {
         setHost(uri.getHost());
 
         if (uri.getPort() != -1) {

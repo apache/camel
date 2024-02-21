@@ -33,7 +33,7 @@ public class BeanToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        mock.expectedFileExists("target/data/BeanToFileTest.txt", "Bye World");
+        mock.expectedFileExists(testFile("BeanToFileTest.txt"), "Bye World");
 
         template.sendBody("direct:in", "World");
 
@@ -52,7 +52,7 @@ public class BeanToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in").to("bean:myBean").setHeader(Exchange.FILE_NAME, constant("BeanToFileTest.txt"))
-                        .to("file://target/data/?fileExist=Override", "mock:result");
+                        .to(fileUri("?fileExist=Override"), "mock:result");
             }
         };
     }

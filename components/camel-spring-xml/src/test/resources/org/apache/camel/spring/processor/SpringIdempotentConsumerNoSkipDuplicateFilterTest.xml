@@ -30,10 +30,11 @@
     <bean id="myRepo" class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <!-- we do not want to skip any duplicate messages -->
-            <idempotentConsumer messageIdRepositoryRef="myRepo" skipDuplicate="false">
+            <idempotentConsumer idempotentRepository="myRepo" skipDuplicate="false">
                 <!-- use the messageId header as key for identifying duplicate messages -->
                 <header>messageId</header>
                 <!-- we will to handle duplicate messages using a filter -->

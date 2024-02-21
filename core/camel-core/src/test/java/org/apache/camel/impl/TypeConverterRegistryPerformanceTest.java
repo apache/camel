@@ -68,7 +68,7 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
         }
 
         assertTrue(latch.await(2, TimeUnit.MINUTES), "Should all work");
-        log.info("Took " + watch.taken());
+        log.info("Took {}", watch.taken());
 
         executorService.shutdownNow();
     }

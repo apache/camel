@@ -19,58 +19,62 @@ public class TwitterSearchEndpointUriFactory extends org.apache.camel.support.co
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(43);
-        props.add("backoffMultiplier");
-        props.add("keywords");
-        props.add("latitude");
-        props.add("httpProxyHost");
-        props.add("initialDelay");
-        props.add("type");
-        props.add("scheduler");
-        props.add("consumerSecret");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("numberOfPages");
-        props.add("runLoggingLevel");
-        props.add("sortById");
-        props.add("backoffErrorThreshold");
-        props.add("userIds");
-        props.add("greedy");
-        props.add("distanceMetric");
-        props.add("radius");
-        props.add("lang");
-        props.add("scheduledExecutorService");
-        props.add("consumerKey");
-        props.add("longitude");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sinceId");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("count");
-        props.add("httpProxyPort");
         props.add("accessToken");
-        props.add("httpProxyPassword");
-        props.add("backoffIdleThreshold");
         props.add("accessTokenSecret");
-        props.add("lazyStartProducer");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
+        props.add("consumerKey");
+        props.add("consumerSecret");
+        props.add("count");
         props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
-        props.add("filterOld");
-        props.add("locations");
-        props.add("extendedMode");
+        props.add("distanceMetric");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("extendedMode");
+        props.add("filterOld");
+        props.add("greedy");
+        props.add("httpProxyHost");
+        props.add("httpProxyPassword");
+        props.add("httpProxyPort");
         props.add("httpProxyUser");
+        props.add("initialDelay");
+        props.add("keywords");
+        props.add("lang");
+        props.add("latitude");
+        props.add("lazyStartProducer");
+        props.add("locations");
+        props.add("longitude");
+        props.add("numberOfPages");
+        props.add("pollStrategy");
+        props.add("radius");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("sinceId");
+        props.add("sortById");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("type");
+        props.add("useFixedDelay");
+        props.add("userIds");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("consumerSecret");
         secretProps.add("accessToken");
-        secretProps.add("consumerKey");
         secretProps.add("accessTokenSecret");
+        secretProps.add("consumerKey");
+        secretProps.add("consumerSecret");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -98,6 +102,11 @@ public class TwitterSearchEndpointUriFactory extends org.apache.camel.support.co
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

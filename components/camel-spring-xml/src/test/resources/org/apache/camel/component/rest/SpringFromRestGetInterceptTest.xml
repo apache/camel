@@ -28,6 +28,7 @@
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <intercept>
       <to uri="mock:intercept"/>
@@ -35,15 +36,18 @@
 
     <rest path="/say/hello">
       <get>
-        <route>
-          <to uri="mock:hello"/>
-          <to uri="mock:bar"/>
-          <transform>
-            <constant>Bye World</constant>
-          </transform>
-        </route>
+        <to uri="direct:hello"/>
       </get>
     </rest>
+
+    <route>
+      <from uri="direct:hello"/>
+      <to uri="mock:hello"/>
+      <to uri="mock:bar"/>
+      <transform>
+        <constant>Bye World</constant>
+      </transform>
+    </route>
 
   </camelContext>
 

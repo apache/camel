@@ -23,15 +23,18 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the
  * registry
  */
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     private static final String KEY = XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://java.sun.com/jaxp/xpath/dom";
@@ -64,14 +67,12 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathLanguageDefaultSettingsTest.xml");
+        return newAppContext("XPathLanguageDefaultSettingsTest.xml");
     }
 
     @Test
     public void testSpringDSLXPathLanguageDefaultSettings() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpointResult = getMockEndpoint("mock:testDefaultXPathSettingsResult");
         MockEndpoint mockEndpointException = getMockEndpoint("mock:testDefaultXPathSettingsResultException");
@@ -81,7 +82,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
         template.sendBody("seda:testDefaultXPathSettings", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

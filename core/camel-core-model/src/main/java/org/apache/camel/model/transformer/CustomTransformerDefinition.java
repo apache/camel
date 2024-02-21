@@ -16,17 +16,17 @@
  */
 package org.apache.camel.model.transformer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
 /**
  * Represents a CustomTransformer. One of the bean reference (ref) or fully qualified class name (type) of the custom
- * {@link Transformer} needs to be specified. {@see TransformerDefinition} {@see Transformer}
+ * {@link Transformer} needs to be specified.
  */
 @Metadata(label = "transformation")
 @XmlType(name = "customTransformer")
@@ -44,8 +44,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a bean reference of the {@link Transformer}
-     *
-     * @param ref the bean reference of the Transformer
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -57,8 +55,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a class name of the {@link Transformer}
-     *
-     * @param className the class name of the Transformer
      */
     public void setClassName(String className) {
         this.className = className;

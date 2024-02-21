@@ -29,6 +29,9 @@ content:
     - url: ./../
       branches: HEAD
       start_path: docs/components
+    - url: ./../
+      branches: HEAD
+      start_path: docs/main
 
 asciidoc:
   attributes:

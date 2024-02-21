@@ -18,19 +18,28 @@ package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.OptionalInt;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
  * <p/>
- * The component should use the {@link #matchBestPath(String, String, java.util.List)} with the request details and the
- * matcher returns the best matched, or <tt>null</tt> if none could be determined.
+ * The component should use the {@link #matchBestPath(String, String, List)} with the request details and the matcher
+ * returns the best matched, or <tt>null</tt> if none could be determined.
  * <p/>
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
+
+    private static final Map<String, Pattern> PATH_PATTERN = new ConcurrentHashMap<>();
 
     private RestConsumerContextPathMatcher() {
     }
@@ -113,22 +122,23 @@ public final class RestConsumerContextPathMatcher {
      * @param  consumerPaths the list of consumer context path details
      * @return               the best matched consumer, or <tt>null</tt> if none could be determined.
      */
-    public static ConsumerPath matchBestPath(String requestMethod, String requestPath, List<ConsumerPath> consumerPaths) {
-        ConsumerPath answer = null;
+    public static <
+            T> ConsumerPath<T> matchBestPath(String requestMethod, String requestPath, List<ConsumerPath<T>> consumerPaths) {
+        ConsumerPath<T> answer = null;
 
-        List<ConsumerPath> candidates = new ArrayList<>();
+        List<ConsumerPath<T>> candidates = new ArrayList<>();
 
         // first match by http method
-        for (ConsumerPath entry : consumerPaths) {
+        for (ConsumerPath<T> entry : consumerPaths) {
             if (matchRestMethod(requestMethod, entry.getRestrictMethod())) {
                 candidates.add(entry);
             }
         }
 
         // then see if we got a direct match
-        Iterator<ConsumerPath> it = candidates.iterator();
+        Iterator<ConsumerPath<T>> it = candidates.iterator();
         while (it.hasNext()) {
-            ConsumerPath consumer = it.next();
+            ConsumerPath<T> consumer = it.next();
             if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
                 answer = consumer;
                 break;
@@ -143,7 +153,7 @@ public final class RestConsumerContextPathMatcher {
             // then try again to see if we can find a direct match
             it = candidates.iterator();
             while (it.hasNext()) {
-                ConsumerPath consumer = it.next();
+                ConsumerPath<T> consumer = it.next();
                 if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
                     answer = consumer;
                     break;
@@ -151,9 +161,9 @@ public final class RestConsumerContextPathMatcher {
             }
         }
 
-        // if there are no wildcards, then select the matching with the longest path
-        boolean noWildcards = candidates.stream().allMatch(p -> countWildcards(p.getConsumerPath()) == 0);
-        if (noWildcards) {
+        // if there are no uri template, then select the matching with the longest path
+        boolean noCurlyBraces = candidates.stream().allMatch(p -> countCurlyBraces(p.getConsumerPath()) == 0);
+        if (noCurlyBraces) {
             // grab first which is the longest that matched the request path
             answer = candidates.stream()
                     .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
@@ -161,46 +171,108 @@ public final class RestConsumerContextPathMatcher {
                     .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
         }
 
-        // then match by wildcard path
-        if (answer == null) {
-            it = candidates.iterator();
+        if (answer != null) {
+            return answer;
+        }
+
+        // then match by uri template path
+        it = candidates.iterator();
+        List<ConsumerPath<T>> uriTemplateCandidates = new ArrayList<>();
+        while (it.hasNext()) {
+            ConsumerPath<T> consumer = it.next();
+            // filter non matching paths
+            if (matchRestPath(requestPath, consumer.getConsumerPath(), true)) {
+                uriTemplateCandidates.add(consumer);
+            }
+        }
+
+        // if there is multiple candidates with uri template then pick anyone with the least number of uri template
+        ConsumerPath<T> best = null;
+        Map<Integer, List<ConsumerPath<T>>> pathMap = new HashMap<>();
+        if (uriTemplateCandidates.size() > 1) {
+            it = uriTemplateCandidates.iterator();
             while (it.hasNext()) {
-                ConsumerPath consumer = it.next();
-                // filter non matching paths
-                if (!matchRestPath(requestPath, consumer.getConsumerPath(), true)) {
-                    it.remove();
+                ConsumerPath<T> entry = it.next();
+                int curlyBraces = countCurlyBraces(entry.getConsumerPath());
+                if (curlyBraces > 0) {
+                    List<ConsumerPath<T>> consumerPathsList = pathMap.computeIfAbsent(curlyBraces, key -> new ArrayList<>());
+                    consumerPathsList.add(entry);
                 }
             }
 
-            // if there is multiple candidates with wildcards then pick anyone with the least number of wildcards
-            int bestWildcard = Integer.MAX_VALUE;
-            ConsumerPath best = null;
-            if (candidates.size() > 1) {
-                it = candidates.iterator();
-                while (it.hasNext()) {
-                    ConsumerPath entry = it.next();
-                    int wildcards = countWildcards(entry.getConsumerPath());
-                    if (wildcards > 0) {
-                        if (best == null || wildcards < bestWildcard) {
-                            best = entry;
-                            bestWildcard = wildcards;
-                        }
-                    }
+            OptionalInt min = pathMap.keySet().stream().mapToInt(Integer::intValue).min();
+            if (min.isPresent()) {
+                List<ConsumerPath<T>> bestConsumerPaths = pathMap.get(min.getAsInt());
+                if (bestConsumerPaths.size() > 1 && !canBeAmbiguous(requestMethod, requestMethod)) {
+                    String exceptionMsg = "Ambiguous paths " + bestConsumerPaths.stream().map(ConsumerPath::getConsumerPath)
+                            .collect(Collectors.joining(",")) + " for request path " + requestPath;
+                    throw new IllegalStateException(exceptionMsg);
                 }
-
-                if (best != null) {
-                    // pick the best among the wildcards
-                    answer = best;
-                }
+                best = bestConsumerPaths.get(0);
             }
 
-            // if there is one left then its our answer
-            if (answer == null && candidates.size() == 1) {
-                answer = candidates.get(0);
+            if (best != null) {
+                // pick the best among uri template
+                answer = best;
+            }
+        }
+
+        // if there is one left then it's our answer
+        if (answer == null && uriTemplateCandidates.size() == 1) {
+            return uriTemplateCandidates.get(0);
+        }
+
+        // last match by wildcard path
+        it = candidates.iterator();
+        while (it.hasNext()) {
+            ConsumerPath<T> consumer = it.next();
+            // filter non matching paths
+            if (matchWildCard(requestPath, consumer.getConsumerPath())) {
+                answer = consumer;
+                break;
             }
         }
 
         return answer;
+    }
+
+    /**
+     * Pre-compiled consumer path for wildcard match
+     *
+     * @param consumerPath a consumer path
+     */
+    public static void register(String consumerPath) {
+        // Convert URI template to a regex pattern
+        String regex = consumerPath
+                .replace("/", "\\/")
+                .replace("{", "(?<")
+                .replace("}", ">[^\\/]+)");
+
+        // Add support for wildcard * as path suffix
+        regex = regex.replace("*", ".*");
+
+        // Match the provided path against the regex pattern
+        Pattern pattern = Pattern.compile(regex);
+        PATH_PATTERN.put(consumerPath, pattern);
+    }
+
+    /**
+     * if the rest consumer is removed, we also remove pattern cache.
+     *
+     * @param consumerPath a consumer path
+     */
+    public static void unRegister(String consumerPath) {
+        PATH_PATTERN.remove(consumerPath);
+    }
+
+    /**
+     *
+     * @param  requestMethod The request method
+     * @param  requestPath   The request path
+     * @return               if the request method and path can escape from the ambiguous exception
+     */
+    private static boolean canBeAmbiguous(String requestMethod, String requestPath) {
+        return requestMethod.equalsIgnoreCase("options");
     }
 
     /**
@@ -230,11 +302,11 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request path with the configured consumer path
      *
-     * @param  requestPath  the request path
-     * @param  consumerPath the consumer path which may use { } tokens
-     * @return              <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @param  requestPath   the request path
+     * @param  isUriTemplate the consumer path which may use { } tokens
+     * @return               <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
-    private static boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
+    private static boolean matchRestPath(String requestPath, String consumerPath, boolean isUriTemplate) {
         // deal with null parameters
         if (requestPath == null && consumerPath == null) {
             return true;
@@ -271,7 +343,7 @@ public final class RestConsumerContextPathMatcher {
             String p1 = requestPaths[i];
             String p2 = consumerPaths[i];
 
-            if (wildcard && p2.startsWith("{") && p2.endsWith("}")) {
+            if (isUriTemplate && p2.startsWith("{") && p2.endsWith("}")) {
                 // always matches
                 continue;
             }
@@ -286,13 +358,13 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
-     * Counts the number of wildcards in the path
+     * Counts the number of uri template's curlyBraces in the path
      *
      * @param  consumerPath the consumer path which may use { } tokens
-     * @return              number of wildcards, or <tt>0</tt> if no wildcards
+     * @return              number of curlyBraces, or <tt>0</tt> if no curlyBraces
      */
-    private static int countWildcards(String consumerPath) {
-        int wildcards = 0;
+    private static int countCurlyBraces(String consumerPath) {
+        int curlyBraces = 0;
 
         // remove starting/ending slashes
         if (consumerPath.startsWith("/")) {
@@ -305,11 +377,26 @@ public final class RestConsumerContextPathMatcher {
         String[] consumerPaths = consumerPath.split("/");
         for (String p2 : consumerPaths) {
             if (p2.startsWith("{") && p2.endsWith("}")) {
-                wildcards++;
+                curlyBraces++;
             }
         }
 
-        return wildcards;
+        return curlyBraces;
+    }
+
+    private static boolean matchWildCard(String requestPath, String consumerPath) {
+        if (!requestPath.endsWith("/")) {
+            requestPath = requestPath + "/";
+        }
+
+        Pattern pattern = PATH_PATTERN.get(consumerPath);
+        if (pattern == null) {
+            return false;
+        }
+
+        Matcher matcher = pattern.matcher(requestPath);
+
+        return matcher.matches();
     }
 
 }

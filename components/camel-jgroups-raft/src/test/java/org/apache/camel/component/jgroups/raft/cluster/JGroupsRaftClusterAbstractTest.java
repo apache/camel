@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.RuntimeCamelException;
 import org.jgroups.raft.RaftHandle;
 
 public abstract class JGroupsRaftClusterAbstractTest {
@@ -29,7 +30,7 @@ public abstract class JGroupsRaftClusterAbstractTest {
             attempts--;
         }
         if (attempts <= 0) {
-            throw new RuntimeException("No leader in time!");
+            throw new RuntimeCamelException("No leader in time!");
         }
     }
 }

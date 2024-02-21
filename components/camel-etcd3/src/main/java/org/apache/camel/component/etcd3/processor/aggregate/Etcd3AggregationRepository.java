@@ -46,6 +46,7 @@ import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -147,7 +148,11 @@ public class Etcd3AggregationRepository extends ServiceSupport
                         ByteSequence.from(String.format("%s/%s", prefixName, key).getBytes()), convertToEtcd3Format(newHolder));
                 completablePutResponse.get();
             }
-        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error(e.getMessage(), e);
+            throw new OptimisticLockingException();
+        } catch (ExecutionException | IOException | ClassNotFoundException e) {
             LOG.error(e.getMessage(), e);
             throw new OptimisticLockingException();
         }
@@ -175,14 +180,19 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     .If(new Cmp(
                             ByteSequence.from(String.format("%s/%s", prefixName, key).getBytes()),
                             Cmp.Op.EQUAL,
-                            CmpTarget.ModRevisionCmpTarget.modRevision(modRevision)))
+                            CmpTarget.modRevision(modRevision)))
                     .Then(Op.put(ByteSequence
                             .from(String.format("%s/%s", prefixName, key).getBytes()), convertToEtcd3Format(newHolder),
                             PutOption.DEFAULT))
-                    .commit();
-        } catch (InterruptedException | ExecutionException | IOException e) {
+                    .commit()
+                    .get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
+        } catch (ExecutionException | IOException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
         }
         return unmarshallExchange(camelContext, newHolder);
     }
@@ -202,9 +212,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
                 LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(),
                         camelContext.getName());
                 return scanned;
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.error(e.getMessage(), e);
-                throw new RuntimeException(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
+            } catch (ExecutionException e) {
+                LOG.error(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
             }
         } else {
             LOG.warn(
@@ -224,9 +238,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
             DefaultExchangeHolder holder
                     = (DefaultExchangeHolder) convertFromEtcd3Format(getResponse.getKvs().get(0).getValue());
             return useRecovery ? unmarshallExchange(camelContext, holder) : null;
-        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
+        } catch (ExecutionException | IOException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
         }
     }
 
@@ -326,9 +344,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
                 holder = (DefaultExchangeHolder) convertFromEtcd3Format(getResponse.getKvs().get(0).getValue());
             }
             return unmarshallExchange(camelContext, holder);
-        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
+        } catch (ExecutionException | IOException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
         }
     }
 
@@ -361,10 +383,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
                             key);
                     throw new OptimisticLockingException();
                 }
-
-            } catch (InterruptedException | ExecutionException | ClassNotFoundException | IOException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.error(e.getMessage(), e);
-                throw new RuntimeException(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
+            } catch (ExecutionException | ClassNotFoundException | IOException e) {
+                LOG.error(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
             }
             LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(),
                     key);
@@ -380,9 +405,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     LOG.trace(
                             "Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                             exchange.getExchangeId(), key);
-                } catch (IOException | InterruptedException | ExecutionException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     LOG.error(e.getMessage(), e);
-                    throw new RuntimeException(e.getMessage(), e);
+                    throw new RuntimeCamelException(e.getMessage(), e);
+                } catch (IOException | ExecutionException e) {
+                    LOG.error(e.getMessage(), e);
+                    throw new RuntimeCamelException(e.getMessage(), e);
                 }
 
             }
@@ -408,23 +437,31 @@ public class Etcd3AggregationRepository extends ServiceSupport
                                     Op.put(ByteSequence
                                             .from(String.format("%s/%s", persistencePrefixName, key).getBytes()),
                                             convertToEtcd3Format(removedHolder), PutOption.DEFAULT))
-                            .commit();
+                            .commit()
+                            .get();
                     LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.",
                             exchange.getExchangeId(), key);
                     LOG.trace(
                             "Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                } catch (Throwable throwable) {
-                    throw new RuntimeException(throwable.getMessage(), throwable);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeCamelException(e.getMessage(), e);
+                } catch (Exception exception) {
+                    throw new RuntimeCamelException(exception.getMessage(), exception);
                 }
             } else {
                 CompletableFuture<DeleteResponse> completableDeleteResponse = kvClient
                         .delete(ByteSequence.from(String.format("%s/%s", prefixName, key).getBytes()));
                 try {
                     completableDeleteResponse.get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     LOG.error(e.getMessage(), e);
-                    throw new RuntimeException(e.getMessage(), e);
+                    throw new RuntimeCamelException(e.getMessage(), e);
+                } catch (ExecutionException e) {
+                    LOG.error(e.getMessage(), e);
+                    throw new RuntimeCamelException(e.getMessage(), e);
                 }
             }
         }
@@ -438,9 +475,13 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     .delete(ByteSequence.from(String.format("%s/%s", persistencePrefixName, exchangeId).getBytes()));
             try {
                 completableDeleteResponse.get();
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.error(e.getMessage(), e);
-                throw new RuntimeException(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
+            } catch (ExecutionException e) {
+                LOG.error(e.getMessage(), e);
+                throw new RuntimeCamelException(e.getMessage(), e);
             }
         }
     }
@@ -449,15 +490,19 @@ public class Etcd3AggregationRepository extends ServiceSupport
     public Set<String> getKeys() {
         CompletableFuture<GetResponse> completableGetResponse = kvClient.get(ByteSequence.from(prefixName.getBytes()),
                 GetOption.newBuilder().withRange(ByteSequence.from(prefixName.getBytes())).build());
-        Set<String> scanned = Collections.unmodifiableSet(new TreeSet<>());
+        Set<String> scanned;
         try {
             GetResponse getResponse = completableGetResponse.get();
             Set<String> keys = new TreeSet<>();
             getResponse.getKvs().forEach(kv -> keys.add(new String(kv.getKey().getBytes())));
             scanned = Collections.unmodifiableSet(keys);
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
+        } catch (ExecutionException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeCamelException(e.getMessage(), e);
         }
         return scanned;
     }
@@ -475,7 +520,7 @@ public class Etcd3AggregationRepository extends ServiceSupport
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         if (client == null) {
             client = Client.builder().endpoints(endpoint).build();
             shutdownClient = true;

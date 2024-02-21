@@ -30,7 +30,6 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        System.setProperty("CamelSedaPollTimeout", "10");
         try {
             new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml");
             fail("Should throw exception");

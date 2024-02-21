@@ -18,9 +18,9 @@ package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -44,12 +44,12 @@ public class HttpConverterTest extends BaseJettyTest {
     public void testToServletRequestAndResponse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test")
                         // add this node to make sure the convert can work within
                         // DefaultMessageImpl
                         .convertBodyTo(String.class).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
                                 assertNotNull(request, "We should get request object here");
                                 HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
@@ -67,18 +67,17 @@ public class HttpConverterTest extends BaseJettyTest {
     }
 
     @Test
-    public void testToServletInputStream() throws Exception {
+    public void testToServletInputStreamWithStreamCaching() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
 
+                        // The ServletInputStream should be cached, and you can't read message here
                         ServletInputStream sis = HttpConverter.toServletInputStream(msg);
                         assertNotNull(sis);
-                        // The ServletInputStream should be cached and you can't
-                        // read message here
                         assertEquals(0, sis.available());
                         String s = msg.getBody(String.class);
 
@@ -94,12 +93,39 @@ public class HttpConverterTest extends BaseJettyTest {
     }
 
     @Test
+    public void testToServletInputDisableStreamStreamCaching() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("jetty://http://localhost:{{port}}/test?disableStreamCache=true").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage msg = exchange.getIn(HttpMessage.class);
+
+                        // The ServletInputStream should not be cached
+                        ServletInputStream sis = HttpConverter.toServletInputStream(msg);
+                        assertNotNull(sis);
+                        assertEquals(11, sis.available());
+                        String s = context.getTypeConverter().convertTo(String.class, sis);
+
+                        assertEquals("Hello World", s);
+                    }
+                }).transform(constant("Bye World"));
+            }
+        });
+        context.setStreamCaching(false); // this test requires stream caching disabled to work with raw servlet
+        context.start();
+
+        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
+        assertEquals("Bye World", out);
+    }
+
+    @Test
     public void testToInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
 
                         InputStream sis = msg.getBody(InputStream.class);

@@ -1,56 +1,51 @@
-[[DelayInterceptor-DelayInterceptor]]
-= Delay Interceptor
+= Delayer
 
-*Available in Camel 1.5*
+The Delayer is used for slowing processing of messages.
 
-The Delay interceptor is an route interceptor that is used for slowing
-processing of messages down. This allows you to enable this interceptor
-and set a fixed amount of delay between each step a message passes in
-the route path, to show how things is happening nice and slowly, so you
+This allows you to set a fixed amount of delay between each step a message passes in
+the route, to better show how things is happening nice and slowly, so you
 are not bombarded with a zillion lines of logging output.
 
-The delay interceptor can be configured as follows:
+== Using Delayer
 
-* setting the delay attribute in the spring camelContext tag.
-* adding the delay interceptor to the CamelContext in Java code.
+The delayer can be configured on two levels:
 
-[[DelayInterceptor-ConfiguringusingSpring]]
-== Configuring using Spring
+- CamelContext - _Globally_
+- Route - _Individually per route_
 
-Just set the delay attribute of the camelContext tag as shown below:
+=== Configuring using XML DSL
+
+Just set the `delayer` attribute of the `<camelContext>` tag as shown below:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------
-    <camelContext id="camel" delayer="500" xmlns="http://activemq.apache.org/camel/schema/spring">
-        <route>
-            <from uri="direct:start"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+<camelContext id="camel" delayer="500" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
 --------------------------------------------------------------------------------------------------
 
-[[DelayInterceptor-ConfiguringusingJava]]
-== Configuring using Java
+=== Configuring using Java
 
-You can add the delayer interceptor in the RouteBulder:
+You can enable delaying messages by setting the delay value on the `CamelContext` as shown:
 
 [source,java]
 -----------------------------
-getContext().setDelayer(200);
+camelContext.setDelayer(200);
 -----------------------------
 
-[[DelayInterceptor-Granularity]]
-== Granularity
+=== Configuring on route level
 
-In *Camel 2.0* you can configure it on both camel context and per route
-as you like. Per route will override the camel context setting. +
- For example the route below is only the first route that has a delayer
-with 200 millis.
+You can also configure it on both camel context and per route
+as you like. Per route will override the camel context setting.
 
-[source,java]
-------------------------
-<camelContext ...>
+For example the route below is only the first route that has a delayer with 200 millis.
 
+[source,xml]
+----
+<camelContext>
    <route delayer="200">
      ...
    </route>
@@ -58,7 +53,14 @@ with 200 millis.
    <route>
      ...
    </route>
-
 </camelContext>
-------------------------
+----
+
+And in Java DSL:
+
+[source,java]
+----
+from("direct:start").delayer(200)
+    .to("mock:result")
+----
 

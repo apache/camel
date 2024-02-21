@@ -18,11 +18,11 @@ package org.apache.camel.model.validator;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -35,9 +35,9 @@ import org.apache.camel.spi.Metadata;
 public class ValidatorsDefinition {
 
     @XmlElements({
-            @XmlElement(required = false, name = "endpointValidator", type = EndpointValidatorDefinition.class),
-            @XmlElement(required = false, name = "predicateValidator", type = PredicateValidatorDefinition.class),
-            @XmlElement(required = false, name = "customValidator", type = CustomValidatorDefinition.class) })
+            @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
+            @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
+            @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
     private List<ValidatorDefinition> validators;
 
     /**

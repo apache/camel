@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -39,47 +39,11 @@
         <module>camel-tooling-model</module>
         <module>camel-util-json</module>
         <module>camel-tooling-util</module>
-        <module>swagger-rest-dsl-generator</module>
         <module>openapi-rest-dsl-generator</module>
         <module>maven</module>
+        <module>camel-tooling-maven</module>
     </modules>
 
     <properties>
-        <camel.osgi.export.pkg />
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-    <!-- profiles>
-      <profile>
-        <id>build.manual</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>assembly</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>deploy</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-      <profile>
-        <id>apache-release</id>
-        <modules>
-          <module>camel-manual</module>
-        </modules>
-      </profile>
-    </profiles -->
 </project>

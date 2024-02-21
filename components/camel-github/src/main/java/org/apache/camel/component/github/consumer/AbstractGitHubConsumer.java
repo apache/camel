@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AbstractGitHubConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractGitHubConsumer.class);
 
     private final GitHubEndpoint endpoint;
 
@@ -36,7 +36,7 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
 
     private Repository repository;
 
-    public AbstractGitHubConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
+    protected AbstractGitHubConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
 

@@ -23,8 +23,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
@@ -37,6 +41,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class SpringTestSupport extends ContextTestSupport {
@@ -47,8 +62,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
-        System.setProperty("CamelSedaPollTimeout", "10");
         DefaultCamelContext.setDisableJmx(!useJmx());
         Class<?>[] excluded = excludeRoutes();
         if (excluded != null && excluded.length > 0) {
@@ -148,7 +161,35 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
         return context;
     }
 
+    public ObjectName getContextObjectName() throws MalformedObjectNameException {
+        return getCamelObjectName(TYPE_CONTEXT, context.getName());
+    }
+
+    public ObjectName getCamelObjectName(String type, String name) throws MalformedObjectNameException {
+        String quote;
+        switch (type) {
+            case TYPE_CONTEXT:
+            case TYPE_COMPONENT:
+            case TYPE_ENDPOINT:
+            case TYPE_PROCESSOR:
+            case TYPE_ROUTE:
+            case TYPE_THREAD_POOL:
+            case TYPE_STEP:
+                quote = "\"";
+                break;
+            default:
+                quote = "";
+                break;
+        }
+        String on = DEFAULT_DOMAIN + ":"
+                    + KEY_CONTEXT + "=" + context.getManagementName() + ","
+                    + KEY_TYPE + "=" + type + ","
+                    + KEY_NAME + "=" + quote + name + quote;
+        return ObjectName.getInstance(on);
+    }
 }

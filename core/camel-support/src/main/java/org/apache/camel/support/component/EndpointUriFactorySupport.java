@@ -56,9 +56,9 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         }
         if (ObjectHelper.isNotEmpty(obj)) {
             String str = camelContext.getTypeConverter().convertTo(String.class, obj);
-            int occurence = StringHelper.countOccurence(uri, name);
-            if (occurence > 1) {
-                uri = StringHelper.replaceFromSecondOccurence(uri, name, str);
+            int occurrence = StringHelper.countOccurrence(uri, name);
+            if (occurrence > 1) {
+                uri = StringHelper.replaceFromSecondOccurrence(uri, name, str);
             } else {
                 uri = uri.replace(name, str);
             }
@@ -110,37 +110,4 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         return uri;
     }
 
-    private int countOccurence(String str, String findStr) {
-        int lastIndex = 0;
-        int count = 0;
-
-        while (lastIndex != -1) {
-
-            lastIndex = str.indexOf(findStr, lastIndex);
-
-            if (lastIndex != -1) {
-                count++;
-                lastIndex += findStr.length();
-            }
-        }
-        return count;
-    }
-
-    private String replaceFromSecondOccurence(String str, String name, String repl) {
-        int index = str.indexOf(name);
-        boolean replace = false;
-
-        while (index != -1) {
-            String tempString = str.substring(index);
-            if (replace) {
-                tempString = tempString.replaceFirst(name, repl);
-                str = str.substring(0, index) + tempString;
-                replace = false;
-            } else {
-                replace = true;
-            }
-            index = str.indexOf(name, index + 1);
-        }
-        return str;
-    }
 }

@@ -16,52 +16,97 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
+import org.apache.camel.spi.PooledObjectFactory;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+
+        ecc.setExchangeFactory(new PooledExchangeFactory());
+        ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
+        ecc.getExchangeFactory().setStatisticsEnabled(true);
+        ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
+
         return camelContext;
     }
 
+    @Order(1)
     @Test
     public void testOne() throws Exception {
+        Assumptions.assumeTrue(context.isStarted());
+
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(0, stat.getAcquiredCounter());
+            assertEquals(1, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
+    @Order(2)
     @Test
-    public void testTwo() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel");
+    public void testThree() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel", "Earth");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
         assertEquals("Bye World", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
+        out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(
+                () -> {
+                    String reqOut = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
+                    assertEquals("Bye Earth", reqOut);
+                });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(2, stat.getAcquiredCounter());
+            assertEquals(3, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
+            public void configure() {
+                from("netty-http:http://0.0.0.0:{{port}}/pooled")
                         .convertBodyTo(String.class)
                         .to("mock:input")
                         .transform().simple("Bye ${body}");

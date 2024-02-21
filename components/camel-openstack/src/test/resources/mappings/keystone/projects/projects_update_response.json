@@ -1,0 +1,18 @@
+{
+  "id" : "81e5db2e-3043-401b-9cfb-61371d12822f",
+  "name" : "projects_update_response.json",
+  "request" : {
+    "url" : "/v3/projects/3337151a1c38496c8bffcb280b19c346",
+    "method" : "PATCH"
+  },
+  "response" : {
+    "body": "{\"project\":{\"is_domain\":false,\"description\":\"An updated project used for CRUD tests\",\"links\":{\"self\":\"http:\/\/127.0.0.1:5000\/v3\/projects\/3337151a1c38496c8bffcb280b19c346\"},\"enabled\":true,\"id\":\"3337151a1c38496c8bffcb280b19c346\",\"parent_id\":null,\"domain_id\":\"7a71863c2d1d4444b3e6c2cd36955e1e\",\"name\":\"ProjectX\",\"extra_key1\":\"value1\",\"extra_key2\":\"value2\"}}",
+    "headers" : {
+      "Content-Type" : "application/json; charset=UTF-8"
+    },
+    "status" : 200
+  },
+  "uuid" : "81e5db2e-3043-401b-9cfb-61371d12822f",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

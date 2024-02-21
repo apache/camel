@@ -19,39 +19,42 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
-        props.add("bindRetryInterval");
-        props.add("bufferWrites");
-        props.add("lenientBind");
-        props.add("maxReceiveTimeouts");
-        props.add("hostname");
-        props.add("bridgeErrorHandler");
-        props.add("bindTimeout");
-        props.add("connectTimeout");
-        props.add("stringPayload");
+        Set<String> props = new HashSet<>(30);
         props.add("acceptTimeout");
-        props.add("requireEndOfData");
-        props.add("tcpNoDelay");
         props.add("autoAck");
-        props.add("keepAlive");
-        props.add("maxConcurrentConsumers");
-        props.add("hl7Headers");
-        props.add("sendBufferSize");
-        props.add("exchangePattern");
-        props.add("reuseAddress");
-        props.add("lazyStartProducer");
         props.add("backlog");
-        props.add("receiveBufferSize");
-        props.add("port");
-        props.add("receiveTimeout");
-        props.add("idleTimeout");
-        props.add("readTimeout");
-        props.add("exceptionHandler");
-        props.add("validatePayload");
+        props.add("bindRetryInterval");
+        props.add("bindTimeout");
+        props.add("bridgeErrorHandler");
         props.add("charsetName");
+        props.add("connectTimeout");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("hl7Headers");
+        props.add("hostname");
+        props.add("idleTimeout");
+        props.add("idleTimeoutStrategy");
+        props.add("keepAlive");
+        props.add("lazyStartProducer");
+        props.add("lenientBind");
+        props.add("maxBufferSize");
+        props.add("maxConcurrentConsumers");
+        props.add("minBufferSize");
+        props.add("port");
+        props.add("readTimeout");
+        props.add("receiveBufferSize");
+        props.add("receiveTimeout");
+        props.add("requireEndOfData");
+        props.add("reuseAddress");
+        props.add("sendBufferSize");
+        props.add("stringPayload");
+        props.add("tcpNoDelay");
+        props.add("validatePayload");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -80,6 +83,11 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

@@ -17,65 +17,54 @@
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.List;
 
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.parser.ParseException;
+import com.apptasticsoftware.rssreader.Item;
+import com.apptasticsoftware.rssreader.RssReader;
 import org.apache.camel.Processor;
-import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
  */
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
-    private Document<Feed> document;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
-                                    boolean throttleEntries) {
-        super(endpoint, processor, filter, lastUpdate, throttleEntries);
-    }
+    private RssReader rssReader;
+    private List<Item> items;
 
-    private Document<Feed> getDocument() throws IOException, ParseException {
-        if (document == null) {
-            if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
-                document = AtomUtils.parseDocument(endpoint.getFeedUri());
-            } else {
-                document = AtomUtils.parseDocument(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword());
-            }
-            Feed root = document.getRoot();
-            if (endpoint.isSortEntries()) {
-                sortEntries(root);
-            }
-            list = root.getEntries();
-            entryIndex = list.size() - 1;
-        }
-        return document;
-    }
-
-    protected void sortEntries(Feed feed) {
-        feed.sortEntriesByUpdated(true);
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean throttleEntries) {
+        super(endpoint, processor, throttleEntries);
     }
 
     @Override
-    protected void populateList(Object feed) throws ParseException, IOException {
+    protected void doStart() throws Exception {
+        this.rssReader = new RssReader();
+        this.rssReader.addItemExtension("name", Item::setAuthor);
+        super.doStart();
+    }
+
+    @Override
+    protected void populateList(Object feed) throws IOException {
         // list is populated already in the createFeed method
     }
 
     @Override
     protected Object createFeed() throws IOException {
-        return getDocument().getRoot();
+        return readItems();
     }
 
     @Override
     protected void resetList() {
-        document = null;
+        items = null;
     }
 
-    @Override
-    protected EntryFilter createEntryFilter(Date lastUpdate) {
-        return new UpdatedDateFilter(lastUpdate);
+    private List<Item> readItems() throws IOException {
+        if (items == null) {
+            items = AtomUtils.readItems(endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
+            list = items;
+            entryIndex = list.size() - 1;
+        }
+        return items;
     }
+
 }

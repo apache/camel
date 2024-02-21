@@ -26,17 +26,22 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.influxdb.InfluxDB;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
+ * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v1, a time series
+ * database.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean",
-             category = { Category.DATABASE }, producerOnly = true)
+             category = { Category.DATABASE }, producerOnly = true, headersClass = InfluxDbConstants.class)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);
+    private static final String CREATE_DATABASE = "CREATE DATABASE ";
+    private static final String SHOW_DATABASES = "SHOW DATABASES";
 
     private InfluxDB influxDB;
 
@@ -53,6 +58,10 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String operation = InfluxDbOperations.INSERT;
     @UriParam
     private String query;
+    @UriParam(defaultValue = "false")
+    private boolean checkDatabaseExistence;
+    @UriParam(defaultValue = "false")
+    private boolean autoCreateDatabase;
 
     public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
         super(uri, component);
@@ -66,6 +75,16 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (checkDatabaseExistence) {
+            ensureDatabaseExists();
+        }
+
     }
 
     public InfluxDB getInfluxDB() {
@@ -143,5 +162,49 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
      */
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public boolean isCheckDatabaseExistence() {
+        return checkDatabaseExistence;
+    }
+
+    /**
+     * Define if we want to check the database existence while starting the endpoint
+     */
+    public void setCheckDatabaseExistence(boolean checkDatabaseExistence) {
+        this.checkDatabaseExistence = checkDatabaseExistence;
+    }
+
+    public boolean isAutoCreateDatabase() {
+        return autoCreateDatabase;
+    }
+
+    /**
+     * Define if we want to auto create the database if it's not present
+     */
+    public void setAutoCreateDatabase(boolean autoCreateDatabase) {
+        this.autoCreateDatabase = autoCreateDatabase;
+    }
+
+    private void ensureDatabaseExists() {
+        QueryResult result = getInfluxDB().query(new Query(SHOW_DATABASES));
+
+        //values are located in the first item in series, where list of values is the first item in the Serie's values,
+        //if any object on the 'path' is null, database does not exist
+        boolean exists;
+        try {
+            //NPE could be thrown from objects deep in the structure.
+            //try catch block with NullPointerException is used on purpose
+            exists = result.getResults().get(0).getSeries().get(0).getValues().get(0).contains(databaseName);
+        } catch (NullPointerException e) {
+            exists = false;
+        }
+
+        if (!exists) {
+            if (autoCreateDatabase) {
+                LOG.debug("Database {} doesn't exist. Creating it...", databaseName);
+                getInfluxDB().query(new Query(CREATE_DATABASE + databaseName, ""));
+            }
+        }
     }
 }

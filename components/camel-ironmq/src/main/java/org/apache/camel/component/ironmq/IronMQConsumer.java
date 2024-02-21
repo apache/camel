@@ -24,9 +24,11 @@ import io.iron.ironmq.Message;
 import io.iron.ironmq.Messages;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -48,6 +50,17 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
+    protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
+        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
+            DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
+            ds.setConcurrentConsumers(getEndpoint().getConfiguration().getConcurrentConsumers());
+            // if using concurrent consumers then resize pool to be at least same size
+            int ps = Math.max(ds.getPoolSize(), getEndpoint().getConfiguration().getConcurrentConsumers());
+            ds.setPoolSize(ps);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         ironQueue = getEndpoint().getClient().queue(getEndpoint().getConfiguration().getQueueName());
@@ -65,6 +78,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             messages = this.ironQueue.reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(),
                     getEndpoint().getConfiguration().getWait());
             LOG.trace("Received {} messages", messages.getSize());
+
+            // okay we have some response from ironmq so lets mark the consumer as ready
+            forceConsumerAsReady();
 
             Queue<Exchange> exchanges = createExchanges(messages.getMessages());
             int noProcessed = processBatch(CastUtils.cast(exchanges));
@@ -98,9 +114,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
@@ -108,7 +124,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             // add on completion to handle after work when the exchange is done
             // if batchDelete is not enabled
             if (!getEndpoint().getConfiguration().isBatchDelete()) {
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                     final String reservationId
                             = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
                     final String messageid
@@ -139,7 +155,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy to delete the message after being processed.
-     * 
+     *
      * @param exchange the exchange
      */
     protected void processCommit(Exchange exchange, String messageid, String reservationId) {
@@ -155,7 +171,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy when processing the exchange failed.
-     * 
+     *
      * @param exchange the exchange
      */
     protected void processRollback(Exchange exchange) {

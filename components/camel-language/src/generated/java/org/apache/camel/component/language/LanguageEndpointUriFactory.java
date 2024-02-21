@@ -19,19 +19,22 @@ public class LanguageEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("transform");
-        props.add("binary");
-        props.add("contentCache");
+        Set<String> props = new HashSet<>(10);
         props.add("allowContextMapAll");
-        props.add("resourceUri");
+        props.add("binary");
         props.add("cacheScript");
+        props.add("contentCache");
         props.add("languageName");
+        props.add("lazyStartProducer");
+        props.add("resourceUri");
+        props.add("resultType");
         props.add("script");
+        props.add("transform");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -60,6 +63,11 @@ public class LanguageEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

@@ -1,0 +1,119 @@
+= Debezium MongoDB Connector Component
+:doctitle: Debezium MongoDB Connector
+:shortname: debezium-mongodb
+:artifactid: camel-debezium-mongodb
+:description: Capture changes from a MongoDB database.
+:since: 3.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only consumer is supported
+//Manually maintained attributes
+:group: Debezium
+:camel-spring-boot-name: debezium-mongodb
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.9/development/engine.html[Debezium Engine], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
+
+[NOTE]
+====
+The Debezium MongoDB connector uses MongoDB’s oplog to capture the changes.
+The connector works only with the MongoDB replica sets or with sharded clusters, where each shard is a separate replica set.
+Therefore, you will need to have your MongoDB instance running either in replica set mode or sharded clusters mode.
+====
+
+[NOTE]
+====
+*Note on handling failures:*
+per https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[Debezium Embedded Engine] documentation,
+the engines are actively recording source offsets and periodically flush these offsets to a persistent storage.
+Therefore, when the application is restarted or crashed, the engine will resume from the last recorded offset.
+This means that, at normal operation, your downstream routes will receive each event exactly once.
+However, in case of an application crash (not having a graceful shutdown),
+the application will resume from the last recorded offset,
+which may result in receiving duplicate events immediately after the restart.
+Therefore, your downstream routes should be tolerant enough of such a case and deduplicate events if needed.
+====
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-debezium-mongodb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+---------------------------
+debezium-mongodb:name[?options]
+---------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+For more information about configuration:
+https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
+https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties]
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+*Note*: Debezium Mongodb uses MongoDB’s oplog to populate the CDC events, the update events in MongoDB’s oplog don’t have the before or after states of the changed document, so there’s no way for the Debezium connector to provide this information, therefore header key `CamelDebeziumBefore` is not available in this component.
+
+== Message body
+The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `String` JSON format, and you can unmarshal using Camel JSON Data Format.
+
+== Samples
+
+=== Consuming events
+
+Here is a basic route that you can use to listen to Debezium events from MongoDB connector:
+
+[source,java]
+----
+from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbHosts=rs0/localhost:27017&mongodbUser=debezium&mongodbPassword=dbz&mongodbName=dbserver1&databaseHistoryFileFilename=/usr/history-file-1.dat")
+    .log("Event received from Debezium : ${body}")
+    .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
+    .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
+    .log("    the event occurred upon this operation '${headers.CamelDebeziumSourceOperation}'")
+    .log("    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'")
+    .log("    with the key ${headers.CamelDebeziumKey}")
+    .choice()
+        .when(header(DebeziumConstants.HEADER_OPERATION).in("c", "u", "r"))
+            .unmarshal().json()
+            .log("Event received from Debezium : ${body}")
+         .end()
+    .end();
+----
+
+By default, the component will emit the events in the body String JSON format in case of `u`, `c` or `r` operations.
+This can be easily converted to JSON using Camel JSON Data Format e.g.: `.unmarshal().json()` like the above example.
+In case of operation `d`, the body will be `null`.
+
+[IMPORTANT]
+====
+This component is a thin wrapper around Debezium Engine as mentioned.
+Therefore, before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior.
+This is especially true in regard to https://debezium.io/documentation/reference/1.8/operations/embedded.html#_handling_failures[handling failures].
+====
+
+include::spring-boot:partial$starter.adoc[]

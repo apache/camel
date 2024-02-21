@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -40,7 +41,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_METHOD)).thenReturn("PUT");
 
-        AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
+        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {
                 return null;
@@ -97,7 +98,8 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("http://localhost:8080/endpoint?query=hello");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn("http://localhost:8080/endpoint?query=hello");
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class))
+                .thenReturn("http://localhost:8080/endpoint?query=hello");
 
         assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
                 AbstractHttpSpanDecorator.getHttpMethod(exchange, endpoint));
@@ -111,7 +113,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
         Mockito.when(message.getBody()).thenReturn("Message Body");
 
         assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
@@ -140,7 +142,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
 
         SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
@@ -159,7 +161,9 @@ public class AbstractHttpSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(TEST_URI, span.tags().get(Tag.HTTP_URL.name()));
+        assertEquals(TEST_URI, span.tags().get(TagConstants.HTTP_URL));
         assertTrue(span.tags().containsKey(Tag.HTTP_METHOD.name()));
+        assertTrue(span.tags().containsKey(TagConstants.HTTP_METHOD));
     }
 
     @Test
@@ -170,8 +174,8 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn("Another URL");
-        Mockito.when(message.getHeader(Exchange.HTTP_URL)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn("Another URL");
+        Mockito.when(message.getHeader(Exchange.HTTP_URL, String.class)).thenReturn(TEST_URI);
 
         AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
@@ -196,7 +200,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
 
         AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
@@ -286,6 +290,7 @@ public class AbstractHttpSpanDecoratorTest {
         decorator.post(span, exchange, null);
 
         assertEquals(200, span.tags().get(Tag.HTTP_STATUS.name()));
+        assertEquals(200, span.tags().get(TagConstants.HTTP_STATUS));
     }
 
 }

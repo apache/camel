@@ -36,6 +36,8 @@ public class LanguageProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageProducer.class);
 
+    private Class<?> resultType = Object.class;
+
     public LanguageProducer(LanguageEndpoint endpoint) {
         super(endpoint);
     }
@@ -45,13 +47,14 @@ public class LanguageProducer extends DefaultProducer {
         String script = null;
 
         // is there a custom expression in the header?
-        Expression exp = exchange.getIn().getHeader(Exchange.LANGUAGE_SCRIPT, Expression.class);
+        Expression exp = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, Expression.class);
         if (exp == null) {
-            script = exchange.getIn().getHeader(Exchange.LANGUAGE_SCRIPT, String.class);
+            script = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, String.class);
             if (script != null) {
                 // the script may be a file: so resolve it before using
                 script = getEndpoint().resolveScript(script);
                 exp = getEndpoint().getLanguage().createExpression(script);
+                exp.init(getEndpoint().getCamelContext());
             }
         }
         // if not fallback to use expression from endpoint
@@ -94,7 +97,9 @@ public class LanguageProducer extends DefaultProducer {
         // if we have a text based script then use and evaluate it
         if (script != null) {
             // create the expression from the script
-            exp = getEndpoint().getLanguage().createExpression(script);
+            Class<?> type = resultType != Object.class ? resultType : null;
+            exp = getEndpoint().getLanguage().createExpression(script, new Object[] { type });
+            exp.init(getEndpoint().getCamelContext());
             // expression was resolved from resource
             getEndpoint().setContentResolvedFromResource(true);
             // if we cache then set this as expression on endpoint so we don't re-create it again
@@ -107,7 +112,7 @@ public class LanguageProducer extends DefaultProducer {
         Object result;
         if (exp != null) {
             try {
-                result = exp.evaluate(exchange, Object.class);
+                result = exp.evaluate(exchange, resultType);
                 LOG.debug("Evaluated expression as: {} with: {}", result, exchange);
             } finally {
                 if (!getEndpoint().isCacheScript()) {
@@ -123,16 +128,20 @@ public class LanguageProducer extends DefaultProducer {
 
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setBody(result);
-            } else {
-                exchange.getIn().setBody(result);
-            }
+            exchange.getMessage().setBody(result);
         }
     }
 
     @Override
     public LanguageEndpoint getEndpoint() {
         return (LanguageEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (getEndpoint().getResultType() != null) {
+            resultType = getEndpoint().getCamelContext()
+                    .getClassResolver().resolveMandatoryClass(getEndpoint().getResultType());
+        }
     }
 }

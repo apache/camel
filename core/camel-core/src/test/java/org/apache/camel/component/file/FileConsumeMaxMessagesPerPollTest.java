@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,14 +27,7 @@ import org.junit.jupiter.api.Test;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&maxMessagesPerPoll=2";
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/poll");
-        super.setUp();
-    }
+    public static final String FILE_QUERY = "?initialDelay=0&delay=10&maxMessagesPerPoll=2";
 
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
@@ -44,10 +36,10 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
         mock.expectedMinimumMessageCount(2);
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
         mock.message(1).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
-
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "godday.txt");
+        String fileUri = fileUri(FILE_QUERY);
+        template.sendBodyAndHeader(fileUri, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri, "Godday World", Exchange.FILE_NAME, "godday.txt");
 
         // start route
         context.getRouteController().startRoute("foo");
@@ -59,7 +51,7 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY)).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

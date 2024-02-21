@@ -161,7 +161,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         log.trace("Running purge task to see if any entries have been timed out");
         try {
             purge();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // must catch and log exception otherwise the executor will now schedule next purgeTask
             log.warn("Exception occurred during purge task. This exception will be ignored.", t);
         }
@@ -233,7 +233,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         for (Listener<K, V> listener : listeners) {
             try {
                 listener.timeoutMapEvent(type, key, value);
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // Ignore
             }
         }

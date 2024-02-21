@@ -27,6 +27,7 @@
   <bean id="myPolicy" class="org.apache.camel.impl.RoutePolicyCallbackTest$MyRoutePolicy"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route id="foo" routePolicyRef="myPolicy">
       <from uri="direct:start"/>
       <to uri="mock:result"/>

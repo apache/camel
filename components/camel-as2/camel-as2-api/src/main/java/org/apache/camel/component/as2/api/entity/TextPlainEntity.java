@@ -18,21 +18,21 @@ package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 
 public class TextPlainEntity extends MimeEntity {
 
     private String content;
 
     public TextPlainEntity(String content, String charset, String contentTransferEncoding, boolean isMainBody) {
-        this.content = Args.notNull(content, "Content");
+        this.content = ObjectHelper.notNull(content, "Content");
         setContentType(ContentType.create(AS2MediaType.TEXT_PLAIN, charset));
         setContentTransferEncoding(contentTransferEncoding);
         setMainBody(isMainBody);
@@ -45,7 +45,7 @@ public class TextPlainEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII)) {
+        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {
@@ -58,7 +58,7 @@ public class TextPlainEntity extends MimeEntity {
             }
 
             // Write out content
-            canonicalOutstream.write(content.getBytes(AS2Charset.US_ASCII), 0, content.length());
+            canonicalOutstream.write(content.getBytes(StandardCharsets.US_ASCII), 0, content.length());
         }
     }
 

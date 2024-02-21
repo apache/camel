@@ -23,11 +23,8 @@ import org.apache.commons.csv.CSVFormat;
  */
 public interface CsvMarshallerFactory {
 
-    CsvMarshallerFactory DEFAULT = new CsvMarshallerFactory() {
-        @Override
-        public CsvMarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
-            return CsvMarshaller.create(format, dataFormat);
-        }
+    CsvMarshallerFactory DEFAULT = (CSVFormat format, CsvDataFormat dataFormat) -> {
+        return CsvMarshaller.create(format, dataFormat);
     };
 
     /**

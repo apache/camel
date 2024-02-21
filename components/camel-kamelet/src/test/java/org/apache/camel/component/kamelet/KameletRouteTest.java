@@ -18,13 +18,14 @@ package org.apache.camel.component.kamelet;
 
 import java.util.UUID;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KameletRouteTest extends CamelTestSupport {
     @Test
@@ -43,23 +44,36 @@ public class KameletRouteTest extends CamelTestSupport {
                 fluentTemplate.toF("direct:chain").withBody(body).request(String.class)).isEqualTo("b-a-" + body);
     }
 
+    @Test
+    public void duplicateRouteId() {
+        RouteBuilder rb = new RouteBuilder(context) {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .to("kamelet:echo/test?prefix=test");
+            }
+        };
+
+        assertThrows(FailedToCreateRouteException.class, () -> rb.addRoutesToCamelContext(context));
+    }
+
     // **********************************************
     //
     // test set-up
     //
     // **********************************************
 
-    @Obsolete
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")
                         .setBody().simple("{{prefix}}-${body}");
 
-                from("direct:single")
+                from("direct:single").routeId("test")
                         .to("kamelet:echo?prefix=a")
                         .log("${body}");
 

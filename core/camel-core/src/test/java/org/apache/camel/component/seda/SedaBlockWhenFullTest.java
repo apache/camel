@@ -19,13 +19,17 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests that a Seda producer supports the blockWhenFull option by blocking when a message is sent while the queue is
  * full.
  */
+@Timeout(20)
 public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int QUEUE_SIZE = 1;
     private static final int DELAY = 10;
@@ -33,9 +37,9 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
     private static final String SIZE_PARAM = "?size=%d";
     private static final String SEDA_WITH_OFFER_TIMEOUT_URI
-            = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&offerTimeout=100";
+            = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&offerTimeout=200";
     private static final String BLOCK_WHEN_FULL_URI
-            = "seda:blockingBar" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=200";
+            = "seda:blockingBar" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=1000";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE);
 
     @Override
@@ -52,32 +56,24 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSedaOfferTimeoutWhenFull() throws Exception {
-        try {
-            SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
-            assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
+    public void testSedaOfferTimeoutWhenFull() {
+        SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
+        assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
-            sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE);
-
-            fail("Failed to insert element into queue, " + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE),
+                "Failed to insert element into queue, " + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
     }
 
     @Test
-    public void testSedaDefaultWhenFull() throws Exception {
-        try {
-            SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
-            assertFalse(seda.isBlockWhenFull(),
-                    "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
+    public void testSedaDefaultWhenFull() {
+        SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
+        assertFalse(seda.isBlockWhenFull(),
+                "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
 
-            sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE);
-
-            fail("The route didn't fill the queue beyond capacity: test class isn't working as intended");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE),
+                "The route didn't fill the queue beyond capacity: test class isn't working as intended");
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
     }
 
     @Test

@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
@@ -34,14 +35,14 @@ public class XQueryTransformIssueTest extends CamelTestSupport {
 
         template.sendBody("direct:start", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
                         .to("log:info")

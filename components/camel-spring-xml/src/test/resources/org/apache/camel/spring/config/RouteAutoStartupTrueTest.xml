@@ -26,6 +26,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder location="classpath:org/apache/camel/spring/config/route.properties" id="properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
         <route id="bar" autoStartup="{{cool.bar.startup}}">
             <from uri="direct:start"/>
             <to uri="mock:result"/>

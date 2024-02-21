@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
@@ -340,7 +341,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertTrue(foo.getBar().isGoldCustomer());
         // a new class was created so its empty
         assertEquals(0, foo.getBar().getWork().getId());
-        assertEquals(null, foo.getBar().getWork().getName());
+        assertNull(foo.getBar().getWork().getName());
     }
 
     @Test
@@ -408,6 +409,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             }
 
             @Override
+            public <T> T newInstance(Class<T> type, Class<?> factoryClass, String factoryMethod) {
+                return null;
+            }
+
+            @Override
             public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                 return null;
             }
@@ -437,7 +443,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Tony Tiger", foo.getAnimal().getName());
-        assertEquals(true, foo.getAnimal().isDangerous());
+        assertTrue(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -450,7 +456,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -463,7 +469,31 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterMandatoryBean() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        try {
+            PropertyBindingSupport.build().bind(context, foo, "animal",
+                    "#class:org.apache.camel.support.Animal('#bean:myName', false)");
+            fail("Should have thrown exception");
+        } catch (PropertyBindingException e) {
+            NoSuchBeanException nsb = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
+            assertEquals("myName", nsb.getName());
+        }
+
+        // add bean and try again
+        context.getRegistry().bind("myName", "Acme");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('#bean:myName', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -476,7 +506,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Tiger", foo.getAnimal().getName());
-        assertEquals(true, foo.getAnimal().isDangerous());
+        assertTrue(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -489,7 +519,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -502,7 +532,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -579,6 +609,30 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("unknown", e.getPropertyName());
         }
+    }
+
+    @Test
+    public void testConvert() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.age", "#valueAs(Integer):33");
+        prop.put("bar.rider", "#valueAs(boolean):true");
+        prop.put("bar.gold-customer", "#valueAs(boolean):true");
+        prop.put("bar.work.id", "#valueAs(int):123");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        PropertyBindingSupport.bindProperties(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     public static class Foo {

@@ -41,7 +41,7 @@ public class DataSetFlinkProducer extends DefaultProducer {
             Thread.currentThread().setContextClassLoader(DataSet.class.getClassLoader());
             if (body instanceof List) {
                 List list = (List) body;
-                Object[] array = list.toArray(new Object[list.size()]);
+                Object[] array = list.toArray(new Object[0]);
                 result = dataSetCallback.onDataSet(ds, array);
             } else {
                 result = dataSetCallback.onDataSet(ds, body);

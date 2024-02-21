@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
 
     @BindToRegistry("myBootstrapOptions")
-    public NettyServerBootstrapConfiguration loadNettyBootstrapConf() throws Exception {
+    public NettyServerBootstrapConfiguration loadNettyBootstrapConf() {
 
         // create NettyServerBootstrapConfiguration instance where we can configure the bootstrap
         // option we want to use in our Camel routes. This allows us to configure this once,
@@ -53,7 +54,7 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // validate the options
         NettyHttpConsumer consumer = (NettyHttpConsumer) context.getRoute("foo").getConsumer();
@@ -70,10 +71,10 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we want to use the same bootstrap options and want to configure this explicit, so we
                 // have a NettyServerBootstrapConfiguration instance in the registry, with the key = myBootstrapOptions
                 // which we then tell netty-http to lookup and use

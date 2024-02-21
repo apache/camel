@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -40,14 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TelegramChatBotTest extends TelegramTestSupport {
 
     @Test
-    public void testChatBotResult() throws Exception {
+    public void testChatBotResult() {
 
         List<OutgoingTextMessage> msgs = Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
                         rawMessages -> rawMessages.size() >= 2)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
-                .collect(Collectors.toList());
+                .toList();
 
         assertCollectionSize(msgs, 2);
         assertTrue(msgs.stream().anyMatch(m -> "echo from the bot: Hello World!".equals(m.getText())));
@@ -77,12 +76,12 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
 
                         from("telegram:bots?authorizationToken=mock-token")
                                 .bean(TelegramChatBotTest.this, "chatBotProcess1")

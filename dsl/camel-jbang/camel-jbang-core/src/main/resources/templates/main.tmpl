@@ -1,0 +1,12 @@
+{{ .PackageName }}
+
+import org.apache.camel.main.Main;
+
+public class {{ .MainClassname }} {
+
+    public static void main(String[] args) throws Exception {
+        Main main = new Main({{ .MainClassname }}.class);
+        main.run(args);
+    }
+
+}

@@ -18,46 +18,43 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsConstants;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractXmlApplicationContext;
 
-public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringTestSupport {
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+// This one does not run well in parallel: it becomes flaky
+@Tags({ @Tag("not-parallel") })
+public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelBrokerClientTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
-    private static final String URI = "activemq:queue:foo?autoStartup=false";
+    private static final String URI = "activemq:queue:JmsSendToAlotOfDestinationWithSameEndpointTest?autoStartup=false";
 
     @Test
-    public void testSendToAlotOfMessageToQueues() throws Exception {
+    public void testSendToAlotOfMessageToQueues() {
+        assertDoesNotThrow(this::sendToAlotOfMessagesToQueue);
+    }
+
+    private void sendToAlotOfMessagesToQueue() {
         int size = 100;
 
-        LOG.info("About to send " + size + " messages");
+        LOG.info("About to send {} messages", size);
 
         for (int i = 0; i < size; i++) {
             // use the same endpoint but provide a header with the dynamic queue we send to
             // this allows us to reuse endpoints and not create a new endpoint for each and every jms queue
             // we send to
             if (i > 0 && i % 50 == 0) {
-                LOG.info("Send " + i + " messages so far");
+                LOG.info("Sent {} messages so far", i);
             }
-            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME, "foo" + i);
+            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME,
+                    "JmsSendToAlotOfDestinationWithSameEndpointTest" + i);
         }
 
         LOG.info("Send complete use jconsole to view");
-
-        // now we should be able to poll a message from each queue
-        // Thread.sleep(99999999);
-    }
-
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                new String[] {
-                        "classpath:org/apache/camel/component/jms/issues/broker.xml",
-                        "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml" });
     }
 
 }

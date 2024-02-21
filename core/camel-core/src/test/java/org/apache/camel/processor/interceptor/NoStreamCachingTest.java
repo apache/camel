@@ -70,7 +70,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNoStreamCacheIsDefault() throws Exception {
+    public void testStreamCacheIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -85,8 +85,9 @@ public class NoStreamCachingTest extends ContextTestSupport {
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisfied();
-        boolean b1 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
-        assertTrue(b1);
+
+        boolean a1 = a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache;
+        assertTrue(a1);
         assertEquals(MESSAGE, a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
@@ -95,7 +96,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").to("mock:a");
+                from("direct:a").noStreamCaching().to("mock:a");
 
                 from("direct:b").streamCaching().to("mock:b");
             }

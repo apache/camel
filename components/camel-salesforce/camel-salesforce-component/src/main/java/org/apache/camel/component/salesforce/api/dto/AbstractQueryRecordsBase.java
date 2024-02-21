@@ -16,36 +16,17 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.util.List;
+
 /**
  * Abstract base DTO for Salesforce SOQL Query records.
- * <p>
- * Derived classes must follow the template below:
- * </p>
- * 
- * <pre>
- * {
- *     &#64;code
- *     public class QueryResultMySObject extends AbstractQueryRecordsBase {
- *         &#64;XStreamImplicit
- *         private List<MySObject> records;
- *
- *         public List<MySObject> getRecords() {
- *             return records;
- *         }
- *
- *         public void setRecords(List<MySObject> records) {
- *             this.records = records;
- *         }
- *
- *     }
- * }
- * </pre>
  */
-public abstract class AbstractQueryRecordsBase extends AbstractDTOBase {
+public class AbstractQueryRecordsBase<T extends AbstractSObjectBase> extends AbstractDTOBase {
 
     private Boolean done;
     private int totalSize;
     private String nextRecordsUrl;
+    private List<T> records;
 
     public Boolean getDone() {
         return done;
@@ -71,4 +52,11 @@ public abstract class AbstractQueryRecordsBase extends AbstractDTOBase {
         this.nextRecordsUrl = nextRecordsUrl;
     }
 
+    public List<T> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<T> records) {
+        this.records = records;
+    }
 }

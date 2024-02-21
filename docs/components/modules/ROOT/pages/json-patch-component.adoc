@@ -1,0 +1,1 @@
+../../../../../components/camel-json-patch/src/main/docs/json-patch-component.adoc

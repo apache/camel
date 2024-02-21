@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.openstack;
 
-import java.io.IOException;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
@@ -41,18 +40,21 @@ public abstract class AbstractProducerTestSupport {
     @Mock
     protected Exchange exchange;
 
+    @Mock(extraInterfaces = ExtendedCamelContext.class)
+    protected CamelContext camelContext;
+
     @Mock
-    protected ExtendedCamelContext camelContext;
+    protected ExtendedCamelContext ecc;
 
     protected Message msg;
 
     protected Producer producer;
 
     @BeforeEach
-    public void before() throws IOException {
+    public void before() {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
-        when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension().getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

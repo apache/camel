@@ -16,51 +16,44 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsToDSendDynamicTest extends CamelTestSupport {
+public class JmsToDSendDynamicTest extends AbstractPersistentJMSTest {
 
     @Test
-    public void testToD() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+    public void testToD() {
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDSendDynamicTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDSendDynamicTest.beer");
 
         // there should only be one activemq endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("activemq:")).count();
         assertEquals(1, count, "There should only be 1 activemq endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("activemq:queue:bar", 2000, String.class);
+        String out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicTest.bar", 2000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("activemq:queue:beer", 2000, String.class);
+        out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicTest.beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    @Test
+    public void testToDSlashed() {
+        template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "JmsToDSendDynamicTest.bar");
+        String out = consumer.receiveBody("activemq://JmsToDSendDynamicTest.bar", 2000, String.class);
+        assertEquals("Hello bar", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");
+                from("direct:startSlashed").toD("activemq://${header.where}");
             }
         };
     }

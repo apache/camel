@@ -16,35 +16,26 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
     private static int counter;
     private String body = "Hello World this file will be deleted";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/deletefile");
-        super.setUp();
-    }
-
     @Test
     public void testPollFileAndShouldBeDeletedAtThirdPoll() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
-        template.sendBodyAndHeader("file://target/data/deletefile", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
         context.getRouteController().startRoute("FromFilePollThirdTimeOkTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
@@ -54,22 +45,20 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         assertEquals(3, counter);
 
         // assert the file is deleted
-        File file = new File("target/data/deletefile/hello.txt");
-        assertFalse(file.exists(), "The file should have been deleted");
+        assertFileNotExists(testFile("hello.txt"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup()
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).noAutoStartup()
                         .routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;
                                 if (counter < 3) {
                                     // file should exists
-                                    File file = new File("target/data/deletefile/hello.txt");
-                                    assertTrue(file.exists(), "The file should NOT have been deleted");
+                                    assertFileExists(testFile("hello.txt"));
                                     throw new IllegalArgumentException("Forced by unittest");
                                 }
                             }

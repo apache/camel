@@ -33,7 +33,7 @@ public class QuartzJobRouteUnderscoreTest extends BaseQuartzTest {
         mock.message(0).header("triggerGroup").isEqualTo("my_group");
         mock.message(0).header("triggerName").isEqualTo("my_timer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
         assertNotNull(detail);

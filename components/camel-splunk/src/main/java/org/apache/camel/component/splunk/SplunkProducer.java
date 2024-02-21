@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.splunk;
 
+import java.util.Optional;
+
 import com.splunk.Args;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.splunk.event.SplunkEvent;
@@ -72,6 +74,9 @@ public class SplunkProducer extends DefaultProducer {
                 LOG.debug("Creating TcpDataWriter");
                 dataWriter = new TcpDataWriter(endpoint, buildSplunkArgs());
                 ((TcpDataWriter) dataWriter).setPort(endpoint.getConfiguration().getTcpReceiverPort());
+                ((TcpDataWriter) dataWriter).setHost(endpoint.getConfiguration().getHost());
+                ((TcpDataWriter) dataWriter)
+                        .setLocalPort(Optional.ofNullable(endpoint.getConfiguration().getTcpReceiverLocalPort()));
                 LOG.debug("TcpDataWriter created for endpoint {}", endpoint);
                 break;
             }

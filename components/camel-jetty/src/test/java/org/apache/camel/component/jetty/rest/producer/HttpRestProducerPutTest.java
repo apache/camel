@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.rest.producer;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class HttpRestProducerPutTest extends BaseJettyTest {
@@ -28,14 +29,14 @@ public class HttpRestProducerPutTest extends BaseJettyTest {
 
         fluentTemplate.withBody("Donald Duck").withHeader("id", "123").to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().producerComponent("http").component("jetty").host("localhost").port(getPort());
 

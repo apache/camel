@@ -16,8 +16,8 @@
  */
 package org.apache.camel.core.xml.util.jsse;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.BaseSSLContextParameters;

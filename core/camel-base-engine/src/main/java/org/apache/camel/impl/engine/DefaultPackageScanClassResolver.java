@@ -21,11 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,12 +44,15 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
 public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         implements PackageScanClassResolver, NonManagedService {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultPackageScanClassResolver.class);
 
     private volatile Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
@@ -78,8 +78,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             return Collections.emptySet();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for annotations of {} in packages: {}", annotation.getName(), Arrays.asList(packageNames));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for annotations of {} in packages: {}", annotation.getName(), Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
@@ -88,7 +88,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             find(test, pkg, classes);
         }
 
-        log.debug("Found: {}", classes);
+        LOG.debug("Found: {}", classes);
 
         return classes;
     }
@@ -99,8 +99,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             return Collections.emptySet();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for annotations of {} in packages: {}", annotations, Arrays.asList(packageNames));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for annotations of {} in packages: {}", annotations, Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
@@ -109,7 +109,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             find(test, pkg, classes);
         }
 
-        log.debug("Found: {}", classes);
+        LOG.debug("Found: {}", classes);
 
         return classes;
     }
@@ -120,8 +120,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             return Collections.emptySet();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for implementations of {} in packages: {}", parent.getName(), Arrays.asList(packageNames));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for implementations of {} in packages: {}", parent.getName(), Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
@@ -130,7 +130,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             find(test, pkg, classes);
         }
 
-        log.debug("Found: {}", classes);
+        LOG.debug("Found: {}", classes);
 
         return classes;
     }
@@ -146,13 +146,18 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             find(filter, pkg, classes);
         }
 
-        log.debug("Found: {}", classes);
+        LOG.debug("Found: {}", classes);
 
         return classes;
     }
 
     protected void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
-        packageName = packageName.replace('.', '/');
+        // special for root package
+        if (".".equals(packageName)) {
+            packageName = "";
+        } else {
+            packageName = packageName.replace('.', '/');
+        }
 
         Set<ClassLoader> set = getClassLoaders();
 
@@ -162,19 +167,13 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     }
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
-        if (log.isTraceEnabled()) {
-            log.trace("Searching for: {} in package: {} using classloader: {}",
-                    new Object[] { test, packageName, loader.getClass().getName() });
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Searching for: {} in package: {} using classloader: {}",
+                    test, packageName, loader.getClass().getName());
         }
 
-        Enumeration<URL> urls;
-        try {
-            urls = getResources(loader, packageName);
-            if (!urls.hasMoreElements()) {
-                log.trace("No URLs returned by classloader");
-            }
-        } catch (IOException ioe) {
-            log.warn("Cannot read package: {}", packageName, ioe);
+        Enumeration<URL> urls = getUrls(packageName, loader);
+        if (urls == null) {
             return;
         }
 
@@ -182,55 +181,20 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             URL url = null;
             try {
                 url = urls.nextElement();
-                log.trace("URL from classloader: {}", url);
+                LOG.trace("URL from classloader: {}", url);
 
                 url = customResourceLocator(url);
 
-                String urlPath = url.getFile();
-                urlPath = URLDecoder.decode(urlPath, "UTF-8");
-                if (log.isTraceEnabled()) {
-                    log.trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
-                }
-
-                // If it's a file in a directory, trim the stupid file: spec
-                if (urlPath.startsWith("file:")) {
-                    // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
-                    // for example + being decoded to something else (+ can be used in temp folders on Mac OS)
-                    // to remedy this then create new path without using the URLDecoder
-                    try {
-                        urlPath = new URI(url.getFile()).getPath();
-                    } catch (URISyntaxException e) {
-                        // fallback to use as it was given from the URLDecoder
-                        // this allows us to work on Windows if users have spaces in paths
-                    }
-
-                    if (urlPath.startsWith("file:")) {
-                        urlPath = urlPath.substring(5);
-                    }
-                }
-
-                // osgi bundles should be skipped
-                if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-                    log.trace("Skipping OSGi bundle: {}", url);
+                String urlPath = parseUrlPath(url);
+                if (urlPath == null) {
                     continue;
                 }
 
-                // bundle resource should be skipped
-                if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
-                    log.trace("Skipping bundleresource: {}", url);
-                    continue;
-                }
-
-                // Else it's in a JAR, grab the path to the jar
-                if (urlPath.indexOf('!') > 0) {
-                    urlPath = urlPath.substring(0, urlPath.indexOf('!'));
-                }
-
-                log.trace("Scanning for classes in: {} matching criteria: {}", urlPath, test);
+                LOG.trace("Scanning for classes in: {} matching criteria: {}", urlPath, test);
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    log.trace("Loading from directory using file: {}", file);
+                    LOG.trace("Loading from directory using file: {}", file);
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream = null;
@@ -240,14 +204,14 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                                 || isAcceptableScheme(urlPath)) {
                             // load resources using http/https, sonicfs and other acceptable scheme
                             // sonic ESB requires to be loaded using a regular URLConnection
-                            log.trace("Loading from jar using url: {}", urlPath);
+                            LOG.trace("Loading from jar using url: {}", urlPath);
                             URL urlStream = new URL(urlPath);
                             URLConnection con = urlStream.openConnection();
                             // disable cache mainly to avoid jar file locking on Windows
                             con.setUseCaches(false);
                             stream = con.getInputStream();
                         } else {
-                            log.trace("Loading from jar using file: {}", file);
+                            LOG.trace("Loading from jar using file: {}", file);
                             stream = new FileInputStream(file);
                         }
 
@@ -264,7 +228,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
-                log.debug("Cannot read entries in url: {}", url, e);
+                LOG.debug("Cannot read entries in url: {}", url, e);
             }
         }
     }
@@ -294,19 +258,21 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         File[] files = location.listFiles();
         StringBuilder builder;
 
+        // this will prevent NullPointerException, but there are no means to tell caller class that the location folder is empty
+        if (files == null) {
+            return;
+        }
+
         for (File file : files) {
             builder = new StringBuilder(100);
-            String name = file.getName();
-            if (name != null) {
-                name = name.trim();
-                builder.append(parent).append("/").append(name);
-                String packageOrClass = parent == null ? name : builder.toString();
+            final String name = file.getName().trim();
+            builder.append(parent).append("/").append(name);
+            String packageOrClass = parent == null ? name : builder.toString();
 
-                if (file.isDirectory()) {
-                    loadImplementationsInDirectory(test, packageOrClass, file, classes);
-                } else if (name.endsWith(".class")) {
-                    addIfMatching(test, packageOrClass, classes);
-                }
+            if (file.isDirectory()) {
+                loadImplementationsInDirectory(test, packageOrClass, file, classes);
+            } else if (name.endsWith(".class")) {
+                addIfMatching(test, packageOrClass, classes);
             }
         }
     }
@@ -332,10 +298,10 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             entries = doLoadJarClassEntries(stream, urlPath);
             if (jarCache != null) {
                 jarCache.put(urlPath, entries);
-                log.trace("Cached {} JAR with {} entries", urlPath, entries.size());
+                LOG.trace("Cached {} JAR with {} entries", urlPath, entries.size());
             }
         } else {
-            log.trace("Using cached {} JAR with {} entries", urlPath, entries.size());
+            LOG.trace("Using cached {} JAR with {} entries", urlPath, entries.size());
         }
 
         doLoadImplementationsInJar(test, parent, entries, classes);
@@ -357,18 +323,15 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
 
             JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
-                String name = entry.getName();
-                if (name != null) {
-                    name = name.trim();
-                    if (!entry.isDirectory() && name.endsWith(".class")) {
-                        entries.add(name);
-                    }
+                final String name = entry.getName().trim();
+                if (!entry.isDirectory() && name.endsWith(".class")) {
+                    entries.add(name);
                 }
             }
         } catch (IOException ioe) {
-            log.warn("Cannot search jar file '{}' due to an IOException: {}", urlPath, ioe.getMessage(), ioe);
+            LOG.warn("Cannot search jar file '{}' due to an IOException: {}", urlPath, ioe.getMessage(), ioe);
         } finally {
-            IOHelper.close(jarStream, urlPath, log);
+            IOHelper.close(jarStream, urlPath, LOG);
         }
 
         return entries;
@@ -404,36 +367,36 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test,
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test,
                             classLoader);
                 }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);
-                    log.trace("Loaded the class: {} in classloader: {}", type, classLoader);
+                    LOG.trace("Loaded the class: {} in classloader: {}", type, classLoader);
                     if (test.matches(type)) {
-                        log.trace("Found class: {} which matches the filter in classloader: {}", type, classLoader);
+                        LOG.trace("Found class: {} which matches the filter in classloader: {}", type, classLoader);
                         classes.add(type);
                     }
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Cannot find class '{}' in classloader: {}. Reason: {}", fqn, classLoader,
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Cannot find class '{}' in classloader: {}. Reason: {}", fqn, classLoader,
                                 e.getMessage(), e);
                     }
                 } catch (NoClassDefFoundError e) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Cannot find the class definition '{}' in classloader: {}. Reason: {}", fqn, classLoader,
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Cannot find the class definition '{}' in classloader: {}. Reason: {}", fqn, classLoader,
                                 e.getMessage(), e);
                     }
                 }
             }
             if (!found) {
-                log.debug("Cannot find class '{}' in any classloaders: {}", fqn, set);
+                LOG.debug("Cannot find class '{}' in any classloaders: {}", fqn, set);
             }
         } catch (Exception e) {
-            log.warn("Cannot examine class '{}' due to a {} with message: {}", fqn, e.getClass().getName(),
+            LOG.warn("Cannot examine class '{}' due to a {} with message: {}", fqn, e.getClass().getName(),
                     e.getMessage(), e);
 
         }

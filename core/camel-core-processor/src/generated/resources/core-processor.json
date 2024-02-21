@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-processor",
+    "title": "Core Processor",
+    "description": "Camel core processors",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

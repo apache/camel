@@ -1,4 +1,3 @@
-[[HealthCheck-HealthCheck]]
 = Health Checks
 
 Camel provides support to probe the state of an integration via a pluggable Health Check strategy based on the following concepts:
@@ -11,14 +10,24 @@ Camel provides support to probe the state of an integration via a pluggable Heal
 
 == Health checks out of the box
 
-Camel provides three standard health checks out of the box
+Camel provides the following health checks out of the box:
 
-- context - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
-- routes - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
+- _context_ - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
+- _routes_ - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
   This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
   Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
-  such as troublesome routes that may not startup the first time, and are retried to be started in the background with backoff delays.
-- registry - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
+  such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
+- _consumers_ A `HealthCheckRegistry` which discovers all the consumers from all the routes in `CamelContext`
+  enabling fine-grained checks for the route input. This means if the consumer is failing to poll new messages
+  then the health check can detect this and report as un-healthy. Note that the consumer will be DOWN during its initialization and until at least
+  one poll run has been executed, to know whether that poll was a success or not. And if the poll was a success
+  then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
+  and then after first poll run then DOWN again because the consumer cannot poll from external system;
+  which causes the health check to be _flaky_.
+- _producers_ A `HealthCheckRegistry` which are for producer based health-checks. There are a few components
+  which comes with producer health checks such as `camel-kafka` and many of the `AWS` components.
+  However, producer health checks are by default disabled. See further below for how to enable producer health checks.
+- _registry_ - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
 
 == IDs
 
@@ -27,46 +36,33 @@ With the suffix `-health-check` or `-health-check-repository`. When looking up o
 
 For example `context-health-check` is the ID but can also be used by its shorthand `context`.
 
+The ID of the consumer health checks is the route id with `consumer:` as prefix, i.e. if the route
+is named foo, then the ID is `consumer:foo`.
+
 == Readiness and Liveness
 
-A health check is by default useable for both readiness and liveness checks.
+A health check is by default usable for both readiness and liveness checks.
 
-To specify a custom health check as only useable for liveness checks,
+To specify a custom health check as only usable for liveness checks,
 you would need to turn off readiness, by overriding the `isReadiness` method and return `false`.
 
 [source,java]
 ----
-    @Override
-    public boolean isReadiness() {
-        return false;
-    }
+@Override
+public boolean isReadiness() {
+    return false;
+}
 ----
-
-== Health Check configuration
-
-The `HealthCheckConfiguration` has the following options:
-
-[%header,cols=3*]
-|====
-| Name | Default | Description
-| enabled | true | Set if the check associated to this configuration is enabled or not.
-| interval | | Set the check interval in milli seconds.
-| failureThreshold | | Set the number of failure before reporting the service as un-healthy.
-|====
-
-The `interval` and `failureThreshold` are used for configuring health checks to deal with flaky checks.
-For example assume you do not want to regard a check as immediately DOWN when a check for the first time returns a response as DOWN.
-So you can specify the `interval=10000` and `failureThreshold=5`, which means that the check has slacks, and will
-only report it as DOWN when there has been 5 failures in a row, with a minimum of 10 second of interval between these checks.
-So in other words after minimum 50 seconds and 5 calls then it can be reported as DOWN.
 
 == Configuring health-check
 
 Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
 such as Camel on Spring Boot, or Camel K.
 
-Camel will automatic enable `context`, `routes` and `registry` health-checks if `camel-health` is detected on the classpath.
-They are all enabled by default. However you can configure them, for example to turn it off:
+Camel will automatically enable `context`, `routes`, `consumers`, `producers` and `registry` health-checks if `camel-health` is detected on the classpath.
+They are all enabled by default (except for `producers` which is disabled).
+
+However, you can configure them, for example to turn them off:
 
 [source,properties]
 ----
@@ -75,58 +71,153 @@ They are all enabled by default. However you can configure them, for example to 
 
 # allows to enable or disable health-checks from startup
 # for example to only use context health-check
-camel.health.contextEnabled=true
 camel.health.routesEnabled=false
+camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
 
-== Configuring routes health-check
+=== Excluding health-checks
 
-The `routes` health check supports filtering by route id, or endpoint uri using a pattern style (* as wildcard, and regexp supported).
-For example to turn off all routes that are from kafka, you can do:
+By default, all enabled health-checks are invoked by Camel when check the health status.
 
-NOTE: Notice the syntax is a map `[]` where the key is the route id pattern. Its important to set the `parent`
-option to refer to what health-check this configuration applies for such as `routes` or `registry`.
+It is possible to specify checks that should be excluded, for example a specific route by the route-id.
 
 [source,properties]
 ----
-camel.health.config[kafka*].parent=routes
-camel.health.config[kafka*].enabled=false
+camel.health.exclude-pattern = myroute
 ----
 
-It's possible to set a default fallback configuration using `[*]` as the route id:
+You can specify multiple patterns (and use wildcards) such as:
+
 [source,properties]
 ----
-camel.health.config[kafka*].parent=routes
-camel.health.config[kafka*].enabled=false
-camel.health.config[*].parent=routes
-camel.health.config[*].enabled=true
-camel.health.config[*].failure-threshold=10
+camel.health.exclude-pattern = myroute,foo,bar*
 ----
+
+=== Turning off consumer level health-checks
+
+If routes health check is enabled then they will execute consumer health-checks as well
+as part of an aggregated response.
+
+The consumer checks can be turned off, to only use the route level checks (status of the route)
+
+[source,properties]
+----
+camel.health.consumersEnabled=false
+----
+
+You can also turn off individual consumers by prefixing the ID with `consumer:` and the route id:
+
+[source,properties]
+----
+camel.health.exclude-pattern = consumer:myroute*
+----
+
+which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
+
+
+Or you can turn off producer based health checks by their component name:
+
+[source,properties]
+----
+camel.health.exclude-pattern = producer:kafka*
+----
+
+Or all AWS producer health-checks
+
+[source,properties]
+----
+camel.health.exclude-pattern = producer:aws*
+----
+
+=== Turning on producer level health-checks
+
+Only consumer based health-checks is enabled by default.
+
+Some components (in particular AWS) provides also health checks for producers.
+These health checks can be enabled via:
+
+[source,properties]
+----
+camel.health.producersEnabled=true
+----
+
+=== Turning off health checks from components
+
+Some Camel components comes with health-checks.
+
+For example to turn off both consumer and producer health checks from Kafka:
+
+[source,properties]
+----
+camel.component.kafka.health-check-consumer-enabled = false
+camel.component.kafka.health-check-producer-enabled = false
+----
+
+TIP: You can turn of either consumer, producer or both.
 
 == JMX management
 
-The health check is managable via JMX (requires `camel-management` JAR on the classpath).
+The health check is manageable via JMX (requires `camel-management` JAR on the classpath).
 You can find the `DefaultHealthCheck` MBean under the `health` node in the Camel JMX tree.
 
 This MBean allows at runtime to manage health-checks where you can enable and disable checks based on their IDs.
 As well have the latest status whether the overall health check is healthy or not.
 The MBean also allows invoking health checks based on IDs (or all of them).
 
+=== Configuring level of details in the health check responses
+
+The option `exposureLevel` sets the level of details to exposure as result of invoking health checks.
+
+There are the following levels:
+
+- _full_ - The full level will include all details and status from all the invoked health checks.
+- _default_ - The default level will report UP if everything is okay, and only include detailed information for health check that was DOWN.
+- _oneline_ - The oneline level will only report either UP or DOWN.
+
+You can specify multiple patterns (and use wildcards) such as:
+
+For example to only report either as UP or DOWN then use:
+
+[source,properties]
+----
+camel.health.exposure-level = oneline
+----
+
+=== Enriching and controlling health check responses
+
+Each health check that is invoked will gather details about the result using `HealthCheckResultBuilder`.
+
+To allow enriching and manipulating the result, then you can use `HealthCheckResultStrategy` to
+plug in a custom bean that can process the result, and change state, add information, remove unwanted information,
+etc. on the result builder.
+
+The custom bean should be registered to the Camel xref:registry.adoc[Registry] to be discovered
+by `camel-health`. Only one instance of the bean is allowed.
+
 == Invoking health checks
 
 You can invoke the health checks from Java by using the `org.apache.camel.health.HealthCheckHelper` which has APIs
-to easily invoke all the health checks and gather their results, or filter out unwanated checkes, or invoke only
+to easily invoke all the health checks and gather their results, or filter out unwanted checks, or invoke only
 the readiness or liveness checks.
 
 The health checks can also be invoked from JMX.
 
-== Writing a custom check:
+== Writing a custom health check
 
-There are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some useful methods:
+There are a limited number of health checks provided by Camel out of the box,
+so you may need to write your own check which you can do by implementing the _HealthCheck_ interface
+or by extending _AbstractHealthCheck_ which provides some useful methods.
+
+To make the health-check discoverable you should annotate the class with `@HealthCheck` and
+the _name_-check syntax.
 
 [source,java]
 ----
+import org.apache.camel.spi.annotations.HealthCheck;
+import org.apache.camel.impl.health.AbstractHealthCheck;
+
+@HealthCheck("my-check")
 public final class MyHealthCheck extends AbstractHealthCheck {
 
     public MyHealthCheck() {
@@ -150,9 +241,76 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 }
 ----
 
-You can now make _MyHealthCheck_ available to Camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
-The example `camel-example-main-health` has a custom health check.
+You can now make _MyHealthCheck_ available to Camel by adding an instance to (for example Spring application context)
+or directly to the Camel xref:registry.adoc[Registry].
+
+== Loading custom health checks
+
+Camel can discover and load custom health checks from classpath scanning. This requires
+to annotate the custom health checks with `@HealthCheck` annotation on the class (see above).
+
+Then the xref:camel-component-maven-plugin.adoc[camel-component-maven-plugin] can be
+used to automatic generated service loader file in `META-INF/services/org/apache/camel/health-checks` that Camel uses
+to discover the custom health checks.
+
+You must also enable loading custom health check by setting (Camel Main, Camel K, or Camel Quarkus):
+
+[source,properties]
+----
+camel.main.load-health-checks = true
+----
+
+And in Spring Boot:
+
+[source,properties]
+----
+camel.springboot.load-health-checks = true
+----
+
+And if you use the classic Spring XML or Blueprint XML, you can enable this on `<camelContext>` as shown:
+
+[source,xml]
+----
+<camelContext loadHealthChecks="true">
+    ...
+</camelContext>
+----
+
+And of course you can also enable loading health checks from Java via `CamelContext`:
+
+[source,java]
+----
+CamelContext context = ...
+context.setLoadHealthChecks(true);
+----
+
+TIP: The example `main-health` has a custom health check which is loadable.
+
+=== Loading custom health checks in Camel Quarkus
+
+If you use Camel Quarkus then you can write custom health checks with
+xref:components:others:microprofile-health.adoc[MicroProfile Health], which
+Camel Quarkus can automatically discover during build time compilation and ensure
+are automatically loaded.
+
+Using Camel's own health check APIs does however allow building health checks
+that are usable anywhere you use Camel whether its standalone, spring boot, quarkus,
+or something else.
+
+== Writing custom Health Check for Camel components
+
+You can implement custom health checks in Camel components (currently only for consumers).
+
+To do this, you implement the interface `HealthCheckAware` on your consumer class, which should
+return the custom health check in the getter method.
+
+In the custom health check implementation, you can perform the check as shown in the previous section.
+Camel will then use these custom component health checks when it performs *routes* health checks.
 
 == Examples
 
-You can find a standalone example in the Camel examples in the `camel-example-main-health` directory.
+There are examples for Camel at:
+
+- Camel Standalone: https://github.com/apache/camel-examples/tree/main/main-health[main-health]
+- Camel Spring Boot: https://github.com/apache/camel-spring-boot-examples/tree/main/health-checks[health-checks]
+- Camel Quarkus: https://github.com/apache/camel-quarkus-examples/tree/main/health[health]

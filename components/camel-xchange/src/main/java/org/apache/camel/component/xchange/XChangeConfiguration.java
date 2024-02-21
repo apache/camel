@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.xchange;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 
@@ -54,10 +48,10 @@ public class XChangeConfiguration {
         ticker
     }
 
+    @Metadata(description = "The target currency", javaType = "org.knowm.xchange.currency.Currency")
     public static final String HEADER_CURRENCY = "Currency";
+    @Metadata(description = "The target currency pair", javaType = "org.knowm.xchange.currency.CurrencyPair")
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
-
-    static Map<String, Class<? extends Exchange>> xchangeMapping = new HashMap<>();
 
     @UriPath(description = "The exchange to connect to")
     @Metadata(required = true)
@@ -72,10 +66,6 @@ public class XChangeConfiguration {
     private Currency currency;
     @UriParam(description = "The currency pair")
     private String currencyPair;
-
-    public XChangeConfiguration(XChangeComponent component) {
-        ObjectHelper.notNull(component, "component");
-    }
 
     public String getName() {
         return name;
@@ -128,23 +118,4 @@ public class XChangeConfiguration {
         this.currencyPair = currencyPair;
     }
 
-    @SuppressWarnings("unchecked")
-    public Class<? extends Exchange> getXChangeClass() {
-        Class<? extends Exchange> xchangeClass = xchangeMapping.get(name);
-        if (xchangeClass == null) {
-            String firstUpper = name.substring(0, 1).toUpperCase() + name.substring(1);
-            String className = "org.knowm.xchange." + name + "." + firstUpper + "Exchange";
-            ClassLoader classLoader = getClass().getClassLoader();
-            try {
-                xchangeClass = (Class<? extends Exchange>) classLoader.loadClass(className);
-            } catch (ClassNotFoundException e) {
-                // ignore
-            }
-        }
-        return xchangeClass;
-    }
-
-    public Set<String> getSupportedXChangeNames() {
-        return xchangeMapping.keySet();
-    }
 }

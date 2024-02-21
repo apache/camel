@@ -1,0 +1,20 @@
+{
+  "id" : "ea1f6a98-86b1-44e0-aecc-9c3b2e15cc9d",
+  "name" : "regions_delete.json",
+  "request" : {
+    "url" : "/v3/groups/c0d675eac29945ad9dfd08aa1bb75751",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+        "Date": "Wed, 16 Mar 2016 15:01:58 GMT",
+        "Server": "Apache/2.4.7 (Ubuntu)",
+        "Vary": "X-Auth-Token",
+        "x-openstack-request-id": "req-bf13fc70-8a3d-41ff-881a-880bc8a59f4d"
+    }
+  },
+  "uuid" : "ea1f6a98-86b1-44e0-aecc-9c3b2e15cc9d",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

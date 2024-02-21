@@ -18,6 +18,7 @@ package org.apache.camel.builder.saxon;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,16 +27,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,8 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(XPathSplitChoicePerformanceTest.class);
+
+    @TempDir
+    Path testDirectory;
 
     private int size = 20 * 1000;
     private final AtomicInteger tiny = new AtomicInteger();
@@ -62,16 +65,16 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
 
     @Test
     @Disabled("Manual test")
-    public void testXPathPerformanceRoute() throws Exception {
+    public void testXPathPerformanceRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(60, TimeUnit.SECONDS);
-        LOG.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Processed file with {} elements in: {}", size, TimeUtils.printDuration(watch.taken(), true));
 
-        LOG.info("Processed " + tiny.get() + " tiny messages");
-        LOG.info("Processed " + small.get() + " small messages");
-        LOG.info("Processed " + med.get() + " medium messages");
-        LOG.info("Processed " + large.get() + " large messages");
+        LOG.info("Processed {} tiny messages", tiny.get());
+        LOG.info("Processed {} small messages", small.get());
+        LOG.info("Processed {} medium messages", med.get());
+        LOG.info("Processed {} large messages", large.get());
 
         assertEquals((size / 10) * 4, tiny.get());
         assertEquals((size / 10) * 2, small.get());
@@ -82,13 +85,13 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("file:target/data?noop=true")
+            public void configure() {
+                from(TestSupport.fileUri(testDirectory, "?noop=true"))
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 log.info("Starting to process file");
                                 watch.restart();
                             }
@@ -97,52 +100,52 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                         .choice()
                         .when().xpath("/order/amount < 10")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>3</amount>"), xml);
 
                                 int num = tiny.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " tiny messages");
+                                    log.info("Processed {} tiny messages", num);
                                     log.debug(xml);
                                 }
                             }
                         })
                         .when().xpath("/order/amount < 50")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>44</amount>"), xml);
 
                                 int num = small.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " small messages");
+                                    log.info("Processed {} small messages", num);
                                     log.debug(xml);
                                 }
                             }
                         })
                         .when().xpath("/order/amount < 100")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>88</amount>"), xml);
 
                                 int num = med.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " medium messages");
+                                    log.info("Processed {} medium messages", num);
                                     log.debug(xml);
                                 }
                             }
                         })
                         .otherwise()
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
                                 assertTrue(xml.contains("<amount>123</amount>"), xml);
 
                                 int num = large.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " large messages");
+                                    log.info("Processed {} large messages", num);
                                     log.debug(xml);
                                 }
                             }
@@ -153,13 +156,10 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         };
     }
 
-    public static void createDataFile(Logger log, int size) throws Exception {
-        deleteDirectory("target/data");
-        createDirectory("target/data");
-
+    public void createDataFile(Logger log, int size) throws Exception {
         log.info("Creating data file ...");
 
-        File file = new File("target/data/data.xml");
+        File file = testDirectory.resolve("data.xml").toFile();
         FileOutputStream fos = new FileOutputStream(file, true);
         fos.write("<orders>\n".getBytes());
 

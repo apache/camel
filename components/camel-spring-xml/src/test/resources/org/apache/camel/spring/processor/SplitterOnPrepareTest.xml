@@ -25,9 +25,10 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <split onPrepareRef="fixNamePrepare">
+            <split onPrepare="fixNamePrepare">
                 <simple>${body}</simple>
                 <to uri="direct:a"/>
             </split>

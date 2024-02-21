@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -29,24 +27,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MinaDisconnectTest extends BaseMinaTest {
 
     @Test
-    public void testCloseSessionWhenComplete() throws Exception {
+    public void testCloseSessionWhenComplete() {
         Object out = template.requestBody(
                 String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort()), "Chad");
         assertEquals("Bye Chad", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort()))
-                        .process(new Processor() {
-
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                exchange.getMessage().setBody("Bye " + body);
-                            }
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort())
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
                         });
             }
         };

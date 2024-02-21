@@ -40,8 +40,7 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     public RedisIdempotentRepository(String processorName) {
         redisConfiguration = new RedisConfiguration();
-        RedisTemplate<String, String> redisTemplate = redisConfiguration.getRedisTemplate();
-        this.redisTemplate = redisTemplate;
+        this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
         this.setOperations = redisTemplate.opsForSet();
         redisTemplate.getConnectionFactory().getConnection().flushDb();
         this.processorName = processorName;

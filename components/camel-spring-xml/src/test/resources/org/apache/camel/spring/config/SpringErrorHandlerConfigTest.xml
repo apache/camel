@@ -33,6 +33,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <errorHandler id="defaultEH">
             <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="1000" asyncDelayedRedelivery="true"/>

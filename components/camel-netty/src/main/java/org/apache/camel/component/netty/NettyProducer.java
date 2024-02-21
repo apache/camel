@@ -18,6 +18,9 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -29,13 +32,19 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueDomainSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.unix.DomainSocketAddress;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
@@ -45,16 +54,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,24 +114,26 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
-            GenericObjectPool.Config config = new GenericObjectPool.Config();
-            config.maxActive = configuration.getProducerPoolMaxActive();
-            config.minIdle = configuration.getProducerPoolMinIdle();
-            config.maxIdle = configuration.getProducerPoolMaxIdle();
+            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            config.setMaxTotal(configuration.getProducerPoolMaxTotal());
+            config.setMinIdle(configuration.getProducerPoolMinIdle());
+            config.setMaxIdle(configuration.getProducerPoolMaxIdle());
+            config.setBlockWhenExhausted(configuration.isProducerPoolBlockWhenExhausted());
+            config.setMaxWait(Duration.ofMillis(configuration.getProducerPoolMaxWait()));
             // we should test on borrow to ensure the channel is still valid
-            config.testOnBorrow = true;
-            // only evict channels which are no longer valid
-            config.testWhileIdle = true;
+            config.setTestOnBorrow(true);
+            // idle channels can be evicted
+            config.setTestWhileIdle(false);
             // run eviction every 30th second
-            config.timeBetweenEvictionRunsMillis = 30 * 1000L;
-            config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
-            config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(this), config);
+            config.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
+            config.setMinEvictableIdleTime(Duration.ofMillis(configuration.getProducerPoolMinEvictableIdle()));
+            pool = new GenericObjectPool(new NettyProducerPoolableObjectFactory(this), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
-                        "Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
-                        config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool);
+                        "Created NettyProducer pool[maxTotal={}, minIdle={}, maxIdle={}, minEvictableIdleDuration={}] -> {}",
+                        config.getMaxTotal(), config.getMaxIdle(), config.getMaxIdle(), config.getMinEvictableIdleDuration(),
+                        pool);
             }
         } else {
             pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory(this));
@@ -174,18 +188,6 @@ public class NettyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
-        // close all channels
-        LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // and then shutdown the thread pools
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
-            workerGroup = null;
-        }
-
-        ServiceHelper.stopService(correlationManager);
 
         if (pool != null) {
             if (LOG.isDebugEnabled()) {
@@ -194,6 +196,22 @@ public class NettyProducer extends DefaultAsyncProducer {
             pool.close();
         }
 
+        // close all channels
+        LOG.debug("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
+        future.awaitUninterruptibly();
+
+        // and then shutdown the thread pools
+        if (workerGroup != null) {
+            LOG.debug("Stopping worker group: {}", workerGroup);
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
+        }
+
+        LOG.trace("Stopping correlation manager: {}", correlationManager);
+        ServiceHelper.stopService(correlationManager);
+
+        LOG.debug("Stopped producer at address: {}", configuration.getAddress());
         super.doStop();
     }
 
@@ -227,7 +245,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
+            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+                    IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
         if (LOG.isTraceEnabled()) {
@@ -279,7 +298,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             channel.attr(CORRELATION_MANAGER_ATTR).set(correlationManager);
             exchange.setProperty(NettyConstants.NETTY_CHANNEL, channel);
             // and defer closing the channel until we are done routing the exchange
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     // should channel be closed after complete?
@@ -335,7 +354,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
-        channelCorrelationManager.putState(channel, new NettyCamelState(producerCallback, exchange));
+        final NettyCamelState state = new NettyCamelState(producerCallback, exchange);
+        channelCorrelationManager.putState(channel, state);
         // here we need to setup the remote address information here
         InetSocketAddress remoteAddress = null;
         if (!isTcp()) {
@@ -343,11 +363,27 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // write body
-        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
+                    Throwable cause = null;
                     // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
+                    try {
+                        // need to get real caused exception from netty, which is not possible in a nice API
+                        // but we can try to get a result with a 0 timeout, then netty will throw the caused
+                        // exception wrapped in an outer exception
+                        channelFuture.get(0, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        cause = e.getCause();
+                    } catch (Exception e) {
+                        cause = e.getCause();
+                    }
+                    if (cause != null) {
+                        exchange.setException(cause);
+                    }
+                    state.onExceptionCaughtOnce(false);
                     return;
                 }
 
@@ -424,15 +460,35 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (isTcp()) {
             // its okay to create a new bootstrap for each new channel
             Bootstrap clientBootstrap = new Bootstrap();
-            if (configuration.isNativeTransport()) {
-                clientBootstrap.channel(EpollSocketChannel.class);
+            if (configuration.getUnixDomainSocketPath() != null) {
+                if (KQueue.isAvailable()) {
+                    clientBootstrap.channel(KQueueDomainSocketChannel.class);
+                } else if (Epoll.isAvailable()) {
+                    clientBootstrap.channel(EpollDomainSocketChannel.class);
+                } else {
+                    throw new IllegalStateException(
+                            "Unable to use unix domain sockets - both Epoll and KQueue are not available");
+                }
             } else {
-                clientBootstrap.channel(NioSocketChannel.class);
+                if (configuration.isNativeTransport()) {
+                    if (KQueue.isAvailable()) {
+                        clientBootstrap.channel(KQueueSocketChannel.class);
+                    } else if (Epoll.isAvailable()) {
+                        clientBootstrap.channel(EpollSocketChannel.class);
+                    } else {
+                        throw new IllegalStateException(
+                                "Unable to use native transport - both Epoll and KQueue are not available");
+                    }
+                } else {
+                    clientBootstrap.channel(NioSocketChannel.class);
+                }
             }
             clientBootstrap.group(getWorkerGroup());
-            clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
-            clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
-            clientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+            if (configuration.getUnixDomainSocketPath() == null) {
+                clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
+                clientBootstrap.option(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
+                clientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+            }
             clientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
 
             //TODO need to check it later;
@@ -446,11 +502,19 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.handler(pipelineFactory);
-            answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+            SocketAddress socketAddress;
+            if (configuration.getUnixDomainSocketPath() != null) {
+                Path udsPath = Path.of(configuration.getUnixDomainSocketPath()).toAbsolutePath();
+                LOG.debug("Creating new TCP client bootstrap connecting to {} with options {}",
+                        udsPath, clientBootstrap);
+                socketAddress = new DomainSocketAddress(udsPath.toFile());
+            } else {
+                LOG.debug("Creating new TCP client bootstrap connecting to {}:{} with options: {}",
                         configuration.getHost(), configuration.getPort(), clientBootstrap);
+                socketAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
             }
+            answer = clientBootstrap.connect(socketAddress);
+            LOG.debug("TCP client bootstrap created");
             return answer;
         } else {
             // its okay to create a new bootstrap for each new channel
@@ -525,7 +589,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 LOG.trace("Putting channel back to pool {}", channel);
                 pool.returnObject(channelFuture);
             } else {
-                // and if its not active then invalidate it
+                // and if it's not active then invalidate it
                 LOG.trace("Invalidating channel from pool {}", channel);
                 pool.invalidateObject(channelFuture);
             }
@@ -574,7 +638,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     /**
      * Object factory to create {@link Channel} used by the pool.
      */
-    private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<ChannelFuture> {
+    private final class NettyProducerPoolableObjectFactory implements PooledObjectFactory<ChannelFuture> {
         private NettyProducer producer;
 
         public NettyProducerPoolableObjectFactory(NettyProducer producer) {
@@ -582,19 +646,26 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public ChannelFuture makeObject() throws Exception {
-            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    notifyChannelOpen(future);
+        public void activateObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
+            LOG.trace("activateObject channel request: {}", channelFuture);
+
+            if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
+                LOG.trace("Reset the request timeout as we activate the channel");
+                Channel channel = channelFuture.channel();
+
+                ChannelHandler handler = channel.pipeline().get("timeout");
+                if (handler == null) {
+                    ChannelHandler timeout
+                            = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+                    channel.pipeline().addBefore("handler", "timeout", timeout);
                 }
-            });
-            LOG.trace("Requested channel: {}", channelFuture);
-            return channelFuture;
+            }
         }
 
         @Override
-        public void destroyObject(ChannelFuture channelFuture) throws Exception {
+        public void destroyObject(PooledObject<ChannelFuture> p) throws Exception {
+            ChannelFuture channelFuture = p.getObject();
             LOG.trace("Destroying channel request: {}", channelFuture);
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
@@ -610,7 +681,15 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public boolean validateObject(ChannelFuture channelFuture) {
+        public void passivateObject(PooledObject<ChannelFuture> p) throws Exception {
+            // noop
+            ChannelFuture channelFuture = p.getObject();
+            LOG.trace("passivateObject channel request: {}", channelFuture);
+        }
+
+        @Override
+        public boolean validateObject(PooledObject<ChannelFuture> p) {
+            ChannelFuture channelFuture = p.getObject();
             // we need a connecting or connected channel to be valid
             if (!channelFuture.isDone()) {
                 LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
@@ -627,27 +706,17 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public void activateObject(ChannelFuture channelFuture) {
-            LOG.trace("activateObject channel request: {}", channelFuture);
-
-            if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
-                LOG.trace("reset the request timeout as we activate the channel");
-                Channel channel = channelFuture.channel();
-
-                ChannelHandler handler = channel.pipeline().get("timeout");
-                if (handler == null) {
-                    ChannelHandler timeout
-                            = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
-                    channel.pipeline().addBefore("handler", "timeout", timeout);
+        public PooledObject<ChannelFuture> makeObject() throws Exception {
+            ChannelFuture channelFuture = openConnection().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    notifyChannelOpen(future);
                 }
-            }
+            });
+            LOG.trace("Requested channel: {}", channelFuture);
+            return new DefaultPooledObject<>(channelFuture);
         }
 
-        @Override
-        public void passivateObject(ChannelFuture channelFuture) {
-            // noop
-            LOG.trace("passivateObject channel request: {}", channelFuture);
-        }
     }
 
     /**

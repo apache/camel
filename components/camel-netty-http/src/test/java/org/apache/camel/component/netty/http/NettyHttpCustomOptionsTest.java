@@ -24,20 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
-    String expectedResponse = "response";
+    final String expectedResponse = "response";
 
     @Test
-    public void shouldReturnCustomResponseForOptions() throws Exception {
+    public void shouldReturnCustomResponseForOptions() {
         String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
                 String.class);
         assertEquals(expectedResponse, response);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?httpMethodRestrict=OPTIONS").setBody().constant(expectedResponse);
             }
         };

@@ -33,10 +33,11 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route id="idempotent-cache">
             <from uri="direct:start" />
             <log message="Message id: ${header.MessageId}"/>
-            <idempotentConsumer messageIdRepositoryRef="repo" skipDuplicate="true">
+            <idempotentConsumer idempotentRepository="repo" skipDuplicate="true">
                 <header>MessageId</header>
                 <to uri="log:org.apache.camel.spring.processor.idempotent?level=INFO&amp;showAll=true&amp;multiline=true" />
                 <to uri="mock:result"/>

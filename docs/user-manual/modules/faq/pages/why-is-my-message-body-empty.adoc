@@ -1,4 +1,3 @@
-[[Whyismymessagebodyempty-Whyismymessageempty]]
 = Why is my message empty?
 
 In Camel the message body can be of any types. Some types are safely

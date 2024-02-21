@@ -1,0 +1,67 @@
+= Google Calendar Component
+:doctitle: Google Calendar
+:shortname: google-calendar
+:artifactid: camel-google-calendar
+:description: Perform various operations on a Google Calendar.
+:since: 2.15
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-calendar
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Calendar component provides access
+to http://google.com/calendar[Google Calendar] via
+the https://developers.google.com/google-apps/calendar/v3/reference/[Google
+Calendar Web APIs].
+
+Google Calendar uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/google-apps/calendar/auth[create an
+account and generate OAuth credentials]. Credentials consist of a
+`clientId`, `clientSecret`, and a `refreshToken`. A handy resource for
+generating a long-lived `refreshToken` is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+In the case of a https://developers.google.com/identity/protocols/oauth2#serviceaccount[service account],
+credentials consist of a JSON-file (serviceAccountKey). You can also use
+https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority[delegation domain-wide authority]
+(delegate) and one, several, or all possible
+https://developers.google.com/calendar/api/guides/auth[Calendar API Auth Scopes].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-calendar</artifactId>
+        <!-- use the same version as your Camel core version -->
+        <version>x.x.x</version>
+</dependency>
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+
+include::spring-boot:partial$starter.adoc[]

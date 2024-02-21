@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan-embedded</artifactId>
@@ -39,7 +39,12 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query</artifactId>
+            <artifactId>infinispan-core-jakarta</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query-jakarta</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
@@ -70,7 +75,7 @@
         <!-- testing - infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
+            <artifactId>infinispan-core-jakarta</artifactId>
             <version>${infinispan-version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -83,23 +88,18 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-embedded</artifactId>
+            <artifactId>infinispan-spring6-embedded</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan.protostream</groupId>
-            <artifactId>sample-domain-implementation</artifactId>
-            <version>${protostream-version}</version>
+            <groupId>org.infinispan</groupId>
+            <artifactId>proto-sample-domain-implementation</artifactId>
+            <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- testing - misc -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -113,28 +113,40 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>infinispan.test.jgroups.protocol</name>
-                            <value>tcp</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

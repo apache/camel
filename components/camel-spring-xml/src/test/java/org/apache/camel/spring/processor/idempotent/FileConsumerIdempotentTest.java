@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerIdempotentTest extends ContextTestSupport {
@@ -43,8 +44,6 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/fileidempotent");
-
         super.setUp();
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
@@ -52,7 +51,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     @Test
     public void testIdempotent() throws Exception {
         // send a file
-        template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
 
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -67,15 +66,15 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         mock.setResultMinimumWaitTime(50);
 
         // move file back
-        File file = new File("target/fileidempotent/done/report.txt");
-        File renamed = new File("target/fileidempotent/report.txt");
+        File file = testFile("done/report.txt").toFile();
+        File renamed = testFile("report.txt").toFile();
         file.renameTo(renamed);
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         assertMockEndpointsSatisfied();
 
-        String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
-        assertTrue(repo.contains(name), "Should contain file: " + name);
+        String name = FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
+        await().untilAsserted(() -> assertTrue(repo.contains(name), "Should contain file: " + name));
     }
 
 }

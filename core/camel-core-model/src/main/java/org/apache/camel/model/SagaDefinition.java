@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.saga.CamelSagaService;
@@ -36,46 +36,43 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
 /**
- * Enables sagas on the route
+ * Enables Sagas on the route
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "saga")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
+    @XmlTransient
+    private CamelSagaService sagaServiceBean;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.saga.CamelSagaService")
+    private String sagaService;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
               enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
-
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO", enums = "AUTO,MANUAL")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO",
+              enums = "AUTO,MANUAL")
     private String completionMode;
-
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", deprecationNote = "Use timeout instead")
-    @Deprecated
-    private String timeoutInMilliseconds;
-
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
-
     @XmlElement
     private SagaActionUriDefinition compensation;
-
     @XmlElement
     private SagaActionUriDefinition completion;
-
     @XmlElement(name = "option")
-    private List<SagaOptionDefinition> options;
-
-    @XmlAttribute
-    private String sagaServiceRef;
-    @XmlTransient
-    private CamelSagaService sagaService;
+    @Metadata(label = "advanced")
+    private List<PropertyExpressionDefinition> options;
 
     public SagaDefinition() {
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
     }
 
     @XmlElementRef
@@ -120,6 +117,21 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     // Properties
+
+    public CamelSagaService getSagaServiceBean() {
+        return sagaServiceBean;
+    }
+
+    public String getSagaService() {
+        return sagaService;
+    }
+
+    /**
+     * Refers to the id to lookup in the registry for the specific CamelSagaService to use.
+     */
+    public void setSagaService(String sagaService) {
+        this.sagaService = sagaService;
+    }
 
     public SagaActionUriDefinition getCompensation() {
         return compensation;
@@ -171,26 +183,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.completionMode = completionMode;
     }
 
-    public CamelSagaService getSagaService() {
-        return sagaService;
-    }
-
-    public void setSagaService(CamelSagaService sagaService) {
-        this.sagaService = sagaService;
-    }
-
-    public String getSagaServiceRef() {
-        return sagaServiceRef;
-    }
-
-    /**
-     * Refers to the id to lookup in the registry for the specific CamelSagaService to use.
-     */
-    public void setSagaServiceRef(String sagaServiceRef) {
-        this.sagaServiceRef = sagaServiceRef;
-    }
-
-    public List<SagaOptionDefinition> getOptions() {
+    public List<PropertyExpressionDefinition> getOptions() {
         return options;
     }
 
@@ -200,7 +193,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * compensating actions. Option values will be transformed into input headers of the compensation/completion
      * exchange.
      */
-    public void setOptions(List<SagaOptionDefinition> options) {
+    public void setOptions(List<PropertyExpressionDefinition> options) {
         this.options = options;
     }
 
@@ -216,23 +209,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.timeout = timeout;
     }
 
-    public String getTimeoutInMilliseconds() {
-        return timeoutInMilliseconds;
-    }
-
-    /**
-     * Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated
-     * automatically (unless a different decision has been taken in the meantime).
-     */
-    public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
-        this.timeoutInMilliseconds = timeoutInMilliseconds;
-    }
-
     private void addOption(String option, Expression expression) {
         if (this.options == null) {
             this.options = new ArrayList<>();
         }
-        this.options.add(new SagaOptionDefinition(option, expression));
+        this.options.add(new PropertyExpressionDefinition(option, expression));
     }
 
     // Builders
@@ -253,22 +234,18 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
-    public SagaDefinition propagation(String propagation) {
-        return propagation(propagation);
-    }
-
     public SagaDefinition propagation(SagaPropagation propagation) {
         setPropagation(propagation.name());
         return this;
     }
 
     public SagaDefinition sagaService(CamelSagaService sagaService) {
-        setSagaService(sagaService);
+        this.sagaServiceBean = sagaService;
         return this;
     }
 
-    public SagaDefinition sagaServiceRef(String sagaServiceRef) {
-        setSagaServiceRef(sagaServiceRef);
+    public SagaDefinition sagaService(String sagaService) {
+        setSagaService(sagaService);
         return this;
     }
 
@@ -287,7 +264,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition timeout(Duration duration) {
-        return timeout(TimeUtils.printDuration(duration));
+        return timeout(TimeUtils.printDuration(duration, true));
     }
 
     public SagaDefinition timeout(long timeout, TimeUnit unit) {
@@ -313,7 +290,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         if (value == null) {
             return;
         }
-        if (builder.length() > 0) {
+        if (!builder.isEmpty()) {
             builder.append(',');
         }
         builder.append(key).append(':').append(value);

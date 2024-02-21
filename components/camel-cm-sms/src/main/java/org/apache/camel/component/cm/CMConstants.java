@@ -30,6 +30,7 @@ public interface CMConstants {
     // status code 200 - Error substrings - check it contains.
     String ERROR_UNKNOWN = "Unknown error";
     String ERROR_NO_ACCOUNT = "No account found";
+    String ERROR_NO_USER = "No or incorrect User node found";
     String ERROR_INSUFICIENT_BALANCE = "Insufficient balance";
     String ERROR_UNROUTABLE_MESSAGE = "Message is unroutable";
     String ERROR_INVALID_PRODUCT_TOKEN = "Invalid product token";

@@ -6,9 +6,7 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import jakarta.annotation.Generated;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
@@ -21,12 +19,15 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
  * Salesforce DTO for SObject Asset
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("Asset")
 public class Asset extends AbstractDescribedSObjectBase {
 
     public Asset() {
@@ -71,7 +72,7 @@ public class Asset extends AbstractDescribedSObjectBase {
         this.time = time;
     }
 
- 
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

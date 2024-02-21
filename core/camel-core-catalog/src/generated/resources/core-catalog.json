@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-catalog",
+    "title": "Core Catalog",
+    "description": "The Camel Core Catalog",
+    "deprecated": false,
+    "firstVersion": "3.1.0",
+    "label": "core,tooling",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-catalog",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}

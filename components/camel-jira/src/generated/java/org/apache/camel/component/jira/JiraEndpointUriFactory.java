@@ -19,34 +19,36 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(17);
-        props.add("jql");
-        props.add("sendOnlyUpdatedField");
-        props.add("exchangePattern");
-        props.add("type");
         props.add("accessToken");
-        props.add("verificationCode");
-        props.add("privateKey");
-        props.add("lazyStartProducer");
-        props.add("password");
-        props.add("delay");
         props.add("bridgeErrorHandler");
-        props.add("jiraUrl");
-        props.add("maxResults");
-        props.add("watchedFields");
         props.add("consumerKey");
+        props.add("delay");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("jiraUrl");
+        props.add("jql");
+        props.add("lazyStartProducer");
+        props.add("maxResults");
+        props.add("password");
+        props.add("privateKey");
+        props.add("sendOnlyUpdatedField");
+        props.add("type");
         props.add("username");
+        props.add("verificationCode");
+        props.add("watchedFields");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(6);
-        secretProps.add("privateKey");
-        secretProps.add("password");
         secretProps.add("accessToken");
         secretProps.add("consumerKey");
+        secretProps.add("password");
+        secretProps.add("privateKey");
         secretProps.add("username");
         secretProps.add("verificationCode");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -74,6 +76,11 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

@@ -22,7 +22,7 @@ import net.sf.saxon.Configuration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XQueryEndpointConfigurationTest extends CamelSpringTestSupport {
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         Configuration configuration = context.getRegistry().lookupByNameAndType("saxon-configuration", Configuration.class);
         Map<String, Object> properties = context.getRegistry().lookupByNameAndType("saxon-properties", Map.class);
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);
@@ -58,7 +58,7 @@ public class XQueryEndpointConfigurationTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/XQueryEndpointConfigurationTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("XQueryEndpointConfigurationTest.xml");
     }
 }

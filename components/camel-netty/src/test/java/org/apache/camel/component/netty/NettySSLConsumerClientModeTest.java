@@ -73,12 +73,12 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     }
 
     @BindToRegistry("ksf")
-    public File loadKeystoreKsf() throws Exception {
+    public File loadKeystoreKsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
     @BindToRegistry("tsf")
-    public File loadKeystoreTsf() throws Exception {
+    public File loadKeystoreTsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
@@ -97,16 +97,16 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf")
                         .id("sslclient")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
-                                exchange.getOut().setBody("Bye " + body);
+                                exchange.getMessage().setBody("Bye " + body);
                             }
                         }).to("mock:receive").noAutoStartup();
             }
@@ -147,24 +147,24 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
 
         @Override
-        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        public void channelActive(ChannelHandlerContext ctx) {
             ctx.write("Willem\r\n");
             ctx.flush();
         }
 
         @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
             LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        protected void channelRead0(ChannelHandlerContext ctx, String msg) {
             // Do nothing here
         }
 
         @Override
-        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        public void channelReadComplete(ChannelHandlerContext ctx) {
             ctx.flush();
         }
     }
@@ -203,7 +203,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         }
 
         @Override
-        public void initChannel(SocketChannel ch) throws Exception {
+        public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
 
             // create a new SslHandler to add at the start of the pipeline

@@ -16,45 +16,46 @@
  */
 package org.apache.camel.component.caffeine.cache;
 
-import java.util.concurrent.TimeUnit;
-
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
-import org.apache.camel.component.caffeine.EvictionType;
+import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Perform caching operations using Caffeine Cache.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache",
-             syntax = "caffeine-cache:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING },
-             producerOnly = true)
+             remote = false, syntax = "caffeine-cache:cacheName", category = { Category.CACHE, Category.CLUSTERING },
+             producerOnly = true, headersClass = CaffeineConstants.class)
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
-    @UriPath(description = "the cache name")
+
+    @UriPath(description = "Cache name")
     @Metadata(required = true)
     private final String cacheName;
     @UriParam
     private final CaffeineConfiguration configuration;
 
-    private Cache cache;
+    private volatile Cache<?, ?> cache;
 
     CaffeineCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
-
         this.cacheName = cacheName;
         this.configuration = configuration;
+    }
+
+    @Override
+    public CaffeineCacheComponent getComponent() {
+        return (CaffeineCacheComponent) super.getComponent();
     }
 
     @Override
@@ -64,34 +65,16 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         cache = CamelContextHelper.lookup(getCamelContext(), cacheName, Cache.class);
         if (cache == null) {
-            Caffeine<?, ?> builder = Caffeine.newBuilder();
-            if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
-                builder.initialCapacity(configuration.getInitialCapacity());
-                builder.maximumSize(configuration.getMaximumSize());
-            } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
-                builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
-                builder.expireAfterWrite(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
+            if (configuration.isCreateCacheIfNotExist()) {
+                cache = getComponent().getOrCreateCache(cacheName, configuration);
+            } else {
+                throw new IllegalArgumentException(
+                        "Cache instance '" + cacheName + "' not found and createCacheIfNotExist is set to false");
             }
-            if (configuration.isStatsEnabled()) {
-                if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
-                    builder.recordStats();
-                } else {
-                    builder.recordStats(configuration::getStatsCounter);
-                }
-            }
-            if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
-                builder.removalListener(configuration.getRemovalListener());
-            }
-            cache = builder.build();
         }
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
     }
 
     CaffeineConfiguration getConfiguration() {

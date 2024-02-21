@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * A simple marker interface for an object which holds a CamelContext
+ * A simple marker interface for an object which holds a {@link CamelContext}.
  */
 public interface HasCamelContext {
 

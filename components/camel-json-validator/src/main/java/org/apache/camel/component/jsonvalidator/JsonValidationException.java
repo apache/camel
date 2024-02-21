@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import java.io.Serial;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.ValidationMessage;
@@ -25,13 +28,14 @@ import org.apache.camel.ValidationException;
 
 public class JsonValidationException extends ValidationException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final JsonSchema schema;
     private final Set<ValidationMessage> errors;
 
     public JsonValidationException(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) {
-        super(exchange, "JSON validation error with " + errors.size() + " errors");
+        super(exchange, "JSON validation error with " + errors.size() + " errors:\n" + toString(errors));
         this.schema = schema;
         this.errors = errors;
     }
@@ -39,7 +43,7 @@ public class JsonValidationException extends ValidationException {
     public JsonValidationException(Exchange exchange, JsonSchema schema, Exception e) {
         super(e.getMessage(), exchange, e);
         this.schema = schema;
-        this.errors = null;
+        this.errors = Collections.emptySet();
     }
 
     public JsonSchema getSchema() {
@@ -52,5 +56,9 @@ public class JsonValidationException extends ValidationException {
 
     public int getNumberOfErrors() {
         return errors.size();
+    }
+
+    private static String toString(Set<ValidationMessage> errors) {
+        return errors.stream().map(ValidationMessage::toString).collect(Collectors.joining("\n"));
     }
 }

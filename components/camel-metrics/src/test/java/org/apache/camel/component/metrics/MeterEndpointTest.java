@@ -47,18 +47,18 @@ public class MeterEndpointTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.METER, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testMeterEndpoint() throws Exception {
+    public void testMeterEndpoint() {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -72,12 +72,12 @@ public class MeterEndpointTest {
     }
 
     @Test
-    public void testGetMark() throws Exception {
+    public void testGetMark() {
         assertThat(endpoint.getMark(), is(nullValue()));
     }
 
     @Test
-    public void testSetMark() throws Exception {
+    public void testSetMark() {
         assertThat(endpoint.getMark(), is(nullValue()));
         endpoint.setMark(VALUE);
         assertThat(endpoint.getMark(), is(VALUE));

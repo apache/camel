@@ -44,11 +44,11 @@ public class PubNubSubscriberTest extends PubNubTestBase {
         context.getRouteController().startRoute("subroute");
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("pubnub:mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)

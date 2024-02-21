@@ -21,8 +21,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd">
     <SHARED_LOOPBACK
-            max_bundle_size="64K"
-            enable_diagnostics="true"
+            bundler.max_size="64K"
+            diag.enabled="true"
             thread_naming_pattern="cl"
 
             thread_pool.enabled="true"
@@ -43,7 +43,7 @@
     <UFC max_credits="2M" min_threshold="0.4"/>
     <MFC max_credits="2M" min_threshold="0.4"/>
     <FRAG2 frag_size="60K" />
-    <raft.ELECTION election_min_interval="100" election_max_interval="500"/>
+    <raft.ELECTION />
     <raft.RAFT members="B" raft_id="${raft_id:undefined}" log_class="org.jgroups.protocols.raft.InMemoryLog"/>
     <raft.REDIRECT/>
 </config>

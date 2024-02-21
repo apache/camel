@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpringTestSupport {
 
@@ -32,8 +32,8 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
+        return newAppContext(
+                "JdbcSpringDataSource.xml", "JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
     }
 
     @Test
@@ -55,13 +55,13 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     public static class MyFailProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             int count = counter.incrementAndGet();
             if (count <= 3) {
                 throw new IllegalArgumentException("Damn");

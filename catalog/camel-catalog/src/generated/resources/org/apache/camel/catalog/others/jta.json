@@ -6,9 +6,10 @@
     "description": "Using Camel With JTA Transaction Manager",
     "deprecated": false,
     "firstVersion": "3.4.0",
+    "label": "database",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jta",
-    "version": "3.9.0-SNAPSHOT"
+    "version": "4.5.0-SNAPSHOT"
   }
 }

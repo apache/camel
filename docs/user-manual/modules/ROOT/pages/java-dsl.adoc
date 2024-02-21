@@ -1,15 +1,16 @@
-[[JavaDSL-JavaDSL]]
 = Java DSL
 
-Apache Camel offers a Java based DSL using the fluent builder style. The
-Java DSL is available by extending the
-RouteBuilder class, and implement the
-`configure` method.
+Apache Camel offers a Java based DSL.
+
+In the Java DSL you create a route by extending the xref:manual::route-builder.adoc[`RouteBuilder` class], and implementing the `configure` method.
+
+== Java DSL example
 
 This is best illustrate by an example. In the code below we create a new
 class called `MyRouteBuilder` that extends the
-`org.apache.camel.builder.RouteBuilder` from Camel. +
- In the `configure` method the Java DSL is at our disposal.
+`org.apache.camel.builder.RouteBuilder` from Camel.
+
+In the `configure` method the Java DSL is at our disposal.
 
 [source,java]
 -------------------------------------------------------------------------
@@ -39,18 +40,17 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------
 
-In the `configure` method we can define Camel Routes.
-In the example above we have a single route, which pickup files,
-(eg the from).
+In the `configure` method we can define Camel xref:routes.adoc[Routes].
+
+In the example above we have a single route, which pickup files (the `from`).
 
 [source,java]
 ---------------------------------------
 from("file:src/data?noop=true")
 ---------------------------------------
 
-Then we use the `Content Based Router` (for ex: 
- the choice) to route the message depending if the person is from London
-or not.
+Then we use the xref:components:eips:choice-eip.adoc[Content Based Router] EIP
+(the `choice`) to route the message whether the person is from London or not.
 
 [source,java]
 -------------------------------------------------------
@@ -61,126 +61,74 @@ or not.
         .to("file:target/messages/others");
 -------------------------------------------------------
 
-[[JavaDSL-Routes]]
-== Routes
+=== Using Text Blocks for long URIs
 
-Camel supports the definition of routing rules using a Java
-DSL (domain specific language) which avoids the need for
-cumbersome XML using a RouteBuilder.
-
-For example a simple route can be created as follows.
+If you have very long endpoint xref:uris.adoc[uris], then you can declare those in Java text blocks, instead
+of breaking a String into multiple added elements:
 
 [source,java]
--------------------------------------------------------
+----
+    from("""
+            debezium-postgres:customerEvents
+            ?databasePassword={{myPassword}}
+            &databaseDbname=myDB
+            &databaseHostname=myHost
+            &pollIntervalMs=2000
+            &queryFetchSize=100
+        """)
+        .to("kafka:cheese");
+----
+
+=== Routes using Java lambda style
+
+Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
+you may want to quickly define a few routes.
+
+For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
+
+[source,java]
+----
+rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+----
+
+There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
+See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
+
+
+== More Details
+
+For more details see xref:dsl.adoc[DSL], xref:routes.adoc[Routes], and xref:processor.adoc[Processor].
+
+=== The Java DSL under the hood
+
+As mentioned in the Getting Started guide, you can use Camel's Java DSL in a way that almost looks like a DSL. For instance:
+
+*Note*: comments afterwards explain some of the constructs used in the example.
+
+.*Example of Camel's "Java DSL"*
+[source,java]
+----
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a").to("direct:b");
+        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+
+        from("queue:c").choice()
+                .when(header("foo").isEqualTo("bar")).to("queue:d")
+                .when(header("foo").isEqualTo("cheese")).to("queue:e")
+                .otherwise().to("queue:f");
     }
 };
--------------------------------------------------------
+CamelContext myCamelContext = new DefaultCamelContext();
+myCamelContext.addRoutes(builder);
+----
 
-As you can see from the above Camel uses URIs to wire
-endpoints together.
+The first line in the above example creates an object which is an instance of an anonymous subclass of `RouteBuilder` with the specified `configure()` method.
 
-[[JavaDSL-URIStringformatting]]
-== URI String formatting
+The `CamelContext.addRoutes(RouterBuilder builder)` method invokes `builder.setContext(this)` – so the `RouteBuilder` object knows which `CamelContext` object it is associated with – and then invokes `builder.configure()`. The body of `configure()` invokes methods such as `from()`, `filter()`, `choice()`, `when()`, `isEqualTo()`, `otherwise()` and `to()`.
 
-*Since Camel 2.0*
+The `RouteBuilder.from(String uri)` method invokes `getEndpoint(uri)` on the `CamelContext` associated with the `RouteBuilder` object to get the specified `Endpoint` and then puts a `FromBuilder` _wrapper_ around this `Endpoint`. The `FromBuilder.filter(Predicate predicate)` method creates a `FilterProcessor` object for the `Predicate` (that is, condition) object built from the `header("foo").isEqualTo("bar")` expression. In this way, these operations incrementally build up a `Route` object (with a `RouteBuilder` wrapper around it) and add it to the `CamelContext` instance associated with the `RouteBuilder`.
 
-If you have endpoint URIs that accept options and you want to be able to
-substitute the value, e.g. build the URI by concat the strings together,
-then you can use the `java.lang.String.format` method. But in Camel 2.0
-we have added two convenient methods in the Java DSL so you can do
-`fromF` and `toF` that uses String formatting to build the URI.
 
-[source,java]
--------------------------------------------------------
-from("direct:start").toF("file://%s?fileName=%s", path, name);
- 
-fromF("file://%s?include=%s", path, pattern).toF("mock:%s", result);
--------------------------------------------------------
+== More Information
 
-[[JavaDSL-Filters]]
-== Filters
-
-You can combine simple routes with filters which can be arbitrary
-Predicate implementations.
-
-[source,java]
--------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a")
-            .filter(header("foo").isEqualTo("bar"))
-                .to("direct:b");
-    }
-};
--------------------------------------------------------
-
-[[JavaDSL-Choices]]
-== Choices
-
-With a choice you provide a list of predicates and outcomes along with
-an optional default otherwise clause which is invoked if none of the
-conditions are met.
-
-[source,java]
--------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a")
-            .choice()
-                .when(header("foo").isEqualTo("bar"))
-                    .to("direct:b")
-                .when(header("foo").isEqualTo("cheese"))
-                    .to("direct:c")
-                .otherwise()
-                    .to("direct:d");
-    }
-};
--------------------------------------------------------
-
-[[JavaDSL-Usingacustomprocessor]]
-=== Using a custom processor
-
-Here is an example of using a custom Processor
-
-[source,java]
--------------------------------------------------------
-myProcessor = new Processor() {
-    public void process(Exchange exchange) {
-        log.debug("Called with exchange: " + exchange);
-    }
-};
- 
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a")
-            .process(myProcessor);
-    }
-};
--------------------------------------------------------
-
-You can mix and match custom processors with filters and choices.
-
-[source,java]
--------------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        errorHandler(deadLetterChannel("mock:error"));
- 
-        from("direct:a")
-            .filter(header("foo").isEqualTo("bar"))
-                .process(myProcessor);
-    }
-};
--------------------------------------------------------
-
+See xref:lambda-route-builder.adoc[Lambda Route Builder] for creating a routing rule using the DSL, using Java lambda style.

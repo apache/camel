@@ -37,7 +37,7 @@ public class JMXMonitorTypeCounterTest extends SimpleBeanFixture {
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/monitorNotification.xml"));
 
-        // the offset value was two, so another change won't trigger an event. 
+        // the offset value was two, so another change won't trigger an event.
         // it'll take 2 more changes to trigger the event
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setMonitorNumber(4);

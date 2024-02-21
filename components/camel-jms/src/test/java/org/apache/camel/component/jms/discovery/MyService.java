@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyService {
-    private String name;
+    private final String name;
 
     public MyService(String name) {
         this.name = name;

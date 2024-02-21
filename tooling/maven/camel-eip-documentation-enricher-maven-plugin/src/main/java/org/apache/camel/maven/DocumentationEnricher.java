@@ -30,7 +30,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
@@ -55,9 +55,9 @@ public class DocumentationEnricher {
         }
     }
 
-    public void enrichTypeAttributesDocumentation(Log log, NodeList attributeElements, File jsonFile) {
-        for (int j = 0; j < attributeElements.getLength(); j++) {
-            Element item = (Element) attributeElements.item(j);
+    public void enrichElementDocumentation(Log log, NodeList elements, File jsonFile) {
+        for (int j = 0; j < elements.getLength(); j++) {
+            Element item = (Element) elements.item(j);
             addAttributeDocumentation(log, item, jsonFile);
         }
     }
@@ -65,11 +65,13 @@ public class DocumentationEnricher {
     private void addElementDocumentation(Element item, File jsonFile) {
         BaseModel<?> model = JsonMapper.generateModel(jsonFile.toPath());
         String descriptionText = model.getDescription();
+        if (model.isDeprecated()) {
+            descriptionText = "Deprecated: " + descriptionText;
+        }
         addDocumentation(item, descriptionText);
     }
 
     private void addAttributeDocumentation(Log log, Element item, File jsonFile) {
-
         String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
         if (isNullOrEmpty(name)) {
             return;
@@ -96,6 +98,10 @@ public class DocumentationEnricher {
         } else if ("serviceRef".equals(name) && jsonFile.getName().endsWith("proxy.json")) {
             descriptionText
                     = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
+        }
+
+        if (descriptionText == null || descriptionText.equals("null")) {
+            descriptionText = "";
         }
 
         if (option != null && option.isDeprecated()) {
@@ -137,9 +143,9 @@ public class DocumentationEnricher {
 
     private String formatTextContent(Element item, String textContent) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("\n")
                 .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
-                .append(System.lineSeparator());
+                .append("\n");
         // Fix closing tag intention.
         stringBuilder.append(Constants.DEFAULT_XML_INTENTION);
         for (Node parent = item.getParentNode(); parent != null; parent = parent.getParentNode()) {

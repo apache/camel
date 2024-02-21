@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -79,7 +79,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             try {
                 exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
             } catch (GenericFileOperationFailedException ex) {
-                if (ex.getCause() instanceof FileNotFoundException) {
+                if (ex.getCause() instanceof IOException) {
                     exclusive = false;
                 } else {
                     throw ex;
@@ -126,6 +126,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return true;
         }

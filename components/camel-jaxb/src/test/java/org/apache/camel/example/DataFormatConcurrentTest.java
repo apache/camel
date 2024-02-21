@@ -22,19 +22,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
@@ -46,21 +47,20 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     private int fooBarSize = 50;
 
     @Test
-    public void testUnmarshalConcurrent() throws Exception {
+    public void testUnmarshalConcurrent() {
+        assertDoesNotThrow(() -> runUnmarshalConcurrent());
+    }
+
+    private void runUnmarshalConcurrent() throws Exception {
         template.setDefaultEndpointUri("direct:unmarshal");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshal")
                         .unmarshal(new JaxbDataFormat("org.apache.camel.example"))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.countDown();
-                            }
-                        });
+                        .process(exchange -> latch.countDown());
             }
         });
 
@@ -68,21 +68,20 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalFallbackConcurrent() throws Exception {
+    public void testUnmarshalFallbackConcurrent() {
+        assertDoesNotThrow(() -> runUnmarshallFallbackConcurrent());
+    }
+
+    private void runUnmarshallFallbackConcurrent() throws Exception {
         template.setDefaultEndpointUri("direct:unmarshalFallback");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshalFallback")
                         .convertBodyTo(Foo.class)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.countDown();
-                            }
-                        });
+                        .process(exchange -> latch.countDown());
             }
         });
 
@@ -90,21 +89,20 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshallConcurrent() throws Exception {
+    public void testMarshallConcurrent() {
+        assertDoesNotThrow(() -> runMarshallConcurrent());
+    }
+
+    private void runMarshallConcurrent() throws Exception {
         template.setDefaultEndpointUri("direct:marshal");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:marshal")
                         .marshal(new JaxbDataFormat("org.apache.camel.example"))
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.countDown();
-                            }
-                        });
+                        .process(exchange -> latch.countDown());
             }
         });
 
@@ -112,21 +110,20 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshallFallbackConcurrent() throws Exception {
+    public void testMarshallFallbackConcurrent() {
+        assertDoesNotThrow(() -> runMarshallFallbackConcurrent());
+    }
+
+    private void runMarshallFallbackConcurrent() throws Exception {
         template.setDefaultEndpointUri("direct:marshalFallback");
         final CountDownLatch latch = new CountDownLatch(warmupCount + testCycleCount);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:marshalFallback")
                         .convertBodyTo(String.class)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                latch.countDown();
-                            }
-                        });
+                        .process(exchange -> latch.countDown());
             }
         });
 
@@ -159,7 +156,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public void unmarshal(final CountDownLatch latch) throws Exception {
@@ -171,7 +168,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         final ByteArrayInputStream[] payloads = createPayloads(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < payloads.length; i++) {
             final int finalI = i;
             pool.execute(new Runnable() {
@@ -182,10 +179,10 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         }
 
         latch.await();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
-                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
+                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -197,7 +194,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         final Foo[] payloads = createFoo(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         for (int i = 0; i < payloads.length; i++) {
             final int finalI = i;
             pool.execute(new Runnable() {
@@ -208,19 +205,18 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         }
 
         latch.await();
-        long end = System.currentTimeMillis();
+        long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
-                new Object[] { payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start });
+                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
     }
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
-     * @return           the payloads used for this stress test
-     * @throws Exception
+     *
+     * @return the payloads used for this stress test
      */
-    public Foo[] createFoo(int testCount) throws Exception {
+    public Foo[] createFoo(int testCount) {
         Foo[] foos = new Foo[testCount];
         for (int i = 0; i < testCount; i++) {
             Foo foo = new Foo();
@@ -239,7 +235,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
+     *
      * @return           the payloads used for this stress test
      * @throws Exception
      */

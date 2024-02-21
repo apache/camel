@@ -63,7 +63,7 @@ public class TransformerBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                transformer().scheme("other").withJava(MyTransformer.class);
+                transformer().name("other").withJava(MyTransformer.class);
                 from("direct:input").log("test");
             }
         };

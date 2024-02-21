@@ -44,10 +44,10 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 dataFormat.setNoNamespaceSchemaLocation("person-no-namespace.xsd");
                 dataFormat.setIgnoreJAXBElement(false);

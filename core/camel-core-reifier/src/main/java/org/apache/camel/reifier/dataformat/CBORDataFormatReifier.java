@@ -32,16 +32,8 @@ public class CBORDataFormatReifier extends DataFormatReifier<CBORDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         // must be a reference value
         properties.put("xmlMapper", asRef(definition.getObjectMapper()));
-        if (definition.getUnmarshalType() != null) {
-            properties.put("unmarshalTypeName", asTypeName(definition.getUnmarshalType()));
-        } else {
-            properties.put("unmarshalTypeName", definition.getUnmarshalTypeName());
-        }
-        if (definition.getCollectionType() != null) {
-            properties.put("collectionTypeName", asTypeName(definition.getCollectionType()));
-        } else {
-            properties.put("collectionTypeName", definition.getCollectionTypeName());
-        }
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
+        properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
         properties.put("useList", definition.getUseList());
         properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
         properties.put("prettyPrint", definition.getPrettyPrint());

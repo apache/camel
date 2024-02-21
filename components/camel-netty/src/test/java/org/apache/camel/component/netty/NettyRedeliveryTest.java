@@ -75,10 +75,10 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .maximumRedeliveries(REDELIVERY_COUNT)
                         .retryAttemptedLogLevel(LoggingLevel.INFO)
@@ -138,8 +138,9 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         // Override the error handler executor service such that we can track the tasks created
         CamelContext context = new DefaultCamelContext(createCamelRegistry()) {
+
             @Override
-            public ScheduledExecutorService getErrorHandlerExecutorService() {
+            protected ScheduledExecutorService createErrorHandlerExecutorService() {
                 return getScheduledExecutorService();
             }
         };
@@ -209,7 +210,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
             try {
                 Thread.sleep(10);
                 socket.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
                 try {

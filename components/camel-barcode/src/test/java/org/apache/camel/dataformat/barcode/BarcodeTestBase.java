@@ -47,9 +47,6 @@ public class BarcodeTestBase extends CamelTestSupport {
 
     protected static final String MSG = "This is a testmessage!";
 
-    protected static final String PATH = "target/out";
-    protected static final String FILE_ENDPOINT = "file:" + PATH;
-
     @EndpointInject("mock:out")
     MockEndpoint out;
 

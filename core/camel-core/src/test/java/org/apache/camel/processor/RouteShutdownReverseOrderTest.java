@@ -40,7 +40,7 @@ public class RouteShutdownReverseOrderTest extends ContextTestSupport {
 
         // assert correct startup order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
 
         assertEquals(2, order.size());
         assertEquals("direct://bar", order.get(0).getRoute().getEndpoint().getEndpointUri());

@@ -19,8 +19,8 @@ package org.apache.camel.component.bean;
 import java.lang.reflect.Proxy;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
+import org.apache.camel.support.PluginHelper;
 
 /**
  * A helper class for creating proxies which delegate to Camel
@@ -59,7 +59,7 @@ public final class ProxyHelper {
     public static <T> T createProxy(
             Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache)
             throws Exception {
-        Producer producer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory()
+        Producer producer = PluginHelper.getDeferServiceFactory(endpoint.getCamelContext())
                 .createProducer(endpoint);
         return createProxyObject(endpoint, binding, producer, cl, interfaceClasses, methodCache);
     }
@@ -96,15 +96,14 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T> interfaceClass) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T> interfaceClass) {
         return createProxy(endpoint, true, producer, toArray(interfaceClass));
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses)
-            throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, boolean binding, Producer producer, Class<T>... interfaceClasses) {
         return createProxyObject(endpoint, binding, producer, getClassLoader(interfaceClasses), interfaceClasses,
                 createMethodInfoCache(endpoint));
     }

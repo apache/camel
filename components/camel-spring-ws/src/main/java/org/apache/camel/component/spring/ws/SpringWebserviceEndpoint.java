@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
@@ -30,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
              syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-             category = { Category.SPRING, Category.SOAP, Category.WEBSERVICE })
+             category = { Category.WEBSERVICE }, headersClass = SpringWebserviceConstants.class)
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -39,6 +40,7 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
     public SpringWebserviceEndpoint(Component component, String uri, SpringWebserviceConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        setExchangePattern(ExchangePattern.InOut);
     }
 
     @Override
@@ -59,4 +61,5 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
     public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
     }
+
 }

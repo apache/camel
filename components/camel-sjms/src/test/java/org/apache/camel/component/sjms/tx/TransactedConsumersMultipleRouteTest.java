@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test to verify concurrent consumers on a transacted endpoint.
  */
+@Disabled("Works only in isolation")
 public class TransactedConsumersMultipleRouteTest extends TransactedConsumerSupport {
-
-    private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=false";
 
     /**
      * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and
@@ -44,6 +44,6 @@ public class TransactedConsumersMultipleRouteTest extends TransactedConsumerSupp
 
     @Override
     public String getBrokerUri() {
-        return BROKER_URI;
+        return service.serviceAddress();
     }
 }

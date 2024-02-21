@@ -31,15 +31,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpClientRouteTest extends BaseJettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientRouteTest.class);
-
-    private int port1;
-    private int port2;
 
     @Test
     public void testHttpRouteWithMessageHeader() throws Exception {
@@ -70,9 +67,9 @@ public class HttpClientRouteTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
-        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
+        assertFalse(headers.isEmpty(), "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -94,10 +91,10 @@ public class HttpClientRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpRouteWithHttpURI() throws Exception {
+    public void testHttpRouteWithHttpURI() {
         Exchange exchange = template.send("http://localhost:" + port2 + "/querystring", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost:" + port2 + "/querystring?id=test");
             }
@@ -106,16 +103,13 @@ public class HttpClientRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                port1 = getPort();
-                port2 = getNextPort();
-
                 errorHandler(noErrorHandler());
 
                 Processor clientProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // small payloads is optimized to be byte array for http component
                         assertIsInstanceOf(byte[].class, exchange.getIn().getBody());
                     }
@@ -129,7 +123,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                         .to("http://localhost:" + port2 + "/querystring").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
                         exchange.getMessage().setBody(bis);
                     }
@@ -140,13 +134,13 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port2 + "/hello?chunked=false").process(proc);
 
                 from("jetty:http://localhost:" + port2 + "/Query%20/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody(exchange.getIn().getHeader("myQuery", String.class));
                     }
                 });
 
                 from("jetty:http://localhost:" + port2 + "/querystring").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String result = exchange.getIn().getHeader("id", String.class);
                         if (result == null) {
                             result = "No id header";

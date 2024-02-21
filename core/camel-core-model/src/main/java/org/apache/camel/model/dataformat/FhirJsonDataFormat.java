@@ -16,9 +16,10 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -34,4 +35,19 @@ public class FhirJsonDataFormat extends FhirDataformat {
         super("fhirJson");
     }
 
+    private FhirJsonDataFormat(Builder builder) {
+        super("fhirJson", builder);
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link FhirJsonDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, FhirJsonDataFormat> {
+
+        @Override
+        public FhirJsonDataFormat end() {
+            return new FhirJsonDataFormat(this);
+        }
+    }
 }

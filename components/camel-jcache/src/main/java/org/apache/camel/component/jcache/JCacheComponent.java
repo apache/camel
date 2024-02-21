@@ -53,8 +53,7 @@ public class JCacheComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String cacheName = remaining;
-        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext(), cacheName);
+        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext(), remaining);
 
         configuration.setCachingProvider(cachingProvider);
         configuration.setCacheConfiguration(cacheConfiguration);

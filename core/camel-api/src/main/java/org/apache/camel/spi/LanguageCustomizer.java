@@ -159,7 +159,7 @@ public interface LanguageCustomizer extends Ordered {
         }
 
         public LanguageCustomizer build(ThrowingConsumer<T, Exception> consumer) {
-            return build(new ThrowingBiConsumer<String, T, Exception>() {
+            return build(new ThrowingBiConsumer<>() {
                 @Override
                 public void accept(String name, T target) throws Exception {
                     consumer.accept(target);
@@ -196,35 +196,6 @@ public interface LanguageCustomizer extends Ordered {
                 @Override
                 public int getOrder() {
                     return order;
-                }
-            };
-        }
-
-        private BiPredicate<String, Language> condition() {
-            if (type.equals(Language.class)) {
-                return this.condition != null
-                        ? this.condition
-                        : new BiPredicate<String, Language>() {
-                            @Override
-                            public boolean test(String s, Language language) {
-                                return true;
-                            }
-                        };
-            }
-
-            if (condition == null) {
-                return new BiPredicate<String, Language>() {
-                    @Override
-                    public boolean test(String name, Language target) {
-                        return type.isAssignableFrom(target.getClass());
-                    }
-                };
-            }
-
-            return new BiPredicate<String, Language>() {
-                @Override
-                public boolean test(String name, Language target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
                 }
             };
         }

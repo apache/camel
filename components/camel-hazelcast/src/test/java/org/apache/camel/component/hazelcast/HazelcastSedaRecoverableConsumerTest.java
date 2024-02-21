@@ -53,7 +53,7 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
 
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
     }
 
     @Override

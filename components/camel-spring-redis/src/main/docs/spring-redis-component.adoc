@@ -1,23 +1,24 @@
-[[spring-redis-component]]
 = Spring Redis Component
-:docTitle: Spring Redis
-:artifactId: camel-spring-redis
+:doctitle: Spring Redis
+:shortname: spring-redis
+:artifactid: camel-spring-redis
 :description: Send and receive messages from Redis.
 :since: 2.11
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/spring-redis.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
+:camel-spring-boot-name: spring-redis
 
 *Since Camel {since}*
 
 *{component-header}*
 
 This component allows sending and receiving messages from
-https://redis.io/[Redis]. Redis is advanced key-value store where
+https://redis.io/[Redis]. Redis is an advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In
-addition it provides pub/sub functionality for inter-app
+addition, it provides pub/sub functionality for inter-app
 communications.
 Camel provides a producer for executing commands, consumer for
 subscribing to pub/sub messages an idempotent repository for filtering
@@ -27,347 +28,300 @@ out duplicate messages.
 ====
 *Prerequisites*
 
-In order to use this component, you must have a Redis server running.
+To use this component, you must have a Redis server running.
 ====
 
 == URI Format
 
-[source,java]
 ----------------------------------
 spring-redis://host:port[?options]
 ----------------------------------
 
-You can append query options to the URI in the following format,
-`?options=value&option2=value&...`
 
-== URI Options
 
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Spring Redis component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *redisTemplate* (common) | *Autowired* Reference to a pre-configured RedisTemplate instance to use. |  | RedisTemplate
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
 // endpoint options: START
-The Spring Redis endpoint is configured using URI syntax:
 
-----
-spring-redis:host:port
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (2 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *host* | *Required* The host where Redis server is running. |  | String
-| *port* | *Required* Redis server port number |  | Integer
-|===
-
-
-=== Query Parameters (10 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *channels* (common) | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma. |  | String
-| *command* (common) | Default command, which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE. There are 129 enums and the value can be one of: PING, SET, GET, QUIT, EXISTS, DEL, TYPE, FLUSHDB, KEYS, RANDOMKEY, RENAME, RENAMENX, RENAMEX, DBSIZE, EXPIRE, EXPIREAT, TTL, SELECT, MOVE, FLUSHALL, GETSET, MGET, SETNX, SETEX, MSET, MSETNX, DECRBY, DECR, INCRBY, INCR, APPEND, SUBSTR, HSET, HGET, HSETNX, HMSET, HMGET, HINCRBY, HEXISTS, HDEL, HLEN, HKEYS, HVALS, HGETALL, RPUSH, LPUSH, LLEN, LRANGE, LTRIM, LINDEX, LSET, LREM, LPOP, RPOP, RPOPLPUSH, SADD, SMEMBERS, SREM, SPOP, SMOVE, SCARD, SISMEMBER, SINTER, SINTERSTORE, SUNION, SUNIONSTORE, SDIFF, SDIFFSTORE, SRANDMEMBER, ZADD, ZRANGE, ZREM, ZINCRBY, ZRANK, ZREVRANK, ZREVRANGE, ZCARD, ZSCORE, MULTI, DISCARD, EXEC, WATCH, UNWATCH, SORT, BLPOP, BRPOP, AUTH, SUBSCRIBE, PUBLISH, UNSUBSCRIBE, PSUBSCRIBE, PUNSUBSCRIBE, ZCOUNT, ZRANGEBYSCORE, ZREVRANGEBYSCORE, ZREMRANGEBYRANK, ZREMRANGEBYSCORE, ZUNIONSTORE, ZINTERSTORE, SAVE, BGSAVE, BGREWRITEAOF, LASTSAVE, SHUTDOWN, INFO, MONITOR, SLAVEOF, CONFIG, STRLEN, SYNC, LPUSHX, PERSIST, RPUSHX, ECHO, LINSERT, DEBUG, BRPOPLPUSH, SETBIT, GETBIT, SETRANGE, GETRANGE, PEXPIRE, PEXPIREAT, GEOADD, GEODIST, GEOHASH, GEOPOS, GEORADIUS, GEORADIUSBYMEMBER | SET | Command
-| *connectionFactory* (common) | Reference to a pre-configured RedisConnectionFactory instance to use. |  | RedisConnectionFactory
-| *redisTemplate* (common) | Reference to a pre-configured RedisTemplate instance to use. |  | RedisTemplate
-| *serializer* (common) | Reference to a pre-configured RedisSerializer instance to use. |  | RedisSerializer
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *listenerContainer* (consumer) | Reference to a pre-configured RedisMessageListenerContainer instance to use. |  | RedisMessageListenerContainer
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-|===
 // endpoint options: END
-
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
 See also the unit tests available
-at https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
+at https://github.com/apache/camel/tree/main/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/main/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
 
 === Message headers evaluated by the Redis producer
 
-The producer issues commands to the server and each command has
-different set of parameters with specific types. The result from the
+The producer issues commands to the server, and each command has
+a different set of parameters with specific types. The result from the
 command execution is returned in the message body.
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Hash Commands |Description |Parameters |Result
 
-|`HSET` |Set the string value of a hash field |CamelRedis.Key (String), CamelRedis.Field (String), CamelRedis.Value
+|`HSET` |Set the string value of a hash field |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Object) |void
 
-|`HGET` |Get the value of a hash field |CamelRedis.Key (String), CamelRedis.Field (String) |String
+|`HGET` |Get the value of a hash field |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |String
 
-|`HSETNX` |Set the value of a hash field, only if the field does not exist |CamelRedis.Key (String), CamelRedis.Field (String), CamelRedis.Value
+|`HSETNX` |Set the value of a hash field only if the field does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Object) |void
 
-|`HMSET` |Set multiple hash fields to multiple values |CamelRedis.Key (String), CamelRedis.Values(Map<String, Object>) |void
+|`HMSET` |Set multiple hash fields to multiple values |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 
-|`HMGET` |Get the values of all the given hash fields |CamelRedis.Key (String), CamelRedis.Fields (Collection<String>) |Collection<Object>
+|`HMGET` |Get the values of all the given hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELDS`/"CamelRedis.Fields" (Collection<String>) |Collection<Object>
 
-|`HINCRBY` |Increment the integer value of a hash field by the given number |CamelRedis.Key (String), CamelRedis.Field (String), CamelRedis.Value
+|`HINCRBY` |Increment the integer value of a hash field by the given number |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Long) |Long
 
-|`HEXISTS` |Determine if a hash field exists |CamelRedis.Key (String), CamelRedis.Field (String) |Boolean
+|`HEXISTS` |Determine if a hash field exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |Boolean
 
-|`HDEL` |Delete one or more hash fields |CamelRedis.Key (String), CamelRedis.Field (String) |void 
+|`HDEL` |Delete one or more hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |void
 
-|`HLEN` |Get the number of fields in a hash |CamelRedis.Key (String) |Long
+|`HLEN` |Get the number of fields in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`HKEYS` |Get all the fields in a hash |CamelRedis.Key (String) |Set<String>
+|`HKEYS` |Get all the fields in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Set<String>
 
-|`HVALS` |Get all the values in a hash |CamelRedis.Key (String) |Collection<Object>
+|`HVALS` |Get all the values in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Collection<Object>
 
-|`HGETALL` |Get all the fields and values in a hash |CamelRedis.Key (String) |Map<String, Object>
+|`HGETALL` |Get all the fields and values in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Map<String, Object>
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |List Commands |Description |Parameters |Result
 
-|`RPUSH` |Append one or multiple values to a list |CamelRedis.Key (String), CamelRedis.Value (Object) |Long
+|`RPUSH` |Append one or multiple values to a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
-|`RPUSHX` |Append a value to a list, only if the list exists |CamelRedis.Key (String), CamelRedis.Value (Object) |Long
+|`RPUSHX` |Append a value to a list only if the list exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
-|`LPUSH` |Prepend one or multiple values to a list |CamelRedis.Key (String), CamelRedis.Value (Object) |Long
+|`LPUSH` |Prepend one or multiple values to a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
-|`LLEN` |Get the length of a list |CamelRedis.Key (String) |Long
+|`LLEN` |Get the length of a list |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`LRANGE` |Get a range of elements from a list |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long) |List<Object>
+|`LRANGE` |Get a range of elements from a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |List<Object>
 
-|`LTRIM` |Trim a list to the specified range |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long) |void
+|`LTRIM` |Trim a list to the specified range |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`LINDEX` |Get an element from a list by its index |CamelRedis.Key (String), CamelRedis.Index (Long) |String
+|`LINDEX` |Get an element from a list by its index |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.INDEX`/"CamelRedis.Index" (Long) |String
 
-|`LINSERT` |Insert an element before or after another element in a list |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Pivot
-(String), CamelRedis.Position (String) |Long
+|`LINSERT` |Insert an element before or after another element in a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.PIVOT`/"CamelRedis.Pivot"
+(String), `RedisConstants.POSITION`/"CamelRedis.Position" (String) |Long
 
-|`LSET` |Set the value of an element in a list by its index |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Index
+|`LSET` |Set the value of an element in a list by its index |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.INDEX`/"CamelRedis.Index"
 (Long) |void
 
-|`LREM` |Remove elements from a list |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Count
+|`LREM` |Remove elements from a list |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.COUNT`/"CamelRedis.Count"
 (Long) |Long
 
-|`LPOP` |Remove and get the first element in a list |CamelRedis.Key (String) |Object
+|`LPOP` |Remove and get the first element in a list |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Object
 
-|`RPOP` |Remove and get the last element in a list |CamelRedis.Key (String) |String
+|`RPOP` |Remove and get the last element in a list |`RedisConstants.KEY`/"CamelRedis.Key" (String) |String
 
 |`RPOPLPUSH` |Remove the last element in a list, append it to another list and return
-it |CamelRedis.Key (String), CamelRedis.Destination (String) |Object
+it |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |Object
 
 |`BRPOPLPUSH` |Pop a value from a list, push it to another list and return it; or block
-until one is available |CamelRedis.Key (String), CamelRedis.Destination (String),
-CamelRedis.Timeout (Long) |Object
+until one is available |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String),
+`RedisConstants.TIMEOUT`/"CamelRedis.Timeout" (Long) |Object
 
 |`BLPOP` |Remove and get the first element in a list, or block until one is
-available |CamelRedis.Key (String), CamelRedis.Timeout (Long) |Object
+available |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout" (Long) |Object
 
 |`BRPOP` |Remove and get the last element in a list, or block until one is
-available |CamelRedis.Key (String), CamelRedis.Timeout (Long) |String
+available |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout" (Long) |String
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Set Commands |Description |Parameters |Result
 
-|`SADD` |Add one or more members to a set |CamelRedis.Key (String), CamelRedis.Value (Object) |Boolean
+|`SADD` |Add one or more members to a set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`SMEMBERS` |Get all the members in a set |CamelRedis.Key (String) |Set<Object>
+|`SMEMBERS` |Get all the members in a set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Set<Object>
 
-|`SREM` |Remove one or more members from a set |CamelRedis.Key (String), CamelRedis.Value (Object) |Boolean
+|`SREM` |Remove one or more members from a set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`SPOP` |Remove and return a random member from a set |CamelRedis.Key (String) |String
+|`SPOP` |Remove and return a random member from a set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |String
 
-|`SMOVE` |Move a member from one set to another |CamelRedis.Key (String), CamelRedis.Value (Object),
-CamelRedis.Destination (String) |Boolean
+|`SMOVE` |Move a member from one set to another |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |Boolean
 
-|`SCARD` |Get the number of members in a set |CamelRedis.Key (String) |Long
+|`SCARD` |Get the number of members in a set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`SISMEMBER` |Determine if a given value is a member of a set |CamelRedis.Key (String), CamelRedis.Value (Object) |Boolean
+|`SISMEMBER` |Determine if a given value is a member of a set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`SINTER` |Intersect multiple sets |CamelRedis.Key (String), CamelRedis.Keys (String) |Set<Object>
+|`SINTER` |Intersect multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
 
-|`SINTERSTORE` |Intersect multiple sets and store the resulting set in a key |CamelRedis.Key (String), CamelRedis.Keys (String),
-CamelRedis.Destination (String) |void
+|`SINTERSTORE` |Intersect multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
-|`SUNION` |Add multiple sets |CamelRedis.Key (String), CamelRedis.Keys (String) |Set<Object>
+|`SUNION` |Add multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
 
-|`SUNIONSTORE` |Add multiple sets and store the resulting set in a key |CamelRedis.Key (String), CamelRedis.Keys (String),
-CamelRedis.Destination (String) |void
+|`SUNIONSTORE` |Add multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
-|`SDIFF` |Subtract multiple sets |CamelRedis.Key (String), CamelRedis.Keys (String) |Set<Object>
+|`SDIFF` |Subtract multiple sets |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String) |Set<Object>
 
-|`SDIFFSTORE` |Subtract multiple sets and store the resulting set in a key |CamelRedis.Key (String), CamelRedis.Keys (String),
-CamelRedis.Destination (String) |void
+|`SDIFFSTORE` |Subtract multiple sets and store the resulting set in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
-|`SRANDMEMBER` |Get one or multiple random members from a set |CamelRedis.Key (String) |String
+|`SRANDMEMBER` |Get one or multiple random members from a set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |String
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Ordered set Commands |Description |Parameters |Result
 
 |`ZADD` |Add one or more members to a sorted set, or update its score if it
-already exists |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Score
+already exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.SCORE`/"CamelRedis.Score"
 (Double) |Boolean
 
-|`ZRANGE` |Return a range of members in a sorted set, by index |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long),
-CamelRedis.WithScore (Boolean) |Object
+|`ZRANGE` |Return a range of members in a sorted set, by index |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long),
+`RedisConstants.WITHSCORE`/"CamelRedis.WithScore" (Boolean) |Object
 
-|`ZREM` |Remove one or more members from a sorted set |CamelRedis.Key (String), CamelRedis.Value (Object) |Boolean
+|`ZREM` |Remove one or more members from a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`ZINCRBY` |Increment the score of a member in a sorted set |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Increment
+|`ZINCRBY` |Increment the score of a member in a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.INCREMENT`/"CamelRedis.Increment"
 (Double) |Double
 
-|`ZRANK` |Determine the index of a member in a sorted set |CamelRedis.Key (String), CamelRedis.Value (Object) |Long
+|`ZRANK` |Determine the index of a member in a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
 |`ZREVRANK` |Determine the index of a member in a sorted set, with scores ordered
-from high to low |CamelRedis.Key (String), CamelRedis.Value (Object) |Long
+from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
 
 |`ZREVRANGE` |Return a range of members in a sorted set, by index, with scores ordered
-from high to low |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long),
-CamelRedis.WithScore (Boolean) |Object
+from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long),
+`RedisConstants.WITHSCORE`/"CamelRedis.WithScore" (Boolean) |Object
 
-|`ZCARD` |Get the number of members in a sorted set |CamelRedis.Key (String) |Long
+|`ZCARD` |Get the number of members in a sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`ZCOUNT` |Count the members in a sorted set with scores within the given values |CamelRedis.Key (String), CamelRedis.Min (Double), CamelRedis.Max
+|`ZCOUNT` |Count the members in a sorted set with scores within the given values |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.MIN`/"CamelRedis.Min" (Double), `RedisConstants.MAX`/"CamelRedis.Max"
 (Double) |Long
 
-|`ZRANGEBYSCORE` |Return a range of members in a sorted set, by score |CamelRedis.Key (String), CamelRedis.Min (Double), CamelRedis.Max
+|`ZRANGEBYSCORE` |Return a range of members in a sorted set, by score |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.MIN`/"CamelRedis.Min" (Double), `RedisConstants.MAX`/"CamelRedis.Max"
 (Double) |Set<Object>
 
 |`ZREVRANGEBYSCORE` |Return a range of members in a sorted set, by score, with scores ordered
-from high to low |CamelRedis.Key (String), CamelRedis.Min (Double), CamelRedis.Max
+from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.MIN`/"CamelRedis.Min" (Double), `RedisConstants.MAX`/"CamelRedis.Max"
 (Double) |Set<Object>
 
-|`ZREMRANGEBYRANK` |Remove all members in a sorted set within the given indexes |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long) |void
+|`ZREMRANGEBYRANK` |Remove all members in a sorted set within the given indexes |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long) |void
+|`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting sorted set in a new key |CamelRedis.Key (String), CamelRedis.Keys (String),
-CamelRedis.Destination (String) |void
+|`ZUNIONSTORE` |Add multiple sorted sets and store the resulting-sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 
 |`ZINTERSTORE` |Intersect multiple sorted sets and store the resulting sorted set in a
-new key |CamelRedis.Key (String), CamelRedis.Keys (String),
-CamelRedis.Destination (String) |void
+new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (String),
+`RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |String Commands |Description |Parameters |Result
 
-|`SET` |Set the string value of a key |CamelRedis.Key (String), CamelRedis.Value (Object) |void
+|`SET` |Set the string value of a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |void
 
-|`GET` |Get the value of a key |CamelRedis.Key (String) |Object
+|`GET` |Get the value of a key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Object
 
-|`STRLEN` |Get the length of the value stored in a key |CamelRedis.Key (String) |Long
+|`STRLEN` |Get the length of the value stored in a key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`APPEND` |Append a value to a key |CamelRedis.Key (String), CamelRedis.Value (String) |Integer
+|`APPEND` |Append a value to a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (String) |Integer
 
-|`SETBIT` |Sets or clears the bit at offset in the string value stored at key |CamelRedis.Key (String), CamelRedis.Offset (Long), CamelRedis.Value
+|`SETBIT` |Sets or clears the bit at offset in the string value stored at key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.OFFSET`/"CamelRedis.Offset" (Long), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Boolean) |void
 
-|`GETBIT` |Returns the bit value at offset in the string value stored at key |CamelRedis.Key (String), CamelRedis.Offset (Long) |Boolean
+|`GETBIT` |Returns the bit value at offset in the string value stored at key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.OFFSET`/"CamelRedis.Offset" (Long) |Boolean
 
-|`SETRANGE` |Overwrite part of a string at key starting at the specified offset |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Offset
+|`SETRANGE` |Overwrite part of a string at key starting at the specified offset |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.OFFSET`/"CamelRedis.Offset"
 (Long) |void
 
-|`GETRANGE` |Get a substring of the string stored at a key |CamelRedis.Key (String), CamelRedis.Start (Long), CamelRedis.End (Long) |String
+|`GETRANGE` |Get a substring of the string stored at a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |String
 
-|`SETNX` |Set the value of a key, only if the key does not exist |CamelRedis.Key (String), CamelRedis.Value (Object) |Boolean
+|`SETNX` |Set the value of a key only if the key does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Boolean
 
-|`SETEX` |Set the value and expiration of a key |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Timeout
+|`SETEX` |Set the value and expiration of a key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout"
 (Long), SECONDS |void
 
-|`DECRBY` |Decrement the integer value of a key by the given number |CamelRedis.Key (String), CamelRedis.Value (Long) |Long
+|`DECRBY` |Decrement the integer value of a key by the given number |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Long) |Long
 
-|`DECR` |Decrement the integer value of a key by one |CamelRedis.Key (String), |Long
+|`DECR` |Decrement the integer value of a key by one |`RedisConstants.KEY`/"CamelRedis.Key" (String), |Long
 
-|`INCRBY` |Increment the integer value of a key by the given amount |CamelRedis.Key (String), CamelRedis.Value (Long) |Long
+|`INCRBY` |Increment the integer value of a key by the given amount |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Long) |Long
 
-|`INCR` |Increment the integer value of a key by one |CamelRedis.Key (String) |Long
+|`INCR` |Increment the integer value of a key by one |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`MGET` |Get the values of all the given keys |CamelRedis.Fields (Collection<String>) |List<Object>
+|`MGET` |Get the values of all the given keys |`RedisConstants.FIELDS`/"CamelRedis.Filds" (Collection<String>) |List<Object>
 
-|`MSET` |Set multiple keys to multiple values |CamelRedis.Values(Map<String, Object>) |void
+|`MSET` |Set multiple keys to multiple values |`RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 
-|`MSETNX` |Set multiple keys to multiple values, only if none of the keys exist |CamelRedis.Key (String), CamelRedis.Value (Object) |void
+|`MSETNX` |Set multiple keys to multiple values only if none of the keys exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |void
 
-|`GETSET` |Set the string value of a key and return its old value |CamelRedis.Key (String), CamelRedis.Value (Object) |Object
+|`GETSET` |Set the string value of a key and return its old value |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Object
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Key Commands |Description |Parameters |Result
 
-|`EXISTS` |Determine if a key exists |CamelRedis.Key (String) |Boolean
+|`EXISTS` |Determine if a key exists |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Boolean
 
-|`DEL` |Delete a key |CamelRedis.Keys (String) |void
+|`DEL` |Delete a key |`RedisConstants.KEYS`/"CamelRedis.Keys" (String) |void
 
-|`TYPE` |Determine the type stored at key |CamelRedis.Key (String) |DataType
+|`TYPE` |Determine the type stored at key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |DataType
 
-|`KEYS` |Find all keys matching the given pattern |CamelRedis.Pattern (String) |Collection<String>
+|`KEYS` |Find all keys matching the given pattern |`RedisConstants.PATERN`/"CamelRedis.Pattern" (String) |Collection<String>
 
-|`RANDOMKEY` |Return a random key from the keyspace |CamelRedis.Pattern (String), CamelRedis.Value (String) |String
+|`RANDOMKEY` |Return a random key from the keyspace |`RedisConstants.PATERN`/"CamelRedis.Pattern" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (String) |String
 
-|`RENAME` |Rename a key |CamelRedis.Key (String) |void
+|`RENAME` |Rename a key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |void
 
-|`RENAMENX` |Rename a key, only if the new key does not exist |CamelRedis.Key (String), CamelRedis.Value (String) |Boolean
+|`RENAMENX` |Rename a key, only if the new key does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (String) |Boolean
 
-|`EXPIRE` |Set a key's time to live in seconds |CamelRedis.Key (String), CamelRedis.Timeout (Long) |Boolean
+|`EXPIRE` |Set a key's time to live in seconds |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout" (Long) |Boolean
 
-|`SORT` |Sort the elements in a list, set or sorted set |CamelRedis.Key (String) |List<Object>
+|`SORT` |Sort the elements in a list, set or sorted set |`RedisConstants.KEY`/"CamelRedis.Key" (String) |List<Object>
 
-|`PERSIST` |Remove the expiration from a key |CamelRedis.Key (String) |Boolean
+|`PERSIST` |Remove the expiration from a key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Boolean
 
-|`EXPIREAT` |Set the expiration for a key as a UNIX timestamp |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
+|`EXPIREAT` |Set the expiration for a key as a UNIX timestamp |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMESTAMP`/"CamelRedis.Timestamp" (Long) |Boolean
 
-|`PEXPIRE` |Set a key's time to live in milliseconds |CamelRedis.Key (String), CamelRedis.Timeout (Long) |Boolean
+|`PEXPIRE` |Set a key's time to live in milliseconds |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMEOUT`/"CamelRedis.Timeout" (Long) |Boolean
 
 |`PEXPIREAT` |Set the expiration for a key as a UNIX timestamp specified in
-milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
+milliseconds |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.TIMESTAMP`/"CamelRedis.Timestamp" (Long) |Boolean
 
-|`TTL` |Get the time to live for a key |CamelRedis.Key (String) |Long
+|`TTL` |Get the time to live for a key |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`MOVE` |Move a key to another database |CamelRedis.Key (String), CamelRedis.Db (Integer) |Boolean
+|`MOVE` |Move a key to another database |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.DB`/"CamelRedis.Db" (Integer) |Boolean
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Geo Commands |Description |Parameters |Result
 
-|`GEOADD` |Adds the specified geospatial items (latitude, longitude, name) to the specified key |CamelRedis.Key (String), CamelRedis.Latitude (Double), CamelRedis.Longitude (Double), CamelRedis.Value (Object) |Long
-|`GEODIST` |Return the distance between two members in the geospatial index for the specified key  |CamelRedis.Key (String), CamelRedis.Values (Object[]) |Distance
-|`GEOHASH` |Return valid Geohash strings representing the position of an element in the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object) |List<String>
-|`GEOPOS` |Return the positions (longitude,latitude) of an element in the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object) |List<Point>
-|`GEORADIUS` |Return the  element in the geospatial index for the specified key which are within the borders of the area specified with the center location and the maximum distance from the center (the radius) |CamelRedis.Key (String), CamelRedis.Latitude (Double), CamelRedis.Longitude (Double), CamelRedis.Radius (Double), CamelRedis.Count (Integer) |GeoResults
-|`GEORADIUSBYMEMBER` |This command is exactly like GEORADIUS with the sole difference that instead of taking, as the center of the area to query, a longitude and latitude value, it takes the name of a member already existing inside the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Radius (Double), CamelRedis.Count (Integer) |GeoResults
+|`GEOADD` |Adds the specified geospatial items (latitude, longitude, name) to the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.LATITUDE`/"CamelRedis.Latitude" (Double), `RedisConstants.LONGITUDE`/"CamelRedis.Longitude" (Double), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |Long
+|`GEODIST` |Return the distance between two members in the geospatial index for the specified key  |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUES`/"CamelRedis.Values" (Object[]) |Distance
+|`GEOHASH` |Return valid Geohash strings representing the position of an element in the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |List<String>
+|`GEOPOS` |Return the positions (longitude, latitude) of an element in the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object) |List<Point>
+|`GEORADIUS` |Return the  element in the geospatial index for the specified key which is within the borders of the area specified with the center location and the maximum distance from the center (the radius) |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.LATITUDE`/"CamelRedis.Latitude" (Double), `RedisConstants.LONGITUDE`/"CamelRedis.Longitude" (Double), `RedisConstants.RADIUS`/"CamelRedis.Radius" (Double), `RedisConstants.COUNT`/"CamelRedis.Count" (Integer) |GeoResults
+|`GEORADIUSBYMEMBER` |This command is exactly like GEORADIUS with the sole difference that instead of taking, as the center of the area to query, a longitude and latitude value, it takes the name of a member already existing inside the geospatial index for the specified key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUE`/"CamelRedis.Value" (Object), `RedisConstants.RADIUS`/"CamelRedis.Radius" (Double), `RedisConstants.COUNT`/"CamelRedis.Count" (Integer) |GeoResults
 |=======================================================================
 
-[width="100%",cols="20%,20%,20%,60%",options="header",]
+[width="100%",cols="10%,40%,50%,10%"",options="header",]
 |=======================================================================
 |Other Command |Description |Parameters |Result
 
@@ -377,17 +331,17 @@ milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
 
 |`EXEC` |Execute all commands issued after MULTI |none |void
 
-|`WATCH` |Watch the given keys to determine execution of the MULTI/EXEC block |CamelRedis.Keys (String) |void
+|`WATCH` |Watch the given keys to determine execution of the MULTI/EXEC block |`RedisConstants.KEYS`/"CamelRedis.Keys" (String) |void
 
 |`UNWATCH` |Forget about all watched keys |none |void
 
-|`ECHO` |Echo the given string |CamelRedis.Value (String) |String
+|`ECHO` |Echo the given string |`RedisConstants.VALUE`/"CamelRedis.Value" (String) |String
 
 |`PING` |Ping the server |none |String
 
 |`QUIT` |Close the connection |none |void
 
-|`PUBLISH` |Post a message to a channel |CamelRedis.Channel (String), CamelRedis.Message (Object) |void
+|`PUBLISH` |Post a message to a channel |`RedisConstants.CHANNEL`/"CamelRedis.Channel" (String), `RedisConstants.MESSAGE`/"CamelRedis.Message" (Object) |void
 |=======================================================================
 
 == Dependencies
@@ -408,4 +362,5 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-include::camel-spring-boot::page$spring-redis-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

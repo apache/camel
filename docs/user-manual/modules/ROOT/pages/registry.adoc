@@ -1,17 +1,191 @@
-[[Registry-Registry]]
 = Registry
 
-Camel supports a pluggable
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/spi/Registry.java[Registry]
-plugin strategy. This allows Camel to easily work with some kind of
-registry like
+The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any kind of runtime platform,
+whether you run Camel on Spring Boot, Quarkus, Standalone, Kafka or something else.
 
-* https://github.com/apache/camel/blob/master/core/camel-support/src/main/java/org/apache/camel/support/SimpleRegistry.java[SimpleRegistry]
-which is a simple `java.util.Map` based registry.
-* https://github.com/apache/camel/blob/master/core/camel-core-engine/src/main/java/org/apache/camel/impl/JndiRegistry.java[JndiRegistry]
-which uses the JNDI InitialContext as the registry
+Camel uses the `DefaultRegistry` that based on which runtime used (Spring Boot, Quarkus, etc.) will
+first lookup beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
 
-You can also access the Registry from the
-CamelContext via the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/CamelContext.java#L690[camelContext.getRegistry()
-method]
+== Registry API
+
+The registry has two sets of APIs:
+
+- binding
+- lookup
+
+The binding API is used to add new beans into the registry.
+The lookup is used for looking up existing beans from the registry.
+
+=== Binding API
+
+The binding API is as follows:
+
+[source,java]
+----
+public interface Registry extends BeanRepository {
+
+    /**
+     * Binds the bean to the repository (if possible).
+     * If the bean is CamelContextAware then the registry will automatic inject the context if possible.
+     *
+     * @param  id    the id of the bean
+     * @param  bean  the bean
+     */
+    void bind(String id, Object bean);
+
+    /**
+     * Binds the bean to the repository (if possible).
+     * Binding by id and type allows to bind multiple entries with the same id but with different type.
+     * If the bean is CamelContextAware then the registry will automatic inject the context if possible.
+     *
+     * @param  id    the id of the bean
+     * @param  type  the type of the bean to associate the binding
+     * @param  bean  the bean
+     */
+    void bind(String id, Class<?> type, Object bean);
+
+}
+----
+
+If you for example need to add a bean to the `Registry` then you can easily do this from Java as follows:
+
+[source,java]
+----
+Object myFoo = ...
+camelContext.getRegistry().bind("foo", myFoo);
+----
+
+Then you can access the bean by the id, such as from a Camel route:
+
+[source,java]
+----
+from("jms:cheese").bean("foo");
+----
+
+==== Binding in Spring XML
+
+If you use Spring XML file, then any `<bean>` is automatic handled by Spring itself, and
+registered into Spring bean container; which means there is no need to bind the bean from Camel also.
+
+[source,xml]
+----
+<bean id="foo" class="com.foo.MyFoo"/>
+----
+
+==== Binding in Spring Boot
+
+When using Spring Boot, then you can also use annotations to declare beans
+such as with the `@Bean` annotation on the method that creates the bean:
+
+[source,java]
+----
+@Bean
+public MyFoo foo() {
+    return new MyFoo();
+}
+----
+
+This is common functionality of Spring Boot, and you can find information about this in
+the Spring Boot project documentation.
+
+==== Binding in Quarkus
+
+Quarkus has similar functionality like Spring Boot to declare beans, which can be done
+with the `javax.inject.enterprise.Produces` and `javax.inject.Named` annotations:
+
+[source,java]
+----
+@Produces @Named("foo")
+public MyFoo foo() {
+    return new MyFoo();
+}
+----
+
+== Lookup API
+
+Registry is mostly used for looking up beans by their IDs, or by type. This is heavily used
+during startup of Camel where Camel is wiring up all components, endpoints, routes, processors, beans and so forth.
+
+The lookup API is the following methods:
+
+[source,java]
+----
+public interface BeanRepository {
+
+    /**
+     * Looks up a bean in the registry based purely on name, returning the bean or null if it could not be found.
+     *
+     * Important: Multiple beans of different types may be bound with the same name, and its encouraged to use the
+     * lookupByNameAndType(String, Class) to lookup the bean with a specific type, or to use any of the
+     * find methods.
+     *
+     * @param  name the name of the bean
+     * @return      the bean from the registry or null if it could not be found
+     */
+    Object lookupByName(String name);
+
+    /**
+     * Looks up a bean in the registry, returning the bean or null if it could not be found.
+     *
+     * @param  name the name of the bean
+     * @param  type the type of the required bean
+     * @return      the bean from the registry or null if it could not be found
+     */
+    <T> T lookupByNameAndType(String name, Class<T> type);
+
+    /**
+     * Finds beans in the registry by their type.
+     *
+     * @param  type the type of the beans
+     * @return      the types found, with their bean ids as the key. Returns an empty Map if none found.
+     */
+    <T> Map<String, T> findByTypeWithName(Class<T> type);
+
+    /**
+     * Finds beans in the registry by their type.
+     *
+     * @param  type the type of the beans
+     * @return      the types found. Returns an empty Set if none found.
+     */
+    <T> Set<T> findByType(Class<T> type);
+
+}
+----
+
+You can lookup beans from Java code as shown:
+
+[source,java]
+----
+// lookup by id only
+Object foo = camelContext.getRegistry().lookupByName("foo");
+
+// lookup by type so there is no need for type casting
+MyFoo foo2 = camelContext.getRegistry().lookupByNameAndType("foo", MyFoo.class);
+----
+
+=== Looking up beans
+
+You can also use dependency injection that will lookup the bean via the Camel registry.
+If you use a runtime platform such as Spring Boot or Quarkus then they come with their own
+functionality for this. Camel also has its own bean injection annotation `@BeanInject` which can
+be used when running Camel standalone.
+
+NOTE: You can also use `@BeanInject` from Camel in Spring Boot or Quarkus;
+but this requires the class with the bean injection is _managed_ by Camel (such as a `RouteBuilder` class);
+which may not always be the case. Therefore, it is best to only use the Spring Boot or Quarkus annotations.
+
+==== Lookup in Spring Boot
+
+When using Spring Boot you can use Spring annotations such as `@Autowired` or `@Inject`
+for dependency injection.
+
+==== Lookup in Quarkus
+
+When using Quarkus you can use CDI annotations such as `@Inject` and `@Named`
+for dependency injection.
+
+== More Information
+
+See xref:bean-injection.adoc[Bean Injection] and xref:bean-integration.adoc[Bean Integration]
+for more details on working with Beans in Camel.
+

@@ -34,9 +34,9 @@ public class KafkaSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.TOPIC)).thenReturn("test");
+        Mockito.when(message.getHeader(KafkaSpanDecorator.OVERRIDE_TOPIC, String.class)).thenReturn("test");
 
-        KafkaSpanDecorator decorator = new KafkaSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new KafkaSpanDecorator();
 
         assertEquals("test", decorator.getDestination(exchange, null));
     }
@@ -49,9 +49,9 @@ public class KafkaSpanDecoratorTest {
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.getEndpointUri())
-                .thenReturn("kafka:localhost:9092?topic=test&groupId=testing&consumersCount=1");
+                .thenReturn("kafka:test?brokers=localhost:9092&consumersCount=1");
 
-        KafkaSpanDecorator decorator = new KafkaSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new KafkaSpanDecorator();
 
         assertEquals("test", decorator.getDestination(exchange, endpoint));
     }
@@ -69,10 +69,10 @@ public class KafkaSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("test");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.KEY)).thenReturn(testKey);
+        Mockito.when(message.getHeader(KafkaSpanDecorator.KEY, String.class)).thenReturn(testKey);
         Mockito.when(message.getHeader(KafkaSpanDecorator.OFFSET, String.class)).thenReturn(testOffset);
         Mockito.when(message.getHeader(KafkaSpanDecorator.PARTITION, String.class)).thenReturn(testPartition);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.PARTITION_KEY)).thenReturn(testPartitionKey);
+        Mockito.when(message.getHeader(KafkaSpanDecorator.PARTITION_KEY, String.class)).thenReturn(testPartitionKey);
 
         SpanDecorator decorator = new KafkaSpanDecorator();
 
@@ -97,8 +97,8 @@ public class KafkaSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("test");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.OFFSET, Long.class)).thenReturn(testOffset);
-        Mockito.when(message.getHeader(KafkaSpanDecorator.PARTITION, Integer.class)).thenReturn(testPartition);
+        Mockito.when(message.getHeader(KafkaSpanDecorator.OFFSET, String.class)).thenReturn(testOffset.toString());
+        Mockito.when(message.getHeader(KafkaSpanDecorator.PARTITION, String.class)).thenReturn(testPartition.toString());
 
         SpanDecorator decorator = new KafkaSpanDecorator();
 

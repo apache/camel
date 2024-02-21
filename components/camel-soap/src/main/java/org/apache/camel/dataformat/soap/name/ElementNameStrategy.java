@@ -25,7 +25,7 @@ public interface ElementNameStrategy {
 
     /**
      * Deterimine element name for given type
-     * 
+     *
      * @param  soapAction
      * @param  type
      * @return            resolved element name
@@ -34,9 +34,17 @@ public interface ElementNameStrategy {
 
     /**
      * Determine exception class for given SOAP Fault QName
-     * 
+     *
      * @param  faultName
      * @return
      */
     Class<? extends Exception> findExceptionForFaultName(QName faultName);
+
+    /**
+     * Determine exception class for given SOAP Action and Fault QName
+     *
+     * @param  faultName
+     * @return
+     */
+    Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName);
 }

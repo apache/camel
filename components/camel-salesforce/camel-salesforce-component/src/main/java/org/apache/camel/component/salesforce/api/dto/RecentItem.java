@@ -18,7 +18,6 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//CHECKSTYLE:OFF
 public class RecentItem extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
@@ -56,4 +55,3 @@ public class RecentItem extends AbstractDTOBase {
         this.Name = name;
     }
 }
-//CHECKSTYLE:ON

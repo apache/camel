@@ -1,0 +1,26 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "java",
+    "title": "Java",
+    "description": "Evaluates a Java (Java compiled once at runtime) expression.",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "label": "language",
+    "javaType": "org.apache.camel.language.joor.JavaLanguage",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-joor",
+    "version": "4.5.0-SNAPSHOT",
+    "modelName": "java",
+    "modelJavaType": "org.apache.camel.model.language.JavaExpression"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "expression": { "index": 1, "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "preCompile": { "index": 2, "kind": "attribute", "displayName": "Pre Compile", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation." },
+    "singleQuotes": { "index": 3, "kind": "attribute", "displayName": "Single Quotes", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings." },
+    "resultType": { "index": 4, "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
+    "trim": { "index": 5, "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" }
+  }
+}

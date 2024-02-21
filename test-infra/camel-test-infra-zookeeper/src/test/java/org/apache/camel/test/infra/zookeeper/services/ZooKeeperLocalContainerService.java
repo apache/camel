@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
 import org.slf4j.Logger;
@@ -24,20 +25,26 @@ import org.slf4j.LoggerFactory;
 public class ZooKeeperLocalContainerService implements ZooKeeperService, ContainerService<ZooKeeperContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperLocalContainerService.class);
 
-    private ZooKeeperContainer container;
+    private final ZooKeeperContainer container;
 
     public ZooKeeperLocalContainerService() {
-        String imageName = System.getProperty("zookeeper.container");
-
-        if (imageName == null) {
-            container = new ZooKeeperContainer();
-        } else {
-            container = new ZooKeeperContainer(imageName);
-        }
+        this(LocalPropertyResolver.getProperty(ZooKeeperLocalContainerService.class, ZooKeeperProperties.ZOOKEEPER_CONTAINER));
     }
 
     public ZooKeeperLocalContainerService(String imageName) {
-        container = new ZooKeeperContainer(imageName);
+        container = initContainer(imageName);
+    }
+
+    public ZooKeeperLocalContainerService(ZooKeeperContainer container) {
+        this.container = container;
+    }
+
+    protected ZooKeeperContainer initContainer(String imageName) {
+        if (imageName == null) {
+            return new ZooKeeperContainer();
+        } else {
+            return new ZooKeeperContainer(imageName);
+        }
     }
 
     @Override

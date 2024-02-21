@@ -16,133 +16,178 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
-import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext.Builder;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
+import io.fabric8.kubernetes.client.utils.Serialization;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport {
+    private static String githubSourceString;
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
-    private String gitHubSourceString = "{" +
-                                        "\"apiVersion\": \"sources.knative.dev/v1alpha1\"," +
-                                        "\"kind\": \"GitHubSource\"," +
-                                        "\"metadata\": {" +
-                                        "   \"name\": \"test\"}," +
-                                        "\"spec\": {" +
-                                        "   \"eventTypes\": [issues, repository]," +
-                                        "   \"ownerAndRepository\": \"akihikokuroda/sample\"," +
-                                        "   \"accessToken\": {" +
-                                        "       \"secretKeyRef\": {" +
-                                        "           \"name\": \"githubsecret\"," +
-                                        "           \"key\": \"accessToken\"}}," +
-                                        "   \"secretToken\": {" +
-                                        "       \"secretKeyRef\": {" +
-                                        "           \"name\": \"githubsecret\"," +
-                                        "           \"key\": \"secretToken\"}}}," +
-                                        "\"githubAPIURL\": \"https://api.github.com/\"," +
-                                        "\"sink\": {" +
-                                        "    \"ref\": {" +
-                                        "       \"apiVersion\": \"messaging.knative.dev/v1beta1\"," +
-                                        "       \"kind\": \"Channel\"," +
-                                        "       \"name\": \"github\"}}" +
-                                        "}";
-
-    private CustomResourceDefinitionContext getCustomResourceContext() {
-        return new CustomResourceDefinitionContext.Builder()
-                .withName("githubsources.sources.knative.dev")
-                .withGroup("sources.knative.dev")
-                .withScope("Namespaced")
-                .withVersion("v1alpha1")
-                .withPlural("githubsources")
-                .build();
+    @BeforeAll
+    public static void readResource() throws IOException {
+        try (InputStream stream = KubernetesCustomResourcesProducerTest.class.getResourceAsStream("sample-cr.json")) {
+            githubSourceString = IOHelper.loadText(stream);
+        }
     }
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
-        return server.getClient();
+    public KubernetesClient getClient() {
+        return client;
+    }
+
+    private String setupGithubSourceList() {
+        GenericKubernetesResourceList list = new GenericKubernetesResourceList();
+        list.getItems().add(Serialization.unmarshal(githubSourceString, GenericKubernetesResource.class));
+        return Serialization.asJson(list);
     }
 
     @Test
-    public void listTest() throws Exception {
-        JsonObject instance = new JsonObject(getClient().customResource(getCustomResourceContext()).load(gitHubSourceString));
-        JsonObject gitHubSourceList = new JsonObject();
-        JsonArray list = new JsonArray();
-        list.add(instance);
-        gitHubSourceList.put("items", list);
-
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources")
-                .andReturn(200, gitHubSourceList.toJson()).once();
-
-        Exchange ex = template.request("direct:listCustomResources", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
-        });
-
-        List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
-
-        assertTrue(1 == result.size());
-    }
-
-    @Test
-    public void createAndDeleteTest() throws Exception {
-        JsonObject instance = new JsonObject(getClient().customResource(getCustomResourceContext()).load(gitHubSourceString));
-        JsonObject gitHubSourceList = new JsonObject();
-        JsonArray list = new JsonArray();
-        list.add(instance);
-        gitHubSourceList.put("items", list);
-
-        server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources")
-                .andReturn(200, gitHubSourceList.toJson()).once();
-        server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources/createtest")
-                .andReturn(200, gitHubSourceList.toJson()).once();
+    @Order(1)
+    void createTest() {
+        server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, githubSourceString).once();
+        server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString).once();
 
         Exchange ex = template.request("direct:createCustomResource", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "createtest");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, gitHubSourceString);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, githubSourceString);
         });
 
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources")
-                .andReturn(200, gitHubSourceList.toJson()).once();
-        Exchange ex2 = template.request("direct:listCustomResources", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
+
+        assertNotNull(ex.getMessage());
+        assertNotNull(ex.getMessage().getBody());
+    }
+
+    @Test
+    @Order(0)
+    void updateTest() {
+        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString).once();
+        server.expect().put().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString).once();
+
+        Exchange ex = template.request("direct:updateCustomResource", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, githubSourceString);
+        });
+
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
+
+        assertNotNull(ex.getMessage());
+        assertNotNull(ex.getMessage().getBody());
+    }
+
+    @Test
+    @Order(2)
+    void listTest() throws Exception {
+        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, setupGithubSourceList()).once();
+
+        Exchange ex = template.request("direct:listCustomResources", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
         });
-        List<Map<String, Object>> result = ex2.getMessage().getBody(List.class);
+
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
+
+        List<?> result = ex.getMessage().getBody(List.class);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @Order(3)
+    void listByLabelsTest() throws Exception {
+        server.expect().get()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources?labelSelector="
+                          + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(200, setupGithubSourceList()).once();
+
+        Exchange ex = template.request("direct:listCustomResourcesByLabels", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_LABELS, labels);
+        });
+
+        assertFalse(ex.isFailed());
+        assertNull(ex.getException());
+
+        List<?> result = ex.getMessage().getBody(List.class);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @Order(4)
+    void deleteTest() {
+        server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, githubSourceString).once();
+        server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString).once();
 
         Exchange ex3 = template.request("direct:deleteCustomResource", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "createtest");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
@@ -150,10 +195,17 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
         });
 
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/test/githubsources")
-                .andReturn(200, "").once();
+        assertNotNull(ex3.getMessage());
+        assertTrue(ex3.getMessage().getHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, Boolean.class));
+    }
+
+    @Test
+    @Order(5)
+    void testListNotFound() {
+        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(404, "").once();
         Exchange ex4 = template.request("direct:listCustomResources", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
@@ -161,24 +213,25 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
         });
 
-        List<Map<String, Object>> result1 = ex4.getMessage().getBody(List.class);
-
-        assertTrue(result1.size() == 0);
+        assertNotNull(ex4.getMessage());
+        assertNull(ex4.getMessage().getBody());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:getCustomResource")
-                        .toF("kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=getCustomResource");
+            public void configure() {
                 from("direct:listCustomResources").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
+                from("direct:listCustomResourcesByLabels").toF(
+                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResourcesByLabels");
                 from("direct:deleteCustomResource").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=deleteCustomResource");
                 from("direct:createCustomResource").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=createCustomResource");
+                from("direct:updateCustomResource").toF(
+                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=updateCustomResource");
             }
         };
     }

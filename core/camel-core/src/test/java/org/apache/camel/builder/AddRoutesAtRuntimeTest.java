@@ -16,8 +16,13 @@
  */
 package org.apache.camel.builder;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.engine.AbstractCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,11 +45,19 @@ public class AddRoutesAtRuntimeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertEquals(2, context.getRoutes().size());
 
+        // use reflection to test that we do not leak bootstraps when dynamic adding routes
+        Method m = AbstractCamelContext.class.getDeclaredMethod("getBootstraps");
+        m.setAccessible(true);
+        Assertions.assertEquals(0, ((List<?>) m.invoke(context)).size());
+
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         context.addRoutes(new MyDynamcRouteBuilder(context, "direct:bar", "mock:bar"));
         template.sendBody("direct:bar", "Hi Camel");
         assertMockEndpointsSatisfied();
         assertEquals(3, context.getRoutes().size());
+
+        // use reflection to test that we do not leak bootstraps when dynamic adding routes
+        Assertions.assertEquals(0, ((List<?>) m.invoke(context)).size());
     }
 
     @Override

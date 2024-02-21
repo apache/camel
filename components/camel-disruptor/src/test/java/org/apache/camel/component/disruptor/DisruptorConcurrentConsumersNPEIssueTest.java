@@ -34,7 +34,7 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
 
         template.sendBody("disruptor:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         RouteController routeController = context.getRouteController();
 
         Exception ex = assertThrows(FailedToStartRouteException.class,
@@ -52,7 +52,7 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
 
         template.sendBody("disruptor:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // this should be okay
         context.getRouteController().startRoute("third");

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StringTemplateTest extends CamelTestSupport {
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         Exchange response = template.request("direct:a", exchange -> {
             exchange.getIn().setBody("Monday");
             exchange.getIn().setHeader("name", "Christian");
@@ -43,7 +43,7 @@ public class StringTemplateTest extends CamelTestSupport {
     }
 
     @Test
-    public void testVariableMap() throws Exception {
+    public void testVariableMap() {
         Exchange exchange = template.request("direct:a", exchange1 -> {
             exchange1.getIn().setBody("");
             exchange1.getIn().setHeader("name", "Christian");

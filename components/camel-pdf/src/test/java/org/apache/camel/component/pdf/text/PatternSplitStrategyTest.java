@@ -28,7 +28,7 @@ public class PatternSplitStrategyTest {
     private PatternSplitStrategy patternSplitStrategy = new PatternSplitStrategy(PATTERN);
 
     @Test
-    public void testSplit() throws Exception {
+    public void testSplit() {
         Collection<String> split = patternSplitStrategy.split("hello" + PATTERN + "world");
         assertEquals(2, split.size());
         assertEquals("world", new ArrayList<>(split).get(1));

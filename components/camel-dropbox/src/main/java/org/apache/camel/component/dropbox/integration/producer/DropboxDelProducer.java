@@ -21,8 +21,8 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxDelResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxHelper;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 
 public class DropboxDelProducer extends DropboxProducer {
@@ -40,7 +40,7 @@ public class DropboxDelProducer extends DropboxProducer {
         DropboxDelResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
                 .del(remotePath);
 
-        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(), result.getEntry());
+        exchange.getIn().setHeader(DropboxConstants.DELETED_PATH, result.getEntry());
         exchange.getIn().setBody(result.getEntry());
     }
 

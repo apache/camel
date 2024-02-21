@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,7 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
         // start route
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(1, foo.intValue());
         assertEquals(1, bar.intValue());
@@ -59,15 +60,15 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jpa://" + SendEmail.class.getName() + "?transacted=false&delay=100").routeId("foo").noAutoStartup()
                         .to("mock:start")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 SendEmail send = exchange.getIn().getBody(SendEmail.class);
                                 if ("kaboom@beer.org".equals(send.getAddress())) {
                                     kaboom.incrementAndGet();

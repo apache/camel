@@ -24,19 +24,10 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-
-    <bean id="dynaPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass">
-            <value>org.apache.camel.test.AvailablePortFinder</value>
-        </property>
-        <property name="targetMethod">
-            <value>getNextAvailable</value>
-        </property>
-    </bean>
-
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="httpEndpoint" uri="http://localhost:#{dynaPort}/hi"/>
-        <endpoint id="jettyEndpoint" uri="jetty:http://localhost:#{dynaPort}/hi"/>
+        <jmxAgent id="jmx" disabled="true"/>
+        <endpoint id="httpEndpoint" uri="http://localhost:{{port}}/hi"/>
+        <endpoint id="jettyEndpoint" uri="jetty:http://localhost:{{port}}/hi"/>
 
         <route>
             <from uri="direct:start"/>

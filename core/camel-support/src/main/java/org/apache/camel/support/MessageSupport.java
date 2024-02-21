@@ -16,15 +16,17 @@
  */
 package org.apache.camel.support;
 
+import java.util.EnumMap;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
+import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * A base class for implementation inheritance providing the core {@link Message} body handling features but letting the
@@ -34,18 +36,20 @@ import org.apache.camel.spi.DataTypeAware;
  * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
-    ExtendedCamelContext camelContext;
-    TypeConverter typeConverter;
+    protected CamelContext camelContext;
+    protected TypeConverter typeConverter;
     private Exchange exchange;
     private Object body;
     private String messageId;
-    private DataType dataType;
+    private long messageTimestamp;
+
+    private final EnumMap<MessageTrait, Object> traits = new EnumMap<>(MessageTrait.class);
 
     @Override
     public void reset() {
         body = null;
         messageId = null;
-        dataType = null;
+        traits.clear();
     }
 
     @Override
@@ -124,6 +128,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 throw new InvalidPayloadException(e, type, this, cause);
             }
         }
+        // TODO Null value in e. Is it expected?
         throw new InvalidPayloadException(e, type, this);
     }
 
@@ -132,7 +137,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         this.body = body;
         // set data type if in use
         if (body != null && camelContext != null && camelContext.isUseDataType()) {
-            this.dataType = new DataType(body.getClass());
+            setPayloadForTrait(MessageTrait.DATA_AWARE, new DataType(body.getClass()));
         }
     }
 
@@ -151,31 +156,29 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setBody(Object body, DataType type) {
         this.body = body;
-        this.dataType = type;
+        setPayloadForTrait(MessageTrait.DATA_AWARE, type);
     }
 
     @Override
     public DataType getDataType() {
-        return this.dataType;
+        Object payload = getPayloadForTrait(MessageTrait.DATA_AWARE);
+        return (DataType) payload;
     }
 
     @Override
     public void setDataType(DataType type) {
-        this.dataType = type;
+        setPayloadForTrait(MessageTrait.DATA_AWARE, type);
     }
 
     @Override
     public boolean hasDataType() {
-        return dataType != null;
+        return hasTrait(MessageTrait.DATA_AWARE);
     }
 
     @Override
     public Message copy() {
         Message answer = newInstance();
-        // must copy over CamelContext
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(camelContext);
-        }
+
         answer.copyFrom(this);
         return answer;
     }
@@ -183,54 +186,38 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void copyFrom(Message that) {
         if (that == this) {
-            // the same instance so do not need to copy
+            // it's the same instance, so do not need to copy
             return;
         }
 
-        // must copy over CamelContext
-        if (that instanceof CamelContextAware) {
-            setCamelContext(((CamelContextAware) that).getCamelContext());
-        }
-        if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
-            setDataType(((DataTypeAware) that).getDataType());
-        }
-        // cover over exchange if none has been assigned
-        if (getExchange() == null) {
-            setExchange(that.getExchange());
-        }
-
         copyFromWithNewBody(that, that.getBody());
+        // Preserve the DataType
+        if (that.hasTrait(MessageTrait.DATA_AWARE)) {
+            setPayloadForTrait(MessageTrait.DATA_AWARE, that.getPayloadForTrait(MessageTrait.DATA_AWARE));
+        }
     }
 
     @Override
     public void copyFromWithNewBody(Message that, Object newBody) {
         if (that == this) {
-            // the same instance so do not need to copy
+            // it's the same instance, so do not need to copy
             return;
         }
 
-        // must copy over CamelContext
-        if (that instanceof CamelContextAware) {
-            setCamelContext(((CamelContextAware) that).getCamelContext());
-        }
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
             setExchange(that.getExchange());
         }
 
+        if (that.hasMessageId()) {
+            setMessageId(that.getMessageId());
+        }
         // should likely not set DataType as the new body may be a different type than the original body
-
-        setMessageId(that.getMessageId());
         setBody(newBody);
 
         // the headers may be the same instance if the end user has made some mistake
         // and set the OUT message with the same header instance of the IN message etc
-        boolean sameHeadersInstance = false;
-        if (hasHeaders() && that.hasHeaders() && getHeaders() == that.getHeaders()) {
-            sameHeadersInstance = true;
-        }
-
-        if (!sameHeadersInstance) {
+        if (!sameHeaders(that)) {
             if (hasHeaders()) {
                 // okay its safe to clear the headers
                 getHeaders().clear();
@@ -239,6 +226,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 getHeaders().putAll(that.getHeaders());
             }
         }
+    }
+
+    private boolean sameHeaders(Message that) {
+        return hasHeaders() && that.hasHeaders() && getHeaders() == that.getHeaders();
     }
 
     @Override
@@ -257,7 +248,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.camelContext = camelContext;
         this.typeConverter = camelContext.getTypeConverter();
     }
 
@@ -284,8 +275,22 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     }
 
     @Override
+    public long getMessageTimestamp() {
+        if (messageTimestamp == 0) {
+            // use -1 to indicate no timestamp exists
+            messageTimestamp = getHeader(Exchange.MESSAGE_TIMESTAMP, -1L, long.class);
+        }
+        return messageTimestamp <= 0 ? 0 : messageTimestamp;
+    }
+
+    @Override
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    @Override
+    public boolean hasMessageId() {
+        return messageId != null;
     }
 
     /**
@@ -300,4 +305,18 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         }
     }
 
+    @Override
+    public boolean hasTrait(MessageTrait trait) {
+        return traits.containsKey(trait);
+    }
+
+    @Override
+    public Object getPayloadForTrait(MessageTrait trait) {
+        return traits.get(trait);
+    }
+
+    @Override
+    public void setPayloadForTrait(MessageTrait trait, Object object) {
+        traits.put(trait, object);
+    }
 }

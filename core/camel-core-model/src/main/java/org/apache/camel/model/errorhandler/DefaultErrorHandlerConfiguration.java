@@ -18,14 +18,19 @@ package org.apache.camel.model.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @XmlTransient
+@Deprecated
 public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProperties {
 
     private CamelLogger logger;
@@ -195,5 +200,15 @@ public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProp
 
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
         this.onExceptionOccurredRef = onExceptionOccurredRef;
+    }
+
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public ErrorHandlerFactory cloneBuilder() {
+        return null;
     }
 }

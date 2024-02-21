@@ -33,6 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.Message;
@@ -42,10 +43,13 @@ import quickfix.SessionID;
  * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = QuickfixjEndpoint.class)
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
+    @Metadata(description = "The event category.", javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
+    @Metadata(description = "The FIX message SessionID.", javaType = "quickfix.SessionID")
     public static final String SESSION_ID_KEY = "SessionID";
+    @Metadata(description = "The FIX MsgType tag value.", javaType = "String")
     public static final String MESSAGE_TYPE_KEY = "MessageType";
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
 
@@ -55,10 +59,11 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true)
     private String configurationName;
     @UriParam
-    private SessionID sessionID;
+    private String sessionID;
+    private volatile SessionID sid;
     @UriParam
     private boolean lazyCreateEngine;
 
@@ -67,16 +72,26 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         this.engine = engine;
     }
 
-    public SessionID getSessionID() {
+    @Override
+    public QuickfixjComponent getComponent() {
+        return (QuickfixjComponent) super.getComponent();
+    }
+
+    public String getSessionID() {
         return sessionID;
+    }
+
+    public SessionID getSID() {
+        return sid;
     }
 
     /**
      * The optional sessionID identifies a specific FIX session. The format of the sessionID is:
      * (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]->(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]]
      */
-    public void setSessionID(SessionID sessionID) {
+    public void setSessionID(String sessionID) {
         this.sessionID = sessionID;
+        this.sid = new SessionID(sessionID);
     }
 
     public String getConfigurationName() {
@@ -100,7 +115,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     /**
-     * This option allows to create QuickFIX/J engine on demand. Value true means the engine is started when first
+     * This option allows creating QuickFIX/J engine on demand. Value true means the engine is started when first
      * message is send or there's consumer configured in route definition. When false value is used, the engine is
      * started at the endpoint creation. When this parameter is missing, the value of component's property
      * lazyCreateEngines is being used.
@@ -115,7 +130,6 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
                 getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
-        consumers.add(consumer);
         return consumer;
     }
 
@@ -126,6 +140,34 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
         }
         return new QuickfixjProducer(this);
+    }
+
+    protected void addConsumer(QuickfixjConsumer consumer) {
+        consumers.add(consumer);
+        engine.incRefCount();
+        getComponent().ensureEngineStarted(engine);
+    }
+
+    protected void removeConsumer(QuickfixjConsumer consumer) {
+        consumers.remove(consumer);
+        int count = engine.decRefCount();
+        if (count <= 0 && getComponent().isEagerStopEngines()) {
+            LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
+            ServiceHelper.stopService(engine);
+        }
+    }
+
+    protected void addProducer() {
+        engine.incRefCount();
+        getComponent().ensureEngineStarted(engine);
+    }
+
+    protected void removeProducer() {
+        int count = engine.decRefCount();
+        if (count <= 0 && getComponent().isEagerStopEngines()) {
+            LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
+            ServiceHelper.stopService(engine);
+        }
     }
 
     @Override
@@ -148,33 +190,33 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     private boolean isMatching(SessionID sessionID) {
-        if (this.sessionID.equals(sessionID)) {
+        if (this.sid.equals(sessionID)) {
             return true;
         }
-        return isMatching(this.sessionID.getBeginString(), sessionID.getBeginString())
-                && isMatching(this.sessionID.getSenderCompID(), sessionID.getSenderCompID())
-                && isMatching(this.sessionID.getSenderSubID(), sessionID.getSenderSubID())
-                && isMatching(this.sessionID.getSenderLocationID(), sessionID.getSenderLocationID())
-                && isMatching(this.sessionID.getTargetCompID(), sessionID.getTargetCompID())
-                && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID())
-                && isMatching(this.sessionID.getTargetLocationID(), sessionID.getTargetLocationID());
+        return isMatching(this.sid.getBeginString(), sessionID.getBeginString())
+                && isMatching(this.sid.getSenderCompID(), sessionID.getSenderCompID())
+                && isMatching(this.sid.getSenderSubID(), sessionID.getSenderSubID())
+                && isMatching(this.sid.getSenderLocationID(), sessionID.getSenderLocationID())
+                && isMatching(this.sid.getTargetCompID(), sessionID.getTargetCompID())
+                && isMatching(this.sid.getTargetSubID(), sessionID.getTargetSubID())
+                && isMatching(this.sid.getTargetLocationID(), sessionID.getTargetLocationID());
     }
 
     private boolean isMatching(String s1, String s2) {
-        return s1.equals("") || s1.equals("*") || s1.equals(s2);
+        return s1.isEmpty() || s1.equals("*") || s1.equals(s2);
     }
 
     private boolean isWildcarded() {
-        if (sessionID == null) {
+        if (sid == null) {
             return false;
         }
-        return sessionID.getBeginString().equals("*")
-                || sessionID.getSenderCompID().equals("*")
-                || sessionID.getSenderSubID().equals("*")
-                || sessionID.getSenderLocationID().equals("*")
-                || sessionID.getTargetCompID().equals("*")
-                || sessionID.getTargetSubID().equals("*")
-                || sessionID.getTargetLocationID().equals("*");
+        return sid.getBeginString().equals("*")
+                || sid.getSenderCompID().equals("*")
+                || sid.getSenderSubID().equals("*")
+                || sid.getSenderLocationID().equals("*")
+                || sid.getTargetCompID().equals("*")
+                || sid.getTargetSubID().equals("*")
+                || sid.getTargetLocationID().equals("*");
     }
 
     @Override
@@ -190,7 +232,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             synchronized (engine) {
                 if (!engine.isInitialized()) {
                     engine.initializeEngine();
-                    engine.start();
+                    ServiceHelper.startService(engine);
                 }
             }
         }

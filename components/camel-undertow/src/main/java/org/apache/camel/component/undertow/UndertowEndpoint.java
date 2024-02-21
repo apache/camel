@@ -59,12 +59,13 @@ import org.xnio.Options;
  * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-             category = { Category.HTTP, Category.WEBSOCKET }, lenientProperties = true)
+             category = { Category.HTTP, Category.NETWORKING }, lenientProperties = true,
+             headersClass = UndertowConstants.class)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private UndertowComponent component;
+    private final UndertowComponent component;
     private SSLContext sslContext;
     private OptionMap optionMap;
     private HttpHandlerRegistrationInfo registrationInfo;
@@ -92,7 +93,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean accessLog = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean muteException = Boolean.FALSE;
@@ -277,7 +278,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      * exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception
      * is required to be serialized. This is by default turned off. If you enable this then be aware that Java will
      * deserialize the incoming data from the request to Java and that can be a potential security risk.
-     *
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
@@ -533,7 +533,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
             ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader.load(UndertowSecurityProvider.class);
 
             Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
-            List<String> providers = new LinkedList();
+            List<String> providers = new LinkedList<>();
             while (iter.hasNext()) {
                 UndertowSecurityProvider security = iter.next();
                 //only securityProvider, who accepts security configuration, could be used

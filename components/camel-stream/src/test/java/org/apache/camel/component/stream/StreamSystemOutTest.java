@@ -39,7 +39,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testStringContent() throws Exception {
+    public void testStringContent() {
         try {
             // Given
             System.setOut(new PrintStream(mockOut));
@@ -64,7 +64,7 @@ public class StreamSystemOutTest extends CamelTestSupport {
             template.sendBody("direct:in", message.getBytes());
 
             // Then
-            assertEquals(message, new String(mockOut.toByteArray()));
+            assertEquals(message + LS, new String(mockOut.toByteArray()));
         } finally {
             System.setOut(stdOut);
         }

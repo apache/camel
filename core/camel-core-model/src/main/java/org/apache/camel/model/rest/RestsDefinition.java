@@ -19,15 +19,16 @@ package org.apache.camel.model.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A series of rest services defined using the rest-dsl
@@ -35,11 +36,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest")
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer {
+public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, ResourceAware {
+
     @XmlElementRef
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlTransient
-    private CamelContext camelContext;
+    private Resource resource;
 
     public RestsDefinition() {
     }
@@ -75,12 +77,12 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         this.rests = rests;
     }
 
-    public CamelContext getCamelContext() {
-        return camelContext;
+    public Resource getResource() {
+        return resource;
     }
 
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API
@@ -115,8 +117,12 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
     protected RestDefinition createRest() {
         RestDefinition rest = new RestDefinition();
+        if (resource != null) {
+            rest.setResource(resource);
+        }
         return rest;
     }
 

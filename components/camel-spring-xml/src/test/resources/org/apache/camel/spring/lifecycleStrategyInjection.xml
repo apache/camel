@@ -27,6 +27,7 @@
   <bean id="lifecycleStrategy" class="org.apache.camel.spring.DummyLifecycleStrategy"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
       <to uri="mock:result"/>

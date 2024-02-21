@@ -70,8 +70,9 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
                 rest("/users/")
                         // just return the default country here
                         .get("lives").to("direct:start")
-                        .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
+                        .post("lives").type(UserPojo.class).outType(CountryPojo.class).to("direct:lives");
+
+                from("direct:lives")
                         .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();

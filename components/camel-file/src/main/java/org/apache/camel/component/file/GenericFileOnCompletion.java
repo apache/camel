@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.LoggingExceptionHandler;
@@ -110,7 +111,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      */
     protected void processStrategyCommit(
             GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
-        if (endpoint.isIdempotent()) {
+        if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
 
             // use absolute file path as default key, but evaluate if an
             // expression key was configured
@@ -167,13 +168,13 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void handleDoneFile(Exchange exchange) {
         // must be last in batch to delete the done file name
         // delete done file if used (and not noop=true)
-        boolean complete = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+        boolean complete = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
         if (endpoint.getDoneFileName() != null && !endpoint.isNoop()) {
             // done file must be in same path as the original input file
             String doneFileName = endpoint.createDoneFileName(absoluteFileName);
             StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
             // we should delete the dynamic done file
-            if (endpoint.getDoneFileName().indexOf("{file:name") > 0 || complete) {
+            if (endpoint.getDoneFileName().contains("{file:name") || complete) {
                 try {
                     // delete done file
                     boolean deleted = operations.deleteFile(doneFileName);

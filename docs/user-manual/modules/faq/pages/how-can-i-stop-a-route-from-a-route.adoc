@@ -1,4 +1,3 @@
-[[HowcanIstoparoutefromaroute-HowcanIstoparoutefromaroute]]
 = How can I stop a route from a route
 
 The xref:ROOT:camelcontext.adoc[CamelContext] provides API for managing
@@ -149,7 +148,7 @@ public RouteBuilder createMyRoutes() throws Exception {
                                 @Override
                                 public void run() {
                                     try {
-                                        exchange.getContext().stopRoute("myRoute");
+                                        exchange.getContext().getRouteController().stopRoute("myRoute");
                                     } catch (Exception e) {
                                         // ignore
                                     }

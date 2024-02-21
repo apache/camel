@@ -104,9 +104,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
-            SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
             // As the SnmpTrapConsumer is not a polling consumer we don't need to call the configureConsumer here.
-            return answer;
+            return new SnmpTrapConsumer(this, processor);
         } else if (this.type == SnmpActionType.POLL) {
             SnmpOIDPoller answer = new SnmpOIDPoller(this, processor);
             configureConsumer(answer);
@@ -260,7 +259,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();
         int port = uri.getPort();
-        if (host == null || host.trim().length() < 1) {
+        if (host == null || host.isBlank()) {
             host = "127.0.0.1";
         }
         if (port == -1) {

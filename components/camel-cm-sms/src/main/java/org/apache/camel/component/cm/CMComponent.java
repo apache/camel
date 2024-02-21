@@ -19,10 +19,10 @@ package org.apache.camel.component.cm;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -56,7 +56,7 @@ public class CMComponent extends DefaultComponent {
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations
                 = getValidator().validate(endpoint.getConfiguration());
         if (!constraintViolations.isEmpty()) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s",
                         cv.getPropertyPath().toString(),
@@ -74,10 +74,5 @@ public class CMComponent extends DefaultComponent {
             validator = factory.getValidator();
         }
         return validator;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
     }
 }

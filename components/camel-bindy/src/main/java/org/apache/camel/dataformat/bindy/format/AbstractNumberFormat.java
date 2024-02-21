@@ -34,14 +34,14 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
     /**
      *
      */
-    public AbstractNumberFormat() {
+    protected AbstractNumberFormat() {
         this(false, 0, null);
     }
 
     /**
      *
      */
-    public AbstractNumberFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
+    protected AbstractNumberFormat(boolean impliedDecimalPosition, int precision, Locale locale) {
         this.impliedDecimalPosition = impliedDecimalPosition;
         this.precision = precision > 0 ? precision : 0;
         this.format = null;

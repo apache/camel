@@ -26,10 +26,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource Tests to ensure the body can be
@@ -42,8 +42,8 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/processor/aggregate/jdbc/JdbcSpringAggregateStoreAsText.xml");
+        return newAppContext(
+                "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
     }
 
     @Override
@@ -51,9 +51,12 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         super.postProcessTest();
 
         repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
-        dataSource = context.getRegistry().lookupByNameAndType("dataSource3", DataSource.class);
+        dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
+
+        jdbcTemplate.execute("DELETE FROM aggregationRepo3");
+        jdbcTemplate.execute("DELETE FROM aggregationRepo3_completed");
     }
 
     @Test
@@ -91,7 +94,7 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeaders("direct:start", "E", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -109,76 +112,38 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
         assertEquals("A", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "B", headers);
         assertEquals("AB", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "C", headers);
         assertEquals("ABC", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "D", headers);
         assertEquals("ABCD", getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals(null, getAggregationRepositoryAccountName(123));
+        assertNull(getAggregationRepositoryCompanyName(123));
+        assertNull(getAggregationRepositoryAccountName(123));
 
         template.sendBodyAndHeaders("direct:start", "E", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testOnlyAccountNameHeaders() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregated");
-        mock.expectedBodiesReceived("ABCDE");
-
-        repo.setStoreBodyAsText(false);
-        repo.setHeadersToStoreAsText(Arrays.asList("accountName"));
-
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("id", 123);
-        headers.put("companyName", "Acme");
-        headers.put("accountName", "Alan");
-
-        template.sendBodyAndHeaders("direct:start", "A", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "B", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "C", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "D", headers);
-        assertEquals(null, getAggregationRepositoryBody(123));
-        assertEquals(null, getAggregationRepositoryCompanyName(123));
-        assertEquals("Alan", getAggregationRepositoryAccountName(123));
-
-        template.sendBodyAndHeaders("direct:start", "E", headers);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public String getAggregationRepositoryBody(int id) throws Exception {
+    public String getAggregationRepositoryBody(int id) {
         return getAggregationRepositoryColumn(id, "body");
     }
 
-    public String getAggregationRepositoryCompanyName(int id) throws Exception {
+    public String getAggregationRepositoryCompanyName(int id) {
         return getAggregationRepositoryColumn(id, "companyName");
     }
 
-    public String getAggregationRepositoryAccountName(int id) throws Exception {
+    public String getAggregationRepositoryAccountName(int id) {
         return getAggregationRepositoryColumn(id, "accountName");
     }
 

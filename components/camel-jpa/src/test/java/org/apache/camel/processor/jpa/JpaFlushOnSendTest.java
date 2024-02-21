@@ -36,7 +36,7 @@ public class JpaFlushOnSendTest extends AbstractJpaTest {
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB();
     }
 
@@ -49,7 +49,7 @@ public class JpaFlushOnSendTest extends AbstractJpaTest {
         };
     }
 
-    private void assertEntityInDB() throws Exception {
+    private void assertEntityInDB() {
         List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
         assertEquals(1, list.size());
 

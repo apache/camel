@@ -80,7 +80,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         assertEquals("doStop", EVENTS.get(2));
     }
 
-    private class MyComponent extends DefaultComponent {
+    private static class MyComponent extends DefaultComponent {
 
         public MyComponent(CamelContext context) {
             super(context);
@@ -92,7 +92,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
     }
 
-    private class MyEndpoint extends DefaultEndpoint {
+    private static class MyEndpoint extends DefaultEndpoint {
 
         public MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);
@@ -109,7 +109,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
     }
 
-    private class MyFailConsumer extends DefaultConsumer {
+    private static class MyFailConsumer extends DefaultConsumer {
 
         public MyFailConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);

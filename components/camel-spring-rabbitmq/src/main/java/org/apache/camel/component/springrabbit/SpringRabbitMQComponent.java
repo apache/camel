@@ -16,19 +16,21 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.util.ErrorHandler;
 
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
 import static org.apache.camel.component.springrabbit.SpringRabbitMQEndpoint.ARG_PREFIX;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
@@ -61,7 +63,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced",
               description = "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
     private MessagePropertiesConverter messagePropertiesConverter;
-    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
+    @Metadata(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
@@ -89,6 +91,33 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     private ListenerContainerFactory listenerContainerFactory = new DefaultListenerContainerFactory();
     @Metadata(label = "advanced", description = "Switch on ignore exceptions such as mismatched properties when declaring")
     private boolean ignoreDeclarationExceptions;
+    @Metadata(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
+              description = "The type of the MessageListenerContainer")
+    private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
+    @Metadata(label = "consumer,advanced", defaultValue = "1", description = "The number of consumers")
+    private int concurrentConsumers = 1;
+    @Metadata(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
+    private Integer maxConcurrentConsumers;
+    @Metadata(label = "consumer,advanced", description = "Custom retry configuration to use. "
+                                                         + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
+    private RetryOperationsInterceptor retry;
+    @Metadata(label = "consumer", defaultValue = "5",
+              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
+    private int maximumRetryAttempts = 5;
+    @Metadata(label = "consumer", defaultValue = "1000",
+              description = "Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
+    private int retryDelay = 1000;
+    @Metadata(label = "consumer", defaultValue = "true",
+              description = "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
+    private boolean rejectAndDontRequeue = true;
+    @Metadata(label = "producer", defaultValue = "false",
+              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
+    private boolean allowNullBody;
+    @Metadata(label = "advanced",
+              description = "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
+                            + " consumer. exchange. queue. binding. dlq.exchange. dlq.queue. dlq.binding."
+                            + " For example to declare a queue with message ttl argument: queue.x-message-ttl=60000")
+    private Map<String, Object> args;
 
     @Override
     protected void doInit() throws Exception {
@@ -101,7 +130,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             messageConverter = new DefaultMessageConverter(getCamelContext());
         }
         if (messagePropertiesConverter == null) {
-            messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext(), getHeaderFilterStrategy());
+            messagePropertiesConverter = new DefaultMessagePropertiesConverter();
         }
     }
 
@@ -111,6 +140,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setConnectionFactory(connectionFactory);
         endpoint.setTestConnectionOnStartup(testConnectionOnStartup);
         endpoint.setMessageConverter(messageConverter);
+        messagePropertiesConverter.setHeaderFilterStrategy(getHeaderFilterStrategy());
         endpoint.setMessagePropertiesConverter(messagePropertiesConverter);
         endpoint.setAutoStartup(autoStartup);
         endpoint.setAutoDeclare(autoDeclare);
@@ -120,8 +150,23 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setDeadLetterRoutingKey(deadLetterRoutingKey);
         endpoint.setReplyTimeout(replyTimeout);
         endpoint.setPrefetchCount(prefetchCount);
+        endpoint.setMessageListenerContainerType(messageListenerContainerType);
+        endpoint.setConcurrentConsumers(concurrentConsumers);
+        endpoint.setMaxConcurrentConsumers(maxConcurrentConsumers);
+        endpoint.setRetry(retry);
+        endpoint.setMaximumRetryAttempts(maximumRetryAttempts);
+        endpoint.setRetryDelay(retryDelay);
+        endpoint.setRejectAndDontRequeue(rejectAndDontRequeue);
+        endpoint.setAllowNullBody(allowNullBody);
 
-        endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
+        if (args != null) {
+            Map<String, Object> copy = new HashMap<>(args);
+            Map<String, Object> extra = PropertiesHelper.extractProperties(parameters, ARG_PREFIX);
+            copy.putAll(extra);
+            endpoint.setArgs(copy);
+        } else {
+            endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
+        }
         setProperties(endpoint, parameters);
 
         return endpoint;
@@ -261,5 +306,77 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setIgnoreDeclarationExceptions(boolean ignoreDeclarationExceptions) {
         this.ignoreDeclarationExceptions = ignoreDeclarationExceptions;
+    }
+
+    public String getMessageListenerContainerType() {
+        return messageListenerContainerType;
+    }
+
+    public void setMessageListenerContainerType(String messageListenerContainerType) {
+        this.messageListenerContainerType = messageListenerContainerType;
+    }
+
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getMaxConcurrentConsumers() {
+        return maxConcurrentConsumers;
+    }
+
+    public void setMaxConcurrentConsumers(Integer maxConcurrentConsumers) {
+        this.maxConcurrentConsumers = maxConcurrentConsumers;
+    }
+
+    public RetryOperationsInterceptor getRetry() {
+        return retry;
+    }
+
+    public void setRetry(RetryOperationsInterceptor retry) {
+        this.retry = retry;
+    }
+
+    public int getMaximumRetryAttempts() {
+        return maximumRetryAttempts;
+    }
+
+    public void setMaximumRetryAttempts(int maximumRetryAttempts) {
+        this.maximumRetryAttempts = maximumRetryAttempts;
+    }
+
+    public int getRetryDelay() {
+        return retryDelay;
+    }
+
+    public void setRetryDelay(int retryDelay) {
+        this.retryDelay = retryDelay;
+    }
+
+    public boolean isRejectAndDontRequeue() {
+        return rejectAndDontRequeue;
+    }
+
+    public void setRejectAndDontRequeue(boolean rejectAndDontRequeue) {
+        this.rejectAndDontRequeue = rejectAndDontRequeue;
+    }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+
+    public Map<String, Object> getArgs() {
+        return args;
+    }
+
+    public void setArgs(Map<String, Object> args) {
+        this.args = args;
     }
 }

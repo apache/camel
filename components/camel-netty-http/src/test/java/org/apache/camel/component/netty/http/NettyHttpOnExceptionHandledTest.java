@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class NettyHttpOnExceptionHandledTest extends BaseNettyTest {
 
     @Test
-    public void testOnExceptionHandled() throws Exception {
+    public void testOnExceptionHandled() {
         Exchange reply = template.request("netty-http:http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
 
         assertNotNull(reply);
@@ -35,10 +35,10 @@ public class NettyHttpOnExceptionHandledTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("netty-http:http://localhost:{{port}}/myserver")
                         // use onException to catch all exceptions and return a custom reply message

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -35,13 +35,13 @@ import org.apache.camel.spi.Metadata;
 public class LoopDefinition extends OutputExpressionNode {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String copy;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String doWhile;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String breakOnShutdown;
 
     public LoopDefinition() {
@@ -62,8 +62,6 @@ public class LoopDefinition extends OutputExpressionNode {
 
     /**
      * Enables copy mode so a copy of the input Exchange is used for each iteration.
-     * 
-     * @return the builder
      */
     public LoopDefinition copy() {
         setCopy(Boolean.toString(true));
@@ -103,8 +101,6 @@ public class LoopDefinition extends OutputExpressionNode {
     /**
      * If the breakOnShutdown attribute is true, then the loop will not iterate until it reaches the end when Camel is
      * shut down.
-     *
-     * @param breakOnShutdown a Boolean-parsable String
      */
     public void setBreakOnShutdown(String breakOnShutdown) {
         this.breakOnShutdown = breakOnShutdown;

@@ -22,16 +22,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INSTANCE;
+
 /**
  * Consume join/leave events of a cache instance in a Hazelcast cluster.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-instance", title = "Hazelcast Instance",
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_INSTANCE, title = "Hazelcast Instance",
              syntax = "hazelcast-instance:cacheName",
-             consumerOnly = true, category = { Category.CACHE, Category.DATAGRID })
+             consumerOnly = true, category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {

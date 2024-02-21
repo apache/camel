@@ -26,7 +26,7 @@ public interface PropertyNamesInterceptor {
     /**
      * Intercept property names used to find API Method. Used to add any custom/hidden method arguments, which MUST be
      * provided in interceptProperties() override.
-     * 
+     *
      * @param propertyNames argument names.
      */
     void interceptPropertyNames(Set<String> propertyNames);

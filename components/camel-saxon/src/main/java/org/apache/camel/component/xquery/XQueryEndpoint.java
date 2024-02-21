@@ -32,6 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Query and/or transform XML payloads using XQuery and Saxon.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
-             category = { Category.TRANSFORMATION })
+             remote = false, category = { Category.TRANSFORMATION })
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
@@ -73,7 +74,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriParam
     private boolean allowStAX;
     @UriParam
-    private String headerName;
+    private String source;
 
     public XQueryEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -211,15 +212,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.allowStAX = allowStAX;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public String getSource() {
+        return source;
     }
 
     /**
-     * To use a Camel Message header as the input source instead of Message body.
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     @Override
@@ -254,8 +257,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setResultType(getResultType());
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
-        this.xquery.setHeaderName(getHeaderName());
         this.xquery.setModuleURIResolver(getModuleURIResolver());
+        this.xquery.setSource(ExpressionBuilder.singleInputExpression(getSource()));
         this.xquery.init(getCamelContext());
 
         setProcessor(xquery);

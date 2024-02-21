@@ -33,7 +33,7 @@ import org.apache.camel.util.IOHelper;
 /**
  * Deflate (zip) compression data format (does not support zip files, instead use zipfile dataformat).
  */
-@Dataformat("zipdeflater")
+@Dataformat("zipDeflater")
 public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;
@@ -48,7 +48,7 @@ public class ZipDeflaterDataFormat extends ServiceSupport implements DataFormat,
 
     @Override
     public String getDataFormatName() {
-        return "zipdeflater";
+        return "zipDeflater";
     }
 
     public int getCompressionLevel() {

@@ -27,7 +27,7 @@ import org.eclipse.jgit.lib.Ref;
 
 public class GitTagConsumer extends AbstractGitConsumer {
 
-    private List tagsConsumed = new ArrayList();
+    private final List<String> tagsConsumed = new ArrayList<>();
 
     public GitTagConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

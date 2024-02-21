@@ -46,7 +46,7 @@ public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
                     }
                 })
                         // and refer to the profile here
-                        .parallelProcessing().executorServiceRef("myProfile").to("direct:a", "direct:b")
+                        .parallelProcessing().executorService("myProfile").to("direct:a", "direct:b")
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 

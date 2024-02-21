@@ -23,32 +23,50 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>dsl</artifactId>
     <packaging>pom</packaging>
 
-    <name>Camel :: DSLs Modules</name>
-    <description>Camel DSLs Modules</description>
+    <name>Camel :: DSL :: Parent</name>
+    <description>Camel DSL Parent</description>
+
+    <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel-prepare-component>true</camel-prepare-component>
+    </properties>
 
     <modules>
+        <module>camel-endpointdsl</module>
+        <module>camel-componentdsl</module>
+        <module>camel-cli-connector</module>
+        <module>camel-dsl-support</module>
+        <module>camel-dsl-modeline</module>
+        <module>camel-endpointdsl-support</module>
+        <module>camel-groovy-dsl</module>
         <module>camel-java-joor-dsl</module>
         <module>camel-xml-io-dsl</module>
         <module>camel-xml-jaxb-dsl</module>
+        <module>camel-xml-jaxb-dsl-test</module>
         <module>camel-yaml-dsl</module>
+        <module>camel-js-dsl</module>
+        <module>camel-jsh-dsl</module>
+        <module>camel-kotlin-dsl</module>
+        <module>camel-kamelet-main</module>
+        <module>camel-jbang</module>
+        <module>camel-kotlin-api</module>
     </modules>
-
-    <properties>
-        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
-    </properties>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
+                <configuration>
+                </configuration>
+
                 <executions>
                     <execution>
                         <id>generate</id>
@@ -78,21 +96,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- generate sources JAR by default as they are needed by other Camel sub projects -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -115,58 +118,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <supportIncrementalBuild>true</supportIncrementalBuild>
-                    <noWarningProjectTypes>pom</noWarningProjectTypes>
-                    <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
-                    <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-                        <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
-                        <Import-Package>${camel.osgi.import}</Import-Package>
-                        <Export-Package>${camel.osgi.export}</Export-Package>
-                        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
-                        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
-                        <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
-                        <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
-                        <Implementation-Title>Apache Camel</Implementation-Title>
-                        <Implementation-Version>${project.version}</Implementation-Version>
-                        <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-                        <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
-                        <_failok>${camel.osgi.failok}</_failok>
-                        <_removeheaders>Bnd-LastModified</_removeheaders>
-                    </instructions>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>versions</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>cleanVersions</goal>
-                        </goals>
-                        <configuration>
-                            <versions>
-                                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
-                            </versions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

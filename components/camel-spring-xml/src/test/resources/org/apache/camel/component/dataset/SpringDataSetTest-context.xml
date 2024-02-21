@@ -26,6 +26,7 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <!-- start this first to make sure the "direct:foo" consumer is ready --> 
     <route>

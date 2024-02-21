@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-xml</artifactId>
@@ -36,10 +36,11 @@
         <firstVersion>3.9.0</firstVersion>
         <label>spring</label>
         <supportLevel>Stable</supportLevel>
-        <camel.osgi.import>
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
+        <title>Spring XML</title>
+
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -74,16 +75,19 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -126,50 +130,34 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- todo: remove log4j 1.x logging if possible -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
+            <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${derby-version}</version>
+            <scope>test</scope>
+        </dependency>        
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>${xmlunit-version}</version>
-            <scope>test</scope>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation-api-version}</version>
         </dependency>
 
-        <!-- for testing Spring AOP at class level -->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>${cglib-version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- assertj and woostox are used for a few tests -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -304,33 +292,10 @@
                 </executions>
             </plugin>
 
-            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>${platform.skip.tests}</exclude>
-                    </excludes>
-                    <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-
             <!-- unpack sources which are needed for the scheme generator -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.2</version>
                 <executions>
                     <execution>
                         <id>process-sources</id>
@@ -358,7 +323,7 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <includes>**/*</includes>
-                                    <excludes>**/*DefinitionConfigurer.java</excludes>
+                                    <excludes>**/app/*,**/*Configurer.java</excludes>
                                     <outputDirectory>target/sources/camel-core-model</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
@@ -488,8 +453,9 @@
                                 <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/src/main/resources" />
                                 </copy>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="$${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="$${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="$${camel.version}" value="${project.version}" preservelastmodified="true" />
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/spring-meta" />
                                 </copy>
@@ -558,21 +524,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- generate sources JAR by default as this is needed by camel-blueprint -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
@@ -609,8 +560,8 @@
                         <link>http://download.oracle.com/javase/7/docs/api/</link>
                         <link>http://download.oracle.com/javaee/7/api/</link>
                         <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
-                        <link>http://camel.apache.org/maven/current/camel-core-model/apidocs/</link>
-                        <link>http://camel.apache.org/maven/current/camel-core-engine/apidocs/</link>
+                        <link>http://javadoc.io/doc/org.apache.camel/camel-core-model/latest/</link>
+                        <link>http://javadoc.io/doc/org.apache.camel/camel-core-engine/latest/</link>
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
@@ -687,18 +638,48 @@
                 </plugins>
             </build>
         </profile>
-
-        <!-- skip management tests on AIX as it hangs CI servers -->
         <profile>
-            <id>aix</id>
+            <id>full</id>
             <activation>
-                <os>
-                    <name>aix</name>
-                </os>
+                <property>
+                    <name>!quickly</name>
+                </property>
             </activation>
-            <properties>
-                <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
-            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>${platform.skip.tests}</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <visibleassertions.silence>true</visibleassertions.silence>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>${platform.skip.tests}</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

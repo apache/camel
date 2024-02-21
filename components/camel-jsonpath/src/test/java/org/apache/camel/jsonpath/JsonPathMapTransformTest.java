@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonPathMapTransformTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().jsonpath("$.store.book[*].author")
                         .to("mock:authors");
@@ -47,13 +50,16 @@ public class JsonPathMapTransformTest extends CamelTestSupport {
         getMockEndpoint("mock:authors").expectedMessageCount(1);
 
         // should be a map
-        Object document = Configuration.defaultConfiguration().jsonProvider()
+        Configuration.ConfigurationBuilder builder = Configuration.builder();
+        builder.jsonProvider(new JacksonJsonProvider());
+        builder.mappingProvider(new JacksonMappingProvider());
+        Object document = builder.build().jsonProvider()
                 .parse(new FileInputStream("src/test/resources/books.json"), "utf-8");
         assertIsInstanceOf(Map.class, document);
 
         template.sendBody("direct:start", document);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Nigel Rees", authors.get(0));

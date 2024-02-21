@@ -27,7 +27,7 @@ public final class MyEcho {
 
     public static String echoString(String str) {
         // throw a runtime exception
-        if (str == null || str.length() == 0) {
+        if (str == null || str.isEmpty()) {
             throw new IllegalArgumentException("Cannot take the null String.");
         }
         return str;

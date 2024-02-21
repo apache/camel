@@ -30,16 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.ConsulException;
-import com.orbitz.consul.KeyValueClient;
-import com.orbitz.consul.SessionClient;
-import com.orbitz.consul.model.session.ImmutableSession;
-import com.orbitz.consul.model.session.SessionCreatedResponse;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.ConsulException;
+import org.kiwiproject.consul.KeyValueClient;
+import org.kiwiproject.consul.SessionClient;
+import org.kiwiproject.consul.model.session.ImmutableSession;
+import org.kiwiproject.consul.model.session.SessionCreatedResponse;
 
 /**
  * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well as bookmarked under kv/[type]/key to
@@ -155,14 +156,24 @@ public class ConsulRegistry implements Registry {
     }
 
     @Override
-    public void bind(String id, Class type, Object bean) throws RuntimeCamelException {
+    public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
         put(id, bean);
+    }
+
+    @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Binding with supplier not supported");
+    }
+
+    @Override
+    public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Binding with supplier not supported");
     }
 
     public void remove(String key) {
         // create session to avoid conflicts (not sure if that is safe enough)
         SessionClient sessionClient = consul.sessionClient();
-        String sessionName = "session_" + UUID.randomUUID().toString();
+        String sessionName = "session_" + UUID.randomUUID();
 
         SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
@@ -185,7 +196,7 @@ public class ConsulRegistry implements Registry {
         // create session to avoid conflicts
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
-        String sessionName = "session_" + UUID.randomUUID().toString();
+        String sessionName = "session_" + UUID.randomUUID();
         SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();
@@ -243,7 +254,12 @@ public class ConsulRegistry implements Registry {
         this.port = port;
     }
 
-    static class ConsulRegistryUtils {
+    static final class ConsulRegistryUtils {
+
+        private ConsulRegistryUtils() {
+
+        }
+
         /**
          * Decodes using Base64.
          *
@@ -256,7 +272,7 @@ public class ConsulRegistry implements Registry {
 
         /**
          * Encodes using Base64.
-         * 
+         *
          * @param  binaryData the data to encode
          * @return            an encoded data as a {@link String}
          */
@@ -275,7 +291,7 @@ public class ConsulRegistry implements Registry {
             try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
                 return in.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
 
@@ -291,9 +307,8 @@ public class ConsulRegistry implements Registry {
 
         /**
          * Serializes the given {@code serializable} using Java Serialization
-         * 
-         * @param  serializable
-         * @return              the serialized object as a byte array
+         *
+         * @return the serialized object as a byte array
          */
         static byte[] serialize(Serializable serializable) {
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
@@ -301,7 +316,7 @@ public class ConsulRegistry implements Registry {
                 out.writeObject(serializable);
                 return baos.toByteArray();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }

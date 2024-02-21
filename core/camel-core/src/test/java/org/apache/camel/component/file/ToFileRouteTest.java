@@ -34,7 +34,7 @@ public class ToFileRouteTest extends ContextTestSupport {
     public void testToFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/data/test-reports/report.txt");
+        mock.expectedFileExists(testFile("report.txt"));
 
         template.sendBody("direct:reports", "This is a great report");
 
@@ -54,9 +54,9 @@ public class ToFileRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // the reports from the seda queue is processed by our processor
-                // before they are written to files in the target/data/reports
-                // directory
-                from("direct:reports").process("processReport").to("file://target/data/test-reports", "mock:result");
+                // before they are written to files in the test directory
+                from("direct:reports").process("processReport")
+                        .to(fileUri(), "mock:result");
             }
         };
     }

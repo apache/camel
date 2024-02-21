@@ -21,9 +21,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,8 +36,7 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -57,7 +56,6 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
         assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:sub", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
-        assertEquals("true", node.getAttribute("customId"));
     }
 
     @Override

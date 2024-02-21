@@ -18,12 +18,12 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -35,11 +35,11 @@ public class SpringQuartzPersistentStoreRestartAppTest {
     public void testQuartzPersistentStoreRestart() throws Exception {
         // load spring app
         AbstractXmlApplicationContext app
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
+                = newAppContext("SpringQuartzPersistentStoreTest.xml");
 
         app.start();
 
-        CamelContext camel = app.getBean("camelContext", CamelContext.class);
+        CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel);
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -61,12 +61,11 @@ public class SpringQuartzPersistentStoreRestartAppTest {
         // is supposed to handle and start again
 
         // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
+        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStoreRestartTest.xml");
 
         app2.start();
 
-        CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
+        CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel2);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
@@ -80,6 +79,10 @@ public class SpringQuartzPersistentStoreRestartAppTest {
         // the second app before the first one so that the quartz scheduler running
         // inside it can be properly shutdown
         IOHelper.close(app2, app);
+    }
+
+    private AbstractXmlApplicationContext newAppContext(String config) {
+        return CamelSpringTestSupport.newAppContext(config, getClass());
     }
 
 }

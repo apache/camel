@@ -39,7 +39,7 @@ public class MyBatisBeanInsertTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", account);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -47,10 +47,10 @@ public class MyBatisBeanInsertTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis-bean:AccountService:insertBeanAccount")
                         .to("mock:result");

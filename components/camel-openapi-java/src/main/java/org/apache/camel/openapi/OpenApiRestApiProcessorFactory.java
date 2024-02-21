@@ -28,7 +28,7 @@ public class OpenApiRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override
     public Processor createApiProcessor(
-            CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
+            CamelContext camelContext, String contextPath,
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
 
@@ -78,6 +78,6 @@ public class OpenApiRestApiProcessorFactory implements RestApiProcessorFactory {
             options.put("cors", "true");
         }
 
-        return new RestOpenApiProcessor(contextIdPattern, contextIdListing, options, configuration);
+        return new RestOpenApiProcessor(options, configuration);
     }
 }

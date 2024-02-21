@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -105,9 +106,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                 LOG.debug("Message arrived on topic: {} -> {}", topic, message);
                 Exchange exchange = createExchange(message, topic);
 
-                getAsyncProcessor().process(exchange, doneSync -> {
-                    // noop
-                });
+                // use default consumer callback
+                AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                getAsyncProcessor().process(exchange, cb);
             }
 
             @Override

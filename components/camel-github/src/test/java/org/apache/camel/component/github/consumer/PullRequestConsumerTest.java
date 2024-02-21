@@ -31,11 +31,11 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
     protected static final Logger LOG = LoggerFactory.getLogger(PullRequestConsumerTest.class);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("github://pullRequest?repoOwner=anotherguy&repoName=somerepo")
                         .process(new MockPullRequestProcessor())
                         .to(mockResultEndpoint);
@@ -56,7 +56,7 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
 
     public class MockPullRequestProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             PullRequest pullRequest = (PullRequest) in.getBody();
             User pullRequestUser = pullRequest.getUser();
@@ -65,8 +65,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             pullRequest.getHtmlUrl();
             pullRequest.getUser().getLogin();
             pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From "
-                      + pullRequestUser.getLogin());
+            LOG.debug("Got PullRequest {} [{}] From {}", pullRequest.getHtmlUrl(), pullRequest.getTitle(),
+                    pullRequestUser.getLogin());
         }
     }
 }

@@ -65,23 +65,23 @@ public class SpringSignatureTest extends SignatureTest {
         return cert.getPublicKey();
     }
 
-    public static PrivateKey privateRSAKey() throws Exception {
+    public static PrivateKey privateRSAKey() {
         return rsaPair.getPrivate();
     }
 
-    public static PrivateKey privateDSAKey() throws Exception {
+    public static PrivateKey privateDSAKey() {
         return dsaPair.getPrivate();
     }
 
-    public static PublicKey publicRSAKey() throws Exception {
+    public static PublicKey publicRSAKey() {
         return rsaPair.getPublic();
     }
 
-    public static PublicKey publicDSAKey() throws Exception {
+    public static PublicKey publicDSAKey() {
         return dsaPair.getPublic();
     }
 
-    public static SecureRandom random() throws Exception {
+    public static SecureRandom random() {
         return new SecureRandom();
     }
 

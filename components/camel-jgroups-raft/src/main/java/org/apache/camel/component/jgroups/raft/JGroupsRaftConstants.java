@@ -16,20 +16,36 @@
  */
 package org.apache.camel.component.jgroups.raft;
 
+import org.apache.camel.spi.Metadata;
+
 public final class JGroupsRaftConstants {
+    @Metadata(label = "consumer", description = "The Raft log size in number of entries.", javaType = "int")
     public static final String HEADER_JGROUPSRAFT_LOG_SIZE = "JGROUPSRAFT_LOG_SIZE";
     public static final String DEFAULT_JGROUPSRAFT_CONFIG = "raft.xml";
+    @Metadata(label = "consumer", description = "The commit index.", javaType = "int")
     public static final String HEADER_JGROUPSRAFT_COMMIT_INDEX = "JGROUPSRAFT_COMMIT_INDEX";
+    @Metadata(label = "consumer", description = "The current raft term.", javaType = "int")
     public static final String HEADER_JGROUPSRAFT_CURRENT_TERM = "JGROUPSRAFT_CURRENT_TERM";
+    @Metadata(label = "consumer", description = "Whether the node is the Raft Leader or not.", javaType = "boolean")
     public static final String HEADER_JGROUPSRAFT_IS_LEADER = "JGROUPSRAFT_IS_LEADER";
+    @Metadata(label = "consumer", description = "The index of the last log entry that was appended to the log.",
+              javaType = "int")
     public static final String HEADER_JGROUPSRAFT_LAST_APPLIED = "JGROUPSRAFT_LAST_APPLIED";
+    @Metadata(label = "consumer", description = "The Address ot Raft Leader or not.", javaType = "org.jgroups.Address")
     public static final String HEADER_JGROUPSRAFT_LEADER_ADDRESS = "JGROUPSRAFT_LEADER_ADDRESS";
-    public static final String HEADER_JGROUPSRAFT_LOG_SIZE_BYTE = "JGROUPSRAFT_LOG_SIZE_BYTE";
+    @Metadata(label = "consumer", description = "The Raft id of the node.", javaType = "String")
     public static final String HEADER_JGROUPSRAFT_RAFT_ID = "JGROUPSRAFT_RAFT_ID";
+    @Metadata(label = "consumer", description = "The event type",
+              javaType = "org.apache.camel.component.jgroups.raft.JGroupsRaftEventType")
     public static final String HEADER_JGROUPSRAFT_EVENT_TYPE = "JGROUPSRAFT_EVENT_TYPE";
+    @Metadata(label = "producer", description = "Offset to use in the byte[] buffer to be set().", javaType = "Integer")
     public static final String HEADER_JGROUPSRAFT_SET_OFFSET = "JGROUPSRAFT_SET_OFFSET";
+    @Metadata(label = "producer", description = "Length to use in the byte[] buffer to be set().", javaType = "Integer")
     public static final String HEADER_JGROUPSRAFT_SET_LENGTH = "JGROUPSRAFT_SET_LENGTH";
+    @Metadata(label = "producer", description = "Timeout to be used in set() operation.", javaType = "Long")
     public static final String HEADER_JGROUPSRAFT_SET_TIMEOUT = "JGROUPSRAFT_SET_TIMEOUT";
+    @Metadata(label = "producer", description = "Timeunit to be used in set() operation.",
+              javaType = "java.util.concurrent.TimeUnit")
     public static final String HEADER_JGROUPSRAFT_SET_TIMEUNIT = "JGROUPSRAFT_SET_TIMEUNIT";
 
     private JGroupsRaftConstants() {

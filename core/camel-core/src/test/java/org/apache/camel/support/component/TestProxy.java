@@ -61,7 +61,7 @@ class TestProxy {
         for (int i = 0; i < times; i++) {
             result.add("Greetings " + name);
         }
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 
     public Map<String, String> greetAll(Map<String, String> nameMap) {

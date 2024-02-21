@@ -55,28 +55,28 @@ public class IrcEndpointTest {
     }
 
     @Test
-    public void doJoinChannelTestNoKey() throws Exception {
+    public void doJoinChannelTestNoKey() {
         endpoint.joinChannel("#chan1");
         verify(connection).doJoin("#chan1");
     }
 
     @Test
-    public void doJoinChannelTestKey() throws Exception {
+    public void doJoinChannelTestKey() {
         endpoint.joinChannel("#chan2");
         verify(connection).doJoin("#chan2", "chan2key");
     }
 
     @Test
-    public void doJoinChannels() throws Exception {
+    public void doJoinChannels() {
         endpoint.joinChannels();
         verify(connection).doJoin("#chan1");
         verify(connection).doJoin("#chan2", "chan2key");
     }
 
     @Test
-    public void doHandleIrcErrorNickInUse() throws Exception {
+    public void doHandleIrcErrorNickInUse() {
         when(connection.getNick()).thenReturn("nick");
-        endpoint.handleIrcError(IRCConstants.ERR_NICKNAMEINUSE, "foo");
+        endpoint.handleIrcError(IRCConstants.ERR_NICKNAMEINUSE);
 
         verify(connection).doNick("nick-");
         when(connection.getNick()).thenReturn("nick---");

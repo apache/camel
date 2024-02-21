@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSupport {
 
     @Test
-    public void testObjectFactoryFalse() throws Exception {
+    public void testObjectFactoryFalse() {
         Message in = new Message("Hello World");
         getMockEndpoint("mock:a").expectedBodiesReceived(in);
 
@@ -36,12 +36,12 @@ public class FallbackTypeConverterObjectFactoryDisabledTest extends CamelTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context.getGlobalOptions().put(FallbackTypeConverter.OBJECT_FACTORY, "false");
         return new RouteBuilder(context) {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").convertBodyTo(String.class).to("direct:b");
                 from("direct:b").convertBodyTo(Message.class).to("mock:a");
             }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ public class Main extends MainCommandLineSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     private String applicationContextUri = "META-INF/spring/*.xml";
     private String fileApplicationContextUri;
@@ -62,8 +63,11 @@ public class Main extends MainCommandLineSupport {
     private AbstractApplicationContext parentApplicationContext;
     private AbstractApplicationContext additionalApplicationContext;
     private String parentApplicationContextUri;
+    private boolean allowMultipleCamelContexts;
 
     public Main() {
+        // do not run in standalone mode as we let Spring create and manage CamelContext but use this Main to bootstrap
+        standalone = false;
     }
 
     @Override
@@ -152,6 +156,18 @@ public class Main extends MainCommandLineSupport {
         this.parentApplicationContextUri = parentApplicationContextUri;
     }
 
+    public boolean isAllowMultipleCamelContexts() {
+        return allowMultipleCamelContexts;
+    }
+
+    /**
+     * Enable this to allow multiple CamelContexts to be loaded by this Main class. By default only a single
+     * CamelContext is allowed.
+     */
+    public void setAllowMultipleCamelContexts(boolean allowMultipleCamelContexts) {
+        this.allowMultipleCamelContexts = allowMultipleCamelContexts;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -159,8 +175,12 @@ public class Main extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         Map<String, SpringCamelContext> camels = applicationContext.getBeansOfType(SpringCamelContext.class);
         if (camels.size() > 1) {
+            if (isAllowMultipleCamelContexts()) {
+                // just grab the first
+                return camels.values().iterator().next();
+            }
             throw new IllegalArgumentException(
-                    "Multiple CamelContext detected. This Main class only supports single CamelContext");
+                    "Multiple CamelContext detected. Set allowMultipleCamelContexts=true to allow multiple CamelContexts");
         } else if (camels.size() == 1) {
             return camels.values().iterator().next();
         }
@@ -229,7 +249,7 @@ public class Main extends MainCommandLineSupport {
         return getCamelContext().createProducerTemplate();
     }
 
-    protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
+    protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();
 
         // file based
@@ -262,7 +282,7 @@ public class Main extends MainCommandLineSupport {
                     }
                 }
                 LOG.info("Using Spring annotation scanning in packages: {}", packages);
-                ac.scan(packages.toArray(new String[packages.size()]));
+                ac.scan(packages.toArray(new String[0]));
                 ac.refresh();
                 return ac;
             } else {
@@ -278,7 +298,7 @@ public class Main extends MainCommandLineSupport {
         if (!locations.isEmpty()) {
             LOG.info("Found locations for additional Spring XML files: {}", locations);
 
-            String[] locs = locations.toArray(new String[locations.size()]);
+            String[] locs = locations.toArray(new String[0]);
             return new ClassPathXmlApplicationContext(locs);
         } else {
             return null;
@@ -297,7 +317,7 @@ public class Main extends MainCommandLineSupport {
                         break;
                     }
                     line = line.trim();
-                    if (line.startsWith("#") || line.length() == 0) {
+                    if (line.startsWith("#") || line.isEmpty()) {
                         continue;
                     }
                     locations.add(line);

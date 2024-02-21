@@ -27,6 +27,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 public abstract class AbstractExchangeEvent extends EventObject implements ExchangeEvent {
     private static final long serialVersionUID = 1L;
     private final Exchange exchange;
+    private long timestamp;
 
     public AbstractExchangeEvent(Exchange source) {
         super(source);
@@ -37,4 +38,15 @@ public abstract class AbstractExchangeEvent extends EventObject implements Excha
     public Exchange getExchange() {
         return exchange;
     }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

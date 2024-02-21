@@ -19,36 +19,29 @@ package org.apache.camel.component.cm.test;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import org.apache.camel.component.cm.CMConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 @ContextConfiguration(classes = { ValidatorConfiguration.class })
-// @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-// @DisableJmx(false)
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CMConfigurationTest {
 
     @Autowired
     private Validator validator;
 
-    @BeforeEach
-    public void beforeTest() throws Exception {
-    }
-
-    // @After
-    // public void afterTest() {
-
     @Test
-    public void testNullProductToken() throws Exception {
+    public void testNullProductToken() {
 
         final CMConfiguration configuration = new CMConfiguration();
 
@@ -59,82 +52,38 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
-    @Test
-    public void testNullDefaultFrom() throws Exception {
-
+    @ParameterizedTest
+    @ValueSource(strings = { "", "123456789012" })
+    @NullSource
+    public void testDefaultFrom(String defaultFrom) {
         final CMConfiguration configuration = new CMConfiguration();
 
         // length: 1-11
-        configuration.setDefaultFrom(null);
+        configuration.setDefaultFrom(defaultFrom);
 
         configuration.setProductToken(UUID.randomUUID().toString());
         configuration.setDefaultMaxNumberOfParts(8);
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
-    @Test
-    public void testDefaultFromFieldMaxLength() throws Exception {
-
-        final CMConfiguration configuration = new CMConfiguration();
-
-        // length: 1-11
-        configuration.setDefaultFrom("123456789012");
-
-        configuration.setProductToken(UUID.randomUUID().toString());
-        configuration.setDefaultMaxNumberOfParts(8);
-        configuration.setTestConnectionOnStartup(false);
-
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
-    }
-
-    @Test
-    public void testDefaultFromFieldZeroLength() throws Exception {
-
-        final CMConfiguration configuration = new CMConfiguration();
-
-        // length: 1-11
-        configuration.setDefaultFrom("");
-
-        configuration.setProductToken(UUID.randomUUID().toString());
-        configuration.setDefaultMaxNumberOfParts(8);
-        configuration.setTestConnectionOnStartup(false);
-
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
-    }
-
-    @Test
-    public void testMaxNumberOfParts() throws Exception {
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 9 })
+    public void testNumberOfParts(int numberOfParts) {
 
         final CMConfiguration configuration = new CMConfiguration();
 
         configuration.setProductToken(UUID.randomUUID().toString());
         configuration.setDefaultFrom("DefaultFrom");
-        configuration.setDefaultMaxNumberOfParts(9);
+        configuration.setDefaultMaxNumberOfParts(numberOfParts);
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
-    }
-
-    @Test
-    public void testMaxNumberOfPartsZero() throws Exception {
-
-        final CMConfiguration configuration = new CMConfiguration();
-
-        configuration.setProductToken(UUID.randomUUID().toString());
-        configuration.setDefaultFrom("DefaultFrom");
-        configuration.setDefaultMaxNumberOfParts(0);
-        configuration.setTestConnectionOnStartup(false);
-
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
+        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 }

@@ -32,14 +32,14 @@ public class JpaWireTapTest extends AbstractJpaTest {
         // should auto setup transaction manager and entity factory
         JpaComponent jpa = context.getComponent("jpa", JpaComponent.class);
         assertNotNull(jpa.getEntityManagerFactory(), "Should have been auto assigned");
-        assertNotNull(jpa.getTransactionManager(), "Should have been auto assigned");
+        assertNotNull(jpa.getTransactionStrategy(), "Should have been auto assigned");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(2);
     }
 

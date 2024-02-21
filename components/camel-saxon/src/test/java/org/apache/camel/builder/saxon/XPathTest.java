@@ -21,15 +21,17 @@ import javax.xml.xpath.XPathFactory;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathTest extends CamelTestSupport {
 
     @Test
-    public void testXPathUsingSaxon() throws Exception {
+    public void testXPathUsingSaxon() {
         XPathFactory fac = new XPathFactoryImpl();
         XPathBuilder builder = XPathBuilder.xpath("foo/bar").factory(fac);
 
@@ -44,7 +46,7 @@ public class XPathTest extends CamelTestSupport {
     }
 
     @Test
-    public void testXPathFunctionSubstringUsingSaxon() throws Exception {
+    public void testXPathFunctionSubstringUsingSaxon() {
         String xml = "<foo><bar>Hello World</bar></foo>";
 
         XPathFactory fac = new XPathFactoryImpl();
@@ -58,7 +60,7 @@ public class XPathTest extends CamelTestSupport {
     }
 
     @Test
-    public void testXPathFunctionTokenizeUsingSaxonXPathFactory() throws Exception {
+    public void testXPathFunctionTokenizeUsingSaxonXPathFactory() {
         // START SNIPPET: e1
         // create a Saxon factory
         XPathFactory fac = new net.sf.saxon.xpath.XPathFactoryImpl();
@@ -72,22 +74,8 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e1
     }
 
-    @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
-    public void testXPathFunctionTokenizeUsingObjectModel() throws Exception {
-        // START SNIPPET: e2
-        // create a builder to evaluate the xpath using saxon based on its object model uri
-        XPathBuilder builder
-                = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").objectModel("http://saxon.sf.net/jaxp/xpath/om");
-
-        // evaluate as a String result
-        String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
-        assertEquals("def", result);
-        // END SNIPPET: e2
-    }
-
-    @Test
-    public void testXPathFunctionTokenizeUsingSaxon() throws Exception {
+    public void testXPathFunctionTokenizeUsingSaxon() {
         // START SNIPPET: e3
         // create a builder to evaluate the xpath using saxon
         XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").saxon();
@@ -98,19 +86,4 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e3
     }
 
-    @Test
-    public void testXPathFunctionTokenizeUsingSystemProperty() throws Exception {
-        // START SNIPPET: e4
-        // set system property with the XPath factory to use which is Saxon 
-        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om",
-                "net.sf.saxon.xpath.XPathFactoryImpl");
-
-        // create a builder to evaluate the xpath using saxon
-        XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]");
-
-        // evaluate as a String result
-        String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
-        assertEquals("def", result);
-        // END SNIPPET: e4
-    }
 }

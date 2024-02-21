@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -32,16 +33,16 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
     @Test
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World");
-        template.sendBody("sjms:topic:in.only.topic", "Hello Camel");
-        template.sendBody("sjms:topic:in.only.topic", "Hello World");
-        assertMockEndpointsSatisfied();
+        template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello Camel");
+        template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("sjms:topic:in.only.topic").to("log:request").process(new Processor() {
+            public void configure() {
+                from("sjms:topic:in.only.InOnlyConsumerTopicTest.topic").to("log:request").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {

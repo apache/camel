@@ -16,21 +16,27 @@
  */
 package org.apache.camel.support.processor;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.util.SensitiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link MaskingFormatter} that searches the specified keywords in the source and replace its value with mask
- * string. By default passphrase, password and secretKey are used as keywords to replace its value.
+ * string.
+ * <p>
+ * By default all the known secret keys from {@link SensitiveUtils#getSensitiveKeys()} are used. Custom keywords can be
+ * added with the {@link #addKeyword(String)} method.
  */
 public class DefaultMaskingFormatter implements MaskingFormatter {
 
-    private static final Set<String> DEFAULT_KEYWORDS = new HashSet<>(Arrays.asList("passphrase", "password", "secretKey"));
-    private Set<String> keywords;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultMaskingFormatter.class);
+
+    private final Set<String> keywords;
     private boolean maskKeyValue;
     private boolean maskXmlElement;
     private boolean maskJson;
@@ -40,18 +46,52 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
     private Pattern jsonMaskPattern;
 
     public DefaultMaskingFormatter() {
-        this(DEFAULT_KEYWORDS, true, true, true);
+        this(SensitiveUtils.getSensitiveKeys(), true, true, true);
     }
 
     public DefaultMaskingFormatter(boolean maskKeyValue, boolean maskXml, boolean maskJson) {
-        this(DEFAULT_KEYWORDS, maskKeyValue, maskXml, maskJson);
+        this(SensitiveUtils.getSensitiveKeys(), maskKeyValue, maskXml, maskJson);
     }
 
     public DefaultMaskingFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
-        this.keywords = keywords;
+        this.keywords = new TreeSet<>(keywords);
         setMaskKeyValue(maskKeyValue);
         setMaskXmlElement(maskXmlElement);
         setMaskJson(maskJson);
+
+        initPatterns();
+    }
+
+    /**
+     * Adds a custom keyword for masking.
+     */
+    public void addKeyword(String keyword) {
+        keywords.add(keyword);
+        // recreate patterns as keywords changed
+        initPatterns();
+    }
+
+    /**
+     * Adds custom keywords for masking.
+     */
+    public void setCustomKeywords(Set<String> keywords) {
+        this.keywords.addAll(keywords);
+        // recreate patterns as keywords changed
+        initPatterns();
+    }
+
+    /**
+     * The string to use for replacement such as xxxxx
+     */
+    public String getMaskString() {
+        return maskString;
+    }
+
+    /**
+     * The string to use for replacement such as xxxxx
+     */
+    public void setMaskString(String maskString) {
+        this.maskString = maskString;
     }
 
     @Override
@@ -60,16 +100,24 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
             return source;
         }
 
+        // xml,json or key=value pairs is the formats supported
+        boolean xml = maskXmlElement && source.startsWith("<");
+        boolean json = maskJson && !xml && (source.startsWith("{") || source.startsWith("["));
+
         String answer = source;
-        if (maskKeyValue) {
-            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
-        }
-        if (maskXmlElement) {
+        if (xml) {
             answer = xmlElementMaskPattern.matcher(answer).replaceAll("$1" + maskString + "$3");
+            if (maskKeyValue) {
+                // used for the attributes in the XML tags
+                answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
+            }
+        } else if (json) {
+            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
+        } else if (maskKeyValue) {
+            // key=value paris
+            answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
         }
-        if (maskJson) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("$1\"" + maskString + "\"");
-        }
+
         return answer;
     }
 
@@ -79,11 +127,6 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskKeyValue(boolean maskKeyValue) {
         this.maskKeyValue = maskKeyValue;
-        if (maskKeyValue) {
-            keyValueMaskPattern = createKeyValueMaskPattern(keywords);
-        } else {
-            keyValueMaskPattern = null;
-        }
     }
 
     public boolean isMaskXmlElement() {
@@ -92,11 +135,6 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskXmlElement(boolean maskXml) {
         this.maskXmlElement = maskXml;
-        if (maskXml) {
-            xmlElementMaskPattern = createXmlElementMaskPattern(keywords);
-        } else {
-            xmlElementMaskPattern = null;
-        }
     }
 
     public boolean isMaskJson() {
@@ -105,19 +143,24 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public void setMaskJson(boolean maskJson) {
         this.maskJson = maskJson;
+    }
+
+    protected void initPatterns() {
+        if (maskKeyValue) {
+            keyValueMaskPattern = createKeyValueMaskPattern(keywords);
+        } else {
+            keyValueMaskPattern = null;
+        }
+        if (maskXmlElement) {
+            xmlElementMaskPattern = createXmlElementMaskPattern(keywords);
+        } else {
+            xmlElementMaskPattern = null;
+        }
         if (maskJson) {
             jsonMaskPattern = createJsonMaskPattern(keywords);
         } else {
             jsonMaskPattern = null;
         }
-    }
-
-    public String getMaskString() {
-        return maskString;
-    }
-
-    public void setMaskString(String maskString) {
-        this.maskString = maskString;
     }
 
     protected Pattern createKeyValueMaskPattern(Set<String> keywords) {
@@ -126,7 +169,11 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
             return null;
         }
         regex.insert(0, "([\\w]*(?:");
-        regex.append(")[\\w]*[\\s]*?=[\\s]*?)([\\S&&[^'\",\\}\\]\\)]]+[\\S&&[^,\\}\\]\\)>]]*?|\"[^\"]*?\"|'[^']*?')");
+        regex.append(")[\\w]*[\\s]*?=[\\s]*?['\"]?)([^'\",]+)");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("KeyValue Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -137,6 +184,10 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         }
         regex.insert(0, "(<([\\w]*(?:");
         regex.append(")[\\w]*)(?:[\\s]+.+)*?>[\\s]*?)(?:[\\S&&[^<]]+(?:\\s+[\\S&&[^<]]+)*?)([\\s]*?</\\2>)");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("XML Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -145,8 +196,12 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
         if (regex == null) {
             return null;
         }
-        regex.insert(0, "(\"(?:[^\"]|(?:\\\"))*?(?:");
-        regex.append(")(?:[^\"]|(?:\\\"))*?\"\\s*?\\:\\s*?)(?:\"(?:[^\"]|(?:\\\"))*?\")");
+        regex.insert(0, "\\\"(");
+        regex.append(")\\\"(\\s*?):(\\s*?)\\\"([^\"]*)\\\"");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("JSon Pattern: {}", regex);
+        }
         return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
     }
 

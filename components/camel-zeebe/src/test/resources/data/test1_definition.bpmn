@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0ba1kkd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.6.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:process id="Process_0e3ldfm" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_06b8rmw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_06b8rmw" sourceRef="StartEvent_1" targetRef="Gateway_0f64mp8" />
+    <bpmn:serviceTask id="Activity_0j0xad0" name="Test Task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="consumerTest" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1kukbfa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ch40f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_14dntj9" name="End">
+      <bpmn:incoming>Flow_00ouk4b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ch40f7" sourceRef="Activity_0j0xad0" targetRef="Gateway_0rvq709" />
+    <bpmn:sequenceFlow id="Flow_1kukbfa" sourceRef="Gateway_0f64mp8" targetRef="Activity_0j0xad0" />
+    <bpmn:sequenceFlow id="Flow_00ouk4b" sourceRef="Gateway_0rvq709" targetRef="Event_14dntj9" />
+    <bpmn:sequenceFlow id="Flow_0bj7k1c" sourceRef="Gateway_0f64mp8" targetRef="Activity_1s4bp47" />
+    <bpmn:sequenceFlow id="Flow_0i9bh3r" sourceRef="Activity_1s4bp47" targetRef="Gateway_0rvq709" />
+    <bpmn:serviceTask id="Activity_1s4bp47" name="Test Task JSON">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="consumerTestJSON" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bj7k1c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i9bh3r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_0f64mp8">
+      <bpmn:incoming>Flow_06b8rmw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kukbfa</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bj7k1c</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_0rvq709">
+      <bpmn:incoming>Flow_0ch40f7</bpmn:incoming>
+      <bpmn:incoming>Flow_0i9bh3r</bpmn:incoming>
+      <bpmn:outgoing>Flow_00ouk4b</bpmn:outgoing>
+    </bpmn:parallelGateway>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0e3ldfm">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="142" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14dntj9_di" bpmnElement="Event_14dntj9">
+        <dc:Bounds x="612" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="620" y="142" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wmk85o_di" bpmnElement="Activity_0j0xad0">
+        <dc:Bounds x="360" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lr5bp2_di" bpmnElement="Activity_1s4bp47">
+        <dc:Bounds x="360" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t01r5c_di" bpmnElement="Gateway_0f64mp8">
+        <dc:Bounds x="265" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_061v7bu_di" bpmnElement="Gateway_0rvq709">
+        <dc:Bounds x="495" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_06b8rmw_di" bpmnElement="Flow_06b8rmw">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="265" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ch40f7_di" bpmnElement="Flow_0ch40f7">
+        <di:waypoint x="460" y="117" />
+        <di:waypoint x="495" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kukbfa_di" bpmnElement="Flow_1kukbfa">
+        <di:waypoint x="315" y="117" />
+        <di:waypoint x="360" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00ouk4b_di" bpmnElement="Flow_00ouk4b">
+        <di:waypoint x="545" y="117" />
+        <di:waypoint x="612" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bj7k1c_di" bpmnElement="Flow_0bj7k1c">
+        <di:waypoint x="290" y="142" />
+        <di:waypoint x="290" y="230" />
+        <di:waypoint x="360" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i9bh3r_di" bpmnElement="Flow_0i9bh3r">
+        <di:waypoint x="460" y="230" />
+        <di:waypoint x="520" y="230" />
+        <di:waypoint x="520" y="142" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

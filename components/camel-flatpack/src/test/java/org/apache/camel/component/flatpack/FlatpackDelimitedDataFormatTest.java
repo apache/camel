@@ -46,7 +46,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         String data = IOConverter.toString(new File("src/test/data/delim/INVENTORY-CommaDelimitedWithQualifier.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
@@ -76,7 +76,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         data.add(row2);
 
         template.sendBody("direct:marshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -101,13 +101,13 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         data.add(row2);
 
         template.sendBody("direct:marshal2", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 FlatpackDataFormat df = new FlatpackDataFormat();
                 df.setDefinition("INVENTORY-Delimited.pzmap.xml");
 

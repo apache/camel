@@ -19,9 +19,9 @@ package org.apache.camel.impl.engine;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ExtendedCamelContextConfigurer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,19 +29,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultConfigurerResolverTest {
 
     private DefaultConfigurerResolver resolver;
+    private DefaultCamelContext ctx;
 
+    @BeforeEach
+    public void setup() {
+        resolver = new DefaultConfigurerResolver();
+        ctx = new DefaultCamelContext();
+    }
+
+    @DisplayName("Test that the configurer uses the ContextConfigurer wrapper for the CamelContext and subclasses")
     @Test
-    void resolvePropertyConfigurerShouldFallbackToExtendedCamelContextOnlyForCamelComponents() {
+    void resolvePropertyConfigurerShouldFallbackToDefaultConfigurer() {
+        Stream.of(CamelContext.class.getName(), SimpleCamelContext.class.getName(), "org.apache.camel.model.ModelCamelContext",
+                "org.apache.camel.SomeCamelContextStuff")
+                .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx))
+                        .as(name).isInstanceOf(DefaultConfigurerResolver.ContextConfigurer.class));
+
+        Stream.of(DefaultCamelContextExtension.class.getName(), "org.apache.camel.SomeCamelContextStuffExtension")
+                .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx))
+                        .as(name).isNull());
+    }
+
+    // Note, this might change when we fully decouple the extension from the context
+    @DisplayName("Test that the configurer defaults to null if given the extension (ContextConfiguration must be done via Context configurers)")
+    @Test
+    void resolvePropertyConfigurerForContextExtension() {
         resolver = new DefaultConfigurerResolver();
         DefaultCamelContext ctx = new DefaultCamelContext();
 
-        Stream.of(CamelContext.class.getName(), ExtendedCamelContext.class.getName(),
-                SimpleCamelContext.class.getName(), "org.apache.camel.SomeCamelContextStuff")
+        Stream.of(DefaultCamelContextExtension.class.getName(), "org.apache.camel.SomeCamelContextStuffExtension")
                 .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx))
-                        .as(name).isInstanceOf(ExtendedCamelContextConfigurer.class));
+                        .as(name).isNull());
+    }
 
+    @DisplayName("Test that the configurer returns null for classes named similarly, but unrelated to CamelContext")
+    @Test
+    void resolvePropertyConfigurerShouldFallbackToExtendedCamelContextOnlyForCamelComponents3() {
         Stream.of(
-                "CamelContext", "ExtendedCamelContext", "SimpleCamelContext",
+                "CamelContext", "SimpleCamelContext",
                 "org.somepackage.CamelContext", "it.apache.camel.ExtendedCamelContext")
                 .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx)).as(name).isNull());
 

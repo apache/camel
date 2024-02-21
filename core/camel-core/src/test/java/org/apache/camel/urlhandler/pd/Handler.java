@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceResolverSupport;
+import org.apache.camel.support.ResourceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,13 +62,8 @@ public class Handler extends ResourceResolverSupport {
     }
 
     @Override
-    protected Resource createResource(String location) {
-        return new Resource() {
-            @Override
-            public String getLocation() {
-                return location;
-            }
-
+    protected Resource createResource(String location, String remaining) {
+        return new ResourceSupport("mem", location) {
             @Override
             public boolean exists() {
                 return true;

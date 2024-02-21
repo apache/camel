@@ -21,7 +21,8 @@ import org.apache.camel.Service;
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LifecycleStrategyServiceTest extends TestSupport {
 
@@ -35,13 +36,13 @@ public class LifecycleStrategyServiceTest extends TestSupport {
 
     @Test
     public void testLifecycleStrategyService() throws Exception {
-        assertEquals(false, dummy1.isStarted());
+        assertFalse(dummy1.isStarted());
 
         CamelContext context = createCamelContext();
         context.start();
-        assertEquals(true, dummy1.isStarted());
+        assertTrue(dummy1.isStarted());
         context.stop();
-        assertEquals(false, dummy1.isStarted());
+        assertFalse(dummy1.isStarted());
     }
 
     private static class MyLifecycleStrategy extends DummyLifecycleStrategy implements Service {

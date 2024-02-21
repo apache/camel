@@ -32,7 +32,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.emptyOrNullString;
 
 @Disabled("Not implemented yet")
 public class WordpressServiceCommentsAdapterIT {
@@ -51,7 +51,7 @@ public class WordpressServiceCommentsAdapterIT {
         final Category cat = serviceCategories.retrieve(1, null);
         assertThat(cat, not(nullValue()));
         assertThat(cat.getId(), is(1));
-        assertThat(cat.getName(), not(isEmptyOrNullString()));
+        assertThat(cat.getName(), not(emptyOrNullString()));
     }
 
     @Test

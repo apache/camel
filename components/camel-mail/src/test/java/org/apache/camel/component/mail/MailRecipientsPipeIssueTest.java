@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,6 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for recipients using | in email address
  */
 public class MailRecipientsPipeIssueTest extends CamelTestSupport {
+    private static final MailboxUser you = Mailbox.getOrCreateUser("you", "secret");
+    private static final MailboxUser camelPipes = Mailbox.getOrCreateUser("camel|pipes@riders.org", "camelPipes", "secret");
+    private static final MailboxUser easyPipes = Mailbox.getOrCreateUser("easyPipes@riders.org", "easyPipes", "secret");
 
     @Test
     public void testMultiRecipients() throws Exception {
@@ -36,26 +40,26 @@ public class MailRecipientsPipeIssueTest extends CamelTestSupport {
 
         sendBody("direct:a", "Camel does really rock");
 
-        Mailbox inbox = Mailbox.get("camel|pipes@riders.org");
+        Mailbox inbox = camelPipes.getInbox();
         Message msg = inbox.get(0);
-        assertEquals("you@apache.org", msg.getFrom()[0].toString());
-        assertEquals("camel|pipes@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
-        assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
+        assertEquals(you.getEmail(), msg.getFrom()[0].toString());
+        assertEquals(camelPipes.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(easyPipes.getEmail(), msg.getRecipients(Message.RecipientType.TO)[1].toString());
 
-        inbox = Mailbox.get("easy@riders.org");
+        inbox = easyPipes.getInbox();
         msg = inbox.get(0);
-        assertEquals("you@apache.org", msg.getFrom()[0].toString());
-        assertEquals("camel|pipes@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
-        assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
+        assertEquals(you.getEmail(), msg.getFrom()[0].toString());
+        assertEquals(camelPipes.getEmail(), msg.getRecipients(Message.RecipientType.TO)[0].toString());
+        assertEquals(easyPipes.getEmail(), msg.getRecipients(Message.RecipientType.TO)[1].toString());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                String recipients = "&to=camel|pipes@riders.org;easy@riders.org";
+            public void configure() {
+                String recipients = "&to=" + camelPipes.getEmail() + ";" + easyPipes.getEmail();
 
-                from("direct:a").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
+                from("direct:a").to(you.uriPrefix(Protocol.smtp) + "&from=" + you.getEmail() + recipients);
             }
         };
     }

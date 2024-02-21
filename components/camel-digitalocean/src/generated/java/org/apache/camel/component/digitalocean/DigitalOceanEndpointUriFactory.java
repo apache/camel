@@ -19,25 +19,27 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(11);
+        props.add("digitalOceanClient");
+        props.add("httpProxyHost");
+        props.add("httpProxyPassword");
+        props.add("httpProxyPort");
+        props.add("httpProxyUser");
         props.add("lazyStartProducer");
         props.add("oAuthToken");
+        props.add("operation");
+        props.add("page");
         props.add("perPage");
         props.add("resource");
-        props.add("httpProxyHost");
-        props.add("httpProxyPort");
-        props.add("page");
-        props.add("operation");
-        props.add("httpProxyPassword");
-        props.add("httpProxyUser");
-        props.add("digitalOceanClient");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("oAuthToken");
         secretProps.add("httpProxyPassword");
         secretProps.add("httpProxyUser");
+        secretProps.add("oAuthToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -65,6 +67,11 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

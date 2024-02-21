@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestNettyHttpOptionsTest extends BaseNettyTest {
 
     @Test
-    public void testNettyServerOptions() throws Exception {
+    public void testNettyServerOptions() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v1/customers",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
@@ -42,7 +42,7 @@ public class RestNettyHttpOptionsTest extends BaseNettyTest {
     }
 
     @Test
-    public void testNettyServerMultipleOptions() throws Exception {
+    public void testNettyServerMultipleOptions() {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v2/options",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
@@ -52,10 +52,10 @@ public class RestNettyHttpOptionsTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 

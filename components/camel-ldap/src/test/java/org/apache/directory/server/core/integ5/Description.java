@@ -30,7 +30,7 @@ public class Description {
         displayName = String.format("%s(%s)", method.getName(), method.getDeclaringClass().getName());
     }
 
-    public Description(Class clazz) {
+    public Description(Class<?> clazz) {
         annotated = clazz;
         displayName = clazz.getName();
     }

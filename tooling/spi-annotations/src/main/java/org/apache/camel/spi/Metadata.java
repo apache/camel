@@ -132,4 +132,42 @@ public @interface Metadata {
      * specify which options each implementation only supports.
      */
     String includeProperties() default "";
+
+    /**
+     * Indicates the list of schemes for which this metadata is applicable. This is used to filter out message headers
+     * that are shared with several endpoints but only applicable for some of them.
+     * <p/>
+     * In the next example, the header {@code SOME_HEADER} is only applicable for endpoints whose scheme is "foo" or
+     * "bar".
+     *
+     * <pre>
+     * <code>
+     *
+     * &#64;Metadata(description = "some description", javaType = "String", applicableFor = {"foo", "bar"})
+     * public static final String SOME_HEADER = "someHeaderName";
+     * </code>
+     * </pre>
+     */
+    String[] applicableFor() default {};
+
+    /**
+     * Whether the option can refer to a file by using file: or classpath: as prefix and specify the location of the
+     * file.
+     */
+    boolean supportFileReference() default false;
+
+    /**
+     * Whether the option can be large input such as a SQL query, XSLT template, or scripting code.
+     *
+     * This can be used to help tooling to provide an input form instead of a single input field to give better user
+     * experience.
+     */
+    boolean largeInput() default false;
+
+    /**
+     * If the option is some specific language such as SQL, XSLT, XML, JavaScript or something else.
+     *
+     * This can be used to help tooling to provide a better user experience.
+     */
+    String inputLanguage() default "";
 }

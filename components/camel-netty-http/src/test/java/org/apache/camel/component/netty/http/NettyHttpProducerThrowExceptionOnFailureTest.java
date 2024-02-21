@@ -29,7 +29,7 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducerThrowExceptionOnFailureTest.class);
 
     @Test
-    public void testFailWithoutException() throws Exception {
+    public void testFailWithoutException() {
         try {
             String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
                     String.class);
@@ -41,7 +41,7 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     }
 
     @Test
-    public void testFailWithException() throws Exception {
+    public void testFailWithException() {
         try {
             template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null,
                     String.class);
@@ -53,10 +53,10 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/fail")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE).constant(404)
                         .transform(constant("Fail"));

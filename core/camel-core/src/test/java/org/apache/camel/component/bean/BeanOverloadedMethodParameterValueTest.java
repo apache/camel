@@ -144,7 +144,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyBean.class, "times(byte[], ${header.times})").to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(byte[].class, ${header.times})").to("mock:result");
 
             }
         });
@@ -162,7 +162,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyBean.class, "times(byte[],${header.times})").to("mock:result");
+                from("direct:start").bean(MyBean.class, "times(byte[].class,${header.times})").to("mock:result");
 
             }
         });

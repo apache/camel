@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.Map;
+
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,6 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class JettyComponentSpringConfiguredTest extends CamelSpringTestSupport {
 
+    @RegisterExtension
+    protected AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Override
     protected boolean useJmx() {
         return true;
@@ -37,15 +43,21 @@ public class JettyComponentSpringConfiguredTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jetty/JettyComponentSpringConfiguredTest.xml");
+        return newAppContext("JettyComponentSpringConfiguredTest.xml");
+    }
+
+    protected Map<String, String> getTranslationProperties() {
+        Map<String, String> map = super.getTranslationProperties();
+        map.put("port", port.toString());
+        return map;
     }
 
     @Test
     @Disabled("run manual test")
-    public void testJetty2() throws Exception {
+    public void testJetty2() {
         assertNotNull(context.hasComponent("jetty2"), "Should have jetty2 component");
 
-        String reply = template.requestBody("jetty2:http://localhost:9090/myapp", "Camel", String.class);
+        String reply = template.requestBody("http://localhost:" + port + "/myapp", "Camel", String.class);
         assertEquals("Hello Camel", reply);
     }
 }

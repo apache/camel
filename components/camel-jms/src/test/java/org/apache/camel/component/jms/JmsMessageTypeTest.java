@@ -20,35 +20,44 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsMessageTypeTest extends CamelTestSupport {
+public class JmsMessageTypeTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "jms";
+    }
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-
-        camelContext.getTypeConverterRegistry().addTypeConverter(byte[].class, MyFooBean.class, new MyFooBean());
-        camelContext.getTypeConverterRegistry().addTypeConverter(String.class, MyFooBean.class, new MyFooBean());
-        camelContext.getTypeConverterRegistry().addTypeConverter(Map.class, MyFooBean.class, new MyFooBean());
-
-        return camelContext;
+    @ContextFixture
+    public void configureConverters(CamelContext context) {
+        context.getTypeConverterRegistry().addTypeConverter(byte[].class, MyFooBean.class, new MyFooBean());
+        context.getTypeConverterRegistry().addTypeConverter(String.class, MyFooBean.class, new MyFooBean());
+        context.getTypeConverterRegistry().addTypeConverter(Map.class, MyFooBean.class, new MyFooBean());
     }
 
     @Test
@@ -61,7 +70,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Text type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Text");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +83,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Text type
         template.sendBody("direct:text", new MyFooBean("World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -87,7 +96,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send a string and force it to use Text type
         template.sendBody("direct:text", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +108,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Bytes type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Bytes");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -111,7 +120,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Bytes type
         template.sendBody("direct:bytes", new MyFooBean("World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -123,7 +132,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send a string and force it to use Bytes type
         template.sendBody("direct:bytes", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -135,7 +144,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Map type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("Claus"), JMS_MESSAGE_TYPE, "Map");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -149,7 +158,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Map type
         template.sendBody("direct:map", new MyFooBean("Claus"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -166,7 +175,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send a Map object and force it to use Map type
         template.sendBody("direct:map", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -181,7 +190,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Object type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("James"), JMS_MESSAGE_TYPE, "Object");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
@@ -196,26 +205,38 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we send an object and force it to use Object type
         template.sendBody("direct:object", new MyFooBean("James"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:text").to("jms:queue:foo?jmsMessageType=Text");
-                from("direct:bytes").to("jms:queue:foo?jmsMessageType=Bytes");
-                from("direct:map").to("jms:queue:foo?jmsMessageType=Map");
-                from("direct:object").to("jms:queue:foo?jmsMessageType=Object");
+            public void configure() {
+                from("direct:text").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Text");
+                from("direct:bytes").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Bytes");
+                from("direct:map").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Map");
+                from("direct:object").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Object");
 
-                from("direct:foo").to("jms:queue:foo");
+                from("direct:foo").to("jms:queue:fooJmsMessageTypeTest");
 
-                from("jms:queue:foo").to("mock:result");
+                from("jms:queue:fooJmsMessageTypeTest").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public static final class MyFooBean extends TypeConverterSupport implements Serializable {

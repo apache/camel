@@ -26,10 +26,11 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <!-- use on prepare with multicast -->
-            <multicast onPrepareRef="animalDeepClonePrepare">
+            <multicast onPrepare="animalDeepClonePrepare">
                 <to uri="direct:a"/>
                 <to uri="direct:b"/>
             </multicast>

@@ -40,8 +40,9 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         if (definition.getIgnoreInvalidEndpoints() != null) {
             dynamicRouter.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
-        if (definition.getCacheSize() != null) {
-            dynamicRouter.setCacheSize(parseInt(definition.getCacheSize()));
+        Integer num = parseInt(definition.getCacheSize());
+        if (num != null) {
+            dynamicRouter.setCacheSize(num);
         }
 
         AsyncProcessor errorHandler

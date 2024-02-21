@@ -153,9 +153,7 @@ public class WatcherProducerTest extends CamelTestSupport {
 
     @Test
     public void addWatchers() throws InterruptedException {
-        List<String> watchersToAdd = new ArrayList<>();
-        watchersToAdd.add("user1A");
-        watchersToAdd.add("user1B");
+        String watchersToAdd = "user1A,user1B";
         Map<String, Object> headers = new HashMap<>();
         headers.put(ISSUE_KEY, backendIssue.getKey());
         headers.put(ISSUE_WATCHERS_ADD, watchersToAdd);
@@ -175,9 +173,7 @@ public class WatcherProducerTest extends CamelTestSupport {
 
     @Test
     public void removeWatchers() throws InterruptedException {
-        List<String> watchersToRemove = new ArrayList<>();
-        watchersToRemove.add("user2");
-        watchersToRemove.add("user3");
+        String watchersToRemove = "user2,user3";
         Map<String, Object> headers = new HashMap<>();
         headers.put(ISSUE_KEY, backendIssue.getKey());
         headers.put(ISSUE_WATCHERS_REMOVE, watchersToRemove);
@@ -197,12 +193,8 @@ public class WatcherProducerTest extends CamelTestSupport {
 
     @Test
     public void addRemoveWatchers() throws InterruptedException {
-        List<String> watchersToAdd = new ArrayList<>();
-        watchersToAdd.add("user2A");
-        watchersToAdd.add("user2B");
-        List<String> watchersToRemove = new ArrayList<>();
-        watchersToRemove.add("user4");
-        watchersToRemove.add("user5");
+        String watchersToAdd = "user2A,user2B";
+        String watchersToRemove = "user4,user5";
         Map<String, Object> headers = new HashMap<>();
         headers.put(ISSUE_KEY, backendIssue.getKey());
         headers.put(ISSUE_WATCHERS_ADD, watchersToAdd);

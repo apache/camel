@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 public class InfluxDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
-    private static final String CREATE_DATABASE = "CREATE DATABASE ";
-    private static final String SHOW_DATABASES = "SHOW DATABASES";
 
     InfluxDbEndpoint endpoint;
     InfluxDB connection;
@@ -63,7 +61,7 @@ public class InfluxDbProducer extends DefaultProducer {
                 doInsert(exchange, dataBaseName, retentionPolicy);
                 break;
             case InfluxDbOperations.QUERY:
-                doQuery(exchange, dataBaseName, retentionPolicy);
+                doQuery(exchange, dataBaseName);
                 break;
             case InfluxDbOperations.PING:
                 doPing(exchange);
@@ -77,8 +75,9 @@ public class InfluxDbProducer extends DefaultProducer {
         if (!endpoint.isBatch()) {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
             try {
-                LOG.debug("Writing point {}", p.lineProtocol());
-                ensureDatabaseExists(dataBaseName);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing point {}", p.lineProtocol());
+                }
                 connection.write(dataBaseName, retentionPolicy, p);
             } catch (Exception ex) {
                 exchange.setException(new CamelInfluxDbException(ex));
@@ -86,7 +85,9 @@ public class InfluxDbProducer extends DefaultProducer {
         } else {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
             try {
-                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                }
                 connection.write(batchPoints);
             } catch (Exception ex) {
                 exchange.setException(new CamelInfluxDbException(ex));
@@ -94,18 +95,18 @@ public class InfluxDbProducer extends DefaultProducer {
         }
     }
 
-    private void doQuery(Exchange exchange, String dataBaseName, String retentionPolicy) {
+    private void doQuery(Exchange exchange, String dataBaseName) {
         String query = calculateQuery(exchange);
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(resultSet);
+        exchange.getMessage().setBody(resultSet);
     }
 
     private void doPing(Exchange exchange) {
         Pong result = connection.ping();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     private String calculateRetentionPolicy(Exchange exchange) {
@@ -135,26 +136,6 @@ public class InfluxDbProducer extends DefaultProducer {
             throw new IllegalArgumentException("The query option must be set if you want to run a query operation");
         }
         return query;
-    }
-
-    private void ensureDatabaseExists(String dataBaseName) {
-        QueryResult result = connection.query(new Query(SHOW_DATABASES));
-
-        //values are located in the first item in series, where list of values is the first item in the Serie's values,
-        //if any object on the 'path' is null, database does not exist
-        boolean exists;
-        try {
-            //NPE could be thrown from objects deep in the structure.
-            //try catch block with NullPointerException is used on purpose
-            exists = result.getResults().get(0).getSeries().get(0).getValues().get(0).contains(dataBaseName);
-        } catch (NullPointerException e) {
-            exists = false;
-        }
-
-        if (!exists) {
-            LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
-            connection.query(new Query(CREATE_DATABASE + dataBaseName, ""));
-        }
     }
 
 }

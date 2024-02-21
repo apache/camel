@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
-    private int messageCount = 3;
+    private final int messageCount = 3;
 
     @Test
     public void testMinaRoute() throws Exception {
@@ -37,10 +37,10 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
         sendUdpMessages();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    protected void sendUdpMessages() throws Exception {
+    protected void sendUdpMessages() {
         for (int i = 0; i < messageCount; i++) {
             template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), "Hello Message: " + i);
         }
@@ -54,7 +54,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         byte[] in = "Hello from bytes".getBytes();
         template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
@@ -73,7 +73,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         byte[] in = fromHexString(toSend);
         template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
@@ -92,11 +92,12 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
     }
 
     private byte[] fromHexString(String hexstr) {
-        byte data[] = new byte[hexstr.length() / 2];
+        byte[] data = new byte[hexstr.length() / 2];
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
             data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
-                                          + hexstr.charAt(i + 1))).byteValue();
+                                          + hexstr.charAt(i + 1)))
+                    .byteValue();
         }
         return data;
     }
@@ -105,7 +106,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("mina:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort()))
+                fromF("mina:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort())
                         .to("mock:result");
             }
         };

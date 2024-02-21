@@ -22,13 +22,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_PODS;
 
 /**
  * Perform operations on Kubernetes Pods and get notified on Pod changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods",
-             syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PODS, title = "Kubernetes Pods",
+             syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
+             headersClass = KubernetesConstants.class)
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {

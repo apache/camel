@@ -24,7 +24,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanRefNotFoundTest extends ContextTestSupport {
 
@@ -45,15 +45,15 @@ public class BeanRefNotFoundTest extends ContextTestSupport {
                 from("direct:b").routeId("b").bean("bar").to("mock:b");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertEquals("b", failed.getRouteId());
-            NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("bar", cause.getName());
-        }
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should have thrown exception");
+
+        FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertEquals("b", failed.getRouteId());
+        NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
+        assertEquals("bar", cause.getName());
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
@@ -29,12 +30,12 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
     @BindToRegistry("ksf")
-    public File loadKeystoreKsf() throws Exception {
+    public File loadKeystoreKsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
     @BindToRegistry("tsf")
-    public File loadKeystoreTsf() throws Exception {
+    public File loadKeystoreTsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
@@ -71,7 +72,7 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
                 "Hello World", String.class);
         assertEquals("Bye World", response);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

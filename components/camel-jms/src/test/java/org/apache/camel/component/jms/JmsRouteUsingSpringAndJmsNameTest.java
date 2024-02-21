@@ -17,8 +17,13 @@
 package org.apache.camel.component.jms;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
 
     @Override
@@ -26,10 +31,8 @@ public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringAndJmsName.xml");
     }
 
-    @Override
     @BeforeEach
     public void setUp() throws Exception {
         componentName = "jms";
-        super.setUp();
     }
 }

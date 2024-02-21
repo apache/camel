@@ -30,6 +30,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/component/properties/cheese.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <onException>
             <exception>java.lang.Exception</exception>

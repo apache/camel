@@ -66,9 +66,14 @@ public class ConsumingAppender extends AbstractAppender {
         ConsumingAppender appender = new ConsumingAppender(appenderName, patter, consumer);
         appender.start();
 
-        LoggerConfig loggerConfig = LoggerConfig.createLogger(true, level, loggerName, "true",
-                new AppenderRef[] { AppenderRef.createAppenderRef(appenderName, null, null) }, null,
-                config, null);
+        LoggerConfig loggerConfig = LoggerConfig.newBuilder()
+                .withIncludeLocation("true")
+                .withLoggerName(loggerName)
+                .withLevel(level)
+                .withAdditivity(true)
+                .withConfig(config)
+                .withRefs(new AppenderRef[] { AppenderRef.createAppenderRef(appenderName, null, null) })
+                .build();
 
         loggerConfig.addAppender(appender, null, null);
         config.addLogger(loggerName, loggerConfig);

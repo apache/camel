@@ -34,11 +34,10 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE);
+    public void testConstructorOne() {
+        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -49,11 +48,10 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, CAUSE);
+    public void testConstructorTwo() {
+        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -64,11 +62,10 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorThree() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES);
+    public void testConstructorThree() {
+        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -79,11 +76,11 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFour() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+    public void testConstructorFour() {
+        instance = new MllpAcknowledgementExceptionStub(
+                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -94,11 +91,10 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFive() throws Exception {
-        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE);
+    public void testConstructorFive() {
+        instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -109,12 +105,11 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSix() throws Exception {
+    public void testConstructorSix() {
         instance = new MllpAcknowledgementExceptionStub(
-                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+                TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -123,28 +118,29 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     }
 
     static class MllpAcknowledgementExceptionStub extends MllpAcknowledgementException {
-        MllpAcknowledgementExceptionStub(String message) {
-            super(message);
+        MllpAcknowledgementExceptionStub(String message, boolean logPhi) {
+            super(message, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, Throwable cause) {
-            super(message, cause);
+        MllpAcknowledgementExceptionStub(String message, Throwable cause, boolean logPhi) {
+            super(message, cause, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message) {
-            super(message, hl7Message);
+        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, boolean logPhi) {
+            super(message, hl7Message, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-            super(message, hl7Message, hl7Acknowledgement);
+        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+            super(message, hl7Message, hl7Acknowledgement, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, Throwable cause) {
-            super(message, hl7Message, cause);
+        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
+            super(message, hl7Message, cause, logPhi);
         }
 
-        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-            super(message, hl7Message, hl7Acknowledgement, cause);
+        MllpAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
+                                         boolean logPhi) {
+            super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
         }
     }
 

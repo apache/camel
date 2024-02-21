@@ -19,26 +19,18 @@ package org.apache.camel.component.xslt;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.management.ManagementTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class ManagedXsltOutputBytesTest extends ContextTestSupport {
-
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
-    }
+public class ManagedXsltOutputBytesTest extends ManagementTestSupport {
 
     @Test
     public void testXsltOutput() throws Exception {
@@ -52,8 +44,7 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance(
-                "org.apache.camel:context=camel-1,type=endpoints,name=\"xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes\"");
+        ObjectName on = getCamelObjectName(TYPE_ENDPOINT, "xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("xslt://org/apache/camel/component/xslt/example.xsl?output=bytes", uri);
 

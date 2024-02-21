@@ -74,14 +74,12 @@ public class MinaConfiguration implements Cloneable {
     private boolean allowDefaultCodec = true;
     @UriParam
     private boolean disconnect;
-    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
     @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", defaultValue = "true")
-    private boolean autoStartTls = true;
     @UriParam(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16; // 16 is the default mina setting
     @UriParam(label = "advanced", defaultValue = "true")
@@ -324,8 +322,7 @@ public class MinaConfiguration implements Cloneable {
     }
 
     /**
-     * Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and
-     * producer.
+     * Whether to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
@@ -364,17 +361,6 @@ public class MinaConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
-    }
-
-    public boolean isAutoStartTls() {
-        return autoStartTls;
-    }
-
-    /**
-     * Whether to auto start SSL handshake.
-     */
-    public void setAutoStartTls(boolean autoStartTls) {
-        this.autoStartTls = autoStartTls;
     }
 
     public int getMaximumPoolSize() {

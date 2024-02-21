@@ -18,7 +18,6 @@ package org.apache.camel.component.jms.issues;
 
 import java.io.File;
 
-import javax.jms.ConnectionFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -27,15 +26,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,16 +47,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Unit test based on user forum issue.
  */
-public class JmsTypeConverterIssueTest extends CamelTestSupport {
+public class JmsTypeConverterIssueTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Test
@@ -72,14 +78,14 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
         template.sendBody("activemq:queue:inbox", "<?xml version=\"1.0\"?><agent id=\"123\"></agent>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:inbox")
                         .setProperty(Exchange.CHARSET_NAME, constant("UTF-8"))
                         .setHeader("agentId", xpath("/agent/@id"))
@@ -102,9 +108,21 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
+
     private static class FixateHeaderValuesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String id = exchange.getIn().getHeader("agentId", String.class);
             exchange.getIn().setHeader("agentId", id);
         }
@@ -112,7 +130,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
     private static class ReadLocalFile implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             exchange.getIn().setBody(new File(filename));
         }

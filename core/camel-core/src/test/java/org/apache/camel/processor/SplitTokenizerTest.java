@@ -106,9 +106,10 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
                 from("direct:a").split().tokenize(",").to("mock:split");
 
-                from("direct:b").split().tokenize(",", "myHeader").to("mock:split");
+                var byHeader = expression().tokenize().token(",").source("header:myHeader").end();
+                from("direct:b").split(byHeader).to("mock:split");
 
-                from("direct:c").split().tokenize("(\\W+)\\s*", null, true).to("mock:split");
+                from("direct:c").split().tokenize("(\\W+)\\s*", true).to("mock:split");
 
                 from("direct:d").split().tokenizePair("[", "]", true).to("mock:split");
 

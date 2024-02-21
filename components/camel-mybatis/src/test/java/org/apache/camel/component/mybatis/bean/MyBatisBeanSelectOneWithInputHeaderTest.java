@@ -38,7 +38,7 @@ public class MyBatisBeanSelectOneWithInputHeaderTest extends MyBatisTestSupport 
 
         template.sendBodyAndHeader("direct:start", TEST_ACCOUNT_ID_BAD, TEST_CASE_HEADER_NAME, TEST_ACCOUNT_ID);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
         assertEquals("Claus", account.getFirstName());
@@ -52,14 +52,14 @@ public class MyBatisBeanSelectOneWithInputHeaderTest extends MyBatisTestSupport 
 
         template.sendBodyAndHeader("direct:start", TEST_ACCOUNT_ID, TEST_CASE_HEADER_NAME, TEST_ACCOUNT_ID_BAD);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis-bean:AccountService:selectBeanAccountById?inputHeader=" + TEST_CASE_HEADER_NAME)
                         .to("mock:result");

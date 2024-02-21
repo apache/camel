@@ -67,7 +67,7 @@ public class TimerProducerTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         producer = new TimerProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, timer, context, in);
         lenient().when(registry.timer(METRICS_NAME)).thenReturn(timer);
@@ -76,7 +76,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testTimerProducer() throws Exception {
+    public void testTimerProducer() {
         assertThat(producer, is(notNullValue()));
         assertThat(producer.getEndpoint().equals(endpoint), is(true));
     }
@@ -174,7 +174,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testHandleStart() throws Exception {
+    public void testHandleStart() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         producer.handleStart(exchange, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
@@ -185,7 +185,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testHandleStartAlreadyRunning() throws Exception {
+    public void testHandleStartAlreadyRunning() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         producer.handleStart(exchange, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
@@ -193,9 +193,9 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testHandleStop() throws Exception {
+    public void testHandleStop() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
-        producer.handleStop(exchange, registry, METRICS_NAME);
+        producer.handleStop(exchange, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(context, times(1)).stop();
         inOrder.verify(exchange, times(1)).removeProperty(PROPERTY_NAME);
@@ -203,20 +203,20 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testHandleStopContextNotFound() throws Exception {
+    public void testHandleStopContextNotFound() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
-        producer.handleStop(exchange, registry, METRICS_NAME);
+        producer.handleStop(exchange, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testGetPropertyName() throws Exception {
+    public void testGetPropertyName() {
         assertThat(producer.getPropertyName(METRICS_NAME), is("timer" + ":" + METRICS_NAME));
     }
 
     @Test
-    public void testGetTimerContextFromExchange() throws Exception {
+    public void testGetTimerContextFromExchange() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
         assertThat(producer.getTimerContextFromExchange(exchange, PROPERTY_NAME), is(context));
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
@@ -224,7 +224,7 @@ public class TimerProducerTest {
     }
 
     @Test
-    public void testGetTimerContextFromExchangeNotFound() throws Exception {
+    public void testGetTimerContextFromExchangeNotFound() {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
         assertThat(producer.getTimerContextFromExchange(exchange, PROPERTY_NAME), is(nullValue()));
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);

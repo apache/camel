@@ -23,14 +23,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET;
 
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed set.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-set", title = "Hazelcast Set", syntax = "hazelcast-set:cacheName",
-             category = { Category.CACHE, Category.DATAGRID })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SET, title = "Hazelcast Set", syntax = "hazelcast-set:cacheName",
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,

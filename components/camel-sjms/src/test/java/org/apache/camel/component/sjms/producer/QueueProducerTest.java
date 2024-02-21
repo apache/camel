@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QueueProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "test.foo";
+    private static final String TEST_DESTINATION_NAME = "test.foo.QueueProducerTest";
 
     public QueueProducerTest() {
     }
@@ -67,7 +67,7 @@ public class QueueProducerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

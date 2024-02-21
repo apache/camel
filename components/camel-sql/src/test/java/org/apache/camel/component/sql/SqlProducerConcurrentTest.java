@@ -64,7 +64,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
-                public List<?> call() throws Exception {
+                public List<?> call() {
                     int id = (index % 3) + 1;
                     return template.requestBody("direct:simple", "" + id, List.class);
                 }
@@ -72,7 +72,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
@@ -93,7 +93,9 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -103,11 +105,13 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

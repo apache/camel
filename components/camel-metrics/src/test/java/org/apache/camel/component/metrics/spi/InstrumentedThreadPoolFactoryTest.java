@@ -63,7 +63,7 @@ public class InstrumentedThreadPoolFactoryTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         profile = new ThreadPoolProfile(METRICS_NAME);
         profile.setDefaultProfile(false);
         profile.setMaxPoolSize(10);
@@ -79,7 +79,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewCacheThreadPool() throws Exception {
+    public void testNewCacheThreadPool() {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newCachedThreadPool(threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(InstrumentedExecutorService.class)));
@@ -91,7 +91,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewThreadPool() throws Exception {
+    public void testNewThreadPool() {
         final ExecutorService executorService = instrumentedThreadPoolFactory.newThreadPool(profile, threadFactory);
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(InstrumentedExecutorService.class)));
@@ -103,7 +103,7 @@ public class InstrumentedThreadPoolFactoryTest {
     }
 
     @Test
-    public void testNewScheduledThreadPool() throws Exception {
+    public void testNewScheduledThreadPool() {
         final ScheduledExecutorService scheduledExecutorService
                 = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 

@@ -38,13 +38,15 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry reg = new SimpleRegistry();
 
         // START SNIPPET: e2
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
         // END SNIPPET: e2
 
         reg.bind("jdbc/myDataSource", db);
@@ -82,11 +84,13 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1

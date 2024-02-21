@@ -17,21 +17,26 @@
 package org.apache.camel.component.kubernetes.config_maps;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesConfigMapsProducer extends DefaultProducer {
 
@@ -48,34 +53,32 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
-            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
-        } else {
-            operation = getEndpoint().getKubernetesConfiguration().getOperation();
-        }
+        String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
 
             case KubernetesOperations.LIST_CONFIGMAPS:
-                doList(exchange, operation);
+                doList(exchange);
                 break;
 
             case KubernetesOperations.LIST_CONFIGMAPS_BY_LABELS_OPERATION:
-                doListConfigMapsByLabels(exchange, operation);
+                doListConfigMapsByLabels(exchange);
                 break;
 
             case KubernetesOperations.GET_CONFIGMAP_OPERATION:
-                doGetConfigMap(exchange, operation);
+                doGetConfigMap(exchange);
                 break;
 
             case KubernetesOperations.CREATE_CONFIGMAP_OPERATION:
-                doCreateConfigMap(exchange, operation);
+                doCreateConfigMap(exchange);
+                break;
+
+            case KubernetesOperations.UPDATE_CONFIGMAP_OPERATION:
+                doUpdateConfigMap(exchange);
                 break;
 
             case KubernetesOperations.DELETE_CONFIGMAP_OPERATION:
-                doDeleteConfigMap(exchange, operation);
+                doDeleteConfigMap(exchange);
                 break;
 
             default:
@@ -83,73 +86,80 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         }
     }
 
-    protected void doList(Exchange exchange, String operation) throws Exception {
+    protected void doList(Exchange exchange) {
         ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMapsList.getItems());
+        prepareOutboundMessage(exchange, configMapsList.getItems());
     }
 
-    protected void doListConfigMapsByLabels(Exchange exchange, String operation) throws Exception {
-        ConfigMapList configMapsList = null;
+    protected void doListConfigMapsByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        FilterWatchListMultiDeletable<ConfigMap, ConfigMapList> configMaps
-                = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
-            configMaps.withLabel(entry.getKey(), entry.getValue());
-        }
-        configMapsList = configMaps.list();
+        ConfigMapList configMapsList = getEndpoint().getKubernetesClient()
+                .configMaps()
+                .inAnyNamespace()
+                .withLabels(labels)
+                .list();
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMapsList.getItems());
+        prepareOutboundMessage(exchange, configMapsList.getItems());
     }
 
-    protected void doGetConfigMap(Exchange exchange, String operation) throws Exception {
-        ConfigMap configMap = null;
+    protected void doGetConfigMap(Exchange exchange) {
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(cfMapName)) {
             LOG.error("Get a specific ConfigMap require specify a ConfigMap name");
             throw new IllegalArgumentException("Get a specific ConfigMap require specify a ConfigMap name");
         }
+        ConfigMap configMap;
         if (namespaceName != null) {
             configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(cfMapName).get();
         } else {
             configMap = getEndpoint().getKubernetesClient().configMaps().withName(cfMapName).get();
         }
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMap);
+        prepareOutboundMessage(exchange, configMap);
     }
 
-    protected void doCreateConfigMap(Exchange exchange, String operation) throws Exception {
-        ConfigMap configMap = null;
+    protected void doUpdateConfigMap(Exchange exchange) {
+        doCreateOrUpdateConfigMap(exchange, "Update", Resource::update);
+    }
+
+    protected void doCreateConfigMap(Exchange exchange) {
+        doCreateOrUpdateConfigMap(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateConfigMap(
+            Exchange exchange, String operationName, Function<Resource<ConfigMap>, ConfigMap> operation) {
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         HashMap<String, String> configMapData
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, HashMap.class);
         if (ObjectHelper.isEmpty(cfMapName)) {
-            LOG.error("Create a specific configMap require specify a configMap name");
-            throw new IllegalArgumentException("Create a specific configMap require specify a configMap name");
+            LOG.error("{} a specific configMap require specify a configMap name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific configMap require specify a configMap name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific configMap require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific configMap require specify a namespace name");
+            LOG.error("{} a specific configMap require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific configMap require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(configMapData)) {
-            LOG.error("Create a specific configMap require specify a data map");
-            throw new IllegalArgumentException("Create a specific configMap require specify a data map");
+            LOG.error("{} a specific configMap require specify a data map", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific configMap require specify a data map", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
         ConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName).withLabels(labels).endMetadata()
                 .withData(configMapData).build();
-        configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).create(cfMapCreating);
+        ConfigMap configMap
+                = operation.apply(
+                        getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).resource(cfMapCreating));
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(configMap);
+        prepareOutboundMessage(exchange, configMap);
     }
 
-    protected void doDeleteConfigMap(Exchange exchange, String operation) throws Exception {
+    protected void doDeleteConfigMap(Exchange exchange) {
         String configMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(configMapName)) {
@@ -160,10 +170,10 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
             LOG.error("Delete a specific config map require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific config map require specify a namespace name");
         }
-        boolean cfMapDeleted
+        List<StatusDetails> statusDetails
                 = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(configMapName).delete();
+        boolean cfMapDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
-        exchange.getOut().setBody(cfMapDeleted);
+        prepareOutboundMessage(exchange, cfMapDeleted);
     }
 }

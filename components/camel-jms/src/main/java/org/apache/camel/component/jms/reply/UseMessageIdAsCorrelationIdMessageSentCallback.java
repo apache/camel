@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import javax.jms.Destination;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.component.jms.MessageSentCallback;
 
@@ -32,9 +32,9 @@ import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
  */
 public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSentCallback {
 
-    private ReplyManager replyManager;
-    private String correlationId;
-    private long requestTimeout;
+    private final ReplyManager replyManager;
+    private final String correlationId;
+    private final long requestTimeout;
 
     public UseMessageIdAsCorrelationIdMessageSentCallback(ReplyManager replyManager, String correlationId,
                                                           long requestTimeout) {

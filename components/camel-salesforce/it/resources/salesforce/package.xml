@@ -72,10 +72,6 @@
         <name>PermissionSet</name>
     </types>
     <types>
-        <members>*</members>
-        <name>Profile</name>
-    </types>
-    <types>
         <members>Test_Reports</members>
         <members>Test_Reports/Test_Report</members>
         <name>Report</name>
@@ -89,8 +85,8 @@
         <name>ConnectedApp</name>
     </types>
     <types>
-        <members>ChangeEvents</members>
-        <name>PlatformEventChannel</name>
+        <members>ChangeEvents_AccountChangeEvent</members>
+        <name>PlatformEventChannelMember</name>
     </types>
-    <version>45.0</version>
+    <version>55.0</version>
 </Package>

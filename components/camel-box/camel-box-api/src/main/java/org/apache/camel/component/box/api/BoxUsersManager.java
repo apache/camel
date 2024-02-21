@@ -26,8 +26,11 @@ import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box users.
@@ -43,7 +46,7 @@ public class BoxUsersManager {
 
     /**
      * Create users manager to manage the users of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxUsersManager(BoxAPIConnection boxConnection) {
@@ -52,7 +55,7 @@ public class BoxUsersManager {
 
     /**
      * Get current user.
-     * 
+     *
      * @return The current user.
      */
     public BoxUser getCurrentUser() {
@@ -61,8 +64,8 @@ public class BoxUsersManager {
 
             return BoxUser.getCurrentUser(boxConnection);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -71,7 +74,7 @@ public class BoxUsersManager {
      * managed users it matches any users names or emails that start with the term. For external, it only does full
      * match on email. This method is ideal to use in the case where you have a full email for a user and you don't know
      * if they're managed or external.
-     * 
+     *
      * @param  filterTerm - The filter term to lookup users by (login for external, login or name for managed); if
      *                    <code>null</code> all managed users are returned.
      * @param  fields     - the fields to retrieve. Leave this out for the standard fields.
@@ -93,14 +96,14 @@ public class BoxUsersManager {
             }
             return users;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Provision a new user in an enterprise with additional user information.
-     * 
+     *
      * @param  login  - the email address the user will use to login.
      * @param  name   - the name of the user.
      * @param  params - additional user information.
@@ -109,12 +112,9 @@ public class BoxUsersManager {
     public BoxUser createEnterpriseUser(String login, String name, CreateUserParams params) {
         try {
             LOG.debug("Creating enterprise user with login={} name={}", login, name);
-            if (login == null) {
-                throw new IllegalArgumentException("Parameter 'login' can not be null");
-            }
-            if (name == null) {
-                throw new IllegalArgumentException("Parameter 'name' can not be null");
-            }
+
+            BoxHelper.notNull(login, BoxHelper.LOGIN);
+            BoxHelper.notNull(name, BoxHelper.NAME);
 
             if (params != null) {
                 return BoxUser.createEnterpriseUser(boxConnection, login, name, params).getResource();
@@ -122,14 +122,14 @@ public class BoxUsersManager {
                 return BoxUser.createEnterpriseUser(boxConnection, login, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Provision a new app user in an enterprise with additional user information using Box Developer Edition.
-     * 
+     *
      * @param  name   - the name of the user.
      * @param  params - additional user information.
      * @return        All the enterprise users or enterprise users that matches the filter.
@@ -137,9 +137,7 @@ public class BoxUsersManager {
     public BoxUser createAppUser(String name, CreateUserParams params) {
         try {
             LOG.debug("Creating app user with name={}", name);
-            if (name == null) {
-                throw new IllegalArgumentException("Parameter 'name' can not be null");
-            }
+            BoxHelper.notNull(name, BoxHelper.NAME);
 
             if (params != null) {
                 return BoxUser.createAppUser(boxConnection, name, params).getResource();
@@ -147,36 +145,34 @@ public class BoxUsersManager {
                 return BoxUser.createAppUser(boxConnection, name).getResource();
             }
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Get user information.
-     * 
+     *
      * @param  userId - the id of user.
      * @return        The user information.
      */
     public BoxUser.Info getUserInfo(String userId) {
         try {
             LOG.debug("Getting info for user(id={})", userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
 
             BoxUser user = new BoxUser(boxConnection, userId);
 
             return user.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Update user information.
-     * 
+     *
      * @param  userId - the id of user to update.
      * @param  info   - the updated information
      * @return        The updated user.
@@ -184,25 +180,21 @@ public class BoxUsersManager {
     public BoxUser updateUserInfo(String userId, BoxUser.Info info) {
         try {
             LOG.debug("Updating info for user(id={})", userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
-            if (info == null) {
-                throw new IllegalArgumentException("Parameter 'info' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
+            BoxHelper.notNull(info, BoxHelper.INFO);
 
             BoxUser user = new BoxUser(boxConnection, userId);
             user.updateInfo(info);
             return user;
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Delete user from an enterprise account.
-     * 
+     *
      * @param userId     - the id of user to delete.
      * @param notifyUser - whether or not to send an email notification to the user that their account has been deleted.
      * @param force      - whether or not this user should be deleted even if they still own files.
@@ -210,21 +202,19 @@ public class BoxUsersManager {
     public void deleteUser(String userId, boolean notifyUser, boolean force) {
         try {
             LOG.debug("Deleting user(id={}) notifyUser={} force={}", userId, notifyUser, force);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'fileId' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
 
             BoxUser file = new BoxUser(boxConnection, userId);
             file.delete(notifyUser, force);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Add a new email alias to user's account.
-     * 
+     *
      * @param  userId - the id of user.
      * @param  email  - the email address to add as an alias.
      * @return        The newly created email alias.
@@ -232,66 +222,56 @@ public class BoxUsersManager {
     public EmailAlias addUserEmailAlias(String userId, String email) {
         try {
             LOG.debug("Adding email alias '{}' to user(id={})", email, userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
-            if (email == null) {
-                throw new IllegalArgumentException("Paramerer 'email' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
+            BoxHelper.notNull(email, BoxHelper.EMAIL);
 
             BoxUser user = new BoxUser(boxConnection, userId);
 
             return user.addEmailAlias(email);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Get a collection of all the email aliases for user.
-     * 
+     *
      * @param  userId - the id of user.
      * @return        A collection of all the email aliases for user.
      */
     public Collection<EmailAlias> getUserEmailAlias(String userId) {
         try {
             LOG.debug("Get email aliases for user(id={})", userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
 
             BoxUser user = new BoxUser(boxConnection, userId);
 
             return user.getEmailAliases();
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
     /**
      * Delete an email alias from user's account.
-     * 
+     *
      * @param userId       - the id of user.
      * @param emailAliasId - the id of the email alias to delete.
      */
     public void deleteUserEmailAlias(String userId, String emailAliasId) {
         try {
             LOG.debug("Deleting email_alias({}) for user(id={})", emailAliasId, userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
-            if (emailAliasId == null) {
-                throw new IllegalArgumentException("Parameter 'emailAliasId' can not be null");
-            }
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
+            BoxHelper.notNull(emailAliasId, BoxHelper.EMAIL_ALIAS_ID);
 
             BoxUser user = new BoxUser(boxConnection, userId);
 
             user.deleteEmailAlias(emailAliasId);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -304,19 +284,16 @@ public class BoxUsersManager {
     public BoxFolder.Info moveFolderToUser(String userId, String sourceUserId) {
         try {
             LOG.debug("Moving root folder for user(id={}) to user(id={})", sourceUserId, userId);
-            if (userId == null) {
-                throw new IllegalArgumentException("Parameter 'userId' can not be null");
-            }
-            if (sourceUserId == null) {
-                throw new IllegalArgumentException("Parameter 'sourceUserId' can not be null");
-            }
+
+            BoxHelper.notNull(userId, BoxHelper.USER_ID);
+            BoxHelper.notNull(sourceUserId, BoxHelper.SOURCE_USER_ID);
 
             BoxUser user = new BoxUser(boxConnection, sourceUserId);
 
             return user.transferContent(userId);
         } catch (BoxAPIException e) {
-            throw new RuntimeException(
-                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
+            throw new RuntimeCamelException(
+                    buildBoxApiErrorMessage(e), e);
         }
     }
 }

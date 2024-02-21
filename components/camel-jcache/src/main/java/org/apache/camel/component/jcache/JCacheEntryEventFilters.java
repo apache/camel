@@ -25,7 +25,7 @@ import javax.cache.event.CacheEntryEventFilter;
 import javax.cache.event.CacheEntryListenerException;
 import javax.cache.event.EventType;
 
-class JCacheEntryEventFilters {
+final class JCacheEntryEventFilters {
     public static class Named implements CacheEntryEventFilter<Object, Object> {
         private List<EventType> filteredEvents;
 
@@ -73,5 +73,9 @@ class JCacheEntryEventFilters {
 
             return true;
         }
+    }
+
+    private JCacheEntryEventFilters() {
+
     }
 }

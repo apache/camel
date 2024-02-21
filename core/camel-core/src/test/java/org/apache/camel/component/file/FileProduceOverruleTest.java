@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,7 +35,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
-        mock.expectedFileExists("target/data/write/hello.txt", "Hello World");
+        mock.expectedFileExists(testFile("hello.txt"), "Hello World");
 
         template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -48,7 +47,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_NAME).isNull();
-        mock.expectedFileExists("target/data/write/overrule.txt", "Hello World");
+        mock.expectedFileExists(testFile("overrule.txt"), "Hello World");
 
         template.sendBodyAndHeader("direct:start", "Hello World", Exchange.OVERRULE_FILE_NAME, "overrule.txt");
 
@@ -61,7 +60,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
-        mock.expectedFileExists("target/data/write/ruled.txt", "Hello World");
+        mock.expectedFileExists(testFile("ruled.txt"), "Hello World");
 
         Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
@@ -74,17 +73,10 @@ public class FileProduceOverruleTest extends ContextTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/write");
-        super.setUp();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("file://target/data/write", "mock:result");
+                from("direct:start").to(fileUri(), "mock:result");
             }
         };
     }

@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.messaging.IgniteMessagingComponent;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -78,8 +79,9 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
 
         template.requestBodyAndHeader("ignite-messaging:" + TOPIC1, 1, IgniteConstants.IGNITE_MESSAGING_TOPIC, "TOPIC2");
 
-        Thread.sleep(1000);
-        Assertions.assertThat(messages1.size()).isEqualTo(0);
+        await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> messages1.size(), Matchers.equalTo(0));
+
         Assertions.assertThat(messages2.size()).isEqualTo(1);
     }
 
@@ -161,7 +163,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
     private Processor storeBodyInListProcessor(final List<Object> list) {
         return new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 list.add(exchange.getIn().getBody());
             }
         };

@@ -50,19 +50,19 @@ public class ThreadPoolTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:start").to("sjms:queue:foo").routeId(FROM_ROUTE);
-                from("sjms:queue:foo").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
+            public void configure() {
+                from("direct:start").to("sjms:queue:foo.ThreadPoolTest").routeId(FROM_ROUTE);
+                from("sjms:queue:foo.ThreadPoolTest").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
             }
         };
     }
 
     /**
      * Test that only 2 thread pools are created on start
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -73,7 +73,7 @@ public class ThreadPoolTest extends JmsTestSupport {
 
     /**
      * Test that ThreadPool is removed when producer is removed
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -84,7 +84,7 @@ public class ThreadPoolTest extends JmsTestSupport {
 
     /**
      * Test that ThreadPool is removed when consumer is removed
-     * 
+     *
      * @throws Exception
      */
     @Test

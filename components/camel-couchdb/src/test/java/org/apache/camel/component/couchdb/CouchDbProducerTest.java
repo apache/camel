@@ -141,7 +141,7 @@ public class CouchDbProducerTest {
         when(client.save(any())).thenAnswer(new Answer<Response>() {
 
             @Override
-            public Response answer(InvocationOnMock invocation) throws Throwable {
+            public Response answer(InvocationOnMock invocation) {
                 assertTrue(invocation.getArguments()[0] instanceof JsonElement,
                         invocation.getArguments()[0].getClass() + " but wanted " + JsonElement.class);
                 return new Response();

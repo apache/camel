@@ -40,18 +40,18 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextParameters parameters = new SSLContextParameters();
 
         Collection<String> result;
-        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile("TLS.*")),
-                Arrays.asList(new Pattern[0]));
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), List.of(Pattern.compile("TLS.*")),
+                List.of());
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
 
-        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile(".*")),
-                Arrays.asList(Pattern.compile("SSL.*")));
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), List.of(Pattern.compile(".*")),
+                List.of(Pattern.compile("SSL.*")));
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
         try {
             assertStartsWith((String[]) null, "TLS");
-            fail("We chould got an exception here!");
+            fail("We should got an exception here!");
         } catch (AssertionError ex) {
             assertTrue(ex.getMessage().contains("The values should not be null"), "Get a wrong message");
         }
@@ -142,10 +142,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(false, serverSocket.getWantClientAuth());
-        assertEquals(false, serverSocket.getNeedClientAuth());
-        assertEquals(false, engine.getWantClientAuth());
-        assertEquals(false, engine.getNeedClientAuth());
+        assertFalse(serverSocket.getWantClientAuth());
+        assertFalse(serverSocket.getNeedClientAuth());
+        assertFalse(engine.getWantClientAuth());
+        assertFalse(engine.getNeedClientAuth());
 
         // ClientAuthentication - WANT
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
@@ -153,10 +153,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(true, serverSocket.getWantClientAuth());
-        assertEquals(false, serverSocket.getNeedClientAuth());
-        assertEquals(true, engine.getWantClientAuth());
-        assertEquals(false, engine.getNeedClientAuth());
+        assertTrue(serverSocket.getWantClientAuth());
+        assertFalse(serverSocket.getNeedClientAuth());
+        assertTrue(engine.getWantClientAuth());
+        assertFalse(engine.getNeedClientAuth());
 
         // ClientAuthentication - REQUIRE
         scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
@@ -164,15 +164,15 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertEquals(false, serverSocket.getWantClientAuth());
-        assertEquals(true, serverSocket.getNeedClientAuth());
-        assertEquals(false, engine.getWantClientAuth());
-        assertEquals(true, engine.getNeedClientAuth());
+        assertFalse(serverSocket.getWantClientAuth());
+        assertTrue(serverSocket.getNeedClientAuth());
+        assertFalse(engine.getWantClientAuth());
+        assertTrue(engine.getNeedClientAuth());
     }
 
     @Test
     public void testServerParameters() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -192,10 +192,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertStartsWith(socket.getEnabledProtocols(), "TLS");
         assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
         assertEquals(controlServerSocket.getWantClientAuth(), serverSocket.getWantClientAuth());
         assertEquals(controlServerSocket.getNeedClientAuth(), serverSocket.getNeedClientAuth());
 
@@ -219,8 +219,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
         assertEquals(0, serverSocket.getEnabledCipherSuites().length);
 
         // Cipher suites filter on server params
@@ -233,8 +233,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
         assertEquals(0, serverSocket.getEnabledCipherSuites().length);
 
         // Csp on server overrides cipher suites filter on server
@@ -246,8 +246,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
         assertEquals(0, serverSocket.getEnabledCipherSuites().length);
 
         // Sspp on server params
@@ -315,7 +315,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testClientParameters() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -335,10 +335,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertStartsWith(socket.getEnabledProtocols(), "TLS");
         assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // No csp or filter on client params passes through shared config
         scp.setCipherSuites(new CipherSuitesParameters());
@@ -358,10 +358,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
         assertEquals(0, socket.getEnabledCipherSuites().length);
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // Cipher suites filter on client params
         FilterParameters filter = new FilterParameters();
@@ -373,10 +373,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
         assertEquals(0, socket.getEnabledCipherSuites().length);
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // Csp on client overrides cipher suites filter on client
         filter.getInclude().add(".*");
@@ -387,10 +387,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
         assertEquals(0, socket.getEnabledCipherSuites().length);
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // Sspp on client params
         SecureSocketProtocolsParameters sspp = new SecureSocketProtocolsParameters();
@@ -445,7 +445,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testCipherSuites() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -460,10 +460,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // empty csp
 
@@ -513,7 +513,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testCipherSuitesFilter() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -531,10 +531,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
-        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
-                serverSocket.getEnabledCipherSuites()));
+        assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
+        assertArrayEquals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites());
+        assertArrayEquals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()),
+                serverSocket.getEnabledCipherSuites());
 
         // empty filter
         FilterParameters filter = new FilterParameters();
@@ -664,7 +664,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
     public void testSecureSocketProtocolsFilter() throws Exception {
-        SSLContext controlContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         SSLSocket controlSocket = (SSLSocket) controlContext.getSocketFactory().createSocket();
@@ -705,8 +705,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertTrue(Arrays.equals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledProtocols(), socket.getEnabledProtocols()));
+        assertArrayEquals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols());
+        assertArrayEquals(controlSocket.getEnabledProtocols(), socket.getEnabledProtocols());
         checkProtocols(controlServerSocket.getEnabledProtocols(), serverSocket.getEnabledProtocols());
 
         // explicit filter with excludes (excludes overrides)
@@ -765,7 +765,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         SSLContext context = scp.createSSLContext(null);
 
-        assertEquals("TLSv1.2", context.getProtocol());
+        assertEquals("TLSv1.3", context.getProtocol());
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -835,7 +835,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
             }
         }
 
-        return enabled.toArray(new String[enabled.size()]);
+        return enabled.toArray(new String[0]);
     }
 
     protected void assertStartsWith(String[] values, String prefix) {

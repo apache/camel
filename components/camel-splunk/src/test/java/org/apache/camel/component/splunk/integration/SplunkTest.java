@@ -31,7 +31,7 @@ public abstract class SplunkTest extends CamelTestSupport {
     protected static final String INDEX = "junit";
 
     @BeforeEach
-    public void init() throws Exception {
+    public void init() {
         SplunkEvent splunkEvent = new SplunkEvent();
         splunkEvent.addPair("key1", "value1");
         splunkEvent.addPair("key2", "value2");

@@ -28,19 +28,10 @@ package org.apache.camel;
  * <p/>
  * <b>All</b> methods throws {@link RuntimeCamelException} if consuming of the {@link Exchange} failed and an Exception
  * occurred. The <tt>getCause</tt> method on {@link RuntimeCamelException} returns the wrapper original caused
- * exception. <br/>
- * <p/>
- * All the receive<b>Body</b> methods will return the content according to this strategy
- * <ul>
- * <li>throws {@link RuntimeCamelException} as stated above</li>
- * <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
- * <li>The <tt>out.body</tt> if there is a out message set and its not <tt>null</tt></li>
- * <li>The <tt>in.body</tt></li>
- * </ul>
- * <br/>
+ * exception.
  * <p/>
  * Before using the template it must be started. And when you are done using the template, make sure to {@link #stop()}
- * the template. <br/>
+ * the template.
  * <p/>
  * <b>Important note on usage:</b> See this
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before

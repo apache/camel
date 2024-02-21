@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
@@ -28,10 +30,22 @@ import org.apache.camel.spi.EventNotifier;
  *
  * @see SimpleEventNotifierSupport
  */
-public abstract class EventNotifierSupport extends SimpleEventNotifierSupport {
+public abstract class EventNotifierSupport extends SimpleEventNotifierSupport implements CamelContextAware {
+
+    private CamelContext camelContext;
 
     public EventNotifierSupport() {
         setupIgnore(false);
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -152,15 +166,5 @@ public abstract class EventNotifierSupport extends SimpleEventNotifierSupport {
     @Override
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         this.ignoreStepEvents = ignoreStepEvents;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 }

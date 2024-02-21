@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
 
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.Service;

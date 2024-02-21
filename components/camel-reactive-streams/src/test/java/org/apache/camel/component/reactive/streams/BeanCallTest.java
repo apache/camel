@@ -26,7 +26,6 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.util.UnwrapStreamProcessor;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("unused")
-public class BeanCallTest extends CamelTestSupport {
+public class BeanCallTest extends BaseReactiveTest {
 
     @Test
     public void beanCallTest() throws Exception {

@@ -34,7 +34,9 @@ public class SqlProducerNoopTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -44,7 +46,9 @@ public class SqlProducerNoopTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -56,7 +60,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:insert", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -68,7 +72,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:query", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +84,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:update", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -92,14 +96,14 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:delete", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 

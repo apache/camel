@@ -16,15 +16,18 @@
  */
 package org.apache.camel.spring.spi;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.builder.SpringTransactionErrorHandlerBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -33,13 +36,25 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * Wraps the processor in a Spring transaction
+ * Spring transaction policy when using spring based transactions.
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
+
     private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;
+    private String name;
     private String propagationBehaviorName;
     private PlatformTransactionManager transactionManager;
+
+    static {
+        // register camel-spring as transaction error handler (both builder and definition)
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerBuilder.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerDefinition.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
+    }
 
     /**
      * Default constructor for easy spring configuration.
@@ -71,19 +86,19 @@ public class SpringTransactionPolicy implements TransactedPolicy {
 
         // find the existing error handler builder
         RouteDefinition routeDefinition = (RouteDefinition) route.getRoute();
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeDefinition.getErrorHandlerFactory();
+        ErrorHandlerFactory builder = routeDefinition.getErrorHandlerFactory();
 
         // check if its a ref if so then do a lookup
-        if (builder instanceof ErrorHandlerBuilderRef) {
+        if (builder instanceof RefErrorHandlerDefinition) {
             // its a reference to a error handler so lookup the reference
-            ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
+            RefErrorHandlerDefinition builderRef = (RefErrorHandlerDefinition) builder;
             String ref = builderRef.getRef();
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
             if (ErrorHandlerHelper.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
+                builder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
             }
         }
 
@@ -98,9 +113,10 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             if (builder != null) {
                 LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: {}", builder);
             } else {
-                LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
+                LOG.debug("No ErrorHandlerBuilder configured, will use default LegacyTransactionErrorHandlerBuilder settings");
             }
-            TransactionErrorHandlerBuilder txBuilder = new TransactionErrorHandlerBuilder();
+            // use legacy transaction to also support camel-spring-xml
+            LegacyTransactionErrorHandlerBuilder txBuilder = new LegacyTransactionErrorHandlerBuilder();
             txBuilder.setTransactionTemplate(getTransactionTemplate());
             txBuilder.setSpringTransactionPolicy(this);
             if (builder != null) {
@@ -118,10 +134,10 @@ public class SpringTransactionPolicy implements TransactedPolicy {
     }
 
     protected TransactionErrorHandler createTransactionErrorHandler(
-            Route route, Processor processor, ErrorHandlerBuilder builder) {
+            Route route, Processor processor, ErrorHandlerFactory builder) {
         TransactionErrorHandler answer;
         try {
-            ModelCamelContext mcc = route.getCamelContext().adapt(ModelCamelContext.class);
+            ModelCamelContext mcc = (ModelCamelContext) route.getCamelContext();
             answer = (TransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -133,6 +149,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         if (template == null) {
             ObjectHelper.notNull(transactionManager, "transactionManager");
             template = new TransactionTemplate(transactionManager);
+            if (name != null) {
+                template.setName(name);
+            }
             if (propagationBehaviorName != null) {
                 template.setPropagationBehaviorName(propagationBehaviorName);
             }
@@ -144,12 +163,24 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         this.template = template;
     }
 
+    public TransactionTemplate getTemplate() {
+        return template;
+    }
+
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
     public PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setPropagationBehaviorName(String propagationBehaviorName) {

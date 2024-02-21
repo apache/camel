@@ -36,14 +36,16 @@ import java.util.Map.Entry;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
@@ -52,35 +54,33 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIUtils;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.utils.URIUtils;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HeaderElements;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.FileEntity;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.io.entity.NullEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.http.HttpHeaders.HOST;
 
 public class HttpProducer extends DefaultProducer {
 
@@ -112,11 +112,7 @@ public class HttpProducer extends DefaultProducer {
         super.doInit();
 
         String range = getEndpoint().getOkStatusCodeRange();
-        if (!range.contains(",")) {
-            // default is 200-299 so lets optimize for this
-            minOkRange = Integer.parseInt(StringHelper.before(range, "-"));
-            maxOkRange = Integer.parseInt(StringHelper.after(range, "-"));
-        }
+        parseStatusRange(range);
 
         // optimize and build default url when there are no override headers
         String url = getEndpoint().getHttpUri().toASCIIString();
@@ -135,6 +131,20 @@ public class HttpProducer extends DefaultProducer {
         defaultHttpHost = URIUtils.extractHost(uri);
     }
 
+    private void parseStatusRange(String range) {
+        if (!range.contains(",")) {
+            if (!HttpUtil.parseStatusRange(range, this::setRanges)) {
+                minOkRange = Integer.parseInt(range);
+                maxOkRange = minOkRange;
+            }
+        }
+    }
+
+    private void setRanges(int minOkRange, int maxOkRange) {
+        this.minOkRange = minOkRange;
+        this.maxOkRange = maxOkRange;
+    }
+
     @Override
     public void process(Exchange exchange) throws Exception {
         boolean cookies = !getEndpoint().getComponent().isCookieManagementDisabled();
@@ -149,21 +159,21 @@ public class HttpProducer extends DefaultProducer {
 
         if (getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
-            String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+            String queryString = exchange.getIn().getHeader(HttpConstants.HTTP_QUERY, String.class);
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
         }
 
-        HttpRequestBase httpRequest = createMethod(exchange);
-        HttpHost httpHost = createHost(httpRequest, exchange);
+        HttpUriRequest httpRequest = createMethod(exchange);
+        HttpHost httpHost = createHost(httpRequest);
 
         Message in = exchange.getIn();
-        String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
+        String httpProtocolVersion = in.getHeader(HttpConstants.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
             // set the HTTP protocol version
             int[] version = HttpHelper.parserHttpVersion(httpProtocolVersion);
-            httpRequest.setProtocolVersion(new HttpVersion(version[0], version[1]));
+            httpRequest.setVersion(new HttpVersion(version[0], version[1]));
         }
 
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
@@ -195,37 +205,8 @@ public class HttpProducer extends DefaultProducer {
                         // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
                         final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                        // the value to add as request header
-                        List<String> multiValues = null;
-                        String prev = null;
-
-                        // if its a multi value then check each value if we can add it and for multi values they
-                        // should be combined into a single value
-                        while (it.hasNext()) {
-                            String value = tc.convertTo(String.class, it.next());
-                            if (value != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                                if (prev == null) {
-                                    prev = value;
-                                } else {
-                                    // only create array for multi values when really needed
-                                    if (multiValues == null) {
-                                        multiValues = new ArrayList<>();
-                                        multiValues.add(prev);
-                                    }
-                                    multiValues.add(value);
-                                }
-                            }
-                        }
-
-                        // add the value(s) as a http request header
-                        if (multiValues != null) {
-                            // use the default toString of a ArrayList to create in the form [xxx, yyy]
-                            // if multi valued, for a single value, then just output the value as is
-                            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-                            httpRequest.addHeader(key, s);
-                        } else if (prev != null) {
-                            httpRequest.addHeader(key, prev);
-                        }
+                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                                (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
                 }
             }
@@ -233,7 +214,7 @@ public class HttpProducer extends DefaultProducer {
 
         if (getEndpoint().getCookieHandler() != null) {
             Map<String, List<String>> cookieHeaders
-                    = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
+                    = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getUri());
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
                 if (!entry.getValue().isEmpty()) {
@@ -244,74 +225,115 @@ public class HttpProducer extends DefaultProducer {
         }
 
         if (getEndpoint().getCustomHostHeader() != null) {
-            httpRequest.setHeader(HOST, getEndpoint().getCustomHostHeader());
+            httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, getEndpoint().getCustomHostHeader());
         }
         //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
         //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
         if (getEndpoint().isPreserveHostHeader()) {
-            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            String hostHeader = exchange.getIn().getHeader(HttpConstants.HTTP_HEADER_HOST, String.class);
             if (hostHeader != null) {
                 //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
-                httpRequest.setHeader(HOST, hostHeader);
+                httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, hostHeader);
             }
         }
 
         if (getEndpoint().isConnectionClose()) {
-            httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
+            httpRequest.addHeader("Connection", HeaderElements.CLOSE);
         }
 
         // lets store the result in the output message.
-        HttpResponse httpResponse = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
-            }
-            httpResponse = executeMethod(httpHost, httpRequest);
-            int responseCode = httpResponse.getStatusLine().getStatusCode();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Http responseCode: {}", responseCode);
-            }
-
-            if (!throwException) {
-                // if we do not use failed exception then populate response for all response codes
-                populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
-            } else {
-                boolean ok;
-                if (minOkRange > 0) {
-                    ok = responseCode >= minOkRange && responseCode <= maxOkRange;
-                } else {
-                    ok = HttpHelper.isStatusCodeOk(responseCode, getEndpoint().getOkStatusCodeRange());
-                }
-                if (ok) {
-                    // only populate response for OK response
-                    populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
-                } else {
-                    // operation failed so populate exception to throw
-                    throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
-                }
-            }
-        } finally {
-            final HttpResponse response = httpResponse;
-            if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
-                // close the stream at the end of the exchange to ensure it gets eventually closed later
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-                    @Override
-                    public void onDone(Exchange exchange) {
+            executeMethod(
+                    httpHost, httpRequest,
+                    httpResponse -> {
                         try {
-                            EntityUtils.consume(response.getEntity());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getUri());
+                            }
+                            int responseCode = httpResponse.getCode();
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Http responseCode: {}", responseCode);
+                            }
+
+                            if (!throwException) {
+                                // if we do not use failed exception then populate response for all response codes
+                                HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
+                            } else {
+                                boolean ok;
+                                if (minOkRange > 0) {
+                                    ok = responseCode >= minOkRange && responseCode <= maxOkRange;
+                                } else {
+                                    ok = HttpHelper.isStatusCodeOk(responseCode,
+                                            HttpProducer.this.getEndpoint().getOkStatusCodeRange());
+                                }
+                                if (ok) {
+                                    // only populate response for OK response
+                                    HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy,
+                                            responseCode);
+                                } else {
+                                    // operation failed so populate exception to throw
+                                    throw HttpProducer.this.populateHttpOperationFailedException(exchange, httpRequest,
+                                            httpResponse, responseCode);
+                                }
+                            }
+                        } catch (IOException | HttpException | RuntimeCamelException e) {
+                            throw e;
                         } catch (Exception e) {
-                            // ignore
+                            throw new RuntimeCamelException(e);
+                        } finally {
+                            if (httpResponse != null && HttpProducer.this.getEndpoint().isDisableStreamCache()) {
+                                // close the stream at the end of the exchange to ensure it gets eventually closed later
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange1) {
+                                        try {
+                                            EntityUtils.consume(httpResponse.getEntity());
+                                        } catch (Exception e) {
+                                            // ignore
+                                        } finally {
+                                            try {
+                                                EntityUtils.consume(httpRequest.getEntity());
+                                            } catch (Exception e) {
+                                                // ignore
+                                            }
+                                        }
+                                    }
+                                });
+                            } else if (httpResponse != null) {
+                                // close the stream now
+                                try {
+                                    EntityUtils.consume(httpResponse.getEntity());
+                                } catch (Exception e) {
+                                    // ignore
+                                } finally {
+                                    try {
+                                        EntityUtils.consume(httpRequest.getEntity());
+                                    } catch (Exception e) {
+                                        // ignore
+                                    }
+                                }
+                            }
                         }
-                    }
-                });
-            } else if (httpResponse != null) {
-                // close the stream now
-                try {
-                    EntityUtils.consume(response.getEntity());
-                } catch (Exception e) {
-                    // ignore
-                }
+                        return null;
+                    });
+        } catch (RuntimeCamelException e) {
+            if (e.getCause() instanceof Exception ex) {
+                // Rethrow the embedded exception to simulate the same behavior as with version 4
+                throw ex;
             }
+            throw e;
+        }
+    }
+
+    private static void applyHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
+        // add the value(s) as a http request header
+        if (multiValues != null) {
+            // use the default toString of a ArrayList to create in the form [xxx, yyy]
+            // if multi valued, for a single value, then just output the value as is
+            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
+            httpRequest.addHeader(key, s);
+        } else if (prev != null) {
+            httpRequest.addHeader(key, prev);
         }
     }
 
@@ -321,21 +343,21 @@ public class HttpProducer extends DefaultProducer {
     }
 
     protected void populateResponse(
-            Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
-            Message in, HeaderFilterStrategy strategy, int responseCode)
+            Exchange exchange, HttpUriRequest httpRequest, ClassicHttpResponse httpResponse,
+            HeaderFilterStrategy strategy, int responseCode)
             throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
-        Object response = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
 
         // optimize for 200 response code as the boxing is outside the cached integers
         if (responseCode == 200) {
-            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
         } else {
-            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
         }
-        if (httpResponse.getStatusLine() != null) {
-            answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
+        if (httpResponse.getReasonPhrase() != null) {
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
         }
         answer.setBody(response);
 
@@ -343,15 +365,16 @@ public class HttpProducer extends DefaultProducer {
 
             // propagate HTTP response headers
             Map<String, List<String>> cookieHeaders = null;
-            if (getEndpoint().getCookieHandler() != null) {
+            CookieHandler cookieHandler = getEndpoint().getCookieHandler();
+            if (cookieHandler != null) {
                 cookieHeaders = new HashMap<>();
             }
 
             // optimize to walk headers with an iterator which does not create a new array as getAllHeaders does
             boolean found = false;
-            HeaderIterator it = httpResponse.headerIterator();
+            Iterator<Header> it = httpResponse.headerIterator();
             while (it.hasNext()) {
-                Header header = it.nextHeader();
+                Header header = it.next();
                 String name = header.getName();
                 String value = header.getValue();
                 if (cookieHeaders != null) {
@@ -359,7 +382,7 @@ public class HttpProducer extends DefaultProducer {
                 }
                 if (!found && name.equalsIgnoreCase("content-type")) {
                     name = Exchange.CONTENT_TYPE;
-                    exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                     found = true;
                 }
                 // use http helper to extract parameter value as it may contain multiple values
@@ -369,8 +392,12 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
             // handle cookies
-            if (getEndpoint().getCookieHandler() != null) {
-                getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), cookieHeaders);
+            if (cookieHandler != null) {
+                try {
+                    cookieHandler.storeCookies(exchange, httpRequest.getUri(), cookieHeaders);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeCamelException(e);
+                }
             }
         }
 
@@ -383,26 +410,30 @@ public class HttpProducer extends DefaultProducer {
     }
 
     protected Exception populateHttpOperationFailedException(
-            Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode)
+            Exchange exchange, HttpUriRequest httpRequest, ClassicHttpResponse httpResponse, int responseCode)
             throws IOException, ClassNotFoundException {
         Exception answer;
 
-        String uri = httpRequest.getURI().toString();
-        String statusText = httpResponse.getStatusLine() != null ? httpResponse.getStatusLine().getReasonPhrase() : null;
-        Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
+        String statusText = httpResponse.getReasonPhrase() != null ? httpResponse.getReasonPhrase() : null;
+        Map<String, String> headers = extractResponseHeaders(httpResponse.getHeaders());
         // handle cookies
-        if (getEndpoint().getCookieHandler() != null) {
+        CookieHandler cookieHandler = getEndpoint().getCookieHandler();
+        if (cookieHandler != null) {
             Map<String, List<String>> m = new HashMap<>();
             for (Entry<String, String> e : headers.entrySet()) {
                 m.put(e.getKey(), Collections.singletonList(e.getValue()));
             }
-            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+            try {
+                cookieHandler.storeCookies(exchange, httpRequest.getUri(), m);
+            } catch (URISyntaxException e) {
+                throw new RuntimeCamelException(e);
+            }
         }
 
-        Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        if (transferException && responseBody instanceof Exception) {
+        Object responseBody = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        if (transferException && responseBody instanceof Exception ex) {
             // if the response was a serialized exception then use that
-            return (Exception) responseBody;
+            return ex;
         }
 
         // make a defensive copy of the response body in the exception so its detached from the cache
@@ -412,10 +443,16 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Header locationHeader = httpResponse.getFirstHeader("location");
-        if (locationHeader != null && (responseCode >= 300 && responseCode < 400)) {
-            answer = new HttpOperationFailedException(uri, responseCode, statusText, locationHeader.getValue(), headers, copy);
-        } else {
-            answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
+        try {
+            String uri = httpRequest.getUri().toString();
+            if (locationHeader != null && responseCode >= 300 && responseCode < 400) {
+                answer = new HttpOperationFailedException(
+                        uri, responseCode, statusText, locationHeader.getValue(), headers, copy);
+            } else {
+                answer = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
+            }
+        } catch (URISyntaxException e) {
+            throw new RuntimeCamelException(e);
         }
 
         return answer;
@@ -426,30 +463,28 @@ public class HttpProducer extends DefaultProducer {
      *
      * @param  httpHost    the http host to call
      * @param  httpRequest the http request to execute
+     * @param  handler     the response handler
      * @return             the response
      * @throws IOException can be thrown
      */
-    protected HttpResponse executeMethod(HttpHost httpHost, HttpUriRequest httpRequest) throws IOException {
-        HttpContext localContext = new BasicHttpContext();
-        if (getEndpoint().isAuthenticationPreemptive()) {
-            BasicScheme basicAuth = new BasicScheme();
-            localContext.setAttribute("preemptive-auth", basicAuth);
-        }
+    protected <T> T executeMethod(HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
+            throws IOException {
+        HttpContext localContext = HttpClientContext.create();
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
         }
-        return httpClient.execute(httpHost, httpRequest, localContext);
+        return httpClient.execute(httpHost, httpRequest, localContext, handler);
     }
 
     /**
      * Extracts the response headers
      *
      * @param  responseHeaders the headers
-     * @return                 the extracted headers or <tt>null</tt> if no headers existed
+     * @return                 the extracted headers or an empty map if no headers existed
      */
     protected static Map<String, String> extractResponseHeaders(Header[] responseHeaders) {
         if (responseHeaders == null || responseHeaders.length == 0) {
-            return null;
+            return Map.of();
         }
 
         Map<String, String> answer = new HashMap<>();
@@ -464,7 +499,7 @@ public class HttpProducer extends DefaultProducer {
      * Extracts the response from the method as a InputStream.
      */
     protected Object extractResponseBody(
-            HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody)
+            ClassicHttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody)
             throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
@@ -476,10 +511,11 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = httpResponse.getFirstHeader(Exchange.CONTENT_ENCODING);
+        Header header = httpResponse.getFirstHeader(HttpConstants.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
-        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        final boolean gzipEncoding = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
+        if (!gzipEncoding) {
             is = GZIPHelper.uncompressGzip(contentEncoding, is);
         }
         // Honor the character encoding
@@ -512,7 +548,13 @@ public class HttpProducer extends DefaultProducer {
                     if (len > 0 && len <= max) {
                         int i = (int) len;
                         byte[] arr = new byte[i];
-                        is.read(arr, 0, i);
+                        int read = 0;
+                        int offset = 0;
+                        int remain = i;
+                        while ((read = is.read(arr, offset, remain)) > 0 && remain > 0) {
+                            offset += read;
+                            remain -= read;
+                        }
                         IOHelper.close(is);
                         return arr;
                     }
@@ -552,11 +594,15 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates the HttpHost to use to call the remote server
      */
-    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) throws Exception {
-        if (httpRequest.getURI() == defaultUri) {
-            return defaultHttpHost;
-        } else {
-            return URIUtils.extractHost(httpRequest.getURI());
+    protected HttpHost createHost(HttpUriRequest httpRequest) {
+        try {
+            URI uri = httpRequest.getUri();
+            if (uri.equals(defaultUri)) {
+                return defaultHttpHost;
+            }
+            return HttpHost.create(uri);
+        } catch (URISyntaxException e) {
+            throw new RuntimeCamelException(e);
         }
     }
 
@@ -568,7 +614,7 @@ public class HttpProducer extends DefaultProducer {
      * @throws URISyntaxException is thrown if the URI is invalid
      * @throws Exception          is thrown if error creating RequestEntity
      */
-    protected HttpRequestBase createMethod(Exchange exchange) throws Exception {
+    protected HttpUriRequest createMethod(Exchange exchange) throws Exception {
         if (defaultUri == null || defaultUrl == null) {
             throw new IllegalArgumentException("Producer must be started");
         }
@@ -580,17 +626,17 @@ public class HttpProducer extends DefaultProducer {
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
         boolean create = false;
         Message in = exchange.getIn();
-        if (in.getHeader("CamelRestHttpUri") != null) {
+        if (in.getHeader(HttpConstants.REST_HTTP_URI) != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpUri") != null && !getEndpoint().isBridgeEndpoint()) {
+        } else if (in.getHeader(HttpConstants.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
             create = true;
-        } else if (in.getHeader("CamelHttpPath") != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_PATH) != null) {
             create = true;
-        } else if (in.getHeader("CamelRestHttpQuery") != null) {
+        } else if (in.getHeader(HttpConstants.REST_HTTP_QUERY) != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpRawQuery") != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_RAW_QUERY) != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpQuery") != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_QUERY) != null) {
             create = true;
         }
 
@@ -604,15 +650,12 @@ public class HttpProducer extends DefaultProducer {
 
         // create http holder objects for the request
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
-        HttpRequestBase method = methodToUse.createMethod(uri);
+        HttpUriRequest method = methodToUse.createMethod(uri);
 
         // special for HTTP DELETE/GET if the message body should be included
-        if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
-            HttpEntity requestEntity = createRequestEntity(exchange);
-            method = new HttpDeleteWithBodyMethod(uri, requestEntity);
-        } else if (getEndpoint().isGetWithBody() && "GET".equals(method.getMethod())) {
-            HttpEntity requestEntity = createRequestEntity(exchange);
-            method = new HttpGetWithBodyMethod(uri, requestEntity);
+        if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())
+                || getEndpoint().isGetWithBody() && "GET".equals(method.getMethod())) {
+            method.setEntity(createRequestEntity(exchange));
         }
 
         LOG.trace("Using URL: {} with method: {}", url, method);
@@ -620,14 +663,14 @@ public class HttpProducer extends DefaultProducer {
         if (methodToUse.isEntityEnclosing()) {
             // only create entity for http payload if the HTTP method carries payload (such as POST)
             HttpEntity requestEntity = createRequestEntity(exchange);
-            ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
+            method.setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 
         // there must be a host on the method
-        if (method.getURI().getScheme() == null || method.getURI().getHost() == null) {
+        if (uri.getScheme() == null || uri.getHost() == null) {
             throw new IllegalArgumentException(
                     "Invalid url: " + url + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
                                                + getEndpoint());
@@ -650,16 +693,16 @@ public class HttpProducer extends DefaultProducer {
         Object body = in.getBody();
         try {
             if (body == null) {
-                return null;
-            } else if (body instanceof HttpEntity) {
-                answer = (HttpEntity) body;
+                return NullEntity.INSTANCE;
+            } else if (body instanceof HttpEntity entity) {
+                answer = entity;
                 // special optimized for using these 3 type converters for common message payload types
-            } else if (body instanceof byte[]) {
-                answer = HttpEntityConverter.toHttpEntity((byte[]) body, exchange);
-            } else if (body instanceof InputStream) {
-                answer = HttpEntityConverter.toHttpEntity((InputStream) body, exchange);
-            } else if (body instanceof String) {
-                answer = HttpEntityConverter.toHttpEntity((String) body, exchange);
+            } else if (body instanceof byte[] bytes) {
+                answer = HttpEntityConverter.toHttpEntity(bytes, exchange);
+            } else if (body instanceof InputStream is) {
+                answer = HttpEntityConverter.toHttpEntity(is, exchange);
+            } else if (body instanceof String content) {
+                answer = HttpEntityConverter.toHttpEntity(content, exchange);
             }
         } catch (Exception e) {
             throw new CamelExchangeException("Error creating RequestEntity from message body", exchange, e);
@@ -677,7 +720,7 @@ public class HttpProducer extends DefaultProducer {
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
                         // using ContentType.parser for charset
-                        if (contentTypeString.indexOf("charset") > 0 || contentTypeString.indexOf(';') > 0) {
+                        if (contentTypeString.contains("charset") || contentTypeString.contains(";")) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {
                             contentType = ContentType.create(contentTypeString);
@@ -688,30 +731,24 @@ public class HttpProducer extends DefaultProducer {
                             && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
                         if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
                             throw new CamelExchangeException(
-                                    "Content-type " + org.apache.camel.http.common.HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT
+                                    "Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT
                                                              + " is not allowed",
                                     exchange);
                         }
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        HttpHelper.writeObjectToStream(bos, obj);
-                        ByteArrayEntity entity = new ByteArrayEntity(bos.toByteArray());
-                        entity.setContentType(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-                        IOHelper.close(bos);
-                        answer = entity;
+                        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                            HttpHelper.writeObjectToStream(bos, obj);
+                            answer = new ByteArrayEntity(bos.toByteArray(), HttpConstants.JAVA_SERIALIZED_OBJECT);
+                        }
                     } else if (data instanceof File || data instanceof GenericFile) {
                         // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {
-                            if (contentType != null) {
-                                answer = new FileEntity(file, contentType);
-                            } else {
-                                answer = new FileEntity(file);
-                            }
+                            answer = new FileEntity(file, contentType);
                         }
-                    } else if (data instanceof String) {
+                    } else if (data instanceof String content) {
                         // be a bit careful with String as any type can most likely be converted to String
                         // so we only do an instanceof check and accept String if the body is really a String
                         // do not fallback to use the default charset as it can influence the request
@@ -724,9 +761,13 @@ public class HttpProducer extends DefaultProducer {
                                 charset = cs.name();
                             }
                         }
-                        StringEntity entity = new StringEntity((String) data, charset);
-                        entity.setContentType(contentType != null ? contentType.toString() : null);
-                        answer = entity;
+
+                        // sync contentType.charset and charset
+                        if (contentType != null && contentType.getCharset() == null && charset != null) {
+                            contentType = ContentType.parse(contentType + ";charset=" + charset);
+                        }
+
+                        answer = new StringEntity(content, contentType, false);
                     }
 
                     // fallback as input stream
@@ -734,12 +775,7 @@ public class HttpProducer extends DefaultProducer {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
 
-                        InputStreamEntity entity = new InputStreamEntity(is, -1);
-
-                        if (contentType != null) {
-                            entity.setContentType(contentType.toString());
-                        }
-                        answer = entity;
+                        answer = new InputStreamEntity(is, -1, contentType);
                     }
                 }
             } catch (UnsupportedEncodingException e) {

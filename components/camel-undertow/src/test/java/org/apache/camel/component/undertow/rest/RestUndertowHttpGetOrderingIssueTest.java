@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
@@ -29,48 +30,45 @@ public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
         getMockEndpoint("mock:root").expectedMessageCount(1);
         String out = template.requestBody("undertow:http://localhost:{{port}}", null, String.class);
         assertEquals("Route without name", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:pippo").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/Donald", null, String.class);
         assertEquals("Route with name: Donald", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/bar", null, String.class);
         assertEquals("Going to the bar", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
-                rest()
-                        .get("/bar")
-                        .route()
+                rest().get("/bar").to("direct:bar");
+                from("direct:bar")
                         .setBody().constant("Going to the bar")
                         .to("mock:bar")
                         .setHeader("Content-Type", constant("text/plain"));
 
-                rest()
-                        .get("/{pippo}")
-                        .route()
+                rest().get("/{pippo}").to("direct:pippo");
+                from("direct:pippo")
                         .setBody().simple("Route with name: ${header.pippo}")
                         .to("mock:pippo")
                         .setHeader("Content-Type", constant("text/plain"));
 
-                rest()
-                        .get("/")
-                        .route()
+                rest().get("/").to("direct:noname");
+                from("direct:noname")
                         .setBody().constant("Route without name")
                         .to("mock:root")
                         .setHeader("Content-Type", constant("text/plain"));

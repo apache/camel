@@ -1,0 +1,82 @@
+= AWS Config Service Component
+:doctitle: AWS Config Service
+:shortname: aws-config
+:artifactid: camel-aws-config
+:description: Manage AWS Config service.
+:since: 4.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-ecs
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS Config component supports create and delete config rules
+https://aws.amazon.com/config/[AWS ECS] clusters instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Config. More information is available at
+https://aws.amazon.com/config/[Amazon Config].
+
+== URI Format
+
+-------------------------
+aws-config://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+Required Config component options
+
+You have to provide the ConfigClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/config/[Amazon Config] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+include::spring-boot:partial$starter.adoc[]

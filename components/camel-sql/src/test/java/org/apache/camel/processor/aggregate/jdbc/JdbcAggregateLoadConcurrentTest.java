@@ -40,7 +40,7 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        LOG.info("Staring to send " + SIZE + " messages.");
+        LOG.info("Starting to send {} messages.", SIZE);
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -57,17 +57,17 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
             });
         }
 
-        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new MyAggregationStrategy())

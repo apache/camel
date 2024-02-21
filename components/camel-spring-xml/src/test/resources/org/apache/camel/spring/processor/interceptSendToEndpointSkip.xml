@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- since we set the skipSendToOriginalEndpoint attribute to true we instruct
              Camel to skip sending the exchange to the original intended destination.

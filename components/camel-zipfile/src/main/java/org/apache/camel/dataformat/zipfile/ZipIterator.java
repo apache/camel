@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -43,16 +44,25 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     private boolean allowEmptyDirectory;
     private volatile ZipInputStream zipInputStream;
     private volatile Message parent;
+    private volatile boolean first;
 
     public ZipIterator(Exchange exchange, InputStream inputStream) {
         this.exchange = exchange;
         this.allowEmptyDirectory = false;
+
+        Objects.requireNonNull(inputStream);
+
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream) inputStream;
         } else {
-            zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+            if (inputStream instanceof InputStream) {
+                zipInputStream = new ZipInputStream(inputStream);
+            } else {
+                zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+            }
         }
         parent = null;
+        first = true;
     }
 
     @Override
@@ -71,6 +81,9 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 } else {
                     availableDataInCurrentEntry = true;
                 }
+                if (first && parent == null) {
+                    throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
+                }
             }
             return availableDataInCurrentEntry;
         } catch (IOException exception) {
@@ -85,6 +98,12 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         }
         Message answer = parent;
         parent = null;
+
+        if (first && answer == null) {
+            throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
+        }
+
+        first = false;
         checkNullAnswer(answer);
 
         return answer;

@@ -27,7 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
 
@@ -38,17 +40,16 @@ public class BeanNoTypeConvertionPossibleTest extends ContextTestSupport {
 
         // we send in a Date object which cannot be converted to XML so it
         // should fail
-        try {
-            template.requestBody("direct:start", new Date());
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException ntae
-                    = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
-            assertEquals(Date.class, ntae.getFromType());
-            assertEquals(Document.class, ntae.getToType());
-            assertNotNull(ntae.getValue());
-            assertNotNull(ntae.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", new Date()),
+                "Should have thrown an exception");
+
+        NoTypeConversionAvailableException ntae
+                = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+        assertEquals(Date.class, ntae.getFromType());
+        assertEquals(Document.class, ntae.getToType());
+        assertNotNull(ntae.getValue());
+        assertNotNull(ntae.getMessage());
 
         assertMockEndpointsSatisfied();
     }

@@ -16,30 +16,37 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
+import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
  * Base class for {@link ReplyManager} implementations.
@@ -58,7 +65,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected CorrelationTimeoutMap correlation;
     protected String correlationProperty;
 
-    public ReplyManagerSupport(CamelContext camelContext) {
+    protected ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -107,7 +114,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 log.trace("Waiting for replyTo to be set done");
             }
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         return replyTo;
     }
@@ -139,11 +146,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         try {
             if (correlationProperty == null) {
-                correlationID = message.getJMSCorrelationID();
+                correlationID = JmsMessageHelper.getJMSCorrelationID(message);
             } else {
                 correlationID = message.getStringProperty(correlationProperty);
             }
-        } catch (JMSException e) {
+        } catch (Exception e) {
             // ignore
         }
 
@@ -163,6 +170,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         if (holder != null && isRunAllowed()) {
             try {
                 Exchange exchange = holder.getExchange();
+                Object to = exchange.getIn().getHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED);
 
                 boolean timeout = holder.isTimeout();
                 if (timeout) {
@@ -184,10 +192,14 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     Session session = holder.getSession();
                     JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
-                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
+                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
                     // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
                     exchange.setOut(response);
                     Object body = response.getBody();
+                    // store where the request message was sent to, so we know that also
+                    if (to != null) {
+                        response.setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
+                    }
 
                     if (endpoint.isTransferException() && body instanceof Exception) {
                         log.debug("Reply was an Exception. Setting the Exception on the Exchange: {}", body);
@@ -201,7 +213,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
                         JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                        exchange.getOut().setHeader("JMSCorrelationID", holder.getOriginalCorrelationId());
+                        exchange.getOut().setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
                     }
                 }
             } finally {
@@ -230,33 +242,21 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             log.warn("Early reply received with correlationID [{}] -> {}", correlationID, message);
         }
 
-        ReplyHandler answer = null;
-
         // wait up until configured values
-        boolean done = false;
-        int counter = 0;
-        while (!done && counter++ < endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter()) {
-            log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
-            try {
-                Thread.sleep(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime());
-            } catch (InterruptedException e) {
-                // ignore
-            }
+        long interval = endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
+                .withMaxIterations(endpoint.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter())
+                .withInterval(Duration.ofMillis(interval))
+                .build())
+                .build();
 
-            // try again
-            answer = correlation.get(correlationID);
-            done = answer != null;
+        return task.run(() -> getReplyHandler(correlationID), answer -> answer != null).orElse(null);
+    }
 
-            if (answer != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace(
-                            "Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
-                            correlationID, counter, answer);
-                }
-            }
-        }
+    private ReplyHandler getReplyHandler(String correlationID) {
+        log.trace("Early reply not found handler. Waiting a bit longer.");
 
-        return answer;
+        return correlation.get(correlationID);
     }
 
     @Override
@@ -277,7 +277,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         listenerContainer.afterPropertiesSet();
         log.debug("Starting reply listener container on endpoint: {}", endpoint);
 
-        endpoint.onListenerContainerStarting(listenerContainer);
+        endpoint.onListenerContainerStarting();
         listenerContainer.start();
     }
 
@@ -291,7 +291,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 listenerContainer.stop();
                 listenerContainer.destroy();
             } finally {
-                endpoint.onListenerContainerStopped(listenerContainer);
+                endpoint.onListenerContainerStopped();
                 listenerContainer = null;
             }
         }
@@ -307,4 +307,20 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
     }
 
+    protected static void setupClientId(JmsEndpoint endpoint, DefaultMessageListenerContainer answer) {
+        String clientId = endpoint.getClientId();
+        if (clientId != null) {
+            clientId += ".CamelReplyManager";
+            answer.setClientId(clientId);
+        }
+    }
+
+    protected static AbstractMessageListenerContainer getAbstractMessageListenerContainer(JmsEndpoint endpoint) {
+        MessageListenerContainerFactory factory = endpoint.getConfiguration().getMessageListenerContainerFactory();
+        if (factory != null) {
+            return factory.createMessageListenerContainer(endpoint);
+        }
+        throw new IllegalArgumentException(
+                "ReplyToConsumerType.Custom requires that a MessageListenerContainerFactory has been configured");
+    }
 }

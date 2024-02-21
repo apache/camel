@@ -88,7 +88,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param fileStore the file store
      * @param cacheSize the cache size
      */
-    @SuppressWarnings("unchecked")
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
         return fileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
     }
@@ -100,7 +99,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param cacheSize        the cache size
      * @param maxFileStoreSize the max size in bytes for the filestore file
      */
-    @SuppressWarnings("unchecked")
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
         FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
@@ -183,8 +181,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public void clear() {
         synchronized (cache) {
             cache.clear();
-            if (cache instanceof LRUCache) {
-                ((LRUCache) cache).cleanUp();
+            if (cache instanceof LRUCache<String, Object> lruCache) {
+                lruCache.cleanUp();
             }
             // clear file store
             clearStore();
@@ -248,7 +246,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      *
      * Setting cache size is only possible when using the default {@link LRUCache} cache implementation.
      */
-    @SuppressWarnings("unchecked")
     public void setCacheSize(int size) {
         if (cache != null && !(cache instanceof LRUCache)) {
             throw new IllegalArgumentException(
@@ -275,8 +272,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public synchronized void reset() throws IOException {
         synchronized (cache) {
             // run the cleanup task first
-            if (cache instanceof LRUCache) {
-                ((LRUCache) cache).cleanUp();
+            if (cache instanceof LRUCache<String, Object> lruCache) {
+                lruCache.cleanUp();
             }
             cache.clear();
             loadStore();
@@ -448,8 +445,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      */
     protected void cleanup() {
         // run the cleanup task first
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
+        if (cache instanceof LRUCache<String, Object> lruCache) {
+            lruCache.cleanUp();
         }
     }
 
@@ -461,8 +458,11 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         if (!fileStore.exists()) {
             LOG.debug("Creating filestore: {}", fileStore);
             File parent = fileStore.getParentFile();
-            if (parent != null) {
-                parent.mkdirs();
+            if (parent != null && !parent.exists()) {
+                boolean mkdirsResult = parent.mkdirs();
+                if (!mkdirsResult) {
+                    LOG.warn("Cannot create the filestore directory at: {}", parent);
+                }
             }
             boolean created = FileUtil.createNewFile(fileStore);
             if (!created) {
@@ -486,7 +486,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ObjectHelper.notNull(fileStore, "fileStore", this);
 
@@ -504,8 +503,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     protected void doStop() throws Exception {
         // run the cleanup task first
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
+        if (cache instanceof LRUCache<String, Object> lruCache) {
+            lruCache.cleanUp();
         }
 
         cache.clear();

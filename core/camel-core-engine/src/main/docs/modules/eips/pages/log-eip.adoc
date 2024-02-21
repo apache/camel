@@ -1,43 +1,45 @@
-[[log-eip]]
 = Log EIP
-:docTitle: Log
+:doctitle: Log
+:shortname: log
 :description: Logs the defined message to the logger
-:since:
-:supportLevel: Stable
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
 
 How can I log the processing of a xref:message.adoc[Message]?
 
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
-* You can use the xref:components::log-component.adoc[Log] component which logs the Message content.
-* You can use the xref:latest@manual:ROOT:tracer.adoc[Tracer] which trace logs message flow.
-* You can also use a xref:latest@manual:ROOT:processor.adoc[Processor] or xref:latest@manual:ROOT:bean-binding.adoc[Bean] and log from Java code.
-* You can use the log DSL.
+
+* You can use the xref:ROOT:log-component.adoc[Log] component which logs the Message content.
+* You can use the xref:manual::tracer.adoc[Tracer] which trace logs message flow.
+* You can also use a xref:manual::processor.adoc[Processor] or xref:manual::bean-binding.adoc[Bean] and log from Java code.
+* You can use this log EIP.
 
 == Options
 
 // eip options: START
-The Log EIP supports 5 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *message* | *Required* Sets the log message (uses simple language) |  | String
-| *loggingLevel* | Sets the logging level. The default value is INFO | INFO | LoggingLevel
-| *logName* | Sets the name of the logger |  | String
-| *marker* | To use slf4j marker |  | String
-| *loggerRef* | To refer to a custom logger instance to lookup from the registry. |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
+== Exchange properties
 
-=== Difference between log in the DSL and Log component
-The log DSL is much lighter and meant for logging human logs such as Starting to do ... etc. It can only log a message based on the Simple language. On the other hand Log component is a full fledged component which involves using endpoints and etc. The Log component is meant for logging the Message itself and you have many URI options to control what you would like to be logged.
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
-== Samples
+=== Difference between Log EIP and Log component
 
-You can use the log DSL which allows you to use xref:components:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
+This log EIP is much lighter and meant for logging human logs such as `Starting to do ...` etc.
+It can only log a message based on the xref:languages:simple-language.adoc[Simple] language.
 
-For example you can do
+The xref:ROOT:log-component.adoc[log] component is meant for logging the message content (body, headers, etc.).
+There are many options on the log component to configure what content to log.
+
+== Example
+
+You can use the log EIP which allows you to use xref:languages:simple-language.adoc[Simple] language to construct a dynamic message which gets logged.
+
+For example, you can do
 
 [source,java]
 ----
@@ -46,14 +48,23 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-Which will construct a String message at runtime using the Simple language. The log message will by logged at INFO level using the route id as the log name. By default a route is named route-1, route-2 etc. But you can use the routeId("myCoolRoute") to set a route name of choice.
+And in XML:
 
-[TIP]
-====
-*Logging message body with streamed messages:*
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <log message="Processing ${id}"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+This will be evaluated using the xref:languages:simple-language.adoc[Simple]
+to construct the `String` containg the message to be logged.
+
+=== Logging message body with streaming
 
 If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
-====
 
 The log DSL have overloaded methods to set the logging level and/or name as well.
 [source,java]
@@ -75,7 +86,7 @@ The logger instance may be used as well:
 [source,java]
 ----
 from("direct:start")
-    .log(LoggingLeven.DEBUG, org.slf4j.LoggerFactory.getLogger("com.mycompany.mylogger"), "Processing ${id}")
+    .log(LoggingLevel.DEBUG, org.slf4j.LoggerFactory.getLogger("com.mycompany.mylogger"), "Processing ${id}")
     .to("bean:foo");
 ----
 
@@ -87,7 +98,7 @@ from("file://target/files")
     .to("bean:foo");
 ----
 
-In Spring DSL it is also easy to use log DSL as shown below:
+In XML DSL it is also easy to use log DSL as shown below:
 [source,xml]
 ----
 <route id="foo">
@@ -107,86 +118,106 @@ The log tag has attributes to set the message, loggingLevel and logName. For exa
 </route>
 ----
 
-Since Camel *2.12.4/2.13.1* it is possible to reference logger instance. For example:
+== Using custom logger
+
+It is possible to reference an existing logger instance. For example:
+
 [source,xml]
 ----
-<bean id="myLogger" class="org.slf4j.LoggerFactory" factory-method="getLogger" xmlns="http://www.springframework.org/schema/beans">
+<bean id="myLogger" class="org.slf4j.LoggerFactory" factory-method="getLogger">
     <constructor-arg value="com.mycompany.mylogger" />
 </bean>
 
-<route id="moo" xmlns="http://camel.apache.org/schema/spring">
+<route id="moo">
     <from uri="direct:moo"/>
-    <log message="Me Got ${body}" loggingLevel="INFO" loggerRef="myLogger"/>
+    <log message="Me Got ${body}" loggerRef="myLogger"/>
     <to uri="mock:baz"/>
 </route>
 ----
 
-=== Using Logger instance from the Registry
+=== Configuring logging name
 
-If no logger name or logger instance is passed to log DSL,
- there is a Registry lookup performed to find single instance of org.slf4j.Logger.
- If such an instance is found, it is used instead of creating a new logger instance.
- If more instances are found, the behavior defaults to creating a new instance of logger.
+The log message will be logged at `INFO` level using the route id as the logger name (or source name:line if source location is enabled, see TIP below).
+So for example, if you have not assigned an id to the route, then Camel will use `route-1`, `route-2` as the logger name.
 
-== Configuring log name globally
+To use "fooRoute" as the route id, you can do:
 
-By default the log name is the route id. If you want to use a different log name, you would need to configure the logName option. However if you have many logs and you want all of them to use the same log name, then you would need to set that logName option on all of them.
+[source,java]
+----
+from("direct:start").routeId("fooRoute")
+    .log("Processing ${id}")
+    .to("bean:foo");
+----
 
-You can configure a global log name that is used instead of the route id, eg
+And in XML:
+
+[source,xml]
+----
+<route id="fooRoute">
+  <from uri="direct:start"/>
+  <log message="Processing ${id}"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+TIP: If you enable `sourceLocationEnabled=true` on `CamelContext` then Camel will use source file:line as logger name,
+instead of the route id. This is for example what `camel-jbang` do, to make it easy to see where in the source code the log is located.
+
+==== Using custom logger from the Registry
+
+If the Log EIP has not been configured with a specific logger to use,
+then Camel will will lookup in the xref:manual::registry.adoc[Registry]
+if there is a single instance of `org.slf4j.Logger`.
+
+If such an instance exists then this logger is used,
+if not the behavior defaults to creating a new instance of logger.
+
+=== Configuring logging name globally
+
+You can configure a global log name that is used instead of the route id,
+by setting the global option on the `CamelContext`.
+
+In Java you can do:
+
 [source,java]
 ----
 camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
 ----
 
-And in XML
+And in XML:
+
 [source,xml]
 ----
-<camelContext ...>
+<camelContext>
   <properties>
     <property key="CamelLogEipName" value="com.foo.myapp"/>
   </properties>
 </camelContext>
 ----
 
-== Using slf4j Marker
-
-You can specify a marker name in the DSL
-[source,xml]
-----
-<route id="baz">
-    <from uri="direct:baz"/>
-    <log loggingLevel="FATAL" logName="com.mycompany.MyCoolRoute" marker="myMarker"
-         message="Me Got ${body}"/>
-    <to uri="mock:baz"/>
-</route>
-----
-
-== Using log DSL in OSGi
-
-When using log DSL inside OSGi (e.g., in Karaf), the underlying logging mechanisms are provided by PAX logging. It searches for a bundle which invokes org.slf4j.LoggerFactory.getLogger() method and associates the bundle with the logger instance. Passing only logger name to log DSL results in associating camel-core bundle with the logger instance created.
-
-In some scenarios it is required that the bundle associated with logger should be the bundle which contains route definition. This is possible using provided logger instance both for Java DSL and Spring DSL (see the examples above).
-
 == Masking sensitive information like password
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
-Note that this option also affects xref:components::log-component.adoc[Log] component.
+Note that this option also affects xref:ROOT:log-component.adoc[Log] component.
 
 To enable mask in Java DSL at CamelContext level:
+
 [source,java]
 ----
 camelContext.setLogMask(true);
 ----
 
-And in XML:
-[source,java]
+And in XML you set the option on `<camelContext>`:
+
+[source,xml]
 ----
 <camelContext logMask="true">
-...
+
 </camelContext>
 ----
 
 You can also turn it on|off at route level. To enable mask in Java DSL at route level:
+
 [source,java]
 ----
 from("direct:start").logMask()
@@ -195,13 +226,31 @@ from("direct:start").logMask()
 ----
 
 And in XML:
-[source,java]
+
+[source,xml]
 ----
 <route logMask="true">
-...
+
 </route>
 ----
+
+=== Using custom masking formatter
 
 `org.apache.camel.support.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
+
+The know set of keywords to mask is gathered from all the different component options, that are marked as secret.
+The list is generated into the source code in `org.apache.camel.util.SensitiveUtils`.
+At this time of writing there is more than 65 different keywords.
+
+Custom keywords can be added as shown:
+
+[source,java]
+----
+DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
+formatter.addKeyword("mySpecialKeyword");
+formatter.addKeyword("verySecret");
+
+camelContext.getRegistry().bind(MaskingFormatter.CUSTOM_LOG_MASK_REF, formatter);
+----

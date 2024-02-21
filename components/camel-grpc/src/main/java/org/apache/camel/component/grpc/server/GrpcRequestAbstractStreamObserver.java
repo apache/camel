@@ -33,8 +33,8 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
 
-    public GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
-                                             StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    protected GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
+                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
         this.endpoint = endpoint;
         this.consumer = consumer;
         this.responseObserver = responseObserver;

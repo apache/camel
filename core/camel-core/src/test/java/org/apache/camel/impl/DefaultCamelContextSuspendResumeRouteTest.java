@@ -16,9 +16,13 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,9 +50,9 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
         context.suspend();
 
         // need to give seda consumer thread time to idle
-        Thread.sleep(100);
-
-        template.sendBody("seda:foo", "B");
+        Awaitility.await().atMost(200, TimeUnit.MILLISECONDS)
+                .pollDelay(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> template.sendBody("seda:foo", "B")));
 
         mock.assertIsSatisfied(1000);
 

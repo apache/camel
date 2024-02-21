@@ -30,24 +30,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
     @Test
     public void testManageTransformerRegistry() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -75,37 +74,37 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertEquals(2, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
-        assertEquals(0, current.intValue());
+        assertEquals(2, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
-        assertEquals(2, current.intValue());
+        assertEquals(0, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("TransformerRegistry"));
-        assertTrue(source.endsWith("capacity: 1000"));
+        assertTrue(source.endsWith("capacity: 1000]"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
         for (Object row : data.values()) {
             CompositeData composite = (CompositeData) row;
-            String scheme = (String) composite.get("scheme");
+            String name = (String) composite.get("name");
             String from = (String) composite.get("from");
             String to = (String) composite.get("to");
             String description = (String) composite.get("description");
             boolean isStatic = (boolean) composite.get("static");
             boolean isDynamic = (boolean) composite.get("dynamic");
-            LOG.info("[{}][{}][{}][{}][{}][{}]", scheme, from, to, isStatic, isDynamic, description);
+            LOG.info("[{}][{}][{}][{}][{}][{}]", name, from, to, isStatic, isDynamic, description);
             if (description.startsWith("ProcessorTransformer")) {
-                assertEquals(null, scheme);
+                assertNull(name);
                 assertEquals("xml:foo", from);
                 assertEquals("json:bar", to);
             } else if (description.startsWith("DataFormatTransformer")) {
-                assertEquals(null, scheme);
+                assertNull(name);
                 assertEquals("java:" + ManagedTransformerRegistryTest.class.getName(), from);
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
-                assertEquals("custom", scheme);
-                assertEquals(null, from);
-                assertEquals(null, to);
+                assertEquals("custom", name);
+                assertEquals("camel:any", from);
+                assertEquals("camel:any", to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
@@ -123,7 +122,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                         .toType("json:bar")
                         .withUri("direct:transformer");
                 transformer()
-                        .scheme("custom")
+                        .name("custom")
                         .withJava(MyTransformer.class);
 
                 from("direct:start").to("mock:result");

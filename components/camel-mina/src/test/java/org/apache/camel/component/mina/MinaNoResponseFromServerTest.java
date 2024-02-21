@@ -31,7 +31,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to test what happens if remote server closes session but doesn't reply
@@ -39,29 +39,28 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MinaNoResponseFromServerTest extends BaseMinaTest {
 
     @BindToRegistry("myCodec")
-    private MyCodec codec1 = new MyCodec();
+    private final MyCodec codec1 = new MyCodec();
 
     @Test
     public void testNoResponse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
-            fail("Should throw a CamelExchangeException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-        }
+        final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort());
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody(format, "Hello World"),
+                "Should throw a CamelExchangeException");
 
+        assertIsInstanceOf(CamelExchangeException.class, e.getCause());
         mock.assertIsSatisfied();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
+            public void configure() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())
                         .transform(constant("Bye World")).to("mock:result");
             }
         };
@@ -70,15 +69,15 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
     private static class MyCodec implements ProtocolCodecFactory {
 
         @Override
-        public ProtocolEncoder getEncoder(IoSession session) throws Exception {
+        public ProtocolEncoder getEncoder(IoSession session) {
             return new ProtocolEncoder() {
 
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
 
-                public void dispose(IoSession ioSession) throws Exception {
+                public void dispose(IoSession ioSession) {
                     // do nothing
                 }
             };
@@ -86,19 +85,19 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolDecoder getDecoder(IoSession session) throws Exception {
+        public ProtocolDecoder getDecoder(IoSession session) {
             return new ProtocolDecoder() {
 
-                public void decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+                public void decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
 
-                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
+                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) {
                     // do nothing
                 }
 
-                public void dispose(IoSession ioSession) throws Exception {
+                public void dispose(IoSession ioSession) {
                     // do nothing
                 }
             };

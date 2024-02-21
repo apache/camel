@@ -34,21 +34,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface Produce {
 
     /**
      * The uri to produce to
      */
     String value() default "";
-
-    /**
-     * The uri to produce to
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri to produce to

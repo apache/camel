@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.java.joor.support.MockRestConsumerFactory;
 import org.apache.camel.main.Main;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.rest.GetVerbDefinition;
+import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ public class JavaMainRestsTest {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
-        List<RestDefinition> restDefinitions = camelContext.adapt(ModelCamelContext.class).getRestDefinitions();
+        List<RestDefinition> restDefinitions = ((ModelCamelContext) camelContext).getRestDefinitions();
         assertEquals(1, restDefinitions.size());
 
         RestDefinition restDefinition = restDefinitions.get(0);
@@ -108,7 +108,7 @@ public class JavaMainRestsTest {
         assertEquals(1, verbs.size());
 
         VerbDefinition verbDefinition = verbs.get(0);
-        assertTrue(verbDefinition instanceof GetVerbDefinition);
+        assertTrue(verbDefinition instanceof GetDefinition);
 
         main.stop();
     }

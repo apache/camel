@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define a custom thread pool -->
         <threadPool id="myPool" poolSize="2" maxPoolSize="4" threadName="myPool"/>
@@ -33,7 +34,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- use the custom thread pool in the camel route -->
-            <threads executorServiceRef="myPool"/>
+            <threads executorService="myPool"/>
             <to uri="mock:result"/>
         </route>
         

@@ -65,7 +65,7 @@ public class KeyManagersParameters extends JsseParameters {
      * configuration returned from {@link #getKeyStore()}. The {@code KeyManager}s are produced from a factory created
      * by using the provider and algorithm identifiers returned by {@link #getProvider()} and {@link #getAlgorithm()},
      * respectively. If either of these methods returns null, the default JSSE value is used instead.
-     * 
+     *
      * @return                          the initialized {@code KeyManager}s
      * @throws GeneralSecurityException if there is an error creating the {@code KeyManager}s or in creating the
      *                                  {@code KeyStore}
@@ -92,7 +92,7 @@ public class KeyManagersParameters extends JsseParameters {
         }
 
         LOG.debug("KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
-                new Object[] { kmf, this, kmf.getProvider(), kmf.getAlgorithm() });
+                kmf, this, kmf.getProvider(), kmf.getAlgorithm());
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
@@ -119,7 +119,7 @@ public class KeyManagersParameters extends JsseParameters {
     /**
      * Sets the key store configuration used to create the {@link KeyStore} that the {@link KeyManager}s produced by
      * this object's configuration expose.
-     * 
+     *
      * @param value the configuration to use
      */
     public void setKeyStore(KeyStoreParameters value) {
@@ -153,7 +153,7 @@ public class KeyManagersParameters extends JsseParameters {
     /**
      * Sets the optional provider identifier for the {@link KeyManagerFactory} used to create the {@link KeyManager}s
      * represented by this object's configuration.
-     * 
+     *
      * @param value the desired provider identifier or {@code null} to use the highest priority provider implementing
      *              the algorithm
      *
@@ -175,7 +175,7 @@ public class KeyManagersParameters extends JsseParameters {
      * by this object's configuration. See the
      * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
      * Socket Extension Reference Guide</a> for information about standard algorithm names.
-     * 
+     *
      * @param value the desired algorithm or {@code null} to use default
      *
      * @see         KeyManagerFactory#getDefaultAlgorithm()

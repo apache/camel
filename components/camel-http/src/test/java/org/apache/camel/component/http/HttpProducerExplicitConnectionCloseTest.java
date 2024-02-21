@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HTTP;
+import org.apache.hc.core5.http.HeaderElements;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
 
-    @EndpointInject("mock:result")
-    protected MockEndpoint mockResultEndpoint;
-
     private HttpServer localServer;
 
     @BeforeEach
@@ -45,8 +40,8 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -67,7 +62,7 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
         HttpEndpoint endpoiont
-                = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                = (HttpEndpoint) component.createEndpoint("http://localhost:"
                                                           + localServer.getLocalPort() + "/myget?connectionClose=true");
         HttpProducer producer = new HttpProducer(endpoiont);
         Exchange exchange = producer.createExchange();
@@ -76,7 +71,7 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
         producer.process(exchange);
         producer.stop();
 
-        assertEquals(HTTP.CONN_CLOSE, exchange.getMessage().getHeader("connection"));
+        assertEquals(HeaderElements.CLOSE, exchange.getMessage().getHeader("connection"));
         assertExchange(exchange);
     }
 }

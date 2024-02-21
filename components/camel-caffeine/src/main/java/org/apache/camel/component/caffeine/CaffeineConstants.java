@@ -16,14 +16,9 @@
  */
 package org.apache.camel.component.caffeine;
 
+import org.apache.camel.spi.Metadata;
+
 public interface CaffeineConstants {
-    String ACTION = "CamelCaffeineAction";
-    String ACTION_HAS_RESULT = "CamelCaffeineActionHasResult";
-    String ACTION_SUCCEEDED = "CamelCaffeineActionSucceeded";
-    String KEY = "CamelCaffeineKey";
-    String KEYS = "CamelCaffeineKeys";
-    String VALUE = "CamelCaffeineValue";
-    String OLD_VALUE = "CamelCaffeineOldValue";
 
     String ACTION_CLEANUP = "CLEANUP";
     String ACTION_PUT = "PUT";
@@ -32,4 +27,26 @@ public interface CaffeineConstants {
     String ACTION_GET_ALL = "GET_ALL";
     String ACTION_INVALIDATE = "INVALIDATE";
     String ACTION_INVALIDATE_ALL = "INVALIDATE_ALL";
+    String ACTION_AS_MAP = "AS_MAP";
+
+    @Metadata(description = "The action to execute.\n\nPossible values:\n\n* " + ACTION_CLEANUP + "\n* "
+                            + ACTION_PUT + "\n* " + ACTION_PUT_ALL + "\n* " + ACTION_GET + "\n* " + ACTION_GET_ALL + "\n* "
+                            + ACTION_INVALIDATE + "\n* " + ACTION_INVALIDATE_ALL + "\n* " + ACTION_AS_MAP,
+              javaType = "String")
+    String ACTION = "CamelCaffeineAction";
+    @Metadata(description = "The flag indicating whether the action has a result or not.", javaType = "Boolean")
+    String ACTION_HAS_RESULT = "CamelCaffeineActionHasResult";
+    @Metadata(description = "The flag indicating whether the action was successful or not.", javaType = "Boolean")
+    String ACTION_SUCCEEDED = "CamelCaffeineActionSucceeded";
+    @Metadata(description = "The key for all actions on a single entry.")
+    String KEY = "CamelCaffeineKey";
+    @Metadata(description = "The keys to get (" + ACTION_GET_ALL + "), to invalidate (" + ACTION_INVALIDATE_ALL
+                            + ") or existing (" + ACTION_AS_MAP + ") according to the action.",
+              javaType = "Set")
+    String KEYS = "CamelCaffeineKeys";
+    @Metadata(description = "The value of key for all put actions (" + ACTION_PUT + " or " + ACTION_PUT_ALL + ").")
+    String VALUE = "CamelCaffeineValue";
+    @Metadata(description = "The old value returned according to the action.")
+    String OLD_VALUE = "CamelCaffeineOldValue";
+
 }

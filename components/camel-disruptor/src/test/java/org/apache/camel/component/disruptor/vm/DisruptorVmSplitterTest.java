@@ -36,7 +36,7 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 
         template2.sendBody("direct:start", "Claus@James@Willem");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

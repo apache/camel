@@ -17,15 +17,19 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 
 public class MailSortTermThreeUriConfigTest extends MailSortTermThreeTest {
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
+
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&sortTerm=reverse,date").to("mock:resultDescendingImap");
+                from(bill.uriPrefix(Protocol.imap) + "&sortTerm=reverse,date").to("mock:resultDescendingImap");
             }
         };
     }

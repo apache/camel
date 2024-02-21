@@ -38,17 +38,17 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
 
         Exchange out = template.request("direct:request", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String date = out.getMessage().getHeader("sub-date", String.class);
         assertNull(date);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:request").setHeader("Date", constant("31-03-2014"))
                         .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
@@ -58,7 +58,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
         };
     }
 
-    private class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    private static class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         CustomHeaderFilterStrategy() {
             // allow all outbound headers to pass through but only filter out
             // below inbound header

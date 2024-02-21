@@ -45,6 +45,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
+    // a special prefix to avoid cache clash
+    private static final String CACHE_KEY_PREFIX = "@SIMPLE@";
+
     boolean allowEscape = true;
 
     // use caches to avoid re-parsing the same expressions over and over again
@@ -81,17 +84,15 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void stop() {
-        if (cachePredicate instanceof LRUCache) {
+        if (cachePredicate instanceof LRUCache<String, Predicate> cache) {
             if (LOG.isDebugEnabled()) {
-                LRUCache cache = (LRUCache) cachePredicate;
                 LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
             cachePredicate.clear();
         }
-        if (cacheExpression instanceof LRUCache) {
+        if (cacheExpression instanceof LRUCache<String, Expression> cache) {
             if (LOG.isDebugEnabled()) {
-                LRUCache cache = (LRUCache) cacheExpression;
                 LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
@@ -103,7 +104,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        Predicate answer = cachePredicate != null ? cachePredicate.get(expression) : null;
+        String key = CACHE_KEY_PREFIX + expression;
+        Predicate answer = cachePredicate != null ? cachePredicate.get(key) : null;
         if (answer == null) {
 
             if (isDynamicResource(expression)) {
@@ -129,14 +131,16 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             if (isStaticResource(expression)) {
                 expression = loadResource(expression);
+                key = CACHE_KEY_PREFIX + expression;
             }
 
+            // using the expression cache here with the predicate parser is okay
             SimplePredicateParser parser
                     = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
-                cachePredicate.put(expression, answer);
+                cachePredicate.put(key, answer);
             }
         }
 
@@ -146,8 +150,11 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     @Override
     public Predicate createPredicate(String expression, Object[] properties) {
         boolean trim = property(boolean.class, properties, 1, true);
-        if (trim) {
+        if (trim && expression != null) {
             expression = expression.trim();
+        }
+        if (expression == null) {
+            expression = "${null}";
         }
         return createPredicate(expression);
     }
@@ -156,8 +163,11 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> resultType = property(Class.class, properties, 0, null);
         boolean trim = property(boolean.class, properties, 1, true);
-        if (trim) {
+        if (trim && expression != null) {
             expression = expression.trim();
+        }
+        if (expression == null) {
+            expression = "${null}";
         }
         return createExpression(expression, resultType);
     }
@@ -166,13 +176,13 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        Expression answer = cacheExpression != null ? cacheExpression.get(expression) : null;
-        if (answer == null) {
+        String key = CACHE_KEY_PREFIX + expression;
+        Expression answer = cacheExpression != null ? cacheExpression.get(key) : null;
 
+        if (answer == null) {
             if (isDynamicResource(expression)) {
                 // we need to load the resource dynamic based on evaluating the expression via the exchange
-                // so create an embedded expression as result
-                // need to lazy eval as its a dynamic resource
+                // so create an embedded expression as result need to lazy eval due to dynamic resource
                 final String text = expression;
                 return new Expression() {
                     @Override
@@ -191,39 +201,22 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
 
             if (isStaticResource(expression)) {
+                // load static resource and re-eval if there are functions
                 expression = loadResource(expression);
+                key = CACHE_KEY_PREFIX + expression;
             }
 
+            // only parse if there are simple functions
             SimpleExpressionParser parser
                     = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parseExpression();
 
             if (cacheExpression != null && answer != null) {
-                cacheExpression.put(expression, answer);
+                cacheExpression.put(key, answer);
             }
         }
 
         return answer;
-    }
-
-    /**
-     * Creates a new {@link Expression}.
-     * <p/>
-     * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
-     * {@link #predicate(String)} instead.
-     */
-    @Deprecated
-    public static Expression simple(String expression) {
-        return expression(expression);
-    }
-
-    /**
-     * Creates a new {@link Expression} (or {@link Predicate} if the resultType is a <tt>Boolean</tt>, or
-     * <tt>boolean</tt> type).
-     */
-    @Deprecated
-    public static Expression simple(String expression, Class<?> resultType) {
-        return new SimpleLanguage().createExpression(expression, resultType);
     }
 
     public Expression createExpression(String expression, Class<?> resultType) {
@@ -238,35 +231,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
             return exp;
         }
-    }
-
-    /**
-     * Creates a new {@link Expression}.
-     * <p/>
-     * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
-     * {@link #predicate(String)} instead.
-     */
-    @Deprecated
-    public static Expression expression(String expression) {
-        return SIMPLE.createExpression(expression);
-    }
-
-    /**
-     * Creates a new {@link Predicate}.
-     */
-    @Deprecated
-    public static Predicate predicate(String predicate) {
-        return SIMPLE.createPredicate(predicate);
-    }
-
-    /**
-     * Does the expression include a simple function.
-     *
-     * @param  expression the expression
-     * @return            <tt>true</tt> if one or more simple function is included in the expression
-     */
-    public static boolean hasSimpleFunction(String expression) {
-        return SimpleTokenizer.hasFunctionStartToken(expression);
     }
 
 }

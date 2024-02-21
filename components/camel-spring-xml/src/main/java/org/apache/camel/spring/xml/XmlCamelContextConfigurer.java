@@ -20,14 +20,14 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Allows to do custom configuration when a new XML based {@link org.apache.camel.spring.SpringCamelContext} has been
- * created. For example we use this to enable camel-spring-boot to configure Camel created from XML files with the
- * existing Spring Boot auto configuration.
+ * Allows doing custom configuration when a new XML based {@link org.apache.camel.spring.SpringCamelContext} has been
+ * created. For example, we use this to enable camel-spring-boot to configure Camel created from XML files with the
+ * existing Spring Boot auto-configuration.
  */
 public interface XmlCamelContextConfigurer {
 
     /**
-     * Configures XML based CamelContext with the given configuration
+     * Configures XML based CamelContext with the given configuration.
      *
      * @param  applicationContext the Spring context
      * @param  camelContext       the XML based CamelContext

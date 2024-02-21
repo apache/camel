@@ -26,7 +26,7 @@ public interface ExpressionResultComparator extends SequenceElementComparator<Ex
 
     /**
      * Set the expression used for comparing {@link Exchange}s.
-     * 
+     *
      * @param expression the expression
      */
     void setExpression(Expression expression);

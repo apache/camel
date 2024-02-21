@@ -34,6 +34,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -72,7 +74,7 @@ public class CouchbaseProducerTest {
     private CouchbaseProducer producer;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         lenient().when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
         lenient().when(endpoint.getProducerRetryAttempts()).thenReturn(3);
         lenient().when(endpoint.getProducerRetryPause()).thenReturn(200);
@@ -83,38 +85,39 @@ public class CouchbaseProducerTest {
     }
 
     @Test
-    public void testBodyMandatory() throws Exception {
+    public void testBodyMandatory() {
         assertThrows(CouchbaseException.class,
                 () -> producer.process(exchange));
     }
 
     @Test
-    public void testPersistToLowerThanSupported() throws Exception {
+    public void testPersistToLowerThanSupported() {
         assertThrows(IllegalArgumentException.class,
                 () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
     @Test
-    public void testPersistToHigherThanSupported() throws Exception {
+    public void testPersistToHigherThanSupported() {
         assertThrows(IllegalArgumentException.class,
                 () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
     @Test
-    public void testReplicateToLowerThanSupported() throws Exception {
+    public void testReplicateToLowerThanSupported() {
         assertThrows(IllegalArgumentException.class,
                 () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
     @Test
-    public void testReplicateToHigherThanSupported() throws Exception {
+    public void testReplicateToHigherThanSupported() {
         assertThrows(IllegalArgumentException.class,
                 () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test
-    public void testMaximumValuesForPersistToAndRepicateTo() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 4, 3);
+    public void testMaximumValuesForPersistToAndReplicateTo() {
+        assertDoesNotThrow(() -> producer = new CouchbaseProducer(endpoint, client, 4, 3));
+        assertNotNull(producer);
     }
 
     //

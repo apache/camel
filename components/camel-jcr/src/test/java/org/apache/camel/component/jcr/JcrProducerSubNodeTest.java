@@ -67,10 +67,10 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("jcr://user:pass@repository/home/test");
             }

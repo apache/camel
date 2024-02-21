@@ -19,7 +19,10 @@ package org.apache.camel.impl.engine;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +35,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,11 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     private CamelContext camelContext;
     private boolean enabled;
+    private String allowClassNames;
+    private String denyClassNames;
+    private Collection<Class<?>> allowClasses;
+    private Collection<Class<?>> denyClasses;
+    private boolean spoolEnabled;
     private File spoolDirectory;
     private transient String spoolDirectoryName = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
@@ -75,6 +82,44 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public Collection<Class<?>> getAllowClasses() {
+        return allowClasses;
+    }
+
+    public void setAllowClasses(Class<?>... allowClasses) {
+        this.allowClasses = List.of(allowClasses);
+    }
+
+    @Override
+    public void setAllowClasses(String names) {
+        this.allowClassNames = names;
+    }
+
+    @Override
+    public Collection<Class<?>> getDenyClasses() {
+        return denyClasses;
+    }
+
+    public void setDenyClasses(Class<?>... denyClasses) {
+        this.denyClasses = List.of(denyClasses);
+    }
+
+    @Override
+    public void setDenyClasses(String names) {
+        this.denyClassNames = names;
+    }
+
+    @Override
+    public boolean isSpoolEnabled() {
+        return spoolEnabled;
+    }
+
+    @Override
+    public void setSpoolEnabled(boolean spoolEnabled) {
+        this.spoolEnabled = spoolEnabled;
     }
 
     @Override
@@ -204,25 +249,85 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     @Override
     public StreamCache cache(Exchange exchange) {
-        Message message = exchange.getMessage();
-        StreamCache cache = message.getBody(StreamCache.class);
+        return doCache(exchange.getMessage().getBody(), exchange);
+    }
+
+    @Override
+    public StreamCache cache(Message message) {
+        return doCache(message.getBody(), message.getExchange());
+    }
+
+    @Override
+    public StreamCache cache(Object body) {
+        return doCache(body, null);
+    }
+
+    private StreamCache doCache(Object body, Exchange exchange) {
+        StreamCache cache = null;
+        // try convert to stream cache
+        if (body != null) {
+            boolean allowed = allowClasses == null && denyClasses == null;
+            if (!allowed) {
+                allowed = checkAllowDenyList(body);
+            }
+            if (allowed) {
+                if (exchange != null) {
+                    cache = camelContext.getTypeConverter().convertTo(StreamCache.class, exchange, body);
+                } else {
+                    cache = camelContext.getTypeConverter().convertTo(StreamCache.class, body);
+                }
+            }
+        }
         if (cache != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
             }
             if (statistics.isStatisticsEnabled()) {
-                try {
-                    if (cache.inMemory()) {
-                        statistics.updateMemory(cache.length());
-                    } else {
-                        statistics.updateSpool(cache.length());
-                    }
-                } catch (Exception e) {
-                    LOG.debug("Error updating cache statistics. This exception is ignored.", e);
-                }
+                computeStatistics(cache);
             }
         }
         return cache;
+    }
+
+    private boolean checkAllowDenyList(Object body) {
+        boolean allowed;
+        Class<?> source = body.getClass();
+        if (denyClasses != null && allowClasses != null) {
+            // deny takes precedence
+            allowed = !isAssignableFrom(source, denyClasses);
+            if (allowed) {
+                allowed = isAssignableFrom(source, allowClasses);
+            }
+        } else if (denyClasses != null) {
+            allowed = !isAssignableFrom(source, denyClasses);
+        } else {
+            allowed = isAssignableFrom(source, allowClasses);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Cache stream from class: {} is {}", source, allowed ? "allowed" : "denied");
+        }
+        return allowed;
+    }
+
+    private void computeStatistics(StreamCache cache) {
+        try {
+            if (cache.inMemory()) {
+                statistics.updateMemory(cache.length());
+            } else {
+                statistics.updateSpool(cache.length());
+            }
+        } catch (Exception e) {
+            LOG.debug("Error updating cache statistics. This exception is ignored.", e);
+        }
+    }
+
+    protected static boolean isAssignableFrom(Class<?> source, Collection<Class<?>> targets) {
+        for (Class<?> target : targets) {
+            if (target.isAssignableFrom(source)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected String resolveSpoolDirectory(String path) {
@@ -247,8 +352,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
         // replace tokens
         String answer = path;
-        answer = StringHelper.replaceAll(answer, "#camelId#", name);
-        answer = StringHelper.replaceAll(answer, "#name#", name);
+        answer = answer.replace("#camelId#", name);
+        answer = answer.replace("#name#", name);
         // replace custom
         answer = customResolveManagementName(answer);
         return answer;
@@ -257,7 +362,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     protected String customResolveManagementName(String pattern) {
         if (pattern.contains("#uuid#")) {
             String uuid = camelContext.getUuidGenerator().generateUuid();
-            pattern = StringHelper.replaceAll(pattern, "#uuid#", uuid);
+            pattern = pattern.replace("#uuid#", uuid);
         }
         return FilePathResolver.resolvePath(pattern);
     }
@@ -269,18 +374,37 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             return;
         }
 
+        if (allowClassNames != null) {
+            if (allowClasses == null) {
+                allowClasses = new ArrayList<>();
+            }
+            for (String name : allowClassNames.split(",")) {
+                name = name.trim();
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
+                allowClasses.add(clazz);
+            }
+        }
+        if (denyClassNames != null) {
+            if (denyClasses == null) {
+                denyClasses = new ArrayList<>();
+            }
+            for (String name : denyClassNames.split(",")) {
+                name = name.trim();
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
+                denyClasses.add(clazz);
+            }
+        }
+
         if (spoolUsedHeapMemoryThreshold > 99) {
             throw new IllegalArgumentException(
                     "SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: " + spoolUsedHeapMemoryThreshold);
         }
 
         // if we can overflow to disk then make sure directory exists / is created
-        if (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0) {
-
+        if (spoolEnabled && (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0)) {
             if (spoolDirectory == null && spoolDirectoryName == null) {
                 throw new IllegalArgumentException("SpoolDirectory must be configured when using SpoolThreshold > 0");
             }
-
             if (spoolDirectory == null) {
                 String name = resolveSpoolDirectory(spoolDirectoryName);
                 if (name != null) {
@@ -290,7 +414,6 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                     throw new IllegalStateException("Cannot resolve spool directory from pattern: " + spoolDirectoryName);
                 }
             }
-
             if (spoolDirectory.exists()) {
                 if (spoolDirectory.isDirectory()) {
                     LOG.debug("Using spool directory: {}", spoolDirectory);
@@ -308,9 +431,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 } else {
                     LOG.debug("Created spool directory: {}", spoolDirectory);
                 }
-
             }
-
             if (spoolThreshold > 0) {
                 spoolRules.add(new FixedThresholdSpoolRule());
             }
@@ -327,14 +448,17 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
         if (spoolDirectory != null) {
             LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
-        } else {
+        } else if (!spoolRules.isEmpty()) {
             LOG.info("StreamCaching in use with rules: {}", spoolRules);
+        } else {
+            // reduce logging noise when its in-memory stream caching
+            LOG.debug("StreamCaching in use");
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping()) {
+        if (spoolEnabled && isSpoolRemovable()) {
             LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
@@ -346,10 +470,15 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         statistics.reset();
     }
 
+    private boolean isSpoolRemovable() {
+        return spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
+    }
+
     @Override
     public String toString() {
         return "DefaultStreamCachingStrategy["
-               + "spoolDirectory=" + spoolDirectory
+               + "spoolDirectoryEnabled=" + spoolEnabled
+               + ", spoolDirectory=" + spoolDirectory
                + ", spoolCipher=" + spoolCipher
                + ", spoolThreshold=" + spoolThreshold
                + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold

@@ -16,19 +16,20 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Look up an expression in the Camel Registry and evaluate it.
+ * Uses an existing expression from the registry.
  */
 @Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RefExpression extends ExpressionDefinition {
+public class RefExpression extends TypedExpressionDefinition {
 
     public RefExpression() {
     }
@@ -37,9 +38,24 @@ public class RefExpression extends ExpressionDefinition {
         super(ref);
     }
 
+    private RefExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "ref";
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link RefExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, RefExpression> {
+
+        @Override
+        public RefExpression end() {
+            return new RefExpression(this);
+        }
+    }
 }

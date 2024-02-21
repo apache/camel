@@ -1,0 +1,383 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.15 to 3.16
+
+=== camel-core
+
+Change the default from `Override` to `Ignore` in the `TypeConverterExists` option,
+and the TypeConverterExistsLoggingLevel from `WARN` to `DEBUG`.
+
+Previously when Camel detected a duplicate type converter during startup, Camel would
+override the existing converter and log a WARN. A more correct behaviour would be
+to keep the existing and ignore the duplicate.
+
+Removed the deprecated class `org.apache.camel.impl.RouteIdFactory`.
+
+=== Rest DSL
+
+The Rest DSL have some changes.
+
+==== Removed support for embedded routes
+
+The Rest DSL no longer allows embedding routes directly into each REST service.
+Instead, you must use `to` to route to a Camel endpoint. If you have an embedded
+route you can them make this into an individual route using `direct` as the input endpoint,
+and then link to this route from the REST service.
+
+For example
+
+[source,java]
+----
+rest("/users")
+  .get("/{id}")
+  .route().
+    // embedded route here
+----
+
+Should now be:
+
+[source,java]
+----
+rest("/users")
+  .get("/{id}")
+  .to("direct:users-by-id");
+
+from("direct:users-by-id")
+    // embedded route here
+----
+
+And in XML:
+
+[source,xml]
+----
+<rest path="/users">
+  <get path="/{id}">
+    <route>
+      ...
+   </route>
+  </get>
+</rest>
+----
+
+Should now be:
+
+[source,xml]
+----
+<rest path="/users">
+  <get path="/{id}">
+    <to uri="direct:users-by-id"/>
+  </get>
+</rest>
+
+<route>
+  <from uri="direct:users-by-id"/>
+  ...
+</route>
+----
+
+==== Renamed uri to path
+
+Rename `uri` to `path` on the verb classes listed above.
+When using XML or YAML DSL then migration is needed such as:
+
+[source,xml]
+----
+<rest>
+  <get uri="/hello/{name}">
+    ...
+  </get>
+</rest>
+----
+
+Should be:
+
+[source,xml]
+----
+<rest>
+  <get path="/hello/{name}">
+    ...
+  </get>
+</rest>
+----
+
+And in YAML DSL:
+
+[source,yaml]
+----
+rest:
+  get:
+    - uri: "/hello/{name}"
+      to: "direct:hello"
+----
+
+Should be:
+
+[source,yaml]
+----
+rest:
+  get:
+    - path: "/hello/{name}"
+      to: "direct:hello"
+----
+
+==== Renamed classes
+
+The generic verb-based definition, where the HTTP verb can be specified as a string value
+is no longer supported for defining a REST service.
+Only the built-in verbs (get, post, put etc.) must be used.
+
+Renamed the following classes in package `org.apache.camel.model.rest`:
+
+- `DeleteVerbDefinition` to `DeleteDefinition`
+- `GetVerbDefinition` to `GetDefinition`
+- `HeadVerbDefinition` to `HeadDefinition`
+- `PatchVerbDefinition` to `PatchDefinition`
+- `PostVerbDefinition` to `PostDefinition`
+- `PutVerbDefinition` to `PutDefinition`
+- `RestSecurityApiKey` to `ApiKeyDefinition`
+- `RestSecurityBasicAuth` to `BasicAuthDefinition`
+- `RestSecurityBearerToken` to `BearerTokenDefinition`
+- `RestSecurityMultalTLS` to `MutalTLSDefinition`
+- `RestSecurityOAuth2` to `OAuth2Definition`
+- `RestSecurityOpenIdConnect` to `OpenIdConnectDefinition`
+- `RestOperationParamDefinition` to `ParamDefinition`
+- `RestOperationResponseHeaderDefinition` to `ResponseHeaderDefinition`
+- `RestOperationResponseMsgDefinition` to `ResponseMessageDefinition`
+
+==== Removed classes
+
+For the sake of simplicity, the class `RestSecuritiesRequirement` has been removed because it contains only elements of type `SecurityDefinition` which have been moved directly into `RestDefinition`.
+
+=== Aggregate EIP
+
+Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
+Renamed `aggregationRepositoryRef` to `aggregationRepository`.
+Renamed `aggregateControllerRef` to `aggregateController`.
+Renamed `executorServiceRef` to `executorService`.
+Renamed `timeoutCheckerExecutorServiceRef` to `timeoutCheckerExecutorService`.
+Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== Circuit Breaker EIP
+
+Renamed `circuitBreakerRef` to `circuitBreaker`.
+Renamed `configRef` to `config`.
+Renamed `bulkheadExecutorServiceRef` to `bulkheadExecutorService`.
+Renamed `timeoutScheduledExecutorServiceRef` to `timeoutScheduledExecutorService`.
+
+=== Claim Check EIP
+
+Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Removed some unnecessary methods in Java DSL.
+
+=== Delay EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== DoSwitch EIP
+
+Replaced by Choice EIP in precondition mode.
+
+Before it was:
+[source,java]
+----
+.doSwitch()
+    .when(simple("{{?red}}")).to("mock:red")
+    .when(simple("{{?blue}}")).to("mock:blue")
+.end()
+----
+
+Now it is:
+[source,java]
+----
+.choice().precondition()
+    .when(simple("{{?red}}")).to("mock:red")
+    .when(simple("{{?blue}}")).to("mock:blue")
+.end()
+----
+
+=== Enrich & Poll Enrich EIPs
+
+Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
+Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== Idempotent Consumer EIP
+
+Renamed `messageIdRepositoryRef` to `idempotentRepository`.
+Removed some unnecessary methods in Java DSL.
+
+=== Log EIP
+
+Renamed `loggerRef` to `logger`.
+
+=== Multicast, Recipient List & Split EIP
+
+Renamed `strategyRef` to `aggregationStrategy`.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
+Renamed `onPrepareRef` to `onPrepare`.
+Renamed `executorServiceRef` to `executorService`.
+Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== OnCompletion EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== Resequence EIP
+
+Renamed `comparatorRef` to `comparator`.
+
+=== Sort EIP
+
+Renamed `comparatorRef` to `comparator`.
+
+=== Threads EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== Throttle EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== Saga EIP
+
+Renamed `sagaServiceRef` to `sagaService`.
+Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
+
+In the `<option>` the `optionName` is renamed to `key`. When using XML DSL then this is affected as follows:
+
+[source,xml]
+----
+<saga sagaServiceRef="mySagaService">
+    <compensation uri="mock:compensation"/>
+    <completion uri="mock:completion"/>
+    <option optionName="myOptionKey">
+        <constant>myOptionValue</constant>
+    </option>
+    <option optionName="myOptionKey2">
+        <constant>myOptionValue2</constant>
+    </option>
+</saga>
+----
+
+To:
+
+[source,xml]
+----
+<saga sagaServiceRef="mySagaService">
+    <compensation uri="mock:compensation"/>
+    <completion uri="mock:completion"/>
+    <option key="myOptionKey">
+        <constant>myOptionValue</constant>
+    </option>
+    <option key="myOptionKey2">
+        <constant>myOptionValue2</constant>
+    </option>
+</saga>
+----
+
+=== WireTap EIP
+
+Renamed `onPrepareRef` to `onPrepare`.
+Renamed `executorServiceRef` to `executorService`.
+Removed the _new message_ mode as this functionality is better done by using onPrepare processor in copy mode.
+
+=== camel-health
+
+The `HealthCheck` API has been simplified and removed the following configurations:
+
+- interval
+- success threshold
+- failure threshold
+
+These options would complicate health checks as they affect the outcome of health checks.
+It is better the checks always execute and the responsibility of the monitoring systems
+how to deal with interval between checks and thresholds.
+
+Removed the option to disable context health check as it should always be enabled.
+
+==== Disabling health checks
+
+The configuration for disabling individual health-checks has changed
+
+Before each health-check could be configured and set `enabled=false`. For example
+to disable health-checks for route with id `netty` you would do:
+
+[source,properties]
+----
+camel.health.config[netty].check = routes
+camel.health.config[netty].enabled = false
+----
+
+With Camel 3.16 onwards you instead specify pattern(s) for health checks to be excluded
+from being invoked, which is done in a single configuration:
+
+[source,properties]
+----
+camel.health.exclude-pattern = netty
+----
+
+You can specify multiple patterns (and use wildcards) such as:
+
+[source,properties]
+----
+camel.health.exclude-pattern = netty,foo,bar*
+----
+
+=== camel-main
+
+The option `camel.main.packageScanRouteBuilders` has been renamed to `camel.main.basePackageScan`.
+
+Using configuration classes must now implement the interface `org.apache.camel.main.CamelConfiguration`
+and the `configure` method now takes a `CamelContext` as argument.
+
+=== camel-any23
+
+The option `baseURI` is renamed to `baseUri`.
+
+=== camel-aws2-kinesis
+
+The `camel-aws2-kinesis` component will now set only the raw data as body while consuming from a stream. The data will be an input stream.
+This changes the behavior from the old versions because in the past the component was returning the full record as part of the body.
+
+=== camel-aws2-sqs
+
+The `camel-aws2-sqs` component will now map message headers from their original type
+such as boolean, integer, etc. This requires using Camel for both sending and receiving
+as AWS only have string or binary types, so Camel stores custom metadata in the message header
+to know its original type.
+
+=== camel-stream
+
+The producer will now by default append new line character to end of output.
+The option `appendNewLine` can be used to turn this off.
+
+=== camel-testcontainers
+
+This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-junit5
+
+This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-spring
+
+This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-testcontainers-spring-junit5
+
+This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-salesforce
+
+The `sObjectName` query parameter and header now take precedence over the class name of the `AbstractSObjectBase` DTO for
+determining the name of the SObject. We suggest testing your existing routes to identify any potential issues. See
+https://issues.apache.org/jira/browse/CAMEL-17608 for more details.

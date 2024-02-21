@@ -29,13 +29,16 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     protected HttpBinding httpBinding;
     @Metadata(label = "advanced", description = "To use the shared HttpConfiguration as base configuration.")
     protected HttpConfiguration httpConfiguration;
+    @Metadata(label = "consumer", defaultValue = "true",
+              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+    protected boolean muteException = true;
     @Metadata(label = "advanced",
               description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
                             + " This is by default turned off. "
                             + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
-    public HttpCommonComponent() {
+    protected HttpCommonComponent() {
     }
 
     /**
@@ -124,6 +127,18 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      */
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public boolean isAllowJavaSerializedObject() {

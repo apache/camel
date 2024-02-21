@@ -16,25 +16,27 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
+    private final String serverUri
+            = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
 
     @Test
-    public void testNettySuspendResume() throws Exception {
-        // these tests does not run well on Windows
-        assumeFalse(isPlatform("windows"));
-
+    public void testNettySuspendResume() {
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);
@@ -57,18 +59,19 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         // resume
         consumer.resume();
 
-        Thread.sleep(2000);
-
-        // and send request which should be processed
-        reply = template.requestBody(serverUri, "Moon", String.class);
-        assertEquals("Bye Moon", reply);
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // and send request which should be processed
+                    String nextReply = template.requestBody(serverUri, "Moon", String.class);
+                    assertEquals("Bye Moon", nextReply);
+                });
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(serverUri).routeId("foo")
                         .transform(body().prepend("Bye "));
             }

@@ -3,14 +3,15 @@
     "kind": "model",
     "name": "random",
     "title": "Random",
-    "description": "Random load balancer The random load balancer selects a random endpoint for each exchange.",
+    "description": "The destination endpoints are selected by random.",
     "deprecated": false,
-    "label": "eip,routing,loadbalance",
+    "label": "eip,routing",
     "javaType": "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

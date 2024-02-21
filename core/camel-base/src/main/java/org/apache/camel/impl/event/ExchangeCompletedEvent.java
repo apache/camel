@@ -18,16 +18,22 @@ package org.apache.camel.impl.event;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.util.TimeUtils;
 
 public class ExchangeCompletedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCompletedEvent {
     private static final long serialVersionUID = -3231801412021356098L;
+    private final long timeTaken;
 
     public ExchangeCompletedEvent(Exchange source) {
         super(source);
+
+        this.timeTaken = getExchange().getClock().elapsed();
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange completed: " + getExchange();
+    public final String toString() {
+        return getExchange().getExchangeId() + " exchange completed"
+               + " took: " + TimeUtils.printDuration(timeTaken, true);
+
     }
 }

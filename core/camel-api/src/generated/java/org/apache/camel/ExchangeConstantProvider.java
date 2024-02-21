@@ -11,7 +11,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(150);
+        Map<String, String> map = new HashMap<>(155);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -37,6 +37,8 @@ public class ExchangeConstantProvider {
         map.put("COMPILE_SCRIPT", "CamelCompileScript");
         map.put("CONTENT_ENCODING", "Content-Encoding");
         map.put("CONTENT_LENGTH", "Content-Length");
+        map.put("CONTENT_SCHEMA", "CamelContentSchema");
+        map.put("CONTENT_SCHEMA_TYPE", "CamelContentSchemaType");
         map.put("CONTENT_TYPE", "Content-Type");
         map.put("COOKIE_HANDLER", "CamelCookieHandler");
         map.put("CORRELATION_ID", "CamelCorrelationId");
@@ -47,7 +49,8 @@ public class ExchangeConstantProvider {
         map.put("DISABLE_HTTP_STREAM_CACHE", "CamelDisableHttpStreamCache");
         map.put("DOCUMENT_BUILDER_FACTORY", "CamelDocumentBuilderFactory");
         map.put("DUPLICATE_MESSAGE", "CamelDuplicateMessage");
-        map.put("ERRORHANDLER_CIRCUIT_DETECTED", "CamelFErrorHandlerCircuitDetected");
+        map.put("ERRORHANDLER_BRIDGE", "CamelErrorHandlerBridge");
+        map.put("ERRORHANDLER_CIRCUIT_DETECTED", "CamelErrorHandlerCircuitDetected");
         map.put("ERRORHANDLER_HANDLED", "CamelErrorHandlerHandled");
         map.put("EVALUATE_EXPRESSION_RESULT", "CamelEvaluateExpressionResult");
         map.put("EXCEPTION_CAUGHT", "CamelExceptionCaught");
@@ -109,9 +112,11 @@ public class ExchangeConstantProvider {
         map.put("MESSAGE_HISTORY", "CamelMessageHistory");
         map.put("MESSAGE_HISTORY_HEADER_FORMAT", "CamelMessageHistoryHeaderFormat");
         map.put("MESSAGE_HISTORY_OUTPUT_FORMAT", "CamelMessageHistoryOutputFormat");
+        map.put("MESSAGE_TIMESTAMP", "CamelMessageTimestamp");
         map.put("MULTICAST_COMPLETE", "CamelMulticastComplete");
         map.put("MULTICAST_INDEX", "CamelMulticastIndex");
         map.put("NOTIFY_EVENT", "CamelNotifyEvent");
+        map.put("OFFSET", "CamelOffset");
         map.put("ON_COMPLETION", "CamelOnCompletion");
         map.put("ON_COMPLETION_ROUTE_IDS", "CamelOnCompletionRouteIds");
         map.put("OVERRULE_FILE_NAME", "CamelOverruleFileName");
@@ -154,10 +159,10 @@ public class ExchangeConstantProvider {
         map.put("TRACE_EVENT_TIMESTAMP", "CamelTraceEventTimestamp");
         map.put("TRACING_HEADER_FORMAT", "CamelTracingHeaderFormat");
         map.put("TRACING_OUTPUT_FORMAT", "CamelTracingOutputFormat");
+        map.put("TRANSACTION_CONTEXT_DATA", "CamelTransactionContextData");
         map.put("TRANSFER_ENCODING", "Transfer-Encoding");
         map.put("TRY_ROUTE_BLOCK", "TryRouteBlock");
         map.put("UNIT_OF_WORK_EXHAUSTED", "CamelUnitOfWorkExhausted");
-        map.put("UNIT_OF_WORK_PROCESS_SYNC", "CamelUnitOfWorkProcessSync");
         map.put("XSLT_ERROR", "CamelXsltError");
         map.put("XSLT_FATAL_ERROR", "CamelXsltFatalError");
         map.put("XSLT_FILE_NAME", "CamelXsltFileName");

@@ -20,35 +20,21 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
 
-    @Test
-    public void testSendToNettyWithPath() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/mypath?useRelativePath=false",
-                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
-
-        // convert the response to a String
-        String body = exchange.getMessage().getBody(String.class);
-        assertEquals("Request message is OK", body);
-    }
-
-    @Test
-    public void testSendToNettyWithoutPath() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}?useRelativePath=false",
-                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
-
-        // convert the response to a String
-        String body = exchange.getMessage().getBody(String.class);
-        assertEquals("Request message is OK", body);
-    }
-
-    @Test
-    public void testSendToNettyWithoutPath2() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/?useRelativePath=false",
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "/mypath?useRelativePath=false",
+            "?useRelativePath=false",
+            "/?useRelativePath=false"
+    })
+    public void testSendToNettyPath(String pathPart) {
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}" + pathPart,
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
         // convert the response to a String
@@ -57,9 +43,9 @@ public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/mypath").process(exchange -> {
                     assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
                             "Get a wrong form parameter from the message header");

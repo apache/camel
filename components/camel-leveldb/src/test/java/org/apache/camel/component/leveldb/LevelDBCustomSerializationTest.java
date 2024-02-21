@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -40,10 +39,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
     @Override
@@ -66,18 +68,18 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", objectB, "id", 123);
         template.sendBodyAndHeader("direct:start", objectC, "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // from endpoint should be preserved
         assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             // START SNIPPET: e1
-            public void configure() throws Exception {
+            public void configure() {
                 // create the leveldb repo
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
@@ -197,7 +199,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
         @Override
         public ObjectWithBinaryField deserialize(JsonParser p, DeserializationContext ctxt)
-                throws IOException, JsonProcessingException {
+                throws IOException {
             JsonNode treeNode = p.getCodec().readTree(p);
 
             String s = treeNode.textValue();

@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Access databases through SQL and JDBC.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true,
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE }, headersClass = JdbcConstants.class)
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;
@@ -67,6 +67,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private String outputClass;
     @UriParam(label = "advanced")
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
+    @UriParam(label = "advanced")
+    private ConnectionStrategy connectionStrategy = new DefaultConnectionStrategy();
 
     public JdbcEndpoint() {
     }
@@ -83,7 +85,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JdbcProducer(this, dataSource, readSize, parameters);
+        return new JdbcProducer(this, dataSource, connectionStrategy, readSize, parameters);
     }
 
     public String getDataSourceName() {
@@ -262,6 +264,20 @@ public class JdbcEndpoint extends DefaultEndpoint {
      */
     public void setUseGetBytesForBlob(boolean useGetBytesForBlob) {
         this.useGetBytesForBlob = useGetBytesForBlob;
+    }
+
+    public ConnectionStrategy getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    /**
+     * To use a custom strategy for working with connections.
+     *
+     * Do not use a custom strategy when using the spring-jdbc component because a special Spring ConnectionStrategy is
+     * used by default to support Spring Transactions.
+     */
+    public void setConnectionStrategy(ConnectionStrategy connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
     }
 
     @Override

@@ -18,8 +18,8 @@ package org.apache.camel.component.sjms;
 
 import java.util.Objects;
 
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -59,7 +59,7 @@ class TransactionOnCompletion extends SynchronizationAdapter {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) {
+        if (!(o instanceof TransactionOnCompletion)) {
             return false;
         }
 

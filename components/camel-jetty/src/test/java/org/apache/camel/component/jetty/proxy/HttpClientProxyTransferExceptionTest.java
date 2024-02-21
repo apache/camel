@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
 
     @Test
-    public void testHttpClientNoProxyOk() throws Exception {
+    public void testHttpClientNoProxyOk() {
         String out = template.requestBody("direct:cool", "World", String.class);
         assertEquals("Hello World", out);
     }
 
     @Test
-    public void testHttpClientNoProxyException() throws Exception {
+    public void testHttpClientNoProxyException() {
         try {
             template.requestBody("direct:cool", "Kaboom");
             fail("Should have thrown an exception");
@@ -67,13 +67,14 @@ public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:cool").to("http://localhost:{{port}}/myapp/myservice?transferException=true");
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?transferException=true").bean(MyCoolServiceBean.class);
+                from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false&transferException=true")
+                        .bean(MyCoolServiceBean.class);
             }
         };
     }

@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,15 +63,15 @@ public class BindyCsvSkipFieldTest {
             from(URI_DIRECT_START).unmarshal(camelDataFormat)
                     .process(new Processor() {
                         @Override
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             CsvSkipField csvSkipField = (CsvSkipField) exchange.getIn().getBody();
-                            assert csvSkipField.getAttention().equals("VOA");
-                            assert csvSkipField.getAddressLine1().equals("12 abc street");
-                            assert csvSkipField.getCity().equals("Melbourne");
-                            assert csvSkipField.getState().equals("VIC");
-                            assert csvSkipField.getZip().equals("3000");
-                            assert csvSkipField.getCountry().equals("Australia");
-                            assert csvSkipField.getDummy2().equals("end of record");
+                            ObjectHelper.equal("VOA", csvSkipField.getAttention());
+                            ObjectHelper.equal("12 abc street", csvSkipField.getAddressLine1());
+                            ObjectHelper.equal("Melbourne", csvSkipField.getCity());
+                            ObjectHelper.equal("VIC", csvSkipField.getState());
+                            ObjectHelper.equal("3000", csvSkipField.getZip());
+                            ObjectHelper.equal("Australia", csvSkipField.getCountry());
+                            ObjectHelper.equal("end of record", csvSkipField.getDummy2());
                         }
                     })
 

@@ -63,9 +63,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
                                 errorContext.getErrorCode(),
                                 errorContext.getException());
                     }
-                } catch (EntityProviderException e) {
-                    throw new ODataApplicationException(e.getMessage(), response.getLocale(), httpStatusCode, e);
-                } catch (IOException e) {
+                } catch (EntityProviderException | IOException e) {
                     throw new ODataApplicationException(e.getMessage(), response.getLocale(), httpStatusCode, e);
                 }
             }

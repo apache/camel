@@ -17,6 +17,9 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -25,6 +28,7 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.quartz.InterruptableJob;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -33,6 +37,7 @@ import org.quartz.JobKey;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
+import org.quartz.UnableToInterruptJobException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +45,21 @@ import org.slf4j.LoggerFactory;
  * This is a Quartz Job that is scheduled by QuartzEndpoint's Consumer and will call it to produce a QuartzMessage
  * sending to a route.
  */
-public class CamelJob implements Job {
+public class CamelJob implements Job, InterruptableJob {
     private static final Logger LOG = LoggerFactory.getLogger(CamelJob.class);
+
+    private final AtomicReference<Exchange> current = new AtomicReference<>();
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Exchange exchange = null;
         try {
+            if (hasTriggerExpired(context)) {
+                LOG.warn("Trigger exists outside StartTime={} and EndTime={}. Skipping CamelJob jobExecutionContext={}",
+                        context.getTrigger().getStartTime(), context.getTrigger().getEndTime(), context);
+                return;
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running CamelJob jobExecutionContext={}", context);
             }
@@ -55,6 +68,7 @@ public class CamelJob implements Job {
             QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, context);
             exchange = endpoint.createExchange();
             exchange.setIn(new QuartzMessage(exchange, context));
+            current.set(exchange);
 
             AsyncProcessor processor = endpoint.getProcessor();
             try {
@@ -65,6 +79,8 @@ public class CamelJob implements Job {
                 }
             } catch (Exception e) {
                 exchange.setException(e);
+            } finally {
+                current.set(null);
             }
 
             if (exchange.getException() != null) {
@@ -83,6 +99,29 @@ public class CamelJob implements Job {
             }
             throw new JobExecutionException(e);
         }
+    }
+
+    /**
+     * Validates if the Fire Time lies within the Start Time and End Time
+     *
+     * @param  context
+     *
+     * @return
+     */
+    private boolean hasTriggerExpired(JobExecutionContext context) {
+        Date fireTime = context.getFireTime();
+
+        // Trigger valid if Start Time is null or before Fire Time
+        Date startTime = context.getTrigger().getStartTime();
+        boolean validStartTime
+                = context.getTrigger().getStartTime() == null || fireTime.equals(startTime) || fireTime.after(startTime);
+
+        // Trigger valid if End Time is null or after Fire Time
+        Date endTime = context.getTrigger().getEndTime();
+        boolean validEndTime
+                = context.getTrigger().getEndTime() == null || fireTime.equals(endTime) || fireTime.before(endTime);
+
+        return !(validStartTime && validEndTime);
     }
 
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
@@ -127,8 +166,8 @@ public class CamelJob implements Job {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
                 if (triggerKey.equals(checkTriggerKey)
-                        || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
-                                && jobKey.getName().equals(checkTriggerKey.getName()))) {
+                        || jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
+                                && jobKey.getName().equals(checkTriggerKey.getName())) {
                     return quartzEndpoint;
                 }
             }
@@ -168,5 +207,16 @@ public class CamelJob implements Job {
             }
         }
         return null;
+    }
+
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        Exchange exchange = current.get();
+        if (exchange != null) {
+            // mark the exchange to stop continue routing as we want to interrupt
+            LOG.debug("Quartz interrupted job during shutdown on exchange: {}", exchange);
+            exchange.setRouteStop(true);
+            exchange.setException(new RejectedExecutionException("Quartz interrupted job during shutdown"));
+        }
     }
 }

@@ -18,47 +18,77 @@ package org.apache.camel.component.jms;
 
 import java.util.Set;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
-public class ManagedJmsSelectorTest extends CamelTestSupport {
+@Tags({ @Tag("not-parallel") })
+public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
 
-    @Override
-    protected boolean useJmx() {
-        return true;
+    @Order(1)
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
+    @ContextFixture
+    public void setupContext(CamelContext context) {
+        final ConnectionFactory connectionFactory
+                = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
+
+        context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
+        DefaultCamelContext.setDisableJmx(false);
+    }
+
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return context;
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 
     protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        return camelContextExtension.getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
     @Test
     public void testJmsSelectorChangeViaJmx() throws Exception {
+        ProducerTemplate template = camelContextExtension.getProducerTemplate();
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
@@ -71,42 +101,41 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         String selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='beer'", selector);
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("Carlsberg");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Carlsberg");
 
-        template.sendBodyAndHeader("activemq:queue:start", "Pepsi", "brand", "softdrink");
-        template.sendBodyAndHeader("activemq:queue:start", "Carlsberg", "brand", "beer");
+        template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
+        template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
 
         // change the selector at runtime
 
-        resetMocks();
+        MockEndpoint.resetMocks(camelContextExtension.getContext());
+        mock.reset();
 
         mbeanServer.setAttribute(on, new Attribute("MessageSelector", "brand='softdrink'"));
 
-        // give it a little time to adjust
-        Thread.sleep(100);
+        mock.expectedBodiesReceived("Pepsi");
+        mock.reset();
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("Pepsi");
+        template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
+        template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
 
-        template.sendBodyAndHeader("activemq:queue:start", "Pepsi", "brand", "softdrink");
-        template.sendBodyAndHeader("activemq:queue:start", "Carlsberg", "brand", "beer");
-
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
 
         selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='softdrink'", selector);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:start?cacheLevelName=CACHE_NONE&selector=brand='beer'").routeId("foo").to("log:foo")
+            public void configure() {
+                from("activemq:queue:startManagedJmsSelectorTest?cacheLevelName=CACHE_NONE&selector=brand='beer'")
+                        .routeId("foo").to("log:foo")
                         .to("mock:result");
             }
         };
     }
-
 }

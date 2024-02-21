@@ -17,12 +17,13 @@
 package org.apache.camel.component.zookeepermaster.group.internal;
 
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
+import org.apache.camel.component.zookeepermaster.group.NodeState;
 
-class EventOperation implements Operation {
-    private final ZooKeeperGroup cache;
+class EventOperation<T extends NodeState> implements Operation {
+    private final ZooKeeperGroup<T> cache;
     private final GroupListener.GroupEvent event;
 
-    EventOperation(ZooKeeperGroup cache, GroupListener.GroupEvent event) {
+    EventOperation(ZooKeeperGroup<T> cache, GroupListener.GroupEvent event) {
         this.cache = cache;
         this.event = event;
     }

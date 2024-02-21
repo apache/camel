@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * A <a href="http://camel.apache.org/weather.html">Weather Component</a>.
@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
  * Camel uses <a href="http://openweathermap.org/api#weather">Open Weather</a> to get the information.
  */
 @Component("weather")
-public class WeatherComponent extends DefaultComponent {
+public class WeatherComponent extends HealthCheckComponent {
 
     public WeatherComponent() {
 

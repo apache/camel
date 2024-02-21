@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
 
         Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
             }
         });
@@ -47,9 +48,9 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
         assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         // send GET request which should be routed
@@ -57,20 +58,21 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
         String out2 = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort()).enableCORS(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                rest("/users/").get("{id}/basic").to("direct:basic");
+                from("direct:basic").to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");
                     }

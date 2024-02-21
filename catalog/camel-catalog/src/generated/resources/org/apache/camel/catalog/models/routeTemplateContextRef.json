@@ -7,10 +7,11 @@
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplateContextRefDefinition",
+    "abstract": false,
     "input": false,
     "output": false
   },
   "properties": {
-    "ref": { "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to the route templates in the xml dsl" }
+    "ref": { "index": 0, "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to the route templates in the xml dsl" }
   }
 }

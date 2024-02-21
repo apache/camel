@@ -138,7 +138,7 @@ public class BindySimpleCsvUnmarshallTest {
 
         assertNotNull(orders);
         // As the @DataField defines a default value for the firstName, the
-        // value might not be empty and equal to defaultValue property 
+        // value might not be empty and equal to defaultValue property
         // inside @DataField annotation
         assertFalse(orders.get(0).getFirstName().isEmpty());
         assertEquals("Joe", orders.get(0).getFirstName());

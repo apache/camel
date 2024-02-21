@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-jdbc/src/main/docs/spring-jdbc-component.adoc

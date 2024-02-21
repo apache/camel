@@ -26,6 +26,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.component.event</package>
+    <jmxAgent id="jmx" disabled="true"/>
 
     <route>
       <from uri="spring-event:foo"/>

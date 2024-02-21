@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
+import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,13 +32,15 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_SET;
+
 /**
  * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name",
-             category = { Category.CACHE, Category.COMPUTE }, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SET, title = "Ignite Sets", syntax = "ignite-set:name",
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -51,7 +54,7 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     private IgniteSetOperation operation;
 
     public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                             IgniteSetComponent igniteComponent) throws Exception {
+                             IgniteSetComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         name = remaining;
 

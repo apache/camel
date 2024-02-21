@@ -19,24 +19,16 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SplitterUoWIssueTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/splitter");
-        super.setUp();
-    }
 
     @Test
     public void testSplitterUoWIssue() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
 
-        template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "splitme.txt");
+        template.sendBodyAndHeader(fileUri(), "A,B,C,D,E", Exchange.FILE_NAME, "splitme.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,8 +38,8 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E", "F", "G", "H", "I");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E", "F,G,H,I");
 
-        template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/data/splitter", "F,G,H,I", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(fileUri(), "A,B,C,D,E", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri(), "F,G,H,I", Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +49,7 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
+                from(fileUri("?initialDelay=0&delay=10&delete=true&sortBy=file:name"))
                         .split(body().tokenize(",")).to("seda:queue").end()
                         .log("End of file ${file:name}").to("mock:result");
 

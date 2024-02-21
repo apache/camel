@@ -75,7 +75,7 @@ public class BindySimpleKeyValuePairFixTest {
                     .unmarshal(bindy)
                     .process(new Processor() {
                         @Override
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             FixOrder order = exchange.getIn().getBody(FixOrder.class);
                             Object body = exchange.getIn().getBody();
 

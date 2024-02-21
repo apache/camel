@@ -24,7 +24,7 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 
 public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
 
@@ -34,7 +34,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
 
     /**
      * Poll from a dropbox remote path and put the result in the message exchange
-     * 
+     *
      * @return number of messages polled
      */
     @Override
@@ -47,7 +47,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
             Map<String, Object> map = result.getEntries();
             if (map.size() == 1) {
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(), entry.getKey());
+                    exchange.getIn().setHeader(DropboxConstants.DOWNLOADED_FILE, entry.getKey());
                     exchange.getIn().setBody(entry.getValue());
                 }
             } else {
@@ -55,7 +55,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     pathsExtracted.append(entry.getKey()).append("\n");
                 }
-                exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
+                exchange.getIn().setHeader(DropboxConstants.DOWNLOADED_FILES, pathsExtracted.toString());
                 exchange.getIn().setBody(map);
             }
 

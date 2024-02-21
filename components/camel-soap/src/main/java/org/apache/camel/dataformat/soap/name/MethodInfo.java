@@ -36,7 +36,7 @@ public final class MethodInfo {
 
     /**
      * Initialize
-     * 
+     *
      * @param name       method name
      * @param soapAction
      * @param in         input parameters
@@ -51,8 +51,8 @@ public final class MethodInfo {
         this.inTypeMap = new HashMap<>();
         for (TypeInfo typeInfo : in) {
             if (inTypeMap.containsKey(typeInfo.getTypeName())
-                    && (!(typeInfo.getTypeName().equals("javax.xml.ws.Holder")))
-                    && (!(inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())))) {
+                    && !typeInfo.getTypeName().equals("jakarta.xml.ws.Holder")
+                    && !inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())) {
                 throw new RuntimeCamelException(
                         "Ambiguous QName mapping. The type [ "
                                                 + typeInfo.getTypeName()

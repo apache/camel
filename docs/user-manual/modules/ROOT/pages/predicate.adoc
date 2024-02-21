@@ -1,20 +1,41 @@
-[[Predicate-Predicates]]
 = Predicates
 
-Camel supports a pluggable interface called
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Predicate.html[Predicate]
-which can be used to integrate a dynamic predicate into
-xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] such as when using the xref:{eip-vc}:eips:filter-eip.adoc[Message Filter]
-or xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router].
+xref:expression.adoc[Expressions] and Predicates can then be used to
+create the various xref:components:eips:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP.
 
-A Predicate is being evaluated to a boolean value so the result is
-either `true` or `false`. This makes xref:predicate.adoc[Predicate] so
+To support dynamic rules Camel supports pluggable
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Predicate.html[Predicate]
+strategies using a variety of different xref:components:languages:index.adoc[Languages].
+
+== Predicate API
+
+The API for a Camel Predicate is defined in the
+`org.apache.camel.Predicate` interface as shown:
+
+[source,java]
+-------------------------------------------------------------------------------
+public interface Predicate {
+
+    /**
+     * Evaluates the predicate on the message exchange and returns true if this
+     * exchange matches the predicate
+     *
+     * @param exchange the message exchange
+     * @return true if the predicate matches
+     */
+    boolean matches(Exchange exchange);
+
+}
+-------------------------------------------------------------------------------
+
+A `Predicate` is being evaluated to a boolean value so the result is
+either `true` or `false`. This makes predicates so
 powerful as it is often used to control the routing of message in which
 path they should be routed.
 
 A simple example is to route an xref:exchange.adoc[Exchange] based on a
-header value:
+header value with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP:
 
 [source,java]
 ----
@@ -28,14 +49,14 @@ from("jms:queue:order")
 ----
 
 In the route above the xref:predicate.adoc[Predicate] is the
-`header("type").isEqualTo("widget")` as its constructed as an
+`header("type").isEqualTo("widget")` as it is constructed as an
 xref:expression.adoc[Expression] that is evaluated as a
-xref:predicate.adoc[Predicate]. To do this the various Builder classes
-helps us here to create a nice and fluent syntax. `isEqualTo` is a
+xref:predicate.adoc[Predicate]. To do this the various _Builder classes_
+help us here to create a nice and fluent syntax. `isEqualTo` is a
 builder method that returns a xref:predicate.adoc[Predicate] based on
 the input.
 
-Sometimes the fluent builders can get long and a bit complex to read,
+Sometimes the fluent builders can get long, and a bit complex to read,
 then you can just define your predicate outside the route and then just
 refer to the predicate in the route:
 
@@ -57,18 +78,17 @@ from("jms:queue:order")
    .end();
 ----
 
-[[Predicate-NegatingaPredicate]]
 == Negating a Predicate
 
 You can use the *not* method on the `PredicateBuilder` to negate a
 predicate.
 
-First we import the not static, so it makes our route nice and easy to
+First, we import the static method `not`, so it makes our route nice and easy to
 read:
 
 [source,java]
 ----
-import static org.apache.camel.builder.PredicateBuilder.not
+import static org.apache.camel.builder.PredicateBuilder.not;
 ----
 
 And then we can use it to enclose an existing predicate and negate it as
@@ -83,19 +103,17 @@ from("direct:start")
     .end();
 ----
 
-[[Predicate-CompoundPredicates]]
 == Compound Predicates
 
 You can also create compound predicates using boolean operators such as
 `and, or, not` and many others.
 
-Currently this feature is only available in the Java-based DSLs, but not
-in the Spring nor Blueprint DSLs.
+Currently, this feature is only available in the Java-based DSLs, and not
+in other DSLs such as XML.
 
 Using the
-https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/PredicateBuilder.html[`PredicateBuilder`]
-class, you can combine predicates *from different Expression Languages*
-based on logical operators and comparison operators:
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/PredicateBuilder.html[`PredicateBuilder`] class,
+you can combine predicates *from different Expression Languages* based on logical operators and comparison operators:
 
 * `not`, `and`, `or`
 * `isNull`, `isNotNull`
@@ -103,10 +121,15 @@ based on logical operators and comparison operators:
 * `startsWith`, `endsWith`
 * `in` ("any of X predicates stands true")
 
-Additionally, with `PredicateBuilder` you can create Regular Expressions
+Additionally, with `PredicateBuilder` you can create regular expressions
 and use them as predicates, applying them to the result of an
-expression, e.g. `PredicateBuilder.regex(header("foo"), "\d\{4}")`
-applies the regular expression to the header = foo.
+expression, e.g.
+
+[source,java]
+----
+PredicateBuilder.regex(header("foo"), "\d\{4}");
+----
+applies the regular expression to the foo header.
 
 Combining different Expression Languages is also possible, e.g.:
 
@@ -145,37 +168,3 @@ from("direct:start").choice()
 .end();
 ----
 
-[[Predicate-ExtensiblePredicates]]
-== Extensible Predicates
-
-Camel supports extensible Predicates using multiple
-xref:languages.adoc[Languages]; the following languages are supported
-out of the box
-
-* xref:components:languages:bean-language.adoc[Bean Language] for using Java for expressions
-* xref:components:languages:constant-language.adoc[Constant]
-* xref:components:languages:header-language.adoc[Header]
-* xref:components:languages:jsonpath-language.adoc[JSonPath]
-* xref:components:languages:mvel-language.adoc[Mvel]
-* xref:components:languages:ognl-language.adoc[OGNL]
-* xref:components:languages:ref-language.adoc[Ref Language]
-* xref:components:languages:exchangeProperty-language.adoc[ExchangeProperty]
-** xref:components:languages:groovy-language.adoc[Groovy]
-* xref:components:languages:simple-language.adoc[Simple]
-** xref:components:languages:file-language.adoc[File Language]
-* xref:components:languages:spel-language.adoc[Spring Expression Language]
-* xref:components:languages:tokenize-language.adoc[Tokenizer]
-* xref:components:languages:xpath-language.adoc[XPath]
-* xref:components:languages:xquery-language.adoc[XQuery]
-
-Most of these languages is also supported used as
-xref:parameter-binding-annotations.adoc[Annotation Based
-Expression Language].
-
-You can easily write your own plugin predicate by implementing the
-https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/Predicate.java[Predicate
-interface].
-
-There are also a number of helper builders available such as the
-https://github.com/apache/camel/blob/master/core/camel-core/src/main/java/org/apache/camel/builder/PredicateBuilder.java[PredicateBuilder
-class]

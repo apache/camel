@@ -25,25 +25,23 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Perform SQL queries using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE }, headersClass = SqlConstants.class)
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
     private String query;
 
     public SqlEndpoint() {
     }
 
-    public SqlEndpoint(String uri, Component component, JdbcTemplate jdbcTemplate, String query) {
-        super(uri, component, jdbcTemplate);
-        this.query = query;
+    public SqlEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     @Override

@@ -17,29 +17,74 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CouchbaseServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CouchbaseServiceFactory.class);
+    static class SingletonCouchbaseService extends SingletonService<CouchbaseService> implements CouchbaseService {
+        public SingletonCouchbaseService(CouchbaseService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getConnectionString() {
+            return getService().getConnectionString();
+        }
+
+        @Override
+        public String getUsername() {
+            return getService().getUsername();
+        }
+
+        @Override
+        public String getPassword() {
+            return getService().getPassword();
+        }
+
+        @Override
+        public String getHostname() {
+            return getService().getHostname();
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+    }
 
     private CouchbaseServiceFactory() {
 
     }
 
-    public static CouchbaseService getService() {
-        String instanceType = System.getProperty("couchbase.instance.type");
-
-        if (instanceType == null || instanceType.equals("local-couchbase-instance")) {
-            return new CouchbaseLocalContainerService();
-        }
-
-        if (instanceType.equals("remote")) {
-            return new CouchbaseRemoteService();
-        }
-
-        LOG.error("Couchbase instance must be one of 'local-couchbase-container' or 'remote");
-        throw new UnsupportedOperationException("Invalid Couchbase instance type");
+    public static SimpleTestServiceBuilder<CouchbaseService> builder() {
+        return new SimpleTestServiceBuilder<>("couchbase");
     }
 
+    public static CouchbaseService createService() {
+        return builder()
+                .addLocalMapping(CouchbaseLocalContainerService::new)
+                .addRemoteMapping(CouchbaseRemoteService::new)
+                .build();
+    }
+
+    public static CouchbaseService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    @Deprecated
+    public static CouchbaseService getService() {
+        return createService();
+    }
+
+    private static class SingletonServiceHolder {
+        static final CouchbaseService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CouchbaseService> instance = builder();
+
+            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerService(), "couchbase"))
+                    .addRemoteMapping(CouchbaseRemoteService::new);
+
+            INSTANCE = instance.build();
+        }
+    }
 }

@@ -40,7 +40,7 @@ public interface AggregateController {
      * To force completing a specific group by its key.
      *
      * @param  key the key
-     * @return     <tt>1</tt> if the group was forced completed, <tt>0</tt> if the group does not exists
+     * @return     <tt>1</tt> if the group was forced completed, <tt>0</tt> if the group does not exist
      */
     int forceCompletionOfGroup(String key);
 
@@ -55,7 +55,7 @@ public interface AggregateController {
      * To force discarding a specific group by its key.
      *
      * @param  key the key
-     * @return     <tt>1</tt> if the group was forced discarded, <tt>0</tt> if the group does not exists
+     * @return     <tt>1</tt> if the group was forced discarded, <tt>0</tt> if the group does not exist
      */
     int forceDiscardingOfGroup(String key);
 

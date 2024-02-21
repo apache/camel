@@ -18,14 +18,13 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -60,13 +59,13 @@ public final class UndertowHelper {
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
-        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        String path = exchange.getIn().getHeader(UndertowConstants.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            if (path.length() > 0) {
+            if (!path.isEmpty()) {
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
                 if (!uri.endsWith("/")) {
@@ -96,7 +95,7 @@ public final class UndertowHelper {
         String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         if (queryString == null) {
-            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+            queryString = exchange.getIn().getHeader(UndertowConstants.HTTP_QUERY, String.class);
         }
         if (queryString == null) {
             queryString = endpoint.getHttpURI().getRawQuery();
@@ -114,20 +113,7 @@ public final class UndertowHelper {
     }
 
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
-
-        headers.put(key, value);
+        CollectionHelper.appendEntry(headers, key, value);
     }
 
     /**
@@ -137,9 +123,9 @@ public final class UndertowHelper {
             throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        String queryString = exchange.getIn().getHeader(UndertowConstants.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
-        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        String uriString = exchange.getIn().getHeader(UndertowConstants.HTTP_URI, String.class);
         // resolve placeholders in uriString
         try {
             uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
@@ -156,7 +142,7 @@ public final class UndertowHelper {
 
         // compute what method to use either GET or POST
         HttpString answer;
-        String m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+        String m = exchange.getIn().getHeader(UndertowConstants.HTTP_METHOD, String.class);
         if (m != null) {
             // always use what end-user provides in a header
             // must be in upper case

@@ -1,0 +1,158 @@
+{
+  "swagger" : "2.x",
+  "host" : "localhost:8080",
+  "basePath" : "/api",
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/complexRequestWithSchemaAnnotation" : {
+      "post" : {
+        "summary" : "Demo complex request type",
+        "operationId" : "verb",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "text/plain" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/sampleRequestWithSchema"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Receives a complex object as parameter",
+            "schema" : {
+              "$ref" : "#/definitions/responseInner"
+            }
+          }
+        },
+        "x-camelContextId" : "camel"
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "global" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "https://AUTHORIZATION_URL",
+      "tokenUrl" : "https://TOKEN_URL",
+      "flow" : "accessCode",
+      "scopes" : {
+        "groups" : "Required scopes for Camel REST APIs"
+      }
+    }
+  },
+  "definitions" : {
+    "requestInner" : {
+      "type" : "object",
+      "properties" : {
+        "longField" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation$InnerClass",
+        "type" : "string"
+      }
+    },
+    "sampleRequestWithSchema" : {
+      "type" : "object",
+      "required" : [ "mapOfStrings", "requestField1" ],
+      "properties" : {
+        "requestField1" : {
+          "type" : "string"
+        },
+        "requestField2" : {
+          "type" : "string"
+        },
+        "listOfStrings" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "data" : {
+          "$ref" : "#/definitions/customData"
+        },
+        "mapOfData" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/definitions/customData"
+          }
+        },
+        "arrayOfString" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "mapOfMapOfData" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/definitions/customData"
+            }
+          }
+        },
+        "innerClass" : {
+          "$ref" : "#/definitions/requestInner"
+        },
+        "listOfListOfData" : {
+          "type" : "array",
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/customData"
+            }
+          }
+        },
+        "listOfData" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/customData"
+          }
+        },
+        "mapOfStrings" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        },
+        "timeUnit" : {
+          "type" : "string",
+          "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation",
+        "type" : "string"
+      }
+    },
+    "customData" : {
+      "type" : "object",
+      "properties" : {
+        "customDataField" : {
+          "type" : "string"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.CustomDataWithSchemaAnnotation",
+        "type" : "string"
+      }
+    },
+    "responseInner" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "type" : "number",
+          "format" : "double"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
+        "type" : "string"
+      }
+    }
+  }
+}

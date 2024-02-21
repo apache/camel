@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-twilio</artifactId>
@@ -38,7 +38,6 @@
         <componentPackage>org.apache.camel.component.twilio</componentPackage>
         <outPackage>org.apache.camel.component.twilio.internal</outPackage>
 
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
@@ -62,13 +61,6 @@
             <classifier>sources</classifier>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- testing -->
@@ -628,20 +620,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!-- we need to generate additional configurer classes -->
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-configurer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-configurer</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -661,32 +639,4 @@
         </pluginManagement>
 
     </build>
-
-    <profiles>
-        <profile>
-            <id>twilio-test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <excludes>
-                                <exclude>**/*XXXTest.java</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

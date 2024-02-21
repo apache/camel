@@ -157,7 +157,7 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
             throw new NullPointerException("throwable is null");
         }
 
-        LOG.error("Error in reactive stream '" + name + "'", throwable);
+        LOG.error("Error in reactive stream '{}'", name, throwable);
 
         ReactiveStreamsConsumer consumer;
         synchronized (this) {

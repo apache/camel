@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 /**
  * Session acknowledge enum keys

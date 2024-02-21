@@ -1,27 +1,54 @@
-[[Endpoint-Endpoints]]
 = Endpoints
 
-Camel supports the Message Endpoint pattern
-using the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
-interface. Endpoints are usually created by a
-Component and Endpoints are usually referred to in
-the DSL via their URIs.
+Camel supports the xref:components:eips:message-endpoint.adoc[Message Endpoint] pattern
+using the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
+interface.
 
-From an Endpoint you can use the following methods
+Endpoints are created by a xref:component.adoc[Component] and these endpoints are referred
+to in the xref:dsl.adoc[DSL] via their endpoint xref:uris.adoc[URIs].
 
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[createProducer()]
+== Example
+
+The following example route demonstrates the use of a xref:components::file-component.adoc[File]
+consumer endpoint and a * xref:components::jms-component.adoc[JMS] producer endpoint,
+by their xref:manual::uris.adoc[URIs]:
+
+[source,java]
+----
+from("file:messages/foo")
+    .to("jms:queue:foo");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+== Endpoint API
+
+You will almost never have the need for creating endpoints manually via Java API.
+
+From an `Endpoint` you can use the following Java API methods to create producers or consumers to the endpoint:
+
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[`createProducer()`]
 will create a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
-for sending message exchanges to the endpoint
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createConsumer-org.apache.camel.Processor-[createConsumer()]
-implements the Event Driven Consumer
+for sending message exchanges to the endpoint.
+
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createConsumer-org.apache.camel.Processor[`createConsumer()`]
+implements the xref:components:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
 pattern for consuming message exchanges from the endpoint via a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
 when creating a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createPollingConsumer--[createPollingConsumer()]
-implements the Polling Consumer pattern for
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer].
+
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createPollingConsumer[`createPollingConsumer()`]
+implements the xref:components:eips:polling-consumer.adoc[Polling Consumer] pattern for
 consuming message exchanges from the endpoint via a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer].
 

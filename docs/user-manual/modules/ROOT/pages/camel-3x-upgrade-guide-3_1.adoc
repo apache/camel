@@ -15,7 +15,7 @@ These Camel components now no longer have dependency on Javax Servlet.
 The exception class `HttpOperationFailedException` is now from package `org.apache.camel.http.base` instead of `org.apache.camel.http.common`.
 The Camel undertow producer throws this exception.
 
-=== came-bean
+=== camel-bean
 
 The bean component has been changed to behave as singleton scoped by default.
 This means that the bean is created or looked up once and reused.
@@ -215,7 +215,7 @@ Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
 === Message History
 
 The message history is now default disabled (due to optimize core for lower footprint out of the box).
-See the xref:{eip-vc}:eips:message-history.adoc[Message History] documentation for how to enabled message history.
+See the xref:components:eips:message-history.adoc[Message History] documentation for how to enabled message history.
 
 === Inflight Repository
 

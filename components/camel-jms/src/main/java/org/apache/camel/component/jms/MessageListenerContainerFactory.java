@@ -26,7 +26,7 @@ public interface MessageListenerContainerFactory {
 
     /**
      * Create a custom {@link org.springframework.jms.listener.AbstractMessageListenerContainer}.
-     * 
+     *
      * @param  endpoint the endpoint to create the listener container for
      * @return          the custom message listener container
      */

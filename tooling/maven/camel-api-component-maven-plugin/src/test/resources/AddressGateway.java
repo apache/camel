@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package com.braintreegateway;
 
 import com.braintreegateway.exceptions.NotFoundException;
@@ -70,7 +69,7 @@ public class AddressGateway {
      * @return the {@link Address} or raises a {@link com.braintreegateway.exceptions.NotFoundException}.
      */
     public Address find(String customerId, String id) {
-        if(customerId == null || customerId.trim().equals("") || id == null || id.trim().equals(""))
+        if(customerId == null || customerId.isBlank() || id == null || id.isBlank())
             throw new NotFoundException();
 
         return new Address(http.get(configuration.getMerchantPath() + "/customers/" + customerId + "/addresses/" + id));
@@ -89,4 +88,3 @@ public class AddressGateway {
         return new Result<Address>(node, Address.class);
     }
 }
-//CHECKSTYLE:ON

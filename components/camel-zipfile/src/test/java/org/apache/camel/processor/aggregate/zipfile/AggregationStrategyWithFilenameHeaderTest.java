@@ -56,7 +56,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
         template.setDefaultEndpointUri("direct:start");
         template.sendBodyAndHeader("foo", Exchange.FILE_NAME, FILE_NAMES.get(0));
         template.sendBodyAndHeader("bar", Exchange.FILE_NAME, FILE_NAMES.get(1));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);
@@ -80,10 +80,10 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(new ZipAggregationStrategy(false, true))
                         .constant(true)

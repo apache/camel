@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,14 +39,14 @@ public class JettyCamelHttpUrlCBRTest extends BaseJettyTest {
                 Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://0.0.0.0:{{port}}/foo").filter().simple("${header.CamelHttpUrl} contains 'foo'")
                         .to("mock:foo").end().transform().constant("Bye World");
             }

@@ -25,16 +25,20 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
+import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUEUE;
+
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-queue", title = "Hazelcast Queue",
-             syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.MESSAGING })
+@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_QUEUE, title = "Hazelcast Queue",
+             syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING },
+             headersClass = HazelcastConstants.class)
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 
     @UriParam

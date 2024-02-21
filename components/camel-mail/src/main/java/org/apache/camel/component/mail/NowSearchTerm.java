@@ -18,12 +18,12 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.Message;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.DateTerm;
+import jakarta.mail.Message;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.DateTerm;
 
 /**
- * A {@link javax.mail.search.SearchTerm} that is based on {@link DateTerm} that compares with current date (eg now).
+ * A {@link jakarta.mail.search.SearchTerm} that is based on {@link DateTerm} that compares with current date (eg now).
  * <p/>
  * This allows to compare with a dynamic derived value.
  */

@@ -44,7 +44,7 @@ public class InvalidAS2NameException extends Exception {
     @Override
     public String getMessage() {
         char character = name.charAt(index);
-        String invalidChar = "" + character;
+        String invalidChar = String.valueOf(character);
         if (Character.isISOControl(character)) {
             invalidChar = String.format("\\u%04x", (int) character);
         }

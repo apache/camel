@@ -26,6 +26,7 @@ import org.apache.camel.spi.Synchronization;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda but keeping the same UoW.
@@ -78,7 +79,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
                 from("seda:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals(null, sync);
+                        assertNull(sync);
                     }
                 }).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

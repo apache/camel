@@ -37,6 +37,8 @@ import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiV2Cli
 import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.LOCATOR;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.MAX_RECORDS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.QUERY_LOCATOR;
 import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.JobResponseCallback;
 import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.ResponseCallback;
@@ -144,7 +146,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     }
 
     private void processCreateJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException, InvalidPayloadException {
+            throws InvalidPayloadException {
         Job job = exchange.getIn().getMandatoryBody(Job.class);
         bulkClient.createJob(job, determineHeaders(exchange),
                 new JobResponseCallback() {
@@ -279,7 +281,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     }
 
     private void processCreateQueryJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException, InvalidPayloadException {
+            throws InvalidPayloadException {
         QueryJob job = exchange.getIn().getMandatoryBody(QueryJob.class);
         bulkClient.createQueryJob(job, determineHeaders(exchange),
                 new BulkApiV2Client.QueryJobResponseCallback() {
@@ -312,7 +314,9 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
     private void processGetQueryJobResults(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        bulkClient.getQueryJobResults(jobId, determineHeaders(exchange),
+        String locator = getParameter(LOCATOR, exchange, false, true);
+        Integer maxRecords = getParameter(MAX_RECORDS, exchange, false, true, Integer.class);
+        bulkClient.getQueryJobResults(jobId, locator, maxRecords, determineHeaders(exchange),
                 new StreamResponseCallback() {
                     @Override
                     public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {

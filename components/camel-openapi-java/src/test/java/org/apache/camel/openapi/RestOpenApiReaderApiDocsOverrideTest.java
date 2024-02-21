@@ -16,17 +16,14 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +39,10 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/hello").apiDocs(false).consumes("application/json").produces("application/json").get("/hi/{name}")
                         .description("Saying hi").param().name("name")
                         .type(RestParamType.path).dataType("string").description("Who is it").endParam().to("log:hi")
@@ -60,25 +57,20 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    public void testReaderRead() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        config.setVersion("2.0");
+        config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
 
         assertNotNull(openApi);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));
@@ -88,33 +80,4 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
 
         context.stop();
     }
-
-    @Test
-    public void testReaderReadV3() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = null;
-        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
-                new DefaultClassResolver());
-
-        assertNotNull(openApi);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-        log.info(json);
-
-        assertFalse(json.contains("\"/hello/bye\""));
-        assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
-        assertTrue(json.contains("\"/hello/bye/{name}\""));
-        assertFalse(json.contains("\"/hello/hi/{name}\""));
-
-        context.stop();
-    }
-
 }

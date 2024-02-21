@@ -16,28 +16,23 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.HasCamelContext;
+
 /**
  * An interface to represent an object which wishes to be injected with the {@link CamelContext}
  */
-public interface CamelContextAware {
+public interface CamelContextAware extends HasCamelContext {
 
     /**
      * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
      */
     static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (object instanceof CamelContextAware) {
+        if (camelContext != null && object instanceof CamelContextAware) {
             ((CamelContextAware) object).setCamelContext(camelContext);
         }
 
         return object;
     }
-
-    /**
-     * Get the {@link CamelContext}
-     *
-     * @return camelContext the Camel context
-     */
-    CamelContext getCamelContext();
 
     /**
      * Injects the {@link CamelContext}

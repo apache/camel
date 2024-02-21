@@ -1,47 +1,16 @@
-[[Debugger-Debugger]]
 = Debugger
 
-*Since Camel 2.6*
-
-Camel Debugger is much related to
-Tracer, in fact they are sisters. Debugger is a
-enhanced tracer with a debugger framework so that tooling can be
-developed to easily monitor Camel routes, trace messages and set
-breakpoints at points in a route etc.
-
-TIP:There is also a BacklogDebugger which allows
-to debug from JMX, and 3rd party tooling.
-
-[[Debugger-AbouttheDebugger]]
-== About the Debugger
+The Camel Debugger is intended for 3rd party tooling to make it possible to
+debug routes, trace messages and to use breakpoints with the EIP patterns in the Camel routes.
 
 The Debugger allows tooling or the likes to attach breakpoints which is
-being invoked when Exchanges is being routed.
+being invoked when xref:exchange.adoc[Exchanges] are routed.
 
-[[Debugger-Defaultimplementation]]
-== Default implementation
+== Java Debugging Camel routes in unit tests
 
-Camel provides a default implementation
-`org.apache.camel.impl.DefaultDebugger` which you can set on the
-`CamelContext` using the `setDebugger` method. +
- Likewise you can get hold of the Debugger using the
-`getDebugger` method on `CamelContext`.
-
-The `org.apache.camel.spi.Debugger` has methods to attach and remove
-breakpoints. And to suspend/resume all breakpoints etc. +
- You can also attach a condition to the breakpoint so it only reacts if
-the condition matches.
-
-[[Debugger-EasilydebuggingCamelroutesfromcamel-test]]
-== Easily debugging Camel routes from `camel-test`
-
-If you are developing unit tests using the `camel-test` component, then
-the Debugger comes out of the box. +
- From *Camel 2.9* onwards you would need to explicit enable the
-debugger, by overriding `isUseDebugger()` method and return `true`.
-
-[[Debugger-Example]]
-=== Example
+If you are developing unit tests using the `camel-test-junit5` component, then
+the Debugger is available if you turn it on via overriding the `isUseDebugger()`
+method and return `true`.
 
 In this unit test
 
@@ -96,16 +65,72 @@ routing. The `ProcessorDefinition` and the `id` and `shortName`
 parameters is all information which tells you where in the route the
 breakpoint was hit. 
 
-TIP:There is also a `debugAfter` method which is invoked after the processor
+TIP: There is also a `debugAfter` method which is invoked after the processor
 has been invoked. This allows you to _see_ what happens to the
-Exchange right after it has invoked a processor in
-the route.
+Exchange right after it has invoked a processor in the route.
 
 The screenshot below shows the Debugger in action.
-The IDE (IDEA) has hit the breakpoint and we can inspect the
-parameters. +
- Notice how we can see that the message is to be send to the "mock:a"
+The IDE (IDEA) has hit the breakpoint, and we can inspect the
+parameters. Notice how we can see that the message is to be sent to the mock:a
 endpoint.
 
-image::debug.png[image]
+image::images/debug.png[image]
+
+=== Java debugging of Camel routes written with Java DSL
+
+A trick to debug a Camel route written with Java DSL is to modify the route to insert a `processor` and then to set the breakpoint in it.
+
+For instance:
+
+[source,java]
+-----------------------------------------------
+public class MyRouteBuilder extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("timer:demo").routeId("foo")
+        	.bean("myBean", "hello")
+			.process(new Processor() {
+				@Override
+				public void process(Exchange exchange) throws Exception {
+					System.out.println("put a breakpoint here");
+				}
+			})
+        	.log("${body}")
+        	.bean("myBean", "bye")
+        	.log("${body}");
+    }
+}
+-----------------------------------------------
+
+=== Implementing a custom debugger
+
+The debugger API is defined in `org.apache.camel.spi.Debugger`.
+This API has methods to attach and remove breakpoints.
+
+And to suspend/resume all breakpoints etc.
+You can also attach a condition to the breakpoint, so it only reacts if
+the condition matches.
+
+Camel provides a base implementation `org.apache.camel.impl.DefaultDebugger`,
+which can be used to extend for custom implementations.
+
+=== Camel Route debugger through JMX
+
+There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX. It is automatically provided when `camel-debug` is on the classpath (since 3.16) or when using the `camel:debug` Maven goal (since 3.18).
+
+To be able to have enough time to add your breakpoints, since 3.18, you could need to suspend the message processing of Camel to make sure
+that you won't miss any messages. For this kind of need, you have to set either the environment variable `CAMEL_DEBUGGER_SUSPEND` or the system property `org.apache.camel.debugger.suspend` to `true` within the context of your application, then the `Backlog Debugger` suspends the message processing until the JMX operation `attach` is called. Calling the JMX operation `detach` suspends again the message processing.
+
+In case the environment variable and the system property are both set, the value of the environment variable is used.
+
+Several 3rd party tooling are using it:
+
+* https://hawt.io/[hawtio] uses this for its web based debugging functionality
+* https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code Debug Adapter for Camel]
+* http://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop Debug Adapter for Camel]
+* https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ Camel plugin]
+* https://github.com/camel-tooling/camel-debug-adapter[Debug Adapter Server for Camel]
+
+Camel requires to have `camel-management` JAR on the classpath for having JMX enabled.
 

@@ -28,21 +28,20 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();
 
     @Test
     public void testPolicy() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -54,13 +53,13 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(3, set.size());
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "foo");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered: foo");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"result\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "result");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered: result");
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"bar\"");
+        on = getCamelObjectName(TYPE_PROCESSOR, "bar");
         assertTrue(mbeanServer.isRegistered(on), "Should be registered: bar");
     }
 

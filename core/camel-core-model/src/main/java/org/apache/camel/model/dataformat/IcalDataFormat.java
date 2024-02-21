@@ -16,27 +16,35 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Marshal and unmarshal iCal (*.ics) documents to/from model objects provided by the iCal4j library.
+ * Marshal and unmarshal iCal (*.ics) documents to/from model objects.
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String validating;
 
     public IcalDataFormat() {
         super("ical");
+    }
+
+    private IcalDataFormat(Builder builder) {
+        this();
+        this.validating = builder.validating;
     }
 
     public String getValidating() {
@@ -50,4 +58,33 @@ public class IcalDataFormat extends DataFormatDefinition {
         this.validating = validating;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link IcalDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<IcalDataFormat> {
+
+        private String validating;
+
+        /**
+         * Whether to validate.
+         */
+        public Builder validating(String validating) {
+            this.validating = validating;
+            return this;
+        }
+
+        /**
+         * Whether to validate.
+         */
+        public Builder validating(boolean validating) {
+            this.validating = Boolean.toString(validating);
+            return this;
+        }
+
+        @Override
+        public IcalDataFormat end() {
+            return new IcalDataFormat(this);
+        }
+    }
 }

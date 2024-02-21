@@ -20,53 +20,60 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
-        props.add("serviceType");
-        props.add("lazySessionCreation");
-        props.add("initialReconnectDelay");
-        props.add("destAddrTon");
-        props.add("httpProxyHost");
-        props.add("numberingPlanIndicator");
-        props.add("alphabet");
-        props.add("destAddrNpi");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("host");
-        props.add("systemType");
-        props.add("sourceAddr");
-        props.add("sourceAddrNpi");
-        props.add("systemId");
+        Set<String> props = new HashSet<>(45);
         props.add("addressRange");
-        props.add("exchangePattern");
-        props.add("sessionStateListener");
-        props.add("usingSSL");
-        props.add("registeredDelivery");
-        props.add("httpProxyPort");
-        props.add("reconnectDelay");
+        props.add("alphabet");
+        props.add("bridgeErrorHandler");
+        props.add("dataCoding");
+        props.add("destAddr");
+        props.add("destAddrNpi");
+        props.add("destAddrTon");
         props.add("encoding");
+        props.add("enquireLinkTimer");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("host");
+        props.add("httpProxyHost");
         props.add("httpProxyPassword");
-        props.add("transactionTimer");
-        props.add("splittingPolicy");
+        props.add("httpProxyPort");
+        props.add("httpProxyUsername");
+        props.add("initialReconnectDelay");
+        props.add("interfaceVersion");
+        props.add("lazySessionCreation");
         props.add("lazyStartProducer");
+        props.add("maxReconnect");
+        props.add("messageReceiverRouteId");
+        props.add("numberingPlanIndicator");
+        props.add("password");
+        props.add("pduProcessorDegree");
+        props.add("pduProcessorQueueCapacity");
+        props.add("port");
+        props.add("priorityFlag");
         props.add("protocolId");
         props.add("proxyHeaders");
-        props.add("httpProxyUsername");
-        props.add("typeOfNumber");
-        props.add("port");
-        props.add("dataCoding");
-        props.add("enquireLinkTimer");
-        props.add("destAddr");
+        props.add("reconnectDelay");
+        props.add("registeredDelivery");
         props.add("replaceIfPresentFlag");
-        props.add("priorityFlag");
-        props.add("maxReconnect");
-        props.add("exceptionHandler");
+        props.add("serviceType");
+        props.add("sessionStateListener");
+        props.add("singleDLR");
+        props.add("sourceAddr");
+        props.add("sourceAddrNpi");
         props.add("sourceAddrTon");
+        props.add("splittingPolicy");
+        props.add("systemId");
+        props.add("systemType");
+        props.add("transactionTimer");
+        props.add("typeOfNumber");
+        props.add("usingSSL");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
         secretProps.add("systemId");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -100,6 +107,11 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

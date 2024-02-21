@@ -18,45 +18,56 @@ package org.apache.camel.component.jms.temp;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
+@Tags({ @Tag("not-parallel") })
 public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
+
     private String brokerName;
-    private Long recoveryInterval = 1000L;
+    private final Long recoveryInterval = 1000L;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         brokerName = "test-broker-" + System.currentTimeMillis();
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://" + brokerName + "?create=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "jms:queue:foo?recoveryInterval=" + recoveryInterval)
+                        .to(ExchangePattern.InOut,
+                                "jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest?recoveryInterval="
+                                                   + recoveryInterval)
                         .to("mock:result");
 
-                from("jms:queue:foo")
+                from("jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest")
                         .setBody(simple("pong"));
             }
         };
@@ -76,22 +87,12 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
         } catch (Exception exception) {
 
         }
-        //wait for connection recovery before starting the broker
-        Thread.sleep(recoveryInterval + 500L);
-        String brokerUri = "vm://" + brokerName;
-        BrokerService broker = new BrokerService();
-        broker.setBrokerName(brokerName);
-        broker.setBrokerId(brokerName);
-        broker.setPersistent(false);
-        broker.setUseJmx(false);
-        broker.addConnector(brokerUri);
-        broker.start();
-        //wait for the next recovery attempt
-        Thread.sleep(recoveryInterval + 500L);
-        template.asyncRequestBody("direct:start", "ping");
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
-        broker.stop();
+        Awaitility.await().untilAsserted(() -> {
+            template.asyncRequestBody("direct:start", "ping");
+
+            MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        });
+
     }
-
 }

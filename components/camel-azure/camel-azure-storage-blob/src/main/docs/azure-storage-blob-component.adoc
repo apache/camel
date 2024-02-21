@@ -1,0 +1,600 @@
+= Azure Storage Blob Service Component
+:doctitle: Azure Storage Blob Service
+:shortname: azure-storage-blob
+:artifactid: camel-azure-storage-blob
+:description: Store and retrieve blobs from Azure Storage Blob Service.
+:since: 3.3
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Azure
+:camel-spring-boot-name: azure-storage-blob
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Azure Storage Blob component is used for storing and retrieving blobs from https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] Service using *Azure APIs v12*.
+However, in the case of versions above v12, we will see if this component can adopt these changes depending on how much breaking changes can result.
+
+Prerequisites
+
+You must have a valid Windows Azure Storage account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure-storage-blob</artifactId>
+    <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+== URI Format
+
+[source,text]
+------------------------------
+azure-storage-blob://accountName[/containerName][?options]
+------------------------------
+
+In the case of a consumer, `accountName`, `containerName` are required.
+
+In the case of a producer, it depends on the operation that is being requested, for example, if operation is on a container level, e.b: createContainer, accountName and containerName are only required, but in case of operation being requested in blob level, e.g: getBlob, accountName, containerName and blobName are required.
+
+The blob will be created if it does not already exist.
+You can append query options to the URI in the following format, `?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+*Required information options:*
+
+To use this component, you have multiple options to provide the required Azure authentication information:
+
+- By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `blobServiceClient`. Note: You don't need to create a specific client, e.g.: BlockBlobClient, the BlobServiceClient represents the upper level which
+can be used to retrieve lower level clients.
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
+- Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
+- Via Azure SAS, when specifying `credentialType=AZURE_SAS` and providing a SAS Token parameter through the `sasToken` parameter.
+
+== Usage
+
+For example, to download a blob content from the block blob `hello.txt`
+located on the `container1` in the `camelazure` storage account, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)").
+to("file://blobdirectory");
+--------------------------------------------------------------------------------
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Advanced Azure Storage Blob configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `BlobServiceClient` instance configuration, you can
+create your own instance:
+
+[source,java]
+-----------------------------------------------------------------------
+StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
+String uri = String.format("https://%s.blob.core.windows.net", "yourAccountName");
+
+BlobServiceClient client = new BlobServiceClientBuilder()
+                          .endpoint(uri)
+                          .credential(credential)
+                          .buildClient();
+// This is camel context
+context.getRegistry().bind("client", client);
+-----------------------------------------------------------------------
+
+Then refer to this instance in your Camel `azure-storage-blob` component configuration:
+
+[source,java]
+-----------------------------------------------------------------------
+from("azure-storage-blob://cameldev/container1?blobName=myblob&serviceClient=#client")
+.to("mock:result");
+-----------------------------------------------------------------------
+
+=== Automatic detection of BlobServiceClient client in registry
+
+The component is capable of detecting the presence of an BlobServiceClient bean into the registry.
+If it's the only instance of that type, it will be used as the client, and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+=== Azure Storage Blob Producer operations
+
+Camel Azure Storage Blob component provides a wide range of operations on the producer side:
+
+*Operations on the service level*
+
+For these operations, `accountName` is *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`listBlobContainers`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`getChangeFeed` | Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
+|===
+
+*Operations on the container level*
+
+For these operations, `accountName` and `containerName` are *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`createBlobContainer` | Create a new container within a storage account. If a container with the same name already exists, the producer will ignore it.
+|`deleteBlobContainer` | Delete the specified container in the storage account. If the container doesn't exist, the operation fails.
+|`listBlobs`| Returns a list of blobs in this container, with folder structures flattened.
+|===
+
+*Operations on the blob level*
+
+For these operations, `accountName`, `containerName` and `blobName` are *required*.
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Operation |Blob Type|Description
+|`getBlob`  |Common|Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`deleteBlob`  |Common|Delete a blob.
+|`downloadBlobToFile` |Common|Download the entire blob into a file specified by the path. The file will be created and must not exist, if the file already exists a `FileAlreadyExistsException` will be thrown.
+|`downloadLink`  |Common| Generate the download link for the specified blob using shared access signatures (SAS). This by default only limits to 1hour of allowed access. However, you can override the default expiration duration through the headers.
+|`uploadBlockBlob` |BlockBlob|Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with PutBlob; the content of the existing blob is overwritten with the new content.
+|`stageBlockBlobList`|`BlockBlob`|Uploads the specified block to the block blob's "staging area" to be later committed by a call to commitBlobBlockList. However, in case header `CamelAzureStorageBlobCommitBlobBlockListLater` or config `commitBlockListLater` is set to false, this will commit the blocks immediately after staging the blocks.
+|`commitBlobBlockList`|`BlockBlob`|Write a blob by specifying the list of block IDs that are to make up the blob. To be written as part
+of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
+call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing the new
+and existing blocks together. Any blocks not specified in the block list and permanently deleted.
+|`getBlobBlockList`  |`BlockBlob`|Returns the list of blocks that have been uploaded as part of a block blob using the specified blocklist filter.
+|`createAppendBlob` |`AppendBlob`|Creates a 0-length append blob. Call commitAppendBlo`b operation to append data to an append blob.
+|`commitAppendBlob` |`AppendBlob`|Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobCreateAppendBlob` or config `createAppendBlob` is set to true, it will attempt to create the appendBlob through internal call to `createAppendBlob` operation first before committing.
+|`createPageBlob`|`PageBlob`|Creates a page blob of the specified length. Call `uploadPageBlob` operation to upload data to a page blob.
+|`uploadPageBlob`|`PageBlob`|Write one or more pages to the page blob. The size must be a multiple of 512. In case of header `CamelAzureStorageBlobCreatePageBlob` or config `createPageBlob` is set to true, it will attempt to create the appendBlob through internal call to `createPageBlob` operation first before uploading.
+|`resizePageBlob`|`PageBlob`| Resizes the page blob to the specified size, which must be a multiple of 512.
+|`clearPageBlob`|`PageBlob`| Free the specified pages from the page blob. The size of the range must be a multiple of 512.
+|`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.
+|`copyBlob`|`Common`|Copy a blob from one container to another one, even from different accounts.
+|===
+
+Refer to the example section in this page to learn how to use these operations into your camel application.
+
+=== Consumer Examples
+
+To consume a blob into a file using the file component, this can be done like this:
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey").
+to("file://blobdirectory");
+--------------------------------------------------------------------------------
+
+However, you can also write to file directly without using the file component, you will need to specify `fileDir` folder path to save your blob in your machine.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+to("mock:results");
+--------------------------------------------------------------------------------
+
+Also, the component supports batch consumer, hence you can consume multiple blobs with only specifying the container name, the consumer will
+return multiple exchanges depending on the number of the blobs in the container. Example:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+to("mock:results");
+--------------------------------------------------------------------------------
+
+
+=== Producer Operations Examples
+- `listBlobContainers`:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS, new ListBlobContainersOptions().setMaxResultsPerPage(10));
+  })
+  .to("azure-storage-blob://camelazure?operation=listBlobContainers&client&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `createBlobContainer`:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "newContainerName");
+  })
+  .to("azure-storage-blob://camelazure/container1?operation=createBlobContainer&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `deleteBlobContainer`:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
+  })
+  .to("azure-storage-blob://camelazure/container1?operation=deleteBlobContainer&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `listBlobs`:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
+  })
+  .to("azure-storage-blob://camelazure/container1?operation=listBlobs&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+
+- `getBlob`:
+
+We can either set an `outputStream` in the exchange body and write the data to it. E.g.:
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
+
+    // set our body
+    exchange.getIn().setBody(outputStream);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+If we don't set a body, then this operation will give us an `InputStream` instance which can proceeded further downstream:
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
+  .process(exchange -> {
+      InputStream inputStream = exchange.getMessage().getBody(InputStream.class);
+      // We use Apache common IO for simplicity, but you are free to do whatever dealing
+      // with inputStream
+      System.out.println(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+  })
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `deleteBlob`:
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=deleteBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `downloadBlobToFile`:
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadBlobToFile&fileDir=/var/mydir&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `downloadLink`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadLink&serviceClient=#client")
+  .process(exchange -> {
+      String link = exchange.getMessage().getHeader(BlobConstants.DOWNLOAD_LINK, String.class);
+      System.out.println("My link " + link);
+  })
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `uploadBlockBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "overridenName");
+    exchange.getIn().setBody("Block Blob");
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadBlockBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `stageBlockBlobList`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+      final List<BlobBlock> blocks = new LinkedList<>();
+      blocks.add(BlobBlock.createBlobBlock(new ByteArrayInputStream("Hello".getBytes())));
+      blocks.add(BlobBlock.createBlobBlock(new ByteArrayInputStream("From".getBytes())));
+      blocks.add(BlobBlock.createBlobBlock(new ByteArrayInputStream("Camel".getBytes())));
+
+      exchange.getIn().setBody(blocks);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=stageBlockBlobList&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `commitBlockBlobList`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+      // We assume here you have the knowledge of these blocks you want to commit
+      final List<Block> blockIds = new LinkedList<>();
+      blockIds.add(new Block().setName("id-1"));
+      blockIds.add(new Block().setName("id-2"));
+      blockIds.add(new Block().setName("id-3"));
+
+      exchange.getIn().setBody(blockIds);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitBlockBlobList&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `getBlobBlockList`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlobBlockList&serviceClient=#client")
+  .log("${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+
+- `createAppendBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createAppendBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `commitAppendBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    final String data = "Hello world from my awesome tests!";
+    final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+
+    exchange.getIn().setBody(dataStream);
+
+    // of course, you can set whatever headers you like, refer to the headers section to learn more
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitAppendBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `createPageBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createPageBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `uploadPageBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
+    new Random().nextBytes(dataBytes);
+    final InputStream dataStream = new ByteArrayInputStream(dataBytes);
+    final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+
+    exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+    exchange.getIn().setBody(dataStream);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadPageBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `resizePageBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+
+    exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=resizePageBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `clearPageBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+
+    exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=clearPageBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `getPageBlobRanges`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:start")
+  .process(exchange -> {
+    final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+
+    exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+  })
+  .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getPageBlobRanges&serviceClient=#client")
+  .log("${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `copyBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:copyBlob")
+  .process(exchange -> {
+    exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "file.txt");
+    exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, "containerblob1");
+    exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, "account");
+  })
+  .to("azure-storage-blob://account/containerblob2?operation=copyBlob&sourceBlobAccessKey=RAW(accessKey)")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this way the `file.txt` in the container `containerblob1` of the account `account`, will be copied to the container `containerblob2` of the same account.
+
+=== SAS Token generation example
+
+SAS Blob Container tokens can be generated programmatically or via Azure UI. To generate the token with java code, the following can be done:
+
+[source,java]
+--------------------------------------------------------------------------------
+
+BlobContainerClient blobClient = new BlobContainerClientBuilder()
+            .endpoint(String.format("https://%s.blob.core.windows.net/%s", accountName, accessKey))
+            .containerName(containerName)
+            .credential(new StorageSharedKeyCredential(accountName, accessKey))
+            .buildClient();
+
+        // Create a SAS token that's valid for 1 day, as an example
+        OffsetDateTime expiryTime = OffsetDateTime.now().plusDays(1);
+
+        // Assign permissions to the SAS token
+        BlobContainerSasPermission blobContainerSasPermission = new BlobContainerSasPermission()
+            .setWritePermission(true)
+            .setListPermission(true)
+            .setCreatePermission(true)
+            .setDeletePermission(true)
+            .setAddPermission(true)
+            .setReadPermission(true);
+
+        BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, blobContainerSasPermission);
+
+        return blobClient.generateSas(sasSignatureValues);
+--------------------------------------------------------------------------------
+
+The generated SAS token can be then stored to an application.properties file so that it can be loaded by the camel route, for example:
+
+[source,properties]
+--------------------------------------------------------------------------------
+
+camel.component.azure-storage-blob.sas-token=MY_TOKEN_HERE
+--------------------------------------------------------------------------------
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:copyBlob")
+  .to("azure-storage-blob://account/containerblob2?operation=uploadBlockBlob&credentialType=AZURE_SAS")
+--------------------------------------------------------------------------------
+
+=== Development Notes (Important)
+
+All integration tests use https://www.testcontainers.org/[Testcontainers] and run by default.
+Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.
+In addition to the mocked unit tests, you *will need to run the integration tests
+with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+To run the integration tests, on this component directory, run the following maven command:
+
+[source,bash]
+----
+mvn verify -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
+----
+
+Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
+
+
+
+include::spring-boot:partial$starter.adoc[]

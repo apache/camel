@@ -27,12 +27,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -40,15 +43,16 @@ import org.apache.camel.util.StringHelper;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public final class BacklogTracer extends ServiceSupport {
+public final class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
 
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
     private final CamelContext camelContext;
     private final Language simple;
     private boolean enabled;
+    private boolean standby;
     private final AtomicLong traceCounter = new AtomicLong();
-    // use a queue with a upper limit to avoid storing too many messages
+    // use a queue with an upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
@@ -56,6 +60,11 @@ public final class BacklogTracer extends ServiceSupport {
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
+    private boolean includeExchangeProperties = true;
+    private boolean includeExchangeVariables = true;
+    private boolean includeException = true;
+    private boolean traceRests;
+    private boolean traceTemplates;
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
@@ -141,18 +150,32 @@ public final class BacklogTracer extends ServiceSupport {
         return predicate.matches(exchange);
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    @Override
+    public boolean isStandby() {
+        return standby;
+    }
+
+    @Override
+    public void setStandby(boolean standby) {
+        this.standby = standby;
+    }
+
+    @Override
     public int getBacklogSize() {
         return backlogSize;
     }
 
+    @Override
     public void setBacklogSize(int backlogSize) {
         if (backlogSize <= 0) {
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
@@ -164,42 +187,98 @@ public final class BacklogTracer extends ServiceSupport {
         this.backlogSize = backlogSize;
     }
 
+    @Override
     public boolean isRemoveOnDump() {
         return removeOnDump;
     }
 
+    @Override
     public void setRemoveOnDump(boolean removeOnDump) {
         this.removeOnDump = removeOnDump;
     }
 
+    @Override
     public int getBodyMaxChars() {
         return bodyMaxChars;
     }
 
+    @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         this.bodyMaxChars = bodyMaxChars;
     }
 
+    @Override
     public boolean isBodyIncludeStreams() {
         return bodyIncludeStreams;
     }
 
+    @Override
     public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
         this.bodyIncludeStreams = bodyIncludeStreams;
     }
 
+    @Override
     public boolean isBodyIncludeFiles() {
         return bodyIncludeFiles;
     }
 
+    @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         this.bodyIncludeFiles = bodyIncludeFiles;
     }
 
+    @Override
+    public boolean isIncludeExchangeProperties() {
+        return includeExchangeProperties;
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        this.includeExchangeProperties = includeExchangeProperties;
+    }
+
+    @Override
+    public boolean isIncludeExchangeVariables() {
+        return includeExchangeVariables;
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        this.includeExchangeVariables = includeExchangeVariables;
+    }
+
+    @Override
+    public boolean isIncludeException() {
+        return includeException;
+    }
+
+    @Override
+    public void setIncludeException(boolean includeException) {
+        this.includeException = includeException;
+    }
+
+    public boolean isTraceRests() {
+        return traceRests;
+    }
+
+    public void setTraceRests(boolean traceRests) {
+        this.traceRests = traceRests;
+    }
+
+    public boolean isTraceTemplates() {
+        return traceTemplates;
+    }
+
+    public void setTraceTemplates(boolean traceTemplates) {
+        this.traceTemplates = traceTemplates;
+    }
+
+    @Override
     public String getTracePattern() {
         return tracePattern;
     }
 
+    @Override
     public void setTracePattern(String tracePattern) {
         this.tracePattern = tracePattern;
         if (tracePattern != null) {
@@ -210,10 +289,12 @@ public final class BacklogTracer extends ServiceSupport {
         }
     }
 
+    @Override
     public String getTraceFilter() {
         return traceFilter;
     }
 
+    @Override
     public void setTraceFilter(String filter) {
         this.traceFilter = filter;
         if (filter != null) {
@@ -228,10 +309,17 @@ public final class BacklogTracer extends ServiceSupport {
         }
     }
 
+    @Override
     public long getTraceCounter() {
         return traceCounter.get();
     }
 
+    @Override
+    public long getQueueSize() {
+        return queue.size();
+    }
+
+    @Override
     public void resetTraceCounter() {
         traceCounter.set(0);
     }
@@ -253,6 +341,7 @@ public final class BacklogTracer extends ServiceSupport {
         return answer;
     }
 
+    @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
 
@@ -265,15 +354,29 @@ public final class BacklogTracer extends ServiceSupport {
         return sb.toString();
     }
 
+    @Override
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<>();
-        answer.addAll(queue);
+        List<BacklogTracerEventMessage> answer = new ArrayList<>(queue);
         if (isRemoveOnDump()) {
             queue.clear();
         }
         return answer;
     }
 
+    @Override
     public String dumpAllTracedMessagesAsXml() {
         List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
 
@@ -286,16 +389,26 @@ public final class BacklogTracer extends ServiceSupport {
         return sb.toString();
     }
 
+    @Override
+    public String dumpAllTracedMessagesAsJSon() {
+        List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
     public void clear() {
         queue.clear();
     }
 
     public long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
     }
 
     @Override

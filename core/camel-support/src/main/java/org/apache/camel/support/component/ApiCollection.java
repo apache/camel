@@ -40,7 +40,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Returns a {@link ApiMethodHelper} for a particular API.
-     * 
+     *
      * @param  apiName name of the API
      * @return         helper class to work with {@link ApiMethod}
      */
@@ -50,7 +50,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Returns a list of API name strings.
-     * 
+     *
      * @return list of API names.
      */
     public final Set<String> getApiNames() {
@@ -63,7 +63,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Creates an endpoint configuration for a particular API
-     * 
+     *
      * @param  apiName name of the API.
      * @return         Endpoint configuration object for the API.
      */
@@ -72,11 +72,9 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
     protected final void setApiHelpers(Map<E, ApiMethodHelper<? extends ApiMethod>> apiHelpers) {
         this.apiHelpers = Collections.unmodifiableMap(apiHelpers);
 
-        this.apiNames = Collections.unmodifiableSet(
-                apiHelpers.keySet()
-                        .stream()
-                        .map(api -> api.getName())
-                        .collect(Collectors.toSet()));
+        this.apiNames = apiHelpers.keySet()
+                .stream()
+                .map(ApiName::getName).collect(Collectors.toUnmodifiableSet());
     }
 
     protected final void setApiMethods(Map<Class<? extends ApiMethod>, E> apiMethods) {

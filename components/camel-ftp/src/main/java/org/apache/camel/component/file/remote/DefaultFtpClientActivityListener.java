@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultFtpClientActivityListener implements FtpClientActivityListener, CopyStreamListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FtpClientActivityListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultFtpClientActivityListener.class);
 
     private final CamelLogger logger;
     private final String host;
@@ -215,7 +215,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
         long taken = watch.taken();
-        String time = TimeUtils.printDuration(taken);
+        String time = TimeUtils.printDuration(taken, true);
         msg += " (took: " + time + ")";
         doLog(msg);
     }
@@ -269,7 +269,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
         long taken = watch.taken();
-        String time = TimeUtils.printDuration(taken);
+        String time = TimeUtils.printDuration(taken, true);
         msg += " (took: " + time + ")";
         doLog(msg);
     }

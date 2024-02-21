@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -103,6 +106,20 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
             final CompositeType type = CamelOpenMBeanTypes.camelHealthDetailsCompositeType();
 
             for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
+                String failureUri = (String) result.getDetails().getOrDefault(HealthCheck.ENDPOINT_URI, "");
+                Integer failureCount = (Integer) result.getDetails().getOrDefault(HealthCheck.FAILURE_COUNT, 0);
+
+                String stacktrace = "";
+                if (result.getError().isPresent()) {
+                    try (StringWriter stackTraceWriter = new StringWriter();
+                         PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
+                        result.getError().get().printStackTrace(pw);
+                        stacktrace = stackTraceWriter.getBuffer().toString();
+                    } catch (IOException exception) {
+                        // ignore
+                    }
+                }
+
                 CompositeData data = new CompositeDataSupport(
                         type,
                         new String[] {
@@ -110,20 +127,24 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                                 "group",
                                 "state",
                                 "enabled",
+                                "message",
+                                "failureUri",
+                                "failureCount",
+                                "failureStackTrace",
                                 "readiness",
-                                "liveness",
-                                "interval",
-                                "failureThreshold"
+                                "liveness"
                         },
                         new Object[] {
                                 result.getCheck().getId(),
                                 result.getCheck().getGroup(),
                                 result.getState().name(),
-                                result.getCheck().getConfiguration().isEnabled(),
+                                result.getCheck().isEnabled(),
+                                result.getMessage().orElse(""),
+                                failureUri,
+                                failureCount,
+                                stacktrace,
                                 result.getCheck().isReadiness(),
-                                result.getCheck().isLiveness(),
-                                result.getCheck().getConfiguration().getInterval(),
-                                result.getCheck().getConfiguration().getFailureThreshold()
+                                result.getCheck().isLiveness()
                         });
 
                 answer.put(data);
@@ -146,7 +167,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     public void enableById(String id) {
         Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
         if (hc.isPresent()) {
-            hc.get().getConfiguration().setEnabled(true);
+            hc.get().setEnabled(true);
         } else {
             Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
             hcr.ifPresent(repository -> repository.setEnabled(true));
@@ -157,7 +178,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     public void disableById(String id) {
         Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
         if (hc.isPresent()) {
-            hc.get().getConfiguration().setEnabled(false);
+            hc.get().setEnabled(false);
         } else {
             Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
             hcr.ifPresent(repository -> repository.setEnabled(false));

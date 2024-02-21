@@ -23,4 +23,10 @@ public interface ManagedMarshalMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "The name of the DataFormat to use for marshal")
     String getDataFormatName();
 
+    @ManagedAttribute(description = "Variable as the source for the message body to send")
+    String getVariableSend();
+
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
 }

@@ -20,36 +20,55 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpConstants;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
+import org.apache.camel.component.mllp.internal.Hl7Util;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An example of a Camel Processor for generating HL7 Acknowledgements.
  */
-public class Hl7AcknowledgementGenerator implements Processor {
+public class Hl7AcknowledgementGenerator extends ServiceSupport implements Processor, CamelContextAware {
+    public static final String DEFAULT_NACK = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
+                                              + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+                                              + MllpProtocolConstants.MESSAGE_TERMINATOR;
+
     private static final Logger LOG = LoggerFactory.getLogger(Hl7AcknowledgementGenerator.class);
 
-    String defaultNack = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
-                         + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
-                         + MllpProtocolConstants.MESSAGE_TERMINATOR;
+    private CamelContext camelContext;
+    private Hl7Util hl7Util;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        MllpComponent component = getCamelContext().getComponent("mllp", MllpComponent.class);
+        this.hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), component.getLogPhi());
+    }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message message = null;
-        if (exchange.hasOut()) {
-            message = exchange.getOut();
-        } else {
-            message = exchange.getIn();
-        }
+        Message message = exchange.getMessage();
 
         byte[] hl7Bytes = message.getMandatoryBody(byte[].class);
 
-        byte[] acknowledgementBytes = null;
+        byte[] acknowledgementBytes;
         if (null == exchange.getException()) {
             acknowledgementBytes = generateApplicationAcceptAcknowledgementMessage(hl7Bytes);
             exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
@@ -79,7 +98,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
     byte[] generateAcknowledgementMessage(byte[] hl7MessageBytes, String acknowledgementCode)
             throws Hl7AcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
-            throw new Hl7AcknowledgementGenerationException("Null HL7 message received for parsing operation");
+            throw new Hl7AcknowledgementGenerationException(hl7Util, "Null HL7 message received for parsing operation");
         }
 
         final byte fieldSeparator = hl7MessageBytes[3];
@@ -100,13 +119,15 @@ public class Hl7AcknowledgementGenerator implements Processor {
 
         if (-1 == endOfMSH) {
             throw new Hl7AcknowledgementGenerationException(
+                    hl7Util,
                     "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
         }
 
         if (8 > fieldSeparatorIndexes.size()) {
             throw new Hl7AcknowledgementGenerationException(
+                    hl7Util,
                     "Insufficient number of fields in MSH to generate a response - 8 are required but "
-                                                            + fieldSeparatorIndexes.size() + " " + "were found",
+                             + fieldSeparatorIndexes.size() + " " + "were found",
                     hl7MessageBytes);
         }
 

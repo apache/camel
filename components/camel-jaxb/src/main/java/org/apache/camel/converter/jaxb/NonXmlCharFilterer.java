@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
  * Provides filtering of characters that do fall into
  * <a href="http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char">range defined by XML 1.0 spec</a>. <i>Filtering</i>
  * here means replacement with space char.
- * 
+ *
  */
 class NonXmlCharFilterer {
-    private static final Logger LOG = LoggerFactory.getLogger(FilteringXmlStreamWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NonXmlCharFilterer.class);
     private static final char REPLACEMENT_CHAR = ' ';
 
     /**
@@ -36,8 +36,8 @@ class NonXmlCharFilterer {
         // Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
         // [#x10000-#x10FFFF]
         // Won't be checking last interval, as it goes beyond 0xFFFF.
-        if (c == 0x9 || c == 0xA || c == 0xD || (c >= 0x20 && c <= 0xD7FF)
-                || (c >= 0xE000 && c <= 0xFFFD)) {
+        if (c == 0x9 || c == 0xA || c == 0xD || c >= 0x20 && c <= 0xD7FF
+                || c >= 0xE000 && c <= 0xFFFD) {
             return false;
         }
         return true;
@@ -46,7 +46,7 @@ class NonXmlCharFilterer {
     /**
      * Filter specified char array by replacing non-XML chars with space. Only part of array specified by
      * <code>offset</code> and <code>length</code> is affected.
-     * 
+     *
      * @return <code>true</code> if <code>content</code> was modified, <code>false</code> otherwise.
      */
     public boolean filter(char[] content, int offset, int length) {
@@ -71,7 +71,7 @@ class NonXmlCharFilterer {
 
     /**
      * Filter specified string by replacing illegal chars with space.
-     * 
+     *
      * @return filtered string
      */
     public String filter(String original) {

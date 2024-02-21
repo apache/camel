@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,19 +30,16 @@ import org.junit.jupiter.api.Test;
  * will work on windows system.
  */
 public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
+
     private String path;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        File dir = new File("target/data/reports/dosnovol");
-        deleteDirectory(dir);
-        path = dir.getAbsolutePath();
+        path = testDirectory("dosnovol").toAbsolutePath().toString();
         if (FileUtil.isWindows()) {
-            int dp = path.indexOf(":\\");
-            if (dp > 0) {
-                path = path.substring(dp + 1).replace('\\', '/');
-            }
+            path = StringHelper.after(path, ":\\", path)
+                    .replace('\\', '/');
         }
 
         super.setUp();

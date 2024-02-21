@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants to use when working with Paho MQTT 5 component.
  */
@@ -24,18 +26,25 @@ public final class PahoMqtt5Constants {
     /**
      * Header indicating a topic of a MQTT message.
      */
+    @Metadata(label = "consumer", description = "The name of the topic.", javaType = "String")
     public static final String MQTT_TOPIC = "CamelMqttTopic";
     /**
      * Header indicating a QoS of a MQTT message.
      */
+    @Metadata(label = "consumer", description = "The quality of service of the incoming message.", javaType = "Integer")
     public static final String MQTT_QOS = "CamelMqttQoS";
 
     public static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
     public static final int DEFAULT_QOS = 2;
 
     public static final String CAMEL_PAHO = "CamelPahoMqtt5";
+    @Metadata(label = "producer", description = "The client quality of service level (0-2).", javaType = "Integer")
     public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + "Qos";
+    @Metadata(label = "producer", description = "Retain option.", javaType = "Boolean")
     public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + "Retained";
+    @Metadata(label = "producer",
+              description = "The name of topic to override and send to instead of topic specified on endpoint.",
+              javaType = "String")
     public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
     private PahoMqtt5Constants() {

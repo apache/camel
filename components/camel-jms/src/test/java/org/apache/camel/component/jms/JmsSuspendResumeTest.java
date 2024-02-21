@@ -18,63 +18,48 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
-public class JmsSuspendResumeTest extends CamelTestSupport {
+public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testSuspendResume() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:foo");
+        MockEndpoint mock = getMockEndpoint("mock:JmsSuspendResumeTest");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsSuspendResumeTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        context.getRouteController().suspendRoute("foo");
+        context.getRouteController().suspendRoute("JmsSuspendResumeTest");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMessageCount(0);
 
         // sleep a bit to ensure its properly suspended
-        Thread.sleep(2000);
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .until(context.getRouteController().getRouteStatus("JmsSuspendResumeTest")::isSuspended);
 
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedBodiesReceived("Bye World");
 
-        context.getRouteController().resumeRoute("foo");
+        context.getRouteController().resumeRoute("JmsSuspendResumeTest");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must use persistent so the message is not lost
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:foo").routeId("foo").to("mock:foo");
+            public void configure() {
+                from("activemq:queue:JmsSuspendResumeTest").routeId("JmsSuspendResumeTest").to("mock:JmsSuspendResumeTest");
             }
         };
     }

@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -27,7 +28,7 @@ public class StingQuoteHelperTest {
 
     @Test
     public void testSplitSafeQuote() throws Exception {
-        assertEquals(null, StringQuoteHelper.splitSafeQuote(null, ','));
+        assertNull(StringQuoteHelper.splitSafeQuote(null, ','));
 
         String[] out = StringQuoteHelper.splitSafeQuote("", ',');
         assertEquals(1, out.length);
@@ -124,6 +125,40 @@ public class StingQuoteHelperTest {
         assertEquals("*", out[0]);
         assertEquals("", out[1]);
         assertEquals("arg3", out[2]);
+
+        out = StringQuoteHelper.splitSafeQuote("'Hello'", ',', true);
+        assertEquals(1, out.length);
+        assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("' Hello '", ',', true);
+        assertEquals(1, out.length);
+        assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("' Hello '", ',', false);
+        assertEquals(1, out.length);
+        assertEquals(" Hello ", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("'Hello', 'World'", ',', true);
+        assertEquals(2, out.length);
+        assertEquals("Hello", out[0]);
+        assertEquals("World", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("\"Hello\"", ',', true);
+        assertEquals(1, out.length);
+        assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("\" Hello \"", ',', true);
+        assertEquals(1, out.length);
+        assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("\" Hello \"", ',', false);
+        assertEquals(1, out.length);
+        assertEquals(" Hello ", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("\"Hello\", \"World\"", ',', true);
+        assertEquals(2, out.length);
+        assertEquals("Hello", out[0]);
+        assertEquals("World", out[1]);
     }
 
     @Test
@@ -169,6 +204,48 @@ public class StingQuoteHelperTest {
         assertEquals("Hello O\"Connor O\"Bannon", out[0]);
         assertEquals("5", out[1]);
         assertEquals("foo bar", out[2]);
+    }
+
+    @Test
+    public void testSpaceSeparator() throws Exception {
+        String[] out = StringQuoteHelper
+                .splitSafeQuote("dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1", ' ');
+        assertEquals(2, out.length);
+        assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
+        assertEquals("dependency=mvn:com.foo:myapp:2.1", out[1]);
+    }
+
+    @Test
+    public void testSpaceSeparatorQuote() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote(
+                "dependency=mvn:org.my:application:1.0 property=hi='Hello World' dependency=mvn:com.foo:myapp:2.1", ' ');
+        assertEquals(3, out.length);
+        assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
+        assertEquals("property=hi=Hello World", out[1]);
+        assertEquals("dependency=mvn:com.foo:myapp:2.1", out[2]);
+    }
+
+    @Test
+    public void testKeepQuotes() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote("'body'", ',', false, true);
+        assertEquals(1, out.length);
+        assertEquals("'body'", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', 123", ',', false, true);
+        assertEquals(2, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("123", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', \"world\"", ',', false, true);
+        assertEquals(2, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("\"world\"", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', \"world\", 123", ',', false, true);
+        assertEquals(3, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("\"world\"", out[1]);
+        assertEquals("123", out[2]);
     }
 
 }

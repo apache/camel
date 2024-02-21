@@ -40,12 +40,17 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
+        case "plain": target.setPlain(property(camelContext, boolean.class, value)); return true;
         case "showall":
         case "showAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
+        case "showallproperties":
+        case "showAllProperties": target.setShowAllProperties(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
         case "showBodyType": target.setShowBodyType(property(camelContext, boolean.class, value)); return true;
+        case "showcachedstreams":
+        case "showCachedStreams": target.setShowCachedStreams(property(camelContext, boolean.class, value)); return true;
         case "showcaughtexception":
         case "showCaughtException": target.setShowCaughtException(property(camelContext, boolean.class, value)); return true;
         case "showexception":
@@ -62,12 +67,20 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": target.setShowHeaders(property(camelContext, boolean.class, value)); return true;
         case "showproperties":
         case "showProperties": target.setShowProperties(property(camelContext, boolean.class, value)); return true;
+        case "showroutegroup":
+        case "showRouteGroup": target.setShowRouteGroup(property(camelContext, boolean.class, value)); return true;
+        case "showrouteid":
+        case "showRouteId": target.setShowRouteId(property(camelContext, boolean.class, value)); return true;
         case "showstacktrace":
         case "showStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
         case "showstreams":
         case "showStreams": target.setShowStreams(property(camelContext, boolean.class, value)); return true;
+        case "showvariables":
+        case "showVariables": target.setShowVariables(property(camelContext, boolean.class, value)); return true;
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": target.setSourceLocationLoggerName(property(camelContext, boolean.class, value)); return true;
         case "style": target.setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
         default: return false;
         }
@@ -95,12 +108,17 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": return int.class;
         case "multiline": return boolean.class;
+        case "plain": return boolean.class;
         case "showall":
         case "showAll": return boolean.class;
+        case "showallproperties":
+        case "showAllProperties": return boolean.class;
         case "showbody":
         case "showBody": return boolean.class;
         case "showbodytype":
         case "showBodyType": return boolean.class;
+        case "showcachedstreams":
+        case "showCachedStreams": return boolean.class;
         case "showcaughtexception":
         case "showCaughtException": return boolean.class;
         case "showexception":
@@ -117,12 +135,20 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": return boolean.class;
         case "showproperties":
         case "showProperties": return boolean.class;
+        case "showroutegroup":
+        case "showRouteGroup": return boolean.class;
+        case "showrouteid":
+        case "showRouteId": return boolean.class;
         case "showstacktrace":
         case "showStackTrace": return boolean.class;
         case "showstreams":
         case "showStreams": return boolean.class;
+        case "showvariables":
+        case "showVariables": return boolean.class;
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": return boolean.class;
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": return boolean.class;
         case "style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
         default: return null;
         }
@@ -151,12 +177,17 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxchars":
         case "maxChars": return target.getMaxChars();
         case "multiline": return target.isMultiline();
+        case "plain": return target.isPlain();
         case "showall":
         case "showAll": return target.isShowAll();
+        case "showallproperties":
+        case "showAllProperties": return target.isShowAllProperties();
         case "showbody":
         case "showBody": return target.isShowBody();
         case "showbodytype":
         case "showBodyType": return target.isShowBodyType();
+        case "showcachedstreams":
+        case "showCachedStreams": return target.isShowCachedStreams();
         case "showcaughtexception":
         case "showCaughtException": return target.isShowCaughtException();
         case "showexception":
@@ -173,12 +204,20 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showHeaders": return target.isShowHeaders();
         case "showproperties":
         case "showProperties": return target.isShowProperties();
+        case "showroutegroup":
+        case "showRouteGroup": return target.isShowRouteGroup();
+        case "showrouteid":
+        case "showRouteId": return target.isShowRouteId();
         case "showstacktrace":
         case "showStackTrace": return target.isShowStackTrace();
         case "showstreams":
         case "showStreams": return target.isShowStreams();
+        case "showvariables":
+        case "showVariables": return target.isShowVariables();
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": return target.isSkipBodyLineSeparator();
+        case "sourcelocationloggername":
+        case "sourceLocationLoggerName": return target.isSourceLocationLoggerName();
         case "style": return target.getStyle();
         default: return null;
         }

@@ -19,41 +19,46 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(29);
-        props.add("backoffMultiplier");
-        props.add("slot");
-        props.add("initialDelay");
-        props.add("statusInterval");
-        props.add("scheduler");
-        props.add("database");
-        props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
-        props.add("backoffErrorThreshold");
-        props.add("host");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
         props.add("autoCreateSlot");
-        props.add("slotOptions");
+        props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
+        props.add("bridgeErrorHandler");
+        props.add("database");
         props.add("delay");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("host");
+        props.add("initialDelay");
+        props.add("outputPlugin");
+        props.add("password");
         props.add("pollStrategy");
         props.add("port");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("slot");
+        props.add("slotOptions");
         props.add("startScheduler");
-        props.add("outputPlugin");
+        props.add("statusInterval");
+        props.add("timeUnit");
+        props.add("useFixedDelay");
         props.add("user");
-        props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("password");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(2);
+        prefixes.add("scheduler.");
+        prefixes.add("slotOptions.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -85,6 +90,11 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

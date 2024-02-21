@@ -27,6 +27,7 @@ public class DefaultStartupStep implements StartupStep {
     private final int parentId;
     private final int level;
     private final long time;
+    private long duration;
 
     public DefaultStartupStep(String type, String name, String description, int id, int parentId, int level, long time) {
         this.type = type;
@@ -74,8 +75,13 @@ public class DefaultStartupStep implements StartupStep {
     }
 
     @Override
+    public long getDuration() {
+        return duration;
+    }
+
+    @Override
     public void endStep() {
-        // noop
+        this.duration = System.currentTimeMillis() - time;
     }
 
 }

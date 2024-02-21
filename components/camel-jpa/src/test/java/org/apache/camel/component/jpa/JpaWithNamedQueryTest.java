@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -94,8 +94,9 @@ public class JpaWithNamedQueryTest {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                LOG.info("Received exchange: " + e.getIn());
-                receivedExchange = e;
+                LOG.info("Received exchange: {}", e.getIn());
+                // make defensive copy
+                receivedExchange = e.copy();
                 latch.countDown();
             }
         });
@@ -128,10 +129,10 @@ public class JpaWithNamedQueryTest {
                 for (Object rowObj : rows) {
                     assertTrue(rowObj instanceof MultiSteps, "Rows are not instances of MultiSteps");
                     final MultiSteps row = (MultiSteps) rowObj;
-                    LOG.info("entity: " + counter++ + " = " + row);
+                    LOG.info("entity: {} = {}", counter++, row);
 
                     if (row.getAddress().equals("foo@bar.com")) {
-                        LOG.info("Found updated row: " + row);
+                        LOG.info("Found updated row: {}", row);
                         assertEquals(getUpdatedStepValue(), row.getStep(), "Updated row step for: " + row);
                     } else {
                         // dummy row
@@ -163,7 +164,7 @@ public class JpaWithNamedQueryTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         camelContext.start();
         template = camelContext.createProducerTemplate();
 
@@ -172,7 +173,9 @@ public class JpaWithNamedQueryTest {
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
         endpoint = (JpaEndpoint) value;
 
-        transactionTemplate = endpoint.createTransactionTemplate();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 
@@ -181,7 +184,7 @@ public class JpaWithNamedQueryTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ServiceHelper.stopService(consumer, template);
         camelContext.stop();
     }

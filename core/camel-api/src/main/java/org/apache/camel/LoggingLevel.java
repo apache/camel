@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Used to configure the logging levels

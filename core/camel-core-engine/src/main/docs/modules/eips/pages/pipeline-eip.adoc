@@ -1,100 +1,150 @@
-[[pipeline-eip]]
 = Pipeline EIP
-:docTitle: Pipeline
+:doctitle: Pipeline
+:shortname: pipeline
 :description: Routes the message to a sequence of processors.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.
+Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
 image::eip/PipesAndFilters.gif[image]
 
-With Camel you can split your processing across multiple independent
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] instances which can then be chained
+With Camel, you can separate your processing across multiple independent
+xref:manual::endpoint.adoc[Endpoint]'s which can then be chained
 together.
 
 == Options
 
 // eip options: START
-The Pipeline EIP has no options.
+include::partial$eip-options.adoc[]
 // eip options: END
 
-[[pipeline-Examples]]
-== Examples
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using pipeline
 
 You can create pipelines of logic using multiple
-xref:latest@manual:ROOT:endpoint.adoc[Endpoint] or xref:message-translator.adoc[Message
-Translator] instances as follows
+xref:manual::endpoint.adoc[Endpoint] or
+xref:message-translator.adoc[Message Translator] instances as follows:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:cheese")
+    .pipeline()
+        .to("bean:foo")
+        .to("bean:bar")
+        .to("acitvemq:wine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <pipeline>
+        <to uri="bean:foo"/>
+        <to uri="bean:bar"/>
+        <to uri="activemq:wine"/>
+    </pipeline>
+</route>
+----
+====
 
 Though pipeline is the default mode of operation when you specify
-multiple outputs in Camel. The opposite to pipeline is multicast; which
-fires the same message into each of its outputs. (See the example
-below).
+multiple outputs in Camel. Therefore, it's much more common to see this with Camel:
 
-In Java you do:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:SomeQueue")
-    .pipeline()
-      .bean("foo")
-      .bean("bar")
-      .to("acitvemq:OutputQueueu");
+    .to("bean:foo")
+    .to("bean:bar")
+    .to("activemq:OutputQueue");
 ----
 
-The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:cheese"/>
+    <to uri="bean:foo"/>
+    <to uri="bean:bar"/>
+    <to uri="activemq:wine"/>
+</route>
+----
+====
 
+=== Pipeline vs Multicast
+
+The opposite to `pipeline` is xref:multicast-eip.adoc[`multicast`].
+A xref:multicast-eip.adoc[Multicast] EIP routes a copy of the same message into each of its outputs,
+where these messages are processed independently. Pipeline EIP however, will route the same message
+sequentially in the pipeline where the output from the previous step is input to the next. The same principle
+from the Linux shell with chaining commands together with pipe (`|`).
+
+=== When using pipeline is necessary
+
+Using pipeline becomes necessary when you need to group together a series of steps into a single logical step.
+For example in the example below where xref:multicast-eip.adoc[Multicast] EIP is in use, to process the same
+message in two different pipelines. The first pipeline calls the something bean, and the second pipeline
+calls the foo and bar beans and then route the message to another queue.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:SomeQueue")
-    .bean("foo")
-    .bean("bar")
-    .to("acitvemq:OutputQueueu");
+    .multicast()
+        .pipeline()
+            .to("bean:something")
+            .to("log:something")
+        .end()
+        .pipeline()
+            .to("bean:foo")
+            .to("bean:bar")
+            .to("activemq:OutputQueue")
+        .end()
+    .end() // ends multicast
+    .to("log:result");
 ----
++
+Notice how we have to use `end()` to mark the end of the blocks.
 
-In XML you can use the `<pipeline>` element
-
-[source,xml]
-----
-<route>
-  <from uri="activemq:SomeQueue"/>
-  <pipeline>
-    <bean ref="foo"/>
-    <bean ref="bar"/>
-    <to uri="activemq:OutputQueue"/>
-  </pipeline>
-</route>
-----
-
-In the above the pipeline element is actually unnecessary, you could use this:
-
-[source,xml]
-----
-<route>
-  <from uri="activemq:SomeQueue"/>
-  <bean ref="foo"/>
-  <bean ref="bar"/>
-  <to uri="activemq:OutputQueue"/>
-</route>
-----
-
-Its just a bit more explicit. However if you wish to use `<multicast/>` to
-avoid a pipeline - to send the same message into multiple pipelines -
-then the `<pipeline>` element comes into its own.
-
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="activemq:SomeQueue"/>
   <multicast>
     <pipeline>
-      <bean ref="something"/>
+      <to uri="bean:something"/>
       <to uri="log:Something"/>
     </pipeline>
     <pipeline>
-      <bean ref="foo"/>
-      <bean ref="bar"/>
+      <to uri="bean:foo"/>
+      <to uri="bean:bar"/>
       <to uri="activemq:OutputQueue"/>
     </pipeline>
   </multicast>
+  <to uri="log:result"/>
 </route>
 ----
+====

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
              title = "IRC",
              syntax = "irc:hostname:port",
              alternativeSyntax = "irc:username:password@hostname:port",
-             category = { Category.CHAT })
+             category = { Category.CHAT }, headersClass = IrcConstants.class)
 public class IrcEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
@@ -92,7 +92,7 @@ public class IrcEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public void handleIrcError(int num, String msg) {
+    public void handleIrcError(int num) {
         if (IRCConstants.ERR_NICKNAMEINUSE == num) {
             handleNickInUse();
         }

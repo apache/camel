@@ -18,12 +18,12 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,44 +35,44 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     @Test
     public void testSwitchNoBodyTo204ViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
-
-        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
-        assertNull(httpResponse.getEntity());
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+            assertEquals(204, httpResponse.getCode());
+            assertNull(httpResponse.getEntity());
+        }
     }
 
     @Test
-    public void testSwitchingNoBodyTo204HttpViaCamel() throws Exception {
+    public void testSwitchingNoBodyTo204HttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/bar", inExchange);
 
         assertEquals(204, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals(null, outExchange.getMessage().getBody(String.class));
+        assertNull(outExchange.getMessage().getBody(String.class));
     }
 
     @Test
-    public void testSwitchingNoBodyTo204ViaCamelRoute() throws Exception {
+    public void testSwitchingNoBodyTo204ViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
         assertEquals(204, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals(null, outExchange.getMessage().getBody(String.class));
+        assertNull(outExchange.getMessage().getBody(String.class));
     }
 
     @Test
     public void testNoSwitchingNoCodeViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
-
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test
-    public void testNoSwitchingNoCodeHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoCodeHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/foo", inExchange);
 
@@ -81,7 +81,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoCodeViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoCodeViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foo", inExchange);
 
@@ -92,16 +92,16 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     @Test
     public void testNoSwitchingNoBodyViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
-
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test
-    public void testNoSwitchingNoBodyHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoBodyHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/foobar", inExchange);
 
@@ -110,7 +110,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoBodyViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoBodyViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foobar", inExchange);
 
@@ -119,10 +119,10 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/bar").setBody().constant("");
 
                 from("direct:bar").to("http://localhost:{{port}}/bar");

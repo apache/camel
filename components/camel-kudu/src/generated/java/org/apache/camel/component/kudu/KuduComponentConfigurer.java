@@ -23,6 +23,8 @@ public class KuduComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "kuduclient":
+        case "kuduClient": target.setKuduClient(property(camelContext, org.apache.kudu.client.KuduClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -30,10 +32,17 @@ public class KuduComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"kuduClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "kuduclient":
+        case "kuduClient": return org.apache.kudu.client.KuduClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -46,6 +55,8 @@ public class KuduComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "kuduclient":
+        case "kuduClient": return target.getKuduClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

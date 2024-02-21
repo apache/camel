@@ -1,26 +1,26 @@
-[[ExchangePattern-ExchangePattern]]
 = Exchange Pattern
 
-There are many different _Message Exchange Patterns_ you can use in
-messaging. This concept is also demonstrated in WSDL and JBI's MEPs.
+There are two _Message Exchange Patterns_ you can use in
+messaging.
 
-From there xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] the common examples are
+From there xref:components:eips:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns] they are:
 
-* Request Reply
-* Event Message (or one way)
+* xref:components:eips:event-message.adoc[Event Message] (or one-way)
+* xref:components:eips:requestReply-eip.adoc[Request Reply]
 
 In Camel we have an
 `org.apache.camel.ExchangePattern`
 enumeration which can be configured on the *exchangePattern* property on
 the Message Exchange indicating if a message
-exchange is a one way Event Message (InOnly) or
-a Request Reply message exchange (InOut).
+exchange is a one way xref:components:eips:event-message.adoc[Event Message] (*InOnly*) or
+a xref:components:eips:requestReply-eip.adoc[Request Reply] message exchange (*InOut*).
 
 For example to override the default pattern on a xref:components::jms-component.adoc[JMS]
-endpoint you could use this URI
+endpoint you could use the `exchangePattern` parameter in the Endpoint xref:uris.adoc[URI]
+as shown:
 
-[source,java]
----------------------------------
-jms:MyQueue?exchangePattern=InOut
----------------------------------
+[source,text]
+----
+jms:myQueue?exchangePattern=InOut
+----

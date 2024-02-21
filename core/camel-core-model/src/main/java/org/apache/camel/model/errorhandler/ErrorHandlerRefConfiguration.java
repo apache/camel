@@ -16,8 +16,14 @@
  */
 package org.apache.camel.model.errorhandler;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.ErrorHandlerFactory;
+
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
+@Deprecated
 @XmlTransient
 public class ErrorHandlerRefConfiguration implements ErrorHandlerRefProperties {
 
@@ -42,5 +48,18 @@ public class ErrorHandlerRefConfiguration implements ErrorHandlerRefProperties {
     @Override
     public void setSupportTransacted(boolean supportTransacted) {
         this.supportTransacted = supportTransacted;
+    }
+
+    @Override
+    public boolean supportTransacted() {
+        return isSupportTransacted();
+    }
+
+    @Override
+    public ErrorHandlerFactory cloneBuilder() {
+        ErrorHandlerRefConfiguration answer = new ErrorHandlerRefConfiguration();
+        answer.setRef(ref);
+        answer.setSupportTransacted(supportTransacted);
+        return answer;
     }
 }

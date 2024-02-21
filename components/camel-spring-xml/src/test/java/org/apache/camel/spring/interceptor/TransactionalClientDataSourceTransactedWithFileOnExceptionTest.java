@@ -31,7 +31,7 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
 
     @Test
     public void testTransactionSuccess() throws Exception {
-        template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
+        template.sendBodyAndHeader(fileUri("okay"), "Hello World", Exchange.FILE_NAME, "okay.txt");
 
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // wait for route to complete
@@ -46,9 +46,9 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
         error.expectedMessageCount(1);
         error.message(0).header(Exchange.EXCEPTION_CAUGHT).isNotNull();
         error.message(0).header(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        error.expectedFileExists("target/transacted/failed/fail.txt");
+        error.expectedFileExists(testFile("failed/fail.txt"));
 
-        template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
+        template.sendBodyAndHeader(fileUri("fail"), "Hello World", Exchange.FILE_NAME, "fail.txt");
 
         // wait for route to complete
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -66,12 +66,12 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(false).to("mock:error");
 
-                from("file://target/transacted/okay?initialDelay=0&delay=10")
+                from(fileUri("okay?initialDelay=0&delay=10"))
                         .transacted()
                         .setBody(constant("Tiger in Action")).bean("bookService")
                         .setBody(constant("Elephant in Action")).bean("bookService");
 
-                from("file://target/transacted/fail?initialDelay=0&delay=10&moveFailed=../failed")
+                from(fileUri("fail?initialDelay=0&delay=10&moveFailed=../failed"))
                         .transacted()
                         .setBody(constant("Tiger in Action")).bean("bookService")
                         .setBody(constant("Donkey in Action")).bean("bookService");

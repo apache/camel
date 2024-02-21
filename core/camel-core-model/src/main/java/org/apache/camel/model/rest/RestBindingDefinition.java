@@ -21,11 +21,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.Metadata;
@@ -40,48 +40,44 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     @XmlTransient
     private Map<String, String> defaultValues;
-
     @XmlTransient
     private Boolean requiredBody;
-
     @XmlTransient
     private Set<String> requiredHeaders;
-
     @XmlTransient
     private Set<String> requiredQueryParameters;
 
     @XmlAttribute
     private String consumes;
-
     @XmlAttribute
     private String produces;
-
     @XmlAttribute
-    @Metadata(defaultValue = "off")
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
-
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String type;
-
     @XmlTransient
     private Class<?> typeClass;
-
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String outType;
-
     @XmlTransient
     private Class<?> outTypeClass;
-
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
-
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
-
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
-
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String component;
 
     public RestBindingDefinition() {
@@ -267,13 +263,12 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
-     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
-     * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
-     * returned.
-     * <p/>
-     * The default value is false.
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
@@ -290,6 +285,19 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
     }
 
     @Override

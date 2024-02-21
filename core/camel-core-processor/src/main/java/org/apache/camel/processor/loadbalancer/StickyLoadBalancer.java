@@ -28,8 +28,8 @@ import org.apache.camel.Expression;
  * load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
-    private Expression correlationExpression;
-    private RoundRobinLoadBalancer loadBalancer;
+    private final Expression correlationExpression;
+    private final RoundRobinLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
     private final Map<Object, AsyncProcessor> stickyMap = new ConcurrentHashMap<>();
 

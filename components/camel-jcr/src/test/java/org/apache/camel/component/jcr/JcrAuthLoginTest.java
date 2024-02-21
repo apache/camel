@@ -50,10 +50,10 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
                         constant("node")).setHeader("my.contents.property",

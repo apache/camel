@@ -16,80 +16,107 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- *
- */
-public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
+public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
     @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        String out = template.requestBody("direct:start", "Camel", String.class);
+        String out = template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
     public void testTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.requestBody("direct:start", "World", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "World", String.class),
+                "Should have thrown exception");
 
-        assertMockEndpointsSatisfied();
+        assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=queue:bar&requestTimeout=2000")
+            public void configure() {
+                from("direct:JmsInOutFixedReplyQueueTimeoutTest")
+                        .routeId("route-1")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsInOutFixedReplyQueueTimeoutTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutTestReply&requestTimeout=2000")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
-                        .process(exchange -> {
-                            String body = exchange.getIn().getBody(String.class);
-                            if ("World".equals(body)) {
-                                log.debug("Sleeping for 4 sec to force a timeout");
-                                Thread.sleep(4000);
-                            }
-                        }).transform(body().prepend("Bye ")).to("log:reply");
+                from("activemq:queue:JmsInOutFixedReplyQueueTimeoutTest")
+                        .routeId("route-2")
+                        .choice()
+                            .when(body().isEqualTo("World"))
+                                .log("Sleeping for 4 sec to force a timeout")
+                                .delay(Duration.ofSeconds(4).toMillis()).
+                            endChoice().end()
+                        .transform(body().prepend("Bye ")).to("log:reply");
             }
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+
+        waitForConnections();
+    }
 }

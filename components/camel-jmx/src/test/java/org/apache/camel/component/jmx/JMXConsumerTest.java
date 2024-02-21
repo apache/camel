@@ -89,7 +89,7 @@ public class JMXConsumerTest extends SimpleBeanFixture {
         waitAndAssertMessageReceived("src/test/resources/consumer-test/timerNotification.xml");
     }
 
-    private void waitAndAssertMessageReceived(String aExpectedFilePath) throws InterruptedException, Exception {
+    private void waitAndAssertMessageReceived(String aExpectedFilePath) throws Exception {
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File(aExpectedFilePath));
     }

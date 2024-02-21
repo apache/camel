@@ -16,19 +16,23 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
+import java.util.concurrent.TimeUnit;
+
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,6 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for moveTo.
  */
 public class MailMoveToTest extends CamelTestSupport {
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
+    private static final MailboxUser jones2 = Mailbox.getOrCreateUser("jones2", "secret");
 
     @Override
     @BeforeEach
@@ -50,47 +56,48 @@ public class MailMoveToTest extends CamelTestSupport {
     public void testMoveToWithMarkAsSeen() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        Thread.sleep(500);
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(0, jones.getInbox().getMessageCount()));
+        assertEquals(0, jones.getInbox().getNewMessageCount());
 
-        assertEquals(0, Mailbox.get("jones@localhost").size());
-        assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
-        assertEquals(5, Mailbox.get("moveToFolder-jones@localhost").getNewMessageCount());
+        final Mailbox moveToFolder = jones.getFolder("moveToFolder");
+        assertEquals(5, moveToFolder.getMessageCount());
+        assertEquals(0, moveToFolder.getNewMessageCount());
 
-        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
-        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
-        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
-        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
-        assertTrue(Mailbox.get("moveToFolder-jones@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(moveToFolder.get(0).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(moveToFolder.get(1).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(moveToFolder.get(2).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(moveToFolder.get(3).getFlags().contains(Flags.Flag.SEEN));
+        assertTrue(moveToFolder.get(4).getFlags().contains(Flags.Flag.SEEN));
     }
 
     @Test
     public void testMoveToWithDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        Thread.sleep(500);
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(0, jones2.getInbox().getMessageCount()));
+        assertEquals(0, jones2.getInbox().getNewMessageCount());
+        assertEquals(5, jones2.getFolder("moveToFolder").getNewMessageCount());
 
-        assertEquals(0, Mailbox.get("jones2@localhost").size());
-        assertEquals(0, Mailbox.get("jones2@localhost").getNewMessageCount());
-        assertEquals(5, Mailbox.get("moveToFolder-jones2@localhost").getNewMessageCount());
-
-        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(0).getFlags().contains(Flags.Flag.SEEN));
-        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(1).getFlags().contains(Flags.Flag.SEEN));
-        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(2).getFlags().contains(Flags.Flag.SEEN));
-        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(3).getFlags().contains(Flags.Flag.SEEN));
-        assertFalse(Mailbox.get("moveToFolder-jones2@localhost").get(4).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(jones2.getFolder("moveToFolder").get(0).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(jones2.getFolder("moveToFolder").get(1).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(jones2.getFolder("moveToFolder").get(2).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(jones2.getFolder("moveToFolder").get(3).getFlags().contains(Flags.Flag.SEEN));
+        assertFalse(jones2.getFolder("moveToFolder").get(4).getFlags().contains(Flags.Flag.SEEN));
     }
 
     private void prepareMailbox() throws Exception {
         Mailbox.clearAll();
-        String[] mailUser = new String[] { "jones", "jones2" };
-        for (String username : mailUser) {
+        MailboxUser[] mailUser = new MailboxUser[] { jones, jones2 };
+        for (MailboxUser user : mailUser) {
             JavaMailSender sender = new DefaultJavaMailSender();
-            Store store = sender.getSession().getStore("pop3");
-            store.connect("localhost", 25, username, "secret");
+            Store store = sender.getSession().getStore("imap");
+            store.connect("localhost", Mailbox.getPort(Protocol.imap), user.getLogin(), user.getPassword());
             Folder folder = store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
             folder.expunge();
@@ -110,13 +117,13 @@ public class MailMoveToTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
+            public void configure() {
+                from(jones.uriPrefix(Protocol.imap) + "&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
-                from("imap://jones2@localhost?password=secret&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
+            public void configure() {
+                from(jones2.uriPrefix(Protocol.imap) + "&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
                         .to("mock:result2");
             }
         } };

@@ -20,11 +20,13 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
@@ -55,7 +57,8 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition def = camelContext.getExtension(Model.class).getProcessorDefinition(id);
+        ProcessorDefinition<?> def
+                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
@@ -79,7 +82,8 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition def = camelContext.getExtension(Model.class).getProcessorDefinition(id);
+        ProcessorDefinition<?> def
+                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
@@ -117,9 +121,35 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
     }
 
     @Override
+    public <T extends ManagedConsumerMBean> T getManagedConsumer(String id, Class<T> type) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        Route route = camelContext.getRoute(id);
+        if (route != null) {
+            try {
+                Consumer consumer = route.getConsumer();
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForConsumer(camelContext,
+                        consumer);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public ManagedCamelContextMBean getManagedCamelContext() {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+        // jmx must be started
+        if (getManagementStrategy().getManagementObjectNameStrategy() == null) {
             return null;
         }
 

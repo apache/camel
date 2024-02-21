@@ -48,11 +48,11 @@ public class QuartzCustomCalendarFireTest extends BaseQuartzTest {
         tomorrow.add(java.util.Calendar.DAY_OF_MONTH, 1);
         assertEquals(false, c.isTimeIncluded(tomorrow.getTimeInMillis()));
         assertEquals(true, c.isTimeIncluded(now.getTime()));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @BindToRegistry("calendar")
-    public HolidayCalendar loadCalendar() throws Exception {
+    public HolidayCalendar loadCalendar() {
 
         HolidayCalendar cal = new HolidayCalendar();
         java.util.Calendar tomorrow = java.util.Calendar.getInstance();

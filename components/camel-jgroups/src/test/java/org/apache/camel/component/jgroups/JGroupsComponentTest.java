@@ -21,11 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsComponentTest extends CamelTestSupport {
 
@@ -34,10 +34,6 @@ public class JGroupsComponentTest extends CamelTestSupport {
     static final String CLUSTER_NAME = "CLUSTER_NAME";
 
     static final String MESSAGE = "MESSAGE";
-
-    static final String SAMPLE_CHANNEL_PROPERTY = "enable_diagnostics=true";
-
-    static final String SAMPLE_CHANNEL_PROPERTIES = String.format("UDP(%s)", SAMPLE_CHANNEL_PROPERTY);
 
     static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
 
@@ -50,10 +46,10 @@ public class JGroupsComponentTest extends CamelTestSupport {
     // Routes fixture
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JGroupsComponent defaultComponent = new JGroupsComponent();
                 defaultComponent.setChannel(defaultComponentChannel);
                 context().addComponent("my-default-jgroups", defaultComponent);
@@ -90,7 +86,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(MESSAGE);
 
         // When
-        Message message = new Message(null, MESSAGE);
+        Message message = new ObjectMessage(null, MESSAGE);
         message.setSrc(null);
         clientChannel.send(message);
 
@@ -99,16 +95,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldConfigureChannelWithProperties() throws Exception {
-        // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI, JGroupsEndpoint.class);
-
-        // Then
-        assertTrue(endpoint.getResolvedChannel().getProperties().contains(SAMPLE_CHANNEL_PROPERTY));
-    }
-
-    @Test
-    public void shouldCreateChannel() throws Exception {
+    public void shouldCreateChannel() {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
         JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();

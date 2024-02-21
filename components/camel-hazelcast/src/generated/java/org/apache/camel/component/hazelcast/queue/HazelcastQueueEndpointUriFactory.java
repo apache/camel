@@ -19,21 +19,24 @@ public class HazelcastQueueEndpointUriFactory extends org.apache.camel.support.c
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
-        props.add("lazyStartProducer");
-        props.add("cacheName");
+        Set<String> props = new HashSet<>(12);
         props.add("bridgeErrorHandler");
-        props.add("pollingTimeout");
-        props.add("queueConsumerMode");
-        props.add("hazelcastInstance");
-        props.add("poolSize");
-        props.add("exchangePattern");
+        props.add("cacheName");
         props.add("defaultOperation");
-        props.add("hazelcastInstanceName");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("hazelcastConfigUri");
+        props.add("hazelcastInstance");
+        props.add("hazelcastInstanceName");
+        props.add("lazyStartProducer");
+        props.add("pollingTimeout");
+        props.add("poolSize");
+        props.add("queueConsumerMode");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +64,11 @@ public class HazelcastQueueEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

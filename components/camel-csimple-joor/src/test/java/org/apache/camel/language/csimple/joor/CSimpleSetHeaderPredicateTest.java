@@ -17,6 +17,7 @@
 package org.apache.camel.language.csimple.joor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class CSimpleSetHeaderPredicateTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class CSimpleSetHeaderPredicateTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -47,14 +48,14 @@ public class CSimpleSetHeaderPredicateTest extends CamelTestSupport {
 
         template.sendBody("direct:other", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("bar").csimple("${header.foo} == 'Camel'", boolean.class).to("mock:result");
 
                 from("direct:other").setHeader("param1", constant("hello")).log("param1 = ${header.param1}").setHeader("param2")

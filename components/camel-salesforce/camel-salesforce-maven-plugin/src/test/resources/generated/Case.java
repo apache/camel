@@ -6,12 +6,8 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
@@ -23,12 +19,15 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
  * Salesforce DTO for SObject Case
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-@XStreamAlias("Case")
 public class Case extends AbstractDescribedSObjectBase {
 
     public Case() {
@@ -37,7 +36,6 @@ public class Case extends AbstractDescribedSObjectBase {
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListAccentMarkEnum PickListAccentMark;
 
     @JsonProperty("PickListAccentMark")
@@ -50,7 +48,6 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListAccentMark = PickListAccentMark;
     }
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListSlashEnum PickListSlash;
 
     @JsonProperty("PickListSlash")
@@ -63,7 +60,6 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListSlash = PickListSlash;
     }
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListQuotationMarkEnum PickListQuotationMark;
 
     @JsonProperty("PickListQuotationMark")
@@ -76,7 +72,6 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListQuotationMark = PickListQuotationMark;
     }
 
-    @XStreamConverter(PicklistEnumConverter.class)
     private Case_PickListValueOverrideEnum PickListValueOverride;
 
     @JsonProperty("PickListValueOverride")
@@ -89,7 +84,7 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListValueOverride = PickListValueOverride;
     }
 
- 
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;

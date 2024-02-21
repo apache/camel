@@ -23,8 +23,8 @@ import java.io.Serializable;
  */
 public class PurchaseOrder implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String product;
-    private double amount;
+    private final String product;
+    private final double amount;
 
     public PurchaseOrder(String product, double amount) {
         this.product = product;

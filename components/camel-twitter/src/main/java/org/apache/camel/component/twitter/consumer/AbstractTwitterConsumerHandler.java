@@ -22,9 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.v1.Paging;
 
 public abstract class AbstractTwitterConsumerHandler {
 
@@ -85,11 +85,11 @@ public abstract class AbstractTwitterConsumerHandler {
         Integer pages = endpoint.getProperties().getNumberOfPages();
         Integer count = endpoint.getProperties().getCount();
         if (pages != null && count != null) {
-            return new Paging(pages, count, lastId);
+            return Paging.ofPage(pages).count(count).sinceId(lastId);
         } else if (pages != null) {
-            return new Paging(pages, lastId);
+            return Paging.ofPage(pages).sinceId(lastId);
         } else {
-            return new Paging(lastId);
+            return Paging.ofSinceId(lastId);
         }
     }
 }

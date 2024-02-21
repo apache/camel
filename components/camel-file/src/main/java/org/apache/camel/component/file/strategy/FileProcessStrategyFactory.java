@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.component.file.FileConstants;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategyFactory;
@@ -96,7 +97,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     private static GenericFileExpressionRenamer<File> getDefaultCommitRenamer(CamelContext context) {
         // use context to lookup language to let it be loose coupled
         Language language = context.resolveLanguage("file");
-        Expression expression = language.createExpression("${file:parent}/.camel/${file:onlyname}");
+        Expression expression
+                = language.createExpression("${file:parent}/" + FileConstants.DEFAULT_SUB_FOLDER + "/${file:onlyname}");
         return new GenericFileExpressionRenamer<>(expression);
     }
 

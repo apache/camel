@@ -33,11 +33,13 @@
 
   <camelContext id="myCamel-1" xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties1" location="mycamel-1.properties"/>
+    <jmxAgent id="jmx" disabled="true"/>
     <routeContextRef ref="myCoolRoute"/>
   </camelContext>
 
   <camelContext id="myCamel-2" xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="properties2" location="mycamel-2.properties"/>
+    <jmxAgent id="jmx2" disabled="true"/>
     <routeContextRef ref="myCoolRoute"/>
   </camelContext>
 

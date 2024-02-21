@@ -64,7 +64,7 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
         final MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // shutdown during processing
         context.stop();

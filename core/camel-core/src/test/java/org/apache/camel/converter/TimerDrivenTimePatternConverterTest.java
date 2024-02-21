@@ -21,11 +21,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
 

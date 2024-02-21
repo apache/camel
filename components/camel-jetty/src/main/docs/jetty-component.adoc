@@ -1,12 +1,14 @@
-[[jetty-component]]
 = Jetty Component
-:docTitle: Jetty
-:artifactId: camel-jetty
-:description: Expose HTTP endpoints using Jetty 9.
+:doctitle: Jetty
+:shortname: jetty
+:artifactid: camel-jetty
+:description: Expose HTTP endpoints using Jetty 12.
 :since: 1.2
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jetty.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: jetty
 
 *Since Camel {since}*
 
@@ -18,11 +20,10 @@ behaves as a simple Web server.
 
 *Stream*
 
-The `assert` call appears in this example, because the code is part of
-an unit test.Jetty is stream based, which means the input it receives is
+Jetty is stream-based, which means the input it receives is
 submitted to Camel as a stream. That means you will only be able to read
-the content of the stream *once*. +
-If you find a situation where the message body appears to be empty or
+the content of the stream *once*.
+If you find a situation where the message body appears to be empty, or
 you need to access the Exchange.HTTP_RESPONSE_CODE data multiple times
 (e.g.: doing multicasting, or redelivery error handling), you should use
 Stream caching or convert the message body to
@@ -43,149 +44,42 @@ for this component:
 
 == URI format
 
-[source,text]
 ----
 jetty:http://hostname[:port][/resourceUri][?options]
 ----
 
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+// component-configure options: START
 
-== Options
-
-
-
-
+// component-configure options: END
 
 // component options: START
-The Jetty component supports 32 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *continuationTimeout* (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
-| *enableJmx* (consumer) | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | boolean
-| *maxThreads* (consumer) | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *minThreads* (consumer) | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *requestBufferSize* (consumer) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
-| *requestHeaderSize* (consumer) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
-| *responseBufferSize* (consumer) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
-| *responseHeaderSize* (consumer) | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
-| *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
-| *useContinuation* (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
-| *useXForwardedForHeader* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
-| *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool
-| *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
-| *httpBinding* (advanced) | Not to be used - use JettyHttpBinding instead. |  | HttpBinding
-| *httpConfiguration* (advanced) | Jetty component does not use HttpConfiguration. |  | HttpConfiguration
-| *jettyHttpBinding* (advanced) | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. |  | JettyHttpBinding
-| *mbContainer* (advanced) | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. |  | MBeanContainer
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *proxyHost* (proxy) | To use a http proxy to configure the hostname. |  | String
-| *proxyPort* (proxy) | To use a http proxy to configure the port number. |  | Integer
-| *keystore* (security) | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
-| *socketConnectorProperties* (security) | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. |  | Map
-| *socketConnectors* (security) | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. |  | Map
-| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *sslKeyPassword* (security) | The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option). |  | String
-| *sslPassword* (security) | The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option). |  | String
-| *sslSocketConnectorProperties* (security) | A map which contains general SSL connector properties. |  | Map
-| *sslSocketConnectors* (security) | A map which contains per port number specific SSL connectors. |  | Map
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
-
-
-
-
-
 // endpoint options: START
-The Jetty endpoint is configured using URI syntax:
 
-----
-jetty:httpUri
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *httpUri* | *Required* The url of the HTTP endpoint to call. |  | URI
-|===
-
-
-=== Query Parameters (32 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *chunked* (consumer) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
-| *disableStreamCache* (common) | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to read the message payload multiple times. The http producer will by default cache the response body stream. If setting this option to true, then the producers will not cache the response body stream but use the response stream as-is as the message body. | false | boolean
-| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
-| *async* (consumer) | Configure the consumer to work in async mode | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *continuationTimeout* (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
-| *enableCORS* (consumer) | If the option is true, Jetty server will setup the CrossOriginFilter which supports the CORS out of box. | false | boolean
-| *enableJmx* (consumer) | If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
-| *enableMultipartFilter* (consumer) | Whether org.apache.camel.component.jetty.MultiPartFilter is enabled or not. You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well. | false | boolean
-| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
-| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
-| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
-| *responseBufferSize* (consumer) | To use a custom buffer size on the javax.servlet.ServletResponse. |  | Integer
-| *sendDateHeader* (consumer) | If the option is true, jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | false | boolean
-| *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
-| *sessionSupport* (consumer) | Specifies whether to enable the session manager on the server side of Jetty. | false | boolean
-| *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *useContinuation* (consumer) | Whether or not to use Jetty continuations for the Jetty Server. |  | Boolean
-| *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *filterInitParameters* (consumer) | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server. |  | Map
-| *filters* (consumer) | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma. |  | List
-| *handlers* (consumer) | Specifies a comma-delimited set of Handler instances to lookup in your Registry. These handlers are added to the Jetty servlet context (for example, to add security). Important: You can not use different handlers with different Jetty endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | List
-| *mapHttpMessageBody* (consumer) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded{zwsp}Body* (consumer) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
-| *mapHttpMessageHeaders* (consumer) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
-| *multipartFilter* (consumer) | Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true. |  | Filter
-| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
-| *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
-| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-|===
 // endpoint options: END
-
-
 
 
 == Message Headers
 
 Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component.
-It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
-header to turn on or turn off the chuched encoding on the camel-jetty
-consumer.
+It also uses a header (`Exchange.HTTP_CHUNKED`, `CamelHttpChunked`) to turn
+on or turn off the chunked encoding on the camel-jetty consumer.
 
-Camel also populates *all* request.parameter and request.headers. For
-example, given a client request with the URL,
+Camel also populates *all* `request.parameter` and `request.headers`.
+For example, given a client request with the URL,
 `\http://myserver/myserver?orderid=123`, the exchange will contain a
-header named `orderid` with the value 123.
+header named `orderid` with the value `123`.
 
-You can get the request.parameter from the
-message header not only from Get Method, but also other HTTP method.
+You can get the `request.parameter` from the
+message header not only from Get Method, but also other HTTP methods.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
@@ -193,9 +87,11 @@ The Jetty component supports consumer endpoints.
 
 == Consumer Example
 
-In this sample we define a route that exposes a HTTP service at
+In this sample we define a route that exposes an HTTP service at
 `\http://localhost:8080/myapp/myservice`:
 
+[NOTE]
+====
 *Usage of localhost*
 
 When you specify `localhost` in a URL, Camel exposes the endpoint only
@@ -209,26 +105,22 @@ If you need to expose a Jetty endpoint on all network interfaces, the
 
 To listen across an entire URI prefix, see
 xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+====
+
+== Servlets
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
 xref:servlet-component.adoc[Servlet Transport].
 
-Our business logic is implemented in the `MyBookService` class, which
-accesses the HTTP request contents and then returns a response. +
- *Note:* The `assert` call appears in this example, because the code is
-part of an unit test.
-
-The following sample shows a content-based route that routes all
-requests containing the URI parameter, `one`, to the endpoint,
-`mock:one`, and all others to `mock:other`.
+== HTTP Request Parameters
 
 So if a client sends the HTTP request, `\http://serverUri?one=hello`, the
 Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-xref:languages:simple-language.adoc[Simple] (such as xref:languages:ognl-language.adoc[OGNL])
+xref:languages:simple-language.adoc[Simple] (such as xref:languages:ognl-language.adoc[OGNL]),
 we could also test for the parameter value and do routing based on the
 header value as well.
 
@@ -273,7 +165,7 @@ Using the JSSE Configuration Utility
 The Jetty component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
-component specific code you need to write and is configurable at the
+component-specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Jetty component.
 
@@ -353,7 +245,7 @@ Use of the global configuration in other Blueprint XML files with route definiti
 Configuring Jetty Directly
 
 Jetty provides SSL support out of the box. To enable Jetty to run in SSL
-mode, simply format the URI with the `\https://` prefix---for example:
+mode, format the URI with the `\https://` prefix---for example:
 
 [source,xml]
 ----
@@ -361,10 +253,10 @@ mode, simply format the URI with the `\https://` prefix---for example:
 ----
 
 Jetty also needs to know where to load your keystore from and what
-passwords to use in order to load the correct SSL certificate. Set the
+passwords to use to load the correct SSL certificate. Set the
 following JVM System Properties:
 
-* `org.eclipse.jetty.ssl.keystore` specifies the location of the Java
+* `org.eclipse.jetty.ssl.keystore` specify the location of the Java
 keystore file, which contains the Jetty server's own X.509 certificate
 in a _key entry_. A key entry stores the X.509 certificate (effectively,
 the _public key_) and also its associated private key.
@@ -380,7 +272,7 @@ For details of how to configure SSL on a Jetty endpoint, read the
 following documentation at the Jetty Site:
 http://docs.codehaus.org/display/JETTY/How+to+configure+SSL[http://docs.codehaus.org/display/JETTY/How+to+configure+SSL]
 
-Some SSL properties aren't exposed directly by Camel, however Camel does
+Camel doesn't expose some SSL properties directly. However, Camel does
 expose the underlying SslSocketConnector, which will allow you to set
 properties like needClientAuth for mutual authentication requiring a
 client certificate or wantClientAuth for mutual authentication where a
@@ -406,13 +298,13 @@ client doesn't need a certificate but can have one.
 ----
 
 The value you use as keys in the above map is the port you configure
-Jetty to listen on.
+Jetty to listen to.
 
 === Configuring general SSL properties
 
-Instead of a per port number specific SSL socket connector (as shown
-above) you can now configure general properties which applies for all
-SSL socket connectors (which is not explicit configured as above with
+Instead of a per-port number specific SSL socket connector (as shown
+above), you can now configure general properties that apply for all
+SSL socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
 [source,xml]
@@ -443,9 +335,9 @@ X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request
 
 === Configuring general HTTP properties
 
-Instead of a per port number specific HTTP socket connector (as shown
-above) you can now configure general properties which applies for all
-HTTP socket connectors (which is not explicit configured as above with
+Instead of a per-port number specific HTTP socket connector (as shown
+above), you can now configure general properties that apply for all
+HTTP socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
 [source,xml]
@@ -470,7 +362,7 @@ return the address of the Apache proxy.
 Jetty has a forwarded property which takes the value from
 X-Forwarded-For and places it in the HttpServletRequest remoteAddr
 property.  This property is not available directly through the endpoint
-configuration but it can be easily added using the socketConnectors
+configuration, but it can be easily added using the socketConnectors
 property:
 
 [source,xml]
@@ -601,7 +493,7 @@ from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler")
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
 
-Blueprint based definition of basic authentication (based on Jetty 9):
+Blueprint-based definition of basic authentication (based on Jetty 12):
 
 [source,xml]
 ----
@@ -649,38 +541,36 @@ Blueprint based definition of basic authentication (based on Jetty 9):
 ...
 ----
 
-The roles.properties files contains
+The `roles.properties` files contain
 
-[source,text]
 ----
 username1=password1,rolename1
 username2=password2,rolename1
 ----
 
-This file is located in the etc folder and will be reloaded when changed. The endpoint
+This file is located in the `etc` folder and will be reloaded when changed. The endpoint:
 
-[source,text]
 ----
 http://0.0.0.0/path
 ----
 
-is now secured with basic authentication, only username1 with password1 and username2 with password2 are able to access the endpoint.
+It is now secured with basic authentication. Only `username1` with `password1` and `username2` with `password2` are able to access the endpoint.
 
 == How to return a custom HTTP 500 reply message
 
 You may want to return a custom reply message when something goes wrong,
 instead of the default reply message Camel xref:jetty-component.adoc[Jetty]
-replies with. +
- You could use a custom `HttpBinding` to be in control of the message
+replies to with.
+You could use a custom `HttpBinding` to be in control of the message
 mapping, but often it may be easier to use Camel's
 Exception Clause to construct the custom
-reply message. For example as show here, where we return
+reply message. For example, as show here, where we return
 `Dude something went wrong` with HTTP error code 500:
 
-== Multi-part Form support
+== Multipart Form support
 
-The camel-jetty component supports multipart form post out of box.
-The submitted form-data are mapped into the message header. Camel-jetty
+The camel-jetty component supports multipart form post out of the box.
+The submitted form-data are mapped into the message header. Camel Jetty
 creates an attachment for each uploaded file. The file name is mapped to
 the name of the attachment. The content type is set as the content type
 of the attachment file name. You can find the example here.
@@ -690,14 +580,14 @@ of the attachment file name. You can find the example here.
 The camel-jetty component supports the enabling of Jetty's JMX
 capabilities at the component and endpoint level with the endpoint
 configuration taking priority. Note that JMX must be enabled within the
-Camel context in order to enable JMX support in this component as the
+Camel context to enable JMX support in this component as the
 component provides Jetty with a reference to the MBeanServer registered
 with the Camel context. Because the camel-jetty component caches and
 reuses Jetty resources for a given protocol/host/port pairing, this
 configuration option will only be evaluated during the creation of the
 first endpoint to use a protocol/host/port pairing. For example, given
 two routes created from the following XML fragments, JMX support would
-remain enabled for all endpoints listening on "https://0.0.0.0".
+remain enabled for all endpoints listening on `https://0.0.0.0`.
 
 [source,xml]
 ----
@@ -713,7 +603,8 @@ The camel-jetty component also provides for direct configuration of the
 Jetty MBeanContainer. Jetty creates MBean names dynamically. If you are
 running another instance of Jetty outside of the Camel context and
 sharing the same MBeanServer between the instances, you can provide both
-instances with a reference to the same MBeanContainer in order to avoid
+instances with a reference to the same MBeanContainer to avoid
 name collisions when registering Jetty MBeans.
 
-include::camel-spring-boot::page$jetty-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

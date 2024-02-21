@@ -24,5 +24,7 @@ public enum MinioOperations {
     deleteBucket,
     listBuckets,
     getObject,
-    getPartialObject
+    getPartialObject,
+    createDownloadLink,
+    createUploadLink
 }

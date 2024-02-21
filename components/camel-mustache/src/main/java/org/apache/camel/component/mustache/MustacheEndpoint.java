@@ -30,7 +30,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -44,7 +43,8 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
  * Transform messages using a Mustache template.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
-             producerOnly = true, category = { Category.TRANSFORMATION })
+             remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
+             headersClass = MustacheConstants.class)
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;
@@ -116,9 +116,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
         writer.flush();
 
         // Fill out message
-        Message out = exchange.getOut();
-        out.setBody(writer.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, writer.toString());
     }
 
     /**

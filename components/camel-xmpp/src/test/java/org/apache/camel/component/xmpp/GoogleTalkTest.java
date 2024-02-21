@@ -21,7 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+// This was originally disabled on the pom file with the reason given below.
+@DisabledOnOs(value = OS.AIX, disabledReason = "has problem with all the new reconnection stuff and whatnot")
 public class GoogleTalkTest extends CamelTestSupport {
 
     @Disabled

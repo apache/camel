@@ -26,7 +26,6 @@ import java.nio.file.Files;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
@@ -34,8 +33,6 @@ import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -154,7 +151,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteTarFileOnCompletion(tarFile));
+            answer.getExchangeExtension().addOnCompletion(new DeleteTarFileOnCompletion(tarFile));
         } else {
             tarFile = oldExchange.getIn().getBody(File.class);
         }
@@ -173,9 +170,6 @@ public class TarAggregationStrategy implements AggregationStrategy {
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
                     addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
-                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
-                    genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -190,15 +184,23 @@ public class TarAggregationStrategy implements AggregationStrategy {
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
                     addEntryToTar(tarFile, entryName, buffer, buffer.length);
-                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
-                    genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
+        GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
+        genericFile.bindToExchange(answer);
         return answer;
+    }
+
+    @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        // this aggregation strategy added onCompletion which we should handover when we are complete
+        if (inputExchange != null) {
+            exchange.getExchangeExtension().handoverCompletions(inputExchange);
+        }
     }
 
     private void addFileToTar(File source, File file, String fileName) throws IOException, ArchiveException {
@@ -208,33 +210,42 @@ public class TarAggregationStrategy implements AggregationStrategy {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
         }
 
-        FileInputStream fis = new FileInputStream(tmpTar);
-        TarArchiveInputStream tin
-                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
-        TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source));
-        tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
-        tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
+        try (FileInputStream fis = new FileInputStream(tmpTar)) {
+            try (TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory()
+                    .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
+                try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
+                    tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+                    tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
 
-        InputStream in = new FileInputStream(file);
+                    try (InputStream in = new FileInputStream(file)) {
+                        copyExistingEntries(tin, tos);
 
-        // copy the existing entries    
-        ArchiveEntry nextEntry;
-        while ((nextEntry = tin.getNextEntry()) != null) {
-            tos.putArchiveEntry(nextEntry);
-            IOUtils.copy(tin, tos);
-            tos.closeArchiveEntry();
+                        // Add the new entry
+                        addNewEntry(file, fileName, tos, in);
+                    }
+                }
+            }
         }
+        LOG.trace("Deleting temporary file: {}", tmpTar);
+        FileUtil.deleteFile(tmpTar);
+    }
 
-        // Add the new entry
+    private void addNewEntry(File file, String fileName, TarArchiveOutputStream tos, InputStream in) throws IOException {
         TarArchiveEntry entry = new TarArchiveEntry(fileName == null ? file.getName() : fileName);
         entry.setSize(file.length());
         tos.putArchiveEntry(entry);
         IOUtils.copy(in, tos);
         tos.closeArchiveEntry();
+    }
 
-        IOHelper.close(fis, in, tin, tos);
-        LOG.trace("Deleting temporary file: {}", tmpTar);
-        FileUtil.deleteFile(tmpTar);
+    private void copyExistingEntries(TarArchiveInputStream tin, TarArchiveOutputStream tos) throws IOException {
+        // copy the existing entries
+        TarArchiveEntry nextEntry;
+        while ((nextEntry = tin.getNextEntry()) != null) {
+            tos.putArchiveEntry(nextEntry);
+            IOUtils.copy(tin, tos);
+            tos.closeArchiveEntry();
+        }
     }
 
     private void addEntryToTar(File source, String entryName, byte[] buffer, int length) throws IOException, ArchiveException {
@@ -244,37 +255,37 @@ public class TarAggregationStrategy implements AggregationStrategy {
             throw new IOException("Cannot create temp file: " + source.getName());
         }
 
-        FileInputStream fis = new FileInputStream(tmpTar);
-        TarArchiveInputStream tin
-                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
-        TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source));
-        tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
-        tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
+        try (FileInputStream fis = new FileInputStream(tmpTar)) {
+            try (TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory()
+                    .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
+                try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
+                    tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+                    tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
 
-        // copy the existing entries    
-        ArchiveEntry nextEntry;
-        while ((nextEntry = tin.getNextEntry()) != null) {
-            tos.putArchiveEntry(nextEntry);
-            IOUtils.copy(tin, tos);
-            tos.closeArchiveEntry();
+                    // copy the existing entries
+                    copyExistingEntries(tin, tos);
+
+                    // Create new entry
+                    createNewEntry(entryName, buffer, length, tos);
+                }
+            }
         }
+        LOG.trace("Deleting temporary file: {}", tmpTar);
+        FileUtil.deleteFile(tmpTar);
+    }
 
-        // Create new entry
+    private void createNewEntry(String entryName, byte[] buffer, int length, TarArchiveOutputStream tos) throws IOException {
         TarArchiveEntry entry = new TarArchiveEntry(entryName);
         entry.setSize(length);
         tos.putArchiveEntry(entry);
         tos.write(buffer, 0, length);
         tos.closeArchiveEntry();
-
-        IOHelper.close(fis, tin, tos);
-        LOG.trace("Deleting temporary file: {}", tmpTar);
-        FileUtil.deleteFile(tmpTar);
     }
 
     /**
      * This callback class is used to clean up the temporary TAR file once the exchange has completed.
      */
-    private class DeleteTarFileOnCompletion implements Synchronization {
+    private static class DeleteTarFileOnCompletion implements Synchronization {
 
         private final File fileToDelete;
 

@@ -1,11 +1,28 @@
-[[xml-jaxb-dsl-other]]
 = Jaxb Xml Dsl Component
-:docTitle: Jaxb XML Dsl
-:artifactId: camel-xml-jaxb-dsl
+//TODO there is no .json file for this doc page, so it is not updated automatically by UpdateReadmeMojo.
+//Header attributes written by hand.
+:doctitle: Jaxb XML Dsl
+:artifactid: camel-xml-jaxb-dsl
 :description: Camel DSL with YAML
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/xml-jaxb-dsl.adoc[opts=optional]
+:since: 3.9
+:supportlevel: Stable
 //Manually maintained attributes
 :group: DSL
 
-See https://camel.apache.org/manual/latest/dsl.html
+*Since Camel {since}*
+
+The `xml-jaxb-dsl` is the original Camel XML DSL that are loaded via JAXB that is heavy and with overhead.
+
+The JAXB parser is generic and can be used for parsing any XML.
+However, the `xml-io-dsl` is a source code generated parser that is Camel specific and can only parse Camel `.xml`
+route files (not classic Spring `<beans>` XML files).
+
+If you are using Camel XML DSL then its recommended using `xml-io-dsl` instead of `xml-jaxb-dsl`.
+You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main, and Camel K etc.
+
+If you use classic Spring `<beans>` XML files, or OSGi `<blueprint>` then you must use the `camel-jaxb-dsl`,
+which comes out of the box when using `camel-spring-xml` or `camel-blueprint`.
+
+== See Also
+
+See xref:manual:ROOT:dsl.adoc[DSL]

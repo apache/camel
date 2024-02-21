@@ -20,12 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
@@ -46,13 +46,13 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
     @XmlElements({
-            @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class) })
+            @XmlElement(name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
+            @XmlElement(name = "failover", type = FailoverLoadBalancerDefinition.class),
+            @XmlElement(name = "random", type = RandomLoadBalancerDefinition.class),
+            @XmlElement(name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
+            @XmlElement(name = "sticky", type = StickyLoadBalancerDefinition.class),
+            @XmlElement(name = "topic", type = TopicLoadBalancerDefinition.class),
+            @XmlElement(name = "weighted", type = WeightedLoadBalancerDefinition.class) })
     private LoadBalancerDefinition loadBalancerType;
 
     public LoadBalanceDefinition() {
@@ -243,7 +243,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
 
     /**
      * Uses topic load balancer
-     * 
+     *
      * @return the builder
      */
     public LoadBalanceDefinition topic() {

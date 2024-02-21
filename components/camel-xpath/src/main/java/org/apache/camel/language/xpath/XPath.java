@@ -54,8 +54,25 @@ public @interface XPath {
     Class<?> resultType() default Object.class;
 
     /**
-     * The name of the header we want to apply the XPath expression to. If this is empty then the XPath expression will
-     * be applied to the body instead.
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
      */
-    String headerName() default "";
+    String source() default "";
+
+    /**
+     * Whether to log namespaces which can assist during troubleshooting
+     */
+    boolean logNamespaces() default false;
+
+    /**
+     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
+     * default.
+     *
+     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
+     * as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath
+     * factory of the built operating system, and not a JVM runtime.
+     */
+    boolean preCompile() default true;
+
 }

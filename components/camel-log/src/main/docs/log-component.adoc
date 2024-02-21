@@ -1,13 +1,15 @@
-[[log-component]]
 = Log Component
-:docTitle: Log
-:artifactId: camel-log
+:doctitle: Log
+:shortname: log
+:artifactid: camel-log
 :description: Log messages to the underlying logging mechanism.
 :since: 1.1
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/log.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -16,7 +18,7 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/log.adoc[o
 The Log component logs message exchanges to the underlying logging
 mechanism.
 
-Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
+Camel uses http://www.slf4j.org/[SLF4J], which allows you to configure
 logging via, among others:
 
 * Log4j
@@ -25,7 +27,6 @@ logging via, among others:
 
 == URI format
 
-[source]
 ----
 log:loggingCategory[?options]
 ----
@@ -41,7 +42,7 @@ can append query options to the URI in the following format,
 If there's single instance
 of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
 longer used to create logger instance. The registered instance is used
-instead. Also it is possible to reference particular `Logger` instance
+instead. Also, it is possible to reference particular `Logger` instance
 using `?logger=#myLogger` URI parameter. Eventually, if there's no
 registered and URI `logger` parameter, the logger instance is created
 using *loggingCategory*.
@@ -50,7 +51,6 @@ using *loggingCategory*.
 For example, a log endpoint typically specifies the logging level using
 the `level` option, as follows:
 
-[source]
 ----
 log:org.apache.camel.example?level=DEBUG
 ----
@@ -61,86 +61,23 @@ also ships with the `Throughput` logger, which is used whenever the
 
 [TIP]
 ====
-*Also a log in the DSL*
-
 There is also a `log` directly in the DSL, but it has a different
-purpose. Its meant for lightweight and human logs. See more details at
-LogEIP.
+purpose. It's meant for lightweight and human logs. See more details at
+xref:eips:log-eip.adoc[LogEIP].
 ====
 
-== Options
 
+// component-configure options: START
 
+// component-configure options: END
 
 // component options: START
-The Log component supports 3 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *exchangeFormatter* (advanced) | *Autowired* Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter. |  | ExchangeFormatter
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-
-
-
 // endpoint options: START
-The Log endpoint is configured using URI syntax:
 
-----
-log:loggerName
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *loggerName* | *Required* Name of the logging category to use |  | String
-|===
-
-
-=== Query Parameters (26 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *groupActiveOnly* (producer) | If true, will hide stats when no new messages have been received for a time interval, if false, show stats regardless of message traffic. | true | Boolean
-| *groupDelay* (producer) | Set the initial delay for stats (in millis) |  | Long
-| *groupInterval* (producer) | If specified will group message stats by this time interval (in millis) |  | Long
-| *groupSize* (producer) | An integer that specifies a group size for throughput logging. |  | Integer
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *level* (producer) | Logging level to use. The default value is INFO. There are 6 enums and the value can be one of: ERROR, WARN, INFO, DEBUG, TRACE, OFF | INFO | String
-| *logMask* (producer) | If true, mask sensitive information like password or passphrase in the log. |  | Boolean
-| *marker* (producer) | An optional Marker name to use. |  | String
-| *exchangeFormatter* (advanced) | To use a custom exchange formatter |  | ExchangeFormatter
-| *maxChars* (formatting) | Limits the number of characters logged per line. | 10000 | int
-| *multiline* (formatting) | If enabled then each information is outputted on a newline. | false | boolean
-| *showAll* (formatting) | Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used) | false | boolean
-| *showBody* (formatting) | Show the message body. | true | boolean
-| *showBodyType* (formatting) | Show the body Java type. | true | boolean
-| *showCaughtException* (formatting) | If the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions. | false | boolean
-| *showException* (formatting) | If the exchange has an exception, show the exception message (no stacktrace) | false | boolean
-| *showExchangeId* (formatting) | Show the unique exchange ID. | false | boolean
-| *showExchangePattern* (formatting) | Shows the Message Exchange Pattern (or MEP for short). | true | boolean
-| *showFiles* (formatting) | If enabled Camel will output files | false | boolean
-| *showFuture* (formatting) | If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged. | false | boolean
-| *showHeaders* (formatting) | Show the message headers. | false | boolean
-| *showProperties* (formatting) | Show the exchange properties. | false | boolean
-| *showStackTrace* (formatting) | Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled. | false | boolean
-| *showStreams* (formatting) | Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching. | false | boolean
-| *skipBodyLineSeparator* (formatting) | Whether to skip line separators when logging the message body. This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is. | true | boolean
-| *style* (formatting) | Sets the outputs style to use. There are 3 enums and the value can be one of: Default, Tab, Fixed | Default | OutputStyle
-|===
 // endpoint options: END
 
 
@@ -190,7 +127,7 @@ from("activemq:orders").
 == Throughput logger with groupInterval sample
 
 This route will result in message stats logged every 10s, with an
-initial 60s delay and stats should be displayed even if there isn't any
+initial 60s delay, and stats should be displayed even if there isn't any
 message traffic.
 
 [source,java]
@@ -201,13 +138,11 @@ from("activemq:orders").
 
 The following will be logged:
 
-[source]
 ----
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
 ----
 
 == Masking sensitive information like password
-*Since Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects Log EIP.
@@ -233,6 +168,7 @@ from("direct:start").to("log:foo?logMask=true");
 ----
 
 And in XML:
+
 [source,xml]
 ----
 <route>
@@ -247,13 +183,10 @@ Note that the masking formatter must implement `org.apache.camel.spi.MaskingForm
 
 == Full customization of the logging output
 
-*Since Camel 2.11*
-
 With the options outlined in the xref:log-component.adoc[#Formatting] section, you
 can control much of the output of the logger. However, log lines will
 always follow this structure:
 
-[source]
 ----
 Exchange[Id:ID-machine-local-50656-1234567901234-1-2, ExchangePattern:InOut, 
 Properties:{CamelToEndpoint=log://org.apache.camel.component.log.TEST?showAll=true, 
@@ -284,7 +217,7 @@ in either of two ways:
 
 *Explicitly instantiating the LogComponent in your Registry:*
 
-[source,java]
+[source,xml]
 ----
 <bean name="log" class="org.apache.camel.component.log.LogComponent">
    <property name="exchangeFormatter" ref="myCustomFormatter" />
@@ -305,16 +238,16 @@ Component is intelligent enough to pick it up automatically.
 ====
 The `ExchangeFormatter` gets applied to *all Log endpoints within
 that Camel Context*. If you need different ExchangeFormatters for
-different endpoints, just instantiate the LogComponent as many times as
+different endpoints, instantiate the LogComponent as many times as
 needed, and use the relevant bean name as the endpoint prefix.
 ====
 
 
 When using a custom log formatter, you
 can specify parameters in the log uri, which gets configured on the
-custom log formatter. Though when you do that you should define the
-"logFormatter" as prototype scoped so its not shared if you have
-different parameters, eg:
+custom log formatter. Though when you do that, you should define the
+"logFormatter" as prototype scoped, so it's not shared if you have
+different parameters, e.g.:
 
 [source,xml]
 ----
@@ -331,21 +264,6 @@ options:
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ---------------------------------------------
 
-== Using Log component in OSGi
-
-*Improvement as of Camel 2.12.4/2.13.1*
-
-When using Log component inside OSGi (e.g., in Karaf), the underlying
-logging mechanisms are provided by PAX logging. It searches for a bundle
-which invokes `org.slf4j.LoggerFactory.getLogger()` method and
-associates the bundle with the logger instance. Without specifying
-custom `org.sfl4j.Logger` instance, the logger created by Log component
-is associated with `camel-core` bundle.
-
-In some scenarios it is required that the bundle associated with logger
-should be the bundle which contains route definition. To do this, either
-register single instance of `org.slf4j.Logger` in the Registry or
-reference it using `logger` URI parameter.
 
 
-include::camel-spring-boot::page$log-starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

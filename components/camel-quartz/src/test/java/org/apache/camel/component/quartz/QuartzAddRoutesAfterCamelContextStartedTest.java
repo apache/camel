@@ -35,13 +35,13 @@ public class QuartzAddRoutesAfterCamelContextStartedTest extends BaseQuartzTest 
         // add the quartz router after CamelContext has been started
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=1000&trigger.repeatCount=1").to("mock:result");
+            public void configure() {
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=1").to("mock:result");
             }
         });
 
         // it should also work
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

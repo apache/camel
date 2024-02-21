@@ -21,22 +21,20 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTestSupport {
 
     @Test
     public void testDumpAsXml() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRouteTemplatesAsXml", null, null);
         assertNotNull(xml);

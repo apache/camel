@@ -17,17 +17,16 @@
 package org.apache.camel.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Route to be executed when all other choices evaluate to <tt>false</tt>
+ * Route to be executed when all other choices evaluate to false
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "otherwise")
@@ -60,7 +59,6 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
 
     @Override
     public String getLabel() {
-        return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", getShortName() + "[", "]"));
+        return "otherwise";
     }
 }

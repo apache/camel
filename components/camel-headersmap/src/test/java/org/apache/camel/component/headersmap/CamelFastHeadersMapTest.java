@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.headersmap;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -34,18 +33,18 @@ public class CamelFastHeadersMapTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should have detected custom and use that
-        HeadersMapFactory factory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+        HeadersMapFactory factory = context.getCamelContextExtension().getHeadersMapFactory();
         assertIsInstanceOf(FastHeadersMapFactory.class, factory);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
             }
         };

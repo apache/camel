@@ -23,17 +23,18 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorNoConsumerTest extends CamelTestSupport {
     @Test
-    void testInOnly() throws Exception {
+    void testInOnly() {
         // no problem for in only as we do not expect a reply
-        template.sendBody("direct:start", "Hello World");
+        assertDoesNotThrow(() -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Test
-    void testInOut() throws Exception {
+    void testInOut() {
         try {
             template.requestBody("direct:start", "Hello World");
             fail("Should throw an exception");

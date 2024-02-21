@@ -19,9 +19,11 @@ package org.apache.camel.component.netty.http.cloud;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.cloud.ServiceExpressionFactory;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("netty-http-service-expression")
+@Configurer
 public class NettyHttpServiceExpressionFactory implements ServiceExpressionFactory {
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {

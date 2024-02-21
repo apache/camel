@@ -19,44 +19,47 @@ public class KubernetesPersistentVolumesEndpointUriFactory extends org.apache.ca
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
-        props.add("portProtocol");
-        props.add("caCertData");
-        props.add("portName");
-        props.add("oauthToken");
-        props.add("clientKeyAlgo");
-        props.add("dnsDomain");
-        props.add("clientCertFile");
-        props.add("lazyStartProducer");
-        props.add("password");
+        Set<String> props = new HashSet<>(22);
         props.add("apiVersion");
-        props.add("clientKeyData");
-        props.add("masterUrl");
-        props.add("clientCertData");
+        props.add("caCertData");
         props.add("caCertFile");
+        props.add("clientCertData");
+        props.add("clientCertFile");
+        props.add("clientKeyAlgo");
+        props.add("clientKeyData");
         props.add("clientKeyFile");
-        props.add("operation");
-        props.add("connectionTimeout");
         props.add("clientKeyPassphrase");
+        props.add("connectionTimeout");
+        props.add("dnsDomain");
         props.add("kubernetesClient");
+        props.add("lazyStartProducer");
+        props.add("masterUrl");
+        props.add("namespace");
+        props.add("oauthToken");
+        props.add("operation");
+        props.add("password");
+        props.add("portName");
+        props.add("portProtocol");
         props.add("trustCerts");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(12);
-        secretProps.add("password");
-        secretProps.add("clientKeyData");
         secretProps.add("caCertData");
-        secretProps.add("clientCertData");
         secretProps.add("caCertFile");
-        secretProps.add("clientKeyFile");
-        secretProps.add("oauthToken");
-        secretProps.add("clientKeyPassphrase");
-        secretProps.add("clientKeyAlgo");
+        secretProps.add("clientCertData");
         secretProps.add("clientCertFile");
+        secretProps.add("clientKeyAlgo");
+        secretProps.add("clientKeyData");
+        secretProps.add("clientKeyFile");
+        secretProps.add("clientKeyPassphrase");
+        secretProps.add("oauthToken");
+        secretProps.add("password");
         secretProps.add("trustCerts");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -84,6 +87,11 @@ public class KubernetesPersistentVolumesEndpointUriFactory extends org.apache.ca
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

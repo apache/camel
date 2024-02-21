@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -58,18 +58,26 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
 
 /**
- * Runs a CamelContext using any Spring or Blueprint XML configuration files found in
- * <code>META-INF/spring/*.xml</code>, and <code>OSGI-INF/blueprint/*.xml</code>, and <code>camel-*.xml</code> and
- * starting up the context.
+ * Runs a CamelContext using any Spring configuration files found in <code>META-INF/spring/*.xml</code>, and
+ * <code>camel-*.xml</code> and starting up the context.
  */
 @Mojo(name = "run", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class RunMojo extends AbstractExecMojo {
+
+    private static final String LOG4J_TEMPLATE = ""
+                                                 + "appender.stdout.type = Console\n"
+                                                 + "appender.stdout.name = out\n"
+                                                 + "appender.stdout.layout.type = PatternLayout\n"
+                                                 + "appender.stdout.layout.pattern = %style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{Dim} %highlight{%5p} %style{%pid}{Magenta} %style{---}{Dim} %style{[%15.15t]}{Dim} %style{%-40.40c}{Cyan} : %m%n\n"
+                                                 + "rootLogger.level = @@@LOGGING_LEVEL@@@\n"
+                                                 + "rootLogger.appenderRef.out.ref = out\n";
 
     // this code is based on a copy-and-paste of maven-exec-plugin
     //
@@ -114,21 +122,26 @@ public class RunMojo extends AbstractExecMojo {
     protected boolean logClasspath;
 
     /**
-     * Whether to use Blueprint when running, instead of Spring
+     * Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to
+     * your project.
+     *
+     * However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot.
+     *
+     * You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
      */
-    @Parameter(property = "camel.useBlueprint")
-    protected Boolean useBlueprint;
+    @Parameter(property = "camel.loggingLevel", defaultValue = "OFF")
+    protected String loggingLevel;
 
     /**
-     * Whether to use CDI when running, instead of Spring
+     * Whether to use Kamelet (camel-main-kamelet) when running, instead of Spring
      */
-    @Parameter(property = "camel.useCDI")
-    protected Boolean useCDI;
+    @Parameter(property = "camel.useKamelet")
+    protected Boolean useKamelet;
 
     protected String extendedPluginDependencyArtifactId;
 
     @Component
-    private ArtifactResolver artifactResolver;
+    protected ArtifactResolver artifactResolver;
 
     @Component
     private ArtifactFactory artifactFactory;
@@ -140,7 +153,7 @@ public class RunMojo extends AbstractExecMojo {
     private ArtifactRepository localRepository;
 
     @Parameter(property = "project.remoteArtifactRepositories")
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     @Component
     private MavenProjectBuilder projectBuilder;
@@ -159,18 +172,6 @@ public class RunMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.mainClass")
     private String mainClass;
-
-    /**
-     * The basedPackages that spring java config want to gets.
-     */
-    @Parameter(property = "camel.basedPackages")
-    private String basedPackages;
-
-    /**
-     * The configClasses that spring java config want to gets.
-     */
-    @Parameter(property = "camel.configClasses")
-    private String configClasses;
 
     /**
      * The classpath based application context uri that spring want to gets.
@@ -195,12 +196,6 @@ public class RunMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.configAdminFileName")
     private String configAdminFileName;
-
-    /**
-     * To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly.
-     */
-    @Parameter(property = "camel.fileWatcherDirectory")
-    private String fileWatcherDirectory;
 
     /**
      * The class arguments.
@@ -305,37 +300,23 @@ public class RunMojo extends AbstractExecMojo {
 
         String skip = System.getProperties().getProperty("maven.test.skip");
         if (skip == null || "false".equals(skip)) {
-            // lets log a INFO about how to skip tests if you want to so you can run faster
-            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+            // lets log a INFO about how to skip tests if you want to, so you can run faster
+            getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
-        boolean usingSpringJavaConfigureMain = false;
-
-        boolean useCdiMain;
-        if (useCDI != null) {
+        boolean usingKameletMain;
+        if (useKamelet != null) {
             // use configured value
-            useCdiMain = useCDI;
-        } else {
-            // auto detect if we have cdi
-            useCdiMain = detectCDIOnClassPath();
-        }
-        boolean usingBlueprintMain;
-        if (useBlueprint != null) {
-            // use configured value
-            usingBlueprintMain = useBlueprint;
+            usingKameletMain = useKamelet;
         } else {
             // auto detect if we have blueprint
-            usingBlueprintMain = detectBlueprintOnClassPathOrBlueprintXMLFiles();
+            usingKameletMain = detectKameletOnClassPath();
         }
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<>();
         if (trace) {
             args.add("-t");
-        }
-        if (fileWatcherDirectory != null) {
-            args.add("-watch");
-            args.add(fileWatcherDirectory);
         }
 
         if (applicationContextUri != null) {
@@ -344,17 +325,6 @@ public class RunMojo extends AbstractExecMojo {
         } else if (fileApplicationContextUri != null) {
             args.add("-fa");
             args.add(fileApplicationContextUri);
-        }
-
-        if (configClasses != null) {
-            args.add("-cc");
-            args.add(configClasses);
-            usingSpringJavaConfigureMain = true;
-        }
-        if (basedPackages != null) {
-            args.add("-bp");
-            args.add(basedPackages);
-            usingSpringJavaConfigureMain = true;
         }
 
         if (!duration.equals("-1")) {
@@ -373,27 +343,11 @@ public class RunMojo extends AbstractExecMojo {
             args.addAll(Arrays.asList(arguments));
         }
 
-        if (usingSpringJavaConfigureMain) {
-            mainClass = "org.apache.camel.spring.javaconfig.Main";
-            getLog().info("Using org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
-        } else if (useCdiMain) {
-            mainClass = "org.apache.camel.cdi.Main";
-            // must include plugin dependencies for cdi
-            extraPluginDependencyArtifactId = "camel-cdi";
+        if (mainClass == null && usingKameletMain) {
+            mainClass = "org.apache.camel.main.KameletMain";
+            // must include plugin dependencies for kamelet
+            extraPluginDependencyArtifactId = "camel-kamelet-main";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
-        } else if (usingBlueprintMain) {
-            mainClass = "org.apache.camel.blueprint.Main";
-            // set the configAdmin pid
-            if (configAdminPid != null) {
-                args.add("-pid");
-                args.add(configAdminPid);
-            }
-            // set the configAdmin pFile
-            if (configAdminFileName != null) {
-                args.add("-pf");
-                args.add(configAdminFileName);
-            }
-            getLog().info("Using org.apache.camel.blueprint.Main to initiate a CamelContext");
         } else if (mainClass != null) {
             getLog().info("Using custom " + mainClass + " to initiate a CamelContext");
         } else {
@@ -422,9 +376,9 @@ public class RunMojo extends AbstractExecMojo {
         final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
 
-        if (usingBlueprintMain && !detectBlueprintMainOnClassPath()) {
+        if (useKamelet != null && usingKameletMain && !detectKameletOnClassPath()) {
             throw new MojoFailureException(
-                    "Cannot run OSGi Blueprint Main because camel-blueprint-main JAR is not available on classpath");
+                    "Cannot run Kamelet Main because camel-kamelet-main JAR is not available on classpath");
         }
 
         final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
@@ -485,6 +439,10 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         registerSourceRoots();
+    }
+
+    protected String goal() {
+        return "camel:run";
     }
 
     /**
@@ -562,7 +520,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     private void terminateThreads(ThreadGroup threadGroup) {
-        long startTime = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
         for (Collection<Thread> threads = getActiveThreads(threadGroup);
@@ -587,7 +545,7 @@ public class RunMojo extends AbstractExecMojo {
                     joinThread(thread, 0); // waits until not alive; no timeout
                     continue;
                 }
-                long timeout = daemonThreadJoinTimeout - (System.currentTimeMillis() - startTime);
+                long timeout = daemonThreadJoinTimeout - watch.taken();
                 if (timeout > 0) {
                     joinThread(thread, timeout);
                 }
@@ -651,45 +609,22 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean detectCDIOnClassPath() {
+    private boolean detectKameletOnClassPath() {
         List<Dependency> deps = project.getCompileDependencies();
         for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi".equals(dep.getArtifactId())) {
-                getLog().info("camel-cdi detected on classpath");
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-kamelet-main".equals(dep.getArtifactId())) {
+                getLog().info("camel-kamelet-main detected on classpath");
                 return true;
             }
         }
-        return false;
-    }
 
-    @SuppressWarnings("unchecked")
-    private boolean detectBlueprintOnClassPathOrBlueprintXMLFiles() {
-        List<Dependency> deps = project.getCompileDependencies();
-        for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-blueprint".equals(dep.getArtifactId())) {
-                getLog().info("camel-blueprint detected on classpath");
-            }
-        }
-
-        // maybe there is blueprint XML files
+        // maybe there are Kamelet YAML files
         List<Resource> resources = project.getResources();
         for (Resource res : resources) {
             File dir = new File(res.getDirectory());
-            File xml = new File(dir, "OSGI-INF/blueprint");
-            if (xml.exists() && xml.isDirectory()) {
-                getLog().info("OSGi Blueprint XML files detected in directory " + xml);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean detectBlueprintMainOnClassPath() {
-        List<Dependency> deps = project.getCompileDependencies();
-        for (Dependency dep : deps) {
-            if ("org.apache.camel.karaf".equals(dep.getGroupId()) && "camel-blueprint-main".equals(dep.getArtifactId())) {
+            File kamelets = new File(dir, "kamelets");
+            if (kamelets.exists() && kamelets.isDirectory()) {
+                getLog().info("Kamelets YAML files detected in directory " + kamelets);
                 return true;
             }
         }
@@ -703,57 +638,83 @@ public class RunMojo extends AbstractExecMojo {
      * @return                        the classloader
      * @throws MojoExecutionException
      */
-    private ClassLoader getClassLoader() throws MojoExecutionException {
-        Set<URL> classpathURLs = new LinkedHashSet<>();
-        // project classpath must be first
-        this.addRelevantProjectDependenciesToClasspath(classpathURLs);
-        // and extra plugin classpath
-        this.addExtraPluginDependenciesToClasspath(classpathURLs);
-        // and plugin classpath last
-        this.addRelevantPluginDependenciesToClasspath(classpathURLs);
+    private ClassLoader getClassLoader() throws MojoExecutionException, MojoFailureException {
+        final List<Artifact> classpath = getClasspath();
+        final List<URL> classpathURLs = new ArrayList<>(classpath.size());
+        try {
+            for (Artifact artifact : classpath) {
+                File file = artifact.getFile();
+                if (file != null) {
+                    classpathURLs.add(file.toURI().toURL());
+                }
+            }
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
 
         if (logClasspath) {
             getLog().info("Classpath:");
             for (URL url : classpathURLs) {
-                getLog().info("  " + url.getFile().toString());
+                getLog().info("  " + url.getFile());
             }
         }
-        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
+        return new URLClassLoader(classpathURLs.toArray(new URL[0]));
+    }
+
+    /**
+     * @return the list of artifacts corresponding to the classpath to use when launching the application
+     */
+    protected List<Artifact> getClasspath() throws MojoExecutionException, MojoFailureException {
+        final List<Artifact> classpath = new ArrayList<>();
+        // project classpath must be first
+        this.addRelevantProjectDependenciesToClasspath(classpath);
+        // and extra plugin classpath
+        this.addExtraPluginDependenciesToClasspath(classpath);
+        // and plugin classpath last
+        this.addRelevantPluginDependenciesToClasspath(classpath);
+
+        if (!loggingLevel.equals("OFF")) {
+            getLog().info("Using built-in logging level: " + loggingLevel);
+            // and extra plugin classpath
+            this.addConsoleLogDependenciesToClasspath(classpath);
+            // setup logging which can only be done by copying log4j.properties to project output to be in classpath
+            try {
+                String out = LOG4J_TEMPLATE.replace("@@@LOGGING_LEVEL@@@", loggingLevel);
+                IOHelper.writeText(out, new File(project.getBuild().getOutputDirectory() + "/log4j2.properties"));
+            } catch (Exception e) {
+                throw new MojoFailureException("Error configuring loggingLevel", e);
+            }
+        }
+        return classpath;
     }
 
     /**
      * Add any relevant project dependencies to the classpath. Indirectly takes includePluginDependencies and
      * ExecutableDependency into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addRelevantPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addRelevantPluginDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (hasCommandlineArgs()) {
             arguments = parseCommandlineArgs();
         }
 
-        try {
-            Iterator<Artifact> iter = this.determineRelevantPluginDependencies().iterator();
-            while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
-
-                // we must skip org.osgi.core, otherwise we get a
-                // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
-                if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
-                                       + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
-                    }
-                    continue;
+        for (Artifact classPathElement : this.determineRelevantPluginDependencies()) {
+            // we must skip org.osgi.core, otherwise we get a
+            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
+            if (classPathElement.getArtifactId().equals("org.osgi.core")) {
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
+                                   + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
                 }
-
-                getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
-                               + " to classpath");
-                path.add(classPathElement.getFile().toURI().toURL());
+                continue;
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
+
+            getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
+                           + " to classpath");
+            classpath.add(classPathElement);
         }
 
     }
@@ -762,78 +723,91 @@ public class RunMojo extends AbstractExecMojo {
      * Add any relevant project dependencies to the classpath. Indirectly takes includePluginDependencies and
      * ExecutableDependency into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addExtraPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addExtraPluginDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (extraPluginDependencyArtifactId == null && extendedPluginDependencyArtifactId == null) {
             return;
         }
 
-        try {
-            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
-            for (Artifact artifact : artifacts) {
-                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
-                        || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
-                    getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
-                                   + " to classpath");
-                    path.add(artifact.getFile().toURI().toURL());
+        final Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
+        for (Artifact artifact : artifacts) {
+            if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
+                    || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
+                getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
+                               + " to classpath");
+                classpath.add(artifact);
 
-                    // add the transient dependencies of this artifact
-                    Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
-                    if (deps != null) {
-                        for (Artifact dep : deps) {
-                            getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
-                                           + " to classpath");
-                            path.add(dep.getFile().toURI().toURL());
-                        }
+                // add the transient dependencies of this artifact
+                Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
+                if (deps != null) {
+                    for (Artifact dep : deps) {
+                        getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
+                                       + " to classpath");
+                        classpath.add(dep);
                     }
                 }
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
+    }
+
+    /**
+     * Adds the JARs needed for using the built-in logging to console
+     */
+    private void addConsoleLogDependenciesToClasspath(List<Artifact> classpath) {
+        Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
+        for (Artifact artifact : artifacts) {
+            // add these loggers in the beginning so they are first
+            if (artifact.getArtifactId().equals("jansi")) {
+                // jansi for logging in color
+                classpath.add(0, artifact);
+            } else if (artifact.getGroupId().equals("org.apache.logging.log4j")) {
+                // add log4j as this is needed
+                classpath.add(0, artifact);
+            } else if (artifact.getArtifactId().equals("camel-maven-plugin")) {
+                // add ourselves
+                classpath.add(0, artifact);
+            }
         }
     }
 
     /**
      * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (this.includeProjectDependencies) {
-            try {
-                getLog().debug("Project Dependencies will be included.");
+            getLog().debug("Project Dependencies will be included.");
 
-                URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + mainClasses);
-                path.add(mainClasses);
+            File mainClasses = new File(project.getBuild().getOutputDirectory());
+            getLog().debug("Adding to classpath : " + mainClasses);
+            classpath.add(
+                    new ProjectArtifact(project) {
+                        @Override
+                        public File getFile() {
+                            return mainClasses;
+                        }
+                    });
 
-                Set<Artifact> dependencies = CastUtils.cast(project.getArtifacts());
+            Set<Artifact> dependencies = CastUtils.cast(project.getArtifacts());
 
-                // system scope dependencies are not returned by maven 2.0. See
-                // MEXEC-17
-                dependencies.addAll(getAllNonTestScopedDependencies());
+            // system scope dependencies are not returned by maven 2.0. See
+            // MEXEC-17
+            dependencies.addAll(getAllNonTestScopedDependencies());
 
-                Iterator<Artifact> iter = dependencies.iterator();
-                while (iter.hasNext()) {
-                    Artifact classPathElement = iter.next();
-                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                                   + " to classpath");
-                    File file = classPathElement.getFile();
-                    if (file != null) {
-                        path.add(file.toURI().toURL());
-                    }
-                }
-
-            } catch (MalformedURLException e) {
-                throw new MojoExecutionException("Error during setting up classpath", e);
+            for (Artifact classPathElement : dependencies) {
+                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                               + " to classpath");
+                classpath.add(classPathElement);
             }
         } else {
             getLog().debug("Project Dependencies will be excluded.");
         }
-
     }
 
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
@@ -853,9 +827,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
         List<Artifact> artifacts = new ArrayList<>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency) dependencies.next();
-
+        for (Dependency dependency : project.getDependencies()) {
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
 
@@ -995,7 +967,7 @@ public class RunMojo extends AbstractExecMojo {
                     this.remoteRepositories,
                     this.localRepository);
 
-            // get all of the dependencies for the executable project
+            // get all the dependencies for the executable project
             List<Dependency> dependencies = executableProject.getDependencies();
 
             // make Artifacts of all the dependencies

@@ -27,8 +27,28 @@ public interface NamedRoute {
     String getRouteId();
 
     /**
+     * Gets the node prefix id.
+     */
+    String getNodePrefixId();
+
+    /**
      * Gets the route endpoint url.
      */
     String getEndpointUrl();
+
+    /**
+     * Is the route created from template;
+     */
+    boolean isCreatedFromTemplate();
+
+    /**
+     * Is the route created from Rest DSL
+     */
+    boolean isCreatedFromRest();
+
+    /**
+     * Gets the route input
+     */
+    NamedNode getInput();
 
 }

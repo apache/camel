@@ -24,7 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 
 /**
- * A {@link org.apache.camel.StreamCache} for String {@link java.io.Reader}s
+ * A {@link org.apache.camel.StreamCache} for String {@link java.io.Reader}s.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public class ReaderCache extends StringReader implements StreamCache {
 
@@ -67,6 +71,11 @@ public class ReaderCache extends StringReader implements StreamCache {
     @Override
     public long length() {
         return data.length();
+    }
+
+    @Override
+    public long position() {
+        return -1;
     }
 
     String getData() {

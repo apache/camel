@@ -102,8 +102,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         return context;
     }
 
-    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn)
-            throws NoSuchFieldException, IllegalAccessException {
+    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn) {
         int result = 0;
         if (lcc.size() != rn.size()) {
             throw new UnsupportedOperationException(

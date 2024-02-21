@@ -35,7 +35,7 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
@@ -45,7 +45,7 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
                      + "fromBlock=0&"
                      + "toBlock=2&"
                      + "fullTransactionObjects=false")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

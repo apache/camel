@@ -45,10 +45,6 @@ public class StompProducerTest extends StompBaseTest {
 
     @Test
     public void testProduce() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         context.addRoutes(createRouteBuilder());
         context.start();
 
@@ -96,7 +92,7 @@ public class StompProducerTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:foo").toF("stomp:test?brokerURL=tcp://localhost:%s", getPort());
+                from("direct:foo").toF("stomp:test?brokerURL=tcp://localhost:%s", servicePort);
             }
         };
     }

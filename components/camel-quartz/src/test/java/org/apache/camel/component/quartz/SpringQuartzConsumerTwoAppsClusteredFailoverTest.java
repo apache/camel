@@ -20,12 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link QuartzConsumer}.
@@ -37,28 +38,22 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
+        AbstractXmlApplicationContext db = newAppContext("SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
+        AbstractXmlApplicationContext app = newAppContext("SpringQuartzConsumerClusteredAppOne.xml");
         app.start();
 
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
+        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzConsumerClusteredAppTwo.xml");
         app2.start();
 
-        CamelContext camel = app.getBean("camelContext", CamelContext.class);
+        CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMinimumMessageCount(3);
         mock.expectedMessagesMatches(new ClusteringPredicate(true));
-
-        // let the route run a bit...
-        Thread.sleep(5000);
 
         mock.assertIsSatisfied();
 
@@ -71,7 +66,15 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
         log.warn("Crashed...");
 
         // wait long enough until the second app takes it over...
-        Thread.sleep(20000);
+        Awaitility.await().untilAsserted(() -> {
+            CamelContext camel2 = app2.getBean("camelContext2-" + getClass().getSimpleName(), CamelContext.class);
+
+            MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
+            mock2.expectedMinimumMessageCount(3);
+            mock2.expectedMessagesMatches(new ClusteringPredicate(false));
+
+            mock2.assertIsSatisfied();
+        });
         // inside the logs one can then clearly see how the route of the second app ('app-two') starts consuming:
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
         // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
@@ -80,16 +83,12 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
         // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
         // 2013-09-30 11:22:35,369 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
 
-        CamelContext camel2 = app2.getBean("camelContext2", CamelContext.class);
-
-        MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMinimumMessageCount(3);
-        mock2.expectedMessagesMatches(new ClusteringPredicate(false));
-
-        mock2.assertIsSatisfied();
-
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);
+    }
+
+    private AbstractXmlApplicationContext newAppContext(String config) {
+        return CamelSpringTestSupport.newAppContext(config, getClass());
     }
 
     private static class ClusteringPredicate implements Predicate {

@@ -23,7 +23,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ZooKeeperContainer extends GenericContainer {
-    public static final String CONTAINER_IMAGE = "zookeeper:3.5";
     public static final String CONTAINER_NAME = "zookeeper";
     public static final int CLIENT_PORT = 2181;
 
@@ -48,7 +47,7 @@ public class ZooKeeperContainer extends GenericContainer {
     }
 
     public ZooKeeperContainer(String name, int clientPort) {
-        super(CONTAINER_IMAGE);
+        super(name);
 
         setWaitStrategy(Wait.forListeningPort());
 
@@ -63,6 +62,6 @@ public class ZooKeeperContainer extends GenericContainer {
     }
 
     public String getConnectionString() {
-        return String.format("%s:%d", getContainerIpAddress(), getMappedPort(CLIENT_PORT));
+        return String.format("%s:%d", getHost(), getMappedPort(CLIENT_PORT));
     }
 }

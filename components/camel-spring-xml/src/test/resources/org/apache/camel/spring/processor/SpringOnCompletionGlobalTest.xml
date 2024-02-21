@@ -27,6 +27,7 @@
     <bean id="myProcessor" class="org.apache.camel.processor.OnCompletionTest$MyProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- START SNIPPET: e1 -->
         <!-- this is a global onCompletion route that is invoke when any exchange is complete
              as a kind of after callback -->

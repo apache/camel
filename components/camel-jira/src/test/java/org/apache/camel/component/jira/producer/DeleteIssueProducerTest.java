@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jira.producer;
 
-import java.io.IOException;
-
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
@@ -106,7 +104,7 @@ public class DeleteIssueProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws IOException {
+            public void configure() {
                 from("direct:start")
                         .setHeader(ISSUE_KEY, () -> KEY + "-1")
                         .to("jira://deleteIssue?jiraUrl=" + JIRA_CREDENTIALS)

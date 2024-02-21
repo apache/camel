@@ -57,7 +57,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
 
     /**
      * Only response is allow using a brand custom channel
-     * 
+     *
      * @return
      */
 

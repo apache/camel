@@ -18,7 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -41,22 +41,22 @@ public class HttpBindingRefTest extends BaseJettyTest {
     private MyHttpBinding bindingHttp = new MyHttpBinding();
 
     @Test
-    public void testDefaultHttpBinding() throws Exception {
+    public void testDefaultHttpBinding() {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Test
-    public void testCustomHttpBinding() throws Exception {
+    public void testCustomHttpBinding() {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform()
@@ -64,7 +64,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 throw new IllegalStateException("Not implemented");
                             }
                         });
@@ -73,7 +73,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
     }
 
     // START SNIPPET: e1
-    public class MyHttpBinding extends DefaultHttpBinding {
+    public static class MyHttpBinding extends DefaultHttpBinding {
 
         @Override
         public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {

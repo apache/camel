@@ -139,11 +139,7 @@ public final class OgnlHelper {
      * @return                the Camel OGNL expression without any trailing operators.
      */
     public static String removeTrailingOperators(String ognlExpression) {
-        int pos = ognlExpression.indexOf('[');
-        if (pos != -1) {
-            return ognlExpression.substring(0, pos);
-        }
-        return ognlExpression;
+        return StringHelper.before(ognlExpression, "[", ognlExpression);
     }
 
     public static String removeOperators(String ognlExpression) {
@@ -182,8 +178,8 @@ public final class OgnlHelper {
      */
     public static List<String> splitOgnl(String ognl) {
         // return an empty list if ognl is empty
-        if (ognl == null || ognl.isEmpty() || ognl.trim().isEmpty()) {
-            return Collections.EMPTY_LIST;
+        if (ognl == null || ognl.isBlank()) {
+            return Collections.emptyList();
         }
 
         List<String> methods = new ArrayList<>(4);
@@ -192,13 +188,28 @@ public final class OgnlHelper {
         int j = 0; // j is used as counter per method
         int squareBracketCnt = 0; // special to keep track if and how deep we are inside a square bracket block, eg: [foo]
         int parenthesisBracketCnt = 0; // special to keep track if and how deep we are inside a parenthesis block, eg: bar(${body}, ${header.foo})
+        boolean singleQuoted = false;
+        boolean doubleQuoted = false;
 
         for (int i = 0; i < ognl.length(); i++) {
             char ch = ognl.charAt(i);
-            // special for starting a new method
-            if (j == 0 || (j == 1 && ognl.charAt(i - 1) == '?')
-                    || (ch != '.' && ch != '?' && ch != ']')) {
+
+            if (!doubleQuoted && ch == '\'') {
+                singleQuoted = !singleQuoted;
+            } else if (!singleQuoted && ch == '\"') {
+                doubleQuoted = !doubleQuoted;
+            }
+            if (singleQuoted || doubleQuoted) {
+                // quoted text so append as literal text
                 sb.append(ch);
+                continue;
+            }
+
+            // special for starting a new method
+            if (j == 0 || j == 1 && ognl.charAt(i - 1) == '?'
+                    || ch != '.' && ch != '?' && ch != ']') {
+                sb.append(ch);
+
                 // special if we are doing square bracket
                 if (ch == '[' && parenthesisBracketCnt == 0) {
                     squareBracketCnt++;
@@ -261,7 +272,7 @@ public final class OgnlHelper {
         }
 
         // add remainder in buffer when reached end of data
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             methods.add(sb.toString());
         }
 

@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 
@@ -37,42 +35,23 @@ import org.apache.camel.util.IOHelper;
  */
 public final class GroupIterator implements Iterator<Object>, Closeable {
 
-    private final CamelContext camelContext;
-    private final Exchange exchange;
     private final Iterator<?> it;
     private final int group;
-    private final boolean skipFirst;
     private boolean closed;
 
     /**
      * Creates a new group iterator
      *
-     * @param  exchange                 the exchange used to create this group iterator
      * @param  it                       the iterator to group
      * @param  group                    number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
-    public GroupIterator(Exchange exchange, Iterator<?> it, int group) {
-        this(exchange, it, group, false);
-    }
-
-    /**
-     * Creates a new group iterator
-     *
-     * @param  exchange                 the exchange used to create this group iterator
-     * @param  it                       the iterator to group
-     * @param  group                    number of parts to group together
-     * @throws IllegalArgumentException is thrown if group is not a positive number
-     */
-    public GroupIterator(Exchange exchange, Iterator<?> it, int group, boolean skipFirst) {
-        this.exchange = exchange;
-        this.camelContext = exchange.getContext();
+    public GroupIterator(Iterator<?> it, int group) {
         this.it = it;
         this.group = group;
         if (group <= 0) {
             throw new IllegalArgumentException("Group must be a positive number, was: " + group);
         }
-        this.skipFirst = skipFirst;
     }
 
     @Override
@@ -112,7 +91,7 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
         }
     }
 
-    private Object doNext() throws IOException {
+    private Object doNext() {
         List<Object> list = new ArrayList<>();
         int count = 0;
         while (count < group && it.hasNext()) {

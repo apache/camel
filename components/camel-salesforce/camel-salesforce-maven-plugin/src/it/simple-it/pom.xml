@@ -29,6 +29,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
   </properties>
 
   <build>
@@ -44,7 +45,7 @@
             <goals><goal>read-project-properties</goal></goals>
             <configuration>
               <files>
-                <file>../../../../test-salesforce-login.properties</file>
+                <file>../../../../test-salesforce-login.sample.properties</file>
               </files>
             </configuration>
           </execution>

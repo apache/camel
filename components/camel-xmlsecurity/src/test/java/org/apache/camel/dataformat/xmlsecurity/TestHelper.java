@@ -31,14 +31,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.DomConverter;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.builder.DiffBuilder;
-import org.xmlunit.diff.Diff;
+import org.xmlunit.assertj3.XmlAssert;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -113,11 +113,11 @@ public class TestHelper {
 
     Logger log = LoggerFactory.getLogger(TestHelper.class);
 
-    protected void sendText(final String fragment, CamelContext context) throws Exception {
+    protected void sendText(final String fragment, CamelContext context) {
         ProducerTemplate template = context.createProducerTemplate();
         template.start();
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
@@ -161,10 +161,7 @@ public class TestHelper {
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
 
         // verify that the decrypted message matches what was sent
-        Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
-
-        assertFalse(xmlDiff.hasDifferences(),
-                "The decrypted document does not match the control document:\n" + xmlDiff.toString());
+        XmlAssert.assertThat(fragment).and(inDoc).areIdentical();
     }
 
     protected void testDecryption(CamelContext context) throws Exception {
@@ -184,7 +181,7 @@ public class TestHelper {
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
     }
 
-    private boolean hasEncryptedData(Document doc) throws Exception {
+    private boolean hasEncryptedData(Document doc) {
         NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
         return nodeList.getLength() > 0;
     }
@@ -196,12 +193,16 @@ public class TestHelper {
     }
 
     private Document getDocumentForInMessage(Exchange exchange) {
-        byte[] body = exchange.getIn().getBody(byte[].class);
-        Document d = createDocumentfromInputStream(new ByteArrayInputStream(body), exchange.getContext());
+        Object body = exchange.getIn().getBody();
+        if (body instanceof StreamCache) {
+            ((StreamCache) body).reset();
+        }
+        byte[] arr = exchange.getIn().getBody(byte[].class);
+        Document d = createDocumentFromInputStream(new ByteArrayInputStream(arr), exchange.getContext());
         return d;
     }
 
-    private Document createDocumentfromInputStream(InputStream is, CamelContext context) {
+    private Document createDocumentFromInputStream(InputStream is, CamelContext context) {
         return context.getTypeConverter().convertTo(Document.class, is);
     }
 

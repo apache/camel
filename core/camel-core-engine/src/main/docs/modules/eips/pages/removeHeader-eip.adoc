@@ -1,24 +1,33 @@
-[[removeHeader-eip]]
 = Remove Header EIP
-:docTitle: Remove Header
+:doctitle: Remove Header
+:shortname: removeHeader
 :description: Removes a named header from the message
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Remove Header EIP allows you to remove a single header from the xref:message.adoc[Message].
 
 == Options
 
 // eip options: START
-The Remove Header EIP supports 1 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *headerName* | *Required* Name of header to remove |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
 
-== Samples
+== Exchange properties
 
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+We want to remove a header with key "myHeader" from the message:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -26,17 +35,36 @@ from("seda:b")
   .to("mock:result");
 ----
 
-=== Spring DSL
-The sample below demonstrates the delay in Spring DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="seda:b"/>
-  <removeHeader>
-     <constant>myHeader</constant>
-  <removeHeader/>
+  <removeHeader name="myHeader"/>
   <to uri="mock:result"/>
 </route>
-
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeader:
+          name: myHeader
+      - to:
+          uri: mock:result
+----
+====
+
+== See Also
+
+Camel provides the following EIPs for removing headers or exchange properties:
+
+- xref:removeHeader-eip.adoc[Remove Header] - To remove a single header
+- xref:removeHeaders-eip.adoc[Remove Headers] - To remove one or more message headers
+- xref:removeProperty-eip.adoc[Remove Property] - To remove a single exchange property
+- xref:removeProperties-eip.adoc[Remove Properties] - To remove one or more exchange properties

@@ -23,13 +23,16 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
 
     public String getDummy() {
@@ -38,11 +41,6 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
 
     @Test
     public void testManageBeanIntrospection() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -69,7 +67,7 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
         assertEquals(0, counter.intValue(), "Should not have been invoked");
 
-        Object dummy = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(this, "dummy", null,
+        Object dummy = PluginHelper.getBeanIntrospection(context).getOrElseProperty(this, "dummy", null,
                 false);
         assertEquals("MyDummy", dummy);
 

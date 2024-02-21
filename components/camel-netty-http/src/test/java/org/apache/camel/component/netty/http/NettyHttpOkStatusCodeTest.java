@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
 
     @Test
-    public void testNoOk() throws Exception {
+    public void testNoOk() {
         byte[] data = "Hello World".getBytes();
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-200", data,
@@ -40,7 +40,19 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
     }
 
     @Test
-    public void testNoOkComplexRange() throws Exception {
+    public void testNoOkSingleValue() {
+        byte[] data = "Hello World".getBytes();
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200", data,
+                        String.class));
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        String body = cause.getContentAsString();
+        assertEquals("Not allowed", body);
+    }
+
+    @Test
+    public void testNoOkComplexRange() {
         byte[] data = "Hello World".getBytes();
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,301", data,
@@ -52,7 +64,7 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
     }
 
     @Test
-    public void testOk() throws Exception {
+    public void testOk() {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-209", data,
                 String.class);
@@ -60,7 +72,7 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
     }
 
     @Test
-    public void testOkComplexRange() throws Exception {
+    public void testOkComplexRange() {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,209,301-304",
                 data, String.class);
@@ -68,10 +80,10 @@ public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/test")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209))
                         .transform().constant("Not allowed");

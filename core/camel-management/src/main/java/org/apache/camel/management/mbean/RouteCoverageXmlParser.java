@@ -65,10 +65,28 @@ public final class RouteCoverageXmlParser {
     public static Document parseXml(final CamelContext camelContext, final InputStream is) throws Exception {
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/namespaces", false);
+        factory.setFeature("http://xml.org/sax/features/validation", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         final SAXParser parser = factory.newSAXParser();
-        final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
-        final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setValidating(false);
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://xml.org/sax/features/namespaces", false);
+        dbf.setFeature("http://xml.org/sax/features/validation", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         final Document doc = docBuilder.newDocument();
 
         final Stack<Element> elementStack = new Stack<>();
@@ -95,12 +113,13 @@ public final class RouteCoverageXmlParser {
                 if (id != null) {
                     try {
                         if ("route".equals(qName)) {
-                            ManagedRouteMBean route = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(id);
+                            ManagedRouteMBean route = camelContext.getCamelContextExtension()
+                                    .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
                             if (route != null) {
                                 long total = route.getExchangesTotal();
-                                el.setAttribute("exchangesTotal", "" + total);
+                                el.setAttribute("exchangesTotal", Long.toString(total));
                                 long totalTime = route.getTotalProcessingTime();
-                                el.setAttribute("totalProcessingTime", "" + totalTime);
+                                el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                             }
                         } else if ("from".equals(qName)) {
                             // grab statistics from the parent route as from would be the same
@@ -108,26 +127,28 @@ public final class RouteCoverageXmlParser {
                             if (parent != null) {
                                 String routeId = parent.getAttribute("id");
                                 ManagedRouteMBean route
-                                        = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(routeId);
+                                        = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                                .getManagedRoute(routeId);
                                 if (route != null) {
                                     long total = route.getExchangesTotal();
-                                    el.setAttribute("exchangesTotal", "" + total);
+                                    el.setAttribute("exchangesTotal", Long.toString(total));
                                     long totalTime = route.getTotalProcessingTime();
-                                    el.setAttribute("totalProcessingTime", "" + totalTime);
+                                    el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                                     // from is index-0
                                     el.setAttribute("index", "0");
                                 }
                             }
                         } else {
                             ManagedProcessorMBean processor
-                                    = camelContext.getExtension(ManagedCamelContext.class).getManagedProcessor(id);
+                                    = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                            .getManagedProcessor(id);
                             if (processor != null) {
                                 long total = processor.getExchangesTotal();
-                                el.setAttribute("exchangesTotal", "" + total);
+                                el.setAttribute("exchangesTotal", Long.toString(total));
                                 long totalTime = processor.getTotalProcessingTime();
-                                el.setAttribute("totalProcessingTime", "" + totalTime);
+                                el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                                 int index = processor.getIndex();
-                                el.setAttribute("index", "" + index);
+                                el.setAttribute("index", Integer.toString(index));
                             }
                         }
                     } catch (Exception e) {
@@ -165,7 +186,7 @@ public final class RouteCoverageXmlParser {
              * outputs text accumulated under the current node
              */
             private void addTextIfNeeded() {
-                if (textBuffer.length() > 0) {
+                if (!textBuffer.isEmpty()) {
                     final Element el = elementStack.peek();
                     final Node textNode = doc.createTextNode(textBuffer.toString());
                     el.appendChild(textNode);

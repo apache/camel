@@ -21,17 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.PatternHelper;
 
 /**
  * To configure rest
@@ -42,103 +41,85 @@ import org.apache.camel.support.PatternHelper;
 public class RestConfigurationDefinition {
 
     @XmlAttribute
+    @Metadata(enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
     private String component;
-
     @XmlAttribute
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced", enums = "openapi,swagger")
     private String apiComponent;
-
     @XmlAttribute
-    @Metadata(label = "producer")
+    @Metadata(label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
     private String producerComponent;
-
     @XmlAttribute
     private String scheme;
-
     @XmlAttribute
     private String host;
-
-    @XmlAttribute
-    private String apiHost;
-
-    @XmlAttribute
-    @Metadata(defaultValue = "true", label = "consumer")
-    private Boolean useXForwardHeaders;
-
     @XmlAttribute
     private String port;
-
     @XmlAttribute
-    @Metadata(label = "producer")
+    @Metadata(label = "consumer,advanced")
+    private String apiHost;
+    @XmlAttribute
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String useXForwardHeaders;
+    @XmlAttribute
+    @Metadata(label = "producer,advanced")
     private String producerApiDoc;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String contextPath;
-
     @XmlAttribute
     @Metadata(label = "consumer")
     private String apiContextPath;
-
     @XmlAttribute
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced")
     private String apiContextRouteId;
-
     @XmlAttribute
-    @Metadata(label = "consumer")
-    private String apiContextIdPattern;
-
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String apiVendorExtension;
     @XmlAttribute
-    @Metadata(label = "consumer")
-    private Boolean apiContextListing;
-
-    @XmlAttribute
-    @Metadata(label = "consumer")
-    private Boolean apiVendorExtension;
-
-    @XmlAttribute
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced", defaultValue = "allLocalIp")
     private RestHostNameResolver hostNameResolver;
-
     @XmlAttribute
-    @Metadata(defaultValue = "off")
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private RestBindingMode bindingMode;
-
     @XmlAttribute
-    private Boolean skipBindingOnErrorCode;
-
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String skipBindingOnErrorCode;
     @XmlAttribute
-    private Boolean clientRequestValidation;
-
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String clientRequestValidation;
     @XmlAttribute
-    @Metadata(label = "consumer")
-    private Boolean enableCORS;
-
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableNoContentResponse;
+    @XmlAttribute
+    @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String inlineRoutes;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String jsonDataFormat;
-
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String xmlDataFormat;
-
     @XmlElement(name = "componentProperty")
+    @Metadata(label = "advanced")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<>();
-
     @XmlElement(name = "endpointProperty")
+    @Metadata(label = "advanced")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<>();
-
     @XmlElement(name = "consumerProperty")
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<>();
-
     @XmlElement(name = "dataFormatProperty")
+    @Metadata(label = "advanced")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<>();
-
     @XmlElement(name = "apiProperty")
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> apiProperties = new ArrayList<>();
-
     @XmlElement(name = "corsHeaders")
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<>();
 
     public String getComponent() {
@@ -160,10 +141,10 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * The name of the Camel component to use as the REST API (such as swagger) If no API Component has been explicit
-     * configured, then Camel will lookup if there is a Camel component responsible for servicing and generating the
-     * REST API documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If
-     * either one is found, then that is being used.
+     * The name of the Camel component to use as the REST API. If no API Component has been explicit configured, then
+     * Camel will lookup if there is a Camel component responsible for servicing and generating the REST API
+     * documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If either one
+     * is found, then that is being used.
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
@@ -209,7 +190,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To use an specific hostname for the API documentation (eg swagger)
+     * To use a specific hostname for the API documentation (such as swagger or openapi)
      * <p/>
      * This can be used to override the generated host with this configured hostname
      */
@@ -238,9 +219,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
-     * and any miss configuration will let Camel fail on startup and report the error(s).
+     * Sets the location of the api document the REST producer will use to validate the REST uri and query parameters
+     * are valid accordingly to the api document.
      * <p/>
      * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
      * <tt>http:</tt> to refer to resources to load from file or http url.
@@ -295,36 +275,7 @@ public class RestConfigurationDefinition {
         this.apiContextRouteId = apiContextRouteId;
     }
 
-    public String getApiContextIdPattern() {
-        return apiContextIdPattern;
-    }
-
-    /**
-     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     * <p/>
-     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
-     * other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
-     *
-     * @param apiContextIdPattern the pattern
-     */
-    public void setApiContextIdPattern(String apiContextIdPattern) {
-        this.apiContextIdPattern = apiContextIdPattern;
-    }
-
-    public Boolean getApiContextListing() {
-        return apiContextListing;
-    }
-
-    /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
-     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
-     */
-    public void setApiContextListing(Boolean apiContextListing) {
-        this.apiContextListing = apiContextListing;
-    }
-
-    public Boolean getApiVendorExtension() {
+    public String getApiVendorExtension() {
         return apiVendorExtension;
     }
 
@@ -333,7 +284,7 @@ public class RestConfigurationDefinition {
      * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways
      * and tools supports vendor-extensions when importing your API docs.
      */
-    public void setApiVendorExtension(Boolean apiVendorExtension) {
+    public void setApiVendorExtension(String apiVendorExtension) {
         this.apiVendorExtension = apiVendorExtension;
     }
 
@@ -362,7 +313,7 @@ public class RestConfigurationDefinition {
         this.bindingMode = bindingMode;
     }
 
-    public Boolean getSkipBindingOnErrorCode() {
+    public String getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
 
@@ -370,28 +321,27 @@ public class RestConfigurationDefinition {
      * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
      * messages that do not bind to json / xml etc, as success messages otherwise will do.
      */
-    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+    public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
-    public Boolean getClientRequestValidation() {
+    public String getClientRequestValidation() {
         return clientRequestValidation;
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
-     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
-     * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
-     * returned.
-     * <p/>
-     * The default value is false.
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
-    public void setClientRequestValidation(Boolean clientRequestValidation) {
+    public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public Boolean getEnableCORS() {
+    public String getEnableCORS() {
         return enableCORS;
     }
 
@@ -400,8 +350,38 @@ public class RestConfigurationDefinition {
      * <p/>
      * The default value is false.
      */
-    public void setEnableCORS(Boolean enableCORS) {
+    public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public String getEnableNoContentResponse() {
+        return enableNoContentResponse;
+    }
+
+    /**
+     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
+     * <p/>
+     * The default value is false.
+     */
+    public void setEnableNoContentResponse(String enableNoContentResponse) {
+        this.enableNoContentResponse = enableNoContentResponse;
+    }
+
+    public String getInlineRoutes() {
+        return inlineRoutes;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public void setInlineRoutes(String inlineRoutes) {
+        this.inlineRoutes = inlineRoutes;
     }
 
     public String getJsonDataFormat() {
@@ -409,8 +389,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Name of specific json data format to use. By default json-jackson will be used. Important: This option is only
-     * for setting a custom name of the data format, not to refer to an existing data format instance.
+     * Name of specific json data format to use. By default jackson will be used. Important: This option is only for
+     * setting a custom name of the data format, not to refer to an existing data format instance.
      */
     public void setJsonDataFormat(String jsonDataFormat) {
         this.jsonDataFormat = jsonDataFormat;
@@ -487,8 +467,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Allows to configure as many additional properties for the api documentation (swagger). For example set property
-     * api.title to my cool stuff
+     * Allows to configure as many additional properties for the api documentation. For example set property api.title
+     * to my cool stuff
      */
     public void setApiProperties(List<RestPropertyDefinition> apiProperties) {
         this.apiProperties = apiProperties;
@@ -505,7 +485,7 @@ public class RestConfigurationDefinition {
         this.corsHeaders = corsHeaders;
     }
 
-    public Boolean getUseXForwardHeaders() {
+    public String getUseXForwardHeaders() {
         return useXForwardHeaders;
     }
 
@@ -514,7 +494,7 @@ public class RestConfigurationDefinition {
      * <p/>
      * The default value is true.
      */
-    public void setUseXForwardHeaders(Boolean useXForwardHeaders) {
+    public void setUseXForwardHeaders(String useXForwardHeaders) {
         this.useXForwardHeaders = useXForwardHeaders;
     }
 
@@ -562,8 +542,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * To define a specific host to use for API documentation (eg swagger) instead of using a generated API hostname
-     * that is relative to the REST service host.
+     * To define a specific host to use for API documentation instead of using a generated API hostname that is relative
+     * to the REST service host.
      */
     public RestConfigurationDefinition apiHost(String host) {
         setApiHost(host);
@@ -574,7 +554,7 @@ public class RestConfigurationDefinition {
      * To specify the port number to use for the REST service
      */
     public RestConfigurationDefinition port(int port) {
-        setPort("" + port);
+        setPort(Integer.toString(port));
         return this;
     }
 
@@ -587,9 +567,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
-     * and any miss configuration will let Camel fail on startup and report the error(s).
+     * Sets the location of the api document the REST producer will use to validate the REST uri and query parameters
+     * are valid accordingly to the api document.
      * <p/>
      * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
      * <tt>http:</tt> to refer to resources to load from file or http url.
@@ -613,35 +592,11 @@ public class RestConfigurationDefinition {
 
     /**
      * Sets the route id to use for the route that services the REST API.
-     */
-    public RestConfigurationDefinition apiContextRouteId(String routeId) {
-        setApiContextRouteId(routeId);
-        return this;
-    }
-
-    /**
-     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
      * <p/>
-     * The pattern uses the following rules are applied in this order:
-     * <ul>
-     * <li>exact match, returns true</li>
-     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
-     * <li>regular expression match, returns true</li>
-     * <li>otherwise returns false</li>
-     * </ul>
+     * The route will by default use an auto assigned route id.
      */
-    public RestConfigurationDefinition apiContextIdPattern(String pattern) {
-        setApiContextIdPattern(pattern);
-        return this;
-    }
-
-    /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
-     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
-     */
-    public RestConfigurationDefinition apiContextListing(boolean listing) {
-        setApiContextListing(listing);
+    public RestConfigurationDefinition apiContextRouteId(String apiContextRouteId) {
+        setApiContextRouteId(apiContextRouteId);
         return this;
     }
 
@@ -651,6 +606,16 @@ public class RestConfigurationDefinition {
      * support vendor extensions and this option can then be turned off.
      */
     public RestConfigurationDefinition apiVendorExtension(boolean vendorExtension) {
+        setApiVendorExtension(vendorExtension ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Some API tooling may not
+     * support vendor extensions and this option can then be turned off.
+     */
+    public RestConfigurationDefinition apiVendorExtension(String vendorExtension) {
         setApiVendorExtension(vendorExtension);
         return this;
     }
@@ -694,15 +659,40 @@ public class RestConfigurationDefinition {
      * To specify whether to skip binding output if there is a custom HTTP error code
      */
     public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        setSkipBindingOnErrorCode(skipBindingOnErrorCode ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to skip binding output if there is a custom HTTP error code
+     */
+    public RestConfigurationDefinition skipBindingOnErrorCode(String skipBindingOnErrorCode) {
         setSkipBindingOnErrorCode(skipBindingOnErrorCode);
         return this;
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
-     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
     public RestConfigurationDefinition clientRequestValidation(boolean clientRequestValidation) {
+        setClientRequestValidation(clientRequestValidation ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
+     */
+    public RestConfigurationDefinition clientRequestValidation(String clientRequestValidation) {
         setClientRequestValidation(clientRequestValidation);
         return this;
     }
@@ -712,7 +702,62 @@ public class RestConfigurationDefinition {
      * response.
      */
     public RestConfigurationDefinition enableCORS(boolean enableCORS) {
+        setEnableCORS(enableCORS ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * response.
+     */
+    public RestConfigurationDefinition enableCORS(String enableCORS) {
         setEnableCORS(enableCORS);
+        return this;
+    }
+
+    /**
+     * To Specify whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML
+     * root object.
+     */
+    public RestConfigurationDefinition enableNoContentResponse(boolean enableNoContentResponse) {
+        setEnableNoContentResponse(enableNoContentResponse ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML
+     * root object.
+     */
+    public RestConfigurationDefinition enableNoContentResponse(String enableNoContentResponse) {
+        setEnableNoContentResponse(enableNoContentResponse);
+        return this;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public RestConfigurationDefinition inlineRoutes(String inlineRoutes) {
+        setInlineRoutes(inlineRoutes);
+        return this;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
+        setInlineRoutes(inlineRoutes ? "true" : "false");
         return this;
     }
 
@@ -829,6 +874,14 @@ public class RestConfigurationDefinition {
      * To specify whether to use X-Forward headers for Host and related setting
      */
     public RestConfigurationDefinition useXForwardHeaders(boolean useXForwardHeaders) {
+        setUseXForwardHeaders(useXForwardHeaders ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to use X-Forward headers for Host and related setting
+     */
+    public RestConfigurationDefinition useXForwardHeaders(String useXForwardHeaders) {
         setUseXForwardHeaders(useXForwardHeaders);
         return this;
     }
@@ -861,7 +914,7 @@ public class RestConfigurationDefinition {
             target.setHost(CamelContextHelper.parseText(context, host));
         }
         if (useXForwardHeaders != null) {
-            target.setUseXForwardHeaders(useXForwardHeaders);
+            target.setUseXForwardHeaders(CamelContextHelper.parseBoolean(context, useXForwardHeaders));
         }
         if (apiHost != null) {
             target.setApiHost(CamelContextHelper.parseText(context, apiHost));
@@ -878,19 +931,8 @@ public class RestConfigurationDefinition {
         if (apiContextRouteId != null) {
             target.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
         }
-        if (apiContextIdPattern != null) {
-            // special to allow #name# to refer to itself
-            if ("#name#".equals(apiComponent)) {
-                target.setApiContextIdPattern(context.getName());
-            } else {
-                target.setApiContextIdPattern(CamelContextHelper.parseText(context, apiContextIdPattern));
-            }
-        }
-        if (apiContextListing != null) {
-            target.setApiContextListing(apiContextListing);
-        }
         if (apiVendorExtension != null) {
-            target.setApiVendorExtension(apiVendorExtension);
+            target.setApiVendorExtension(CamelContextHelper.parseBoolean(context, apiVendorExtension));
         }
         if (contextPath != null) {
             target.setContextPath(CamelContextHelper.parseText(context, contextPath));
@@ -902,13 +944,19 @@ public class RestConfigurationDefinition {
             target.setBindingMode(bindingMode.name());
         }
         if (skipBindingOnErrorCode != null) {
-            target.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+            target.setSkipBindingOnErrorCode(CamelContextHelper.parseBoolean(context, skipBindingOnErrorCode));
         }
         if (clientRequestValidation != null) {
-            target.setClientRequestValidation(clientRequestValidation);
+            target.setClientRequestValidation(CamelContextHelper.parseBoolean(context, clientRequestValidation));
         }
         if (enableCORS != null) {
-            target.setEnableCORS(enableCORS);
+            target.setEnableCORS(CamelContextHelper.parseBoolean(context, enableCORS));
+        }
+        if (enableNoContentResponse != null) {
+            target.setEnableNoContentResponse(CamelContextHelper.parseBoolean(context, enableNoContentResponse));
+        }
+        if (inlineRoutes != null) {
+            target.setInlineRoutes(CamelContextHelper.parseBoolean(context, inlineRoutes));
         }
         if (jsonDataFormat != null) {
             target.setJsonDataFormat(jsonDataFormat);

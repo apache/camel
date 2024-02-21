@@ -183,7 +183,7 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
             infos.add(info);
         }
 
-        return infos.toArray(new MBeanNotificationInfo[infos.size()]);
+        return infos.toArray(new MBeanNotificationInfo[0]);
     }
 
 }

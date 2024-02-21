@@ -72,8 +72,8 @@ public interface AggregationStrategy {
      * Important: In the aggregate method, do not create a new exchange instance to return, instead return either the
      * old or new exchange from the input parameters; favor returning the old exchange whenever possible.
      * <p/>
-     * Important: Only Multicast and Recipient List EIP supports this method with access to the input exchange. All
-     * other EIPs does not and uses the {@link #aggregate(Exchange, Exchange)} method instead.
+     * Important: Only Multicast, Recipient List, and Splitter EIP supports this method with access to the input
+     * exchange. All other EIPs does not and uses the {@link #aggregate(Exchange, Exchange)} method instead.
      *
      * @param  oldExchange   the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new
      *                       exchange)
@@ -88,7 +88,7 @@ public interface AggregationStrategy {
 
     /**
      * Indicates if this aggregation strategy uses pre-completion mode.
-     * 
+     *
      * @return <tt>true</tt> if this strategy uses pre-completion mode, or <tt>false</tt> otherwise.
      */
     default boolean canPreComplete() {
@@ -118,6 +118,19 @@ public interface AggregationStrategy {
      *                 aggregation has been done before the completion occurred
      */
     default void onCompletion(Exchange exchange) {
+    }
+
+    /**
+     * The aggregated {@link Exchange} has completed
+     *
+     * <b>Important: </b> This method must <b>not</b> throw any exceptions.
+     *
+     * @param exchange      the current aggregated exchange, or the original {@link org.apache.camel.Exchange} if no
+     *                      aggregation has been done before the completion occurred
+     * @param inputExchange the input exchange (input to the EIP)
+     */
+    default void onCompletion(Exchange exchange, Exchange inputExchange) {
+        onCompletion(exchange);
     }
 
     /**

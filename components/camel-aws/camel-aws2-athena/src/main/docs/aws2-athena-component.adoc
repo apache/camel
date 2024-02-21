@@ -1,0 +1,365 @@
+= AWS Athena Component
+:doctitle: AWS Athena
+:shortname: aws2-athena
+:artifactid: camel-aws2-athena
+:description: Access AWS Athena.
+:since: 3.4
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-athena
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Athena component supports running queries with https://aws.amazon.com/athena/[AWS Athena] and working with results.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Athena.  More information is available at
+https://aws.amazon.com/athena/[AWS Athena].
+
+== URI Format
+
+------------------------------
+aws2-athena://label[?options]
+------------------------------
+
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+Required Athena component options
+
+You have to provide the amazonAthenaClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/athena/[AWS Athena] service.
+
+== Examples
+
+=== Producer Examples
+
+For example, to run a simple query, wait up to 60 seconds for completion, and log the results:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .split(body()).streaming()
+    .to("log:out")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+Similarly, running the query and returning a path to the results in S3:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Athena Producer operations
+
+The Camel-AWS Athena component provides the following operation on the producer side:
+
+ - getQueryExecution
+ - getQueryResults
+ - listQueryExecutions
+ - startQueryExecution
+
+=== Advanced AmazonAthena configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `AthenaClient` instance configuration, you can
+create your own instance and refer to it in your Camel aws2-athena component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws2-athena://MyQuery?amazonAthenaClient=#client&...")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Overriding query parameters with message headers
+
+Message headers listed in "Message headers evaluated by the Athena producer" override the corresponding
+query parameters listed in "Query Parameters".
+
+For example:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+     .setHeader(Athena2Constants.OUTPUT_LOCATION, constant("s3://other/location/"))
+     .to("aws2-athena:label?outputLocation=s3://foo/bar/")
+     .to("mock:result");
+--------------------------------------------------------------------------------
+
+Will cause the output location to be `s3://other/location/`.
+
+=== Athena Producer Operation examples
+
+- getQueryExecution: this operation returns information about a query given its query execution ID
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("aws2-athena://label?operation=getQueryExecution&queryExecutionId=11111111-1111-1111-1111-111111111111")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will yield an
+https://docs.aws.amazon.com/athena/latest/APIReference/API_QueryExecution.html[Athena QueryExecution] in the body.
+
+The getQueryExecution operation also supports retrieving the query execution ID from a header
+(`CamelAwsAthenaQueryExecutionId`), and since startQueryExecution sets the same header, upon starting a query,
+these operations can be used together:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryExecution")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will yield an Athena QueryExecution in the body for the query that was just started.
+
+- getQueryResults: this operation returns the results of a query that has succeeded.  The results are returned in the
+body in one of three formats.
+
+`StreamList` - the default - returns a
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/paginators/GetQueryResultsIterable.html[GetQueryResultsIterable]
+in the body that can page through all results:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The output of StreamList can be processed in various ways:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant(
+        "SELECT * FROM ("
+            + "    VALUES"
+            + "        (1, 'a'),"
+            + "        (2, 'b')"
+            + ") AS t (id, name)"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .split(body()).streaming()
+    .process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) {
+        GetQueryResultsResponse page = exchange
+                                        .getMessage()
+                                        .getBody(GetQueryResultsResponse.class);
+        for (Row row : page.resultSet().rows()) {
+          String line = row.data()
+                          .stream()
+                          .map(Datum::varCharValue)
+                          .collect(Collectors.joining(","));
+          System.out.println(line);
+        }
+      }
+    })
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will print the results of the query as CSV to the console.
+
+`SelectList` - returns a
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResponse]
+in the body containing at most 1,000 rows, plus the NextToken value as a header (`CamelAwsAthenaNextToken`),
+which can be used for manual pagination of results:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=SelectList")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will return a
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/athena/model/GetQueryResultsResponse.html[GetQueryResponse]
+in the body plus the NextToken value as a header (`CamelAwsAthenaNextToken`), which can be used to manually page
+through the results 1,000 rows at a time.
+
+`S3Pointer` - return an S3 path (e.g. `s3://bucket/path/`) pointing to the results:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will return an
+S3 path (e.g. `s3://bucket/path/`) in the body pointing to the results.  The path will also be set in a header
+(`CamelAwsAthenaOutputLocation`).
+
+- listQueryExecutions: this operation returns a list of query execution IDs
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("aws2-athena://label?operation=listQueryExecutions")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will return a list of query executions in the body, plus the NextToken value as a
+header (`CamelAwsAthenaNextToken`) than can be used for manual pagination of results.
+
+- startQueryExecution: this operation starts the execution of a query.  It supports waiting for the query to
+complete before proceeding, and retrying the query based on a set of configurable failure conditions:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will start the query `SELECT 1` and configure the
+results to be saved to `s3://bucket/path/`, but will not wait for the query
+to complete.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&outputLocation=s3://bucket/path/")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will start a query and wait up to 60 seconds for it to
+reach a status that indicates it is complete (one of SUCCEEDED, FAILED, CANCELLED,
+or UNKNOWN_TO_SDK_VERSION).  Upon failure, the query would not be retried.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&waitTimeout=60000&initialDelay=10000&delay=1000&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will start a query and wait up to 60 seconds for it to reach
+a status that indicates it is complete (one of SUCCEEDED, FAILED, CANCELLED,
+or UNKNOWN_TO_SDK_VERSION).  Upon failure, the query would be automatically
+retried up to two more times if the failure state indicates the query may
+succeed upon retry (Athena queries that fail with states such as `GENERIC_INTERNAL_ERROR`
+or "resource limit exhaustion" will sometimes succeed if retried).  While waiting
+for the query to complete, the query status would first be checked after an
+initial delay of 10 seconds, and subsequently every 1 second until the query completes.
+
+=== Putting it all together
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?waitTimeout=60000&&maxAttempts=3&retry=retryable&outputLocation=s3://bucket/path/")
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The preceding example will start the query and wait up to 60 seconds for it to
+complete.  Upon completion, getQueryResults put the results of the query into
+the body of the message for further processing.
+
+For the sake of completeness, a similar outcome could be achieved with the following:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("SELECT 1"))
+    .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
+    .loopDoWhile(simple("${header." + Athena2Constants.QUERY_EXECUTION_STATE + "} != 'SUCCEEDED'"))
+      .delay(1_000)
+      .to("aws2-athena://label?operation=getQueryExecution")
+    .end()
+    .to("aws2-athena://label?operation=getQueryResults&outputType=StreamList")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+Caution: the preceding example would block indefinitely, however, if the query did not complete with a
+status of SUCCEEDED.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-athena</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+
+include::spring-boot:partial$starter.adoc[]

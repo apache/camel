@@ -17,6 +17,9 @@
 package org.apache.camel.support;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -33,11 +36,180 @@ public class DefaultRegistryTest {
     private final DefaultRegistry registry = new DefaultRegistry(br);
     private final Company myCompany = new Company();
     private final FooBar myFooBar = new FooBar();
+    private final AtomicInteger counter = new AtomicInteger();
 
     @BeforeEach
     protected void setUp() throws Exception {
         br.bind("myCompany", myCompany);
         registry.bind("myFooBar", myFooBar);
+    }
+
+    @Test
+    public void testBindAsSupplierLookupByName() throws Exception {
+        counter.set(0);
+
+        registry.bind("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        FooBar bar1 = (FooBar) registry.lookupByName("myBar");
+        FooBar bar2 = (FooBar) registry.lookupByName("myBar");
+        assertSame(bar1, bar2);
+        assertEquals("I am lazy 1 me", bar1.hello("me"));
+        assertEquals("I am lazy 1 me", bar2.hello("me"));
+    }
+
+    @Test
+    public void testBindAsPrototypeSupplierLookupByName() throws Exception {
+        counter.set(0);
+
+        registry.bindAsPrototype("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        FooBar bar1 = (FooBar) registry.lookupByName("myBar");
+        FooBar bar2 = (FooBar) registry.lookupByName("myBar");
+        assertNotSame(bar1, bar2);
+        assertEquals("I am lazy 1 me", bar1.hello("me"));
+        assertEquals("I am lazy 2 me", bar2.hello("me"));
+    }
+
+    @Test
+    public void testBindAsPrototypeSupplierLookupByNameAndType() throws Exception {
+        counter.set(0);
+
+        registry.bindAsPrototype("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        FooBar bar1 = registry.lookupByNameAndType("myBar", FooBar.class);
+        FooBar bar2 = registry.lookupByNameAndType("myBar", FooBar.class);
+        assertNotSame(bar1, bar2);
+        assertEquals("I am lazy 1 me", bar1.hello("me"));
+        assertEquals("I am lazy 2 me", bar2.hello("me"));
+    }
+
+    @Test
+    public void testBindAsSupplierLookupByNameAndType() throws Exception {
+        counter.set(0);
+
+        registry.bind("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        FooBar bar1 = registry.lookupByNameAndType("myBar", FooBar.class);
+        FooBar bar2 = registry.lookupByNameAndType("myBar", FooBar.class);
+        assertSame(bar1, bar2);
+        assertEquals("I am lazy 1 me", bar1.hello("me"));
+        assertEquals("I am lazy 1 me", bar2.hello("me"));
+    }
+
+    @Test
+    public void testBindAsSupplierFindByType() throws Exception {
+        counter.set(0);
+
+        registry.bind("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        // find first time which we find the supplier and then then from fallback
+        Set<FooBar> set = registry.findByType(FooBar.class);
+        assertEquals(2, set.size());
+        Iterator<FooBar> it = set.iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+
+        // find second time which we find the supplier and then then from fallback
+        set = registry.findByType(FooBar.class);
+        assertEquals(2, set.size());
+        it = set.iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+    }
+
+    @Test
+    public void testBindAsPrototypeSupplierFindByType() throws Exception {
+        counter.set(0);
+
+        registry.bindAsPrototype("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        // find first time which we find the supplier and then then from fallback
+        Set<FooBar> set = registry.findByType(FooBar.class);
+        assertEquals(2, set.size());
+        Iterator<FooBar> it = set.iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+
+        // find second time which we find the supplier and then then from fallback
+        set = registry.findByType(FooBar.class);
+        assertEquals(2, set.size());
+        it = set.iterator();
+        assertEquals("I am lazy 2 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+    }
+
+    @Test
+    public void testBindAsPrototypeSupplierFindByTypeWithName() throws Exception {
+        counter.set(0);
+
+        registry.bindAsPrototype("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        // find first time which we find the supplier and then then from fallback
+        Map<String, FooBar> map = registry.findByTypeWithName(FooBar.class);
+        assertEquals(2, map.size());
+        Iterator<FooBar> it = map.values().iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+
+        // find second time which we find the supplier and then then from fallback
+        map = registry.findByTypeWithName(FooBar.class);
+        assertEquals(2, map.size());
+        it = map.values().iterator();
+        assertEquals("I am lazy 2 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+    }
+
+    @Test
+    public void testBindAsSupplierFindByTypeWithName() throws Exception {
+        counter.set(0);
+
+        registry.bind("myBar", FooBar.class, () -> {
+            FooBar bar = new FooBar();
+            bar.setGreeting("I am lazy " + counter.incrementAndGet());
+            return bar;
+        });
+
+        // find first time which we find the supplier and then then from fallback
+        Map<String, FooBar> map = registry.findByTypeWithName(FooBar.class);
+        assertEquals(2, map.size());
+        Iterator<FooBar> it = map.values().iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
+
+        // find second time which we find the supplier and then then from fallback
+        map = registry.findByTypeWithName(FooBar.class);
+        assertEquals(2, map.size());
+        it = map.values().iterator();
+        assertEquals("I am lazy 1 me", it.next().hello("me"));
+        assertSame(myFooBar, it.next());
     }
 
     @Test
@@ -104,7 +276,7 @@ public class DefaultRegistryTest {
         assertSame(context, lookup.getCamelContext());
     }
 
-    private class MyBean implements CamelContextAware {
+    private static class MyBean implements CamelContextAware {
 
         private CamelContext camelContext;
 

@@ -123,7 +123,7 @@ public class EasyPredicateParser {
             list.add(part.toString());
         }
 
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
 }

@@ -38,7 +38,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * Perform queries against an Apache Drill cluster.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE, Category.BIGDATA }, headersClass = DrillConstants.class)
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")
@@ -91,8 +91,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     public List<?> queryForList(ResultSet rs) throws SQLException {
         ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
         RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
-        List<Map<String, Object>> data = mapper.extractData(rs);
-        return data;
+        return mapper.extractData(rs);
     }
 
     public String getHost() {

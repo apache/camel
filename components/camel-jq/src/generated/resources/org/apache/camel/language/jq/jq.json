@@ -1,0 +1,25 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "jq",
+    "title": "JQ",
+    "description": "Evaluates a JQ expression against a JSON message body.",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "label": "language,json",
+    "javaType": "org.apache.camel.language.jq.JqLanguage",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jq",
+    "version": "4.5.0-SNAPSHOT",
+    "modelName": "jq",
+    "modelJavaType": "org.apache.camel.model.language.JqExpression"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "expression": { "index": 1, "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "source": { "index": 2, "kind": "attribute", "displayName": "Source", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body." },
+    "resultType": { "index": 3, "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
+    "trim": { "index": 4, "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" }
+  }
+}

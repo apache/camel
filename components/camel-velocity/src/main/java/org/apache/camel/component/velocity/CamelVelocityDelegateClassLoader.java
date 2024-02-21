@@ -20,7 +20,7 @@ package org.apache.camel.component.velocity;
  * This class loader is used to help us load the CamelVelocityClasspathResourceLoader in OSGi
  */
 public class CamelVelocityDelegateClassLoader extends ClassLoader {
-    private static final String CAMLE_VELOCITY_CLASSPATH_RESOURCE_LOADER
+    private static final String CAMEL_VELOCITY_CLASSPATH_RESOURCE_LOADER
             = CamelVelocityClasspathResourceLoader.class.getName();
 
     CamelVelocityDelegateClassLoader(ClassLoader parent) {
@@ -29,7 +29,7 @@ public class CamelVelocityDelegateClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if (CAMLE_VELOCITY_CLASSPATH_RESOURCE_LOADER.equals(name)) {
+        if (CAMEL_VELOCITY_CLASSPATH_RESOURCE_LOADER.equals(name)) {
             return CamelVelocityClasspathResourceLoader.class;
         }
         return super.findClass(name);

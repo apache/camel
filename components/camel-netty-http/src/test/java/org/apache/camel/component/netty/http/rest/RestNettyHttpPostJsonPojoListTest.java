@@ -37,7 +37,7 @@ public class RestNettyHttpPostJsonPojoListTest extends BaseNettyTest {
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
         template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);
@@ -52,10 +52,10 @@ public class RestNettyHttpPostJsonPojoListTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty-http on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);

@@ -17,6 +17,9 @@
 package org.apache.camel.catalog;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +27,12 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.ReleaseModel;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -48,7 +57,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testGetVersion() throws Exception {
+    public void testGetVersion() {
         String version = catalog.getCatalogVersion();
         assertNotNull(version);
 
@@ -58,7 +67,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testLoadVersion() throws Exception {
+    public void testLoadVersion() {
         boolean result = catalog.loadVersion("1.0");
         assertFalse(result);
 
@@ -68,7 +77,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindComponentNames() throws Exception {
+    public void testFindComponentNames() {
         List<String> names = catalog.findComponentNames();
         assertNotNull(names);
         assertTrue(names.contains("file"));
@@ -80,13 +89,10 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindOtherNames() throws Exception {
+    public void testFindOtherNames() {
         List<String> names = catalog.findOtherNames();
 
-        assertTrue(names.contains("hystrix"));
-        assertTrue(names.contains("leveldb"));
-        assertTrue(names.contains("swagger-java"));
-        assertTrue(names.contains("test-spring"));
+        assertTrue(names.contains("test-spring-junit5"));
 
         assertFalse(names.contains("http-common"));
         assertFalse(names.contains("kura"));
@@ -97,19 +103,19 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindDataFormatNames() throws Exception {
+    public void testFindDataFormatNames() {
         List<String> names = catalog.findDataFormatNames();
         assertNotNull(names);
-        assertTrue(names.contains("bindy-csv"));
+        assertTrue(names.contains("bindyCsv"));
         assertTrue(names.contains("hl7"));
         assertTrue(names.contains("jaxb"));
         assertTrue(names.contains("syslog"));
         assertTrue(names.contains("asn1"));
-        assertTrue(names.contains("zipfile"));
+        assertTrue(names.contains("zipFile"));
     }
 
     @Test
-    public void testFindLanguageNames() throws Exception {
+    public void testFindLanguageNames() {
         List<String> names = catalog.findLanguageNames();
 
         assertTrue(names.contains("simple"));
@@ -122,7 +128,18 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindModelNames() throws Exception {
+    public void testFindTransformerNames() {
+        List<String> names = catalog.findTransformerNames();
+
+        assertTrue(names.contains("application-cloudevents-json"));
+        assertTrue(names.contains("application-x-java-object"));
+        assertTrue(names.contains("aws-cloudtrail-application-cloudevents"));
+        assertTrue(names.contains("azure-storage-queue-application-cloudevents"));
+        assertTrue(names.contains("http-application-cloudevents"));
+    }
+
+    @Test
+    public void testFindModelNames() {
         List<String> names = catalog.findModelNames();
         assertNotNull(names);
         assertTrue(names.contains("from"));
@@ -136,7 +153,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testJsonSchema() throws Exception {
+    public void testJsonSchema() {
         String schema = catalog.componentJSonSchema("docker");
         assertNotNull(schema);
 
@@ -149,9 +166,6 @@ public class CamelCatalogTest {
         schema = catalog.modelJSonSchema("aggregate");
         assertNotNull(schema);
 
-        schema = catalog.otherJSonSchema("swagger-java");
-        assertNotNull(schema);
-
         // lets make it possible to find bean/method using both names
         schema = catalog.modelJSonSchema("method");
         assertNotNull(schema);
@@ -160,19 +174,13 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testXmlSchema() throws Exception {
+    public void testXmlSchema() {
         String schema = catalog.springSchemaAsXml();
         assertNotNull(schema);
     }
 
     @Test
-    public void testArchetypeCatalog() throws Exception {
-        String schema = catalog.archetypeCatalogAsXml();
-        assertNotNull(schema);
-    }
-
-    @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         String schema = catalog.mainJsonSchema();
         assertNotNull(schema);
     }
@@ -607,7 +615,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validateActiveMQProperties() throws Exception {
+    public void validateActiveMQProperties() {
         // add activemq as known component
         catalog.addComponent("activemq", "org.apache.camel.component.activemq.ActiveMQComponent");
 
@@ -628,7 +636,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validateJmsProperties() throws Exception {
+    public void validateJmsProperties() {
         // jms
         EndpointValidationResult result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
@@ -641,7 +649,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validateProperties() throws Exception {
+    public void validateProperties() {
         // valid
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog");
         assertTrue(result.isSuccess());
@@ -674,16 +682,6 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties(
                 "yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
         assertTrue(result.isSuccess());
-
-        // required / boolean / integer
-        result = catalog
-                .validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
-        assertFalse(result.isSuccess());
-        assertEquals(4, result.getNumberOfErrors());
-        assertTrue(result.getRequired().contains("consumerKey"));
-        assertTrue(result.getRequired().contains("consumerSecret"));
-        assertEquals("no", result.getInvalidBoolean().get("useJson"));
-        assertEquals("five", result.getInvalidInteger().get("initialDelay"));
 
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
@@ -773,7 +771,7 @@ public class CamelCatalogTest {
         assertEquals("foo", result.getLenient().iterator().next());
 
         // data format
-        result = catalog.validateEndpointProperties("dataformat:zipdeflater:marshal?compressionLevel=2", true);
+        result = catalog.validateEndpointProperties("dataformat:zipDeflater:marshal?compressionLevel=2", true);
         assertTrue(result.isSuccess());
 
         // 2 slash after component name
@@ -808,9 +806,9 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validatePropertiesSummary() throws Exception {
+    public void validatePropertiesSummary() {
         EndpointValidationResult result = catalog.validateEndpointProperties(
-                "yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+                "file:foo?blah=yada");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage(true);
         LOG.info(reason);
@@ -822,7 +820,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validateTimePattern() throws Exception {
+    public void validateTimePattern() {
         assertTrue(catalog.validateTimePattern("0"));
         assertTrue(catalog.validateTimePattern("500"));
         assertTrue(catalog.validateTimePattern("10000"));
@@ -843,7 +841,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testEndpointComponentName() throws Exception {
+    public void testEndpointComponentName() {
         String name = catalog.endpointComponentName("jms:queue:foo");
         assertEquals("jms", name);
     }
@@ -873,6 +871,17 @@ public class CamelCatalogTest {
     @Test
     public void testListLanguagesAsJson() throws Exception {
         String json = catalog.listLanguagesAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListTransformersAsJson() throws Exception {
+        String json = catalog.listTransformersAsJson();
         assertNotNull(json);
 
         // validate we can parse the json
@@ -1013,7 +1022,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testSimpleExpression() throws Exception {
+    public void testSimpleExpression() {
         LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
         assertTrue(result.isSuccess());
         assertEquals("${body}", result.getText());
@@ -1035,7 +1044,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testSimplePredicate() throws Exception {
+    public void testSimplePredicate() {
         LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} == 'abc'");
         assertTrue(result.isSuccess());
         assertEquals("${body} == 'abc'", result.getText());
@@ -1050,7 +1059,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testPredicatePlaceholder() throws Exception {
+    public void testPredicatePlaceholder() {
         LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
         assertEquals("${body} contains '{{danger}}'", result.getText());
@@ -1066,7 +1075,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateLanguage() throws Exception {
+    public void testValidateLanguage() {
         LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
         assertTrue(result.isSuccess());
         assertEquals("${body}", result.getText());
@@ -1093,7 +1102,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateJSonPathLanguage() throws Exception {
+    public void testValidateJSonPathLanguage() {
         LanguageValidationResult result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price < 10)]");
         assertTrue(result.isSuccess());
         assertEquals("$.store.book[?(@.price < 10)]", result.getText());
@@ -1101,11 +1110,16 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price ^^^ 10)]");
         assertFalse(result.isSuccess());
         assertEquals("$.store.book[?(@.price ^^^ 10)]", result.getText());
-        assertEquals("Illegal syntax: $.store.book[?(@.price ^^^ 10)]", result.getError());
+        assertEquals("Expected character: )", result.getError());
+
+        // just to call via a configuration option
+        result = catalog.validateLanguageExpression(null, "jsonpath?unpackArray=true", "$.store.book[?(@.price < 10)]");
+        assertTrue(result.isSuccess());
+        assertEquals("$.store.book[?(@.price < 10)]", result.getText());
     }
 
     @Test
-    public void testSpringCamelContext() throws Exception {
+    public void testSpringCamelContext() {
         String xml = catalog.springSchemaAsXml();
         assertNotNull(xml);
 
@@ -1113,25 +1127,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testComponentAsciiDoc() throws Exception {
-        String doc = catalog.componentAsciiDoc("mock");
-        assertNotNull(doc);
-        assertTrue(doc.contains("mock:someName"));
-
-        doc = catalog.componentAsciiDoc("geocoder");
-        assertNotNull(doc);
-        assertTrue(doc.contains("looking up geocodes"));
-
-        doc = catalog.componentAsciiDoc("smtp");
-        assertNotNull(doc);
-        assertTrue(doc.contains("The mail component"));
-
-        doc = catalog.componentAsciiDoc("unknown");
-        assertNull(doc);
-    }
-
-    @Test
-    public void testTransactedAndPolicyNoOutputs() throws Exception {
+    public void testTransactedAndPolicyNoOutputs() {
         String json = catalog.modelJSonSchema("transacted");
         assertNotNull(json);
         assertTrue(json.contains("\"output\": false"));
@@ -1144,32 +1140,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testDataFormatAsciiDoc() throws Exception {
-        String doc = catalog.dataFormatAsciiDoc("json-jackson");
-        assertNotNull(doc);
-        assertTrue(doc.contains("Jackson dataformat"));
-
-        doc = catalog.dataFormatAsciiDoc("bindy-csv");
-        assertNotNull(doc);
-        assertTrue(doc.contains("CsvRecord"));
-    }
-
-    @Test
-    public void testLanguageAsciiDoc() throws Exception {
-        String doc = catalog.languageAsciiDoc("jsonpath");
-        assertNotNull(doc);
-        assertTrue(doc.contains("JSonPath language"));
-    }
-
-    @Test
-    public void testOtherAsciiDoc() throws Exception {
-        String doc = catalog.otherAsciiDoc("swagger-java");
-        assertNotNull(doc);
-        assertTrue(doc.contains("Swagger"));
-    }
-
-    @Test
-    public void testValidateEndpointTwitterSpecial() throws Exception {
+    public void testValidateEndpointTwitterSpecial() {
         String uri = "twitter-search://java?{{%s}}";
 
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1177,7 +1148,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateApiEndpoint() throws Exception {
+    public void testValidateApiEndpoint() {
         // there is a type converter that converts from and to to phone number
         String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1235,7 +1206,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateEndpointTimerDuration() throws Exception {
+    public void testValidateEndpointTimerDuration() {
         String uri = "timer:foo?period=5s";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
@@ -1247,7 +1218,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateEndpointHttpPropertyPlaceholder() throws Exception {
+    public void testValidateEndpointHttpPropertyPlaceholder() {
         String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
@@ -1264,7 +1235,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateEndpointJmsDefault() throws Exception {
+    public void testValidateEndpointJmsDefault() {
         String uri = "jms:cheese?maxMessagesPerTask=-1";
 
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1274,7 +1245,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateEndpointConsumerOnly() throws Exception {
+    public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
         assertTrue(result.isSuccess());
@@ -1287,7 +1258,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateEndpointProducerOnly() throws Exception {
+    public void testValidateEndpointProducerOnly() {
         String uri = "file:outbox?bufferSize=4096&fileExist=Append";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
         assertTrue(result.isSuccess());
@@ -1317,7 +1288,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyComponent() throws Exception {
+    public void testValidateConfigurationPropertyComponent() {
         String text = "camel.component.seda.queueSize=1234";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
@@ -1353,7 +1324,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyLanguage() throws Exception {
+    public void testValidateConfigurationPropertyLanguage() {
         String text = "camel.language.tokenize.token=;";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
@@ -1374,30 +1345,30 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyDataformat() throws Exception {
-        String text = "camel.dataformat.bindy-csv.type=csv";
+    public void testValidateConfigurationPropertyDataformat() {
+        String text = "camel.dataformat.bindyCsv.type=csv";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.dataformat.bindy-csv.locale=us";
+        text = "camel.dataformat.bindyCsv.locale=us";
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        text = "camel.dataformat.bindy-csv.allowEmptyStream=abc";
+        text = "camel.dataformat.bindyCsv.allowEmptyStream=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertEquals("abc", result.getInvalidBoolean().get("camel.dataformat.bindy-csv.allowEmptyStream"));
+        assertEquals("abc", result.getInvalidBoolean().get("camel.dataformat.bindyCsv.allowEmptyStream"));
 
-        text = "camel.dataformat.bindy-csv.foo=abc";
+        text = "camel.dataformat.bindyCsv.foo=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertTrue(result.getUnknown().contains("camel.dataformat.bindy-csv.foo"));
+        assertTrue(result.getUnknown().contains("camel.dataformat.bindyCsv.foo"));
 
-        text = "camel.dataformat.bindy-csv.type=abc";
+        text = "camel.dataformat.bindyCsv.type=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
-        assertEquals("abc", result.getInvalidEnum().get("camel.dataformat.bindy-csv.type"));
-        List<String> list = result.getEnumChoices("camel.dataformat.bindy-csv.type");
+        assertEquals("abc", result.getInvalidEnum().get("camel.dataformat.bindyCsv.type"));
+        List<String> list = result.getEnumChoices("camel.dataformat.bindyCsv.type");
         assertEquals(3, list.size());
         assertEquals("Csv", list.get(0));
         assertEquals("Fixed", list.get(1));
@@ -1405,7 +1376,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyComponentQuartz() throws Exception {
+    public void testValidateConfigurationPropertyComponentQuartz() {
         String text = "camel.component.quartz.auto-start-scheduler=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
@@ -1448,49 +1419,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyComponentJClouds() throws Exception {
-        String text = "camel.component.jclouds.autowiredEnabled=true";
-        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=#myStores";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertTrue(result.getInvalidArray().containsKey("camel.component.jclouds.blobStores"));
-
-        text = "camel.component.jclouds.blobStores[0]=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1]=bar";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo]=123";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo]"));
-
-        text = "camel.component.jclouds.blobStores[0].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1].drink=no";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo].beer"));
-    }
-
-    @Test
-    public void testValidateConfigurationPropertyMain() throws Exception {
+    public void testValidateConfigurationPropertyMain() {
         String text = "camel.main.allow-use-original-message=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
@@ -1561,7 +1490,7 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyMainMap() throws Exception {
+    public void testValidateConfigurationPropertyMainMap() {
         String text = "camel.rest.api-properties=#foo";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
@@ -1589,13 +1518,78 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void validateEnvVariableInSyntax() throws Exception {
+    public void validateEnvVariableInSyntax() {
         EndpointValidationResult result
                 = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
         assertTrue(result.isSuccess());
 
         result = catalog.validateEndpointProperties("netty-http:http://foo-bar/?requestTimeout={{env:TIMEOUT}}");
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void modelFromMavenGAV() {
+        ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ftp", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(ComponentModel.class, am);
+        Assertions.assertEquals("Upload and download files to/from FTP servers.", am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(LanguageModel.class, am);
+        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL).", am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(DataFormatModel.class, am);
+        Assertions.assertEquals("Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
+                am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-unknown", catalog.getCatalogVersion());
+        Assertions.assertNull(am);
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jms", null);
+        Assertions.assertInstanceOf(ComponentModel.class, am);
+        Assertions.assertEquals("Sent and receive messages to/from a JMS Queue or Topic.", am.getDescription());
+    }
+
+    @Test
+    public void loadFooResourceWithBarKind() throws IOException {
+        InputStream is = catalog.loadResource("bar", "foo.txt");
+        Assertions.assertNotNull(is);
+
+        String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        Assertions.assertEquals("Hello Camel", content);
+    }
+
+    @Test
+    public void loadNotExistingResource() {
+        InputStream is = catalog.loadResource("bar", "not_exists");
+        Assertions.assertNull(is);
+    }
+
+    @Test
+    public void camelReleases() {
+        List<ReleaseModel> list = catalog.camelReleases();
+        Assertions.assertTrue(list.size() > 100);
+
+        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("3.20.1")).findFirst().orElse(null);
+        Assertions.assertNotNull(rel);
+        Assertions.assertEquals("3.20.1", rel.getVersion());
+        Assertions.assertEquals("2023-01-07", rel.getDate());
+        Assertions.assertEquals("2023-12-21", rel.getEol());
+        Assertions.assertEquals("lts", rel.getKind());
+    }
+
+    @Test
+    public void camelQuarkusReleases() {
+        List<ReleaseModel> list = catalog.camelQuarkusReleases();
+        Assertions.assertTrue(list.size() > 20);
+
+        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("2.13.2")).findFirst().orElse(null);
+        Assertions.assertNotNull(rel);
+        Assertions.assertEquals("2.13.2", rel.getVersion());
+        Assertions.assertEquals("2022-12-16", rel.getDate());
+        Assertions.assertEquals("2023-07-06", rel.getEol());
+        Assertions.assertEquals("lts", rel.getKind());
+        Assertions.assertEquals("11", rel.getJdk());
     }
 
 }

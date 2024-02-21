@@ -31,6 +31,7 @@
   <context:component-scan base-package="org.apache.camel.spring.produce"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
      <route>
   	   <from uri="direct:start"/>
   	   <to uri="log:TraceMessage"/>

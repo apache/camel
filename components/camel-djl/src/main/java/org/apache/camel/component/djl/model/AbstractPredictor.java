@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 
 public abstract class AbstractPredictor {
 
+    protected static final String FAILED_TO_TRANSFORM_MESSAGE = "Couldn't transform input into a BufferedImage";
+
     public abstract void process(Exchange exchange) throws Exception;
 
 }

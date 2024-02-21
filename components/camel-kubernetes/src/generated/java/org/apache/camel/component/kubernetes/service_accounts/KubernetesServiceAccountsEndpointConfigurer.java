@@ -47,6 +47,7 @@ public class KubernetesServiceAccountsEndpointConfigurer extends PropertyConfigu
         case "kubernetesClient": target.getConfiguration().setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "namespace": target.getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthtoken":
         case "oauthToken": target.getConfiguration().setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
@@ -91,6 +92,7 @@ public class KubernetesServiceAccountsEndpointConfigurer extends PropertyConfigu
         case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "namespace": return java.lang.String.class;
         case "oauthtoken":
         case "oauthToken": return java.lang.String.class;
         case "operation": return java.lang.String.class;
@@ -136,6 +138,7 @@ public class KubernetesServiceAccountsEndpointConfigurer extends PropertyConfigu
         case "kubernetesClient": return target.getConfiguration().getKubernetesClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "namespace": return target.getConfiguration().getNamespace();
         case "oauthtoken":
         case "oauthToken": return target.getConfiguration().getOauthToken();
         case "operation": return target.getConfiguration().getOperation();

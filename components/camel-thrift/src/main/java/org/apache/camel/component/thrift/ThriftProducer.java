@@ -81,7 +81,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
         Message message = exchange.getIn();
         try {
             Object outBody = ThriftUtils.invokeSyncMethod(thriftClient, configuration.getMethod(), message.getBody());
-            exchange.getOut().setBody(outBody);
+            exchange.getMessage().setBody(outBody);
         } catch (Exception e) {
             if (e.getCause() instanceof TException) {
                 exchange.setException(e.getCause());

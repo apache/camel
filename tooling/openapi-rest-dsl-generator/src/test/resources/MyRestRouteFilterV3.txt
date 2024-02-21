@@ -1,6 +1,6 @@
 package com.example;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -17,6 +17,7 @@ public final class MyRestRoute extends RouteBuilder {
 	 * Defines Apache Camel routes using REST DSL fluent API.
 	 */
 	public void configure() {
+
 		rest("/api/v3")
 			.put("/pet")
 				.id("updatePet")
@@ -27,7 +28,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Pet object that needs to be added to the store")
 				.endParam()
-				.to("direct:rest-updatePet")
+				.to("direct:rest-updatePet");
+
+		rest("/api/v3")
 			.get("/pet/findByStatus")
 				.id("findPetsByStatus")
 				.description("Multiple status values can be provided with comma separated strings")
@@ -41,7 +44,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Status values that need to be considered for filter")
 				.endParam()
-				.to("direct:rest-findPetsByStatus")
+				.to("direct:rest-findPetsByStatus");
+
+		rest("/api/v3")
 			.get("/pet/findByTags")
 				.id("findPetsByTags")
 				.description("Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
@@ -55,7 +60,9 @@ public final class MyRestRoute extends RouteBuilder {
 					.required(true)
 					.description("Tags to filter by")
 				.endParam()
-				.to("direct:rest-findPetsByTags")
+				.to("direct:rest-findPetsByTags");
+
+		rest("/api/v3")
 			.delete("/pet/{petId}")
 				.id("deletePet")
 				.param()
@@ -72,5 +79,6 @@ public final class MyRestRoute extends RouteBuilder {
 					.description("Pet id to delete")
 				.endParam()
 				.to("direct:rest-deletePet");
+
 	}
 }

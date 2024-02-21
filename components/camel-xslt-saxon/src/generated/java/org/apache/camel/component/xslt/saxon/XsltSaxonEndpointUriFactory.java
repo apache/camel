@@ -19,27 +19,32 @@ public class XsltSaxonEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(17);
-        props.add("saxonConfiguration");
-        props.add("contentCache");
-        props.add("resourceUri");
+        Set<String> props = new HashSet<>(20);
         props.add("allowStAX");
+        props.add("allowTemplateFromHeader");
+        props.add("contentCache");
         props.add("deleteOutputFile");
-        props.add("output");
-        props.add("errorListener");
-        props.add("lazyStartProducer");
         props.add("entityResolver");
-        props.add("transformerFactoryConfigurationStrategy");
-        props.add("saxonExtensionFunctions");
+        props.add("errorListener");
         props.add("failOnNullBody");
-        props.add("transformerCacheSize");
+        props.add("lazyStartProducer");
+        props.add("output");
+        props.add("resourceUri");
         props.add("resultHandlerFactory");
-        props.add("transformerFactoryClass");
+        props.add("saxonConfiguration");
+        props.add("saxonExtensionFunctions");
+        props.add("secureProcessing");
+        props.add("transformerCacheSize");
         props.add("transformerFactory");
+        props.add("transformerFactoryClass");
+        props.add("transformerFactoryConfigurationStrategy");
         props.add("uriResolver");
+        props.add("xsltMessageLogger");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -67,6 +72,11 @@ public class XsltSaxonEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

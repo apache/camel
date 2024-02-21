@@ -34,7 +34,7 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     private final CatalogCamelContext camelContext;
 
     public CamelContextJSonSchemaResolver(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(CatalogCamelContext.class);
+        this.camelContext = (CatalogCamelContext) camelContext;
     }
 
     @Override
@@ -66,6 +66,16 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     public String getLanguageJSonSchema(String name) {
         try {
             return camelContext.getLanguageParameterJsonSchema(name);
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    @Override
+    public String getTransformerJSonSchema(String name) {
+        try {
+            return camelContext.getTransformerParameterJsonSchema(name);
         } catch (IOException e) {
             // ignore
         }

@@ -35,10 +35,13 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisabledOnOs(OS.MAC)
 public class IgniteComputeTest extends AbstractIgniteTest {
 
     private static final List<Ignite> ADDITIONAL_INSTANCES = Lists.newArrayList();
@@ -136,15 +139,13 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_CALLABLE,
                 Collection.class);
-        Assertions.assertThat(colResult).isNotNull();
-        Assertions.assertThat(colResult).containsExactly("hello", "hello", "hello");
+        Assertions.assertThat(colResult).isNotNull().containsExactly("hello", "hello", "hello");
 
         // Single Closure.
         colResult = template.requestBodyAndHeader("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_CLOSURE,
                 IgniteConstants.IGNITE_COMPUTE_PARAMS, "Camel", Collection.class);
-        Assertions.assertThat(colResult).isNotNull();
-        Assertions.assertThat(colResult).containsExactly("hello Camel", "hello Camel", "hello Camel");
+        Assertions.assertThat(colResult).isNotNull().containsExactly("hello Camel", "hello Camel", "hello Camel");
     }
 
     @Test

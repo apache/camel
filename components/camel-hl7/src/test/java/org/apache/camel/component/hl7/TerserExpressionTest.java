@@ -38,7 +38,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(PATIENT_ID);
         template.sendBody("direct:test1", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test2");
         mock.expectedMessageCount(1);
         template.sendBody("direct:test2", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,17 +54,21 @@ public class TerserExpressionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test3");
         mock.expectedMessageCount(1);
         template.sendBody("direct:test3", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testTerserInvalidExpression() throws Exception {
+        final Message adt01Message = createADT01Message();
+
         assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:test4", createADT01Message()));
+                () -> {
+                    template.sendBody("direct:test4", adt01Message);
+                });
     }
 
     @Test
-    public void testTerserInvalidMessage() throws Exception {
+    public void testTerserInvalidMessage() {
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:test4", "text instead of message"));
     }
@@ -75,16 +79,16 @@ public class TerserExpressionTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(PATIENT_ID);
         template.sendBody("direct:test5", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         final TerserBean terserBean = new TerserBean();
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").transform(hl7terser("PID-3-1")).to("mock:test1");
                 from("direct:test2").filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
                 from("direct:test3").filter(hl7terser("PID-4-1").isNull()).to("mock:test3");

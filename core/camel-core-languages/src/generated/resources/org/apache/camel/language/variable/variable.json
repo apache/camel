@@ -1,0 +1,23 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "variable",
+    "title": "Variable",
+    "description": "Gets a variable",
+    "deprecated": false,
+    "firstVersion": "4.4.0",
+    "label": "language,core",
+    "javaType": "org.apache.camel.language.variable.VariableLanguage",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-languages",
+    "version": "4.5.0-SNAPSHOT",
+    "modelName": "variable",
+    "modelJavaType": "org.apache.camel.model.language.VariableExpression"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "expression": { "index": 1, "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "trim": { "index": 2, "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" }
+  }
+}

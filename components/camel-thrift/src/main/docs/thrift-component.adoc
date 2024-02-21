@@ -1,12 +1,14 @@
-[[thrift-component]]
 = Thrift Component
-:docTitle: Thrift
-:artifactId: camel-thrift
+:doctitle: Thrift
+:shortname: thrift
+:artifactid: camel-thrift
 :description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
 :since: 2.20
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/thrift.adoc[opts=optional]
+//Manually maintained attributes
+:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -30,76 +32,33 @@ for this component:
 
 == URI format
 
-[source,java]
 -------------------------------------
 thrift://service[?options]
 -------------------------------------
 
-== Endpoint Options
+
+
+// component-configure options: START
+
+// component-configure options: END
 
 // component options: START
-The Thrift component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *useGlobalSslContextParameters* (security) | Determine if the thrift component is using global SSL context parameters | false | boolean
-|===
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-The Thrift endpoint is configured using URI syntax:
 
-----
-thrift:host:port/service
-----
-
-with the following path and query parameters:
-
-=== Path Parameters (3 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *host* | The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server host name when using producer. |  | String
-| *port* | *Required* The Thrift server port |  | int
-| *service* | *Required* Fully qualified service name from the thrift descriptor file (package dot service definition name) |  | String
-|===
-
-
-=== Query Parameters (13 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *compressionType* (common) | Protocol compression mechanism type. There are 2 enums and the value can be one of: NONE, ZLIB | NONE | ThriftCompressionType
-| *exchangeProtocol* (common) | Exchange protocol serialization type. There are 4 enums and the value can be one of: BINARY, JSON, SJSON, COMPACT | BINARY | ThriftExchangeProtocol
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *clientTimeout* (consumer) | Client timeout for consumers |  | int
-| *maxPoolSize* (consumer) | The Thrift server consumer max thread pool size | 10 | int
-| *poolSize* (consumer) | The Thrift server consumer initial thread pool size | 1 | int
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *method* (producer) | The Thrift invoked method name |  | String
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used | false | boolean
-| *negotiationType* (security) | Security negotiation type. There are 3 enums and the value can be one of: PLAINTEXT, SSL, SASL | PLAINTEXT | ThriftNegotiationType
-| *sslParameters* (security) | Configuration parameters for SSL/TLS security negotiation |  | SSLContextParameters
-|===
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Thrift method parameters mapping
 
 Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.
-In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an exmaple below, how to pass
+In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an example below, how to pass
 different parameters to the method with the Camel body
 [source,java]
 -------------------------------------------------------------------------------
@@ -122,17 +81,6 @@ Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody
 -------------------------------------------------------------------------------
 
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
-
-
-== Thrift consumer headers (will be installed after the consumer invocation)
-
-[width="100%",cols="25%,50,25%",options="header",]
-|=======================================================================
-|Header name |Description|Possible values
-
-|*CamelThriftMethodName*|Method name handled by the consumer service|
-
-|=======================================================================
 
 == Examples
 
@@ -170,4 +118,5 @@ https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
 
 
-include::camel-spring-boot::page$thrift-starter.adoc[]
+
+include::spring-boot:partial$starter.adoc[]

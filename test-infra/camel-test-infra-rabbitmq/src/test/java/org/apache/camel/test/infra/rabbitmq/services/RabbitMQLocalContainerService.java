@@ -17,18 +17,37 @@
 
 package org.apache.camel.test.infra.rabbitmq.services;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rabbitmq.common.RabbitMQProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
-public class RabbitMQLocalContainerService implements RabbitMQService {
+public class RabbitMQLocalContainerService implements RabbitMQService, ContainerService<RabbitMQContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQLocalContainerService.class);
 
-    private final RabbitMQContainer container = new RabbitMQContainer("rabbitmq:3.8-management");
+    private final RabbitMQContainer container;
 
     public RabbitMQLocalContainerService() {
+        this(LocalPropertyResolver.getProperty(RabbitMQLocalContainerService.class, RabbitMQProperties.RABBITMQ_CONTAINER));
+    }
 
+    public RabbitMQLocalContainerService(String imageName) {
+        container = initContainer(imageName);
+    }
+
+    public RabbitMQLocalContainerService(RabbitMQContainer container) {
+        this.container = container;
+    }
+
+    protected RabbitMQContainer initContainer(String imageName) {
+        return new RabbitMQContainer(imageName);
+    }
+
+    @Override
+    public RabbitMQContainer getContainer() {
+        return container;
     }
 
     @Override

@@ -34,7 +34,7 @@ public class XQueryRecipientListTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<person name='James' city='London'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class XQueryRecipientListTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

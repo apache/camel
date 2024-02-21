@@ -50,7 +50,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         FIND_ANY_PATTERN = Pattern.compile("(?s).*");
     }
 
-    private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
+    private static final Map<String, Pattern> CACHE = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Entry<String, Pattern> eldest) {
             return size() >= 7;
@@ -63,9 +63,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     private static final int BUFFER_SIZE = 1024;
 
-    private Readable source;
-    private Pattern delimPattern;
-    private Matcher matcher;
+    private final Readable source;
+    private final Pattern delimPattern;
+    private final Matcher matcher;
     private CharBuffer buf;
     private int position;
     private boolean inputExhausted;
@@ -120,7 +120,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     @Override
     public boolean hasNext() {
-        checkClosed();
+        if (closed) {
+            return false;
+        }
         saveState();
         while (!inputExhausted) {
             if (hasTokenInBuffer()) {
@@ -255,7 +257,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
         matcher.region(position, buf.limit());
         boolean foundNextDelim = matcher.find();
-        if (foundNextDelim && (matcher.end() == position)) {
+        if (foundNextDelim && matcher.end() == position) {
             foundNextDelim = matcher.find();
         }
         if (foundNextDelim) {

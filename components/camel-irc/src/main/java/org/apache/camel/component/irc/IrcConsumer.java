@@ -66,7 +66,8 @@ public class IrcConsumer extends DefaultConsumer {
         try {
             Thread.sleep(configuration.getCommandTimeout());
         } catch (InterruptedException ex) {
-            // ignore
+            LOG.info("Interrupted while sleeping before sending commands");
+            Thread.currentThread().interrupt();
         }
         if (ObjectHelper.isNotEmpty(configuration.getNickPassword())) {
             LOG.debug("Identifying and enforcing nick with NickServ.");

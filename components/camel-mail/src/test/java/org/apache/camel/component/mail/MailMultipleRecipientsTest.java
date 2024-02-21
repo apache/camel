@@ -20,15 +20,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test to verify that we can have multiple recipients in To, CC and BCC
  */
 public class MailMultipleRecipientsTest extends CamelTestSupport {
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
+    private static final MailboxUser hadrian = Mailbox.getOrCreateUser("hadrian", "secret");
+    private static final MailboxUser tracy = Mailbox.getOrCreateUser("tracy", "secret");
 
     @Test
     public void testSendWithMultipleRecipientsInHeader() throws Exception {
@@ -45,10 +50,10 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         assertMailbox("hadrian");
         assertMailbox("tracy");
 
-        template.sendBodyAndHeaders("smtp://localhost", "Hello World", headers);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), "Hello World", headers);
         // END SNIPPET: e1
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,30 +66,31 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e2
         // here we have pre configured the to receivers to claus and willem. Notice we use comma to separate
         // the two recipients. Camel also support using colon as separator char
-        template.sendBody("smtp://localhost?to=claus@localhost,willem@localhost&cc=james@localhost", "Hello World");
+        template.sendBody(claus.uriPrefix(Protocol.smtp) + "&to=claus@localhost,willem@localhost&cc=james@localhost",
+                "Hello World");
         // END SNIPPET: e2
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
-    private void assertMailbox(String name) throws Exception {
+    private void assertMailbox(String name) {
         MockEndpoint mock = getMockEndpoint("mock:" + name);
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello World\r\n");
         mock.expectedHeaderReceived("cc", "james@localhost");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("pop3://claus@localhost?initialDelay=100&delay=100").to("mock:claus");
+            public void configure() {
+                from(claus.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:claus");
 
-                from("pop3://willem@localhost?initialDelay=100&delay=100").to("mock:willem");
+                from(willem.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:willem");
 
-                from("pop3://hadrian@localhost?initialDelay=100&delay=100").to("mock:hadrian");
+                from(hadrian.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:hadrian");
 
-                from("pop3://tracy@localhost?initialDelay=100&delay=100").to("mock:tracy");
+                from(tracy.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:tracy");
             }
         };
     }

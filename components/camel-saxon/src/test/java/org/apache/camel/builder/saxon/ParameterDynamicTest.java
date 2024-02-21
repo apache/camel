@@ -59,7 +59,7 @@ public class ParameterDynamicTest {
      * This is what Camel XQueryBuilder executes, which leads to a parameter binding type error.
      */
     @Test
-    public void testObjectParameter() throws Exception {
+    public void testObjectParameter() {
         context.setParameter(StructuredQName.fromClarkName("extParam"), new ObjectValue<>(true));
         try {
             Item result = query.iterator(context).next();
@@ -83,7 +83,7 @@ public class ParameterDynamicTest {
     }
 
     @Test
-    public void testXQueryBuilder() throws Exception {
+    public void testXQueryBuilder() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 

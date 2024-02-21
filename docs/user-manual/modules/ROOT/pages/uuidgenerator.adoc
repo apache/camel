@@ -1,10 +1,8 @@
-[[UuidGenerator-UuidGenerator]]
 = UuidGenerator
 
-Starting with *Camel 2.5*, Camel supports 3rd party UUID generator(s).
-This is useful, if e.g. your messaging provider does not support UUID's
-with a length of 36 characters (like Websphere MQ). Another useful
-scenario is to use a simple counter for testing purpose. With this it is
+Camel supports 3rd party UUID generator(s).
+
+A useful scenario is to use a simple counter for testing purpose. With this it is
 easier to correlate the exchanges in the log/debugger.
 
 Camel uses UUIDs in the exchange and message ids, and other unique ids
@@ -13,23 +11,15 @@ it uses.
 You only have to implement `org.apache.camel.spi.UuidGenerator` and tell
 Camel, that it should use your custom implementation:
 
-[[UuidGenerator-ConfiguringfromJavaDSL]]
-== Configuring from Java DSL
+== Configuring UuidGenerator
 
 [source,java]
 ----
 getContext().setUuidGenerator(new MyCustomUuidGenerator());
 ----
 
-Warning: You should not change the UUID generator at runtime (it should only be
-set once)!
-
-[[UuidGenerator-ConfiguringfromSpringDSL]]
-== Configuring from XML DSL
-
 Camel will configure this UUID generator by doing a lookup in the Spring
-bean registry to find the bean of the type
-`org.apache.camel.spi.UuidGenerator`.
+bean registry to find the bean of the type `org.apache.camel.spi.UuidGenerator`.
 
 [source,xml]
 ----
@@ -43,18 +33,13 @@ bean registry to find the bean of the type
 </camelContext>
 ----
 
-[[UuidGenerator-Providedimplementations]]
-== Provided implementations
+== Standard UUID Generators
 
-Camel comes with three implementations of
-`org.apache.camel.spi.UuidGenerator`:
+Camel comes with the following implementations out of the box:
 
+* `org.apache.camel.support.ClassicUuidGenerator` - This is the classic Camel 2.x generator
+* `org.apache.camel.support.DefaultUuidGenerator` - Default generator (32 chars) optimized for Camel usage
+* `org.apache.camel.support.ShortUuidGenerator` - Is 50% the size of the default (16 chars) optimized for Camel usage
 * `org.apache.camel.support.SimpleUuidGenerator` - This implementation uses
 internally a `java.util.concurrent.atomic.AtomicLong` and increases the
 ID for every call by one. Starting with 1 as the first id.
-* `org.apache.camel.support.VanillaUuidGenerator` - This implementation uses
-a random generated seed and a counter which increments by one. This generator
-is not unique per host or JVM.
-* `org.apache.camel.impl.engine.DefaultUuidGenerator` - This implementation
-uses a fast unique UUID generation that is cluster safe (similar to uuid
-generator in ActiveMQ). This is the default implementation in use by Camel.

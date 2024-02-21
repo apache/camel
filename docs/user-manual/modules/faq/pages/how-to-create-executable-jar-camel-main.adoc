@@ -1,10 +1,15 @@
-[[HowtocreateexecutableJARcamelmain-HowtocreateexecutableJARcamelmain]]
 = How to create executable JAR for camel-main project
+
+== Fat jar with camel-maven-plugin
+
+In Camel 3.10 onwards you can use the camel-maven-plugin to
+(https://github.com/apache/camel/blob/main/tooling/maven/camel-maven-plugin/src/main/docs/camel-maven-plugin.adoc#camelprepare-fatjar)[prepare a fat jar].
+
+== Using maven-shade-plugin
 
 You need to use `maven-shade-plugin` to create executable JAR.
 Be aware that uber jar is not fully tested feature and it is Your responsibility to ensure all services are fully functional.
 You might need some modifications, depending on Your project structure.
-See xref:how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?] for more details.
 
 [source]
 ----

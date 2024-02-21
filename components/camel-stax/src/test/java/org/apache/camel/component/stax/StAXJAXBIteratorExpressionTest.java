@@ -41,7 +41,7 @@ public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
     public RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("file:target/in")
                         // split the file using StAX (the stax method is from StAXBuilder)

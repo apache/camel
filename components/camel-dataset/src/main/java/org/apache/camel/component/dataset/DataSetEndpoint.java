@@ -46,7 +46,8 @@ import org.slf4j.LoggerFactory;
  * data set is received. Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-             category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+             remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true,
+             headersClass = DataSetConstants.class)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -122,7 +123,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         if (!getDataSetIndex().equals("off")) {
             Message in = exchange.getIn();
-            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+            in.setHeader(DataSetConstants.DATASET_INDEX, messageIndex);
         }
 
         return exchange;
@@ -211,10 +212,12 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off => the header will not be set -
-     * strict/lenient => the header will be set For Producers: - off => the header value will not be verified, and will
-     * not be set if it is not present = strict => the header value must be present and will be verified = lenient =>
-     * the header value will be verified if it is present, and will be set if it is not present
+     * Controls the behaviour of the CamelDataSetIndex header.
+     *
+     * off (consumer) the header will not be set. strict (consumer) the header will be set. lenient (consumer) the
+     * header will be set. off (producer) the header value will not be verified, and will not be set if it is not
+     * present. strict (producer) the header value must be present and will be verified. lenient (producer) the header
+     * value will be verified if it is present, and will be set if it is not present.
      */
     public void setDataSetIndex(String dataSetIndex) {
         switch (dataSetIndex) {
@@ -245,12 +248,11 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now let's assert that they are the same
         if (log.isDebugEnabled()) {
-            if (copy.getIn().getHeader(Exchange.DATASET_INDEX) != null) {
+            if (copy.getIn().getHeader(DataSetConstants.DATASET_INDEX) != null) {
                 log.debug("Received message: {} (DataSet index={}) = {}",
-                        new Object[] { index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy });
+                        index, copy.getIn().getHeader(DataSetConstants.DATASET_INDEX, Integer.class), copy);
             } else {
-                log.debug("Received message: {} = {}",
-                        new Object[] { index, copy });
+                log.debug("Received message: {} = {}", index, copy);
             }
         }
 
@@ -266,18 +268,18 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
             case "off":
                 break;
             case "strict":
-                long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
-                assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+                long actualCounter = ExchangeHelper.getMandatoryHeader(actual, DataSetConstants.DATASET_INDEX, Long.class);
+                assertEquals("Header: " + DataSetConstants.DATASET_INDEX, index, actualCounter, actual);
                 break;
             case "lenient":
             default:
                 // Validate the header value if it is present
-                Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
+                Long dataSetIndexHeaderValue = actual.getIn().getHeader(DataSetConstants.DATASET_INDEX, Long.class);
                 if (dataSetIndexHeaderValue != null) {
-                    assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
+                    assertEquals("Header: " + DataSetConstants.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
                 } else {
                     // set the header if it isn't there
-                    actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
+                    actual.getIn().setHeader(DataSetConstants.DATASET_INDEX, index);
                 }
                 break;
         }
@@ -302,7 +304,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
             reporter = createReporter();
         }
 
-        log.info("{} expecting {} messages", this, getExpectedCount());
+        log.debug("{} expecting {} messages", this, getExpectedCount());
     }
 
 }

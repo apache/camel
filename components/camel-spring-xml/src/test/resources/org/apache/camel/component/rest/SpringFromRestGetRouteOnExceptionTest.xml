@@ -32,24 +32,28 @@
   <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <rest path="/say/hello">
       <get>
-        <route>
-          <onException>
-            <exception>java.lang.IllegalArgumentException</exception>
-            <handled>
-              <constant>true</constant>
-            </handled>
-            <transform>
-              <constant>Handled the error</constant>
-            </transform>
-          </onException>
-          <to uri="mock:hello"/>
-          <throwException ref="darn"/>
-        </route>
+        <to uri="direct:hello"/>
       </get>
     </rest>
+
+    <route>
+      <from uri="direct:hello"/>
+      <onException>
+        <exception>java.lang.IllegalArgumentException</exception>
+        <handled>
+          <constant>true</constant>
+        </handled>
+        <transform>
+          <constant>Handled the error</constant>
+        </transform>
+      </onException>
+      <to uri="mock:hello"/>
+      <throwException ref="darn"/>
+    </route>
 
   </camelContext>
 

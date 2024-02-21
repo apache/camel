@@ -17,8 +17,6 @@
 package org.apache.camel.itest.tx;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.test.AvailablePortFinder;
 
@@ -35,11 +33,9 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
         port = AvailablePortFinder.getNextAvailable();
 
         // if its a 404 then regard it as handled
-        onException(HttpOperationFailedException.class).onWhen(new Predicate() {
-            public boolean matches(Exchange exchange) {
-                HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
-                return e != null && e.getStatusCode() == 404;
-            }
+        onException(HttpOperationFailedException.class).onWhen(exchange -> {
+            HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
+            return e != null && e.getStatusCode() == 404;
         }).handled(true).to("mock:404").transform(constant(noAccess));
 
         from("activemq:queue:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
@@ -64,30 +60,28 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 .end();
 
         // this is our http router
-        from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) {
-                // first hit is always a error code 500 to force the caller to retry
-                if (counter++ < 1) {
-                    // simulate http error 500
-                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                    exchange.getMessage().setBody("Damn some internal server error");
-                    return;
-                }
-
-                String user = exchange.getIn().getHeader("user", String.class);
-                if ("unknown".equals(user)) {
-                    // no page for a unknown user
-                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                    exchange.getMessage().setBody("Page does not exists");
-                    return;
-                } else if ("guest".equals(user)) {
-                    // not okay for guest user
-                    exchange.getMessage().setBody(nok);
-                    return;
-                }
-
-                exchange.getMessage().setBody(ok);
+        from("jetty:http://localhost:" + port + "/sender").process(exchange -> {
+            // first hit is always a error code 500 to force the caller to retry
+            if (counter++ < 1) {
+                // simulate http error 500
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                exchange.getMessage().setBody("Damn some internal server error");
+                return;
             }
+
+            String user = exchange.getIn().getHeader("user", String.class);
+            if ("unknown".equals(user)) {
+                // no page for a unknown user
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                exchange.getMessage().setBody("Page does not exist");
+                return;
+            } else if ("guest".equals(user)) {
+                // not okay for guest user
+                exchange.getMessage().setBody(nok);
+                return;
+            }
+
+            exchange.getMessage().setBody(ok);
         });
     }
 

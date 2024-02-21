@@ -23,22 +23,18 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMicrometerProducer<Timer> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TimerProducer.class);
 
     public TimerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected Function<MeterRegistry, Timer> registrar(String name, Iterable<Tag> tags) {
-        return meterRegistry -> meterRegistry.timer(name, tags);
+    protected Function<MeterRegistry, Timer> registrar(String name, String description, Iterable<Tag> tags) {
+        return meterRegistry -> Timer.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override
@@ -50,7 +46,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, String metricsName, Iterable<Tag> tags) {
+    protected void doProcess(Exchange exchange, String metricsName, String metricsDescription, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
         Message in = exchange.getIn();
         MicrometerTimerAction action = simple(exchange, getEndpoint().getAction(), MicrometerTimerAction.class);
@@ -58,15 +54,13 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
         if (finalAction == MicrometerTimerAction.start) {
             handleStart(exchange, registry, metricsName);
         } else if (finalAction == MicrometerTimerAction.stop) {
-            handleStop(exchange, metricsName, tags);
-        } else {
-            LOG.warn("No action provided for timer \"{}\"", metricsName);
+            handleStop(exchange, metricsName, metricsDescription, tags);
         }
     }
 
-    private void handleStop(Exchange exchange, String metricsName, Iterable<Tag> tags) {
+    private void handleStop(Exchange exchange, String metricsName, String metricsDescription, Iterable<Tag> tags) {
         if (getTimerSampleFromExchange(exchange, getPropertyName(metricsName)) != null) {
-            doProcess(exchange, getEndpoint(), getOrRegisterMeter(metricsName, tags));
+            doProcess(exchange, getEndpoint(), getOrRegisterMeter(metricsName, metricsDescription, tags));
         }
     }
 
@@ -76,8 +70,6 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
         if (sample == null) {
             sample = Timer.start(registry);
             exchange.setProperty(propertyName, sample);
-        } else {
-            LOG.warn("Timer \"{}\" already running", metricsName);
         }
     }
 

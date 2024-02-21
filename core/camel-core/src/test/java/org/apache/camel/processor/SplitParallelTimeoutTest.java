@@ -16,30 +16,46 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated
+@Timeout(60)
 public class SplitParallelTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;
     private volatile int receivedIndex;
     private volatile int receivedTotal;
     private volatile long receivedTimeout;
+    private final Phaser phaser = new Phaser(3);
 
-    @Test
+    @BeforeEach
+    void sendEarly() {
+        Assumptions.assumeTrue(context.isStarted(), "The test cannot be run because the context is not started");
+        template.sendBody("direct:start", "A,B,C");
+    }
+
+    @RepeatedTest(10)
     public void testSplitParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
         mock.message(0).body().not(body().contains("A"));
 
-        template.sendBody("direct:start", "A,B,C");
+        phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
 
         assertMockEndpointsSatisfied();
 
@@ -54,18 +70,22 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
-                        .choice().when(body().isEqualTo("A")).to("direct:a")
-                        .when(body().isEqualTo("B")).to("direct:b").when(body().isEqualTo("C")).to("direct:c").end() // end
+                from("direct:start")
+                        .split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
+                        .choice()
+                            .when(body().isEqualTo("A")).to("direct:a")
+                            .when(body().isEqualTo("B")).to("direct:b")
+                            .when(body().isEqualTo("C")).to("direct:c")
+                            .end() // end
                         // choice
                         .end() // end split
                         .to("mock:result");
 
-                from("direct:a").delay(200).setBody(constant("A"));
+                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(200).setBody(constant("A"));
 
-                from("direct:b").setBody(constant("B"));
+                from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("B"));
 
-                from("direct:c").delay(10).setBody(constant("C"));
+                from("direct:c").process(e -> phaser.arriveAndAwaitAdvance()).delay(10).setBody(constant("C"));
             }
         };
     }

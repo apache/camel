@@ -1,0 +1,42 @@
+{
+  "id" : "c783b5d3-461c-4e0e-9ed9-838a1d134d9e",
+  "name" : "api_v3_ticker_24hr",
+  "request" : {
+    "url" : "/api/v3/ticker/24hr?symbol=EOSETH",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"symbol\":\"EOSETH\",\"priceChange\":\"0.00000700\",\"priceChangePercent\":\"0.763\",\"weightedAvgPrice\":\"0.00094579\",\"prevClosePrice\":\"0.00091900\",\"lastPrice\":\"0.00092500\",\"lastQty\":\"529.10000000\",\"bidPrice\":\"0.00092500\",\"bidQty\":\"454.60000000\",\"askPrice\":\"0.00092600\",\"askQty\":\"1599.30000000\",\"openPrice\":\"0.00091800\",\"highPrice\":\"0.00099000\",\"lowPrice\":\"0.00091200\",\"volume\":\"266500.80000000\",\"quoteVolume\":\"252.05406430\",\"openTime\":1662374695385,\"closeTime\":1662461095385,\"firstId\":23227582,\"lastId\":23229771,\"count\":2190}",
+    "headers" : {
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Date" : "Tue, 06 Sep 2022 10:44:55 GMT",
+      "Server" : "nginx",
+      "Vary" : "Accept-Encoding",
+      "x-mbx-uuid" : "e564f738-cb2e-4a33-aea2-43d53c1f9494",
+      "x-mbx-used-weight" : "12",
+      "x-mbx-used-weight-1m" : "12",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains",
+      "X-Frame-Options" : "SAMEORIGIN",
+      "X-Xss-Protection" : "1; mode=block",
+      "X-Content-Type-Options" : "nosniff",
+      "Content-Security-Policy" : "default-src 'self'",
+      "X-Content-Security-Policy" : "default-src 'self'",
+      "X-WebKit-CSP" : "default-src 'self'",
+      "Cache-Control" : "no-cache, no-store, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "Access-Control-Allow-Origin" : "*",
+      "Access-Control-Allow-Methods" : "GET, HEAD, OPTIONS",
+      "X-Cache" : "Miss from cloudfront",
+      "Via" : "1.1 50bea678ec8eb5af41be54d11f9c4872.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Pop" : "CDG50-C1",
+      "X-Amz-Cf-Id" : "ETBATVeU45RBl7u4xBtfcRKenJ1X6LjjZkZvlGcl9EC4DDzOTydEIw=="
+    }
+  },
+  "uuid" : "c783b5d3-461c-4e0e-9ed9-838a1d134d9e",
+  "persistent" : true,
+  "scenarioName" : "scenario-1-api-v3-ticker-24hr",
+  "requiredScenarioState" : "scenario-1-api-v3-ticker-24hr-2",
+  "insertionIndex" : 17
+}

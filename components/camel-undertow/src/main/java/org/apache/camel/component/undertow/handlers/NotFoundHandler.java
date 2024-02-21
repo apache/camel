@@ -26,7 +26,7 @@ import io.undertow.util.Headers;
 public class NotFoundHandler implements HttpHandler {
 
     @Override
-    public void handleRequest(HttpServerExchange exchange) throws Exception {
+    public void handleRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(404);
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
         exchange.getResponseSender().send("No matching path found");

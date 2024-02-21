@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
@@ -30,19 +30,20 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
+
     @XmlAttribute(required = true)
-    private String headerName;
+    private String name;
 
     public RemoveHeaderDefinition() {
     }
 
     public RemoveHeaderDefinition(String headerName) {
-        setHeaderName(headerName);
+        setName(headerName);
     }
 
     @Override
     public String toString() {
-        return "RemoveHeader[" + getHeaderName() + "]";
+        return "RemoveHeader[" + getName() + "]";
     }
 
     @Override
@@ -52,17 +53,18 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
 
     @Override
     public String getLabel() {
-        return "removeHeader[" + getHeaderName() + "]";
+        return "removeHeader[" + getName() + "]";
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
      * Name of header to remove
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
 }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-ws</artifactId>
@@ -33,17 +33,7 @@
     <description>Camel support for Spring Web Services</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.springframework.beans.*;version="${spring-version-range}",
-            org.springframework.util.*;version="${spring-version-range}",
-            org.springframework.ws.*;version="[3,4)",
-            org.springframework.xml.*;version="[3,4)",
-            javax.activation.*;version="${javax-activation-version-range}",
-            javax.xml.soap*;version="[1.3,2)"
-        </camel.osgi.import.before.defaults>
-        <!-- for some weird reason org.springframework.ws and org.springframework.xml
-              will have import-ranges of [2,3) by the bundle plugin, so we
-              need to override it here -->
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -65,10 +55,15 @@
             <artifactId>camel-xslt-saxon</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail-version}</version>
         </dependency>
 
         <!-- spring -->
@@ -87,6 +82,28 @@
             <artifactId>spring-ws-support</artifactId>
             <version>${spring-ws-version}</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${jakarta-xml-soap-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>3.0.3</version>
+            <exclusions>
+                <exclusion>
+                   <!--Get dependency from jaxb-runtime-->
+                   <groupId>org.jvnet.staxex</groupId>
+                   <artifactId>stax-ex</artifactId>
+                 </exclusion>
+            </exclusions>
+         </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -102,32 +119,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-security</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -149,6 +143,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${httpclient4-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -169,11 +164,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.javacrumbs</groupId>
             <artifactId>spring-ws-test</artifactId>
             <version>${javacrumbs-version}</version>
@@ -183,14 +173,6 @@
                     <artifactId>xmlunit</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-osgi</artifactId>
-            <version>${jaxb-osgi-version}</version>
             <scope>test</scope>
         </dependency>
 

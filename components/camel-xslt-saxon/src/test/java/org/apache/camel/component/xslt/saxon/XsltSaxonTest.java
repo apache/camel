@@ -55,7 +55,7 @@ public class XsltSaxonTest extends CamelTestSupport {
 
         template.sendBody("direct:start", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -69,9 +69,9 @@ public class XsltSaxonTest extends CamelTestSupport {
         assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xslt-saxon:xslt/transform.xsl")
                         .to("mock:result");

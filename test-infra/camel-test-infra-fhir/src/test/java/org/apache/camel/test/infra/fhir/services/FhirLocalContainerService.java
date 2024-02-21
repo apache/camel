@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.fhir.services;
 
+import java.time.Duration;
+
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.fhir.common.FhirProperties;
 import org.slf4j.Logger;
@@ -25,31 +28,36 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class FhirLocalContainerService implements FhirService, ContainerService<GenericContainer> {
     // needs https://github.com/hapifhir/hapi-fhir-jpaserver-starter/commit/54120f374eea5084634830d34c99a9137b22a310
-    public static final String CONTAINER_IMAGE = "hapiproject/hapi:v4.2.0";
     public static final String CONTAINER_NAME = "fhir";
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirLocalContainerService.class);
 
-    private GenericContainer container;
+    private final GenericContainer container;
 
     public FhirLocalContainerService() {
-        String containerName = System.getProperty("fhir.container", CONTAINER_IMAGE);
-
-        initContainer(containerName);
+        this(LocalPropertyResolver.getProperty(
+                FhirLocalContainerService.class,
+                FhirProperties.FHIR_CONTAINER));
     }
 
-    public FhirLocalContainerService(String containerName) {
-        initContainer(containerName);
+    public FhirLocalContainerService(String imageName) {
+        container = initContainer(imageName, CONTAINER_NAME);
     }
 
-    protected void initContainer(String containerName) {
-        container = new GenericContainer(containerName)
-                .withNetworkAliases(CONTAINER_NAME)
+    public FhirLocalContainerService(GenericContainer container) {
+        this.container = container;
+    }
+
+    protected GenericContainer initContainer(String imageName, String containerName) {
+        return new GenericContainer(imageName)
+                .withNetworkAliases(containerName)
                 .withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT)
-                .withEnv("HAPI_FHIR_VERSION", "DSTU3")
-                .withEnv("HAPI_REUSE_CACHED_SEARCH_RESULTS_MILLIS", "-1")
+                .withStartupTimeout(Duration.ofMinutes(3L))
+                .withEnv("hapi.fhir.allow_multiple_delete", "true")
+                .withEnv("hapi.fhir.fhir_version", "R4")
+                .withEnv("hapi.fhir.reuse_cached_search_results_millis", "-1")
                 .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forHttp("/hapi-fhir-jpaserver/fhir/metadata"));
+                .waitingFor(Wait.forHttp("/fhir/metadata").withStartupTimeout(Duration.ofMinutes(3L)));
     }
 
     @Override
@@ -82,8 +90,8 @@ public class FhirLocalContainerService implements FhirService, ContainerService<
     @Override
     public String getServiceBaseURL() {
         return String.format(
-                "http://%s:%d/hapi-fhir-jpaserver/fhir",
-                container.getContainerIpAddress(),
+                "http://%s:%d/fhir",
+                container.getHost(),
                 container.getMappedPort(FhirProperties.DEFAULT_SERVICE_PORT));
     }
 

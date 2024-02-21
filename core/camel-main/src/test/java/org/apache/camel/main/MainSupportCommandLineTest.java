@@ -19,11 +19,12 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MainSupportCommandLineTest {
 
-    private class MyMainSupport extends MainCommandLineSupport {
+    private static class MyMainSupport extends MainCommandLineSupport {
 
         private CamelContext context = new DefaultCamelContext();
 
@@ -44,20 +45,23 @@ public class MainSupportCommandLineTest {
     }
 
     @Test
-    public void testMainSupport() throws Exception {
+    public void testMainSupport() {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[] { "-d", "1" });
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1" }));
+        Assertions.assertEquals(0, ret, "The code should return 0 when -d, 1 is requested");
     }
 
     @Test
     public void testMainSupportMaxMessages() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[] { "-d", "1", "-dm", "2" });
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1", "-dm", "2" }));
+        Assertions.assertEquals(0, ret, "The code should return 0 when -d, 1, -dm, 2 is requested");
     }
 
     @Test
     public void testMainSupportHelp() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[] { "-h" });
+        final int ret = Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-h" }));
+        Assertions.assertEquals(0, ret, "The code should return 0 when -h is requested");
     }
 }

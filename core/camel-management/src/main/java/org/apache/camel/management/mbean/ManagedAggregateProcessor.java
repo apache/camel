@@ -23,7 +23,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed AggregateProcessor")
 public class ManagedAggregateProcessor extends ManagedProcessor implements ManagedAggregateProcessorMBean {
@@ -32,11 +31,6 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
     public ManagedAggregateProcessor(CamelContext context, AggregateProcessor processor, AggregateDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
-    }
-
-    @Override
-    public void init(ManagementStrategy strategy) {
-        super.init(strategy);
     }
 
     @Override

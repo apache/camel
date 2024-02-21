@@ -25,12 +25,13 @@ import org.apache.camel.StaticService;
 /**
  * Strategy for management.
  * <p/>
- * This is totally pluggable allowing to use a custom or 3rd party management implementation with Camel.
+ * If JMX is detected (camel-management JAR on the classpath) then org.apache.camel.management.JmxManagementStrategy is
+ * in use. Otherwise, the DefaultManagementStrategy is in use.
+ * <p/>
+ * You can also plugin and use a 3rd party management implementation with Camel.
  *
  * @see org.apache.camel.spi.EventNotifier
  * @see org.apache.camel.spi.EventFactory
- * @see ManagementObjectNameStrategy
- * @see org.apache.camel.spi.ManagementAgent
  */
 public interface ManagementStrategy extends StaticService {
 
@@ -83,6 +84,13 @@ public interface ManagementStrategy extends StaticService {
      * @return event notifiers
      */
     List<EventNotifier> getEventNotifiers();
+
+    /**
+     * Gets all the started event notifiers, which is ready to be used.
+     *
+     * @return started event notifiers
+     */
+    List<EventNotifier> getStartedEventNotifiers();
 
     /**
      * Adds the event notifier to use.

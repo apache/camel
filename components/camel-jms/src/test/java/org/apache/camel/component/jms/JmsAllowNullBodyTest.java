@@ -16,16 +16,24 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,46 +41,33 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  *
  */
-public class JmsAllowNullBodyTest extends CamelTestSupport {
+public class JmsAllowNullBodyTest extends AbstractJMSTest {
 
-    @Test
-    public void testAllowNullBodyDefault() throws Exception {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "?allowNullBody=true", "?allowNullBody=true&jmsMessageType=Text" })
+    @DisplayName("Test correct handling of allowNullBody configuration")
+    public void testAllowNullBody(String option) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().isNull();
         getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
 
         // allow null body is default enabled
-        template.sendBodyAndHeader("activemq:queue:foo", null, "bar", 123);
+        template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest" + option, null, "bar", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testAllowNullBody() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
-
-        template.sendBodyAndHeader("activemq:queue:foo?allowNullBody=true", null, "bar", 123);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testAllowNullTextBody() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
-
-        template.sendBodyAndHeader("activemq:queue:foo?allowNullBody=true&jmsMessageType=Text", null, "bar", 123);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testNoAllowNullBody() throws Exception {
+    public void testNoAllowNullBody() {
         try {
-            template.sendBodyAndHeader("activemq:queue:foo?allowNullBody=false", null, "bar", 123);
+            template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=false", null, "bar", 123);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             JMSException cause = assertIsInstanceOf(JMSException.class, e.getCause().getCause());
@@ -81,20 +76,29 @@ public class JmsAllowNullBodyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo").to("mock:result");
+            public void configure() {
+                from("activemq:queue:JmsAllowNullBodyTest").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.stream.FileInputStreamCache.TempFileManager;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.util.IOHelper;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the THRESHOLD value. The
@@ -52,10 +53,10 @@ public class CachedOutputStream extends OutputStream {
 
     public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {
         this.closedOnCompletion = closedOnCompletion;
-        tempFileManager = new TempFileManager(closedOnCompletion);
-        tempFileManager.addExchange(exchange);
+        this.tempFileManager = new TempFileManager(closedOnCompletion);
+        this.tempFileManager.addExchange(exchange);
         this.strategy = exchange.getContext().getStreamCachingStrategy();
-        currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
+        this.currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
     }
 
     @Override
@@ -151,7 +152,7 @@ public class CachedOutputStream extends OutputStream {
         flush();
         ByteArrayOutputStream bout = (ByteArrayOutputStream) currentStream;
         try {
-            // creates an tmp file and a file output stream
+            // creates a tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
             bout.writeTo(currentStream);
         } finally {
@@ -165,9 +166,10 @@ public class CachedOutputStream extends OutputStream {
     }
 
     // This class will close the CachedOutputStream when it is closed
-    private static class WrappedInputStream extends InputStream {
-        private CachedOutputStream cachedOutputStream;
-        private InputStream inputStream;
+    private static class WrappedInputStream extends InputStream implements StreamCache {
+        private final CachedOutputStream cachedOutputStream;
+        private final InputStream inputStream;
+        private long pos;
 
         WrappedInputStream(CachedOutputStream cos, InputStream is) {
             cachedOutputStream = cos;
@@ -176,6 +178,7 @@ public class CachedOutputStream extends OutputStream {
 
         @Override
         public int read() throws IOException {
+            pos++;
             return inputStream.read();
         }
 
@@ -185,8 +188,37 @@ public class CachedOutputStream extends OutputStream {
         }
 
         @Override
-        public synchronized void reset() throws IOException {
-            inputStream.reset();
+        public synchronized void reset() {
+            try {
+                inputStream.reset();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        @Override
+        public void writeTo(OutputStream os) throws IOException {
+            IOHelper.copy(this, os);
+        }
+
+        @Override
+        public StreamCache copy(Exchange exchange) throws IOException {
+            return cachedOutputStream.newStreamCache();
+        }
+
+        @Override
+        public boolean inMemory() {
+            return cachedOutputStream.inMemory;
+        }
+
+        @Override
+        public long length() {
+            return cachedOutputStream.totalLength;
+        }
+
+        @Override
+        public long position() {
+            return pos;
         }
 
         @Override

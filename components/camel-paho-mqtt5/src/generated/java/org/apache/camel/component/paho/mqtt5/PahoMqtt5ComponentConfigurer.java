@@ -66,6 +66,8 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
         case "retained": getOrCreateConfiguration(target).setRetained(property(camelContext, boolean.class, value)); return true;
         case "serveruris":
         case "serverURIs": getOrCreateConfiguration(target).setServerURIs(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": getOrCreateConfiguration(target).setSessionExpiryInterval(property(camelContext, long.class, value)); return true;
         case "socketfactory":
         case "socketFactory": getOrCreateConfiguration(target).setSocketFactory(property(camelContext, javax.net.SocketFactory.class, value)); return true;
         case "sslclientprops":
@@ -129,6 +131,8 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
         case "retained": return boolean.class;
         case "serveruris":
         case "serverURIs": return java.lang.String.class;
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": return long.class;
         case "socketfactory":
         case "socketFactory": return javax.net.SocketFactory.class;
         case "sslclientprops":
@@ -193,6 +197,8 @@ public class PahoMqtt5ComponentConfigurer extends PropertyConfigurerSupport impl
         case "retained": return getOrCreateConfiguration(target).isRetained();
         case "serveruris":
         case "serverURIs": return getOrCreateConfiguration(target).getServerURIs();
+        case "sessionexpiryinterval":
+        case "sessionExpiryInterval": return getOrCreateConfiguration(target).getSessionExpiryInterval();
         case "socketfactory":
         case "socketFactory": return getOrCreateConfiguration(target).getSocketFactory();
         case "sslclientprops":

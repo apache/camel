@@ -121,7 +121,6 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         };
     }
 
-    // java 8 async return type
     public CompletableFuture<?> asyncMethod(String body) {
         this.receivedBody = body;
         methodInvoked.countDown();

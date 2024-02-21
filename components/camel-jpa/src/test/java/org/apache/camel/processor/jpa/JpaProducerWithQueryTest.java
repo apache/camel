@@ -38,7 +38,7 @@ public class JpaProducerWithQueryTest {
     protected ProducerTemplate template;
 
     @Test
-    public void testProducerWithNamedQuery() throws Exception {
+    public void testProducerWithNamedQuery() {
         template.sendBody("direct:deleteCustomers", "");
         Customer c1 = new Customer();
         c1.setName("Willem");
@@ -57,7 +57,7 @@ public class JpaProducerWithQueryTest {
     }
 
     @Test
-    public void testProducerWithQuery() throws Exception {
+    public void testProducerWithQuery() {
         template.sendBody("direct:deleteMultiSteps", "");
         MultiSteps m1 = new MultiSteps();
         m1.setStep(1);
@@ -76,7 +76,7 @@ public class JpaProducerWithQueryTest {
     }
 
     @Test
-    public void testProducerWithNativeQuery() throws Exception {
+    public void testProducerWithNativeQuery() {
         template.sendBody("direct:deleteMultiSteps", "");
         MultiSteps m1 = new MultiSteps();
         m1.setStep(1);
@@ -95,7 +95,7 @@ public class JpaProducerWithQueryTest {
     }
 
     @Test
-    public void testProducerWithNativeQueryAndResultClass() throws Exception {
+    public void testProducerWithNativeQueryAndResultClass() {
         template.sendBody("direct:deleteMultiSteps", "");
         MultiSteps m1 = new MultiSteps();
         m1.setStep(1);
@@ -121,11 +121,11 @@ public class JpaProducerWithQueryTest {
         params.put("custName", "${body}");
         // bind the params
         registry.bind("params", params);
-        camelContext.setRegistry(registry);
+        camelContext.getCamelContextExtension().setRegistry(registry);
 
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:query")
                         .to("jpa://" + MultiSteps.class.getName() + "?query=select o from " + MultiSteps.class.getName()
                             + " o where o.step = 1");
@@ -153,7 +153,7 @@ public class JpaProducerWithQueryTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camelContext.stop();
     }
 }

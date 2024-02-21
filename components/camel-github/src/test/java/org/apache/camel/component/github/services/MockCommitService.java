@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.github.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,7 @@ public class MockCommitService extends CommitService {
     private AtomicLong fakeSha = new AtomicLong(System.currentTimeMillis());
     private Map<String, CommitStatus> commitStatus = new HashMap<>();
 
-    public synchronized RepositoryCommit addRepositoryCommit() {
+    public synchronized RepositoryCommit addRepositoryCommit(String message) {
         User author = new User();
         author.setEmail("someguy@gmail.com");       // TODO change
         author.setHtmlUrl("http://github/someguy");
@@ -50,26 +49,37 @@ public class MockCommitService extends CommitService {
         rc.setSha(fakeSha.incrementAndGet() + "");
         rc.setCommitter(author);
         Commit commit = new Commit();
-        commit.setMessage("Test");
+        if (message == null) {
+            commit.setMessage("Test");
+        } else {
+            commit.setMessage(message);
+        }
         rc.setCommit(commit);
-        LOG.debug("In MockCommitService added commit with sha " + rc.getSha());
-        commitsList.add(rc);
+        LOG.debug("In MockCommitService added commit with sha {}", rc.getSha());
+        commitsList.add(0, rc);
 
         return rc;
     }
 
     @Override
-    public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path)
-            throws IOException {
-        LOG.debug("Returning list of size " + commitsList.size());
+    public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path) {
+        LOG.debug("Returning list of size {}", commitsList.size());
+
+        if (sha != null) {
+            for (int i = 0; i < commitsList.size(); i++) {
+                RepositoryCommit commit = commitsList.get(i);
+                if (commit.getSha().equals(sha)) {
+                    return commitsList.subList(i, commitsList.size());
+                }
+            }
+        }
         return commitsList;
     }
 
     @Override
     public CommitStatus createStatus(
             IRepositoryIdProvider repository,
-            String sha, CommitStatus status)
-            throws IOException {
+            String sha, CommitStatus status) {
         commitStatus.put(sha, status);
 
         return status;

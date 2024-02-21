@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 public class MyFailureProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         throw new IllegalArgumentException("Unit test - this is thrown by intention");
     }
 

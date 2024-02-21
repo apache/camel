@@ -22,19 +22,13 @@ import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FileBeanParameterBindingTest extends ContextTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/foo");
-        super.setUp();
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -47,7 +41,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     public void testFileToBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +51,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/foo").to("bean:foo?method=before").process(new Processor() {
+                from(fileUri()).to("bean:foo?method=before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setHeader("bar", 123);
                     }

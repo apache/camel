@@ -1,0 +1,13 @@
+= Camel Components for Microsoft Azure Services
+//attributes written by hand, not generated
+:doctitle: Azure
+
+The Camel Components for https://azure.microsoft.com/[Microsoft Azure Services]
+provide connectivity to Azure services from Camel.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
+

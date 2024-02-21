@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event",
              syntax = "pgevent:host:port/database/channel",
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE }, headersClass = PgEventConstants.class)
 public class PgEventEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
@@ -70,8 +70,6 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private DataSource datasource;
 
     private final String uri;
-
-    private PGConnection dbConnection;
 
     public PgEventEndpoint(String uri, PgEventComponent component) {
         super(uri, component);
@@ -146,7 +144,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
     }
 
     private void validateInputs() throws IllegalArgumentException {
-        if (getChannel() == null || getChannel().length() == 0) {
+        if (getChannel() == null || getChannel().isEmpty()) {
             throw new IllegalArgumentException("A required parameter was not set when creating this Endpoint (channel)");
         }
 

@@ -48,7 +48,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionArray() throws Exception {
+    public void testExpressionArray() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/books.json"));
 
@@ -58,9 +58,10 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         LOG.debug("Authors {}", authors);
 
         assertNotNull(authors);
-        assertEquals(2, authors.size());
+        assertEquals(3, authors.size());
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
+        assertEquals("John O'Niel", authors.get(2));
 
         exp = lan.createExpression("$.store.bicycle.price");
         String price = exp.evaluate(exchange, String.class);
@@ -68,7 +69,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionField() throws Exception {
+    public void testExpressionField() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
@@ -86,7 +87,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionPojo() throws Exception {
+    public void testExpressionPojo() {
         Exchange exchange = new DefaultExchange(context);
         Map pojo = new HashMap();
         pojo.put("kind", "full");
@@ -107,7 +108,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPredicate() throws Exception {
+    public void testPredicate() {
         // Test books.json file
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/books.json"));
@@ -123,17 +124,47 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSuppressException() throws Exception {
+    public void testSuppressException() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        lan.setOptions(Option.SUPPRESS_EXCEPTIONS);
 
-        Expression exp = lan.createExpression("$.foo");
+        Expression exp = lan.createExpression("$.foo",
+                new Object[] { null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
         String nofoo = exp.evaluate(exchange, String.class);
 
         assertNull(nofoo);
+    }
+
+    @Test
+    public void testUnpackJsonArray() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
+
+        JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+
+        Expression expression = language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, null, null, true });
+        String json = expression.evaluate(exchange, String.class);
+
+        // check that a single json object is returned, not an array
+        assertTrue(json.startsWith("{") && json.endsWith("}"));
+    }
+
+    @Test
+    public void testDontUnpackJsonArray() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
+
+        JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+
+        Expression expression = language.createExpression("$.store.book",
+                new Object[] { String.class, null, null, null, false });
+        String json = expression.evaluate(exchange, String.class);
+
+        // check that an array is returned, not a single object
+        assertTrue(json.startsWith("[") && json.endsWith("]"));
     }
 
 }

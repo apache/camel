@@ -46,7 +46,7 @@ public class IronMQComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:start", "some payload");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message in = mock.getExchanges().get(0).getIn();
         assertNotNull(in.getHeader(IronMQConstants.MESSAGE_ID));
         assertNotNull(in.getHeader(IronMQConstants.MESSAGE_RESERVATION_ID));
@@ -58,12 +58,12 @@ public class IronMQComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -78,12 +78,12 @@ public class IronMQComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -108,7 +108,7 @@ public class IronMQComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(endpoint);

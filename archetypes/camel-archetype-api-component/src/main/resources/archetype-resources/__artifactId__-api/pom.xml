@@ -30,6 +30,7 @@
   <description>API for Camel ${name} Component</description>
 
   <properties>
+    <firstVersion>${version}</firstVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -45,7 +46,7 @@
           <execution>
             <id>attach-sources</id>
             <goals>
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -54,51 +55,7 @@
         </configuration>
       </plugin>
 
-      <!-- to generate API Javadoc -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>add-javadoc</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <attach>true</attach>
-              <source>1.8</source>
-              <quiet>true</quiet>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>1.7</javadocVersion>
-              <encoding>UTF-8</encoding>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
-
-  <!-- Disable Java 8 doclint checks to avoid Javadoc plugin failures -->
-  <profiles>
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8,</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <additionalparam>-Xdoclint:none</additionalparam>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>

@@ -104,7 +104,7 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
                 throw new IllegalArgumentException("Forced to dump stacktrace");
             } catch (Exception e) {
                 e.fillInStackTrace();
-                LOG.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
+                LOG.info("There are {} lines in the stacktrace", e.getStackTrace().length);
                 LOG.error("Dump stacktrace to log", e);
             }
             callback.done(true);

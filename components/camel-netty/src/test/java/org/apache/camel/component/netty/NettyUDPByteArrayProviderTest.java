@@ -52,7 +52,7 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
                 .channel(NioDatagramChannel.class)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
-                    protected void initChannel(Channel channel) throws Exception {
+                    protected void initChannel(Channel channel) {
                         channel.pipeline().addLast(new UdpHandler());
                         channel.pipeline().addLast(new ByteArrayDecoder());
                         channel.pipeline().addLast(new ContentHandler());
@@ -69,7 +69,7 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     }
 
     @Test
-    public void testSendingRawByteMessage() throws Exception {
+    public void testSendingRawByteMessage() {
         createNettyUdpReceiver();
         bind();
         for (int i = 0; i < SEND_COUNT; ++i) {
@@ -80,10 +80,10 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .to("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true&udpConnectionlessSending=true");
             }
@@ -92,15 +92,15 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
 
     public class UdpHandler extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects)
-                throws Exception {
+        protected void decode(
+                ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects) {
             objects.add(datagramPacket.content().retain());
         }
     }
 
     public class ContentHandler extends SimpleChannelInboundHandler<byte[]> {
         @Override
-        protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] s) throws Exception {
+        protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] s) {
             ++receivedCount;
             assertEquals(SEND_STRING, byteArrayToHex(s));
         }

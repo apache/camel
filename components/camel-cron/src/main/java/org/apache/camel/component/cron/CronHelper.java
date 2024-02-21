@@ -17,17 +17,12 @@
 package org.apache.camel.component.cron;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class CronHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CronHelper.class);
-
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cron/";
     private static final String FACTORY_KEY = "cron-service";
 
@@ -40,7 +35,7 @@ public final class CronHelper {
     public static CamelCronService resolveCamelCronService(CamelContext context, String name) {
         // Lookup the registry first
         CamelCronService service = ObjectHelper.isEmpty(name)
-                ? CamelContextHelper.findByType(context, CamelCronService.class)
+                ? CamelContextHelper.findSingleByType(context, CamelCronService.class)
                 : CamelContextHelper.lookup(context, name, CamelCronService.class);
 
         if (service != null) {
@@ -50,7 +45,7 @@ public final class CronHelper {
         }
 
         // Fallback to factory finder
-        FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
     }
 

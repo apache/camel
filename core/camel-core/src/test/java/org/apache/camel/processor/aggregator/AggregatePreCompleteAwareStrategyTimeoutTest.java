@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Does not play well with parallel execution")
 public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSupport {
 
     @Test

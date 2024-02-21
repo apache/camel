@@ -16,14 +16,15 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Get the value of the named Camel Message header.
+ * Gets a header from the Exchange.
  */
 @Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header")
 @XmlRootElement(name = "header")
@@ -37,8 +38,24 @@ public class HeaderExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private HeaderExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "header";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link HeaderExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, HeaderExpression> {
+
+        @Override
+        public HeaderExpression end() {
+            return new HeaderExpression(this);
+        }
     }
 }

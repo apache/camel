@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 
 import org.springframework.jms.support.destination.DestinationResolver;
 
@@ -27,8 +27,8 @@ public class MyDestinationResolver implements DestinationResolver {
     @Override
     public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
             throws JMSException {
-        if ("logicalNameForTestBQueue".equals(destinationName)) {
-            return session.createQueue("test.b");
+        if ("JmsDestinationResolverTest.logicalNameForTestBQueue".equals(destinationName)) {
+            return session.createQueue("JmsDestinationResolverTest.b");
         } else {
             return session.createQueue(destinationName);
         }

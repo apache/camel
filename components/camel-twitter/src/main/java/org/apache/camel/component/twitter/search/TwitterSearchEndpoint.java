@@ -22,16 +22,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
 import org.apache.camel.component.twitter.TwitterConfiguration;
+import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_SEARCH;
+
 /**
  * Access Twitter Search.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-search", title = "Twitter Search", syntax = "twitter-search:keywords",
-             category = { Category.CLOUD, Category.API, Category.SEARCH, Category.SOCIAL })
+@UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_SEARCH, title = "Twitter Search", syntax = "twitter-search:keywords",
+             category = { Category.SAAS, Category.SOCIAL },
+             headersClass = TwitterConstants.class)
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search query, use the keywords AND, OR, - and () to narrow the search results.")

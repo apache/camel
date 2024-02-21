@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
 
     @Test
-    void testDisruptorVmTimeoutWithAnotherDisruptorVm() throws Exception {
+    void testDisruptorVmTimeoutWithAnotherDisruptorVm() {
         try {
             template2.requestBody("disruptor-vm:start1?timeout=4000", "Hello");
             fail("Should have thrown an exception");
@@ -42,7 +42,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
     }
 
     @Test
-    void testDisruptorVmTimeoutWithProcessor() throws Exception {
+    void testDisruptorVmTimeoutWithProcessor() {
         try {
             template2.requestBody("disruptor-vm:start2?timeout=4000", "Hello");
             fail("Should have thrown an exception");

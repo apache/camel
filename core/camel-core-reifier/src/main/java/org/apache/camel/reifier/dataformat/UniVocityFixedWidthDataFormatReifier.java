@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 
-public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityFixedWidthDataFormat> {
+public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityFixedDataFormat> {
 
     public UniVocityFixedWidthDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
         super(camelContext, definition);

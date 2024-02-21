@@ -103,12 +103,12 @@ public class TestEndpoint extends DefaultEndpoint implements WebhookCapableEndpo
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return this.producer != null ? this.producer.get() : null;
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         return this.consumer != null ? this.consumer.apply(processor) : null;
     }
 

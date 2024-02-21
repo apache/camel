@@ -21,6 +21,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JiraComponentConfigurationTest extends CamelTestSupport {
 
@@ -77,6 +78,23 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
         assertEquals(ACCESS_TOKEN_VALUE, endpoint.getConfiguration().getAccessToken());
         assertEquals(CONS_KEY_VALUE, endpoint.getConfiguration().getConsumerKey());
         assertEquals(PRIV_KEY_VALUE, endpoint.getConfiguration().getPrivateKey());
+    }
+
+    @Test
+    public void createEndpointWithPersonalAccessTokenAuthentication() throws Exception {
+        JiraComponent component = new JiraComponent(context);
+        component.start();
+        String query = Joiner.on("&").join(
+                concat(JIRA_URL, JIRA_URL_VALUE),
+                concat(ACCESS_TOKEN, ACCESS_TOKEN_VALUE));
+        JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://updateIssue?" + query);
+
+        assertEquals("updateissue", endpoint.getType().name().toLowerCase());
+        assertEquals(JIRA_URL_VALUE, endpoint.getConfiguration().getJiraUrl());
+        assertNull(endpoint.getConfiguration().getVerificationCode());
+        assertEquals(ACCESS_TOKEN_VALUE, endpoint.getConfiguration().getAccessToken());
+        assertNull(endpoint.getConfiguration().getConsumerKey());
+        assertNull(endpoint.getConfiguration().getPrivateKey());
     }
 
     @Test

@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.HttpHost;
 
 /**
  * Strategy for configuring the HttpClient with a proxy
@@ -33,28 +31,30 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     private final Integer port;
     private final String scheme;
     private final String username;
-    private final String password;
+    private final char[] password;
     private final String domain;
     private final String ntHost;
+    private final HttpCredentialsHelper credentialsHelper;
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme) {
-        this(host, port, scheme, null, null, null, null);
+        this(host, port, scheme, null, null, null, null, null);
     }
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain,
-                                     String ntHost) {
+                                     String ntHost, HttpCredentialsHelper credentialsHelper) {
         this.host = host;
         this.port = port;
         this.scheme = scheme;
         this.username = username;
-        this.password = password;
+        this.password = password == null ? new char[0] : password.toCharArray();
         this.domain = domain;
         this.ntHost = ntHost;
+        this.credentialsHelper = credentialsHelper;
     }
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
-        clientBuilder.setProxy(new HttpHost(host, port, scheme));
+        clientBuilder.setProxy(new HttpHost(scheme, host, port));
 
         if (username != null && password != null) {
             Credentials defaultcreds;
@@ -63,9 +63,8 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             } else {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
-            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, defaultcreds);
-            clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            clientBuilder.setDefaultCredentialsProvider(credentialsHelper
+                    .getCredentialsProvider(host, port, defaultcreds));
         }
     }
 

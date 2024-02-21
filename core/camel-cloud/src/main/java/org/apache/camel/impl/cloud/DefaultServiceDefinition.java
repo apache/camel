@@ -157,7 +157,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
                     String servicePort = StringHelper.after(part, ":");
 
                     if (ObjectHelper.isNotEmpty(serviceHost) && ObjectHelper.isNotEmpty(servicePort)) {
-                        return new DefaultServiceDefinition(serviceId, serviceName, serviceHost, Integer.valueOf(servicePort));
+                        return new DefaultServiceDefinition(serviceId, serviceName, serviceHost, Integer.parseInt(servicePort));
                     }
 
                     return null;

@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestPathMatchingTest {
 
-    private RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
+    private final RestContextPathMatcher matcher = new RestContextPathMatcher("", "", null, true);
 
     @Test
-    public void testRestPathMatcher() throws Exception {
+    public void testRestPathMatcher() {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", true));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", true));
         assertTrue(matcher.matchRestPath("/foo/", "foo", true));
@@ -58,7 +58,7 @@ public class RestPathMatchingTest {
     }
 
     @Test
-    public void testRestPathMatcherNoWildcard() throws Exception {
+    public void testRestPathMatcherNoWildcard() {
         assertTrue(matcher.matchRestPath("/foo/", "/foo/", false));
         assertTrue(matcher.matchRestPath("/foo/", "foo/", false));
         assertTrue(matcher.matchRestPath("/foo/", "foo", false));

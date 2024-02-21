@@ -16,11 +16,11 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -31,12 +31,18 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
+
+    @XmlTransient
+    private Class<?> typeClass;
+
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String mandatory;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String charset;
-    @XmlTransient
-    private Class<?> typeClass;
 
     public ConvertBodyDefinition() {
     }
@@ -48,6 +54,12 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
+    }
+
+    public ConvertBodyDefinition(Class<?> typeClass, boolean mandatory) {
+        setTypeClass(typeClass);
+        setType(typeClass.getCanonicalName());
+        setMandatory(mandatory ? "true" : "false");
     }
 
     public ConvertBodyDefinition(Class<?> typeClass, String charset) {
@@ -99,5 +111,18 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
      */
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public String getMandatory() {
+        return mandatory;
+    }
+
+    /**
+     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
+     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
+     * value is null.
+     */
+    public void setMandatory(String mandatory) {
+        this.mandatory = mandatory;
     }
 }

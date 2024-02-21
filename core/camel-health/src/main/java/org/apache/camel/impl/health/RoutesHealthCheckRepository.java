@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
@@ -25,23 +23,23 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Repository for routes {@link HealthCheck}s.
  */
-@JdkService("routes-health-check-repository")
+@org.apache.camel.spi.annotations.HealthCheck("routes-repository")
 @DeferredContextBinding
-public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
+public class RoutesHealthCheckRepository extends ServiceSupport
+        implements CamelContextAware, HealthCheckRepository, StaticService, NonManagedService {
+
     private final ConcurrentMap<Route, HealthCheck> checks;
     private volatile CamelContext context;
-    private Map<String, HealthCheckConfiguration> configurations;
-    private HealthCheckConfiguration fallbackConfiguration;
     private boolean enabled = true;
 
     public RoutesHealthCheckRepository() {
@@ -61,28 +59,6 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     @Override
     public CamelContext getCamelContext() {
         return context;
-    }
-
-    @Override
-    public Map<String, HealthCheckConfiguration> getConfigurations() {
-        return configurations;
-    }
-
-    @Override
-    public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
-        this.configurations = configurations;
-    }
-
-    @Override
-    public void addConfiguration(String id, HealthCheckConfiguration configuration) {
-        if ("*".equals(id)) {
-            fallbackConfiguration = configuration;
-        } else {
-            if (configurations == null) {
-                configurations = new LinkedHashMap<>();
-            }
-            configurations.put(id, configuration);
-        }
     }
 
     @Override
@@ -123,23 +99,9 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     private HealthCheck toRouteHealthCheck(Route route) {
         return checks.computeIfAbsent(route, r -> {
             RouteHealthCheck rhc = new RouteHealthCheck(route);
-            HealthCheckConfiguration hcc = matchConfiguration(route.getRouteId());
-            if (hcc != null) {
-                rhc.setConfiguration(hcc);
-            }
+            CamelContextAware.trySetCamelContext(rhc, route.getCamelContext());
             return rhc;
         });
-    }
-
-    private HealthCheckConfiguration matchConfiguration(String id) {
-        if (configurations != null) {
-            for (String key : configurations.keySet()) {
-                if (PatternHelper.matchPattern(id, key)) {
-                    return configurations.get(key);
-                }
-            }
-        }
-        return fallbackConfiguration;
     }
 
 }

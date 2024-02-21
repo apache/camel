@@ -34,8 +34,8 @@ public class RestApiJettyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testApi() throws Exception {
-        String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc", null, String.class);
+    public void testApi() {
+        String out = template.requestBody("http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
 
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
@@ -44,14 +44,18 @@ public class RestApiJettyTest extends BaseJettyTest {
         assertTrue(out.contains("\"/hello/bye/{name}\""));
         assertTrue(out.contains("\"/hello/hi/{name}\""));
         assertTrue(out.contains("\"summary\" : \"To update the greeting message\""));
+
+        assertNotNull(context.getRoute("myApi"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).apiContextPath("/api-doc")
+            public void configure() {
+                restConfiguration().component("jetty").host("localhost").port(getPort())
+                        .apiContextPath("/api-doc")
+                        .apiContextRouteId("myApi")
                         .apiProperty("cors", "true")
                         .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
 

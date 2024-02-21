@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.lucene.LuceneConstants;
 import org.apache.camel.component.lucene.LuceneSearcher;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
@@ -34,8 +35,7 @@ public class LuceneQueryProcessor implements Processor {
     private int maxNumberOfHits;
     private int totalHitsThreshold;
 
-    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits,
-                                int totalHitsThreshold) {
+    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
@@ -46,8 +46,8 @@ public class LuceneQueryProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Hits hits;
 
-        String phrase = exchange.getIn().getHeader("QUERY", String.class);
-        String returnLuceneDocs = exchange.getIn().getHeader("RETURN_LUCENE_DOCS", String.class);
+        String phrase = exchange.getIn().getHeader(LuceneConstants.HEADER_QUERY, String.class);
+        String returnLuceneDocs = exchange.getIn().getHeader(LuceneConstants.HEADER_RETURN_LUCENE_DOCS, String.class);
         boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {

@@ -47,12 +47,12 @@ public class CsvTest extends CamelTestSupport {
     @Test
     void testMarshal() throws Exception {
         List<Employee> employees = getEmployees();
-    
+
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
         mock.expectedBodiesReceived(FIXED_DATA);
-    
+
         template.sendBody("direct:marshal", employees);
-    
+
         mock.assertIsSatisfied();
     }
     */

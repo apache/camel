@@ -30,7 +30,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.DataFormat;
@@ -38,6 +37,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -52,7 +52,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class RestProducer extends DefaultAsyncProducer {
 
-    private static final String ACCEPT = "Accept";
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
     private boolean prepareUriTemplate = true;
@@ -83,7 +82,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 // no binding in use call the producer directly
                 return producer.process(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -177,7 +176,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (query != null) {
             // the query parameters for the rest call to be used
-            inMessage.setHeader(Exchange.REST_HTTP_QUERY, query);
+            inMessage.setHeader(RestConstants.REST_HTTP_QUERY, query);
         }
 
         if (hasPath) {
@@ -194,7 +193,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 overrideUri += "/" + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
-            inMessage.setHeader(Exchange.REST_HTTP_URI, overrideUri);
+            inMessage.setHeader(RestConstants.REST_HTTP_URI, overrideUri);
 
             // when chaining RestConsumer with RestProducer, the
             // HTTP_PATH header will be present, we remove it here
@@ -209,17 +208,17 @@ public class RestProducer extends DefaultAsyncProducer {
         if (method != null) {
             // the method should be in upper case
             String upper = method.toUpperCase(Locale.US);
-            inMessage.setHeader(Exchange.HTTP_METHOD, upper);
+            inMessage.setHeader(RestConstants.HTTP_METHOD, upper);
         }
 
         final String produces = getEndpoint().getProduces();
-        if (isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE)) && isNotEmpty(produces)) {
-            inMessage.setHeader(Exchange.CONTENT_TYPE, produces);
+        if (isEmpty(inMessage.getHeader(RestConstants.CONTENT_TYPE)) && isNotEmpty(produces)) {
+            inMessage.setHeader(RestConstants.CONTENT_TYPE, produces);
         }
 
         final String consumes = getEndpoint().getConsumes();
-        if (isEmpty(inMessage.getHeader(ACCEPT)) && isNotEmpty(consumes)) {
-            inMessage.setHeader(ACCEPT, consumes);
+        if (isEmpty(inMessage.getHeader(RestConstants.ACCEPT)) && isNotEmpty(consumes)) {
+            inMessage.setHeader(RestConstants.ACCEPT, consumes);
         }
     }
 
@@ -293,7 +292,7 @@ public class RestProducer extends DefaultAsyncProducer {
                         "JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
             }
         } else {
-            name = "json-jackson";
+            name = "jackson";
         }
         // this will create a new instance as the name was not already pre-created
         DataFormat json = camelContext.createDataFormat(name);
@@ -306,7 +305,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (json != null) {
             // lookup configurer
-            PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
                     .resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
             if (configurer == null) {
                 throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
@@ -318,7 +317,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(json);
             if (type != null) {
                 String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.in.", builder);
@@ -330,7 +329,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     .withTarget(outJson);
             if (outType != null) {
                 String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("unmarshalType", typeName);
                 builder.withProperty("useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, "json.out.", builder);
@@ -360,15 +359,14 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (jaxb != null) {
             // to setup JAXB we need to use camel-jaxb
-            camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
+            PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext)
                     .setupJaxb(camelContext, configuration, type, null, outType, null, jaxb, outJaxb);
         }
 
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder)
-            throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<>();

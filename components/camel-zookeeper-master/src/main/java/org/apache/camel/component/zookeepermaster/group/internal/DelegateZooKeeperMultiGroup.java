@@ -36,7 +36,7 @@ public class DelegateZooKeeperMultiGroup<T extends NodeState> extends DelegateZo
     public boolean isMaster(String id) {
         Group<T> group = this.getGroup();
         if (group != null) {
-            return ((MultiGroup) group).isMaster(id);
+            return ((MultiGroup<T>) group).isMaster(id);
         } else {
             return false;
         }

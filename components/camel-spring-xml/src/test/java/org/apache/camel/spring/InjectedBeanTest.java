@@ -28,14 +28,14 @@ public class InjectedBeanTest extends SpringTestSupport {
 
     @Test
     public void testInjectionPoints() throws Exception {
-        log.info("getFieldInjectedEndpoint()         = " + bean.getFieldInjectedEndpoint());
-        log.info("getPropertyInjectedEndpoint()      = " + bean.getPropertyInjectedEndpoint());
+        log.info("getFieldInjectedEndpoint()         = {}", bean.getFieldInjectedEndpoint());
+        log.info("getPropertyInjectedEndpoint()      = {}", bean.getPropertyInjectedEndpoint());
 
-        log.info("getFieldInjectedProducer()         = " + bean.getFieldInjectedProducer());
-        log.info("getPropertyInjectedProducer()      = " + bean.getPropertyInjectedProducer());
+        log.info("getFieldInjectedProducer()         = {}", bean.getFieldInjectedProducer());
+        log.info("getPropertyInjectedProducer()      = {}", bean.getPropertyInjectedProducer());
 
-        log.info("getFieldInjectedCamelTemplate()    = " + bean.getFieldInjectedCamelTemplate());
-        log.info("getPropertyInjectedCamelTemplate() = " + bean.getPropertyInjectedCamelTemplate());
+        log.info("getFieldInjectedCamelTemplate()    = {}", bean.getFieldInjectedCamelTemplate());
+        log.info("getPropertyInjectedCamelTemplate() = {}", bean.getPropertyInjectedCamelTemplate());
 
         assertEndpointUri(bean.getFieldInjectedEndpoint(), "direct://fieldInjectedEndpoint");
         assertEndpointUri(bean.getPropertyInjectedEndpoint(), "direct://namedEndpoint1");

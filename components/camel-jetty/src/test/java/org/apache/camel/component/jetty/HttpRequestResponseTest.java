@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpRequestResponseTest extends BaseJettyTest {
 
     @Test
-    public void testHttpServletRequestResponse() throws Exception {
+    public void testHttpServletRequestResponse() {
         Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
@@ -42,9 +42,9 @@ public class HttpRequestResponseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1
@@ -52,7 +52,7 @@ public class HttpRequestResponseTest extends BaseJettyTest {
         };
     }
 
-    public class MyBookService implements Processor {
+    public static class MyBookService implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             // just get the body as a string

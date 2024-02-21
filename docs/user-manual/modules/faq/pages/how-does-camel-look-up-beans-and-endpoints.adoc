@@ -1,4 +1,3 @@
-[[HowdoesCamellookupbeansandendpoints-HowdoesCamellookupbeans,componentsorendpoints]]
 = How does Camel look up beans, components or endpoints?
 
 There are many times using Camel that a name is used for a bean such as
@@ -9,9 +8,7 @@ referring to any xref:ROOT:component.adoc[Component] or
 xref:ROOT:endpoint.adoc[Endpoint].
 
 Camel uses the xref:ROOT:registry.adoc[Registry] to resolve names when
-looking up beans or components or endpoints. Typically this will be
-xref:ROOT:spring.adoc[Spring]; though you can use Camel without Spring in
-which case it will use the xref:ROOT:jndi.adoc[JNDI] registry implementation.
+looking up beans or components or endpoints.
 
 Lots of test cases in the camel-core module don't use Spring (as
 camel-core explicitly doesn't depend on spring) - though test cases in

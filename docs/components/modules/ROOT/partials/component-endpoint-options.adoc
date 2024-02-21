@@ -1,0 +1,152 @@
+//component options: START
+
+:tablespec: width="100%",cols="2,5a,^1,2",options="header"
+:component-option-name: util.boldLink(path[2], "component_option", value.group)
+:endpoint-path-option-name: util.boldLink(path[2], "endpoint_path_option", value.group)
+:endpoint-query-option-name: util.boldLink(path[2], "endpoint_query_option", value.group)
+:last-cell-formats: |util.description(value) \
+|util.valueAsString(value.defaultValue) \
+|util.javaSimpleName(value.javaType)
+include::jsonpath$example$json/{shortname}.json[query='$.component',formats='name,scheme,pascalcasescheme=util.pascalCase(scheme),syntax,apiSyntax', requires={requires}]
+include::jsonpathcount$example$json/{shortname}.json[queries='propertycount=nodes$.componentProperties.*,pathparametercount=nodes$.properties[?(@.kind=="path")],queryparametercount=nodes$.properties[?(@.kind=="parameter")],apicount=nodes$.apis.*']
+
+== Component Options
+
+The {doctitle} component supports {propertycount} options, which are listed below.
+
+[{tablespec}]
+|===
+| Name | Description | Default | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.componentProperties.*','{component-option-name}{last-cell-formats}',{requires}]
+
+
+// endpoint options: START
+== Endpoint Options
+
+The {doctitle} endpoint is configured using URI syntax:
+
+[subs='+attributes']
+----
+{syntax}
+----
+
+With the following _path_ and _query_ parameters:
+
+=== Path Parameters ({pathparametercount} parameters)
+
+ifeval::[{pathparametercount} == 0]
+The {doctitle} endpoint has no path parameters.
+endif::[]
+
+ifeval::[{pathparametercount} != 0]
+[{tablespec}]
+|===
+| Name | Description | Default | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="path")]','{endpoint-path-option-name}{last-cell-formats}',{requires}]
+
+endif::[]
+
+[#_query_parameters]
+=== Query Parameters ({queryparametercount} parameters)
+
+ifeval::[{queryparametercount} == 0]
+The {doctitle} endpoint has no _query_ parameters.
+endif::[]
+
+ifeval::[{queryparametercount} != 0]
+[{tablespec}]
+|===
+| Name | Description | Default | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.properties[?(@.kind=="parameter")]','{endpoint-query-option-name}{last-cell-formats}',{requires}]
+endif::[]
+
+ifeval::[{apicount} != 0]
+
+== API Parameters ({apicount} APIs)
+
+The {doctitle} endpoint is an API-based component and has additional parameters based on which API name and API method is used.
+The API name and API method is located in the endpoint URI as the `{apiSyntax}` path parameters:
+
+[subs='+attributes']
+----
+{syntax}
+----
+
+There are {apicount} API names as listed in the table below:
+
+[width="100%",cols="2,2,6a",options="header"]
+|===
+| API Name | Type | Description
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.apis.*','`<<#_api_${path[2]},*${path[2]}*>>`| value.consumerOnly ? "Consumer" : value.producerOnly ? "Producer" : "Both" | value.description']
+
+Each API is documented in the following sections to come.
+
+[jsonpathBlock, example$json/{shortname}.json, 'nodes$.apis.*','apiname=path[2], producer-consumer = util.producerConsumerLong(value.consumerOnly\, value.producerOnly), methodcount=Object.keys(value.methods).length, aliases=value.aliases', {requires}]
+----
+
+[#_api_{apiname}]
+=== API: {apiName}
+
+*{producer-consumer}*
+
+%ifeval::[{methodcount} == 0]
+The {apiName} has no API methods.
+%endif::[]
+
+%ifeval::[{methodcount} != 0]
+
+The {apiname} API is defined in the syntax as follows:
+
+[source,subs=+attributes]
+------
+{scheme}:{apiname}/methodName?[parameters]
+------
+
+The {methodcount} method(s) is(are) listed in the table below, followed by detailed syntax for each method.
+(API methods can have a shorthand _alias_ name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6a",options="header"]
+|===
+| Method | Alias | Description
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods.*','`<<#_api_{apiname}_method_${path[4]},*${path[4]}*>>`|util.alias(path[4], "{aliases}")|value.description', {requires}]
+
+[jsonpathBlock, example$json/{shortname}.json, 'nodes$.apis["{apiname}"].methods.*','methodname=path[4]', {requires}]
+------
+[#_api_{apiname}_method_{methodname}]
+==== Method {methodname}
+
+Signatures:
+
+jsonpathList::example$json/{shortname}.json['nodes$.apis["{apiname}"].methods["{methodname}"].signatures.*','util.formatSignature(value)', {requires}]
+
+The {name}/{methodname} API method has the parameters listed in the table below:
+
+[width="100%",cols="2,4a,2",options="header"]
+|===
+| Parameter | Description | Type
+|===
+
+jsonpathTable::example$json/{shortname}.json['nodes$.apiProperties["{apiname}"].methods["{methodname}"].properties.*','`*${path[6]}*`|`${util.strong(value, "Required")} ${value.description}`|util.javaSimpleName(value.javaType)', {requires}]
+
+------
+
+In addition to the parameters above, the {name} API can also use any of the <<#_query_parameters>>.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `Camel{pascalcasescheme}.parameter`.
+The `inBody` parameter overrides message header, i.e., the endpoint parameter `inBody=myParameterNameHere`
+would override a `Camel{pascalcasescheme}.myParameterNameHere` header.
+
+%endif::[]
+----
+endif::[]

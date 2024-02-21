@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
@@ -128,6 +130,9 @@ public final class AdviceWithTasks {
             if (processor instanceof EndpointRequiredDefinition) {
                 String uri = ((EndpointRequiredDefinition) processor).getEndpointUri();
                 return PatternHelper.matchPattern(uri, toUri);
+            } else if (processor instanceof ToDynamicDefinition) {
+                String uri = ((ToDynamicDefinition) processor).getUri();
+                return PatternHelper.matchPattern(uri, toUri);
             }
             return false;
         }
@@ -203,14 +208,12 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                // flattern as replace uses a pipeline as
-                                // temporary holder
+                                // flattern as replace uses a pipeline as temporary holder
                                 ProcessorDefinition<?> flattern = flatternOutput(replace);
                                 outputs.add(index + 1, flattern);
                                 Object old = outputs.remove(index);
-                                // must set parent on the node we added in the
-                                // route
-                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                // must set parent on the node we added in the route
+                                ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
                                 flattern.setParent(parent);
                                 LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), old, flattern);
                             }
@@ -337,14 +340,12 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                // flattern as before uses a pipeline as
-                                // temporary holder
+                                // flattern as before uses a pipeline as temporary holder
                                 ProcessorDefinition<?> flattern = flatternOutput(before);
                                 Object existing = outputs.get(index);
                                 outputs.add(index, flattern);
-                                // must set parent on the node we added in the
-                                // route
-                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                // must set parent on the node we added in the route
+                                ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
                                 flattern.setParent(parent);
                                 LOG.info("AdviceWith ({}) : [{}] --> before [{}]", matchBy.getId(), existing, flattern);
                             }
@@ -409,14 +410,12 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                // flattern as after uses a pipeline as
-                                // temporary holder
+                                // flattern as after uses a pipeline as temporary holder
                                 ProcessorDefinition<?> flattern = flatternOutput(after);
                                 Object existing = outputs.get(index);
                                 outputs.add(index + 1, flattern);
-                                // must set parent on the node we added in the
-                                // route
-                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                // must set parent on the node we added in the route
+                                ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
                                 flattern.setParent(parent);
                                 LOG.info("AdviceWith ({}) : [{}] --> after [{}]", matchBy.getId(), existing, flattern);
                             }
@@ -466,9 +465,16 @@ public final class AdviceWithTasks {
             return node.getOutputs();
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
-        if (outputs.size() == 1 && outputs.get(0).isAbstract()) {
-            // if the output is abstract then get its output, as
-            outputs = outputs.get(0).getOutputs();
+        boolean allAbstract = true;
+        for (ProcessorDefinition<?> def : outputs) {
+            allAbstract &= def.isAbstract();
+            if (!allAbstract) {
+                break;
+            }
+        }
+        if (!outputs.isEmpty() && allAbstract) {
+            // if all outputs are abstract then get its last output, as
+            outputs = outputs.get(outputs.size() - 1).getOutputs();
         }
         return outputs;
     }
@@ -523,7 +529,7 @@ public final class AdviceWithTasks {
         // cross cutting functionality)
         boolean skip = selectFirst || selectLast;
 
-        for (ProcessorDefinition output : route.getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getOutputs()) {
             // special for transacted, which we need to unwrap
             if (output instanceof TransactedDefinition) {
                 outputs.addAll(output.getOutputs());
@@ -538,13 +544,11 @@ public final class AdviceWithTasks {
         }
 
         @SuppressWarnings("rawtypes")
-        Iterator<ProcessorDefinition> itAll
+        Collection<ProcessorDefinition> all
                 = ProcessorDefinitionHelper.filterTypeInOutputs(outputs, ProcessorDefinition.class, maxDeep);
-        while (itAll.hasNext()) {
-            ProcessorDefinition<?> next = itAll.next();
-
-            if (matchBy.match(next)) {
-                matched.add(next);
+        for (ProcessorDefinition<?> proc : all) {
+            if (matchBy.match(proc)) {
+                matched.add(proc);
             }
         }
 
@@ -555,7 +559,7 @@ public final class AdviceWithTasks {
     private static Iterator<ProcessorDefinition<?>> createSelectorIterator(
             final List<ProcessorDefinition<?>> list, final boolean selectFirst, final boolean selectLast,
             final int selectFrom, final int selectTo) {
-        return new Iterator<ProcessorDefinition<?>>() {
+        return new Iterator<>() {
             private int current;
             private boolean done;
 

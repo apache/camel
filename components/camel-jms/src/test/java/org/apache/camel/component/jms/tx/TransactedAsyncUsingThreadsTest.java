@@ -17,14 +17,18 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+public class TransactedAsyncUsingThreadsTest extends AbstractSpringJMSTestSupport {
 
     private static int counter;
     private static String thread1;
@@ -50,9 +54,9 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:async").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:TransactedAsyncUsingThreadsTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // transacted causes Camel to force sync routing
         assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
@@ -72,20 +76,20 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         // the 2nd message is the redelivered by the JMS broker
         getMockEndpoint("mock:async").message(1).header("JMSRedelivered").isEqualTo(true);
 
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:TransactedAsyncUsingThreadsTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // transacted causes Camel to force sync routing
         assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("activemq:queue:foo")
+            public void configure() {
+                from("activemq:queue:TransactedAsyncUsingThreadsTest")
                         .process(exchange -> thread1 = Thread.currentThread().getName())
                         // use transacted routing
                         .transacted()

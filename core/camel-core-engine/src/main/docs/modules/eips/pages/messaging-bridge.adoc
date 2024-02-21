@@ -1,5 +1,5 @@
-[[Messaging-Bridge]]
 = Messaging Bridge
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingBridge.html[Messaging Bridge]
@@ -11,14 +11,34 @@ image::eip/MessagingBridge.gif[image]
 
 Use a Messaging Bridge, a connection between messaging systems, to replicate messages between systems.
 
-You can use Camel to bridge different systems using Camel components and routes.
+You can use Camel to bridge different systems using Camel xref:ROOT:index.adoc[Components]
+and bridge the endpoints together in a xref:manual::routes.adoc[Route].
 
-A basic bridge between two queues can be done with a Camel route:
+Another alternative is to bridge systems using xref:change-data-capture.adoc[Change Data Capture].
 
+== Example
+
+A basic bridge between two messaging systems (such as WebsphereMQ and xref:ROOT:jms-component.adoc[JMS] broker)
+can be done with a single Camel route:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mq:queue:foo")
-  .to("activemq:queue:foo")
+  .to("jms:queue:foo")
 ----
 
-Another alternative is to bridge systems using xref:change-data-capture.adoc[Change Data Capture].
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="mq:queue:foo"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+====

@@ -1,47 +1,54 @@
-[[weighted-eip]]
 = Weighted EIP
-:docTitle: Weighted
-:description: Weighted load balancer The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. In addition to the weight, endpoint selection is then further refined using random distribution based on weight.
+:doctitle: Weighted
+:shortname: weighted
+:description: Uses a weighted load distribution ratio for each server with respect to others.
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-Weighted Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
+Weighted mode for xref:loadBalance-eip.adoc[Load Balancer] EIP.
+With this policy in case of failures the exchange will be tried on the next endpoint.
 
 == Options
 
 // eip options: START
-The Weighted EIP supports 3 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *roundRobin* | To enable round robin mode. By default the weighted distribution mode is used. The default value is false. |  | String
-| *distributionRatio* | *Required* The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list. |  | String
-| *distributionRatioDelimiter* | Delimiter used to specify the distribution ratio. The default value is , (comma) | , | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
 
 == Examples
 
-In this case we are using the header test as correlation expression:
+In this example we want to send the most message to the first endpoint, then the second, and only a few to the last.
+
+The distribution ratio is 7 = 4 + 2 + 1.
+This means that for every 7 message then 4 goes to the 1st, 2 for the 2nd, and 1 for the last.
 
 [source,java]
 ----
 from("direct:start")
-    .loadBalance()
-    .weighted(false, "4,2,1")
-    .to("seda:x", "seda:y", "seda:z");
+    .loadBalance().weighted(false, "4,2,1")
+        .to("seda:x")
+        .to("seda:y")
+        .to("seda:z")
+    .end();
 ----
 
-In XML you'll have a route like this
+In XML you'll have a route like this:
 
 [source,xml]
 ----
-<from uri="direct:start"/> 
-  <loadBalance> 
-    <weighted roundRobin="false" distributionRatio="4 2 1"/> 
-    <to uri="seda:x"/> 
-    <to uri="seda:y"/> 
-    <to uri="seda:z"/> 
-  </loadBalance>
+<route>
+    <from uri="direct:start"/>
+      <loadBalance>
+        <weighted distributionRatio="4 2 1"/>
+        <to uri="seda:x"/>
+        <to uri="seda:y"/>
+        <to uri="seda:z"/>
+      </loadBalance>
+</route>
 ----

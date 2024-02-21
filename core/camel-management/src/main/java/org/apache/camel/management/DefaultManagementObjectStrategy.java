@@ -44,9 +44,15 @@ import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConvertBody;
+import org.apache.camel.management.mbean.ManagedConvertHeader;
+import org.apache.camel.management.mbean.ManagedConvertVariable;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
+import org.apache.camel.management.mbean.ManagedDisabled;
+import org.apache.camel.management.mbean.ManagedDoCatch;
+import org.apache.camel.management.mbean.ManagedDoFinally;
+import org.apache.camel.management.mbean.ManagedDoTry;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
@@ -68,6 +74,7 @@ import org.apache.camel.management.mbean.ManagedRemoveHeader;
 import org.apache.camel.management.mbean.ManagedRemoveHeaders;
 import org.apache.camel.management.mbean.ManagedRemoveProperties;
 import org.apache.camel.management.mbean.ManagedRemoveProperty;
+import org.apache.camel.management.mbean.ManagedRemoveVariable;
 import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
@@ -84,6 +91,7 @@ import org.apache.camel.management.mbean.ManagedSetBody;
 import org.apache.camel.management.mbean.ManagedSetExchangePattern;
 import org.apache.camel.management.mbean.ManagedSetHeader;
 import org.apache.camel.management.mbean.ManagedSetProperty;
+import org.apache.camel.management.mbean.ManagedSetVariable;
 import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
@@ -102,9 +110,11 @@ import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LoopDefinition;
@@ -118,18 +128,23 @@ import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SetVariableDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
+import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.FinallyProcessor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.processor.MulticastProcessor;
@@ -140,6 +155,7 @@ import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.processor.RemoveHeadersProcessor;
 import org.apache.camel.processor.RemovePropertiesProcessor;
 import org.apache.camel.processor.RemovePropertyProcessor;
+import org.apache.camel.processor.RemoveVariableProcessor;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.RollbackProcessor;
 import org.apache.camel.processor.RoutingSlip;
@@ -150,6 +166,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.SetPropertyProcessor;
+import org.apache.camel.processor.SetVariableProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.processor.StopProcessor;
@@ -158,6 +175,7 @@ import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -168,6 +186,7 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
+import org.apache.camel.processor.transformer.DataTypeProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandler;
@@ -177,6 +196,8 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.ConvertBodyProcessor;
+import org.apache.camel.support.processor.ConvertHeaderProcessor;
+import org.apache.camel.support.processor.ConvertVariableProcessor;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.PredicateValidatingProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
@@ -338,12 +359,24 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
             if (target instanceof ConvertBodyProcessor) {
                 answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
+            } else if (target instanceof ConvertHeaderProcessor) {
+                answer = new ManagedConvertHeader(context, (ConvertHeaderProcessor) target, definition);
+            } else if (target instanceof ConvertVariableProcessor) {
+                answer = new ManagedConvertVariable(context, (ConvertVariableProcessor) target, definition);
             } else if (target instanceof ChoiceProcessor) {
                 answer = new ManagedChoice(context, (ChoiceProcessor) target, definition);
             } else if (target instanceof ClaimCheckProcessor) {
                 answer = new ManagedClaimCheck(context, (ClaimCheckProcessor) target, definition);
             } else if (target instanceof Delayer) {
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
+            } else if (target instanceof DisabledProcessor) {
+                answer = new ManagedDisabled(context, (DisabledProcessor) target, definition);
+            } else if (target instanceof TryProcessor) {
+                answer = new ManagedDoTry(context, (TryProcessor) target, (TryDefinition) definition);
+            } else if (target instanceof CatchProcessor) {
+                answer = new ManagedDoCatch(context, (CatchProcessor) target, (CatchDefinition) definition);
+            } else if (target instanceof FinallyProcessor) {
+                answer = new ManagedDoFinally(context, (FinallyProcessor) target, (FinallyDefinition) definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
@@ -399,10 +432,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedRemoveHeaders(context, (RemoveHeadersProcessor) target, definition);
             } else if (target instanceof SetHeaderProcessor) {
                 answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, (SetHeaderDefinition) definition);
+            } else if (target instanceof SetVariableProcessor) {
+                answer = new ManagedSetVariable(context, (SetVariableProcessor) target, (SetVariableDefinition) definition);
             } else if (target instanceof RemovePropertyProcessor) {
                 answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
             } else if (target instanceof RemovePropertiesProcessor) {
                 answer = new ManagedRemoveProperties(context, (RemovePropertiesProcessor) target, definition);
+            } else if (target instanceof RemoveVariableProcessor) {
+                answer = new ManagedRemoveVariable(context, (RemoveVariableProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
                 answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, (SetPropertyDefinition) definition);
             } else if (target instanceof ExchangePatternProcessor) {
@@ -418,7 +455,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof ThrowExceptionProcessor) {
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
-                answer = new ManagedTransformer(context, (TransformProcessor) target, (TransformDefinition) definition);
+                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
+            } else if (target instanceof DataTypeProcessor && definition instanceof TransformDefinition) {
+                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
             } else if (target instanceof PredicateValidatingProcessor) {
                 answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (ValidateDefinition) definition);
             } else if (target instanceof WireTapProcessor) {

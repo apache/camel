@@ -24,13 +24,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+  <bean id="deadLetter" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
     <property name="deadLetterUri" value="mock:dead"/>
   </bean>
 
   <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <!-- context scoped on exception -->
     <onException>

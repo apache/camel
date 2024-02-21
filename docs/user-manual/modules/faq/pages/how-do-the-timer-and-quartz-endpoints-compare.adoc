@@ -1,4 +1,3 @@
-[[HowdotheTimerandQuartzendpointscompare-HowdotheTimerandQuartzendpointscompare]]
 = How do the Timer and Quartz endpoints compare?
 
 xref:components::timer-component.adoc[Timer] is a simple, non persistence timer using the

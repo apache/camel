@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.SessionMessageListener;
@@ -198,7 +198,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             return false;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to recover JMS Connection. Will try again in " + task.getCurrentDelay() + " millis", e);
+                LOG.debug("Failed to recover JMS Connection. Will try again in {} millis", task.getCurrentDelay(), e);
             }
             // try again
             return true;
@@ -265,7 +265,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         return endpoint.getJmsObjectFactory().createMessageConsumer(session, endpoint);
     }
 
-    protected void stopConsumers() throws Exception {
+    protected void stopConsumers() {
         synchronized (this.consumerLock) {
             if (consumers != null) {
                 LOG.debug("Stopping JMS MessageConsumers");
@@ -320,7 +320,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             if (this.connection != null) {
                 try {
                     this.connection.start();
-                } catch (javax.jms.IllegalStateException e) {
+                } catch (jakarta.jms.IllegalStateException e) {
                     // ignore as it may already be started
                 }
             }

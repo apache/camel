@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,6 +29,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
@@ -46,7 +49,7 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
 
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_CLEANUP).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************
@@ -67,7 +70,7 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
                 .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
-        assertTrue(getTestCache().getIfPresent(key) != null);
+        assertNotNull(getTestCache().getIfPresent(key));
         assertEquals(val, getTestCache().getIfPresent(key));
     }
 
@@ -90,7 +93,7 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
             assertEquals(map.get(k), elements.get(k));
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************
@@ -114,7 +117,7 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
                 .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -133,7 +136,7 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET_ALL)
                 .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = mock.getExchanges().get(0).getIn().getBody(Map.class);
         keys.forEach(k -> {
@@ -162,9 +165,9 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE)
                 .withHeader(CaffeineConstants.KEY, key).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        assertFalse(cache.getIfPresent(key) != null);
+        assertNull(cache.getIfPresent(key));
     }
 
     @Test
@@ -183,11 +186,55 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE_ALL)
                 .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = getTestCache().getAllPresent(keys);
         keys.forEach(k -> {
             assertFalse(elements.containsKey(k));
+        });
+    }
+
+    @Test
+    void testCacheInvalidateAllWithoutKeys() throws Exception {
+        final Cache<Object, Object> cache = getTestCache();
+        final Map<String, String> map = generateRandomMapOfString(3);
+
+        cache.putAll(map);
+
+        final MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, false);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
+
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE_ALL)
+                .to("direct://start").send();
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        assertTrue(getTestCache().asMap().keySet().isEmpty());
+    }
+
+    @Test
+    void testCacheAsMap() throws Exception {
+        final Cache<Object, Object> cache = getTestCache();
+        final Map<String, String> map = generateRandomMapOfString(3);
+
+        cache.putAll(map);
+
+        final MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
+        mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
+
+        final Exchange exchange = fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_AS_MAP)
+                .to("direct://start").send();
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        final Map<String, String> elements = exchange.getMessage().getBody(Map.class);
+        map.forEach((k, s) -> {
+            assertTrue(elements.containsKey(k));
+            assertEquals(s, elements.get(k));
         });
     }
 

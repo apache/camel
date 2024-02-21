@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -126,7 +125,9 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
             channel.connect(timeout);
-            LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
+            }
 
             try {
                 if (is == null) {
@@ -148,7 +149,10 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 LOG.trace("Disconnecting 'exec' scp channel");
                 channel.disconnect();
                 channel = null;
-                LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
+                }
             }
         }
         return true;
@@ -170,12 +174,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
-    public List<ScpFile> listFiles() throws GenericFileOperationFailedException {
+    public ScpFile[] listFiles() throws GenericFileOperationFailedException {
         throw new GenericFileOperationFailedException("Operation 'ls' not supported by the scp: protocol");
     }
 
     @Override
-    public List<ScpFile> listFiles(String path) throws GenericFileOperationFailedException {
+    public ScpFile[] listFiles(String path) throws GenericFileOperationFailedException {
         throw new GenericFileOperationFailedException("Operation 'ls " + path + "' not supported by the scp: protocol");
     }
 
@@ -312,8 +316,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             }
 
             int timeout = config.getConnectTimeout();
-            LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
-                    timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
+                        timeout > 0 ? (timeout + " ms") : "no");
+            }
             if (timeout > 0) {
                 session.connect(timeout);
             } else {
@@ -444,7 +451,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     private static boolean isRecursiveScp(String name) {
-        return name.indexOf('/') > 0;
+        return name.contains("/");
     }
 
     private static String getScpCommand(ScpConfiguration config, String name) {

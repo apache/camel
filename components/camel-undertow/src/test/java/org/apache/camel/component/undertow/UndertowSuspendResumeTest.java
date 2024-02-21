@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowSuspendResumeTest extends BaseUndertowTest {
 
-    private String serverUri = "http://localhost:{{port}}/foo";
+    private final String serverUri = "http://localhost:{{port}}/foo";
 
     @Test
-    public void testSuspendResume() throws Exception {
+    public void testSuspendResume() {
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);
@@ -60,10 +60,10 @@ public class UndertowSuspendResumeTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow://" + serverUri).id("route1").transform(body().prepend("Bye "));
             }
         };

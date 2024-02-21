@@ -108,7 +108,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
             assertEquals("old", cheese);
 
             if ("bar".equals(header)) {
-                LOG.info("someMethod() called with valid header and body: " + body);
+                LOG.info("someMethod() called with valid header and body: {}", body);
             } else {
                 throw new ValidationException(null, "Invalid header foo: " + header);
             }

@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
  */
 public class XQueryLanguageFromFileTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testXQueryFromFile() throws Exception {
@@ -40,30 +43,23 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader("file:target/xquery",
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
                 "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader("file:target/xquery",
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/xquery");
-        super.setUp();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("file:target/xquery")
+            public void configure() {
+                from(TestSupport.fileUri(testDirectory))
                         .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
                         .convertBodyTo(String.class)

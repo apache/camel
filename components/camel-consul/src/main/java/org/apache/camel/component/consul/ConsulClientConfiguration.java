@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.consul;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.kiwiproject.consul.Consul;
+import org.kiwiproject.consul.option.ConsistencyMode;
 
 @UriParams
 public abstract class ConsulClientConfiguration implements Cloneable {
@@ -57,22 +58,10 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
 
-    @Deprecated
-    @Metadata(deprecationNote = "Use connectTimeout instead")
-    @UriParam
-    private Long connectTimeoutMillis;
     @UriParam
     private Duration connectTimeout;
-    @Deprecated
-    @Metadata(deprecationNote = "Use readTimeout instead")
-    @UriParam
-    private Long readTimeoutMillis;
     @UriParam
     private Duration readTimeout;
-    @Deprecated
-    @Metadata(deprecationNote = "Use writeTimeout instead")
-    @UriParam(javaType = "java.time.Duration")
-    private Long writeTimeoutMillis;
     @UriParam
     private Duration writeTimeout;
     @UriParam(defaultValue = "true")
@@ -85,7 +74,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
-    public ConsulClientConfiguration() {
+    protected ConsulClientConfiguration() {
     }
 
     public String getUrl() {
@@ -228,19 +217,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
-    }
-
-    /**
-     * Connect timeout for OkHttpClient
-     *
-     * @deprecated use connectTimeout instead
-     */
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
-    }
-
     public Duration getConnectTimeout() {
         return connectTimeout;
     }
@@ -252,19 +228,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.connectTimeout = connectTimeout;
     }
 
-    public Long getReadTimeoutMillis() {
-        return readTimeoutMillis;
-    }
-
-    /**
-     * Read timeout for OkHttpClient
-     *
-     * @deprecated Use readTimeout instead.
-     */
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
-
     public Duration getReadTimeout() {
         return readTimeout;
     }
@@ -274,19 +237,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
      */
     public void setReadTimeout(Duration readTimeout) {
         this.readTimeout = readTimeout;
-    }
-
-    public Long getWriteTimeoutMillis() {
-        return writeTimeoutMillis;
-    }
-
-    /**
-     * Write timeout for OkHttpClient
-     *
-     * @deprecated Use writeTimeout instead.
-     */
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        this.writeTimeoutMillis = writeTimeoutMillis;
     }
 
     public Duration getWriteTimeout() {
@@ -352,7 +302,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return createConsulClient(null);
     }
 
-    public Consul createConsulClient(CamelContext camelContext) throws Exception {
+    public Consul createConsulClient(CamelContext camelContext) throws GeneralSecurityException, IOException {
         Consul.Builder builder = Consul.builder();
         builder.withPing(pingInstance);
 
@@ -370,18 +320,14 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         }
         if (ObjectHelper.isNotEmpty(connectTimeout)) {
             builder.withConnectTimeoutMillis(connectTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
-            builder.withConnectTimeoutMillis(connectTimeoutMillis);
         }
+
         if (ObjectHelper.isNotEmpty(readTimeout)) {
             builder.withConnectTimeoutMillis(readTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
-            builder.withReadTimeoutMillis(readTimeoutMillis);
         }
+
         if (ObjectHelper.isNotEmpty(writeTimeout)) {
             builder.withConnectTimeoutMillis(writeTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
-            builder.withWriteTimeoutMillis(writeTimeoutMillis);
         }
 
         return builder.build();

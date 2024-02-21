@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecCommandExecutor;
@@ -71,8 +72,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             // with null (required by ExecResult)
             InputStream stdout = out.size() == 0 ? null : new ByteArrayInputStream(out.toByteArray());
             InputStream stderr = err.size() == 0 ? null : new ByteArrayInputStream(err.toByteArray());
-            ExecResult result = new ExecResult(command, stdout, stderr, exitValue);
-            return result;
+            return new ExecResult(command, stdout, stderr, exitValue);
 
         } catch (ExecuteException ee) {
             LOG.error("ExecException while executing command: {} - {}", command, ee.getMessage());
@@ -98,8 +98,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             if (msg != null && "stream closed".equals(msg.toLowerCase(Locale.ENGLISH))) {
                 LOG.debug("Ignoring Stream closed IOException", ioe);
 
-                ExecResult result = new ExecResult(command, stdout, stderr, exitValue);
-                return result;
+                return new ExecResult(command, stdout, stderr, exitValue);
             }
             // invalid working dir
             LOG.error("IOException while executing command: {} - {}", command, ioe.getMessage());
@@ -112,7 +111,12 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
     protected DefaultExecutor prepareDefaultExecutor(ExecCommand execCommand) {
         DefaultExecutor executor = new ExecDefaultExecutor();
+
         executor.setExitValues(null);
+        Set<Integer> exitValues = execCommand.getExitValues();
+        if (!exitValues.isEmpty()) {
+            executor.setExitValues(exitValues.stream().mapToInt(Integer::intValue).toArray());
+        }
 
         if (execCommand.getWorkingDir() != null) {
             executor.setWorkingDirectory(new File(execCommand.getWorkingDir()).getAbsoluteFile());

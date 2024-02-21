@@ -19,30 +19,34 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
-        props.add("cron");
-        props.add("triggerName");
-        props.add("customCalendar");
-        props.add("exchangePattern");
-        props.add("deleteJob");
-        props.add("pauseJob");
-        props.add("triggerStartDelay");
+        Set<String> props = new HashSet<>(19);
         props.add("autoStartScheduler");
-        props.add("groupName");
         props.add("bridgeErrorHandler");
+        props.add("cron");
+        props.add("customCalendar");
+        props.add("deleteJob");
+        props.add("durableJob");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("groupName");
+        props.add("ignoreExpiredNextFireTime");
+        props.add("jobParameters");
+        props.add("pauseJob");
         props.add("prefixJobNameWithEndpointId");
         props.add("recoverableJob");
-        props.add("triggerParameters");
-        props.add("durableJob");
-        props.add("startDelayedSeconds");
-        props.add("jobParameters");
-        props.add("exceptionHandler");
-        props.add("usingFixedCamelContextName");
         props.add("stateful");
-        props.add("fireNow");
+        props.add("triggerName");
+        props.add("triggerParameters");
+        props.add("triggerStartDelay");
+        props.add("usingFixedCamelContextName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(2);
+        prefixes.add("job.");
+        prefixes.add("trigger.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -71,6 +75,11 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

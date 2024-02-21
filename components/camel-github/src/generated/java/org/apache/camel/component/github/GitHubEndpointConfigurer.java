@@ -63,6 +63,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "startingsha":
+        case "startingSha": target.setStartingSha(property(camelContext, java.lang.String.class, value)); return true;
         case "state": target.setState(property(camelContext, java.lang.String.class, value)); return true;
         case "targeturl":
         case "targetUrl": target.setTargetUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -119,6 +121,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+        case "startingsha":
+        case "startingSha": return java.lang.String.class;
         case "state": return java.lang.String.class;
         case "targeturl":
         case "targetUrl": return java.lang.String.class;
@@ -176,6 +180,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+        case "startingsha":
+        case "startingSha": return target.getStartingSha();
         case "state": return target.getState();
         case "targeturl":
         case "targetUrl": return target.getTargetUrl();

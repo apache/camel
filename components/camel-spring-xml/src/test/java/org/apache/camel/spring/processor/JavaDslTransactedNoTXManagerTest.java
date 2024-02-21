@@ -44,7 +44,9 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("No bean could be found in the registry of type: PlatformTransactionManager", cause.getMessage());
+            assertEquals(
+                    "No bean could be found in the registry for: org.springframework.transaction.PlatformTransactionManager",
+                    cause.getMessage());
         }
     }
 

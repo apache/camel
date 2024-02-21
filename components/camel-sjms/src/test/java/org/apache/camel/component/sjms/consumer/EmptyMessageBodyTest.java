@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -26,16 +27,16 @@ public class EmptyMessageBodyTest extends JmsTestSupport {
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("sjms:start", "");
-        template.sendBody("sjms:start", null);
-        assertMockEndpointsSatisfied();
+        template.sendBody("sjms:start.queue.EmptyMessageBodyTest", "");
+        template.sendBody("sjms:start.queue.EmptyMessageBodyTest", null);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("sjms:queue:start").to("mock:result");
+            public void configure() {
+                from("sjms:queue:start.queue.EmptyMessageBodyTest").to("mock:result");
             }
         };
     }

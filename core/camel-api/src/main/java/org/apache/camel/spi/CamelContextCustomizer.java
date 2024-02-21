@@ -24,6 +24,7 @@ import org.apache.camel.Ordered;
  */
 @FunctionalInterface
 public interface CamelContextCustomizer extends Ordered, Comparable<CamelContextCustomizer> {
+
     /**
      * Configure the {@link CamelContext}.
      *

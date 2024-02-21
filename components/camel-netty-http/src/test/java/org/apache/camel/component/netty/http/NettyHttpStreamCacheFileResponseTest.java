@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
-    private String body = "12345678901234567890123456789012345678901234567890";
-    private String body2 = "Bye " + body;
+    private final String body = "12345678901234567890123456789012345678901234567890";
+    private final String body2 = "Bye " + body;
 
     @Override
     @BeforeEach
@@ -45,7 +45,7 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
     }
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(1).create();
 
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
@@ -60,10 +60,10 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced to write to file
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.getStreamCachingStrategy().setSpoolThreshold(16);

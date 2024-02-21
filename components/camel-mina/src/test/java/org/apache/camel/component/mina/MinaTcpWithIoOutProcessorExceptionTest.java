@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -47,13 +45,10 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange e) {
-                        assertEquals("Hello World", e.getIn().getBody(String.class));
-                        // simulate a problem processing the input to see if we can handle it properly
-                        throw new IllegalArgumentException("Forced exception");
-                    }
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()).process(e -> {
+                    assertEquals("Hello World", e.getIn().getBody(String.class));
+                    // simulate a problem processing the input to see if we can handle it properly
+                    throw new IllegalArgumentException("Forced exception");
                 });
             }
         };

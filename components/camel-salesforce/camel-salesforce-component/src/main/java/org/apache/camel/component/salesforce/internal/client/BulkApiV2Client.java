@@ -77,7 +77,9 @@ public interface BulkApiV2Client {
 
     void getQueryJob(String jobId, Map<String, List<String>> headers, QueryJobResponseCallback callback);
 
-    void getQueryJobResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback);
+    void getQueryJobResults(
+            String jobId, String locator, Integer maxRecords, Map<String, List<String>> headers,
+            StreamResponseCallback callback);
 
     void changeQueryJobState(
             String jobId, JobStateEnum state, Map<String, List<String>> headers, QueryJobResponseCallback callback);

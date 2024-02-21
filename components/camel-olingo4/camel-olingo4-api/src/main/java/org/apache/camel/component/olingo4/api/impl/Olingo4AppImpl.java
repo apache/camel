@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -485,8 +486,6 @@ public final class Olingo4AppImpl implements Olingo4App {
             responseHandler.onResponse(this.<T> readContent(uriInfo, content), endpointHttpHeaders);
         } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (Error e) {
-            responseHandler.onException(new ODataException("Runtime Error Occurred", e));
         }
     }
 
@@ -514,7 +513,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                         List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
                         // Check result type: single Entity or EntitySet based
                         // on key predicate detection
-                        if (keyPredicates.size() == 1) {
+                        if (!keyPredicates.isEmpty()) {
                             response = (T) odataReader.readEntity(content, getResourceContentType(uriInfo));
                         } else {
                             response = (T) odataReader.readEntitySet(content, getResourceContentType(uriInfo));
@@ -726,7 +725,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         final ByteArrayOutputStream batchRequestHeaderOutputStream = new ByteArrayOutputStream();
 
         try {
-            batchRequestHeaderOutputStream.write(boundary.getBytes(Constants.UTF8));
+            batchRequestHeaderOutputStream.write(boundary.getBytes(StandardCharsets.UTF_8));
             batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
 
             for (Olingo4BatchRequest batchPart : batchParts) {
@@ -744,7 +743,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
 
                     batchRequestHeaderOutputStream.write(
-                            (HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1).getBytes(Constants.UTF8));
+                            (HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1)
+                                    .getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
@@ -756,7 +756,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     }
 
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
-                    batchRequestHeaderOutputStream.write(boundary.getBytes(Constants.UTF8));
+                    batchRequestHeaderOutputStream.write(boundary.getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                 } else if (batchPart instanceof Olingo4BatchChangeRequest) {
                     final Olingo4BatchChangeRequest batchChangePart = (Olingo4BatchChangeRequest) batchPart;
@@ -773,7 +773,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     batchRequestHeaderOutputStream
                             .write((batchChangePart.getOperation().getHttpMethod() + " " + batchChangeUri + " "
-                                    + HttpVersion.HTTP_1_1).getBytes(Constants.UTF8));
+                                    + HttpVersion.HTTP_1_1).getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeader.ODATA_VERSION,
                             ODataServiceVersion.V40.toString());
@@ -798,7 +798,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                         batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     }
 
-                    batchRequestHeaderOutputStream.write(boundary.getBytes(Constants.UTF8));
+                    batchRequestHeaderOutputStream.write(boundary.getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                 } else {
                     throw new ODataException("Unsupported batch part request object type: " + batchPart);
@@ -812,7 +812,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     private void writeHttpHeader(ByteArrayOutputStream headerOutputStream, String headerName, String headerValue)
             throws IOException {
-        headerOutputStream.write(createHttpHeader(headerName, headerValue).getBytes(Constants.UTF8));
+        headerOutputStream.write(createHttpHeader(headerName, headerValue).getBytes(StandardCharsets.UTF_8));
         headerOutputStream.write(ODataStreamer.CRLF);
     }
 
@@ -827,7 +827,8 @@ public final class Olingo4AppImpl implements Olingo4App {
         try {
             final Header[] contentHeaders = response.getHeaders(HttpHeader.CONTENT_TYPE);
             final ODataBatchLineIterator batchLineIterator
-                    = new ODataBatchLineIteratorImpl(IOUtils.lineIterator(response.getEntity().getContent(), Constants.UTF8));
+                    = new ODataBatchLineIteratorImpl(
+                            IOUtils.lineIterator(response.getEntity().getContent(), StandardCharsets.UTF_8));
             final String batchBoundary = ODataBatchUtilities.getBoundaryFromHeader(getHeadersCollection(contentHeaders));
             final ODataBatchController batchController = new ODataBatchController(batchLineIterator, batchBoundary);
 
@@ -895,7 +896,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     }
 
     private HttpResponse constructBatchPartHttpResponse(InputStream batchPartStream) throws IOException, HttpException {
-        final LineIterator lines = IOUtils.lineIterator(batchPartStream, Constants.UTF8);
+        final LineIterator lines = IOUtils.lineIterator(batchPartStream, StandardCharsets.UTF_8);
         final ByteArrayOutputStream headerOutputStream = new ByteArrayOutputStream();
         final ByteArrayOutputStream bodyOutputStream = new ByteArrayOutputStream();
 
@@ -917,11 +918,11 @@ public final class Olingo4AppImpl implements Olingo4App {
             }
             if (startBatchPartHeader) {
                 // Write header to the output stream
-                headerOutputStream.write(line.getBytes(Constants.UTF8));
+                headerOutputStream.write(line.getBytes(StandardCharsets.UTF_8));
                 headerOutputStream.write(ODataStreamer.CRLF);
             } else if (startBatchPartBody && StringUtils.isNotBlank(line)) {
                 // Write body to the output stream
-                bodyOutputStream.write(line.getBytes(Constants.UTF8));
+                bodyOutputStream.write(line.getBytes(StandardCharsets.UTF_8));
                 bodyOutputStream.write(ODataStreamer.CRLF);
             }
         }
@@ -971,7 +972,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
         final StringBuilder absolutUri = new StringBuilder(resourceUri).append(SEPARATOR).append(resourcePath);
         if (queryOptions != null && !queryOptions.isEmpty()) {
-            absolutUri.append("?" + queryOptions);
+            absolutUri.append('?').append(queryOptions);
         }
         return absolutUri.toString();
 

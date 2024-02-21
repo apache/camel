@@ -66,6 +66,11 @@ public interface RuntimeProvider {
     String getLanguageJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the transformer json files are stored in the catalog JAR file
+     */
+    String getTransformerJSonSchemaDirectory();
+
+    /**
      * Gets the directory where the other (miscellaneous) json files are stored in the catalog JAR file
      */
     String getOtherJSonSchemaDirectory();
@@ -84,6 +89,11 @@ public interface RuntimeProvider {
      * Find all the language names from the Camel catalog supported by the provider
      */
     List<String> findLanguageNames();
+
+    /**
+     * Find all the transfromer names from the Camel catalog supported by the provider
+     */
+    List<String> findTransformerNames();
 
     /**
      * Find all the other (miscellaneous) names from the Camel catalog supported by the provider

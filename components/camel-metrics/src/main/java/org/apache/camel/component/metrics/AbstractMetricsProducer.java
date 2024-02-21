@@ -26,7 +26,7 @@ public abstract class AbstractMetricsProducer extends DefaultProducer {
 
     public static final String HEADER_PATTERN = MetricsConstants.HEADER_PREFIX + "*";
 
-    public AbstractMetricsProducer(MetricsEndpoint endpoint) {
+    protected AbstractMetricsProducer(MetricsEndpoint endpoint) {
         super(endpoint);
     }
 

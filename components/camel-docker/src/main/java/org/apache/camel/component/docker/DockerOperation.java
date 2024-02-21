@@ -27,13 +27,13 @@ public enum DockerOperation {
     /**
      * Events *
      */
-    EVENTS("events", false, true, false,
+    EVENTS("events", true, false, false,
            DockerConstants.DOCKER_INITIAL_RANGE, Long.class),
 
     /**
      * Stats *
      */
-    STATS("stats", false, true, false,
+    STATS("stats", true, false, false,
           DockerConstants.DOCKER_CONTAINER_ID, Long.class),
 
     /**
@@ -209,11 +209,11 @@ public enum DockerOperation {
                DockerConstants.DOCKER_EXEC_ID, String.class,
                DockerConstants.DOCKER_TTY, Boolean.class);
 
-    private String text;
-    private boolean canConsume;
-    private boolean canProduce;
-    private boolean async;
-    private Map<String, Class<?>> parameters;
+    private final String text;
+    private final boolean canConsume;
+    private final boolean canProduce;
+    private final boolean async;
+    private final Map<String, Class<?>> parameters;
 
     DockerOperation(String text, boolean canConsume, boolean canProduce, boolean async, Object... params) {
 

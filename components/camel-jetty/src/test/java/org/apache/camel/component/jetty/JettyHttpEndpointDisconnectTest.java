@@ -16,28 +16,49 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty12.JettyHttpComponent12;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
  */
+@Isolated
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
-    private String serverUri = "http://localhost:" + getPort() + "/myservice";
+    private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
-    public void testContextShutdownRemovesHttpConnector() throws Exception {
+    public void testContextShutdownRemovesHttpConnector() {
         context.stop();
-        assertEquals(0, JettyHttpComponent.CONNECTORS.size(), "Connector should have been removed");
+        assertEquals(0, JettyHttpComponent.CONNECTORS.size(),
+                () -> {
+                    StringBuilder sb = new StringBuilder("Connector should have been removed\n");
+                    for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
+                        Throwable t = JettyHttpComponent12.connectorCreation.get(key);
+                        if (t == null) {
+                            t = new Throwable("Unable to find connector creation");
+                        }
+                        StringWriter sw = new StringWriter();
+                        try (PrintWriter pw = new PrintWriter(sw)) {
+                            t.printStackTrace(pw);
+                        }
+                        sb.append(key).append(": ").append(sw);
+                    }
+                    return sb.toString();
+                });
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + serverUri).to("mock:result");
             }
         };

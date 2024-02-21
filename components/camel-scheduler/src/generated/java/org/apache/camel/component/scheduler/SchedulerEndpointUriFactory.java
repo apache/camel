@@ -19,32 +19,37 @@ public class SchedulerEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
-        props.add("backoffMultiplier");
-        props.add("synchronous");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("initialDelay");
-        props.add("concurrentTasks");
+        Set<String> props = new HashSet<>(23);
+        props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
-        props.add("scheduler");
+        props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
         props.add("delay");
-        props.add("useFixedDelay");
-        props.add("pollStrategy");
-        props.add("runLoggingLevel");
-        props.add("startScheduler");
-        props.add("backoffErrorThreshold");
-        props.add("name");
-        props.add("greedy");
-        props.add("scheduledExecutorService");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("includeMetadata");
+        props.add("initialDelay");
+        props.add("name");
+        props.add("pollStrategy");
+        props.add("poolSize");
         props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startScheduler");
+        props.add("synchronous");
         props.add("timeUnit");
+        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -72,6 +77,11 @@ public class SchedulerEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

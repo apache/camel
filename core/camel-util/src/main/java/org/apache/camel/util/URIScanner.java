@@ -16,9 +16,9 @@
  */
 package org.apache.camel.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,10 +33,7 @@ import static org.apache.camel.util.URISupport.RAW_TOKEN_START;
  * RAW syntax aware URI scanner that provides various URI manipulations.
  */
 class URIScanner {
-
-    // TODO: when upgrading to JDK11 as minimum then use java.nio.Charset
-    private static final String CHARSET = "UTF-8";
-
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final char END = '\u0000';
 
     private final StringBuilder key;
@@ -46,8 +43,12 @@ class URIScanner {
     private char rawTokenEnd;
 
     URIScanner() {
-        this.key = new StringBuilder();
-        this.value = new StringBuilder();
+        /*
+         * By default, StringBuffer has an internal buffer of 16 chars. Our keys and values may usually be larger than,
+         * therefore, start with a value slightly larger than default to avoid resizing the array in most cases.
+         */
+        this.key = new StringBuilder(32);
+        this.value = new StringBuilder(32);
     }
 
     private void initState() {
@@ -57,82 +58,70 @@ class URIScanner {
         this.isRaw = false;
     }
 
-    public Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
+    public Map<String, Object> parseQuery(String uri, boolean useRaw) {
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
         // as & can be used in a parameter value as well.
 
-        try {
-            // use a linked map so the parameters is in the same order
-            Map<String, Object> answer = new LinkedHashMap<>();
+        // use a linked map so the parameters is in the same order
+        Map<String, Object> answer = new LinkedHashMap<>();
 
-            // parse the uri parameters char by char
-            int len = uri.length();
-            for (int i = 0; i < len; i++) {
-                // current char
-                char ch = uri.charAt(i);
-                // look ahead of the next char
-                char next;
-                if (i <= len - 2) {
-                    next = uri.charAt(i + 1);
-                } else {
-                    next = END;
+        // parse the uri parameters char by char
+        final int len = uri.length();
+        for (int i = 0; i < len; i++) {
+            // current char
+            final char ch = uri.charAt(i);
+
+            if (keyMode) {
+                // if there is a = sign then the key ends and we are in value mode
+                if (ch == '=') {
+                    keyMode = false;
+                    continue;
                 }
 
-                if (keyMode) {
-                    // if there is a = sign then the key ends and we are in value mode
-                    if (ch == '=') {
-                        keyMode = false;
-                        continue;
-                    }
+                if (ch != '&') {
+                    // regular char so add it to the key
+                    key.append(ch);
+                }
+            } else {
+                // are we a raw value
+                isRaw = checkRaw();
 
-                    if (ch != '&') {
-                        // regular char so add it to the key
-                        key.append(ch);
-                    }
-                } else {
-                    // are we a raw value
-                    isRaw = checkRaw();
+                // if we are in raw mode, then we keep adding until we hit the end marker
+                if (isRaw) {
+                    value.append(ch);
 
-                    // if we are in raw mode, then we keep adding until we hit the end marker
-                    if (isRaw) {
-                        value.append(ch);
-
-                        if (isAtEnd(ch, next)) {
-                            // raw value end, so add that as a parameter, and reset flags
-                            addParameter(answer, useRaw || isRaw);
-                            initState();
-                            // skip to next as we are in raw mode and have already added the value
-                            i++;
-                        }
-                        continue;
+                    // look ahead of the next char
+                    final char next = i <= len - 2 ? uri.charAt(i + 1) : END;
+                    if (isAtEnd(ch, next)) {
+                        // raw value end, so add that as a parameter, and reset flags
+                        addParameter(answer, useRaw || isRaw);
+                        initState();
+                        // skip to next as we are in raw mode and have already added the value
+                        i++;
                     }
-
-                    if (ch != '&') {
-                        // regular char so add it to the value
-                        value.append(ch);
-                    }
+                    continue;
                 }
 
-                // the & denote parameter is ended
-                if (ch == '&') {
-                    // parameter is ended, as we hit & separator
-                    addParameter(answer, useRaw || isRaw);
-                    initState();
+                if (ch != '&') {
+                    // regular char so add it to the value
+                    value.append(ch);
                 }
             }
 
-            // any left over parameters, then add that
-            if (key.length() > 0) {
+            // the & denote parameter is ended
+            if (ch == '&') {
+                // parameter is ended, as we hit & separator
                 addParameter(answer, useRaw || isRaw);
+                initState();
             }
-
-            return answer;
-
-        } catch (UnsupportedEncodingException e) {
-            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
-            se.initCause(e);
-            throw se;
         }
+
+        // any left over parameters, then add that
+        if (!key.isEmpty()) {
+            addParameter(answer, useRaw || isRaw);
+        }
+
+        return answer;
     }
 
     private boolean checkRaw() {
@@ -165,13 +154,15 @@ class URIScanner {
         return ch == rawTokenEnd && (next == '&' || next == END);
     }
 
-    private void addParameter(Map<String, Object> answer, boolean isRaw) throws UnsupportedEncodingException {
+    private void addParameter(Map<String, Object> answer, boolean isRaw) {
         String name = URLDecoder.decode(key.toString(), CHARSET);
         String text;
         if (isRaw) {
             text = value.toString();
         } else {
-            String s = StringHelper.replaceAll(value.toString(), "%", "%25");
+            // need to replace % with %25 to avoid losing "%" when decoding
+            final String s = replacePercent(value.toString());
+
             text = URLDecoder.decode(s, CHARSET);
         }
 
@@ -198,10 +189,9 @@ class URIScanner {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static List<Pair<Integer>> scanRaw(String str) {
         if (str == null || ObjectHelper.isEmpty(str)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<Pair<Integer>> answer = new ArrayList<>();
@@ -268,6 +258,14 @@ class URIScanner {
 
         // not RAW value
         return null;
+    }
+
+    public static String replacePercent(String input) {
+        if (input.contains("%")) {
+            return input.replace("%", "%25");
+        }
+
+        return input;
     }
 
 }

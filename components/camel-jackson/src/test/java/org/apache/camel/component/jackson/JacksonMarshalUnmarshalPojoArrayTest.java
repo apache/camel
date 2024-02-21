@@ -35,7 +35,7 @@ public class JacksonMarshalUnmarshalPojoArrayTest extends CamelTestSupport {
         String json = "[{\"text\":\"Camel\"}, {\"text\":\"World\"}]";
         template.sendBody("direct:beginArray", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Pojo[] array = mock.getReceivedExchanges().get(0).getIn().getBody(Pojo[].class);
         assertNotNull(array);
@@ -48,10 +48,10 @@ public class JacksonMarshalUnmarshalPojoArrayTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:beginArray").unmarshal().json(Pojo[].class).to("mock:endArray");
             }
         };

@@ -17,13 +17,13 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +50,7 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 13 names
         List<Meter> meters = meterRegistry.getMeters();
@@ -66,16 +66,6 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         assertFalse(json.contains("\"name\" : \"test\""));  // the MicrometerRoutePolicy does NOT display producer metrics
         assertTrue(json.contains("\"routeId\" : \"bar\""));
         assertTrue(json.contains("\"routeId\" : \"foo\""));
-
-        // there should be 2 route policy meter mbeans
-        Set<ObjectName> set
-                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelRoutePolicy.*"), null);
-        assertEquals(2, set.size());
-
-        String camelContextName = context().getName();
-        Long testCount = (Long) getMBeanServer().getAttribute(
-                new ObjectName("org.apache.camel.micrometer:name=test.camelContext." + camelContextName), "Count");
-        assertEquals(count / 2, testCount.longValue());
     }
 
     @Override

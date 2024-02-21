@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
+class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,18 @@ public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLoadProperties() throws Exception {
+    void testLoadProperties() {
         context.start();
 
         org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);
-        assertEquals(19, prop.size());
+        assertEquals(21, prop.size());
 
         assertEquals("{{cool.b}}", prop.getProperty("cool.a"));
         assertEquals("10", prop.getProperty("myQueueSize"));
+        assertEquals("true", prop.getProperty("integration.ftpEnabled"));
     }
 
     @Override

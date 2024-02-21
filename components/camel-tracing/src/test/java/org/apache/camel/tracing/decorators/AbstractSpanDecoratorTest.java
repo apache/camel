@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AbstractSpanDecoratorTest {
 
-    private static final String TEST_URI = "test:/uri";
+    private static final String TEST_URI = "test:/uri?query=hello";
 
     @Test
     public void testGetOperationName() {
@@ -76,6 +77,10 @@ public class AbstractSpanDecoratorTest {
         decorator.pre(span, null, endpoint);
 
         assertEquals("camel-test", span.tags().get(Tag.COMPONENT.name()));
+        assertEquals("camel-test", span.tags().get(TagConstants.COMPONENT));
+        assertEquals("test", span.tags().get(TagConstants.URL_SCHEME));
+        assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
+        assertEquals("query=hello", span.tags().get(TagConstants.URL_QUERY));
     }
 
     @Test
@@ -104,6 +109,7 @@ public class AbstractSpanDecoratorTest {
         decorator.post(span, exchange, null);
 
         assertEquals(true, span.tags().get(Tag.ERROR.name()));
+        assertEquals(true, span.tags().get(TagConstants.ERROR));
         assertEquals(1, span.logEntries().size());
         assertEquals("error", span.logEntries().get(0).fields().get("event"));
         assertEquals("Exception", span.logEntries().get(0).fields().get("error.kind"));

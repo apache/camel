@@ -1,19 +1,63 @@
-[[convertBodyTo-eip]]
 = Convert Body To EIP
-:docTitle: Convert Body To
+:doctitle: Convert Body To
+:shortname: convertBodyTo
 :description: Converts the message body to another type
 :since: 
-:supportLevel: Stable
+:supportlevel: Stable
+:tabs-sync-option:
 
-The ConvertBodyTo EIP allows you to transform your body to a different type.
+The ConvertBodyTo EIP allows you to transform the message body to a different type.
 
 // eip options: START
-The Convert Body To EIP supports 2 options which are listed below:
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *type* | *Required* The java type to convert to |  | String
-| *charset* | To use a specific charset when converting |  | String
-|===
+include::partial$eip-options.adoc[]
 // eip options: END
+
+NOTE: The type is a FQN classname (fully qualified), so for example `java.lang.String`, `com.foo.MyBean` etc.
+However, Camel has shorthand for common Java types, most noticeable `String` can be used instead of `java.lang.String`.
+You can also use `byte[]` for a byte array.
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Example
+
+A common use-case is for converting the message body to a `String`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .convertBodyTo(String.class)
+  .log("The file content: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="String"/>
+  <log message="The file content: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inbox
+    steps:
+      - convertBodyTo:
+          type: String
+      - log:
+          message: "The file content: ${body}"
+----
+====

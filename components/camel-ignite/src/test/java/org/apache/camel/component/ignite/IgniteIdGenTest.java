@@ -43,10 +43,10 @@ public class IgniteIdGenTest extends AbstractIgniteTest {
         Assertions
                 .assertThat(
                         template.requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET", null, Long.class))
-                .isEqualTo(0);
+                .isZero();
         Assertions.assertThat(template
                 .requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=GET_AND_INCREMENT", null, Long.class))
-                .isEqualTo(0);
+                .isZero();
         Assertions.assertThat(template
                 .requestBody("ignite-idgen:" + resourceUid + "?initialValue=0&operation=INCREMENT_AND_GET", null, Long.class))
                 .isEqualTo(2);
@@ -108,7 +108,7 @@ public class IgniteIdGenTest extends AbstractIgniteTest {
 
         // Cannot test much here with a single Ignite instance, let's just test
         // that the parameter could be set.
-        Assertions.assertThat(endpoint.getBatchSize());
+        Assertions.assertThat(endpoint.getBatchSize()).isEqualTo(100);
     }
 
     @AfterEach

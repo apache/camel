@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
-    public final class MyComponent extends DefaultComponent {
+    public static final class MyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -46,7 +46,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         }
     }
 
-    public final class MyEndpoint extends DefaultEndpoint {
+    public static final class MyEndpoint extends DefaultEndpoint {
 
         private String username;
         private String password;
@@ -145,12 +145,12 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRawUriParameterFail() throws Exception {
+    public void testRawUriParameterPlusSign() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
         getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
 
-        template.sendBody("direct:fail", "Hello World");
+        template.sendBody("direct:plus", "Hello World");
 
         // should fail as the password has + sign which gets escaped
         getMockEndpoint("mock:result").assertIsNotSatisfied();
@@ -191,7 +191,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
                 from("direct:rawlines").to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)").to("mock:result");
 
-                from("direct:fail").to("mycomponent:foo?password=foo)+bar&username=scott").to("mock:result");
+                from("direct:plus").to("mycomponent:foo?password=foo)+bar&username=scott").to("mock:result");
 
                 from("direct:ok").to("mycomponent:foo?password=RAW(foo)+bar)&username=scott").to("mock:result");
 

@@ -19,6 +19,7 @@ package org.apache.camel.parser.java;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -45,7 +46,7 @@ public class RoasterJavaDslTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
 
-        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
+        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
@@ -57,7 +58,7 @@ public class RoasterJavaDslTest extends CamelTestSupport {
         assertEquals("28", list.get(0).getLineNumberEnd());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("28\tfrom"));
         assertTrue(tree.contains("29\t  log"));
@@ -78,7 +79,7 @@ public class RoasterJavaDslTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

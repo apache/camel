@@ -25,6 +25,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("As2To", java.lang.String.class);
         map.put("As2Version", java.lang.String.class);
+        map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
@@ -34,6 +35,11 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
         map.put("From", java.lang.String.class);
+        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
+        map.put("HttpConnectionPoolSize", java.lang.Integer.class);
+        map.put("HttpConnectionPoolTtl", java.time.Duration.class);
+        map.put("HttpConnectionTimeout", java.time.Duration.class);
+        map.put("HttpSocketTimeout", java.time.Duration.class);
         map.put("MdnMessageTemplate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
@@ -45,10 +51,12 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("SigningPrivateKey", java.security.PrivateKey.class);
+        map.put("SslContext", javax.net.ssl.SSLContext.class);
         map.put("Subject", java.lang.String.class);
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
         map.put("UserAgent", java.lang.String.class);
+        map.put("ValidateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
 
@@ -66,6 +74,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "As2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "attachedfilename":
+        case "AttachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
         case "ClientFqdn": target.setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "compressionalgorithm":
@@ -84,6 +94,16 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "from":
         case "From": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverifier":
+        case "HostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": target.setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": target.setHttpConnectionPoolTtl(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": target.setHttpConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": target.setHttpSocketTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -106,6 +126,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": target.setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "signingprivatekey":
         case "SigningPrivateKey": target.setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "sslcontext":
+        case "SslContext": target.setSslContext(property(camelContext, javax.net.ssl.SSLContext.class, value)); return true;
         case "subject":
         case "Subject": target.setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "targethostname":
@@ -114,6 +136,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "TargetPortNumber": target.setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "UserAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": target.setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
         }
     }
@@ -136,6 +160,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": return java.lang.String.class;
         case "as2version":
         case "As2Version": return java.lang.String.class;
+        case "attachedfilename":
+        case "AttachedFileName": return java.lang.String.class;
         case "clientfqdn":
         case "ClientFqdn": return java.lang.String.class;
         case "compressionalgorithm":
@@ -154,6 +180,16 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": return java.security.cert.Certificate[].class;
         case "from":
         case "From": return java.lang.String.class;
+        case "hostnameverifier":
+        case "HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": return java.lang.Integer.class;
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": return java.time.Duration.class;
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": return java.time.Duration.class;
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": return java.time.Duration.class;
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": return java.lang.String.class;
         case "methodname":
@@ -176,6 +212,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": return java.security.cert.Certificate[].class;
         case "signingprivatekey":
         case "SigningPrivateKey": return java.security.PrivateKey.class;
+        case "sslcontext":
+        case "SslContext": return javax.net.ssl.SSLContext.class;
         case "subject":
         case "Subject": return java.lang.String.class;
         case "targethostname":
@@ -184,6 +222,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "TargetPortNumber": return java.lang.Integer.class;
         case "useragent":
         case "UserAgent": return java.lang.String.class;
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
         }
     }
@@ -202,6 +242,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "As2To": return target.getAs2To();
         case "as2version":
         case "As2Version": return target.getAs2Version();
+        case "attachedfilename":
+        case "AttachedFileName": return target.getAttachedFileName();
         case "clientfqdn":
         case "ClientFqdn": return target.getClientFqdn();
         case "compressionalgorithm":
@@ -220,6 +262,16 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": return target.getEncryptingCertificateChain();
         case "from":
         case "From": return target.getFrom();
+        case "hostnameverifier":
+        case "HostnameVerifier": return target.getHostnameVerifier();
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": return target.getHttpConnectionPoolSize();
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": return target.getHttpConnectionPoolTtl();
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": return target.getHttpConnectionTimeout();
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": return target.getHttpSocketTimeout();
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": return target.getMdnMessageTemplate();
         case "methodname":
@@ -242,6 +294,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": return target.getSigningCertificateChain();
         case "signingprivatekey":
         case "SigningPrivateKey": return target.getSigningPrivateKey();
+        case "sslcontext":
+        case "SslContext": return target.getSslContext();
         case "subject":
         case "Subject": return target.getSubject();
         case "targethostname":
@@ -250,6 +304,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "TargetPortNumber": return target.getTargetPortNumber();
         case "useragent":
         case "UserAgent": return target.getUserAgent();
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": return target.getValidateSigningCertificateChain();
         default: return null;
         }
     }

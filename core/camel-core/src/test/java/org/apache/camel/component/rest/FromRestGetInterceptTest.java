@@ -36,7 +36,7 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
     public void testFromRestModel() throws Exception {
         getMockEndpoint("mock:hello").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:intercept").expectedMessageCount(3);
+        getMockEndpoint("mock:intercept").expectedMessageCount(4);
 
         String out = template.requestBody("seda:get-say-hello", "I was here", String.class);
         assertEquals("Bye World", out);
@@ -52,7 +52,10 @@ public class FromRestGetInterceptTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 intercept().to("mock:intercept");
 
-                rest("/say/hello").get().route().to("mock:hello").to("mock:bar").transform().constant("Bye World");
+                rest("/say/hello").get().to("direct:hello");
+
+                from("direct:hello")
+                        .to("mock:hello").to("mock:bar").transform().constant("Bye World");
             }
         };
     }

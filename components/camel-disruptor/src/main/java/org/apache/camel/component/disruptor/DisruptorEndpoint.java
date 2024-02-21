@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
-             syntax = "disruptor:name", category = { Category.ENDPOINT })
+             remote = false, syntax = "disruptor:name", category = { Category.MESSAGING })
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
@@ -103,7 +103,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @ManagedAttribute(description = "Amount of pending exchanges waiting for consumption in ring buffer")
-    public long getPendingExchangeCount() throws DisruptorNotStartedException {
+    public long getPendingExchangeCount() {
         return getDisruptor().getPendingExchangeCount();
     }
 

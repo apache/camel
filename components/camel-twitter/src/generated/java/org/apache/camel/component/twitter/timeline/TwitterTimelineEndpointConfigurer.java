@@ -64,6 +64,7 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "latitude": target.getProperties().setLatitude(property(camelContext, java.lang.Double.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "list": target.setList(property(camelContext, java.lang.String.class, value)); return true;
         case "locations": target.getProperties().setLocations(property(camelContext, java.lang.String.class, value)); return true;
         case "longitude": target.getProperties().setLongitude(property(camelContext, java.lang.Double.class, value)); return true;
         case "numberofpages":
@@ -146,6 +147,7 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "latitude": return java.lang.Double.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "list": return java.lang.String.class;
         case "locations": return java.lang.String.class;
         case "longitude": return java.lang.Double.class;
         case "numberofpages":
@@ -229,6 +231,7 @@ public class TwitterTimelineEndpointConfigurer extends PropertyConfigurerSupport
         case "latitude": return target.getProperties().getLatitude();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "list": return target.getList();
         case "locations": return target.getProperties().getLocations();
         case "longitude": return target.getProperties().getLongitude();
         case "numberofpages":

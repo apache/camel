@@ -1,0 +1,447 @@
+= Getting Started
+
+This document will guide you through the fundamentals of the Apache Camel Core. At the end of it you will have a basic understanding of integrating systems, have learned some of the most important concepts of the project, and will be able to create and run your first project.
+
+[[BookGettingStarted-eip-book]]
+
+[[BookGettingStarted-TheEnterpriseIntegrationPatternsEIPBook]]
+== The _Enterprise Integration Patterns_ (E.I.P.) book
+
+Books about design patterns document the existing best practices within a particular field. The authors of these books hope to spread knowledge of best practices and to promote a vocabulary for discussing architectural designs.
+
+A famous book about design patterns is the http://www.amazon.com/Enterprise-Integration-Patterns-Designing-Deploying/dp/0321200683[_Enterprise
+Integration Patterns: Designing, Building, and Deploying Messaging
+Solutions_] written by Gregor Hohpe and Bobby Wolf. The E.I.P. book, as it is known, describes 65 design patterns for asynchronous messaging systems. The book gives each of them a name and an image - intended to be used in architectural diagrams.
+
+[[BookGettingStarted-TheCamelProject]]
+=== The Apache Camel Core project
+
+The http://camel.apache.org[Apache Camel Core] is an open-source, Java-based project that helps users to implement many of the design patterns described in the E.I.P. book. As such, we suggest that our users have a copy of the E.I.P. book as one of their references.
+
+[[BookGettingStarted-SupportingDocumentation]]
+== Supporting Documentation
+
+[[BookGettingStarted-OnlineDocumentationForCamel]]
+=== Online documentation for Camel
+
+The links on the right-side allow easy navigation between different topics within a guide. Our documentation tries to cover the topics for both novice and experienced users. However, experienced users may want to skip the subjects they are familiar with.
+
+Over the years, our community has written link:/community/books/[books], link:/community/articles/[articles] and tutorials about Apache Camel. Our community has presented Apache Camel in many videos and talks.
+
+Some notable references from material developed from members, which may provide significant help for new users include:
+
+* The https://www.manning.com/books/camel-in-action-second-edition[Camel in Action 2nd edition] book, presently serving as the Camel bible, has a free chapter one, which is highly recommended to read to get more familiar with Camel.
+* The link:/blog/2022/08/pluralsight-training/[Fundamentals of Apache Camel] training by Michael Hoffman.
+
+We strongly recommend that our users explore the pages above for additional material that suits their needs.
+
+[[BookGettingStarted-OnlineJavadocDocumentation]]
+=== Online Javadoc documentation
+
+Our API documentation in Javadoc format is available on https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[javadoc.io].
+
+The Javadoc API that are the most relevant for Camel end users are in the following components (JARs):
+
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[camel-core]
+* https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/index.html[camel-support]
+
+[[BookGettingStarted-CreatingYourFirstProject]]
+== Creating your first project
+
+We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] and a https://adoptium.net/temurin/[JDK] version 11 or greater installed on your system.
+
+[NOTE]
+====
+We strongly recommend you use an LTS version of Java (i.e., 11 or 17). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
+====
+
+=== Generating the project
+
+You will use one of the various https://maven.apache.org/guides/introduction/introduction-to-archetypes.html[Maven archetypes] provided by Camel to create your first project. An archetype is a template for a project. In other words: Camel Core provides templates you can use to create projects.
+
+Run this command to create your first Camel Core project:
+
+[source,bash]
+----
+mvn archetype:generate -B -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-java -DarchetypeVersion=3.18.4 -Dpackage=org.apache.camel.learn -DgroupId=org.apache.camel.learn -DartifactId=first-camel-integration -Dversion=1.0.0-SNAPSHOT
+----
+
+If you have never used archetypes before, the command looks lengthy. We'll explain the relevant arguments:
+
+* `-DarchetypeArtifactId`: this is the ID of the archetype to use (i.e., which of the templates from Camel Core to use - `camel-archetype-java` in this case)
+* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `3.18.4` in this example.
+* `-Dpackage`: the package name for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
+* `-DgroupId`: the group ID for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
+* `-DartifactId`: the artifact name for the project you are creating.
+* `-Dversion`: the version for your project.
+
+[NOTE]
+====
+later we will describe other ways to generate a Camel project.
+====
+
+=== Building and running the project
+
+You can run the following command to build the project:
+
+[source,bash]
+----
+mvn clean package
+----
+
+To run the project you can run the following command:
+
+[source,bash]
+----
+mvn camel:run -Dcamel.main.durationMaxMessages=2
+----
+
+After you run the command above, you should have the following messages:
+
+[source,bash]
+----
+...
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 is starting
+[che.camel.learn.MainApp.main()] BaseMainSupport                INFO  Auto-configuration summary
+[che.camel.learn.MainApp.main()] BaseMainSupport                INFO      [JVM System Property]          camel.main.durationMaxMessages=2
+[che.camel.learn.MainApp.main()] XPathBuilder                   INFO  Created default XPathFactory com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl@33cc7a16
+[che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Endpoint is configured with noop=true so forcing endpoint to be idempotent as well
+[che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Using default memory based idempotent repository with cache max size: 1000
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is starting
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Routes startup (started:1)
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO      Started route1 (file://src/data)
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) started in 89ms (build:12ms init:68ms start:9ms JVM-uptime:1s)
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Waiting until complete: Duration max 2 messages processed
+[1) thread #1 - file://src/data] route1                         INFO  Other message
+[1) thread #1 - file://src/data] route1                         INFO  UK message
+[1) thread #1 - file://src/data] MainLifecycleStrategy          INFO  Duration max messages triggering shutdown of the JVM
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is shutting down (timeout:45s)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Routes stopped (stopped:1)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO      Stopped route1 (file://src/data)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) shutdown in 7ms (uptime:1s JVM-uptime:2s)
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 shutdown
+----
+
+If you can see an output like that on your terminal, it means the integration has run well.
+
+The integration you have just run consumed two files and copied them to a directory based on their contents. You can check it out yourself but looking at the `target/messages` directory within the project:
+
+[source,bash]
+----
+find target/messages
+----
+
+You should have the following files:
+
+----
+target/messages
+target/messages/others
+target/messages/others/message2.xml
+target/messages/uk
+target/messages/uk/message1.xml
+----
+
+[NOTE]
+====
+Use the Windows Explorer or the Windows equivalent of the `find` command available on Linux, macOS or *BSDs.
+====
+
+== Understanding the project
+
+The integration you created implements a pattern (E.I.P.) called xref:components:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that route messages based on their content.
+
+More specifically, this integration looks at the content of the XML files in the `src/data` directory. If the content of the element `city` is London, then it moves the file to the directory `target/messages/uk`. Otherwise, it moves the file to the directory `target/messages/others`.
+
+To create the integration that performs this task, this code configures a _route_ that connects a source _endpoint_ represented by the _address_ `file:src/data?noop=true` to two other _endpoints_ represented by the addresses `file:target/messages/uk` and `file:target/messages/others`.
+
+Do not worry if you feel overwhelmed by the technical jargon. In the next sections we will explain what each of these are and why they are important for Camel-based integrations.
+
+[[BookGettingStarted-Endpoint]]
+=== Endpoint
+When we talk about inter-process communication, such as client/server or microservices, we often use the term _endpoint_ to refer to a software entity. In this context, a characteristic of an endpoint is that it is contactable at an _address_. The address may itself convey additional characteristics of an endpoint. For instance, the address `host:port` conveys both the port and network name of a TCP-based communication endpoint.
+
+The distinction between the address and the software contactable at that address is often not important.
+
+[NOTE]
+====
+in the past, other technologies (such as CORBA) used the terminology _endpoint_ in ways that could appear ambiguous. To prevent any confusion, we clarify that Camel uses it solely in the way we have described above.
+====
+
+Camel provides out-of-the-box support for endpoints implemented with many communication technologies. Here are some examples of the supported endpoint technologies:
+
+* A JMS queue.
+* A web service.
+* A file. A file may sound like an unlikely type of endpoint, until you
+realize that in some systems one application might write information to
+a file and, later, another application might read that file.
+* An FTP server.
+* An email address. A client can send a message to an email address, and
+a server can read an incoming message from a mail server.
+* A POJO (plain old Java object).
+
+[[BookGettingStarted-Routes]]
+=== Routes
+
+In a Camel-based application, you create routes. A route is used to connect a source _endpoint_ to a destination _endpoint_.
+
+[NOTE]
+====
+Other projects in the integration, microservices and middleware space use the terms _source_ and _sink_ for the source and destination endpoints. The Camel Core project does not use this terminology.
+====
+
+A _route_ describes the step-by-step movement of a `Message` from a source endpoint, through arbitrary types of decision-making routines (such as filters and routers) to a destination endpoint (if any).
+
+[NOTE]
+====
+At this point, you might want to use an IDE to open the project and view the files.
+====
+
+In the project you created, there should be 2 source files located in the directory `src/main/java/org/apache/camel/learn`:
+
+* `MainApp.java`: contains the code for configuring and launching the application.
+* `MyRouteBuilder.java`: contains the code for the route.
+
+The code for the route should be:
+
+[source,java]
+----
+public class MyRouteBuilder extends RouteBuilder {
+    public void configure() {
+        from("file:src/data?noop=true")
+            .choice()
+                .when(xpath("/person/city = 'London'"))
+                    .log("UK message")
+                    .to("file:target/messages/uk")
+                .otherwise()
+                    .log("Other message")
+                    .to("file:target/messages/others");
+    }
+}
+----
+
+We will elaborate on the nature and the role of a route within the Camel Core project in later parts of this guide. For now, let's focus on the two most important aspects of the route that we created:
+
+* It extends the `RouteBuilder`, which is the base class for creating routes in Camel.
+* It uses the `configure` method to describe the step-by-step movement of the data from the source to the destination.
+
+[[BookGettingStarted-RoutesConfiguration]]
+==== Route Configuration
+
+In this route configuration, we are connecting the source _endpoint_ represented by the _address_ `file:src/data?noop=true` to two other _endpoints_ represented by the addresses `file:target/messages/uk` and `file:target/messages/others`.
+In Camel, Uniform Resource Identifiers (URIs) represent the addresses of the endpoints. These URIs convey additional information that is very important for the route and your integration:
+
+* The _component_ that is used to consume and/or produce data.
+* A _resource identifier_.
+* The options for the component.
+
+Camel makes extensive use of xref:manual::uris.adoc[URIs] to allow you to refer to xref:manual::endpoint.adoc[Endpoints].
+
+[[BookGettingStarted-TheMeaningofURL-URI-URN]]
+===== The Meaning of URL, URI and URN
+
+Some Camel methods take a parameter that is a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier[URI] string. People usually know that a URI is "something like a https://en.wikipedia.org/wiki/URL[URL]" but do not always understand the relationship between URI and an URL or its relationship with other acronyms such as https://en.wikipedia.org/wiki/Internationalized_Resource_Identifier[IRI] and https://en.wikipedia.org/wiki/Uniform_Resource_Name[URN].
+
+Most people are familiar with _URLs_ (uniform resource locators), such as `\http://...`, `\ftp://...`, `\mailto:...:`. A URL specifies the _location_ of a resource.
+
+A URN is a wrapper for different "unique identifier" schemes. The syntax of a URN is `urn:<scheme-name>:<unique-identifier>`. A URN uniquely identifies a _resource_ (i.e.:, a book, person, or piece of equipment). By itself, a URN does not specify the _location_ of the resource.
+
+A _URI_ (uniform resource identifier) is a URL _or_ a URN.
+
+[[BookGettingStarted-TheAddress]]
+===== The Endpoint Address
+
+In Camel, the URIs that represent the addresses of the endpoints take the following format:
+
+`component:resource[?options]`
+
+The scheme part of the URI represents the component used to consume or produce data. Camel contains more than xref:components::index.adoc[300 components] that allow your application to communicate with many systems, protocols, and applications.
+
+These are some examples of valid URIs for Camel: `jms:queue:order`, `kafka:myTopic?groupId=KafkaConsumerFullIT`, `direct:result`. By looking at these URIs we can identify that they are using the `jms`, `kafka`, and the `direct` component.
+
+Every component has its own specific set of features, constraints, and requirements that we must observe when working with them. Camel exposes them through the `resource` and `options`. What this means varies according to the component we are working with. For instance, in the xref:components::file-component.adoc[file] component, the _resource_ is a directory; in the xref:components::kafka-component.adoc[Kafka] component, the _resource_ is the _topic_; etc.
+
+[[BookGettingStarted-RoutesConfigurationAndEIP]]
+==== Route Configuration and EIPs
+
+The integration you created implements a pattern (E.I.P.) called xref:components:eips:choice-eip.adoc[Content Based Router].
+
+Camel usually exposes these patterns via a Java Domain-Specific Language (Java DSL). You can use the methods from the Java DSL in the route to implement the patterns. For instance, the integration you created contained the following code snippet:
+
+[source,java]
+----
+// ...
+.choice()
+    .when(xpath("/person/city = 'London'"))
+        .log("UK message")
+        .to("file:target/messages/uk")
+    .otherwise()
+        .log("Other message")
+        .to("file:target/messages/others");
+// ...
+----
+
+The code above implements the Content Based Router by evaluating (`when()`) a predicate that tests if the body of the message matches an https://en.wikipedia.org/wiki/XPath[xpath] expression (`xpath("/person/city = 'London'")`). If `true`, then the destination endpoint for the message should be `file:target/messages/uk`. Otherwise, the destination endpoint should be `file:target/messages/others`.
+
+Camel supports most of the xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] from the excellent book by Gregor Hohpe and Bobby Woolf.
+
+[[BookGettingStarted-RoutesAdding]]
+=== Adding Routes and Running the Application
+
+Before executing a route, it needs to be configured and added to the _CamelContext_.
+
+The `MainApp.java` file contains the code that performs these steps:
+
+[source,java]
+----
+public class MainApp {
+    public static void main(String... args) throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.run(args);
+    }
+}
+----
+
+We start by creating a xref:components:others:main.adoc[_Main_] component that we configure to include the route (`main.configure().addRoutesBuilder(new MyRouteBuilder());`). Then we start the execution of the main application by running it with the `run` method that will create the _CamelContext_ and execute the integration in the foreground until we terminate it (i.e., with `Ctrl + C`).
+
+You don’t interact directly with the _CamelContext_ in this example, but it is a fundamental part of Camel. We will talk about it in the next section.
+
+[[BookGettingStarted-ConceptsAndTerminologyFundamentalToCamel]]
+== Concepts and terminology fundamental to Camel
+
+In this section, we explain additional Camel concepts and features.
+
+[[BookGettingStarted-CamelContext]]
+=== CamelContext
+
+The _CamelContext_ is the runtime system, which holds together all the fundamental concepts we have presented so far (routes, endpoints, components, etc).
+
+This context object represents the Camel runtime system. Typically, you have one _CamelContext_ instance in an application.
+
+You did not manipulate the _CamelContext_ in the sample application you created, because the _Main_ component managed it for you. As your integration grows more complex, you will eventually need to manipulate it. A typical application executes the following steps:
+
+1. Create the context object.
+2. Add endpoints and, possibly, components, which we will discuss in the Section ("Components").
+3. Add routes to the context object to connect the endpoints.
+4.  Invoke the `start()` operation on the context object. This operation starts the Camel internal threads that process the sending, receiving, and processing of messages in the endpoints.
+5.  Eventually invoke the `stop()` operation on the context object. Doing this, gracefully stops all the endpoints and Camel-internal
+threads.
+
+[NOTE]
+====
+the `CamelContext.start()` operation does not block indefinitely. Rather, it starts threads internal to each `Component` and
+`Endpoint` and then `start()` returns. Conversely, `CamelContext.stop()` waits for all the threads internal to each `Endpoint` and `Component` to terminate, and then `stop()` returns.
+====
+
+If you neglect to call `CamelContext.start()` in your application, Camel will not process the messages because internal threads will not have been created.
+
+If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
+If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
+
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::camelcontext.adoc[CamelContext] if you want to learn more about it.
+====
+
+[[BookGettingStarted-Components]]
+=== Components
+
+Components are another fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services. Camel comes with a large number of built-in components that provide connectivity to a wide range of technologies and protocols, such as HTTP, JMS, file, and many others. You can also create a custom components if the built-in components do not meet your needs.
+
+Typically, Camel-based applications shouldn't need to interact directly with a component. However, there are some circumstances where manipulating the component may be beneficial for the performance, operation, or scalability of the application. Our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
+
+[[BookGettingStarted-message-and-exchange]]
+
+[[BookGettingStarted-MessageandExchange]]
+=== Message and Exchange
+
+The `Message` interface provides an abstraction for a single message, such as a request, reply or exception message.
+
+The public API of the `Message` interface provides getters and setters methods. You can use them to access the _message id_, _body_ and individual _header_ fields of a message.
+
+The `Exchange` interface provides an abstraction for an exchange of messages. An exchange of messages is a request message and its corresponding reply or exception message. In Camel, the request, reply and exception messages are called _in_, _out_ and _fault_ messages.
+
+[NOTE]
+====
+our documentation contains more details about xref:manual::exchange.adoc[Exchange] and the xref:components:eips:event-message.adoc[Message] if you want to learn more about them.
+====
+
+[[BookGettingStarted-Processor]]
+=== Processor
+
+A processor is used to implement consumers of message exchanges or to implement a Message Translator, and other use-cases.
+
+When writing routes, you may use processors to execute more complex logic on the exchanges. For example:
+
+[source,java]
+----
+public void process(Exchange exchange) {
+    final String body = exchange.getMessage().getBody(String.class);
+    System.out.println(“Updated body: “ + body.replace(“city”, “county”));
+
+    // ... more code here
+}
+
+public void configure() {
+    from(“file:src/data?noop=true”)
+        .process(this::process);
+}
+----
+
+The code for the processor must comply with the `Processor` interface. This interface represents a class that processes a message. We show the signature of this interface below:
+
+.Processor
+[source,java]
+----
+package org.apache.camel;
+
+public interface Processor {
+    void process(Exchange exchange) throws Exception;
+}
+----
+
+[NOTE]
+====
+the parameter to the `process()` method is an `Exchange` rather than a `Message`. This provides flexibility. For example to get the input message and process it, an implementation of this method initially might call the method `exchange.getIn()`. If an error occurs during processing, then the method it can call `exchange.setException()`.
+====
+
+An application-level developer might also want to implement the `Processor` interface with a class that executes some business logic.
+
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::processor.adoc[Processor].
+====
+
+==== Built-in processors
+
+Many classes in the Camel library implement the `Processor` interface in a way that provides support for the design patterns in the E.I.P. book. For example:
+
+* `ChoiceProcessor` implements the message router pattern, that is, it uses a cascading if-then-else statement to route a message from an input queue to one of several output queues.
+* The `FilterProcessor` class which discards messages that do not satisfy a stated _predicate_ (that is, condition).
+
+[[BookGettingStarted-RoutesAndRouteBuildersAndDSL]]
+
+=== Routes, RouteBuilders and Java DSL
+
+Camel provides three ways for an application developer to specify routes:
+
+* Using XML.
+* Using YAML.
+* Using the Java Domain-specific Language (DSL).
+
+[[BookGettingStarted-IntroductiontoJavaDSL]]
+==== Introduction to Java DSL
+
+For many people, the term “domain-specific language” implies a compiler or interpreter that can process an input file containing keywords and syntax specific to a particular domain. This is not the approach taken by Camel. Our documentation consistently uses the term _“Java DSL”_ instead of “DSL”, but this does not entirely avoid potential confusion. The Camel _“Java DSL”_ is a class library that you can use in a way that looks almost like a DSL, except that it has a bit of Java syntactic baggage.
+
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::java-dsl.adoc[Java DSL].
+====
+
+[[BookGettingStarted-ContinueLearningaboutCamel]]
+== Continue Learning about Camel
+
+Now that you have learned the basics of Camel, you can refer to the xref:working-with-camel-core:index.adoc[Working With Camel Core] for a list of guides that can help you increase your understanding about Camel.
+
+You can also refer to the xref:reference:index.adoc[Reference Documentation] to get access to the links with documentation for all of Camel's components, EIPs, DSLs and more.

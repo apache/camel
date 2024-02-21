@@ -20,15 +20,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test to verify that message headers override pre configuration.
  */
 public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestSupport {
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
+    private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
 
     @Test
     public void testSendWithRecipientsInHeaders() throws Exception {
@@ -36,26 +40,26 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("to", "claus@localhost");
-        mock.expectedHeaderReceived("cc", "willem@localhost");
-        mock.expectedHeaderReceived("bcc", "hadrian@localhost");
+        mock.expectedBodiesReceived("Hello World\r\n");
+        mock.expectedHeaderReceived("to", claus.getEmail());
+        mock.expectedHeaderReceived("cc", willem.getEmail());
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put("to", "claus@localhost");
-        headers.put("cc", "willem@localhost");
-        headers.put("bcc", "hadrian@localhost");
+        headers.put("to", claus.getEmail());
+        headers.put("cc", willem.getEmail());
 
-        template.sendBodyAndHeaders("smtp://james3@localhost", "Hello World", headers);
+        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), "Hello World", headers);
 
         mock.assertIsSatisfied();
+        /* Bcc should be stripped by specs compliant SMTP servers */
+        Assertions.assertThat(mock.getReceivedExchanges().get(0).getMessage().getHeader("bcc")).isNull();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("pop3://claus@localhost?to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100")
+            public void configure() {
+                from(claus.uriPrefix(Protocol.pop3) + "&to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         };

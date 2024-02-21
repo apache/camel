@@ -20,11 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.generator.openapi.RestDslSourceCodeGenerator;
-import org.apache.camel.generator.openapi.SpringBootProjectSourceCodeGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -54,7 +53,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OasDocument openapi;
+        OpenApiDocument openapi;
         try {
             openapi = readOpenApiDoc(specificationUri);
         } catch (Exception e1) {
@@ -82,14 +81,18 @@ public class GenerateMojo extends AbstractGenerateMojo {
             generator.withIndent(indent.replace("\\t", "\t"));
         }
 
+        if (ObjectHelper.isNotEmpty(basePath)) {
+            generator.withBasePath(basePath);
+        }
         if (ObjectHelper.isNotEmpty(packageName)) {
             generator.withPackageName(packageName);
         }
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {
             final DestinationGenerator destinationGeneratorObject = createDestinationGenerator();
-
             generator.withDestinationGenerator(destinationGeneratorObject);
+        } else if (ObjectHelper.isNotEmpty(destinationToSyntax)) {
+            generator.withDestinationToSyntax(destinationToSyntax);
         }
 
         final Path outputPath = new File(outputDirectory).toPath();
@@ -98,38 +101,28 @@ public class GenerateMojo extends AbstractGenerateMojo {
             String comp = findAppropriateComponent();
             generator.withRestComponent(comp);
 
+            if (clientRequestValidation) {
+                generator.withClientRequestValidation();
+            }
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
                 generator.withApiContextPath(apiContextPath);
-            }
-
-            // if its a spring boot project and we use servlet then we should generate additional source code
-            if (detectSpringBootFromClasspath() && "servlet".equals(comp)) {
-                try {
-                    if (ObjectHelper.isEmpty(packageName)) {
-                        // if not explicit package name then try to use package where the spring boot application is located
-                        String pName = detectSpringBootMainPackage();
-                        if (pName != null) {
-                            packageName = pName;
-                            generator.withPackageName(packageName);
-                            getLog().info(
-                                    "Detected @SpringBootApplication, and will be using its package name: " + packageName);
-                        }
-                    }
-                    getLog().info("Generating Camel Rest Controller source with package name " + packageName
-                                  + " in source directory: " + outputPath);
-                    SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);
-                    // the Camel Rest Controller allows to use root as context-path
-                    generator.withRestContextPath("/");
-                } catch (final IOException e) {
-                    throw new MojoExecutionException(
-                            "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
-                }
             }
         }
 
         if (detectSpringBootFromClasspath()) {
             generator.asSpringComponent();
             generator.asSpringBootProject();
+            // generate with same package name as spring boot (by default)
+            if (ObjectHelper.isEmpty(packageName)) {
+                try {
+                    String sbPackage = detectSpringBootMainPackage();
+                    if (sbPackage != null) {
+                        generator.withPackageName(sbPackage);
+                    }
+                } catch (final IOException e) {
+                    // ignore
+                }
+            }
         }
 
         try {
@@ -138,6 +131,14 @@ public class GenerateMojo extends AbstractGenerateMojo {
         } catch (final IOException e) {
             throw new MojoExecutionException(
                     "Unable to generate REST DSL OpenApi sources from specification: " + specificationUri, e);
+        }
+
+        // Add the generated classes to the maven build path
+        if (ObjectHelper.isNotEmpty(modelOutput)) {
+            project.addCompileSourceRoot(modelOutput);
+        }
+        if (ObjectHelper.isNotEmpty(outputDirectory)) {
+            project.addCompileSourceRoot(outputDirectory);
         }
     }
 

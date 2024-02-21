@@ -35,14 +35,14 @@ public class Web3jConsumerBlockTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
                      + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

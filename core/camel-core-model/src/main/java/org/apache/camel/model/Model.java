@@ -22,12 +22,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Model interface
@@ -47,6 +50,43 @@ public interface Model {
      * @return the lifecycle strategies
      */
     List<ModelLifecycleStrategy> getModelLifecycleStrategies();
+
+    /**
+     * Adds a collection of route configuration definitions to the context
+     *
+     * @param routesConfigurations the route configuration(s) definition to add
+     */
+    void addRouteConfigurations(List<RouteConfigurationDefinition> routesConfigurations);
+
+    /**
+     * Adds a single route configuration definition to the context
+     *
+     * @param routesConfiguration the route configuration to add
+     */
+    void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration);
+
+    /**
+     * Returns a list of the current route configuration definitions
+     *
+     * @return list of the current route configuration definitions
+     */
+    List<RouteConfigurationDefinition> getRouteConfigurationDefinitions();
+
+    /**
+     * Removes a route configuration from the context
+     *
+     * @param  routeConfigurationDefinition route configuration to remove
+     * @throws Exception                    if the route configuration could not be removed for whatever reason
+     */
+    void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception;
+
+    /**
+     * Gets the route configuration definition with the given id
+     *
+     * @param  id id of the route configuration
+     * @return    the route configuration definition or <tt>null</tt> if not found
+     */
+    RouteConfigurationDefinition getRouteConfigurationDefinition(String id);
 
     /**
      * Returns a list of the current route definitions
@@ -157,6 +197,14 @@ public interface Model {
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
+     * Removes the route templates matching the pattern - stopping any previously running routes if any of them are
+     * actively running
+     *
+     * @param pattern pattern, such as * for all, or foo* to remove all foo templates
+     */
+    void removeRouteTemplateDefinitions(String pattern) throws Exception;
+
+    /**
      * Add a converter to translate a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.
      *
      * @param templateIdPattern the route template ut to whom a pattern should eb applied
@@ -175,6 +223,59 @@ public interface Model {
      * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+
+    /**
+     * Adds a new route from a given route template
+     *
+     * @param  routeId         the id of the new route to add (optional)
+     * @param  routeTemplateId the id of the route template (mandatory)
+     * @param  prefixId        prefix to use when assigning route and node IDs (optional)
+     * @param  parameters      parameters to use for the route template when creating the new route
+     * @return                 the id of the route added (for example when an id was auto assigned)
+     * @throws Exception       is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId,
+            Map<String, Object> parameters)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given route template
+     *
+     * @param  routeId              the id of the new route to add (optional)
+     * @param  routeTemplateId      the id of the route template (mandatory)
+     * @param  prefixId             prefix to use when assigning route and node IDs (optional)
+     * @param  routeTemplateContext the route template context (mandatory)
+     * @return                      the id of the route added (for example when an id was auto assigned)
+     * @throws Exception            is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId,
+            RouteTemplateContext routeTemplateContext)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given templated route definition
+     *
+     * @param  templatedRouteDefinition the templated route definition to add as a route (mandatory)
+     * @throws Exception                is thrown if error creating and adding the new route
+     */
+    void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition) throws Exception;
+
+    /**
+     * Adds new routes from a given templated route definitions
+     *
+     * @param  templatedRouteDefinitions the templated route definitions to add as a route (mandatory)
+     * @throws Exception                 is thrown if error creating and adding the new route
+     */
+    default void addRouteFromTemplatedRoutes(
+            Collection<TemplatedRouteDefinition> templatedRouteDefinitions)
+            throws Exception {
+        ObjectHelper.notNull(templatedRouteDefinitions, "templatedRouteDefinitions");
+        for (TemplatedRouteDefinition templatedRouteDefinition : templatedRouteDefinitions) {
+            addRouteFromTemplatedRoute(templatedRouteDefinition);
+        }
+    }
 
     /**
      * Returns a list of the current REST definitions
@@ -238,37 +339,6 @@ public interface Model {
      * @param validators the validators
      */
     void setValidators(List<ValidatorDefinition> validators);
-
-    /**
-     * Gets the Hystrix configuration by the given name. If no name is given the default configuration is returned, see
-     * <tt>setHystrixConfiguration</tt>
-     *
-     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
-     */
-    HystrixConfigurationDefinition getHystrixConfiguration(String id);
-
-    /**
-     * Sets the default Hystrix configuration
-     *
-     * @param configuration the configuration
-     */
-    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
-
-    /**
-     * Sets the Hystrix configurations
-     *
-     * @param configurations the configuration list
-     */
-    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
-
-    /**
-     * Adds the Hystrix configuration
-     *
-     * @param id            name of the configuration
-     * @param configuration the configuration
-     */
-    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
 
     /**
      * Gets the Resilience4j configuration by the given name. If no name is given the default configuration is returned,
@@ -419,5 +489,15 @@ public interface Model {
      * Sets a custom {@link ModelReifierFactory}
      */
     void setModelReifierFactory(ModelReifierFactory modelReifierFactory);
+
+    /**
+     * Adds the custom bean
+     */
+    void addRegistryBean(RegistryBeanDefinition bean);
+
+    /**
+     * Gets the custom beans
+     */
+    List<RegistryBeanDefinition> getRegistryBeans();
 
 }

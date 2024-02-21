@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -25,9 +26,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport {
 
     private CamelContext camel1;
@@ -40,18 +44,12 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
 
     @Test
     public void testTwoManagedCamelContextClash() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         camel1 = createCamelContext();
         camel1.start();
         assertTrue(camel1.getStatus().isStarted(), "Should be started");
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on = getContextObjectName(camel1);
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         // now cheat and reset the counter so we can test for a clash
@@ -59,12 +57,17 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
 
         camel2 = createCamelContext();
         camel2.start();
-        ObjectName on2 = ObjectName
-                .getInstance("org.apache.camel:context=" + camel2.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on2 = getContextObjectName(camel2);
         assertTrue(mbeanServer.isRegistered(on2), "Should be registered");
 
         assertTrue(mbeanServer.isRegistered(on), "Should still be registered after name clash");
         assertTrue(mbeanServer.isRegistered(on2), "Should still be registered after name clash");
+    }
+
+    private static ObjectName getContextObjectName(CamelContext context) throws MalformedObjectNameException {
+        return ObjectName
+                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\""
+                             + context.getName() + "\"");
     }
 
     @Override

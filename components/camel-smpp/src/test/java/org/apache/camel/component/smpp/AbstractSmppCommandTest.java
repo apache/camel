@@ -21,6 +21,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
@@ -42,7 +43,7 @@ public class AbstractSmppCommandTest {
 
         command = new AbstractSmppCommand(session, config) {
             @Override
-            public void execute(Exchange exchange) throws SmppException {
+            public void execute(Exchange exchange) {
             }
         };
     }
@@ -58,17 +59,17 @@ public class AbstractSmppCommandTest {
         Exchange inOnlyExchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOnly);
         Exchange inOutExchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
 
-        assertSame(command.getResponseMessage(inOnlyExchange), inOnlyExchange.getIn());
+        assertSame(ExchangeHelper.getResultMessage(inOnlyExchange), inOnlyExchange.getIn());
         /*
           NOTE: in this test it's important to call the methods in this order:
           1. command.getResponseMessage
           2. inOutExchange.getMessage
-        
+
           This is so, because the empty out Message object is created by the getOut messaged called by
           command.getResponseMessage. Calling in the inverse order causes the hasOut check on getMessage()
           to return false, which, in turns, causes it to return the in message. Thus failing the test.
          */
-        Message expectedMessage = command.getResponseMessage(inOutExchange);
+        Message expectedMessage = ExchangeHelper.getResultMessage(inOutExchange);
         Message verificationMessage = inOutExchange.getMessage();
 
         assertSame(expectedMessage, verificationMessage);

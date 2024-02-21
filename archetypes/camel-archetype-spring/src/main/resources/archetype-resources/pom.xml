@@ -29,7 +29,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <log4j2-version>2.13.3</log4j2-version>
+    <log4j2-version>2.22.1</log4j2-version>
   </properties>
 
   <dependencyManagement>
@@ -62,15 +62,21 @@
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
       <scope>runtime</scope>
       <version>${log4j2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2-version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
+      <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -85,8 +91,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>

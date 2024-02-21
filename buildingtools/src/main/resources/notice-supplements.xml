@@ -139,23 +139,6 @@
   </supplement>
   <supplement>
     <project>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <name>Apache Xalan-Java</name>
-      <organization>
-        <name>The Apache Software Foundation</name>
-        <url>http://www.apache.org</url>
-      </organization>
-      <licenses>
-        <license>
-          <name>The Apache Software License, Version 2.0</name>
-          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-      </licenses>
-    </project>
-  </supplement>
-  <supplement>
-    <project>
       <groupId>net.java.dev.stax-utils</groupId>
       <artifactId>stax-utils</artifactId>
       <name>StAX Utilities</name>

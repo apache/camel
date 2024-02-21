@@ -52,19 +52,15 @@ public final class CollectionHelper {
      */
     public static Integer size(Object value) {
         if (value != null) {
-            if (value instanceof Collection) {
-                Collection<?> collection = (Collection<?>) value;
+            if (value instanceof Collection<?> collection) {
                 return collection.size();
-            } else if (value instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) value;
+            } else if (value instanceof Map<?, ?> map) {
                 return map.size();
-            } else if (value instanceof Object[]) {
-                Object[] array = (Object[]) value;
+            } else if (value instanceof Object[] array) {
                 return array.length;
             } else if (value.getClass().isArray()) {
                 return Array.getLength(value);
-            } else if (value instanceof NodeList) {
-                NodeList nodeList = (NodeList) value;
+            } else if (value instanceof NodeList nodeList) {
                 return nodeList.getLength();
             }
         }
@@ -141,8 +137,7 @@ public final class CollectionHelper {
             Object value = entry.getValue();
             String newKey = prefix.isEmpty() ? key : prefix + separator + key;
 
-            if (value instanceof Map) {
-                Map map = (Map) value;
+            if (value instanceof Map map) {
                 doFlattenKeysInMap(map, newKey, separator, target);
             } else {
                 target.put(newKey, value);
@@ -234,5 +229,35 @@ public final class CollectionHelper {
         }
 
         return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Object addToList(Map<String, ? super Object> headers, String key, T value) {
+        Object existing = headers.get(key);
+        List<Object> list;
+        if (existing instanceof List) {
+            list = (List<Object>) existing;
+        } else {
+            list = new ArrayList<>();
+            list.add(existing);
+        }
+        list.add(value);
+        return list;
+    }
+
+    /**
+     * When trying to set the value for a map, if the value already exists, appends it to a list. Otherwise, sets the
+     * entry to the given value.
+     *
+     * @param headers the map that whose entry will be set or appended
+     * @param key     the key on the map
+     * @param value   the value to set or append within the map
+     */
+    public static <T> void appendEntry(Map<String, ? super Object> headers, String key, T value) {
+        if (headers.containsKey(key)) {
+            headers.put(key, addToList(headers, key, value));
+        } else {
+            headers.put(key, value);
+        }
     }
 }

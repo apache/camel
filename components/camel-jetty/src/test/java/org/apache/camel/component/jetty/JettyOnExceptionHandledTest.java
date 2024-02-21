@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JettyOnExceptionHandledTest extends BaseJettyTest {
 
     @Test
-    public void testJettyOnException() throws Exception {
+    public void testJettyOnException() {
         Exchange reply = template.request("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
 
         assertNotNull(reply);
@@ -35,10 +35,10 @@ public class JettyOnExceptionHandledTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty://http://localhost:{{port}}/myserver")
                         // use onException to catch all exceptions and return a

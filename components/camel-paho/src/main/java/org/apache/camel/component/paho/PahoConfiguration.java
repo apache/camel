@@ -213,8 +213,7 @@ public class PahoConfiguration implements Cloneable {
      * Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its
      * connection to the server, the server will publish a message to itself using the supplied details.
      *
-     * The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1
-     * or 2). Whether or not the message should be retained.
+     * Sets the topic that the willPayload will be published to.
      */
     public void setWillTopic(String willTopic) {
         this.willTopic = willTopic;
@@ -228,8 +227,7 @@ public class PahoConfiguration implements Cloneable {
      * Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its
      * connection to the server, the server will publish a message to itself using the supplied details.
      *
-     * The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1
-     * or 2). Whether or not the message should be retained.
+     * Sets the message for the LWT.
      */
     public void setWillPayload(String willPayload) {
         this.willPayload = willPayload;
@@ -243,8 +241,7 @@ public class PahoConfiguration implements Cloneable {
      * Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its
      * connection to the server, the server will publish a message to itself using the supplied details.
      *
-     * The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1
-     * or 2). Whether or not the message should be retained.
+     * Sets the quality of service to publish the message at (0, 1 or 2).
      */
     public void setWillQos(int willQos) {
         this.willQos = willQos;
@@ -258,8 +255,7 @@ public class PahoConfiguration implements Cloneable {
      * Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its
      * connection to the server, the server will publish a message to itself using the supplied details.
      *
-     * The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1
-     * or 2). Whether or not the message should be retained.
+     * Sets whether or not the message should be retained.
      */
     public void setWillRetained(boolean willRetained) {
         this.willRetained = willRetained;

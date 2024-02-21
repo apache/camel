@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
@@ -36,6 +35,7 @@ import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
@@ -46,7 +46,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
              apiSyntax = "apiName/methodName",
-             category = { Category.CLOUD })
+             category = { Category.CLOUD }, headersClass = Olingo2Constants.class)
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
@@ -140,7 +140,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             }
         }
         // configure on configuration first to be reflection free
-        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        configurer = PluginHelper.getConfigurerResolver(getCamelContext())
                 .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
         if (configurer != null) {
             PropertyBindingSupport.build()
@@ -167,7 +167,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     protected void afterConfigureProperties() {
-        olingo2endpointPropertyNames = new HashSet<>(getEndpointPropertyNames());
+        olingo2endpointPropertyNames
+                = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
         olingo2endpointPropertyNames.add(EDM_PROPERTY);
         olingo2endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
         olingo2endpointPropertyNames.add(SERVICE_URI_PROPERTY);

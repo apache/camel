@@ -45,7 +45,7 @@ public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
         };
     }
 
-    public class MyBean {
+    public static class MyBean {
 
         public boolean isGoldCustomer(String name) {
             return "Camel".equals(name);

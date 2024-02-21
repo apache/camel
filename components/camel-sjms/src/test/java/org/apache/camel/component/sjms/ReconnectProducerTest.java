@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
+                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test.ReconnectProducerTest";
 
     @Override
     protected boolean useJmx() {
@@ -78,11 +81,10 @@ public class ReconnectProducerTest extends JmsTestSupport {
 
     /**
      * @return
-     * @throws Exception
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see    org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

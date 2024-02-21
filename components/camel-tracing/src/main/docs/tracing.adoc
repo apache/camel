@@ -1,11 +1,11 @@
-[[tracing-other]]
 = Tracing Component
-:docTitle: Tracing
-:artifactId: camel-tracing
+:doctitle: Tracing
+:shortname: tracing
+:artifactid: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[opts=optional]
+:supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

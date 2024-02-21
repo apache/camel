@@ -18,8 +18,8 @@ package org.apache.camel.component.stomp;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.SslContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -27,35 +27,43 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.fusesource.stomp.client.Stomp;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class StompBaseTest extends CamelTestSupport {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected BrokerService brokerService;
     protected int numberOfMessages = 100;
-    protected int port;
-    private boolean canTest;
-    private SSLContextParameters serverSslContextParameters;
-    private SSLContext serverSslContext;
+    int sslServicePort = AvailablePortFinder.getNextAvailable();
+    int servicePort = AvailablePortFinder.getNextAvailable();
+
+    @RegisterExtension
+    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+            .withCustomConfiguration(configuration -> {
+                try {
+                    configuration.setJMXManagementEnabled(true);
+
+                    configuration.addAcceptorConfiguration("stomp-ssl-acceptor",
+                            String.format("tcp://0.0.0.0:%s?" +
+                                          "sslEnabled=true;" +
+                                          "keyStorePath=jsse/server-side-keystore.jks;" +
+                                          "keyStorePassword=password;" +
+                                          "protocols=STOMP",
+                                    sslServicePort));
+
+                    configuration.addAcceptorConfiguration("stomp-tcp-acceptor",
+                            String.format("tcp://0.0.0.0:%s?protocols=STOMP",
+                                    servicePort));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
+
     private SSLContextParameters clientSslContextParameters;
     private SSLContext clientSslContext;
-
-    protected int getPort() {
-        return port;
-    }
-
-    /**
-     * Whether we can test on this box, as not all boxes can be used for reliable CI testing.
-     */
-    protected boolean canTest() {
-        return canTest;
-    }
 
     protected boolean isUseSsl() {
         return false;
@@ -67,7 +75,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry registry = new SimpleRegistry();
         if (isUseSsl()) {
             registry.bind("sslContextParameters", getClientSSLContextParameters());
@@ -76,78 +84,23 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return registry;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-
-        try {
-            brokerService = new BrokerService();
-            brokerService.setPersistent(false);
-            brokerService.setAdvisorySupport(false);
-
-            if (isUseSsl()) {
-                SslContext sslContext = new SslContext();
-                sslContext.setSSLContext(getServerSSLContext());
-
-                brokerService.setSslContext(sslContext);
-                brokerService.addConnector("stomp+ssl://localhost:" + getPort() + "?trace=true");
-            } else {
-                brokerService.addConnector("stomp://localhost:" + getPort() + "?trace=true");
-            }
-
-            brokerService.start();
-            brokerService.waitUntilStarted();
-            super.setUp();
-            canTest = true;
-        } catch (Exception e) {
-            System.err.println("Cannot test due " + e.getMessage() + " more details in the log");
-            log.warn("Cannot test due " + e.getMessage(), e);
-            canTest = false;
-        }
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (brokerService != null) {
-            brokerService.stop();
-            brokerService.waitUntilStopped();
-        }
-    }
-
     protected Stomp createStompClient() throws Exception {
         Stomp stomp;
+
         if (isUseSsl()) {
-            stomp = new Stomp("ssl://localhost:" + getPort());
+            stomp = new Stomp("ssl://localhost:" + sslServicePort);
             stomp.setSslContext(getClientSSLContext());
         } else {
-            stomp = new Stomp("tcp://localhost:" + getPort());
+            stomp = new Stomp("tcp://localhost:" + servicePort);
         }
 
         return stomp;
     }
 
-    protected SSLContextParameters getServerSSLContextParameters() {
-        if (serverSslContextParameters == null) {
-            serverSslContextParameters = getSSLContextParameters("jsse/server.keystore", "password");
-        }
-
-        return serverSslContextParameters;
-    }
-
-    protected SSLContext getServerSSLContext() throws Exception {
-        if (serverSslContext == null) {
-            serverSslContext = getServerSSLContextParameters().createSSLContext(context);
-        }
-
-        return serverSslContext;
-    }
-
     protected SSLContextParameters getClientSSLContextParameters() {
         if (clientSslContextParameters == null) {
-            clientSslContextParameters = getSSLContextParameters("jsse/client.keystore", "password");
+            clientSslContextParameters
+                    = getSSLContextParameters("jsse/client-side-keystore.jks", "jsse/client-side-truststore.jks", "password");
         }
 
         return clientSslContextParameters;
@@ -161,19 +114,29 @@ public abstract class StompBaseTest extends CamelTestSupport {
         return clientSslContext;
     }
 
-    private SSLContextParameters getSSLContextParameters(String path, String password) {
+    private SSLContextParameters getSSLContextParameters(String keyStore, String trustStore, String password) {
+        // need an early camel context dummy due to ActiveMQEmbeddedService is eager initialized
+        CamelContext dummy = new DefaultCamelContext();
+
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(path);
+        ksp.setCamelContext(dummy);
+        ksp.setResource(keyStore);
         ksp.setPassword(password);
+
+        KeyStoreParameters tsp = new KeyStoreParameters();
+        tsp.setCamelContext(dummy);
+        tsp.setResource(trustStore);
+        tsp.setPassword(password);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword(password);
         kmp.setKeyStore(ksp);
 
         TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
+        tmp.setKeyStore(tsp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setCamelContext(dummy);
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
 

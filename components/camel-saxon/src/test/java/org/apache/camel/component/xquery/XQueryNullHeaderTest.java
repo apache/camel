@@ -19,7 +19,7 @@ package org.apache.camel.component.xquery;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class XQueryNullHeaderTest extends CamelSpringTestSupport {
 
@@ -33,7 +33,7 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                                    + "<lastName>Strachan</lastName><city>London</city></person>",
                 "foo", "123");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,11 +46,11 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                                    + "<lastName>Strachan</lastName><city>London</city></person>",
                 "foo", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/xqueryExampleTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return newAppContext("xqueryExampleTest.xml");
     }
 }

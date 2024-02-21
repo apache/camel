@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,9 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
         assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         // send GET request which should be routed
@@ -52,21 +53,22 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
         String out2 = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty-http on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).enableCORS(true);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);

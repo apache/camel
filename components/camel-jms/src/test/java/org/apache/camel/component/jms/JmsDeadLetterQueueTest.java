@@ -16,25 +16,35 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for using JMS as DLQ
  */
-public class JmsDeadLetterQueueTest extends CamelTestSupport {
+public class JmsDeadLetterQueueTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     protected String getUri() {
-        return "activemq:queue:dead";
+        return "activemq:queue:JmsDeadLetterQueueTest";
     }
 
     @Test
@@ -44,43 +54,38 @@ public class JmsDeadLetterQueueTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    public void testKabom() throws Exception {
+    public void testKaboom() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedBodiesReceived("Kabom");
+        mock.expectedBodiesReceived("Kaboom");
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // the cause exception is gone in the transformation below
         assertNull(mock.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT));
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("seda:dead").disableRedelivery());
 
                 from("direct:start").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
-                    if ("Kabom".equals(body)) {
-                        throw new IllegalArgumentException("Kabom");
+                    if ("Kaboom".equals(body)) {
+                        throw new IllegalArgumentException("Kaboom");
                     }
                 }).to("mock:result");
 
@@ -91,4 +96,15 @@ public class JmsDeadLetterQueueTest extends CamelTestSupport {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

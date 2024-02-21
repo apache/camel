@@ -20,7 +20,7 @@ public enum SubscriptionInitialPosition {
     EARLIEST(org.apache.pulsar.client.api.SubscriptionInitialPosition.Earliest),
     LATEST(org.apache.pulsar.client.api.SubscriptionInitialPosition.Latest);
 
-    private org.apache.pulsar.client.api.SubscriptionInitialPosition pulsarInitialPosition;
+    private final org.apache.pulsar.client.api.SubscriptionInitialPosition pulsarInitialPosition;
 
     SubscriptionInitialPosition(org.apache.pulsar.client.api.SubscriptionInitialPosition pulsarInitialPosition) {
         this.pulsarInitialPosition = pulsarInitialPosition;

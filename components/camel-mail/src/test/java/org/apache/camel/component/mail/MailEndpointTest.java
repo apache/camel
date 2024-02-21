@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class MailEndpointTest extends CamelTestSupport {
 
     @Test
-    public void testMailEndpointCtr() throws Exception {
+    public void testMailEndpointCtr() {
         MailEndpoint endpoint = new MailEndpoint();
         assertNull(endpoint.getConfiguration());
         assertNull(endpoint.getContentTypeResolver());
@@ -45,7 +45,7 @@ public class MailEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointCtrEndpoint() throws Exception {
+    public void testMailEndpointCtrEndpoint() {
         MailEndpoint endpoint = new MailEndpoint("smtp://myhost");
         assertNull(endpoint.getContentTypeResolver());
         assertNotNull(endpoint.getConfiguration());
@@ -64,7 +64,7 @@ public class MailEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointCtrEndpointConfig() throws Exception {
+    public void testMailEndpointCtrEndpointConfig() {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
         cfg.configureProtocol("smtp");

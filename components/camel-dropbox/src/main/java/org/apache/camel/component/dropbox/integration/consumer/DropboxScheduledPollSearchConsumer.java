@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
-import com.dropbox.core.v2.files.SearchMatch;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.SearchMatchV2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 
 public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollConsumer {
 
@@ -34,7 +35,7 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
 
     /**
      * Poll from a dropbox remote path and put the result in the message exchange
-     * 
+     *
      * @return number of messages polled
      */
     @Override
@@ -45,12 +46,13 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
                     .search(configuration.getRemotePath(), configuration.getQuery());
 
             StringBuilder fileExtracted = new StringBuilder();
-            for (SearchMatch entry : result.getFound()) {
-                fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay())
-                        .append("\n");
+            for (SearchMatchV2 entry : result.getFound()) {
+                Metadata metadata = entry.getMetadata().getMetadataValue();
+                fileExtracted.append(metadata.getName()).append('-').append(metadata.getPathDisplay())
+                        .append('\n');
             }
 
-            exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
+            exchange.getIn().setHeader(DropboxConstants.FOUND_FILES, fileExtracted.toString());
             exchange.getIn().setBody(result.getFound());
 
             if (LOG.isDebugEnabled()) {

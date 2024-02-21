@@ -16,15 +16,17 @@
  */
 package org.apache.camel;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.naming.Context;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -46,12 +48,11 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
-    private boolean useLightweightContext;
     private Service camelContextService;
 
     /**
      * Use the RouteBuilder or not
-     * 
+     *
      * @return If the return value is true, the camel context will be started in the setup method. If the return value
      *         is false, the camel context will not be started in the setup method.
      */
@@ -61,14 +62,6 @@ public abstract class ContextTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
-    }
-
-    public boolean isUseLightweightContext() {
-        return useLightweightContext;
-    }
-
-    public void setUseLightweightContext(boolean useLightweightContext) {
-        this.useLightweightContext = useLightweightContext;
     }
 
     public Service getCamelContextService() {
@@ -95,9 +88,6 @@ public abstract class ContextTestSupport extends TestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        // make SEDA testing faster
-        System.setProperty("CamelSedaPollTimeout", "10");
-
         CamelContext c2 = createCamelContext();
         if (c2 instanceof ModelCamelContext) {
             context = (ModelCamelContext) c2;
@@ -108,14 +98,26 @@ public abstract class ContextTestSupport extends TestSupport {
 
         context.build();
 
+        // make SEDA run faster
+        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
+
         template = context.createProducerTemplate();
         consumer = context.createConsumerTemplate();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
+            // add configuration before routes
             for (RouteBuilder builder : builders) {
-                log.debug("Using created route builder: {}", builder);
-                context.addRoutes(builder);
+                if (builder instanceof RouteConfigurationsBuilder) {
+                    log.debug("Using created route configuration: {}", builder);
+                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                }
+            }
+            for (RouteBuilder builder : builders) {
+                if (!(builder instanceof RouteConfigurationsBuilder)) {
+                    log.debug("Using created route builder: {}", builder);
+                    context.addRoutes(builder);
+                }
             }
         } else {
             log.debug("isUseRouteBuilder() is false");
@@ -147,14 +149,13 @@ public abstract class ContextTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
-        System.clearProperty("CamelSedaPollTimeout");
 
         super.tearDown();
     }
 
     /**
      * Whether or not JMX should be used during testing.
-     * 
+     *
      * @return <tt>false</tt> by default.
      */
     protected boolean useJmx() {
@@ -188,16 +189,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context;
-        if (useLightweightContext) {
-            LightweightCamelContext ctx = new LightweightCamelContext();
-            ctx.setRegistry(createRegistry());
-            context = ctx;
-        } else {
-            DefaultCamelContext ctx = new DefaultCamelContext(true);
-            ctx.setRegistry(createRegistry());
-            context = ctx;
-        }
+        CamelContext context = new DefaultCamelContext(createRegistry());
         if (!useJmx()) {
             context.disableJMX();
         }
@@ -211,6 +203,11 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected Context createJndiContext() throws Exception {
         return JndiTest.createInitialContext();
+    }
+
+    protected List<Processor> getProcessors(String pattern) {
+        return context.getRoutes().stream()
+                .flatMap(r -> r.filter(pattern).stream()).collect(Collectors.toList());
     }
 
     /**

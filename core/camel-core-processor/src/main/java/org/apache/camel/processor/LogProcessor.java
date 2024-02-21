@@ -45,7 +45,6 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
     private final CamelLogger logger;
     private final MaskingFormatter formatter;
     private final Set<LogListener> listeners;
-    private boolean shouldLog;
 
     public LogProcessor(Expression expression, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
         this.expression = expression;
@@ -65,7 +64,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (shouldLog) {
+        if (logger.shouldLog()) {
             try {
                 String msg;
                 if (expression != null) {
@@ -80,7 +79,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
                     msg = fireListeners(exchange, msg);
                 }
                 logger.doLog(msg);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
         }
@@ -96,7 +95,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
             try {
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
@@ -140,6 +139,10 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
         this.routeId = routeId;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public Expression getExpression() {
         return expression;
     }
@@ -152,13 +155,4 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
         return formatter;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        this.shouldLog = logger.shouldLog();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

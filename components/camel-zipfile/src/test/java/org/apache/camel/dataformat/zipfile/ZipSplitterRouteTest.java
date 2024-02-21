@@ -27,14 +27,14 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&noop=true")
                         .log("Start processing big file: ${header.CamelFileName}")

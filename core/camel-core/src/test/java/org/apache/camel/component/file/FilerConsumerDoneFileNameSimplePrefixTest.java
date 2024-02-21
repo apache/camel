@@ -16,53 +16,42 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for writing done files
  */
 public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/done");
-        super.setUp();
-    }
-
     @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // wait a bit and it should not pickup the written file as there are no
         // done file
-        Thread.sleep(250);
+        Awaitility.await().pollDelay(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
 
-        assertMockEndpointsSatisfied();
         resetMocks();
         oneExchangeDone.reset();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done-hello.txt");
+        template.sendBodyAndHeader(fileUri(), "", Exchange.FILE_NAME, "done-hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/data/done/done-hello.txt");
-        assertFalse(file.exists(), "Done file should be deleted: " + file);
+        assertFileNotExists(testFile("done-hello.txt"));
     }
 
     @Override
@@ -72,7 +61,7 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
             public void configure() throws Exception {
                 // using $simple{ to avoid clash with spring property
                 // placeholder
-                from("file:target/data/done?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10").to("mock:result");
+                from(fileUri("?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10")).to("mock:result");
             }
         };
     }

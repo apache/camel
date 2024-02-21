@@ -16,8 +16,8 @@
  */
 package org.apache.camel.jaxb;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,11 +40,11 @@ public class JaxbDataFormatIssueTest extends CamelTestSupport {
         foo.setBar("Hello Bar");
         template.sendBody("direct:start", foo);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

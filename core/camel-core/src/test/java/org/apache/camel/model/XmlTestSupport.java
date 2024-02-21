@@ -18,9 +18,9 @@ package org.apache.camel.model;
 
 import java.net.URL;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.model.rest.RestContainer;
@@ -38,14 +38,14 @@ public abstract class XmlTestSupport extends TestSupport {
     protected RouteContainer assertParseAsJaxb(String uri) throws JAXBException {
         Object value = parseUri(uri);
         RouteContainer context = assertIsInstanceOf(RouteContainer.class, value);
-        log.info("Found: " + context);
+        log.info("Found: {}", context);
         return context;
     }
 
     protected RestContainer assertParseRestAsJaxb(String uri) throws JAXBException {
         Object value = parseUri(uri);
         RestContainer context = assertIsInstanceOf(RestContainer.class, value);
-        log.info("Found: " + context);
+        log.info("Found: {}", context);
         return context;
     }
 
@@ -53,8 +53,7 @@ public abstract class XmlTestSupport extends TestSupport {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
         assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
-        Object value = unmarshaller.unmarshal(resource);
-        return value;
+        return unmarshaller.unmarshal(resource);
     }
 
     @Override

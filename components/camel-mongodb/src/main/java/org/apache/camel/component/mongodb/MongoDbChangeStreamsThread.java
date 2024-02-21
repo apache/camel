@@ -35,7 +35,8 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
 
-    MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer, List<BsonDocument> bsonFilter) {
+    MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
+                               List<BsonDocument> bsonFilter) {
         super(endpoint, consumer);
         this.bsonFilter = bsonFilter;
     }
@@ -51,12 +52,13 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 ? dbCol.watch(bsonFilter)
                 : dbCol.watch();
 
+        iterable.fullDocument(endpoint.getFullDocument());
+
         if (resumeToken != null) {
             iterable = iterable.resumeAfter(resumeToken);
         }
 
-        MongoCursor<ChangeStreamDocument<Document>> cursor = iterable.iterator();
-        return cursor;
+        return iterable.iterator();
     }
 
     @Override
@@ -96,9 +98,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             // it throws exception when cursor is closed in another thread
             // there is no way to stop hasNext() before closing cursor
             if (keepRunning) {
-                throw e;
-            } else {
                 log.debug("Exception from MongoDB, will regenerate cursor.", e);
+            } else {
+                throw e;
             }
         }
     }

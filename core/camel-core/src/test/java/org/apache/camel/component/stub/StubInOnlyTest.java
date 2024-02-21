@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.stub;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class StubInOnlyTest extends AbstractVmTestSupport {
+public class StubInOnlyTest extends ContextTestSupport {
 
     @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template2.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -36,17 +36,9 @@ public class StubInOnlyTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("stub:smtp://some.server.com?something=bar&whatnot=cheese").to("mock:result");
-            }
-        };
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
                 from("direct:start").to("stub:smtp://some.server.com?something=bar&whatnot=cheese");
+
+                from("stub:smtp://some.server.com?something=bar&whatnot=cheese").to("mock:result");
             }
         };
     }

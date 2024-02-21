@@ -26,19 +26,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyDisconnectTest extends BaseNettyTest {
 
     @Test
-    public void testCloseSessionWhenComplete() throws Exception {
+    public void testCloseSessionWhenComplete() {
         Object out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Claus");
         assertEquals("Bye Claus", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&disconnect=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 });
             }

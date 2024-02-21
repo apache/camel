@@ -19,11 +19,13 @@ package org.apache.camel.component.properties;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentFunctionTest extends ContextTestSupport {
 
-    public static final class MyFunction implements PropertiesFunction {
+    public static final class MyFunction extends ServiceSupport implements PropertiesFunction {
 
         @Override
         public String getName() {
@@ -34,6 +36,7 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         public String apply(String remainder) {
             return "mock:" + remainder.toLowerCase();
         }
+
     }
 
     @Override
@@ -43,8 +46,9 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
 
     @Test
     public void testFunction() throws Exception {
+        MyFunction func = new MyFunction();
         PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
-        pc.addPropertiesFunction(new MyFunction());
+        pc.addPropertiesFunction(func);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -54,12 +58,20 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         });
         context.start();
 
+        // function should be started by camel
+        Assertions.assertTrue(func.isStarted());
+
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        context.stop();
+
+        // function should be stopped by camel also
+        Assertions.assertTrue(func.isStopped());
     }
 
 }

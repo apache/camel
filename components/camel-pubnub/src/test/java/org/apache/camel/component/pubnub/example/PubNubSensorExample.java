@@ -19,6 +19,8 @@ package org.apache.camel.component.pubnub.example;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBE_KEY;
+
 public final class PubNubSensorExample {
 
     private PubNubSensorExample() {
@@ -32,8 +34,8 @@ public final class PubNubSensorExample {
 
     static class SensorRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
-            from("pubnub:pubnub-sensor-network?subscribeKey=sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe").log("${body}")
+        public void configure() {
+            from("pubnub:pubnub-sensor-network?uuid=camel&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY).log("${body}")
                     .to("mock:result");
         }
     }

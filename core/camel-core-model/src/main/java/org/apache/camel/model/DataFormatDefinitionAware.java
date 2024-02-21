@@ -20,6 +20,7 @@ package org.apache.camel.model;
  * Marker interface to mark a {@link ProcessorDefinition} that supports data formats.
  */
 public interface DataFormatDefinitionAware {
+
     /**
      * The data format.
      */

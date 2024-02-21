@@ -21,7 +21,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshallTest {
+public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshalTest {
 
     private AbstractXmlApplicationContext applicationContext;
 

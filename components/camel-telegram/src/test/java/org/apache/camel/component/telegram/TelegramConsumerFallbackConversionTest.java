@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -43,7 +42,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     protected ProducerTemplate template;
 
     @Test
-    public void testEverythingOk() throws Exception {
+    public void testEverythingOk() {
 
         template.sendBody(new BrandNewType("wrapped message"));
 
@@ -52,7 +51,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
                         rawMessages -> rawMessages.size() == 1)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
-                .collect(Collectors.toList());
+                .toList();
 
         assertCollectionSize(msgs, 1);
         String text = msgs.get(0).getText();
@@ -60,12 +59,12 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:message")
                                 .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
                     }

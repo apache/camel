@@ -26,14 +26,12 @@ import org.asteriskjava.manager.event.ManagerEvent;
  * The Asterisk consumer.
  */
 public class AsteriskConsumer extends DefaultConsumer {
-    private final AsteriskEndpoint endpoint;
     private final AsteriskConnection connection;
     private final ManagerEventListener listener;
 
     public AsteriskConsumer(AsteriskEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        this.endpoint = endpoint;
         this.connection = new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
         this.listener = new EventListener();
     }

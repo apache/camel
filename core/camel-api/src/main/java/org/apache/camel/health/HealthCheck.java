@@ -29,10 +29,32 @@ import org.apache.camel.spi.HasId;
  */
 public interface HealthCheck extends HasGroup, HasId, Ordered {
 
+    String CHECK_ID = "check.id";
+    String CHECK_GROUP = "check.group";
+    String CHECK_KIND = "check.kind";
+    String CHECK_ENABLED = "check.enabled";
+    String INVOCATION_COUNT = "invocation.count";
+    String INVOCATION_TIME = "invocation.time";
+    String FAILURE_COUNT = "failure.count";
+    String FAILURE_START_TIME = "failure.start.time";
+    String FAILURE_TIME = "failure.time";
+    String FAILURE_ERROR_COUNT = "failure.error.count";
+    String ENDPOINT_URI = "endpoint.uri";
+    String SUCCESS_COUNT = "success.count";
+    String SUCCESS_START_TIME = "success.start.time";
+    String SUCCESS_TIME = "success.time";
+    String HTTP_RESPONSE_CODE = "http.response.code";
+
     enum State {
         UP,
         DOWN,
         UNKNOWN
+    }
+
+    enum Kind {
+        READINESS,
+        LIVENESS,
+        ALL,
     }
 
     @Override
@@ -41,14 +63,26 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
-     * Return meta data associated with this {@link HealthCheck}.
+     * Whether this health check is enabled
+     */
+    boolean isEnabled();
+
+    /**
+     * Used for enabling or disabling this health check
+     */
+    void setEnabled(boolean enabled);
+
+    /**
+     * Return metadata associated with this {@link HealthCheck}.
      */
     default Map<String, Object> getMetaData() {
         return Collections.emptyMap();
     }
 
     /**
-     * Whether this health check can be used for readiness checks
+     * Whether this health check can be used for readiness checks.
+     *
+     * Readiness check is default.
      */
     default boolean isReadiness() {
         return true;
@@ -56,15 +90,12 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
 
     /**
      * Whether this health check can be used for liveness checks
+     *
+     * Liveness check is not default, and must be explicit enabled.
      */
     default boolean isLiveness() {
-        return true;
+        return false;
     }
-
-    /**
-     * Return the configuration associated with this {@link HealthCheck}.
-     */
-    HealthCheckConfiguration getConfiguration();
 
     /**
      * Invoke the check.
@@ -76,17 +107,35 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
+     * Invoke the check as readiness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callReadiness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.READINESS));
+    }
+
+    /**
+     * Invoke the check as liveness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callLiveness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.LIVENESS));
+    }
+
+    /**
      * Invoke the check.
      *
      * The implementation is responsible to eventually perform the check according to the limitation of the third party
      * system i.e. it should not be performed too often to avoid rate limiting. The options argument can be used to pass
      * information specific to the check like forcing the check to be performed against the policies. The implementation
-     * is responsible to catch an handle any exception thrown by the underlying technology, including unchecked ones.
+     * is responsible to catch and handle any exception thrown by the underlying technology, including unchecked ones.
      */
     Result call(Map<String, Object> options);
 
     /**
-     * Response to an health check invocation.
+     * Response to a health check invocation.
      */
     interface Result {
 
@@ -111,9 +160,9 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         Optional<Throwable> getError();
 
         /**
-         * An key/value combination of details.
+         * A key/value combination of details.
          *
-         * @return a non null details map
+         * @return a non null details map (empty if no details)
          */
         Map<String, Object> getDetails();
     }

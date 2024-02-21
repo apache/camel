@@ -21,20 +21,14 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.apache.camel.component.salesforce.api.dto.XStreamFieldOrder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite.Method;
 
-@XStreamAlias("compositeRequest")
-@XStreamFieldOrder({ "method", "url", "referenceId", "body" })
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({ "method", "url", "referenceId", "body" })
 final class CompositeRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XStreamConverter(RichInputConverter.class)
     private final Object body;
 
     private final Method method;

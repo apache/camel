@@ -18,10 +18,10 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
@@ -33,10 +33,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplateContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateContextRefDefinition {
+
     @XmlAttribute(required = true)
     private String ref;
 
     public RouteTemplateContextRefDefinition() {
+    }
+
+    public RouteTemplateContextRefDefinition(String ref) {
+        this.ref = ref;
     }
 
     @Override

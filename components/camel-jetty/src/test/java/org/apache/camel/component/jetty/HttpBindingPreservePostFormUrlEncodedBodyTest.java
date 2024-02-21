@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest {
 
     @Test
-    public void testSendToJetty() throws Exception {
+    public void testSendToJetty() {
         Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("b1=x&b2=y");
                 exchange.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
@@ -43,11 +43,11 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice?map").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
 
                         // for unit testing make sure we got right message

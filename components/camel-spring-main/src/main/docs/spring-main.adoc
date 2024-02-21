@@ -1,14 +1,12 @@
-[[spring-main-other]]
 = Spring Main Component
-:docTitle: Spring Main
-:artifactId: camel-spring-main
+:doctitle: Spring Main
+:shortname: spring-main
+:artifactid: camel-spring-main
 :description: Camel Spring Main support
 :since: 3.2
-:supportLevel: Stable
-include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.adoc[opts=optional]
-//Manually maintained attributes
-:group: Spring
+:supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 
-This module is used for running Spring standalone via a main class extended from `camel-main`.
+This module is used for running classic Spring XML (not Spring Boot) via a main class extended from `camel-main`.

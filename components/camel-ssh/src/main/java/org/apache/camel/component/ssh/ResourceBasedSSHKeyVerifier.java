@@ -71,8 +71,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             PublicKey matchingKey = findKeyForServerToken(knownHostsInputStream, possibleTokens);
             if (matchingKey != null) {
                 log.debug("Found PublicKey match for server");
-                boolean match = Arrays.areEqual(matchingKey.getEncoded(), serverKey.getEncoded());
-                return match;
+                return Arrays.areEqual(matchingKey.getEncoded(), serverKey.getEncoded());
             }
         } catch (IOException ioException) {
             log.debug(String.format("Could not find known_hosts file %s", knownHostsResource), ioException);
@@ -139,17 +138,17 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
      * Decode the public key string, which is a base64 encoded string that consists
      * of multiple parts: 1. public key type (ssh-rsa, ssh-dss, ...) 2. binary key
      * data (May consists of multiple parts)
-     * 
+     *
      * Each part is composed by two sub-parts 1. Length of the part (4 bytes) 2.
      * Binary part (length as defined by 1.)
-     * 
+     *
      * Uses SSHPublicKeyHolder to construct the actual PublicKey Object
-     * 
+     *
      * Note: Currently only supports RSA and DSA Public keys as required by
      * https://tools.ietf.org/html/rfc4253#section-6.6
-     * 
+     *
      */
-    private PublicKey loadKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    PublicKey loadKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SSHPublicKeyHolder sshPublicKeyHolder = new SSHPublicKeyHolder();
 
         byte[] keyByteArray = Base64.getDecoder().decode(key);

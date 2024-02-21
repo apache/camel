@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
 
-    protected String expectedBody = "<hello>world!</hello>";
+    protected final String expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testConvertPayloadToInputStream() throws Exception {
@@ -54,7 +54,7 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");

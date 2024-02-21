@@ -1,17 +1,13 @@
-[[ErrorHandler-ErrorHandler]]
 = Error Handler
 
 Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
-strategies to deal with errors processing an
-Event Driven Consumer. An alternative
-is to specify the error handling directly in the DSL
-using the Exception Clause.
+strategies to deal with errors processing an xref:components:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer].
 
-For introduction and background material see
-Error handling in Camel.
+An alternative is to specify the error handling directly in the xref:dsl.adoc[DSL]
+using the xref:exception-clause.adoc[Exception Clause].
 
-*Exception Clause*
+== Exception Clause
 
 Using Error Handler combined with
 Exception Clause is a very powerful
@@ -19,7 +15,7 @@ combination. We encourage end-users to use this combination in your
 error handling strategies. See samples and
 Exception Clause.
 
-*Using try ... catch ... finally*
+== Using try ... catch ... finally
 
 Related to error handling is the xref:try-catch-finally.adoc[Try Catch
 Finally] as DSL you can use directly in your route. Its basically a
@@ -28,7 +24,6 @@ more power.
 
 The current implementations Camel provides out of the box are:
 
-[[ErrorHandler-Nontransacted]]
 == Non transacted
 
 * DefaultErrorHandler is the default
@@ -40,7 +35,6 @@ attempting to redeliver the message exchange a number of times before
 sending it to a dead letter endpoint
 * NoErrorHandler for no error handling
 
-[[ErrorHandler-Transacted]]
 == Transacted
 
 * TransactionErrorHandler is the
@@ -52,13 +46,12 @@ entire set of rules or a specific routing rule as we show in the next
 examples. Error handling rules are inherited on each routing rule within
 a single RouteBuilder
 
-[[ErrorHandler-ShortSummaryoftheprovidedErrorHandlers]]
 == Short Summary of the provided Error Handlers
 
 === DefaultErrorHandler
 
 The DefaultErrorHandler is the default
-error handler in Camel. Unlike xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
+error handler in Camel. Unlike xref:components:eips:dead-letter-channel.adoc[Dead Letter
 Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
@@ -69,21 +62,7 @@ most 6 times using 1 second delay, and if the exchange failed it will be
 logged at ERROR level.
 
 You can configure the default dead letter endpoint to use:
-
-or in Spring DSL
-
-[source,xml]
------------------------------------------------------------------------------------------------------
-<bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-  <property name="deadLetterUri" value="log:dead"/>
-</bean>
-
-<camelContext errorHandlerRef="deadLetterErrorHandler" xmlns="http://camel.apache.org/schema/spring">
-  ...
-</camelContext>
------------------------------------------------------------------------------------------------------
-
-or also from *Camel 2.3.0 onwards*
+or in XML DSL:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------
@@ -94,7 +73,6 @@ or also from *Camel 2.3.0 onwards*
 </camel:camelContext>
 --------------------------------------------------------------------------------------------------
 
-[[ErrorHandler-NoErrorHandler]]
 === No Error Handler
 
 The no error handler is to be used for disabling error handling.
@@ -104,18 +82,7 @@ The no error handler is to be used for disabling error handling.
 errorHandler(noErrorHandler());
 -------------------------------
 
-or in Spring DSL
-
-[source,xml]
----------------------------------------------------------------------------------------------
-<bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
-
-<camelContext errorHandlerRef="noErrorHandler" xmlns="http://camel.apache.org/schema/spring">
-  ...
-</camelContext>
----------------------------------------------------------------------------------------------
-
-or also from *Camel 2.3.0 onwards*
+or in XML DSL:
 
 [source,xml]
 ---------------------------------------------------------------
@@ -126,26 +93,24 @@ or also from *Camel 2.3.0 onwards*
 </camel:camelContext>
 ---------------------------------------------------------------
 
-[[ErrorHandler]]
 === TransactionErrorHandler
 
 The TransactionErrorHandler is the
 default error handler in Camel for transacted routes.
 
-TIP:If you have marked a route as transacted using the *transacted* DSL then
-Camel will automatic use a
+TIP: If you have marked a route as transacted using the *transacted* DSL then
+Camel will automatically use a
 TransactionErrorHandler. It will try
 to lookup the global/per route configured error handler and use it if
-its a `TransactionErrorHandlerBuilder` instance. If not Camel will
-automatic create a temporary
+it is a `TransactionErrorHandlerBuilder` instance. If not Camel will
+automatically create a temporary
 TransactionErrorHandler that
 overrules the default error handler. This is convention over
 configuration.
 
-[[ErrorHandler-Featuressupportbyvariouss]]
 == Features support by various Error Handlers
 
-Here is a breakdown of which features is supported by the
+Here is a breakdown of which features are supported by the
 Error Handler(s):
 
 [width="100%",cols="20%,80%",options="header",]
@@ -207,18 +172,17 @@ Dead Letter Channel
 
 |=======================================================================
 
-See Exception Clause documentation for
-documentation of some of the features above.
+See xref:exception-clause.adoc[Exception Clause] documentation for
+additional documentation of the features above.
 
-[[ErrorHandler-Scopes]]
 == Scopes
 
-The error handler is scoped as either
+The error handler is scoped as either:
 
-* global (within the RouteBuilder)
-* per route
+- CamelContext - _Globally_ in XML or _globally only_ within the same `RouteBuilder` in Java DSL
+- Route - _Individually per route_
 
-The following example shows how you can register a global error handler:
+The following example shows how you can register a global error handler for the `RouteBuilder`:
 
 [source,java]
 ---------------------------------------------------------------
@@ -252,7 +216,6 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------------------------------------------------
 
-[[ErrorHandler-Springbasedconfiguration]]
 == Spring based configuration
 
 *Java DSL vs. Spring DSL*
@@ -260,44 +223,71 @@ The error handler is configured a bit differently in Java DSL and Spring
 DSL. Spring DSL relies more on standard Spring bean configuration
 whereas Java DSL uses fluent builders.
 
-
 The error handler can be configured as a spring bean and scoped in:
 
-* global (the camelContext tag)
-* per route (the route tag)
-* or per policy (the policy/transacted tag)
+* global (the `<camelContext>` tag)
+* per route (the `<route>` tag)
+* or per policy (the `<policy>`/`<transacted>` tag)
 
 The error handler is configured with the `errorHandlerRef` attribute.
 
-TIP:*Error Handler Hierarchy*
+TIP: *Error Handler Hierarchy* +
 The error handlers is inherited, so if you only have set a global error
 handler then its use everywhere. But you can override this in a route
 and use another error handler.
 
-[[ErrorHandler-Springbasedconfigurationsample]]
 === Spring based configuration sample
 
-In this sample we configure a xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
+In this sample we configure a xref:components:eips:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
 the `errorHandlerRef` attribute on the `route` tag.
 
+[source,xml]
+----
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <template id="myTemplate"/>
+        <!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
+        <route errorHandlerRef="myDeadLetterErrorHandler">
+            <from uri="direct:in"/>
+            <process ref="myFailureProcessor"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+----
+
 Then we configure *myDeadLetterErrorHandler* that is our
 Dead Letter Channel. This configuration
-is standard Spring using the bean element. +
- And finally we have another spring bean for the redelivery policy where
+is standard Spring using the bean element.
+And finally we have another spring bean for the redelivery policy where
 we can configure the options for how many times to redeliver, delays
 etc.
 
-From Camel 2.3.0, camel provides a customer bean configuration for the
-Error Handler, you can find the examples here.
+[source,xml]
+----
+    <!-- here we configure our DeadLetterChannel -->
+    <bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+	    <!-- exchanges is routed to mock:dead in cased redelivery failed -->
+        <property name="deadLetterUri" value="mock:dead"/>
+		<!-- reference the redelivery policy to use -->
+        <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
+    </bean>
 
-[[ErrorHandler-Usingthetransactionalerrorhandler]]
+    <!-- here we set the redelivery settings -->
+    <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.errorhandler.RedeliveryPolicy">
+	    <!-- try redelivery at most 3 times, after that the exchange is dead and its routed to the mock:dead endpoint -->
+        <property name="maximumRedeliveries" value="3"/>
+		<!-- delay 250ms before redelivery -->
+        <property name="redeliveryDelay" value="250"/>
+    </bean>
+----
+
 == Using the transactional error handler
 
 The transactional error handler is based on spring transaction. This
-requires the usage of the camel-spring component. +
- See Transactional Client that has many
+requires the usage of the camel-spring or camel-jta component.
+
+See xref:components:eips:transactional-client.adoc[Transactional Client] that has many
 samples for how to use and transactional behavior and configuration with
 this error handler.
 

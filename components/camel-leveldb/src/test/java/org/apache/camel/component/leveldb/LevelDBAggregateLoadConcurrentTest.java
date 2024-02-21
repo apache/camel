@@ -24,11 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadConcurrentTest.class);
@@ -50,7 +53,7 @@ public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        LOG.info("Staring to send " + SIZE + " messages.");
+        LOG.info("Starting to send {} messages.", SIZE);
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -67,17 +70,17 @@ public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
             });
         }
 
-        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")

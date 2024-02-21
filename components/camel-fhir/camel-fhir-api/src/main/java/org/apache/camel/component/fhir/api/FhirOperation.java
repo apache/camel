@@ -31,7 +31,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 /**
- * API for extended FHIR operations https://www.hl7.org/fhir/operations.html
+ * API for extended FHIR operations
  */
 public class FhirOperation {
 
@@ -166,7 +166,7 @@ public class FhirOperation {
      * This operation is called <b><a href="https://www.hl7.org/fhir/messaging.html">$process-message</a></b> as defined
      * by the FHIR specification.<br>
      * <br>
-     * 
+     *
      * @param  respondToUri    An optional query parameter indicating that responses from the receiving server should be
      *                         sent to this URI, may be NULL
      * @param  msgBundle       Set the Message Bundle to POST to the messaging server

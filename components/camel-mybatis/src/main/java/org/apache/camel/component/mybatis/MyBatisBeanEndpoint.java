@@ -25,11 +25,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS_BEAN;
+
 /**
  * Perform queries, inserts, updates or deletes in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "mybatis-bean", title = "MyBatis Bean",
-             syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE, Category.SQL })
+@UriEndpoint(firstVersion = "2.22.0", scheme = SCHEME_MYBATIS_BEAN, title = "MyBatis Bean",
+             syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE },
+             headersClass = MyBatisConstants.class)
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath

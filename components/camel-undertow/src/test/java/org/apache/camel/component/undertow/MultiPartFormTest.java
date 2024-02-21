@@ -19,16 +19,17 @@ package org.apache.camel.component.undertow;
 import java.io.File;
 import java.util.Map;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormTest extends BaseUndertowTest {
 
-    private HttpEntity createMultipartRequestEntity() throws Exception {
+    private HttpEntity createMultipartRequestEntity() {
         File file = new File("src/test/resources/log4j2.properties");
         return MultipartEntityBuilder.create()
                 .addTextBody("comment", "A binary file of some kind")
@@ -47,29 +48,30 @@ public class MultiPartFormTest extends BaseUndertowTest {
 
     @Test
     public void testSendMultiPartForm() throws Exception {
-        org.apache.http.client.HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/test");
         post.setEntity(createMultipartRequestEntity());
-        HttpResponse response = client.execute(post);
-        int status = response.getStatusLine().getStatusCode();
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+            int status = response.getCode();
 
-        assertEquals(200, status, "Get a wrong response status");
-        String result = IOHelper.loadText(response.getEntity().getContent()).trim();
+            assertEquals(200, status, "Get a wrong response status");
+            String result = IOHelper.loadText(response.getEntity().getContent()).trim();
 
-        assertEquals("A binary file of some kind", result, "Get a wrong result");
+            assertEquals("A binary file of some kind", result, "Get a wrong result");
+        }
     }
 
     @Test
-    public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
+    public void testSendMultiPartFormFromCamelHttpComponent() {
         String result
                 = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow://http://localhost:{{port}}/test").process(exchange -> {
                     AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                     assertEquals(1, in.getAttachments().size(), "Get a wrong attachement size");

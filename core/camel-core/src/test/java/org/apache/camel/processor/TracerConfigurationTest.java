@@ -16,12 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class TracerConfigurationTest extends ContextTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setTracing(true);
+        return context;
+    }
 
     @Test
     public void testTracerConfiguration() throws Exception {

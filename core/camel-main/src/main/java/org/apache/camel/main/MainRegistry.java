@@ -18,10 +18,24 @@ package org.apache.camel.main;
 
 import java.util.Set;
 
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.DefaultRegistry;
 
+/**
+ * {@link org.apache.camel.spi.Registry} used by Camel Main.
+ */
 public final class MainRegistry extends DefaultRegistry {
 
+    public MainRegistry(BeanRepository... repositories) {
+        super(repositories);
+    }
+
+    /**
+     * Finds beans in the registry by their type.
+     *
+     * @param  type the type of the beans
+     * @return      the types found. Returns an empty Set if none found.
+     */
     public <T> Set<T> findBindingsByType(Class<T> type) {
         return fallbackRegistry.findByType(type);
     }

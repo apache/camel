@@ -30,6 +30,9 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, Managed
                       mask = true)
     String getExpression();
 
+    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
+    String getVariableReceive();
+
     @ManagedAttribute(description = "Timeout in millis when polling from the external service")
     Long getTimeout();
 

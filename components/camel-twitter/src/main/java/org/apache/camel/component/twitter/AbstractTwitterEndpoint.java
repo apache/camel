@@ -43,11 +43,6 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
-    @Override
     public void configureConsumer(Consumer consumer) throws Exception {
         super.configureConsumer(consumer);
     }

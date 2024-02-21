@@ -63,14 +63,14 @@ public class StreamCachingInOutTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(1);
                 from("direct:c").noStreamCaching().to("direct:d").convertBodyTo(String.class).to("mock:c");
                 from("direct:d").streamCaching().process(new TestProcessor());
-                from("direct:e").noStreamCaching().to("direct-vm:f").convertBodyTo(String.class).to("mock:e");
-                from("direct-vm:f").streamCaching().process(new TestProcessor());
+                from("direct:e").noStreamCaching().to("direct:f").convertBodyTo(String.class).to("mock:e");
+                from("direct:f").streamCaching().process(new TestProcessor());
             }
         };
     }
 
     // have a test processor that reads the stream and makes sure it is reset
-    private class TestProcessor implements Processor {
+    private static class TestProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);

@@ -16,30 +16,30 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Weighted load balancer The weighted load balancing policy allows you to specify a processing load distribution ratio
- * for each server with respect to others. In addition to the weight, endpoint selection is then further refined using
- * random distribution based on weight.
+ * Uses a weighted load distribution ratio for each server with respect to others.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
-    @XmlAttribute
-    private String roundRobin;
+
     @XmlAttribute(required = true)
     private String distributionRatio;
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(label = "advanced", defaultValue = ",")
     private String distributionRatioDelimiter;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String roundRobin;
 
     public WeightedLoadBalancerDefinition() {
     }

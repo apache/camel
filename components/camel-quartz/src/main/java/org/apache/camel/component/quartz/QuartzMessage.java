@@ -60,6 +60,9 @@ public class QuartzMessage extends DefaultMessage {
             map.put("trigger", trigger);
             map.put("triggerName", trigger.getKey().getName());
             map.put("triggerGroup", trigger.getKey().getGroup());
+            if (jobExecutionContext.getFireTime() != null) {
+                map.put(Exchange.MESSAGE_TIMESTAMP, jobExecutionContext.getFireTime().getTime());
+            }
         }
     }
 

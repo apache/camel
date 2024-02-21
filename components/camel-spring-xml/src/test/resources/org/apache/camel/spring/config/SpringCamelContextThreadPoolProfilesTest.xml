@@ -34,7 +34,7 @@
         <!-- define a big profile with many threads -->
         <threadPoolProfile id="big"
                            poolSize="50"
-                           maxPoolSize="100" rejectedPolicy="DiscardOldest"/>
+                           maxPoolSize="100" rejectedPolicy="Abort"/>
 
         <route>
             <from uri="direct:start"/>

@@ -19,26 +19,29 @@ public class DataSetTestEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(17);
         props.add("anyOrder");
-        props.add("expectedCount");
-        props.add("retainLast");
         props.add("assertPeriod");
-        props.add("failFast");
-        props.add("resultMinimumWaitTime");
-        props.add("timeout");
-        props.add("reportGroup");
-        props.add("sleepForEmptyTest");
-        props.add("lazyStartProducer");
-        props.add("split");
-        props.add("delimiter");
-        props.add("name");
         props.add("copyOnExchange");
+        props.add("delimiter");
+        props.add("expectedCount");
+        props.add("failFast");
+        props.add("lazyStartProducer");
+        props.add("log");
+        props.add("name");
+        props.add("reportGroup");
+        props.add("resultMinimumWaitTime");
         props.add("resultWaitTime");
         props.add("retainFirst");
+        props.add("retainLast");
+        props.add("sleepForEmptyTest");
+        props.add("split");
+        props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -66,6 +69,11 @@ public class DataSetTestEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

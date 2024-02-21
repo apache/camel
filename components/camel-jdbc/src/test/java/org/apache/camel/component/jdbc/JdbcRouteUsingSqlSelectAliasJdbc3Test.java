@@ -21,9 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class JdbcRouteUsingSqlSelectAliasJdbc3Test extends JdbcRouteUsingSqlSelectAliasTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:hello").to("jdbc:testdb?readSize=100&useJDBC4ColumnNameAndLabelSemantics=false");
             }
         };

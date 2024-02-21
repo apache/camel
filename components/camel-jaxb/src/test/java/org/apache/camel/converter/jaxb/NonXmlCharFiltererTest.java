@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -95,7 +96,7 @@ public class NonXmlCharFiltererTest {
         when(nonXmlCharFiltererMock.filter(eq(new char[] { 'a', 'b', 'c' }), anyInt(), anyInt()))
                 .thenAnswer(new Answer<Boolean>() {
 
-                    public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                    public Boolean answer(InvocationOnMock invocation) {
                         char[] buffer = (char[]) invocation.getArguments()[0];
                         buffer[0] = 'i';
                         buffer[1] = 'o';
@@ -131,7 +132,7 @@ public class NonXmlCharFiltererTest {
 
     @Test
     public void testFilter3ArgsNullArg() {
-        nonXmlCharFilterer.filter(null, 2, 3);
+        assertDoesNotThrow(() -> nonXmlCharFilterer.filter(null, 2, 3));
     }
 
     private void checkSingleValid(int charCode) {

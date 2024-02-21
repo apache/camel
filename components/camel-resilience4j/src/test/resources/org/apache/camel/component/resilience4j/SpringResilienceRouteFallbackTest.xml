@@ -40,10 +40,7 @@
     <route>
       <from uri="direct:start.with.timeout.enabled"/>
       <circuitBreaker>
-        <resilience4jConfiguration>
-          <timeoutEnabled>true</timeoutEnabled>
-          <timeoutDuration>2000</timeoutDuration>
-        </resilience4jConfiguration>
+        <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
         <throwException exceptionType="java.lang.IllegalArgumentException" message="Forced"/>
         <onFallback>
           <transform>

@@ -103,7 +103,8 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
 
     @Override
     protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
-        for (EndpointMappingKey key : endpoints.keySet()) {
+        for (Map.Entry<EndpointMappingKey, MessageEndpoint> endpointEntry : endpoints.entrySet()) {
+            EndpointMappingKey key = endpointEntry.getKey();
             String messageKey;
             switch (key.getType()) {
                 case ROOT_QNAME:
@@ -125,7 +126,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
                         String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
 
                         if (messageKey.startsWith(lookupKey)) {
-                            return endpoints.get(key);
+                            return endpointEntry.getValue();
                         }
                     }
 
@@ -135,7 +136,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
                             "Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
             }
             if (key.getLookupKey().equals(messageKey)) {
-                return endpoints.get(key);
+                return endpointEntry.getValue();
             }
         }
         return null;
@@ -246,6 +247,16 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
         if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            try {
+                transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
+            try {
+                transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
         }
     }
 

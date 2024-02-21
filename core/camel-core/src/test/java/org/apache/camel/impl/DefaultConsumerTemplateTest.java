@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ConsumerTemplate;
@@ -26,12 +25,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
@@ -96,10 +101,10 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testConsumeReceiveTimeout() throws Exception {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         Exchange out = consumer.receive("seda:foo", 1000);
         assertNull(out);
-        long delta = System.currentTimeMillis() - start;
+        long delta = watch.taken();
         assertTrue(delta < 1500, "Should take about 1 sec: " + delta);
 
         template.sendBody("seda:foo", "Hello");
@@ -383,20 +388,18 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testDoneUoW() throws Exception {
-        deleteDirectory("target/data/foo");
-        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Exchange exchange = consumer.receive("file:target/data/foo?initialDelay=0&delay=10&delete=true");
+        Exchange exchange = consumer.receive(fileUri("?initialDelay=0&delay=10&delete=true"));
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         // file should still exists
-        File file = new File("target/data/foo/hello.txt");
-        assertTrue(file.exists(), "File should exist " + file);
+        assertFileExists(testFile("hello.txt"));
 
         // done the exchange
         consumer.doneUoW(exchange);
 
-        assertFalse(file.exists(), "File should have been deleted " + file);
+        assertFileNotExists(testFile("hello.txt"));
     }
 }

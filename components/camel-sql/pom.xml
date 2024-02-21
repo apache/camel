@@ -23,13 +23,17 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-sql</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: SQL</name>
     <description>Camel SQL support</description>
+
+    <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+    </properties>
 
     <dependencies>
 
@@ -40,6 +44,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <version>${spring-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -51,6 +56,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -61,21 +67,38 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- derby used for stored procedure tests -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+            <artifactId>derbytools</artifactId>
+            <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+            <version>${hsqldb-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -95,7 +118,7 @@
                             <sourceDirectory>
                                 ${basedir}/src/main/java/org/apache/camel/component/sql/stored/template/grammar
                             </sourceDirectory>
-                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                            <outputDirectory>${basedir}/src/generated/java</outputDirectory>
                         </configuration>
                         <goals>
                             <goal>javacc</goal>

@@ -16,17 +16,17 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Random load balancer The random load balancer selects a random endpoint for each exchange.
+ * The destination endpoints are selected by random.
  */
-@Metadata(label = "eip,routing,loadbalance")
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "random")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {

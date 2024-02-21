@@ -43,9 +43,11 @@ import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
+import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.AllElementsSpaceStrippingRule;
 import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NamespaceUri;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.TreeInfo;
@@ -63,7 +65,6 @@ import net.sf.saxon.value.StringValue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -91,14 +92,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<>();
-    private Map<String, String> namespacePrefixes = new HashMap<>();
+    private final Map<String, String> namespacePrefixes = new HashMap<>();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class<?> resultType;
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;
-    private String headerName;
+    private Expression source;
 
     @Override
     public String toString() {
@@ -108,10 +109,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = evaluate(exchange);
-        exchange.getOut().setBody(body);
+        exchange.getMessage().setBody(body);
 
         // propagate headers
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+        exchange.getMessage().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
     @Override
@@ -120,8 +121,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         LOG.debug("Initializing XQueryBuilder {}", this);
         if (configuration == null) {
             configuration = new Configuration();
-            configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace()
-                    ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
+            configuration.setParseOptions(new ParseOptions().withSpaceStrippingRule(isStripsAllWhiteSpace()
+                    ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance()));
             LOG.debug("Created new Configuration {}", configuration);
         } else {
             LOG.debug("Using existing Configuration {}", configuration);
@@ -145,7 +146,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
             if (!invalid) {
                 LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
-                staticQueryContext.declareNamespace(prefix, uri);
+                staticQueryContext.declareNamespace(prefix, NamespaceUri.of(uri));
                 staticQueryContext.setInheritNamespaces(true);
             }
         }
@@ -223,7 +224,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
-        expression.pull(context, result, properties);
+        expression.run(context, result, properties);
         return result.getNode();
     }
 
@@ -232,7 +233,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
-        getExpression().pull(createDynamicContext(exchange), result, properties);
+        getExpression().run(createDynamicContext(exchange), result, properties);
 
         byte[] answer = buffer.toByteArray();
         buffer.close();
@@ -245,7 +246,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
         for (Item item = iter.next(); item != null; item = iter.next()) {
-            buffer.append(item.getStringValueCS());
+            buffer.append(item.getStringValue());
         }
 
         String answer = buffer.toString();
@@ -258,7 +259,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         LOG.debug("Matches: {} for exchange: {}", expression, exchange);
         try {
             List<?> list = evaluateAsList(exchange);
-            return matches(exchange, list);
+            return matches(list);
         } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
@@ -274,7 +275,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             throw new AssertionError(e);
         }
 
-        if (!matches(exchange, list)) {
+        if (!matches(list)) {
             throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
         }
     }
@@ -438,7 +439,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return namespacePrefixes;
     }
 
-    public XQueryExpression getExpression() throws IOException, XPathException {
+    public XQueryExpression getExpression() {
         return expression;
     }
 
@@ -514,20 +515,20 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.stripsAllWhiteSpace = stripsAllWhiteSpace;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
     public boolean isAllowStAX() {
         return allowStAX;
     }
 
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
+    }
+
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     // Implementation methods
@@ -546,48 +547,30 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         Configuration config = getConfiguration();
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
-        Message in = exchange.getIn();
-        Item item = null;
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            item = in.getHeader(getHeaderName(), Item.class);
-        } else {
-            item = in.getBody(Item.class);
-        }
+        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Item item = exchange.getContext().getTypeConverter().tryConvertTo(Item.class, exchange, payload);
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Object body;
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                body = in.getHeader(getHeaderName());
-            } else {
-                body = in.getBody();
-            }
-
             // the underlying input stream, which we need to close to avoid locking files or other resources
             InputStream is = null;
             try {
                 Source source;
                 // only convert to input stream if really needed
-                if (isInputStreamNeeded(exchange)) {
-                    if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                        is = exchange.getIn().getHeader(getHeaderName(), InputStream.class);
-                    } else {
-                        is = exchange.getIn().getBody(InputStream.class);
-                    }
+                if (isInputStreamNeeded(payload)) {
+                    is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, payload);
                     source = getSource(exchange, is);
                 } else {
-                    source = getSource(exchange, body);
+                    source = getSource(exchange, payload);
                 }
-
                 if (source == null) {
                     // indicate it was not possible to convert to a Source type
-                    throw new NoTypeConversionAvailableException(body, Source.class);
+                    throw new NoTypeConversionAvailableException(payload, Source.class);
                 }
-
                 TreeInfo doc = config.buildDocumentTree(source);
                 dynamicQueryContext.setContextItem(doc.getRootNode());
             } finally {
-                // can deal if is is null
+                // can deal if it is null
                 IOHelper.close(is);
             }
         }
@@ -603,23 +586,20 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
      * <p/>
      * Depending on the content in the message body, we may not need to convert to {@link InputStream}.
      *
-     * @param  exchange the current exchange
-     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source}
-     *                  afterwards.
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
      */
-    protected boolean isInputStreamNeeded(Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        if (body == null) {
+    protected boolean isInputStreamNeeded(Object payload) {
+        if (payload == null) {
             return false;
         }
 
-        if (body instanceof Source) {
+        if (payload instanceof Source) {
             return false;
-        } else if (body instanceof String) {
+        } else if (payload instanceof String) {
             return false;
-        } else if (body instanceof byte[]) {
+        } else if (payload instanceof byte[]) {
             return false;
-        } else if (body instanceof Node) {
+        } else if (payload instanceof Node) {
             return false;
         }
 
@@ -666,8 +646,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     /**
      * Configures the dynamic context with exchange specific parameters
      */
-    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange)
-            throws Exception {
+    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange) {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(
@@ -704,10 +683,9 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected Item getAsParameter(Object value) {
         if (value instanceof String) {
-            return new StringValue((CharSequence) value);
+            return new StringValue((String) value);
         } else if (value instanceof Boolean) {
             return BooleanValue.get((Boolean) value);
         } else if (value instanceof Long) {
@@ -719,11 +697,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         } else if (value instanceof Float) {
             return FloatValue.makeFloatValue((float) value);
         } else {
-            return new ObjectValue(value);
+            return new ObjectValue<>(value);
         }
     }
 
-    protected boolean matches(Exchange exchange, List<?> results) {
+    protected boolean matches(List<?> results) {
         return ObjectHelper.matches(results);
     }
 

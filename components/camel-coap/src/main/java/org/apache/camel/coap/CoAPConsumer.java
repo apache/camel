@@ -16,12 +16,10 @@
  */
 package org.apache.camel.coap;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Iterator;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.server.resources.Resource;
 
 /**
@@ -29,7 +27,6 @@ import org.eclipse.californium.core.server.resources.Resource;
  */
 public class CoAPConsumer extends DefaultConsumer {
     private final CoAPEndpoint endpoint;
-    private List<CoapResource> resources = new LinkedList<>();
 
     public CoAPConsumer(final CoAPEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -44,39 +41,21 @@ public class CoAPConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        String path = endpoint.getUri().getPath();
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
+        Iterator<String> pathSegmentIterator = endpoint.getPathSegmentsFromURI().iterator();
         Resource cr = endpoint.getCoapServer().getRoot();
-        while (!path.isEmpty()) {
-            int idx = path.indexOf('/');
-            String part1 = path;
-            if (idx != -1) {
-                part1 = path.substring(0, idx);
-                path = path.substring(idx + 1);
-            } else {
-                path = "";
-            }
-            Resource child = cr.getChild(part1);
+        while (pathSegmentIterator.hasNext()) {
+            String pathSegment = pathSegmentIterator.next();
+            Resource child = cr.getChild(pathSegment);
             if (child == null) {
-                child = new CamelCoapResource(part1, this);
+                child = new CamelCoapResource(pathSegment, this);
+                ((CamelCoapResource) child).setObservable(endpoint.isObservable());
                 cr.add(child);
                 cr = child;
-            } else if (path.isEmpty()) {
+            } else if (!pathSegmentIterator.hasNext()) {
                 ((CamelCoapResource) child).addConsumer(this);
             } else {
                 cr = child;
             }
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        for (CoapResource r : resources) {
-            r.getParent().delete(r);
-        }
-        resources.clear();
-        super.doStop();
     }
 }

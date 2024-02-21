@@ -34,7 +34,7 @@ public abstract class DigitalOceanProducer extends DefaultProducer {
     protected DigitalOceanConfiguration configuration;
     private DigitalOceanEndpoint endpoint;
 
-    public DigitalOceanProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {
+    protected DigitalOceanProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = configuration;

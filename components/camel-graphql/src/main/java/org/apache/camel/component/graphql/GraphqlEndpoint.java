@@ -34,23 +34,22 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 /**
  * Send GraphQL queries and mutations to external systems.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
-             category = { Category.API }, producerOnly = true)
+             category = { Category.API }, producerOnly = true, lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -74,6 +73,10 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     private String operationName;
     @UriParam
     private JsonObject variables;
+    @UriParam
+    private String variablesHeader;
+    @UriParam
+    private String queryHeader;
 
     private CloseableHttpClient httpClient;
 
@@ -83,7 +86,9 @@ public class GraphqlEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        HttpClientUtils.closeQuietly(this.httpClient);
+        if (httpClient != null) {
+            httpClient.close();
+        }
     }
 
     @Override
@@ -120,8 +125,10 @@ public class GraphqlEndpoint extends DefaultEndpoint {
                     Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
         }
         if (username != null && password != null) {
-            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+            CredentialsStore credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(
+                    new AuthScope(null, -1),
+                    new UsernamePasswordCredentials(username, password.toCharArray()));
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
         return httpClientBuilder.build();
@@ -185,7 +192,7 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     public String getQuery() {
         if (query == null && queryFile != null) {
             try {
-                query = IOHelper.loadText(ObjectHelper.loadResourceAsStream(queryFile));
+                query = IOHelper.loadText(ObjectHelper.loadResourceAsStream(queryFile, getClass().getClassLoader()));
             } catch (IOException e) {
                 throw new RuntimeCamelException("Failed to read query file: " + queryFile, e);
             }
@@ -244,4 +251,38 @@ public class GraphqlEndpoint extends DefaultEndpoint {
         this.variables = variables;
     }
 
+    public String getVariablesHeader() {
+        return variablesHeader;
+    }
+
+    /**
+     * The name of a header containing a JsonObject instance containing the operation variables.
+     */
+    public void setVariablesHeader(String variablesHeader) {
+        this.variablesHeader = variablesHeader;
+    }
+
+    public String getQueryHeader() {
+        return queryHeader;
+    }
+
+    /**
+     * The name of a header containing the GraphQL query.
+     */
+    public void setQueryHeader(String queryHeader) {
+        this.queryHeader = queryHeader;
+    }
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
 }

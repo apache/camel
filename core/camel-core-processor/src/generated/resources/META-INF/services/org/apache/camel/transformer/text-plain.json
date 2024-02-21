@@ -1,0 +1,13 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "text-plain",
+    "title": "Text Plain",
+    "deprecated": false,
+    "javaType": "org.apache.camel.processor.transformer.StringDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.5.0-SNAPSHOT"
+  }
+}
+

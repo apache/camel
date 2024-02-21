@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.IOException;
+import java.io.File;
 import java.security.Principal;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -29,12 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
-import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.resource.URLResourceFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +49,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
-    public SecurityHandler getSecurityHandler() throws IOException {
-        Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
-        constraint.setAuthenticate(true);
+    public SecurityHandler getSecurityHandler() {
+        Constraint constraint = new Constraint.Builder()
+                .name("BASIC")
+                .roles("user")
+                .authorization(Constraint.Authorization.SPECIFIC_ROLE)
+                .build();
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec("/*");
@@ -60,7 +64,10 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
         sh.setAuthenticator(new BasicAuthenticator());
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
-        HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
+        HashLoginService loginService = new HashLoginService(
+                "MyRealm",
+                new URLResourceFactory().newResource(
+                        new File("src/test/resources/myRealm.properties").toURI()));
         sh.setLoginService(loginService);
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
@@ -68,7 +75,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityBasicDigest() throws Exception {
+    public void testAuthMethodPriorityBasicDigest() {
         String out = template.requestBody(
                 "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck",
                 "Hello World",
@@ -77,7 +84,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityNTLMBasic() throws Exception {
+    public void testAuthMethodPriorityNTLMBasic() {
         String out = template.requestBody(
                 "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck",
                 "Hello World",
@@ -86,7 +93,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityInvalid() throws Exception {
+    public void testAuthMethodPriorityInvalid() {
         try {
             template.requestBody(
                     "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck",
@@ -103,7 +110,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityNTLM() throws Exception {
+    public void testAuthMethodPriorityNTLM() {
         try {
             template.requestBody(
                     "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck",
@@ -116,12 +123,12 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
                         assertNotNull(req);
                         Principal user = req.getUserPrincipal();

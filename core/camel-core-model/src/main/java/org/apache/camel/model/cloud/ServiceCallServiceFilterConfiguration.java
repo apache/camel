@@ -16,20 +16,19 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -38,6 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "serviceFilterConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer(extended = true)
+@Deprecated
 public class ServiceCallServiceFilterConfiguration extends ServiceCallConfiguration implements ServiceFilterFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
@@ -68,9 +69,10 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
     /**
      * Adds a custom property to use.
      * <p/>
-     * These properties are specific to what service call implementation are in use. For example if using ribbon, then
-     * the client properties are define in com.netflix.client.config.CommonClientConfigKey.
+     * These properties are specific to what service call implementation are in use. For example if using a different
+     * one, then the client properties are defined according to the specific service in use.
      */
+    @Override
     public ServiceCallServiceFilterConfiguration property(String key, String value) {
         return (ServiceCallServiceFilterConfiguration) super.property(key, value);
     }
@@ -96,7 +98,7 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.adapt(ExtendedCamelContext.class)
+                type = camelContext.getCamelContextExtension()
                         .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
@@ -114,9 +116,7 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
             }
 
             try {
-                Map<String, Object> parameters = new HashMap<>();
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, parameters, null,
-                        false);
+                Map<String, Object> parameters = getConfiguredOptions(camelContext, this);
 
                 parameters.replaceAll((k, v) -> {
                     if (v instanceof String) {
@@ -124,21 +124,28 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
                             v = camelContext.resolvePropertyPlaceholders((String) v);
                         } catch (Exception e) {
                             throw new IllegalArgumentException(
-                                    String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                                    String.format("Exception while resolving %s (%s)", k, v), e);
                         }
                     }
 
                     return v;
                 });
 
-                // Convert properties to Map<String, String>
-                parameters.put("properties", getPropertiesAsMap(camelContext));
+                if (factory != null) {
+                    // Convert properties to Map<String, String>
+                    Map<String, String> map = getPropertiesAsMap(camelContext);
+                    if (map != null && !map.isEmpty()) {
+                        parameters.put("properties", map);
+                    }
 
-                postProcessFactoryParameters(camelContext, parameters);
+                    postProcessFactoryParameters(camelContext, parameters);
 
-                PropertyBindingSupport.build().bind(camelContext, factory, parameters);
+                    PropertyBindingSupport.build().bind(camelContext, factory, parameters);
 
-                answer = factory.newInstance(camelContext);
+                    answer = factory.newInstance(camelContext);
+                } else {
+                    throw new IllegalStateException("factory is null");
+                }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);
             }

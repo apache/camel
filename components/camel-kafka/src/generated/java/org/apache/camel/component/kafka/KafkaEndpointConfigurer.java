@@ -26,13 +26,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "allowmanualcommit":
         case "allowManualCommit": target.getConfiguration().setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
         case "autocommitenable":
-        case "autoCommitEnable": target.getConfiguration().setAutoCommitEnable(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autoCommitEnable": target.getConfiguration().setAutoCommitEnable(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": target.getConfiguration().setAutoCommitIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "autocommitonstop":
-        case "autoCommitOnStop": target.getConfiguration().setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": target.getConfiguration().setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": target.getConfiguration().setBatchWithIndividualHeaders(property(camelContext, boolean.class, value)); return true;
+        case "batching": target.getConfiguration().setBatching(property(camelContext, boolean.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": target.getConfiguration().setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -44,16 +45,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": target.getConfiguration().setCheckCrcs(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "committimeoutms":
+        case "commitTimeoutMs": target.getConfiguration().setCommitTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "compressioncodec":
         case "compressionCodec": target.getConfiguration().setCompressionCodec(property(camelContext, java.lang.String.class, value)); return true;
         case "connectionmaxidlems":
         case "connectionMaxIdleMs": target.getConfiguration().setConnectionMaxIdleMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": target.getConfiguration().setConsumerRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "consumerstreams":
-        case "consumerStreams": target.getConfiguration().setConsumerStreams(property(camelContext, int.class, value)); return true;
         case "consumerscount":
         case "consumersCount": target.getConfiguration().setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": target.getConfiguration().setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -68,6 +71,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": target.getConfiguration().setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupinstanceid":
+        case "groupInstanceId": target.getConfiguration().setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdeserializer":
         case "headerDeserializer": target.getConfiguration().setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
@@ -78,8 +83,16 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "isolationlevel":
+        case "isolationLevel": target.getConfiguration().setIsolationLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": target.getConfiguration().setKerberosConfigLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosinitcmd":
         case "kerberosInitCmd": target.getConfiguration().setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosprincipaltolocalrules":
@@ -104,7 +117,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": target.getConfiguration().setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollrecords":
         case "maxPollRecords": target.getConfiguration().setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxrequestsize":
@@ -124,8 +137,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": target.getConfiguration().setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
+        case "pollonerror":
+        case "pollOnError": target.getConfiguration().setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
         case "pollTimeoutMs": target.getConfiguration().setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": target.getConfiguration().setPreValidateHostAndPort(property(camelContext, boolean.class, value)); return true;
         case "producerbatchsize":
         case "producerBatchSize": target.getConfiguration().setProducerBatchSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "queuebufferingmaxmessages":
@@ -156,7 +175,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "seekto":
-        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, org.apache.camel.component.kafka.SeekPolicy.class, value)); return true;
         case "sendbufferbytes":
         case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sessiontimeoutms":
@@ -220,13 +239,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "allowmanualcommit":
         case "allowManualCommit": return boolean.class;
         case "autocommitenable":
-        case "autoCommitEnable": return java.lang.Boolean.class;
+        case "autoCommitEnable": return boolean.class;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return java.lang.Integer.class;
-        case "autocommitonstop":
-        case "autoCommitOnStop": return java.lang.String.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": return boolean.class;
+        case "batching": return boolean.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -238,16 +258,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": return java.lang.Boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
+        case "committimeoutms":
+        case "commitTimeoutMs": return java.lang.Long.class;
         case "compressioncodec":
         case "compressionCodec": return java.lang.String.class;
         case "connectionmaxidlems":
         case "connectionMaxIdleMs": return java.lang.Integer.class;
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": return java.lang.Integer.class;
-        case "consumerstreams":
-        case "consumerStreams": return int.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
         case "exceptionhandler":
@@ -262,6 +284,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": return java.lang.Integer.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
+        case "groupinstanceid":
+        case "groupInstanceId": return java.lang.String.class;
         case "headerdeserializer":
         case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
         case "headerfilterstrategy":
@@ -272,8 +296,16 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
         case "interceptorClasses": return java.lang.String.class;
+        case "isolationlevel":
+        case "isolationLevel": return java.lang.String.class;
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return java.lang.String.class;
         case "kerberosinitcmd":
         case "kerberosInitCmd": return java.lang.String.class;
         case "kerberosprincipaltolocalrules":
@@ -298,7 +330,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": return java.lang.Integer.class;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": return java.lang.Long.class;
+        case "maxPollIntervalMs": return java.lang.Integer.class;
         case "maxpollrecords":
         case "maxPollRecords": return java.lang.Integer.class;
         case "maxrequestsize":
@@ -318,8 +350,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return boolean.class;
+        case "pollonerror":
+        case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
         case "pollTimeoutMs": return java.lang.Long.class;
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": return boolean.class;
         case "producerbatchsize":
         case "producerBatchSize": return java.lang.Integer.class;
         case "queuebufferingmaxmessages":
@@ -350,7 +388,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
         case "seekto":
-        case "seekTo": return java.lang.String.class;
+        case "seekTo": return org.apache.camel.component.kafka.SeekPolicy.class;
         case "sendbufferbytes":
         case "sendBufferBytes": return java.lang.Integer.class;
         case "sessiontimeoutms":
@@ -415,13 +453,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "allowmanualcommit":
         case "allowManualCommit": return target.getConfiguration().isAllowManualCommit();
         case "autocommitenable":
-        case "autoCommitEnable": return target.getConfiguration().getAutoCommitEnable();
+        case "autoCommitEnable": return target.getConfiguration().isAutoCommitEnable();
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return target.getConfiguration().getAutoCommitIntervalMs();
-        case "autocommitonstop":
-        case "autoCommitOnStop": return target.getConfiguration().getAutoCommitOnStop();
         case "autooffsetreset":
         case "autoOffsetReset": return target.getConfiguration().getAutoOffsetReset();
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": return target.getConfiguration().isBatchWithIndividualHeaders();
+        case "batching": return target.getConfiguration().isBatching();
         case "breakonfirsterror":
         case "breakOnFirstError": return target.getConfiguration().isBreakOnFirstError();
         case "bridgeerrorhandler":
@@ -433,16 +472,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "checkCrcs": return target.getConfiguration().getCheckCrcs();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
+        case "committimeoutms":
+        case "commitTimeoutMs": return target.getConfiguration().getCommitTimeoutMs();
         case "compressioncodec":
         case "compressionCodec": return target.getConfiguration().getCompressionCodec();
         case "connectionmaxidlems":
         case "connectionMaxIdleMs": return target.getConfiguration().getConnectionMaxIdleMs();
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": return target.getConfiguration().getConsumerRequestTimeoutMs();
-        case "consumerstreams":
-        case "consumerStreams": return target.getConfiguration().getConsumerStreams();
         case "consumerscount":
         case "consumersCount": return target.getConfiguration().getConsumersCount();
+        case "deliverytimeoutms":
+        case "deliveryTimeoutMs": return target.getConfiguration().getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return target.getConfiguration().isEnableIdempotence();
         case "exceptionhandler":
@@ -457,6 +498,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": return target.getConfiguration().getFetchWaitMaxMs();
         case "groupid":
         case "groupId": return target.getConfiguration().getGroupId();
+        case "groupinstanceid":
+        case "groupInstanceId": return target.getConfiguration().getGroupInstanceId();
         case "headerdeserializer":
         case "headerDeserializer": return target.getConfiguration().getHeaderDeserializer();
         case "headerfilterstrategy":
@@ -467,8 +510,16 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return target.getConfiguration().getInterceptorClasses();
+        case "isolationlevel":
+        case "isolationLevel": return target.getConfiguration().getIsolationLevel();
+        case "kafkaclientfactory":
+        case "kafkaClientFactory": return target.getKafkaClientFactory();
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return target.getConfiguration().getKerberosBeforeReloginMinTime();
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return target.getConfiguration().getKerberosConfigLocation();
         case "kerberosinitcmd":
         case "kerberosInitCmd": return target.getConfiguration().getKerberosInitCmd();
         case "kerberosprincipaltolocalrules":
@@ -513,8 +564,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "partitioner": return target.getConfiguration().getPartitioner();
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return target.getConfiguration().isPartitionerIgnoreKeys();
+        case "pollonerror":
+        case "pollOnError": return target.getConfiguration().getPollOnError();
         case "polltimeoutms":
         case "pollTimeoutMs": return target.getConfiguration().getPollTimeoutMs();
+        case "prevalidatehostandport":
+        case "preValidateHostAndPort": return target.getConfiguration().isPreValidateHostAndPort();
         case "producerbatchsize":
         case "producerBatchSize": return target.getConfiguration().getProducerBatchSize();
         case "queuebufferingmaxmessages":

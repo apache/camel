@@ -19,26 +19,36 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
+public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=default";
+        return "activemq:queue:JmsRouteWithDefaultKeyFormatStrategyTest?jmsKeyFormatStrategy=default";
     }
 
     @Test
-    public void testIllegalOption() throws Exception {
+    public void testIllegalOption() {
         try {
             context.getEndpoint("activemq:queue:bar?jmsHeaderStrategy=xxx");
             fail("Should have thrown a ResolveEndpointFailedException");
@@ -54,7 +64,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +75,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -83,28 +93,35 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
 
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(getUri());
 
                 from(getUri()).to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

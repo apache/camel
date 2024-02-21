@@ -26,20 +26,18 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
     @Test
     public void testManageEndpointRegistry() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -77,7 +75,7 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("EndpointRegistry"));
-        assertTrue(source.endsWith("capacity: 1000"));
+        assertTrue(source.endsWith("capacity: 1000]"));
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
         assertEquals(3, data.size());

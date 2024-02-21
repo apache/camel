@@ -42,7 +42,7 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:start", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(1, list.size());
@@ -75,7 +75,7 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
     }
 
     @Test
-    public void testNoDataSourceInRegistry() throws Exception {
+    public void testNoDataSourceInRegistry() {
         try {
             template.sendBody("jdbc:xxx", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
@@ -99,9 +99,9 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:testdb?readSize=1").to("mock:result");
                 from("direct:retrieve").to("jdbc:testdb").to("mock:retrieve");
                 from("direct:startTx").to("jdbc:testdb?transacted=true").to("mock:resultTx");

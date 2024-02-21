@@ -32,25 +32,25 @@ public class RestJettyGetToDTest extends BaseJettyTest {
     private JettyRestHttpBinding binding = new JettyRestHttpBinding();
 
     @Test
-    public void testJettyProducerGet() throws Exception {
+    public void testJettyProducerGet() {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef",
                         "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").toD("seda:${header.id}");
-
+                rest("/users/").get("{id}/basic").to("direct:basic");
+                from("direct:basic").toD("seda:${header.id}");
                 from("seda:123").to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");
                     }

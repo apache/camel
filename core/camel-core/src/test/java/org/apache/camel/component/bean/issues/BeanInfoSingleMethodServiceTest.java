@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
 
-    private SingleMethodService myService = new SingleMethodServiceImpl();
+    private final SingleMethodService<String, String> myService = new SingleMethodServiceImpl();
 
     @Test
     public void testBeanInfoSingleMethodRoute() throws Exception {

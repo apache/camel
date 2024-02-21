@@ -18,18 +18,20 @@ package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -37,7 +39,6 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.util.Args;
 
 public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
@@ -78,7 +79,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    Map<String, String> extensionFields,
                                                    String charset,
                                                    boolean isMainBody,
-                                                   PrivateKey decryptingPrivateKey) throws HttpException {
+                                                   PrivateKey decryptingPrivateKey,
+                                                   Certificate[] validateSigningCertificateChain) throws HttpException {
         setMainBody(isMainBody);
         setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
 
@@ -89,12 +91,13 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
         this.originalMessageId = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
-        this.receivedContentMic = MicUtils.createReceivedContentMic(request, decryptingPrivateKey);
+        this.receivedContentMic
+                = MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
 
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 
-        this.dispositionMode = Args.notNull(dispositionMode, "Disposition Mode");
-        this.dispositionType = Args.notNull(dispositionType, "Disposition Type");
+        this.dispositionMode = ObjectHelper.notNull(dispositionMode, "Disposition Mode");
+        this.dispositionType = ObjectHelper.notNull(dispositionType, "Disposition Type");
         this.dispositionModifier = dispositionModifier;
         this.failureFields = failureFields;
         this.errorFields = errorFields;
@@ -183,7 +186,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, AS2Charset.US_ASCII)) {
+        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
             // Write out mime part headers if this is not the main body of
             // message.

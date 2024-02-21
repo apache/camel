@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.sjms2;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,13 +34,16 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
 
     private static final String BEAN_NAME = "not-sjms";
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
+
     @Override
     protected boolean useJmx() {
         return true;
     }
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testDefaults() {
         Endpoint endpoint = context.getEndpoint(BEAN_NAME + ":test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
@@ -47,7 +53,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testQueueEndpoint() throws Exception {
+    public void testQueueEndpoint() {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":queue:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof Sjms2Endpoint);
@@ -55,7 +61,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTopicEndpoint() throws Exception {
+    public void testTopicEndpoint() {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":topic:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof Sjms2Endpoint);
@@ -67,7 +73,7 @@ public class Sjms2EndpointNameOverrideTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                = new ActiveMQConnectionFactory(service.serviceAddress());
         Sjms2Component component = new Sjms2Component();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent(BEAN_NAME, component);

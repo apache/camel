@@ -19,14 +19,14 @@ package org.apache.camel.model;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -41,8 +41,14 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition>
         implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+
+    @XmlTransient
+    private ExecutorService executorServiceBean;
+    @XmlTransient
+    private boolean routeScoped = true;
+
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
               enums = "AfterConsumer,BeforeConsumer")
     private String mode;
     @XmlAttribute
@@ -51,21 +57,18 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String onFailureOnly;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String parallelProcessing;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    private String executorService;
+    @XmlAttribute(name = "useOriginalMessage")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String useOriginalMessage;
     @XmlElement(name = "onWhen")
     @AsPredicate
     private WhenDefinition onWhen;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String parallelProcessing;
-    @XmlAttribute
-    private String executorServiceRef;
-    @XmlAttribute(name = "useOriginalMessage")
-    @Metadata(javaType = "java.lang.Boolean")
-    private String useOriginalMessage;
-    @XmlTransient
-    private ExecutorService executorService;
-    @XmlTransient
-    private boolean routeScoped = true;
 
     public OnCompletionDefinition() {
     }
@@ -111,15 +114,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     }
 
     /**
-     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
+     * Removes all existing global {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
      * <p/>
-     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Hence we remove
-     * all existing as they are global.
+     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>. Do not remove
+     * an existing route-scoped because it is now possible (CAMEL-16374) to have several.
      *
      * @param definition the parent definition that is the route
      */
     public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
-        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition);
+        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition &&
+                !((OnCompletionDefinition) out).isRouteScoped());
     }
 
     @Override
@@ -210,11 +214,59 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     /**
      * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
+     * The original input message is defensively copied, and the copied message body is converted to
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
+     * <p/>
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return     the builder
+     * @deprecated use {@link #useOriginalMessage()}
+     */
+    @Deprecated
+    public OnCompletionDefinition useOriginalBody() {
+        setUseOriginalMessage(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * Will use the original input message when an {@link org.apache.camel.Exchange} for this on completion.
+     * <p/>
+     * The original input message is defensively copied, and the copied message body is converted to
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
+     * <p/>
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
+     * <p/>
      * By default this feature is off.
      *
      * @return the builder
      */
-    public OnCompletionDefinition useOriginalBody() {
+    public OnCompletionDefinition useOriginalMessage() {
         setUseOriginalMessage(Boolean.toString(true));
         return this;
     }
@@ -225,7 +277,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      */
     @Override
     public OnCompletionDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -234,8 +286,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * processing is automatic implied, and you do not have to enable that option as well.
      */
     @Override
-    public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public OnCompletionDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -272,6 +324,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);
+    }
+
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
     }
 
     public String getMode() {
@@ -311,26 +373,6 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         this.onWhen = onWhen;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
-    }
-
     public String getUseOriginalMessage() {
         return useOriginalMessage;
     }
@@ -338,7 +380,26 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     /**
      * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
+     * The original input message is defensively copied, and the copied message body is converted to
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
+     * original route), to ensure the body can be read when the original message is being used later. If the body is
+     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
+     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
+     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
+     * later.
+     * <p/>
+     * <b>Important:</b> The original input means the input message that are bounded by the current
+     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
+     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
+     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
+     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
+     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
+     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
+     * therefore use the parent original message.
+     * <p/>
      * By default this feature is off.
+     *
+     * @return the builder
      */
     public void setUseOriginalMessage(String useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
@@ -352,4 +413,11 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         this.parallelProcessing = parallelProcessing;
     }
 
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
 }

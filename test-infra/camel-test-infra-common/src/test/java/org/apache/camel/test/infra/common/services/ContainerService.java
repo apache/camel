@@ -17,9 +17,29 @@
 
 package org.apache.camel.test.infra.common.services;
 
+import org.junit.jupiter.api.extension.ConditionEvaluationResult;
+import org.junit.jupiter.api.extension.ExecutionCondition;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
-public interface ContainerService<T extends GenericContainer> {
+public interface ContainerService<T extends GenericContainer> extends ExecutionCondition {
+
+    @Override
+    default ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext extensionContext) {
+
+        if (ContainerEnvironmentUtil.isDockerAvailable()) {
+            return ConditionEvaluationResult.enabled("Docker is available");
+        }
+
+        Logger logger = LoggerFactory.getLogger(ContainerService.class);
+        logger.warn("Test {} is disabled because docker is not available", extensionContext.getElement().orElse(null));
+
+        System.err.println(
+                "Container-based tests were disabled because Docker is NOT available. Check the log files on target/failsafe-reports");
+        return ConditionEvaluationResult.disabled("Docker is NOT available");
+    }
 
     T getContainer();
 }

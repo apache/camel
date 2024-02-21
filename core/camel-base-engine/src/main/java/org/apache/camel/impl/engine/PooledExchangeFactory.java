@@ -16,15 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.DefaultPooledExchange;
+import org.apache.camel.support.ResetableClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +34,6 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PooledExchangeFactory.class);
 
     private final ReleaseOnDoneTask onDone = new ReleaseOnDoneTask();
-    private BlockingQueue<Exchange> pool;
-    private int capacity = 100;
 
     public PooledExchangeFactory() {
     }
@@ -47,35 +43,12 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-        this.pool = new ArrayBlockingQueue<>(capacity);
-    }
-
-    @Override
     public ExchangeFactory newExchangeFactory(Consumer consumer) {
         PooledExchangeFactory answer = new PooledExchangeFactory(consumer);
         answer.setCamelContext(camelContext);
         answer.setCapacity(capacity);
-        answer.setStatisticsEnabled(isStatisticsEnabled());
+        answer.setStatisticsEnabled(statisticsEnabled);
         return answer;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public int getSize() {
-        if (pool != null) {
-            return pool.size();
-        } else {
-            return 0;
-        }
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     @Override
@@ -84,17 +57,18 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         if (exchange == null) {
             // create a new exchange as there was no free from the pool
             exchange = createPooledExchange(null, autoRelease);
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.created.increment();
             }
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        ((ResetableClock) exchange.getClock()).reset();
+
         return exchange;
     }
 
@@ -103,34 +77,33 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         Exchange exchange = pool.poll();
         if (exchange == null) {
             // create a new exchange as there was no free from the pool
-            exchange = new DefaultPooledExchange(fromEndpoint);
-            if (statistics.isStatisticsEnabled()) {
+            exchange = createPooledExchange(fromEndpoint, autoRelease);
+            if (statisticsEnabled) {
                 statistics.created.increment();
             }
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        ((ResetableClock) exchange.getClock()).reset();
+
         return exchange;
     }
 
     @Override
     public boolean release(Exchange exchange) {
         try {
-            // done exchange before returning back to pool
-            PooledExchange ee = exchange.adapt(PooledExchange.class);
-            boolean force = !ee.isAutoRelease();
-            ee.done(force);
-            ee.onDone(null);
+            // done exchange before returning to pool
+            PooledExchange ee = (PooledExchange) exchange;
+            ee.done();
 
             // only release back in pool if reset was success
             boolean inserted = pool.offer(exchange);
 
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 if (inserted) {
                     statistics.released.increment();
                 } else {
@@ -139,7 +112,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             }
             return inserted;
         } catch (Exception e) {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 statistics.discarded.increment();
             }
             LOG.debug("Error resetting exchange: {}. This exchange is discarded.", exchange);
@@ -147,10 +120,10 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         }
     }
 
-    protected PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
+    private PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
         PooledExchange answer;
         if (fromEndpoint != null) {
-            answer = new DefaultPooledExchange(fromEndpoint);
+            answer = DefaultPooledExchange.newFromEndpoint(fromEndpoint);
         } else {
             answer = new DefaultPooledExchange(camelContext);
         }
@@ -163,16 +136,19 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     }
 
     @Override
-    public void purge() {
-        pool.clear();
+    public boolean isPooled() {
+        return true;
     }
 
     @Override
     protected void doStop() throws Exception {
-        exchangeFactoryManager.removeExchangeFactory(this);
-        logUsageSummary(LOG, "PooledExchangeFactory", pool.size());
-        statistics.reset();
-        pool.clear();
+        if (exchangeFactoryManager != null) {
+            exchangeFactoryManager.removeExchangeFactory(this);
+        }
+        if (pool != null) {
+            logUsageSummary(LOG, "PooledExchangeFactory", pool.size());
+            pool.clear();
+        }
 
         // do not call super
     }

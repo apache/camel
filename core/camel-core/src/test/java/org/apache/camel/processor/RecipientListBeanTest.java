@@ -77,7 +77,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         };
     }
 
-    public class MyBean {
+    public static class MyBean {
 
         public String[] foo(String body) {
             return body.split(",");

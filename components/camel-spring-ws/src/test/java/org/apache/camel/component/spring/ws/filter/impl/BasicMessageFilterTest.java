@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.spring.ws.filter.impl;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
@@ -109,7 +110,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     @Test
     public void consumerWithHeader() throws Exception {
         exchange.getOut().getHeaders().put("headerAttributeKey", "testAttributeValue");
-        exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "<myElement />"));
+        exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
         filter.filterConsumer(exchange, message);
 
         Assertions.assertThat(message.getAttachments()).isEmpty();
@@ -124,7 +125,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     public void producerWithHeader() throws Exception {
         // foo is already in the header.in from the parent ExchangeTestSupport
         exchange.getIn().getHeaders().put("headerAttributeKey", "testAttributeValue");
-        exchange.getIn().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "<myElement />"));
+        exchange.getIn().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
 
         filter.filterProducer(exchange, message);
 

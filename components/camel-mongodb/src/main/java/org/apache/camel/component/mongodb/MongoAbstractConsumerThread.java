@@ -64,26 +64,40 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     @Override
     public void run() {
         stoppedLatch = new CountDownLatch(1);
-        while (keepRunning) {
-            doRun();
-            // regenerate the cursor, if reading failed for some reason
-            if (keepRunning) {
-                cursor.close();
-                regeneratingCursor();
-
-                if (cursorRegenerationDelayEnabled) {
-                    try {
-                        Thread.sleep(cursorRegenerationDelay);
-                    } catch (InterruptedException ignored) {
+        try {
+            while (keepRunning) {
+                try {
+                    doRun();
+                } catch (Exception e) {
+                    if (keepRunning) {
+                        log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
+                                e.getMessage());
+                    } else {
+                        log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
+                                e.getMessage(), e);
                     }
                 }
+                // regenerate the cursor, if reading failed for some reason
+                if (keepRunning) {
+                    cursor.close();
+                    regeneratingCursor();
 
-                cursor = initializeCursor();
+                    if (cursorRegenerationDelayEnabled) {
+                        try {
+                            Thread.sleep(cursorRegenerationDelay);
+                        } catch (InterruptedException e) {
+                            log.info("Interrupted while waiting for the cursor regeneration");
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    cursor = initializeCursor();
+                }
             }
+        } finally {
+            stopped = true;
+            stoppedLatch.countDown();
         }
-
-        stopped = true;
-        stoppedLatch.countDown();
     }
 
     protected void stop() throws Exception {

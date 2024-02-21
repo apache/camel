@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.cloud;
 
+@Deprecated
 public final class ServiceCallDefinitionConstants {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
     public static final String DEFAULT_COMPONENT = "http";

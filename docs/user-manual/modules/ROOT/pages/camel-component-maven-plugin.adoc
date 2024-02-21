@@ -1,28 +1,30 @@
 = Camel Component Maven Plugin
 
 The
-https://github.com/apache/camel/tree/master/tooling/maven/camel-component-maven-plugin[Camel Component
-Maven Plugin] allows third party component developers to generate all the necessary metadata and Java classes for configurations to be used with Camel 3.x. These metadata files and Java files allows for more efficiency and faster runs for your component.
+https://github.com/apache/camel/tree/main/tooling/maven/camel-component-maven-plugin[Camel Component
+Maven Plugin] allows third party component developers to generate all the necessary metadata and Java classes for configurations to be used since Camel 3.x. These metadata files and Java files allows for more efficiency and faster runs for your component.
 
 == Goals Supported
 
-=== :generate
+The following goal is supported:
+
+=== generate
+
 This goal will generate the following metadata files and Java files:
 
 * Jandex index: it will generate a Jandex index for used Java annotations within the project which allows to more efficiency to search and load the annotations to generate other metadata as mentioned below.
-* Type Converter Loader: it will xref:type-converter.adoc[generate a loader for type converter] annotated with `@Converter(loader = true)` to allow faster way for Camel to load these converter.
+* Type Converter Loader: it will generate a loader for xref:type-converter.adoc[type converter] annotated with `@Converter(loader = true)` to allow faster way for Camel to load these converters.
 * SPIs: it will generate all Service Provider Interfaces (SPI) for the component. This allows Camel to auto-discover your component without adding it manually to the Camel context.
-* Configurers: it will generate all configurer Java classes from `@Configuer` annotated classes.
+* Configurers: it will generate all configurer Java classes from `@Configurer` annotated classes.
 * Endpoint Schema: it will generate the property configurers as well as schema JSONs extracted from the component's Endpoint and Component classes. This allows Camel to avoid reflections while configuring the properties, thus allows for better efficiency.
+* Endpoint URI Factory: it will generate endpoint factory to build URIs from a map of properties.
+* Invoke on Header: it will generate source code for components using `@InvokeOnHeader`
 * Prepare Component: it analyzes if the maven module contains Camel modules such as `components`, `dataformats`, `languages` and others. And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling. 
 * Validate Component: it validates the Camel component if the meta-files for `components`, `dataformats`, `languages` and others, all contains the needed meta-data such as assigned labels, documentation for each option.
 
 [NOTE]
 ====
-
-
 In order for the plugin to work probably, you will need to have the proper Camel annotations in your component. Example, `@Component` for component class, `@UriEndpoint` for endpoint class, `@UriParams` ..etc. You can take a look at these annotation how being used in any of the existing Camel components in github. Or even better, you can use xref:camel-maven-archetypes.adoc[Camel Maven Archetypes] to bootstrap the initial component, this already include all the necessary batteries for your component such as necessary initial Java classes, annotation and maven `pom.xml`.
-
 ====
 
 == Adding the plugin to your pom.xml
@@ -47,4 +49,91 @@ In case you *did not* use the Camel Maven Archetypes to bootstrap the initial co
 </plugin>
 ----
 
-This will attach this plugin `:generate` goal to Maven's `process-classes`, in order to generate all the necessary files being describe above upon compilation. Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.
+This will attach the plugin `generate` goal to Maven's `process-classes`,
+in order to generate all the necessary files being described above upon compilation.
+
+Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.
+
+=== Re-compile to include latest generated code
+
+The `camel-component-maven-plugin` is executed after the compiler, and because it outputs java source
+code, then the compiler must execute again (will only compile if source code has actually changed).
+
+To ensure this the following should be added to the `pom.xml` file:
+
+[source,xml]
+----
+<plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>recompile</id>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <phase>process-classes</phase>
+        </execution>
+    </executions>
+</plugin>
+----
+
+=== Configuring output directory
+
+The plugin will by default generate outputs to
+
+- `src/generated/java` - for generated java source code
+- `src/generated/resources` - for generated resource files
+
+To include these folders with the Java compiler, then you can configure Maven to include those directories:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>add-source</goal>
+                <goal>add-resource</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <source>src/generated/java</source>
+                </sources>
+                <resources>
+                    <resource>
+                        <directory>src/generated/resources</directory>
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+
+However, if you want, you can also configure the `camel-component-maven-plugin` to output directly
+to `src/main` as shown (then you do not need to use the `build-helper-maven-plugin` as we do above):
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-component-maven-plugin</artifactId>
+  <version>${camel-version}</version>
+  <configuration>
+    <sourcesOutputDir>src/main/java</sourcesOutputDir>
+    <resourcesOutputDir>src/main/resources</resourcesOutputDir>
+  </configuration>
+  <executions>
+    <execution>
+      <id>generate</id>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+      <phase>process-classes</phase>
+    </execution>
+   </executions>
+</plugin>
+----

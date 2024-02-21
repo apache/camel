@@ -16,41 +16,27 @@
  */
 package org.apache.camel.issues;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
 public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport {
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/data/inbox");
-        deleteDirectory("target/data/outbox");
-        super.setUp();
-    }
-
     @Test
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/inbox", "A", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "A", Exchange.FILE_NAME,
+                "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        File out = new File("target/data/outbox/hello.txt");
-        String data = context.getTypeConverter().convertTo(String.class, out);
-        assertEquals("A", data);
+        assertFileExists(testFile("outbox/hello.txt"), "A");
     }
 
     @Override
@@ -58,21 +44,23 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox")
+                onException(Exception.class).handled(true).useOriginalMessage()
+                        .to(fileUri("outbox"))
                         .to("mock:error");
 
-                from("file://target/data/inbox?initialDelay=0&delay=10").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("B");
-                    }
-                }).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // try to put some invalid destination
-                        exchange.getIn().setHeader("path", "xxx");
-                    }
-                }).recipientList(header("path"));
+                from(fileUri("inbox?initialDelay=0&delay=10"))
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getIn().setBody("B");
+                            }
+                        }).process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // try to put some invalid destination
+                                exchange.getIn().setHeader("path", "xxx");
+                            }
+                        }).recipientList(header("path"));
             }
         };
     }

@@ -30,12 +30,14 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 
-    private String circuitBreakerRef;
-    private String configRef;
+    private String circuitBreaker;
+    private String config;
     @Metadata(defaultValue = "50")
     private Float failureRateThreshold;
     @Metadata(defaultValue = "10")
     private Integer permittedNumberOfCallsInHalfOpenState;
+    @Metadata(defaultValue = "false")
+    private Boolean throwExceptionWhenHalfOpenOrOpenState;
     @Metadata(defaultValue = "100")
     private Integer slidingWindowSize;
     @Metadata(defaultValue = "COUNT_BASED", enums = "COUNT_BASED,TIME_BASED")
@@ -56,7 +58,7 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     private Integer bulkheadMaxWaitDuration;
     @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
-    private String timeoutExecutorServiceRef;
+    private String timeoutExecutorService;
     @Metadata(defaultValue = "1000")
     private Integer timeoutDuration;
     @Metadata(defaultValue = "true")
@@ -78,28 +80,28 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     // getter and setters
     // --------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
-    public String getConfigRef() {
-        return configRef;
+    public String getConfig() {
+        return config;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from
      * the registry.
      */
-    public void setConfigRef(String configRef) {
-        this.configRef = configRef;
+    public void setConfig(String config) {
+        this.config = config;
     }
 
     public Float getFailureRateThreshold() {
@@ -127,6 +129,18 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      */
     public void setPermittedNumberOfCallsInHalfOpenState(Integer permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+    }
+
+    public Boolean getThrowExceptionWhenHalfOpenOrOpenState() {
+        return throwExceptionWhenHalfOpenOrOpenState;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
+     */
+    public void setThrowExceptionWhenHalfOpenOrOpenState(Boolean throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
     }
 
     public Integer getSlidingWindowSize() {
@@ -300,16 +314,16 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.timeoutEnabled = timeoutEnabled;
     }
 
-    public String getTimeoutExecutorServiceRef() {
-        return timeoutExecutorServiceRef;
+    public String getTimeoutExecutorService() {
+        return timeoutExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by
      * default)
      */
-    public void setTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
-        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
+    public void setTimeoutExecutorService(String timeoutExecutorService) {
+        this.timeoutExecutorService = timeoutExecutorService;
     }
 
     public Integer getTimeoutDuration() {
@@ -339,7 +353,7 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      * registry. When using this, then any other circuit breaker options are not in use.
      */
     public Resilience4jConfigurationProperties withCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+        this.circuitBreaker = circuitBreakerRef;
         return this;
     }
 
@@ -348,7 +362,7 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      * the registry.
      */
     public Resilience4jConfigurationProperties withConfigRef(String configRef) {
-        this.configRef = configRef;
+        this.config = configRef;
         return this;
     }
 
@@ -371,6 +385,16 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     public Resilience4jConfigurationProperties withPermittedNumberOfCallsInHalfOpenState(
             Integer permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+        return this;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
+     */
+    public Resilience4jConfigurationProperties withThrowExceptionWhenHalfOpenOrOpenState(
+            Boolean throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
         return this;
     }
 
@@ -512,7 +536,7 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      * default)
      */
     public Resilience4jConfigurationProperties withTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
-        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
+        this.timeoutExecutorService = timeoutExecutorServiceRef;
         return this;
     }
 

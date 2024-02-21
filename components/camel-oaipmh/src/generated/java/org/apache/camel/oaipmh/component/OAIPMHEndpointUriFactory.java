@@ -19,40 +19,44 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(30);
-        props.add("backoffMultiplier");
-        props.add("metadataPrefix");
-        props.add("initialDelay");
-        props.add("ssl");
-        props.add("scheduler");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
-        props.add("greedy");
-        props.add("from");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("ignoreSSLWarnings");
-        props.add("identifier");
-        props.add("set");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("verb");
-        props.add("exchangePattern");
         props.add("backoffIdleThreshold");
-        props.add("onlyFirst");
+        props.add("backoffMultiplier");
         props.add("baseUrl");
-        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
         props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
-        props.add("until");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("from");
+        props.add("greedy");
+        props.add("identifier");
+        props.add("ignoreSSLWarnings");
+        props.add("initialDelay");
+        props.add("lazyStartProducer");
+        props.add("metadataPrefix");
+        props.add("onlyFirst");
+        props.add("pollStrategy");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("set");
+        props.add("ssl");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("until");
+        props.add("useFixedDelay");
+        props.add("verb");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -80,6 +84,11 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

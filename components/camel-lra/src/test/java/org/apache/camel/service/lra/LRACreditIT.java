@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SagaPropagation;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class LRACreditIT extends AbstractLRATestSupport {
     private CreditService creditService;
 
     @Test
-    public void testCreditExhausted() throws Exception {
+    public void testCreditExhausted() {
         // total credit is 100
         buy(20, false, false);
         buy(70, false, false);
@@ -51,7 +52,7 @@ public class LRACreditIT extends AbstractLRATestSupport {
     }
 
     @Test
-    public void testTotalCompensation() throws Exception {
+    public void testTotalCompensation() {
         // total credit is 100
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
@@ -84,11 +85,11 @@ public class LRACreditIT extends AbstractLRATestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 orderManagerService = new OrderManagerService();
 
@@ -140,7 +141,7 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .choice()
                         .when(header("fail").isEqualTo(true))
                         .process(x -> {
-                            throw new RuntimeException("fail");
+                            throw new RuntimeCamelException("fail");
                         })
                         .end();
 

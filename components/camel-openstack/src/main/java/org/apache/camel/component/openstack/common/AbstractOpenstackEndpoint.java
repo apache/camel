@@ -31,7 +31,7 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
     public static final String V2 = "V2";
     public static final String V3 = "V3";
 
-    public AbstractOpenstackEndpoint(String endpointUri, Component component) {
+    protected AbstractOpenstackEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
@@ -70,9 +70,11 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
         IOSClientBuilder.V3 builder = OSFactory.builderV3()
                 .endpoint(getHost());
 
-        builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
+        builder.credentials(getUsername(), getPassword(), Identifier.byName(getDomain()));
 
-        builder.scopeToProject(Identifier.byId(getProject()));
+        if (getProject() != null) {
+            builder.scopeToProject(Identifier.byId(getProject()));
+        }
 
         if (getConfig() != null) {
             builder.withConfig(getConfig());

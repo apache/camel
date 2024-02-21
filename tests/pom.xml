@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.9.0-SNAPSHOT</version>
+        <version>4.5.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -34,62 +34,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <camel.osgi.export.pkg />
     </properties>
 
     <modules>
         <module>test-bundles</module>
-        <module>camel-itest-standalone</module>
         <module>camel-itest</module>
-        <module>camel-itest-cdi</module>
-        <module>camel-itest-jms2</module>
-        <module>camel-jmh</module>
-        <module>camel-partial-classpath-test</module>
-        <module>camel-typeconverterscan-test</module>
     </modules>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                 </configuration>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-format-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <!-- includes these modules when doing the release -->
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>camel-itest-performance</module>
-                <module>camel-performance</module>
-            </modules>
-        </profile>
-
-        <!-- performance tests -->
-        <profile>
-            <id>performance.test</id>
-            <modules>
-                <module>camel-itest-performance</module>
-                <module>camel-performance</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

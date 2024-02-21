@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,15 +39,14 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportIns
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.SyncReportResults;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.util.BytesContentProvider;
+import org.eclipse.jetty.client.BytesRequestContent;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.util.StringUtil;
 
 /**
  * Default implementation of {@link org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient}.
@@ -251,7 +250,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.getHeaders().put(HttpHeader.AUTHORIZATION, TOKEN_PREFIX + accessToken);
+        request.headers(mutable -> mutable.add(new HttpField(HttpHeader.AUTHORIZATION, TOKEN_PREFIX + accessToken)));
     }
 
     @Override
@@ -260,7 +259,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
         try {
             if (responseContent != null) {
                 // unmarshal RestError
-                final List<RestError> errors = readErrorsFrom(responseContent, PayloadFormat.JSON, objectMapper, null);
+                final List<RestError> errors = readErrorsFrom(responseContent, objectMapper);
 
                 if (statusCode == HttpStatus.NOT_FOUND_404) {
                     return new NoSuchSObjectException(errors);
@@ -268,10 +267,6 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
                 return new SalesforceException(errors, statusCode);
             }
-        } catch (UnsupportedEncodingException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing JSON error response body + [" + responseContent + "] : " + e.getMessage();
-            log.warn(msg, e);
         } catch (IOException e) {
             // log and ignore
             String msg = "Unexpected Error parsing JSON error response body + [" + responseContent + "] : " + e.getMessage();
@@ -291,17 +286,17 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         // set request and response content type and charset, which is always
         // JSON for analytics API
-        request.header(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8);
-        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.headers(mutable -> mutable.add(new HttpField(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8)));
+        request.headers(mutable -> mutable.add(new HttpField(HttpHeader.ACCEPT, APPLICATION_JSON_UTF8)));
+        request.headers(mutable -> mutable.add(new HttpField(HttpHeader.ACCEPT_CHARSET, StandardCharsets.UTF_8.name())));
 
         super.doHttpRequest(request, callback);
     }
 
     private void marshalRequest(Object input, Request request) throws SalesforceException {
         try {
-            request.content(new BytesContentProvider(objectMapper.writeValueAsBytes(input)));
-        } catch (Throwable e) {
+            request.body(new BytesRequestContent(objectMapper.writeValueAsBytes(input)));
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),
@@ -314,7 +309,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseTypeReference);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),
@@ -330,7 +325,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseClass);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
                             e.getMessage()),

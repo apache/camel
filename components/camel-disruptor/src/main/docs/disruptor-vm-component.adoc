@@ -1,0 +1,102 @@
+= Disruptor VM Component
+:doctitle: Disruptor VM
+:shortname: disruptor-vm
+:artifactid: camel-disruptor
+:description: Provides asynchronous SEDA behavior using LMAX Disruptor.
+:since: 2.12
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: disruptor
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Disruptor component provides asynchronous
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior similarly to the
+standard SEDA component.
+However, it uses a https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
+http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
+used by the standard xref:seda-component.adoc[SEDA].
+
+As with the SEDA component, buffers of the Disruptor endpoints are only visible within
+a *single* CamelContext and no support is
+provided for persistence or recovery. The buffers of the
+**disruptor-vm:** endpoints also provide support for communication
+across CamelContexts instances, so you can use this mechanism to
+communicate across web applications (as long as *camel-disruptor.jar*
+is on the *system/boot* classpath).
+
+The main advantage of choosing to use the Disruptor component over the
+SEDA is performance in use cases where there is high
+contention between producer(s) and/or multicasted or concurrent
+consumers. In those cases, significant increases of throughput and
+reduction of latency has been observed. Performance in scenarios without
+contention is comparable to the SEDA component.
+
+The Disruptor is implemented with the intention of mimicking the
+behavior and options of the SEDA component as much as possible.
+The main differences between them are the following:
+
+* The buffer used is always bounded in size (default 1024 exchanges).
+* As the buffer is always bouded, the default behaviour for the
+Disruptor is to block while the buffer is full instead of throwing an
+exception. This default behavior may be configured on the component
+(see options).
+* The Disruptor endpoints don't implement the `BrowsableEndpoint`
+interface. As such, the exchanges currently in the Disruptor can't be
+retrieved, only the number of exchanges.
+* The Disruptor requires its consumers (multicasted or otherwise) to be
+statically configured. Adding or removing consumers on the fly requires
+complete flushing of all pending exchanges in the Disruptor.
+* As a result of the reconfiguration: Data sent over a Disruptor is
+directly processed and 'gone' if there is at least one consumer, late
+joiners only get new exchanges published after they've joined.
+* The `pollTimeout` option is not supported by the Disruptor component.
+* When a producer blocks on a full Disruptor, it does not respond to
+thread interrupts.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-disruptor</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+--------------------------------
+ disruptor-vm:someId[?options]
+--------------------------------
+
+Where _someId_ can be any string that uniquely identifies the
+endpoint within the current CamelContext.
+
+== Options
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== More Documentation
+
+See the xref:disruptor-component.adoc[Disruptor] component for more information.
+
+// shared with disruptor
+
+include::spring-boot:partial$starter.adoc[]

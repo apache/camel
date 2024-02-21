@@ -21,10 +21,10 @@ import java.util.List;
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultRoute;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
@@ -40,12 +41,12 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
-        RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+        RedeliveryPolicyDefinition redeliveryPolicy = new RedeliveryPolicyDefinition();
         redeliveryPolicy.maximumRedeliveries(1);
-        redeliveryPolicy.setUseExponentialBackOff(true);
+        redeliveryPolicy.setUseExponentialBackOff("true");
         DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
-        context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(deadLetterChannelBuilder);
+        context.getCamelContextExtension().setErrorHandlerFactory(deadLetterChannelBuilder);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Channel channel = unwrapChannel(processor);
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            log.debug("Found sendProcessor: " + sendProcessor);
+            log.debug("Found sendProcessor: {}", sendProcessor);
         }
     }
 
@@ -115,7 +116,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals(1, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
-            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
+            assertTrue(redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

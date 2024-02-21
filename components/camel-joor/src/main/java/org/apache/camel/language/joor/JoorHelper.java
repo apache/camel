@@ -41,12 +41,20 @@ public final class JoorHelper {
         return message.getHeader(name, type);
     }
 
+    public static <T> T headerAs(Message message, String name, Object defaultValue, Class<T> type) {
+        return message.getHeader(name, defaultValue, type);
+    }
+
     public static <T> Optional<T> optionalHeaderAs(Message message, String name, Class<T> type) {
         return Optional.ofNullable(message.getHeader(name, type));
     }
 
     public static <T> T exchangePropertyAs(Exchange exchange, String name, Class<T> type) {
         return exchange.getProperty(name, type);
+    }
+
+    public static <T> T exchangePropertyAs(Exchange exchange, String name, Object defaultValue, Class<T> type) {
+        return exchange.getProperty(name, defaultValue, type);
     }
 
     public static <T> Optional<T> optionalExchangePropertyAs(Exchange exchange, String name, Class<T> type) {

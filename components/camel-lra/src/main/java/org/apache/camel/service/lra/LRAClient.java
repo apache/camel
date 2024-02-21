@@ -18,19 +18,15 @@ package org.apache.camel.service.lra;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.InvocationCallback;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -46,47 +42,52 @@ import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLET
 
 public class LRAClient implements Closeable {
 
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String TEXT_PLAIN_CONTENT = "text/plain";
     private final LRASagaService sagaService;
-    private final Client client;
-    private final WebTarget target;
+    private final HttpClient client;
+    private final String lraUrl;
 
     public LRAClient(LRASagaService sagaService) {
-        this.sagaService = sagaService;
-
-        this.client = ClientBuilder.newBuilder()
-                // CAMEL-12204: disabled for compatibility with JAX-RS 2.0
-                //.executorService(sagaService.getExecutorService())
-                .build();
-
-        this.target = client.target(
-                new LRAUrlBuilder()
-                        .host(sagaService.getCoordinatorUrl())
-                        .path(sagaService.getCoordinatorContextPath())
-                        .build());
+        this(sagaService, HttpClient.newHttpClient());
     }
 
-    public CompletableFuture<URL> newLRA() {
-        CompletableFuture<Response> future = new CompletableFuture<>();
-        target.path(COORDINATOR_PATH_START)
-                .request()
-                .async()
-                .post(Entity.text(""), callbackToCompletableFuture(future));
+    public LRAClient(LRASagaService sagaService, HttpClient client) {
+        if (client == null) {
+            throw new IllegalArgumentException("HttpClient must not be null");
+        }
+
+        this.sagaService = sagaService;
+        this.client = client;
+
+        lraUrl = new LRAUrlBuilder()
+                .host(sagaService.getCoordinatorUrl())
+                .path(sagaService.getCoordinatorContextPath())
+                .build();
+    }
+
+    public CompletableFuture<URL> newLRA(Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lraUrl + COORDINATOR_PATH_START), exchange)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(res -> {
             // See if there's a location header containing the LRA URL
-            String location = res.getHeaderString(HttpHeaders.LOCATION);
+            List<String> location = res.headers().map().get("Location");
             if (ObjectHelper.isNotEmpty(location)) {
-                return toURL(location);
+                return toURL(location.get(0));
             }
 
             // If there's no location header try the Long-Running-Action header, assuming there's only one present in the response
-            List<Object> lraHeaders = res.getHeaders().get(Exchange.SAGA_LONG_RUNNING_ACTION);
+            List<String> lraHeaders = res.headers().map().get(Exchange.SAGA_LONG_RUNNING_ACTION);
             if (ObjectHelper.isNotEmpty(lraHeaders) && lraHeaders.size() == 1) {
                 return toURL(lraHeaders.get(0));
             }
 
             // Fallback to reading the URL from the response body
-            String responseBody = res.readEntity(String.class);
+            String responseBody = res.body();
             if (ObjectHelper.isNotEmpty(responseBody)) {
                 return toURL(responseBody);
             }
@@ -95,7 +96,7 @@ public class LRAClient implements Closeable {
         });
     }
 
-    public CompletableFuture<Void> join(URL lra, LRASagaStep step) {
+    public CompletableFuture<Void> join(final URL lra, LRASagaStep step, Exchange exchange) {
         return CompletableFuture.supplyAsync(() -> {
             LRAUrlBuilder participantBaseUrl = new LRAUrlBuilder()
                     .host(sagaService.getLocalParticipantUrl())
@@ -112,23 +113,22 @@ public class LRAClient implements Closeable {
             link.append(',');
             link.append('<').append(completionURL).append('>').append("; rel=complete");
 
-            WebTarget joinTarget = client.target(lra.toString());
+            String lraEndpoint = lra.toString();
             if (step.getTimeoutInMilliseconds().isPresent()) {
-                joinTarget = joinTarget.queryParam(HEADER_TIME_LIMIT, step.getTimeoutInMilliseconds().get());
+                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
+            HttpRequest request = prepareRequest(URI.create(lraEndpoint), exchange)
+                    .setHeader(HEADER_LINK, link.toString())
+                    .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
+                    .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
+                    .PUT(HttpRequest.BodyPublishers.ofString(link.toString()))
+                    .build();
 
-            CompletableFuture<Response> future = new CompletableFuture<>();
-            joinTarget.request()
-                    .header(HEADER_LINK, link.toString())
-                    .header(Exchange.SAGA_LONG_RUNNING_ACTION, lra)
-                    .async()
-                    .put(Entity.entity(link.toString(), MediaType.TEXT_PLAIN), callbackToCompletableFuture(future));
-
-            return future;
+            return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         }, sagaService.getExecutorService())
                 .thenCompose(Function.identity())
                 .thenApply(response -> {
-                    if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                    if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                         throw new RuntimeCamelException("Cannot join LRA");
                     }
 
@@ -136,16 +136,16 @@ public class LRAClient implements Closeable {
                 });
     }
 
-    public CompletableFuture<Void> complete(URL lra) {
-        CompletableFuture<Response> future = new CompletableFuture<>();
-        client.target(lra.toString())
-                .path(COORDINATOR_PATH_CLOSE)
-                .request()
-                .async()
-                .put(Entity.entity("", MediaType.TEXT_PLAIN), callbackToCompletableFuture(future));
+    public CompletableFuture<Void> complete(URL lra, Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE), exchange)
+                .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 throw new RuntimeCamelException("Cannot complete LRA");
             }
 
@@ -153,16 +153,16 @@ public class LRAClient implements Closeable {
         });
     }
 
-    public CompletableFuture<Void> compensate(URL lra) {
-        CompletableFuture<Response> future = new CompletableFuture<>();
-        client.target(lra.toString())
-                .path(COORDINATOR_PATH_CANCEL)
-                .request()
-                .async()
-                .put(Entity.entity("", MediaType.TEXT_PLAIN), callbackToCompletableFuture(future));
+    public CompletableFuture<Void> compensate(URL lra, Exchange exchange) {
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL), exchange)
+                .setHeader(CONTENT_TYPE, TEXT_PLAIN_CONTENT)
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        CompletableFuture<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return future.thenApply(response -> {
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 throw new RuntimeCamelException("Cannot compensate LRA");
             }
 
@@ -170,18 +170,8 @@ public class LRAClient implements Closeable {
         });
     }
 
-    private InvocationCallback<Response> callbackToCompletableFuture(CompletableFuture<Response> future) {
-        return new InvocationCallback<Response>() {
-            @Override
-            public void completed(Response response) {
-                future.complete(response);
-            }
-
-            @Override
-            public void failed(Throwable throwable) {
-                future.completeExceptionally(throwable);
-            }
-        };
+    protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
+        return HttpRequest.newBuilder().uri(uri);
     }
 
     private URL toURL(Object url) {
@@ -201,8 +191,5 @@ public class LRAClient implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (client != null) {
-            client.close();
-        }
     }
 }

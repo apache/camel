@@ -20,10 +20,10 @@ import java.lang.annotation.Annotation;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.DefaultAnnotationExpressionFactory;
 import org.apache.camel.support.language.LanguageAnnotation;
 import org.apache.camel.support.language.NamespacePrefix;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory for the XPath expression annotations.
@@ -42,6 +42,8 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         }
 
         XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);
+        builder.preCompile(isPreCompile(annotation));
+        builder.setLogNamespaces(isLogNamespaces(annotation));
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
         if (namespaces != null) {
             for (NamespacePrefix namespacePrefix : namespaces) {
@@ -49,10 +51,9 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             }
         }
 
-        // Set the header name that we want the XPathBuilder to apply the XPath expression to
-        String headerName = getHeaderName(annotation);
-        if (ObjectHelper.isNotEmpty(headerName)) {
-            builder.setHeaderName(headerName);
+        String source = getSource(annotation);
+        if (source != null) {
+            builder.setSource(ExpressionBuilder.singleInputExpression(source));
         }
 
         return builder;
@@ -66,20 +67,36 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         return (NamespacePrefix[]) getAnnotationObjectValue(annotation, "namespaces");
     }
 
-    /**
-     * Extracts the value of the header method in the Annotation. For backwards compatibility this method will return
-     * null if the annotation's method is not found.
-     * 
-     * @return If the annotation has the method 'header' then the name of the header we want to apply the XPath
-     *         expression to. Otherwise null will be returned
-     */
-    protected String getHeaderName(Annotation annotation) {
-        String headerValue = null;
+    protected String getSource(Annotation annotation) {
+        String answer = null;
         try {
-            headerValue = (String) getAnnotationObjectValue(annotation, "headerName");
+            answer = (String) getAnnotationObjectValue(annotation, "source");
         } catch (Exception e) {
             // Do Nothing
         }
-        return headerValue;
+        if (answer != null && answer.isBlank()) {
+            return null;
+        }
+        return answer;
+    }
+
+    protected boolean isLogNamespaces(Annotation annotation) {
+        // in case @XPath is extended in a custom annotation then it may not have the method
+        try {
+            return (boolean) getAnnotationObjectValue(annotation, "logNamespaces");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        return false;
+    }
+
+    protected boolean isPreCompile(Annotation annotation) {
+        // in case @XPath is extended in a custom annotation then it may not have the method
+        try {
+            return (boolean) getAnnotationObjectValue(annotation, "preCompile");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        return false;
     }
 }

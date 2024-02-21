@@ -46,6 +46,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         return uri;
     }
 
+    @Override
     public boolean isSuccess() {
         boolean ok = super.isSuccess();
         if (ok) {

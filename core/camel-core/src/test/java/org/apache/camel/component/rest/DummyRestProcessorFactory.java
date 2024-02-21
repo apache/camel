@@ -28,7 +28,7 @@ public class DummyRestProcessorFactory implements RestApiProcessorFactory {
 
     @Override
     public Processor createApiProcessor(
-            CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
+            CamelContext camelContext, String contextPath,
             RestConfiguration configuration,
             Map<String, Object> parameters)
             throws Exception {

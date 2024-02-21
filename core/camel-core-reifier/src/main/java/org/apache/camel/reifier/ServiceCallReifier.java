@@ -21,6 +21,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 
+@Deprecated
 public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     public ServiceCallReifier(Route route, ProcessorDefinition<?> definition) {

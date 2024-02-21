@@ -24,6 +24,8 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
@@ -46,8 +48,7 @@ public final class AdviceWith {
      * Advices this route with the route builder using a lambda expression. It can be used as following:
      *
      * <pre>
-     * AdviceWith.adviceWith(context, "myRoute", a ->
-     *     a.weaveAddLast().to("mock:result");
+     * AdviceWith.adviceWith(context, "myRoute", a -> a.weaveAddLast().to("mock:result"));
      * </pre>
      * <p/>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
@@ -85,8 +86,7 @@ public final class AdviceWith {
      * Advices this route with the route builder using a lambda expression. It can be used as following:
      *
      * <pre>
-     * AdviceWith.adviceWith(context, "myRoute", false, a ->
-     *     a.weaveAddLast().to("mock:result");
+     * AdviceWith.adviceWith(context, "myRoute", false, a -> a.weaveAddLast().to("mock:result"));
      * </pre>
      * <p/>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
@@ -142,6 +142,39 @@ public final class AdviceWith {
      * <p/>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
+     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
+     *                      specify a number for the n'th route, or provide the route definition instance directly as
+     *                      well.
+     * @param  camelContext the camel context
+     * @param  builder      the route builder
+     * @return              a new route which is this route merged with the route builder
+     * @throws Exception    can be thrown from the route builder
+     * @see                 AdviceWithRouteBuilder
+     */
+    public static RouteDefinition adviceWith(Object routeId, CamelContext camelContext, RouteBuilder builder)
+            throws Exception {
+        RouteDefinition rd = findRouteDefinition(camelContext, routeId);
+        return adviceWith(rd, camelContext, builder);
+    }
+
+    /**
+     * Advices this route with the route builder.
+     * <p/>
+     * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
+     * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
+     * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
+     * needed to support this properly.
+     * <p/>
+     * You can use a regular {@link RouteBuilder} but the specialized {@link AdviceWithRouteBuilder} has additional
+     * features when using the advice with feature. We therefore suggest you to use the {@link AdviceWithRouteBuilder}.
+     * <p/>
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
+     * builder to this route.
+     * <p/>
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
+     * <p/>
+     * Will stop and remove the old route from camel context and add and start this new advised route.
+     *
      * @param  definition   the model definition
      * @param  camelContext the camel context
      * @param  builder      the route builder
@@ -166,8 +199,8 @@ public final class AdviceWith {
         ObjectHelper.notNull(builder, "RouteBuilder");
 
         LOG.debug("AdviceWith route before: {}", definition);
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        Model model = camelContext.getExtension(Model.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
@@ -208,8 +241,9 @@ public final class AdviceWith {
         String beforeAsXml = null;
         if (logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
-                beforeAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, definition);
-            } catch (Throwable e) {
+                ModelToXMLDumper modelToXMLDumper = PluginHelper.getModelToXMLDumper(ecc);
+                beforeAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, definition);
+            } catch (Exception e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
         }
@@ -229,6 +263,10 @@ public final class AdviceWith {
         // mixed in correctly as well
         RouteDefinition merged = routes.route(definition);
 
+        // must re-prepare the merged route before it can be used
+        merged.markUnprepared();
+        routes.prepareRoute(merged);
+
         // add the new merged route
         model.getRouteDefinitions().add(0, merged);
 
@@ -240,9 +278,10 @@ public final class AdviceWith {
 
         if (beforeAsXml != null && logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
-                String afterAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, merged);
-                LOG.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
-            } catch (Throwable e) {
+                ModelToXMLDumper modelToXMLDumper = PluginHelper.getModelToXMLDumper(ecc);
+                String afterAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, merged);
+                LOG.info("Adviced route before/after as XML:\n{}\n\n{}", beforeAsXml, afterAsXml);
+            } catch (Exception e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
         }
@@ -255,7 +294,7 @@ public final class AdviceWith {
     }
 
     private static RouteDefinition findRouteDefinition(CamelContext camelContext, Object routeId) {
-        ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+        ModelCamelContext mcc = (ModelCamelContext) camelContext;
         if (mcc.getRouteDefinitions().isEmpty()) {
             throw new IllegalArgumentException("Cannot advice route as there are no routes");
         }
@@ -275,7 +314,7 @@ public final class AdviceWith {
                     }
                 }
                 if (rd == null) {
-                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exists");
+                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exist");
                 }
             } else {
                 // grab first route

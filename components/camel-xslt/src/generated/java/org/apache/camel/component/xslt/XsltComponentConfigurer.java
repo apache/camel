@@ -21,6 +21,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XsltComponent target = (XsltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
@@ -42,6 +44,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "contentcache":
@@ -64,6 +68,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XsltComponent target = (XsltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "contentcache":

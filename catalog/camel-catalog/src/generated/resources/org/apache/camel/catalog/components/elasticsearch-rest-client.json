@@ -1,0 +1,45 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "elasticsearch-rest-client",
+    "title": "Elasticsearch Low level Rest Client",
+    "description": "Perform queries and other operations on Elasticsearch or OpenSearch (uses low-level client).",
+    "deprecated": false,
+    "firstVersion": "4.3.0",
+    "label": "search",
+    "javaType": "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-elasticsearch-rest-client",
+    "version": "4.5.0-SNAPSHOT",
+    "scheme": "elasticsearch-rest-client",
+    "extendsScheme": "",
+    "syntax": "elasticsearch-rest-client:clusterName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "clusterName": { "index": 0, "kind": "path", "displayName": "Cluster Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Cluster Name" },
+    "connectionTimeout": { "index": 1, "kind": "parameter", "displayName": "Connection Timeout", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 30000, "description": "Connection timeout" },
+    "hostAddressesList": { "index": 2, "kind": "parameter", "displayName": "Host Addresses List", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "List of host Addresses, multiple hosts can be separated by comma." },
+    "indexName": { "index": 3, "kind": "parameter", "displayName": "Index Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Index Name" },
+    "operation": { "index": 4, "kind": "parameter", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation", "enum": [ "INDEX_OR_UPDATE", "GET_BY_ID", "DELETE", "CREATE_INDEX", "DELETE_INDEX", "SEARCH" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation" },
+    "socketTimeout": { "index": 5, "kind": "parameter", "displayName": "Socket Timeout", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 30000, "description": "Socket timeout" },
+    "lazyStartProducer": { "index": 6, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "enableSniffer": { "index": 7, "kind": "parameter", "displayName": "Enable Sniffer", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enabling Sniffer" },
+    "restClient": { "index": 8, "kind": "parameter", "displayName": "Rest Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.elasticsearch.client.RestClient", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "description": "Rest Client of type org.elasticsearch.client.RestClient. This is only for advanced usage" },
+    "sniffAfterFailureDelay": { "index": 9, "kind": "parameter", "displayName": "Sniff After Failure Delay", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 60000, "description": "Sniffer after failure delay (in millis)" },
+    "snifferInterval": { "index": 10, "kind": "parameter", "displayName": "Sniffer Interval", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 60000, "description": "Sniffer interval (in millis)" },
+    "certificatePath": { "index": 11, "kind": "parameter", "displayName": "Certificate Path", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Certificate Path" },
+    "password": { "index": 12, "kind": "parameter", "displayName": "Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Password" },
+    "user": { "index": 13, "kind": "parameter", "displayName": "User", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "Username" }
+  }
+}

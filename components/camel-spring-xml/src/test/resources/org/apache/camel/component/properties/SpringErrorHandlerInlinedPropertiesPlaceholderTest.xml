@@ -29,6 +29,7 @@
     <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties"
                              location="classpath:org/apache/camel/component/properties/cheese.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel">
           <redeliveryPolicy maximumRedeliveries="{{max}}" redeliveryDelay="0"/>

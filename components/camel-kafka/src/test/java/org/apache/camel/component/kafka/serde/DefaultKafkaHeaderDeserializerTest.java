@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DefaultKafkaHeaderDeserializerTest {
 
-    private KafkaHeaderDeserializer deserializer = new DefaultKafkaHeaderDeserializer();
+    private final KafkaHeaderDeserializer deserializer = new DefaultKafkaHeaderDeserializer();
 
     @Test
     public void shouldDeserializeAsIs() {

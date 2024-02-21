@@ -39,7 +39,7 @@ public class CamelCatalogLuceneTest {
     }
 
     @Test
-    public void validateProperties() throws Exception {
+    public void validateProperties() {
         // spell typo error
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog?levl=WARN");
         assertFalse(result.isSuccess());

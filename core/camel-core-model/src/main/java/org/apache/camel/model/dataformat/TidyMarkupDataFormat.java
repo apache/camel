@@ -16,14 +16,15 @@
  */
 package org.apache.camel.model.dataformat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.w3c.dom.Node;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -34,14 +35,16 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> dataObjectType;
+
     @XmlAttribute(name = "dataObjectType")
-    @Metadata(defaultValue = "org.w3c.dom.Node")
+    @Metadata(defaultValue = "org.w3c.dom.Node", enums = "org.w3c.dom.Node,java.lang.String")
     private String dataObjectTypeName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String omitXmlDeclaration;
-    @XmlTransient
-    private Class<?> dataObjectType;
 
     public TidyMarkupDataFormat() {
         super("tidyMarkup");
@@ -55,6 +58,13 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
                     "TidyMarkupDataFormat only supports returning a String or a org.w3c.dom.Node object");
         }
         this.setDataObjectType(dataObjectType);
+    }
+
+    private TidyMarkupDataFormat(Builder builder) {
+        this();
+        this.dataObjectType = builder.dataObjectType;
+        this.dataObjectTypeName = builder.dataObjectTypeName;
+        this.omitXmlDeclaration = builder.omitXmlDeclaration;
     }
 
     /**
@@ -94,4 +104,55 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.omitXmlDeclaration = omitXmlDeclaration;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link TidyMarkupDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<TidyMarkupDataFormat> {
+
+        private Class<?> dataObjectType;
+        private String dataObjectTypeName;
+        private String omitXmlDeclaration;
+
+        /**
+         * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+         * <p/>
+         * Is by default org.w3c.dom.Node
+         */
+        public Builder dataObjectType(Class<?> dataObjectType) {
+            this.dataObjectType = dataObjectType;
+            return this;
+        }
+
+        /**
+         * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+         * <p/>
+         * Is by default org.w3c.dom.Node
+         */
+        public Builder dataObjectTypeName(String dataObjectTypeName) {
+            this.dataObjectTypeName = dataObjectTypeName;
+            return this;
+        }
+
+        /**
+         * When returning a String, do we omit the XML declaration in the top.
+         */
+        public Builder omitXmlDeclaration(String omitXmlDeclaration) {
+            this.omitXmlDeclaration = omitXmlDeclaration;
+            return this;
+        }
+
+        /**
+         * When returning a String, do we omit the XML declaration in the top.
+         */
+        public Builder omitXmlDeclaration(boolean omitXmlDeclaration) {
+            this.omitXmlDeclaration = Boolean.toString(omitXmlDeclaration);
+            return this;
+        }
+
+        @Override
+        public TidyMarkupDataFormat end() {
+            return new TidyMarkupDataFormat(this);
+        }
+    }
 }

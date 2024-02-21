@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
@@ -32,10 +35,10 @@ import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.Limits;
-import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResult2;
@@ -44,9 +47,9 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
-public class JsonRestProcessor extends AbstractRestProcessor {
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE;
 
-    private static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
+public class JsonRestProcessor extends AbstractRestProcessor {
 
     // it is ok to use a single thread safe ObjectMapper
     private final ObjectMapper objectMapper;
@@ -72,7 +75,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
             case GET_RESOURCES:
                 // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, RestResources.class);
+                exchange.setProperty(RESPONSE_TYPE, new TypeReference<Map<String, String>>() {
+                });
                 break;
 
             case GET_GLOBAL_OBJECTS:
@@ -181,18 +185,23 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         try {
             final Message out = exchange.getOut();
             final Message in = exchange.getIn();
-            out.copyFromWithNewBody(in, null);
+            out.copyFrom(in);
             out.getHeaders().putAll(headers);
 
             if (ex != null) {
-                // if an exception is reported we should not loose it
+                // if an exception is reported we should not lose it
                 if (shouldReport(ex)) {
                     exchange.setException(ex);
+                } else {
+                    out.setBody(null);
                 }
             } else if (responseEntity != null) {
                 // do we need to un-marshal a response
                 final Object response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
+                if (responseClass == null && exchange.getProperty(RESPONSE_CLASS_DEFERRED, false, Boolean.class)) {
+                    responseClass = detectResponseClass(exchange, responseEntity);
+                }
                 if (!rawPayload && responseClass != null) {
                     response = objectMapper.readValue(responseEntity, responseClass);
                 } else {
@@ -200,7 +209,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     if (!rawPayload && responseType != null) {
                         response = objectMapper.readValue(responseEntity, responseType);
                     } else {
-                        // return the response as a stream, for getBlobField
+                        // return the response as a stream, for getBlobField and rawPayload
                         response = responseEntity;
                     }
                 }
@@ -226,5 +235,78 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             callback.done(false);
         }
 
+    }
+
+    private Class<?> detectResponseClass(Exchange exchange, InputStream responseEntity) throws IOException {
+        Class<?> responseClass;
+        try {
+            final JsonParser parser = new JsonFactory().createParser(responseEntity);
+            String type = null;
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                String propName = parser.getCurrentName();
+                if ("type".equals(propName)) {
+                    parser.nextToken();
+                    type = parser.getText();
+                    break;
+                }
+            }
+            String prefix = exchange.getProperty(RESPONSE_CLASS_PREFIX, "", String.class);
+            responseClass = getSObjectClass(prefix + type, null);
+        } catch (IOException | SalesforceException exc) {
+            throw new RuntimeException(exc);
+        } finally {
+            responseEntity.reset();
+        }
+        return responseClass;
+    }
+
+    @Override
+    protected void processStreamResultResponse(
+            Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
+            AsyncCallback callback) {
+        // process JSON response for TypeReference
+        try {
+            final Message out = exchange.getOut();
+            final Message in = exchange.getIn();
+            out.copyFrom(in);
+            out.getHeaders().putAll(headers);
+
+            if (ex != null) {
+                // if an exception is reported we should not lose it
+                if (shouldReport(ex)) {
+                    exchange.setException(ex);
+                } else {
+                    out.setBody(null);
+                }
+            } else if (responseEntity != null) {
+                // do we need to un-marshal a response
+                final AbstractQueryRecordsBase<?> response;
+                Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
+                response = (AbstractQueryRecordsBase<?>) objectMapper.readValue(responseEntity, responseClass);
+                out.setHeader(HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE, response.getTotalSize());
+                QueryResultIterator<?> iterator
+                        = new QueryResultIterator(
+                                objectMapper, responseClass, restClient, determineHeaders(exchange), response);
+                out.setBody(iterator);
+            }
+        } catch (Exception e) {
+            String msg = "Error parsing JSON response: " + e.getMessage();
+            exchange.setException(new SalesforceException(msg, e));
+        } finally {
+            exchange.removeProperty(RESPONSE_CLASS);
+            exchange.removeProperty(RESPONSE_CLASS_DEFERRED);
+            exchange.removeProperty(RESPONSE_CLASS_PREFIX);
+            exchange.removeProperty(RESPONSE_TYPE);
+
+            try {
+                if (responseEntity != null) {
+                    responseEntity.close();
+                }
+            } catch (IOException ignored) {
+            }
+
+            // notify callback that exchange is done
+            callback.done(false);
+        }
     }
 }

@@ -80,13 +80,9 @@ public class CamelWebSocketHandler implements HttpHandler {
     public CamelWebSocketHandler() {
         this.receiveListener = new UndertowReceiveListener();
         this.callback = new UndertowWebSocketConnectionCallback();
-        this.closeListener = new ChannelListener<WebSocketChannel>() {
-            @Override
-            public void handleEvent(WebSocketChannel channel) {
-                sendEventNotificationIfNeeded((String) channel.getAttribute(UndertowConstants.CONNECTION_KEY),
-                        null, channel, EventType.ONCLOSE);
-            }
-        };
+        this.closeListener = (WebSocketChannel channel) -> sendEventNotificationIfNeeded(
+                (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY), null, channel, EventType.ONCLOSE);
+
         this.delegate = Handlers.websocket(callback);
     }
 
@@ -292,8 +288,7 @@ public class CamelWebSocketHandler implements HttpHandler {
     class UndertowReceiveListener extends AbstractReceiveListener {
 
         @Override
-        protected void onFullBinaryMessage(final WebSocketChannel channel, BufferedBinaryMessage message)
-                throws IOException {
+        protected void onFullBinaryMessage(final WebSocketChannel channel, BufferedBinaryMessage message) {
             LOG.debug("onFullBinaryMessage()");
             final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
             if (connectionKey == null) {

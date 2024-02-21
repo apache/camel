@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,7 +45,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     private final JavaTypeCache javaTypeCache;
     private final List<ServiceNowDispatcher> dispatchers;
 
-    protected AbstractServiceNowProcessor(ServiceNowEndpoint endpoint) throws Exception {
+    protected AbstractServiceNowProcessor(ServiceNowEndpoint endpoint) {
         this.javaTypeCache = new JavaTypeCache();
         this.endpoint = endpoint;
         this.config = endpoint.getConfiguration();

@@ -20,10 +20,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -65,8 +63,8 @@ public abstract class AbstractGeneratorMojoTest {
         mojo.componentPackage = COMPONENT_PACKAGE;
         mojo.project = new MavenProject((Model) null) {
             @Override
-            public List getTestClasspathElements() throws DependencyResolutionRequiredException {
-                return Collections.EMPTY_LIST;
+            public List<String> getTestClasspathElements() {
+                return Collections.emptyList();
             }
 
             @Override
@@ -104,7 +102,6 @@ public abstract class AbstractGeneratorMojoTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldAddCompilationRootsByDefault() throws Exception {
         AbstractSourceGeneratorMojo mojo = createGeneratorMojo();
         assumeTrue(mojo != null, "Ignored because createGeneratorMojo is not implemented");
@@ -151,7 +148,7 @@ public abstract class AbstractGeneratorMojoTest {
     private void assertCompileSourceRoots(Supplier<List<String>> roots, File... expectedSources) {
         List<String> compileSourceRoots = roots.get();
         assertEquals(expectedSources.length, compileSourceRoots.size());
-        assertEquals(Stream.of(expectedSources).map(File::getAbsolutePath).collect(Collectors.toList()), compileSourceRoots);
+        assertEquals(Stream.of(expectedSources).map(File::getAbsolutePath).toList(), compileSourceRoots);
     }
 
 }

@@ -39,7 +39,9 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setName(getClass().getSimpleName())
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -49,7 +51,9 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
@@ -59,22 +63,22 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "Hi there!", "lowId", "1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Map row = (Map) list.get(0);
         assertEquals("ASF", row.get("LICENSE"));
-        assertEquals(2, row.get("ROWCOUNT"));
+        assertEquals(2L, row.get("ROWCOUNT"));
         row = (Map) list.get(1);
         assertEquals("XXX", row.get("LICENSE"));
-        assertEquals(1, row.get("ROWCOUNT"));
+        assertEquals(1L, row.get("ROWCOUNT"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 

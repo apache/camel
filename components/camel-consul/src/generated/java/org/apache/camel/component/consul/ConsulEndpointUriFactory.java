@@ -19,43 +19,42 @@ public class ConsulEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
-        props.add("nearNode");
-        props.add("sslContextParameters");
-        props.add("writeTimeout");
-        props.add("nodeMeta");
-        props.add("recursive");
-        props.add("password");
+        Set<String> props = new HashSet<>(26);
+        props.add("aclToken");
+        props.add("action");
+        props.add("apiEndpoint");
+        props.add("blockSeconds");
         props.add("bridgeErrorHandler");
         props.add("connectTimeout");
-        props.add("consulClient");
-        props.add("action");
-        props.add("writeTimeoutMillis");
-        props.add("key");
-        props.add("readTimeoutMillis");
-        props.add("valueAsString");
-        props.add("exchangePattern");
-        props.add("pingInstance");
-        props.add("datacenter");
-        props.add("userName");
-        props.add("url");
-        props.add("tags");
-        props.add("lazyStartProducer");
-        props.add("apiEndpoint");
-        props.add("firstIndex");
-        props.add("aclToken");
         props.add("consistencyMode");
-        props.add("readTimeout");
-        props.add("connectTimeoutMillis");
+        props.add("consulClient");
+        props.add("datacenter");
         props.add("exceptionHandler");
-        props.add("blockSeconds");
+        props.add("exchangePattern");
+        props.add("firstIndex");
+        props.add("key");
+        props.add("lazyStartProducer");
+        props.add("nearNode");
+        props.add("nodeMeta");
+        props.add("password");
+        props.add("pingInstance");
+        props.add("readTimeout");
+        props.add("recursive");
+        props.add("sslContextParameters");
+        props.add("tags");
+        props.add("url");
+        props.add("userName");
+        props.add("valueAsString");
+        props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("password");
         secretProps.add("aclToken");
+        secretProps.add("password");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
@@ -83,6 +82,11 @@ public class ConsulEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

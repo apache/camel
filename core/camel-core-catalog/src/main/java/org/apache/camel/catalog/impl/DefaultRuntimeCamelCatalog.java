@@ -29,6 +29,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.TransformerModel;
 
 /**
  * Default {@link RuntimeCamelCatalog}.
@@ -50,6 +51,20 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         this.setJSonSchemaResolver(new CamelContextJSonSchemaResolver(camelContext));
+    }
+
+    /**
+     * To turn caching on or off
+     */
+    public boolean isCaching() {
+        return caching;
+    }
+
+    /**
+     * To turn caching on or off
+     */
+    public void setCaching(boolean caching) {
+        this.caching = caching;
     }
 
     @Override
@@ -103,6 +118,16 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     }
 
     @Override
+    public String transformerJSonSchema(String name) {
+        return cache("transformer-" + name, name, super::transformerJSonSchema);
+    }
+
+    @Override
+    public TransformerModel transformerModel(String name) {
+        return cache("transformer-model-" + name, name, super::transformerModel);
+    }
+
+    @Override
     public String otherJSonSchema(String name) {
         return cache("other-" + name, name, super::otherJSonSchema);
     }
@@ -112,10 +137,12 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
         return cache("other-model-" + name, name, super::otherModel);
     }
 
+    @Override
     public String mainJSonSchema() {
         return cache("main", "main", k -> super.mainJSonSchema());
     }
 
+    @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
     }

@@ -21,31 +21,43 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A simple request / late reply test.
  */
-public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
+public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestLateReplyTest.class);
     private static Destination replyDestination;
     private static String cid;
-    protected String expectedBody = "Late Reply";
+    protected final String expectedBody = "Late Reply";
     protected JmsComponent activeMQComponent;
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private final CountDownLatch latch = new CountDownLatch(1);
 
     @Test
@@ -62,9 +74,21 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
         Object body = template.requestBody(getQueueEndpointName(), "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(expectedBody, body);
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     private class SendLateReply implements Runnable {
@@ -75,8 +99,6 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
                 LOG.info("Waiting for latch");
                 latch.await(30, TimeUnit.SECONDS);
 
-                // wait 1 sec after latch before sending he late replay
-                Thread.sleep(1000);
             } catch (Exception e) {
                 // ignore
             }
@@ -91,22 +113,24 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        activeMQComponent = camelContext.getComponent("activemq", JmsComponent.class);
-        // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
-        activeMQComponent.getConfiguration().setRequestTimeout(10000);
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
+        // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
+        component.getConfiguration().setRequestTimeout(10000);
+
+        return component;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getQueueEndpointName())
                         .process(exchange -> {
                             // set the MEP to InOnly as we are not able to send a reply right now but will do it later
@@ -119,8 +143,8 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
                             replyDestination = in.getHeader("JMSReplyTo", Destination.class);
                             cid = in.getHeader("JMSCorrelationID", String.class);
 
-                            LOG.info("ReplyDestination: " + replyDestination);
-                            LOG.info("JMSCorrelationID: " + cid);
+                            LOG.info("ReplyDestination: {}", replyDestination);
+                            LOG.info("JMSCorrelationID: {}", cid);
 
                             LOG.info("Ahh I cannot send a reply. Someone else must do it.");
                             // signal to the other thread to send back the reply message
@@ -133,6 +157,6 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
 
     protected static String getQueueEndpointName() {
         // need to use a fixed queue for reply as a temp queue may be deleted
-        return "activemq:queue:hello.queue?replyTo=myReplyQueue";
+        return "activemq:queue:JmsSimpleRequestLateReplyTest?replyTo=JmsSimpleRequestLateReplyTest.reply";
     }
 }

@@ -16,16 +16,27 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+public class JmsAllowAdditionalHeadersTest extends AbstractJMSTest {
 
-public class JmsAllowAdditionalHeadersTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testAllowAdditionalHeaders() throws Exception {
@@ -37,36 +48,49 @@ public class JmsAllowAdditionalHeadersTest extends CamelTestSupport {
         // ActiveMQ will not accept byte[] value
         // getMockEndpoint("mock:bar").expectedHeaderReceived("JMS_IBM_MQMD_USER", data);
 
-        fluentTemplate.withBody("Hello World").withHeader("foo", "bar").withHeader("JMS_IBM_MQMD_USER", data)
+        context.createFluentProducerTemplate()
+                .withBody("Hello World").withHeader("foo", "bar").withHeader("JMS_IBM_MQMD_USER", data)
                 .to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "jms";
+    }
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         // allow any of those special IBM headers (notice we use * as wildcard)
-        jms.getConfiguration().setAllowAdditionalHeaders("JMS_IBM_MQMD*");
+        component.getConfiguration().setAllowAdditionalHeaders("JMS_IBM_MQMD*");
 
-        camelContext.addComponent("jms", jms);
-
-        return camelContext;
+        return component;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:start").to("jms:queue:bar");
+            public void configure() {
+                from("direct:start").to("jms:queue:JmsAllowAdditionalHeadersTest");
 
-                from("jms:queue:bar").to("mock:bar");
+                from("jms:queue:JmsAllowAdditionalHeadersTest").to("mock:bar");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

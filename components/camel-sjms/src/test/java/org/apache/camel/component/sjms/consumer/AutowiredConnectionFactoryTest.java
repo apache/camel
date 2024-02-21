@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public class AutowiredConnectionFactoryTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue.AutowiredConnectionFactoryTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Override
@@ -53,9 +53,9 @@ public class AutowiredConnectionFactoryTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(SJMS_QUEUE_NAME)
                         .to(MOCK_RESULT);
             }

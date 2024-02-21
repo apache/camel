@@ -68,7 +68,7 @@ public class IrcProducerTest {
     }
 
     @Test
-    public void doStopTest() throws Exception {
+    public void doStopTest() {
         producer.stop();
         verify(connection).doPart("#chan1");
         verify(connection).doPart("#chan2");
@@ -76,7 +76,7 @@ public class IrcProducerTest {
     }
 
     @Test
-    public void doStartTest() throws Exception {
+    public void doStartTest() {
         producer.start();
 
         verify(connection).addIRCEventListener(listener);
@@ -107,7 +107,7 @@ public class IrcProducerTest {
     }
 
     @Test
-    public void processTestException() throws Exception {
+    public void processTestException() {
 
         when(exchange.getIn()).thenReturn(message);
         when(message.getBody(String.class)).thenReturn("PART foo");

@@ -27,11 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class StompCustomHeadersTest extends StompBaseTest {
 
     @Test
-    public void testConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
+    public void testConsume() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("brokerURL", "tcp://localhost:61613");
         map.put("version", "1.2");

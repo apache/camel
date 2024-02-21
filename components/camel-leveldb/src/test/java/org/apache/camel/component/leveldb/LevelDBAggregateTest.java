@@ -23,10 +23,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs({ OS.AIX, OS.OTHER })
 @Parameterized
 public class LevelDBAggregateTest extends LevelDBTestSupport {
 
@@ -48,18 +51,18 @@ public class LevelDBAggregateTest extends LevelDBTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // from endpoint should be preserved
         assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             // START SNIPPET: e1
-            public void configure() throws Exception {
+            public void configure() {
 
                 // here is the Camel route where we aggregate
                 from("direct:start")

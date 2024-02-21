@@ -56,7 +56,7 @@ public interface Service extends AutoCloseable {
 
     /**
      * Delegates to {@link Service#stop()} so it can be used in try-with-resources expression.
-     * 
+     *
      * @throws IOException per contract of {@link AutoCloseable} if {@link Service#stop()} fails
      */
     default void close() throws IOException {

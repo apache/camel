@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics.messagehistory;
 
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
         MetricRegistry registry = context.getRegistry().findByType(MetricRegistry.class).iterator().next();

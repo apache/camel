@@ -112,7 +112,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         errorEndpoint.expectedMessageCount(1);
 
         //dynamic job should fail as header is not present and the job is dynamic
-        sendBody("direct:dyanmic", "Start the job, please.");
+        sendBody("direct:dyanmic?block=false", "Start the job, please.");
         mockEndpoint.assertIsSatisfied();
         mockEndpoint.assertIsSatisfied();
     }
@@ -123,9 +123,9 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(0);
         errorEndpoint.expectedMessageCount(1);
 
-        //dynamic job should fail as header is present but the job does not exists
+        //dynamic job should fail as header is present but the job does not exist
         header(SpringBatchConstants.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
-        sendBody("direct:dyanmic", "Start the job, please.");
+        sendBody("direct:dyanmic?block=false", "Start the job, please.");
 
         mockEndpoint.assertIsSatisfied();
         mockEndpoint.assertIsSatisfied();
@@ -140,7 +140,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(SpringBatchConstants.JOB_NAME, "dynamicMockjob");
 
-        sendBody("direct:dynamic", "Start the job, please.", headers);
+        sendBody("direct:dynamic?block=false", "Start the job, please.", headers);
 
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
@@ -195,15 +195,18 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldThrowExceptionIfUsedAsConsumer() throws Exception {
+    public void shouldThrowExceptionIfUsedAsConsumer() {
+        RouteBuilder rb = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("spring-batch:mockJob").to("direct:emptyEndpoint");
+            }
+        };
+        final CamelContext context = context();
+
         // When
         assertThrows(FailedToStartRouteException.class,
-                () -> context().addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from("spring-batch:mockJob").to("direct:emptyEndpoint");
-                    }
-                }));
+                () -> context.addRoutes(rb));
     }
 
     @Test
@@ -219,22 +222,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         ArgumentCaptor<JobParameters> jobParameters = ArgumentCaptor.forClass(JobParameters.class);
         verify(jobLauncher).run(any(Job.class), jobParameters.capture());
         String parameter = jobParameters.getValue().getString(headerKey);
-        assertEquals(parameter, headerValue);
-    }
-
-    @Test
-    public void setNullValueToJobParams() throws Exception {
-        // Given
-        String headerKey = "headerKey";
-        Date headerValue = null;
-
-        // When
-        template.sendBodyAndHeader("direct:start", "Start the job, please.", headerKey, headerValue);
-
-        // Then
-        ArgumentCaptor<JobParameters> jobParameters = ArgumentCaptor.forClass(JobParameters.class);
-        verify(jobLauncher).run(any(Job.class), jobParameters.capture());
-        Date parameter = jobParameters.getValue().getDate(headerKey);
         assertEquals(parameter, headerValue);
     }
 

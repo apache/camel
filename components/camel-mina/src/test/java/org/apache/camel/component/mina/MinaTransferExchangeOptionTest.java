@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -100,38 +99,35 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()))
-                        .process(new Processor() {
+                fromF("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())
+                        .process(e -> {
+                            LOG.debug("Enter Processor...");
+                            assertNotNull(e.getIn().getBody());
+                            LOG.debug("Enter Processor...1");
+                            assertNotNull(e.getIn().getHeaders());
+                            LOG.debug("Enter Processor...2");
+                            assertNotNull(e.getProperties());
+                            LOG.debug("Enter Processor...3");
+                            assertEquals("Hello!", e.getIn().getBody());
+                            LOG.debug("Enter Processor...4");
+                            assertEquals("feta", e.getIn().getHeader("cheese"));
+                            LOG.debug("Enter Processor...5");
+                            assertEquals("old", e.getProperty("ham"));
+                            LOG.debug("Enter Processor...6");
+                            assertEquals(ExchangePattern.InOut, e.getPattern());
+                            LOG.debug("Enter Processor...7");
+                            Boolean setException = (Boolean) e.getProperty("setException");
 
-                            public void process(Exchange e) throws InterruptedException {
-                                LOG.debug("Enter Processor...");
-                                assertNotNull(e.getIn().getBody());
-                                LOG.debug("Enter Processor...1");
-                                assertNotNull(e.getIn().getHeaders());
-                                LOG.debug("Enter Processor...2");
-                                assertNotNull(e.getProperties());
-                                LOG.debug("Enter Processor...3");
-                                assertEquals("Hello!", e.getIn().getBody());
-                                LOG.debug("Enter Processor...4");
-                                assertEquals("feta", e.getIn().getHeader("cheese"));
-                                LOG.debug("Enter Processor...5");
-                                assertEquals("old", e.getProperty("ham"));
-                                LOG.debug("Enter Processor...6");
-                                assertEquals(ExchangePattern.InOut, e.getPattern());
-                                LOG.debug("Enter Processor...7");
-                                Boolean setException = (Boolean) e.getProperty("setException");
-
-                                if (setException) {
-                                    e.getOut().setBody(new InterruptedException());
-                                    e.getOut().setHeader("hello", "nihao");
-                                } else {
-                                    e.getOut().setBody("Goodbye!");
-                                    e.getOut().setHeader("cheese", "cheddar");
-                                }
-                                e.setProperty("salami", "fresh");
-                                e.setProperty("Charset", Charset.defaultCharset());
-                                LOG.debug("Exit Processor...");
+                            if (setException) {
+                                e.getOut().setBody(new InterruptedException());
+                                e.getOut().setHeader("hello", "nihao");
+                            } else {
+                                e.getOut().setBody("Goodbye!");
+                                e.getOut().setHeader("cheese", "cheddar");
                             }
+                            e.setProperty("salami", "fresh");
+                            e.setProperty("Charset", Charset.defaultCharset());
+                            LOG.debug("Exit Processor...");
                         });
             }
         };

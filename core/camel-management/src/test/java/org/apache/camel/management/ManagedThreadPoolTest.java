@@ -16,26 +16,35 @@
  */
 package org.apache.camel.management;
 
+import java.time.Duration;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledOnOs(OS.AIX)
 public class ManagedThreadPoolTest extends ManagementTestSupport {
 
     @Test
     public void testManagedThreadPool() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads1(threads)\"");
+        ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "mythreads(threads)");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
         assertEquals(false, shutdown.booleanValue());
@@ -60,10 +69,8 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure JMX have updated values
-        Thread.sleep(2000);
-
-        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
-        assertEquals(1, poolSize.intValue());
+        Awaitility.await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertPoolSize(mbeanServer, on));
 
         Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
         assertEquals(1, largest.intValue());
@@ -81,12 +88,19 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertEquals(200, remainingCapacity, "remainingCapacity");
     }
 
+    private void assertPoolSize(MBeanServer mbeanServer, ObjectName on)
+            throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+        Integer poolSize;
+        poolSize = (Integer) mbeanServer.getAttribute(on, "PoolSize");
+        assertEquals(1, poolSize.intValue());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads(15, 30).maxQueueSize(200).to("mock:result");
+                from("direct:start").threads(15, 30).id("mythreads").maxQueueSize(200).to("mock:result");
             }
         };
     }

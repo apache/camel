@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 public class TagConsumerTest extends GitHubComponentTestBase {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("github://tag?repoOwner=anotherguy&repoName=somerepo")
                         .process(new RepositoryTagProcessor())
                         .to(mockResultEndpoint);
@@ -52,10 +52,10 @@ public class TagConsumerTest extends GitHubComponentTestBase {
 
     public class RepositoryTagProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             RepositoryTag tag = (RepositoryTag) in.getBody();
-            log.debug("Got TAG  [" + tag.getName() + "]");
+            log.debug("Got TAG  [{}]", tag.getName());
         }
     }
 }

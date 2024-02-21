@@ -76,7 +76,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         verify(cluster).addMembershipListener(argument.capture());
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_ADDED, null);
         argument.getValue().memberAdded(event);
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
 
         // check headers
         Exchange ex = added.getExchanges().get(0);
@@ -97,7 +97,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_REMOVED, null);
         argument.getValue().memberRemoved(event);
 
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
 
         // check headers
         Exchange ex = removed.getExchanges().get(0);

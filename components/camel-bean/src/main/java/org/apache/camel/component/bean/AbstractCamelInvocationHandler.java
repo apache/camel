@@ -43,6 +43,8 @@ import org.apache.camel.Headers;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Variable;
+import org.apache.camel.Variables;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -51,8 +53,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCamelInvocationHandler implements InvocationHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelInvocationHandler.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
+    public static final String CAMEL_INVOCATION_HANDLER = "CamelInvocationHandler";
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
     protected final Producer producer;
@@ -62,7 +65,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
     }
 
-    public AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
+    protected AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
         this.endpoint = endpoint;
         this.producer = producer;
     }
@@ -97,7 +100,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding)
             throws Throwable {
-        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+        final Exchange exchange = DefaultExchange.newFromEndpoint(endpoint, pattern);
 
         //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
         //then use the original bean invocation.
@@ -108,9 +111,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             for (Parameter parameter : method.getParameters()) {
                 if (parameter.isAnnotationPresent(Header.class)
                         || parameter.isAnnotationPresent(Headers.class)
+                        || parameter.isAnnotationPresent(Variable.class)
+                        || parameter.isAnnotationPresent(Variables.class)
                         || parameter.isAnnotationPresent(ExchangeProperty.class)
                         || parameter.isAnnotationPresent(Body.class)) {
                     canUseBinding = true;
+                    break;
                 }
             }
         }
@@ -132,18 +138,26 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                             String name = header.value();
                             exchange.getIn().setHeader(name, value);
                         } else if (ann.annotationType().isAssignableFrom(Headers.class)) {
-                            Map map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            Map<String, Object> map
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
                             if (map != null) {
                                 exchange.getIn().getHeaders().putAll(map);
+                            }
+                        } else if (ann.annotationType().isAssignableFrom(Variable.class)) {
+                            Variable variable = (Variable) ann;
+                            String name = variable.value();
+                            exchange.setVariable(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Variables.class)) {
+                            Map<String, Object> map
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            if (map != null) {
+                                exchange.getVariables().putAll(map);
                             }
                         } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
                             ExchangeProperty ep = (ExchangeProperty) ann;
                             String name = ep.value();
                             exchange.setProperty(name, value);
-                        } else if (ann.annotationType().isAssignableFrom(Body.class)) {
-                            exchange.getIn().setBody(value);
                         } else {
-                            // assume its message body when there is no annotations
                             exchange.getIn().setBody(value);
                         }
                     }
@@ -173,7 +187,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     }
 
     protected Object invokeWithBody(final Method method, Object body, final ExchangePattern pattern) throws Throwable {
-        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+        final Exchange exchange = DefaultExchange.newFromEndpoint(endpoint, pattern);
         exchange.getIn().setBody(body);
 
         return doInvoke(method, exchange);
@@ -191,7 +205,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
                 producer.process(exchange);
 
-                Object answer = afterInvoke(method, exchange, exchange.getPattern(), isFuture);
+                Object answer = afterInvoke(method, exchange, isFuture);
                 LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
                 return answer;
             }
@@ -216,9 +230,9 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    protected Object afterInvoke(Method method, Exchange exchange, ExchangePattern pattern, boolean isFuture) throws Exception {
+    protected Object afterInvoke(Method method, Exchange exchange, boolean isFuture) throws Exception {
         // check if we had an exception
-        Throwable cause = exchange.getException();
+        Exception cause = exchange.getException();
         if (cause != null) {
             Throwable found = findSuitableException(cause, method);
             if (found != null) {
@@ -234,17 +248,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 // if the inner cause is a runtime exception we can throw it
                 // directly
                 if (cause.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) ((RuntimeCamelException) cause).getCause();
+                    throw (RuntimeException) cause.getCause();
                 }
-                throw (RuntimeCamelException) cause;
+                throw cause;
             }
             // okay just throw the exception as is
-            if (cause instanceof Exception) {
-                throw (Exception) cause;
-            } else {
-                // wrap as exception
-                throw new CamelExchangeException("Error processing exchange", exchange, cause);
-            }
+            throw cause;
         }
 
         Class<?> to = isFuture ? getGenericType(exchange.getContext(), method.getGenericReturnType()) : method.getReturnType();
@@ -287,14 +296,14 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // re-create it (its a shared static instance)
         if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
             // try to lookup a pool first based on id/profile
-            executorService = context.getRegistry().lookupByNameAndType("CamelInvocationHandler", ExecutorService.class);
+            executorService = context.getRegistry().lookupByNameAndType(CAMEL_INVOCATION_HANDLER, ExecutorService.class);
             if (executorService == null) {
                 executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class,
-                        "CamelInvocationHandler", "CamelInvocationHandler");
+                        CAMEL_INVOCATION_HANDLER, CAMEL_INVOCATION_HANDLER);
             }
             if (executorService == null) {
                 executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class,
-                        "CamelInvocationHandler");
+                        CAMEL_INVOCATION_HANDLER);
             }
         }
         return executorService;

@@ -23,9 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirReadApiMethod;
-import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test class for {@link org.apache.camel.component.fhir.api.FhirRead} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test - see CAMEL-19659")
 public class FhirReadIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirReadIT.class);
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirReadApiMethod.class).getName();
 
     @Test
-    public void testResourceById() throws Exception {
+    public void testResourceById() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -55,7 +58,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByLongId() throws Exception {
+    public void testResourceByLongId() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -68,7 +71,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByStringId() throws Exception {
+    public void testResourceByStringId() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -81,7 +84,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByIdAndStringResource() throws Exception {
+    public void testResourceByIdAndStringResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceClass", "Patient");
@@ -94,7 +97,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByLongIdAndStringResource() throws Exception {
+    public void testResourceByLongIdAndStringResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -107,7 +110,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByStringIdAndStringResource() throws Exception {
+    public void testResourceByStringIdAndStringResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -120,7 +123,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByStringIdAndVersion() throws Exception {
+    public void testResourceByStringIdAndVersion() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -135,7 +138,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByStringIdAndVersionWithResourceClass() throws Exception {
+    public void testResourceByStringIdAndVersionWithResourceClass() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceClass", "Patient");
@@ -150,7 +153,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByiUrl() throws Exception {
+    public void testResourceByiUrl() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -163,7 +166,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByUrl() throws Exception {
+    public void testResourceByUrl() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resource", Patient.class);
@@ -176,7 +179,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByStringUrlAndStringResource() throws Exception {
+    public void testResourceByStringUrlAndStringResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.resourceClass", "Patient");
@@ -189,7 +192,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByUrlAndStringResource() throws Exception {
+    public void testResourceByUrlAndStringResource() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.resourceClass", "Patient");
@@ -202,7 +205,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceByUrlAndStringResourcePrettyPrint() throws Exception {
+    public void testResourceByUrlAndStringResourcePrettyPrint() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.resourceClass", "Patient");
@@ -216,13 +219,13 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     private void assertValidResponse(Patient result) {
-        LOG.debug("response: " + result);
+        LOG.debug("response: {}", result);
         assertNotNull(result, "resourceByUrl result");
         assertEquals("Freeman", result.getName().get(0).getFamily());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resourceById

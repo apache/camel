@@ -19,7 +19,7 @@ package org.apache.camel.model;
 import java.io.StringWriter;
 import java.util.List;
 
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -35,7 +35,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         RouteDefinition route = context.route();
         route.from("seda:a");
         route.filter(new XQueryExpression("in.header.foo == 'bar'")).to("seda:b");
-        route.description(null, "This is a description of the route", "en");
+        route.description("This is a description of the route");
         dump(context);
     }
 
@@ -45,7 +45,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         RouteDefinition route = context.route();
         route.from("seda:a");
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).to("seda:b");
-        route.description(null, "This is a description of the route", "en");
+        route.description("This is a description of the route");
         List<?> list = route.getOutputs();
         assertEquals(1, list.size(), "Size of list: " + list);
 
@@ -57,7 +57,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();
         marshaller.marshal(context, buffer);
-        log.info("Created: " + buffer);
+        log.info("Created: {}", buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
         assertTrue(out.indexOf("This is a description of the route") > 0, "Should contain the description");

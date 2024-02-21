@@ -15,176 +15,21 @@
  * limitations under the License.
  */
 
-/* eslint-disable-next-line no-unused-vars */
-const { dest, series, parallel, src, symlink } = require('gulp')
-const del = require('del')
-const filter = require('gulp-filter')
-const inject = require('gulp-inject')
-const map = require('map-stream')
-const path = require('path')
-const rename = require('gulp-rename')
-const replace = require('gulp-replace')
-const sort = require('gulp-sort')
-const through2 = require('through2')
-const File = require('vinyl')
-const fs = require('fs')
-
-function deleteComponentSymlinks () {
-  return del([
-    'components/modules/ROOT/pages/*',
-    '!components/modules/ROOT/pages/index.adoc',
-  ])
-}
-
-function deleteComponentImageSymlinks () {
-  return del(['components/modules/ROOT/assets/images/*'])
-}
-
-function createComponentSymlinks () {
-  return (
-    src([
-      '../core/camel-base/src/main/docs/*-component.adoc',
-      '../components/{*,*/*}/src/main/docs/*-component.adoc',
-      '../components/{*,*/*}/src/main/docs/*-summary.adoc',
-    ])
-      .pipe(
-        map((file, done) => {
-          // this flattens the output to just .../pages/....adoc
-          // instead of .../pages/camel-.../src/main/docs/....adoc
-          file.base = path.dirname(file.path)
-          done(null, file)
-        })
-      )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/ROOT/pages/'))
-  )
-}
-
-function createComponentOthersSymlinks () {
-  const f = filter([
-    '**',
-    '!**/*-language.adoc',
-    '!**/*-dataformat.adoc',
-    '!**/*-component.adoc',
-    '!**/*-summary.adoc',
-  ])
-  return (
-    src([
-      '../core/camel-base/src/main/docs/*.adoc',
-      '../core/camel-main/src/main/docs/*.adoc',
-      '../components/{*,*/*}/src/main/docs/*.adoc',
-    ])
-      .pipe(f)
-      .pipe(
-        map((file, done) => {
-          // this flattens the output to just .../pages/....adoc
-          // instead of .../pages/camel-.../src/main/docs/....adoc
-          file.base = path.dirname(file.path)
-          done(null, file)
-        })
-      )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/others/pages/'))
-  )
-}
-
-function createComponentDataFormatSymlinks () {
-  return (
-    src(['../components/{*,*/*}/src/main/docs/*-dataformat.adoc'])
-      .pipe(
-        map((file, done) => {
-          // this flattens the output to just .../pages/....adoc
-          // instead of .../pages/camel-.../src/main/docs/....adoc
-          file.base = path.dirname(file.path)
-          done(null, file)
-        })
-      )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/dataformats/pages/'))
-  )
-}
-
-function createComponentLanguageSymlinks () {
-  return (
-    src(['../components/{*,*/*}/src/main/docs/*-language.adoc'])
-      .pipe(
-        map((file, done) => {
-          // this flattens the output to just .../pages/....adoc
-          // instead of .../pages/camel-.../src/main/docs/....adoc
-          file.base = path.dirname(file.path)
-          done(null, file)
-        })
-      )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(insertSourceAttribute())
-      .pipe(dest('components/modules/languages/pages/'))
-  )
-}
-
-function createComponentImageSymlinks () {
-  return (
-    src('../components/{*,*/*}/src/main/docs/*.png')
-      .pipe(
-        map((file, done) => {
-          // this flattens the output to just .../pages/....adoc
-          // instead of .../pages/camel-.../src/main/docs/....adoc
-          file.base = path.dirname(file.path)
-          done(null, file)
-        })
-      )
-      // Antora disabled symlinks, there is an issue open
-      // https://gitlab.com/antora/antora/issues/188
-      // to reinstate symlink support, until that's resolved
-      // we'll simply copy over instead of creating symlinks
-      // .pipe(symlink('components/modules/ROOT/pages/', {
-      //     relativeSymlinks: true
-      // }));
-      // uncomment above .pipe() and remove the .pipe() below
-      // when antora#188 is resolved
-      .pipe(dest('components/modules/ROOT/assets/images/'))
-  )
-}
+import File from 'vinyl'
+import gulp from 'gulp'
+import inject from 'gulp-inject'
+import map from 'map-stream'
+import path from 'path'
+import rename from 'gulp-rename'
+import sort from 'gulp-sort'
+import through2 from 'through2'
+import { deleteAsync } from 'del'
 
 function titleFrom (file) {
-  var maybeName = /(?::docTitle: )(.*)/.exec(file.contents.toString())
+  let maybeName = /(?::doctitle: )(.*)/.exec(file.contents.toString())
   if (maybeName === null) {
     //TODO investigate these... why dont they have them?
-    // console.warn(`${file.path} doesn't contain Asciidoc docTitle attribute (':docTitle: <Title>'`);
+    // console.warn(`${file.path} doesn't contain Asciidoc doctitle attribute (':doctitle: <Title>'`);
     maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
     if (maybeName === null) {
       throw new Error(
@@ -197,19 +42,12 @@ function titleFrom (file) {
 }
 
 function groupFrom (file) {
-  var groupName = /(?::group: )(.*)/.exec(file.contents.toString())
+  const groupName = /(?::group: )(.*)/.exec(file.contents.toString())
   if (groupName !== null) return groupName[1]
   return null
 }
 
 function compare (file1, file2) {
-  if (file1 === file2) return 0
-  return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase()
-    ? -1
-    : 1
-}
-
-function compareComponents (file1, file2) {
   if (file1 === file2) return 0
   const group1 = groupFrom(file1) ? groupFrom(file1).toUpperCase() : null
   const group2 = groupFrom(file2) ? groupFrom(file2).toUpperCase() : null
@@ -232,7 +70,7 @@ function compareComponents (file1, file2) {
 }
 
 function insertGeneratedNotice () {
-  return inject(src('./generated.txt'), {
+  return inject(gulp.src('./generated.txt'), {
     name: 'generated',
     removeTags: true,
     transform: (filename, file) => {
@@ -241,221 +79,391 @@ function insertGeneratedNotice () {
   })
 }
 
-function insertSourceAttribute () {
-  return replace(/^= .+/m, function (match) {
-    return `${match}\n//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n:page-source: ${path.relative('..', this.file.path)}`
-  })
+// For (some) readability the literal object is used to configure
+// the tasks in this form:
+//
+// taskName: {
+//   kind: { // kind can be asciidoc, image, example or json
+//     source: [...] | '...', // array or string with globs pointing to source files outside of the docs directory
+//     destination: '...', // where to put the symbolic links to the source files
+//     keep: [...], // optional array of files not to delete from the destination directory (defaults to ['index.adoc'])
+//     filter: fn(content), // optional function to filter based on file content
+//   }
+// }
+const sources = {
+  components: {
+    asciidoc: {
+      source: [
+        '../core/camel-base/src/main/docs/*-component.adoc',
+        '../components/{*,*/*,*/*/*}/src/main/docs/*-component.adoc',
+        '../components/{*,*/*}/src/main/docs/*-summary.adoc',
+      ],
+      destination: 'components/modules/ROOT/pages',
+    },
+    image: {
+      source: '../components/{*,*/*}/src/main/docs/*.png',
+      destination: 'components/modules/ROOT/images',
+    },
+    example: {
+      source: [
+        '../core/camel-base/src/main/docs/*.adoc',
+        '../core/camel-main/src/main/docs/*.adoc',
+        '../components/{*,*/*}/src/main/docs/*.adoc',
+      ],
+      destination: 'components/modules/ROOT/examples',
+    },
+    json: {
+      source: [
+        '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/**/*.json',
+      ],
+      destination: 'components/modules/ROOT/examples/json',
+      filter: (content) => JSON.parse(content).component, // check if there is a "component" key at the root
+    },
+  },
+  dataformats: {
+    asciidoc: {
+      source: '../components/{*,*/*}/src/main/docs/*-dataformat.adoc',
+      destination: 'components/modules/dataformats/pages',
+    },
+    json: {
+      source: [
+        '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/**/*.json',
+        '../core/camel-core-model/src/generated/resources/org/apache/camel/model/dataformat/*.json',
+      ],
+      destination: 'components/modules/dataformats/examples/json',
+      filter: (content) => JSON.parse(content).dataformat, // check if there is a "dataformat" key at the root
+    },
+  },
+  //IMPORTANT NOTE: some language adocs may also be copied by an undocumented process
+  //from core/camel-core-languages and core/camel-xml-jaxp.
+  languages: {
+    asciidoc: {
+      source: [
+        '../components/{*,*/*}/src/main/docs/*-language.adoc',
+        '../core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc',
+        '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*-language.adoc',
+      ],
+      destination: 'components/modules/languages/pages',
+    },
+    json: {
+      source: [
+        '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/*/**/*.json',
+        '../core/camel-core-languages/src/generated/resources/org/apache/camel/language/**/*.json',
+        '../core/camel-core-model/src/generated/resources/org/apache/camel/model/language/*.json',
+      ],
+      destination: 'components/modules/languages/examples/json',
+      filter: (content) => JSON.parse(content).language, // check if there is a "language" key at the root
+    },
+  },
+  //TODO this newly copies several dsl pages. Is this correct?
+  // (output edited) diff --git a/docs/components/modules/others/nav.adoc b/docs/components/modules/others/nav.adoc
+  // +** xref:groovy-dsl.adoc[Groovy Dsl]
+  // +** xref:js-dsl.adoc[JavaScript Dsl]
+  // +** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
+  // +** xref:kotlin-dsl.adoc[Kotlin Dsl]
+  // +** xref:java-xml-io-dsl.adoc[XML Dsl]
+  //These seem to have no content, just a non-xref link to the user manual,
+  // where the dsls are not actually explained.  Should the sources be removed?
+  others: {
+    asciidoc: {
+      source: [
+        '../core/camel-base/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/**/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../core/camel-xml-jaxp/src/generated/resources/*.json',
+      ],
+      destination: 'components/modules/others/pages',
+      keep: [
+        'index.adoc',
+        'reactive-threadpoolfactory-vertx.adoc', // not part of any component
+      ],
+    },
+    json: {
+      source: [
+        '../components/{*,*/*,*/*/*}/src/generated/resources/*.json',
+      ],
+      destination: 'components/modules/others/examples/json',
+      filter: (content) => JSON.parse(content).other, // check if there is a "other" key at the root
+    },
+  },
+  eips: {
+    asciidoc: {
+      destination: '../core/camel-core-engine/src/main/docs/modules/eips/pages',
+      filter: (path) => !path.endsWith('enterprise-integration-patterns.adoc')
+    },
+    json: {
+      source: [
+        '../core/camel-core-model/src/generated/resources/org/apache/camel/model/**/*.json',
+      ],
+      destination: '../core/camel-core-engine/src/main/docs/modules/eips/examples/json',
+      filter: (content) => {
+        const json = JSON.parse(content)
+        return json.model && json.model.label.includes('eip')
+      },
+    },
+  },
+  'manual:faq': {
+    example: {
+      source: 'user-manual/modules/faq/**/*.adoc',
+      destination: 'user-manual/modules/faq/examples',
+    },
+  },
 }
 
-function createComponentNav () {
-  return src('component-nav.adoc.template')
-    .pipe(insertGeneratedNotice())
-    .pipe(
-      inject(
-        src([
-          'components/modules/ROOT/pages/**/*.adoc',
-          '!components/modules/ROOT/pages/index.adoc',
-        ]).pipe(sort(compareComponents)),
-        {
-          removeTags: true,
-          transform: (filename, file) => {
-            const filepath = path.basename(filename)
-            const title = titleFrom(file)
-            if (groupFrom(file) !== null) { return `*** xref:${filepath}[${title}]` }
-            return `** xref:${filepath}[${title}]`
-          },
-        }
-      )
-    )
-    .pipe(rename('nav.adoc'))
-    .pipe(dest('components/modules/ROOT/'))
-}
+// Generates a tree of Gulp tasks it will be created from the data
+// structure above. For example given:
+//
+// taskName: {
+//   asciidoc: {
+//     source: ...,
+//     destination: ...
+//   },
+//   json: {
+//     source: ...,
+//     destination: ...,
+//   }
+// },
+//
+// gulp.parallel( // root containing multiple groupings (say, components, dataformats, eips...)
+//   gulp.parallel( // tasks for the given taskName
+//     gulp.series(clean:asciidoc:taskName, symlink:asciidoc:taskName, nav:asciidoc:taskName),
+//     gulp.series(clean:json:taskName, symlink:json:taskName),
+//   ),
+//   gulp.parallel( // tasks configured for a different group
+//     ...
+//   )
+// )
+//
+// Or when run with `yarn gulp --tasks` something like:
+// ├─┬ default
+// │ └─┬ <parallel>
+// │   ├─┬ <series>
+// │   │ ├── clean:asciidoc:taskName
+// │   │ ├── symlink:asciidoc:taskName
+// │   │ └── nav:asciidoc:taskName
+// │   └─┬ <series>
+// │     ├── clean:json:taskName
+// │     └── symlink:json:taskName
+//
+// Where each `*:taskName` is a Gulp function task performing the
+// following:
+//  * `clean:*` task deletes symbolic links,
+//  * `symlink:*` recreates symbolic links pointing to the source
+//    files in the project tree,
+//  * `nav:*` regenerates `nav.adoc` files.
+// There are two different symlink operations, one for .adoc files
+// that strips base directory and for examples that perserves it
+const sourcesMap = new Map(Object.entries(sources))
+// type is 'components', 'dataformats', ...
+// definition is the value under that key, e.g.:
+// {
+//   asciidoc: {
+//     source: ...
+//     destination: ...
+//   },
+//   ...
+// }
+const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
+  // base tasks
 
-function createComponentOthersNav () {
-  return src('component-others-nav.adoc.template')
-    .pipe(insertGeneratedNotice())
-    .pipe(
-      inject(
-        src([
-          'components/modules/others/pages/**/*.adoc',
-          '!components/modules/others/pages/index.adoc',
-        ]).pipe(sort(compare)),
-        {
-          removeTags: true,
-          transform: (filename, file) => {
-            const filepath = path.basename(filename)
-            const title = titleFrom(file)
-            return `** xref:${filepath}[${title}]`
-          },
-        }
-      )
-    )
-    .pipe(rename('nav.adoc'))
-    .pipe(dest('components/modules/others/'))
-}
-
-function createComponentDataFormatsNav () {
-  return src('component-dataformats-nav.adoc.template')
-    .pipe(insertGeneratedNotice())
-    .pipe(
-      inject(
-        src([
-          'components/modules/dataformats/pages/**/*.adoc',
-          '!components/modules/dataformats/pages/index.adoc',
-        ]).pipe(sort(compare)),
-        {
-          removeTags: true,
-          transform: (filename, file) => {
-            const filepath = path.basename(filename)
-            const title = titleFrom(file)
-            return `** xref:dataformats:${filepath}[${title}]`
-          },
-        }
-      )
-    )
-    .pipe(rename('nav.adoc'))
-    .pipe(dest('components/modules/dataformats/'))
-}
-
-function createComponentLanguagesNav () {
-  return src('component-languages-nav.adoc.template')
-    .pipe(insertGeneratedNotice())
-    .pipe(
-      inject(
-        src([
-          'components/modules/languages/pages/**/*.adoc',
-          '!components/modules/languages/pages/index.adoc',
-        ]).pipe(sort(compare)),
-        {
-          removeTags: true,
-          transform: (filename, file) => {
-            const filepath = path.basename(filename)
-            const title = titleFrom(file)
-            return `** xref:languages:${filepath}[${title}]`
-          },
-        }
-      )
-    )
-    .pipe(rename('nav.adoc'))
-    .pipe(dest('components/modules/languages/'))
-}
-
-function createEIPNav () {
-  const f = filter(['**', '!**/enterprise-integration-patterns.adoc'])
-  return src('eip-nav.adoc.template')
-    .pipe(insertGeneratedNotice())
-    .pipe(
-      inject(
-        src('../core/camel-core-engine/src/main/docs/modules/eips/pages/*.adoc')
-          .pipe(f)
-          .pipe(sort(compare)),
-        {
-          removeTags: true,
-          name: 'eips',
-          transform: (filename, file) => {
-            const filepath = path.basename(filename)
-            const title = titleFrom(file)
-            return ` ** xref:eips:${filepath}[${title}]`
-          },
-        }
-      )
-    )
-    .pipe(rename('nav.adoc'))
-    .pipe(dest('../core/camel-core-engine/src/main/docs/modules/eips/'))
-}
-
-const extractExamples = function (file, enc, next) {
-  const asciidoc = file.contents.toString()
-  const includes = /(?:include::\{examplesdir\}\/)([^[]+)/g
-  let example
-  const exampleFiles = new Set()
-  while ((example = includes.exec(asciidoc))) {
-    const examplePath = path.resolve(path.join('..', example[1]))
-    exampleFiles.add(examplePath)
+  // deletes all files at destination except for files named in keep,
+  // by default that's only index.adoc, index.adoc is not symlinked
+  // so we don't want to remove it
+  const clean = (destination, keep) => {
+    const deleteAry = [`${destination}/*`] // files in destination needs to be deleted
+    // append any exceptions, i.e. files to keep at the destination
+    deleteAry.push(...(keep || ['index.adoc']).map((file) => `!${destination}/${file}`))
+    return deleteAsync(deleteAry, {
+      force: true,
+    })
   }
-  // (exampleFiles.size > 0) && console.log('example files', exampleFiles)
-  exampleFiles.forEach((examplePath) =>
-    this.push(
-      new File({
-        base: path.resolve('..'),
-        path: examplePath,
-        contents: fs.createReadStream(examplePath),
-      })
+
+  // creates symlinks from source to destination that satisfy the
+  // given filter removing the basedir from a path, i.e. symlinking
+  // from a flat hiearchy
+  const createSymlinks = (source, destination, filter) => {
+    const filterFn = through2.obj((file, enc, done) => {
+      if (filter && !filter(file.contents)) {
+        done() // skip
+      } else {
+        done(null, file) // process
+      }
+    })
+
+    return gulp.src(source)
+      .pipe(filterFn)
+      .pipe(
+        map((file, done) => {
+          // this flattens the output to just .../pages/.../file.ext
+          // instead of .../pages/camel-.../src/main/docs/.../file.ext
+          file.base = path.dirname(file.path)
+          done(null, file)
+        })
+      )
+      .pipe(gulp.symlink(destination, {
+        relativeSymlinks: true,
+      }))
+  }
+
+  // generates sorted & grouped nav.adoc file from a set of .adoc
+  // files at the destination
+  const createNav = (destination, filter) => {
+    const filterFn = through2.obj((file, enc, done) => {
+      if (filter && !filter(file.path)) {
+        done() // skip
+      } else {
+        done(null, file) // process
+      }
+    })
+
+    return gulp.src(`${type}-nav.adoc.template`)
+      .pipe(insertGeneratedNotice())
+      .pipe(
+        inject(
+          gulp.src([
+            `${destination}/**/*.adoc`,
+            `!${destination}/index.adoc`,
+          ])
+          .pipe(filterFn)
+          .pipe(sort(compare)),
+          {
+            removeTags: true,
+            transform: (filename, file) => {
+              const filepath = path.basename(filename)
+              const title = titleFrom(file)
+              if (groupFrom(file) !== null) {
+                return `*** xref:${filepath}[${title}]`
+              }
+              return `** xref:${filepath}[${title}]`
+            },
+          }
+        )
+      )
+      .pipe(rename('nav.adoc'))
+      .pipe(gulp.dest(`${destination}/../`))
+  }
+
+  // creates symlinks from source to destination for every example
+  // file referenced from .adoc file in the source maintaining the
+  // basedir from the file path, i.e. symlinking from a deep hiearchy
+  const createExampleSymlinks = (source, destination) => {
+    const extractExamples = function (file, enc, done) {
+      const asciidoc = file.contents.toString()
+      const includes = /(?:include::\{examplesdir\}\/)([^[]+)/g
+      let example
+      while ((example = includes.exec(asciidoc))) {
+        const filePath = example[1]
+        // filePath points from the root of the repository, our CWD
+        // is within `/docs`, so to get the correct path we need to
+        // resolve against `..` (`/docs/..`), i.e. root of the
+        // repository
+        const resolved = path.resolve(path.join('..', example[1]))
+        const file = new File({
+          path: filePath,
+          dirname: path.dirname(resolved),
+          base: path.dirname(resolved),
+        })
+        // replace the .adoc file in the Gulp stream with any example
+        // file found in the .adoc file
+        this.push(file)
+      }
+
+      return done()
+    }
+
+    return gulp.src(source) // asciidoc files
+      .pipe(through2.obj(extractExamples)) // extracted example files
+      // symlink links from a fixed directory, i.e. we could link to
+      // the example files from `destination`, that would not work for
+      // us as same-named files would overwrite each other, and also
+      // the `:include::` for the example includes the full path. So
+      // we need a dynamic destination, which we generate based on the
+      // `destination` plus directory of the example as without the
+      // path leading to the git root. For example, for:
+      //  - destination='components/modules/ROOT/examples/'
+      //  - file.dirname='/path/to/git/repository/components/example-component/src/test/resources/example-route.xml'
+      // we want the resulting destination to be:
+      // components/modules/ROOT/examples/components/example-component/src/test/resources/example-route.xml
+      .pipe(gulp.symlink((file) => path.join(destination, file.dirname.replace(path.resolve('..'), '')), {
+        relativeSymlinks: true,
+      }))
+  }
+
+  const { asciidoc, image, example, json } = definition
+
+  // we this use a pattern to name an anonymous function:
+  // const { [name]: f } = { [name]: /* function | lambda */ }
+  // After decomposition f is a function where f.name === name,
+  // since Function.name is read-only property we cannot assign it
+  // and this is an equvalent of:
+  // const name = '...'
+  // const ignored = {
+  //   [name]: /* function | lambda */
+  // }
+  // allowing us to set Function.name implicitly in the declaration.
+  // That is: ignored[name].name === name.
+  //
+  // This is helpful for Gulp as it gets the name of the task from
+  // the name of the function.
+  const named = (name, task, ...args) => {
+    const { [name]: n } = { [name]: () => task(...args) }
+    return n
+  }
+
+  // accumulates all tasks performed per _kind_.
+  const allTasks = []
+
+  if (asciidoc && asciidoc.source) {
+    allTasks.push(
+      gulp.series(
+        named(`clean:asciidoc:${type}`, clean, asciidoc.destination, asciidoc.keep),
+        named(`symlink:asciidoc:${type}`, createSymlinks, asciidoc.source, asciidoc.destination),
+        named(`nav:asciidoc:${type}`, createNav, asciidoc.destination)
+      )
     )
-  )
+  }
 
-  return next()
-}
-
-function deleteExamples () {
-  return del([
-    'user-manual/modules/ROOT/examples/',
-    'user-manual/modules/faq/examples/',
-    'components/modules/ROOT/examples/',
-  ])
-}
-
-function createUserManualExamples () {
-  return src('user-manual/modules/ROOT/**/*.adoc')
-    .pipe(through2.obj(extractExamples))
-    .pipe(dest('user-manual/modules/ROOT/examples/'))
-}
-
-function createFAQExamples () {
-  return src('user-manual/modules/faq/**/*.adoc')
-    .pipe(through2.obj(extractExamples))
-    .pipe(dest('user-manual/modules/faq/examples/'))
-}
-
-function createEIPExamples () {
-  return src('../core/camel-core-engine/src/main/docs/modules/eips/**/*.adoc')
-    .pipe(through2.obj(extractExamples))
-    .pipe(
-      dest('../core/camel-core-engine/src/main/docs/modules/eips/examples/')
+  if (image) {
+    allTasks.push(
+      gulp.series(
+        named(`clean:image:${type}`, clean, image.destination, image.keep),
+        named(`symlink:image:${type}`, createSymlinks, image.source, image.destination)
+      )
     )
-}
+  }
 
-function createUserManualLanguageExamples () {
-  return src(
-    '../core/camel-core-languages/src/main/docs/user-manual/modules/languages/**/*.adoc'
-  )
-    .pipe(through2.obj(extractExamples))
-    .pipe(dest('user-manual/modules/ROOT/examples/'))
-}
+  if (example) {
+    allTasks.push(
+      gulp.series(
+        named(`clean:example:${type}`, clean, example.destination, ['json', 'js']),
+        named(`symlink:example:${type}`, createExampleSymlinks, example.source, example.destination)
+      )
+    )
+  }
 
-function createComponentExamples () {
-  return src('../components/{*,*/*}/src/main/docs/*.adoc')
-    .pipe(through2.obj(extractExamples))
-    .pipe(dest('components/modules/ROOT/examples/'))
-}
+  if (json) {
+    let tasks = [
+      named(`clean:json:${type}`, clean, json.destination, json.keep),
+      named(`symlink:json:${type}`, createSymlinks, json.source, json.destination, json.filter)
+    ]
 
-const symlinks = parallel(
-  series(
-    deleteComponentSymlinks,
-    createComponentSymlinks,
-    createComponentOthersSymlinks,
-    createComponentDataFormatSymlinks,
-    createComponentLanguageSymlinks
-  ),
-  series(deleteComponentImageSymlinks, createComponentImageSymlinks)
-)
-const nav = parallel(
-  createComponentNav,
-  createComponentOthersNav,
-  createComponentDataFormatsNav,
-  createComponentLanguagesNav,
-  createEIPNav
-)
-const examples = series(
-  deleteExamples,
-  createUserManualExamples,
-  createFAQExamples,
-  createEIPExamples,
-  createUserManualLanguageExamples,
-  createComponentExamples
-)
+    if (asciidoc && !asciidoc.source) {
+      tasks.push(
+        named(`nav:asciidoc:${type}`, createNav, asciidoc.destination, asciidoc.filter)
+      )
+    }
 
-exports.symlinks = symlinks
-exports.nav = nav
-exports.examples = examples
-exports.default = series(symlinks, nav, examples)
+    allTasks.push(
+      gulp.series(tasks)
+    )
+  }
+
+  if (allTasks.length > 0) {
+    return allTasks
+  }
+
+  return []
+}, [])
+
+export default gulp.parallel(tasks)

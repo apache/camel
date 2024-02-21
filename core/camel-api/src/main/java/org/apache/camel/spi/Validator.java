@@ -26,7 +26,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * <a href="http://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
  * declared data type. {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is
  * declared on a route with validation enabled.
- * 
+ *
  * @see {@link org.apache.camel.processor.ContractAdvice} {@link org.apache.camel.model.InputTypeDefinition}
  *      {@link org.apache.camel.model.OutputTypeDefinition}
  */
@@ -76,13 +76,4 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
         return String.format("%s[type='%s']", this.getClass().getSimpleName(), type);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // no-op
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // no-op
-    }
 }

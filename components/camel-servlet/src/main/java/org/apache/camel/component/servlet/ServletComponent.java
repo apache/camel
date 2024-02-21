@@ -76,16 +76,17 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // must extract well known parameters before we create the endpoint
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        Boolean muteException = getAndRemoveParameter(parameters, "muteException", Boolean.class);
+        boolean muteException = getAndRemoveParameter(parameters, "muteException", boolean.class, isMuteException());
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
+        String filteredServletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy
                 = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
-        Boolean attachmentMultipartBinding = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
+        Boolean filteredAttachmentMultipartBinding
+                = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
         Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         if (lenientContextPath()) {
@@ -105,7 +106,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
-        endpoint.setServletName(servletName);
+        endpoint.setServletName(filteredServletName);
         endpoint.setFileNameExtWhitelist(fileNameExtWhitelist);
         if (async != null) {
             endpoint.setAsync(async);
@@ -122,7 +123,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             binding = getHttpBinding();
         }
         if (binding != null) {
-            endpoint.setBinding(binding);
+            endpoint.setHttpBinding(binding);
         }
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
@@ -132,9 +133,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (transferException != null) {
             endpoint.setTransferException(transferException);
         }
-        if (muteException != null) {
-            endpoint.setMuteException(muteException);
-        }
+        endpoint.setMuteException(muteException);
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);
         }
@@ -144,8 +143,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
-        if (attachmentMultipartBinding != null) {
-            endpoint.setAttachmentMultipartBinding(attachmentMultipartBinding);
+        if (filteredAttachmentMultipartBinding != null) {
+            endpoint.setAttachmentMultipartBinding(filteredAttachmentMultipartBinding);
         } else {
             endpoint.setAttachmentMultipartBinding(isAttachmentMultipartBinding());
         }
@@ -264,7 +263,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, configuration,
                 parameters, false);
     }
 
@@ -274,12 +273,12 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, configuration, parameters, true);
     }
 
     Consumer doCreateConsumer(
             CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            RestConfiguration configuration, Map<String, Object> parameters, boolean api)
             throws Exception {
 
         String path = basePath;
@@ -300,7 +299,6 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
 
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("servlet", config);
-
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
@@ -315,8 +313,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);
 
-        ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(endpoint, parameters);
+        ServletEndpoint endpoint = (ServletEndpoint) camelContext.getEndpoint(url, parameters);
 
         if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding
@@ -325,6 +322,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             binding.setTransferException(endpoint.isTransferException());
             binding.setMuteException(endpoint.isMuteException());
             binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
+            binding.setMapHttpMessageHeaders(endpoint.isMapHttpMessageHeaders());
+            binding.setMapHttpMessageFormUrlEncodedBody(endpoint.isMapHttpMessageFormUrlEncodedBody());
             endpoint.setHttpBinding(binding);
         }
 
@@ -338,20 +337,20 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         try {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
 
-            // configure additional options on jetty configuration
+            // configure additional options on servlet configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }
         } catch (IllegalArgumentException e) {
             // if there's a mismatch between the component and the rest-configuration,
             // then getRestConfiguration throws IllegalArgumentException which can be
-            // safely ignored as it means there's no special conf for this componet.
+            // safely ignored as it means there's no special conf for this component.
         }
     }
 }

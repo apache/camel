@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.synch";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.synch.InOnlyConsumerAsyncFalseTest";
     private static final String MOCK_RESULT = "mock:result";
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -47,15 +48,15 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         // process the 2nd message on the queue
         Thread.sleep(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(beforeThreadName, afterThreadName);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(SJMS_QUEUE_NAME).to("log:before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
@@ -64,7 +65,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
                         }
                     }
                 }).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("log:after").to(MOCK_RESULT);

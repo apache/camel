@@ -39,7 +39,7 @@ public class CustomSlackHttpClient extends SlackHttpClient {
 
     @Override
     public Response postJsonBody(String url, Object obj) throws IOException {
-        RequestBody body = RequestBody.create((String) obj, MEDIA_TYPE_APPLICATION_JSON);
+        RequestBody body = RequestBody.create(MEDIA_TYPE_APPLICATION_JSON, (String) obj);
         Request request = new Request.Builder().url(url).post(body).build();
         return okHttpClient.newCall(request).execute();
     }

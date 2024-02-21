@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
@@ -135,7 +134,4 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
     // Helpers
     // *********************************************
 
-    @JsonRootName("meta")
-    public static final class MetaData extends HashMap<String, String> {
-    }
 }

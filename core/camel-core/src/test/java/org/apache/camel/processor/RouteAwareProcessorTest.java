@@ -50,7 +50,7 @@ public class RouteAwareProcessorTest extends ContextTestSupport {
         };
     }
 
-    private class MyProcessor extends ServiceSupport implements Processor, RouteIdAware, IdAware {
+    private static class MyProcessor extends ServiceSupport implements Processor, RouteIdAware, IdAware {
 
         private String id;
         private String routeId;

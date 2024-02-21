@@ -18,6 +18,7 @@ package org.apache.camel.component.beanclass;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
+import org.apache.camel.component.bean.BeanConstants;
 import org.apache.camel.component.bean.BeanEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
@@ -25,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
  * Invoke methods of Java beans specified by class name.
  */
 @UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true,
-             category = { Category.CORE, Category.JAVA })
+             remote = false, category = { Category.CORE, Category.SCRIPT }, headersClass = BeanConstants.class)
 public class ClassEndpoint extends BeanEndpoint {
 
     public ClassEndpoint(String endpointUri, Component component) {

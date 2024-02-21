@@ -16,6 +16,7 @@
  */
 package org.apache.camel.http.common;
 
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

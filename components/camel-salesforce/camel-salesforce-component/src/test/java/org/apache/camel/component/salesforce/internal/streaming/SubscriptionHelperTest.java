@@ -138,7 +138,7 @@ public class SubscriptionHelperTest {
         when(component.getConfig()).thenReturn(endpointConfig);
         when(component.getSession()).thenReturn(session);
 
-        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component);
+        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component, session);
 
         assertNotNull(bayeuxClient);
         verify(session, never()).login(null);
@@ -161,7 +161,7 @@ public class SubscriptionHelperTest {
         when(component.getConfig()).thenReturn(endpointConfig);
         when(component.getSession()).thenReturn(session);
 
-        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component);
+        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component, session);
 
         assertNotNull(bayeuxClient);
         verify(session).login(null);

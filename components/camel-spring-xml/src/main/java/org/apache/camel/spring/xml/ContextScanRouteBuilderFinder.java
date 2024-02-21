@@ -72,7 +72,13 @@ public class ContextScanRouteBuilderFinder {
         }
     }
 
-    protected boolean shouldIgnoreBean(Object bean) {
+    /**
+     * Whether or not to ignore the bean
+     *
+     * @param  bean the bean to be checked if should be ignored or not
+     * @return
+     */
+    protected boolean shouldIgnoreBean(@SuppressWarnings("unused") Object bean) {
         return false;
     }
 

@@ -16,13 +16,15 @@
  */
 package org.apache.camel.core.xml;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.StreamCache;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Stream caching configuration.
@@ -33,13 +35,21 @@ import org.apache.camel.spi.Metadata;
 public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String enabled;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String spoolEnabled;
+    @XmlAttribute
+    private String allowClasses;
+    @XmlAttribute
+    private String denyClasses;
     @XmlAttribute
     private String spoolDirectory;
     @XmlAttribute
     private String spoolCipher;
     @XmlAttribute
+    @Metadata(defaultValue = "" + StreamCache.DEFAULT_SPOOL_THRESHOLD)
     private String spoolThreshold;
     @XmlAttribute
     private String spoolUsedHeapMemoryThreshold;
@@ -48,11 +58,13 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     private String spoolRules;
     @XmlAttribute
+    @Metadata(defaultValue = "" + IOHelper.DEFAULT_BUFFER_SIZE)
     private String bufferSize;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String removeSpoolDirectoryWhenStopping;
     @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String statisticsEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "false")
@@ -63,12 +75,61 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets whether the stream caching is enabled.
-     * <p/>
-     * <b>Notice:</b> This cannot be changed at runtime.
+     * Sets whether stream caching is enabled or not.
+     *
+     * While stream types (like StreamSource, InputStream and Reader) are commonly used in messaging for performance
+     * reasons, they also have an important drawback: they can only be read once. In order to be able to work with
+     * message content multiple times, the stream needs to be cached.
+     *
+     * Streams are cached in memory only (by default).
+     *
+     * If streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by default) will be cached in a
+     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
+     * necessary.
+     *
+     * Default is true.
      */
     public void setEnabled(String enabled) {
         this.enabled = enabled;
+    }
+
+    public String getAllowClasses() {
+        return allowClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setAllowClasses(String allowClasses) {
+        this.allowClasses = allowClasses;
+    }
+
+    public String getDenyClasses() {
+        return denyClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setDenyClasses(String denyClasses) {
+        this.denyClasses = denyClasses;
+    }
+
+    public String getSpoolEnabled() {
+        return spoolEnabled;
+    }
+
+    /**
+     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be
+     * cached in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is
+     * no longer necessary.
+     *
+     * Default is false.
+     */
+    public void setSpoolEnabled(String spoolEnabled) {
+        this.spoolEnabled = spoolEnabled;
     }
 
     public String getSpoolDirectory() {

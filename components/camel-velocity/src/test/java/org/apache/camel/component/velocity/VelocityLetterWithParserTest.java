@@ -20,9 +20,9 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class VelocityLetterWithParserTest extends VelocityLetterTest {
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to(
                         "velocity:org/apache/camel/component/velocity/letterWithParser.vm?propertiesFile=org/apache/camel/component/velocity/velocity.properties")
                         .to("mock:result");

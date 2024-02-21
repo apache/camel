@@ -1,0 +1,84 @@
+{
+  "qwjabrlanfssaPaymentID": 93974430,
+  "apiPortNumber": 0,
+  "pollerFrequency": 0,
+  "serviceCode": "QWERETEMKLJLANDD",
+  "extraData": {
+    "97280991": {
+      "pushToOriginator": true,
+      "uidID": 41189716,
+      "metaData": [
+        {
+          "Value": 1070,
+          "Name": "Amount"
+        },
+        {
+          "Value": "PHP82TK6MY",
+          "Name": "MpesaQwasdrtjknsNumber"
+        },
+        {
+          "Name": "Balance"
+        },
+        {
+          "Value": 20210825224512,
+          "Name": "TransactionDate"
+        },
+        {
+          "Value": 599726145860,
+          "Name": "PhoneNumber"
+        }
+      ],
+      "pokjytsAmountCharged": 1070,
+      "hardwareRequestId": null,
+      "ProductCode": "UJHANSNLWII",
+      "isTillNumber": true,
+      "uniqueID": "83859103",
+      "vouchercode": " ",
+      "paybillNumber": "431553",
+      "password": "secret"
+    }
+  },
+  "oiusdftrPaymentStatus": 139,
+  "serviceUrl": "",
+  "lkjmnbsdcvfdertCurrencyCode": "YUM",
+  "wrapperUrl": "",
+  "wsdlFile": "",
+  "protocol": "default",
+  "sslEnabled": 0,
+  "numberOfSends": 0,
+  "invoiceNumber": "",
+  "erdfghytIsdgftgDate": "2021-08-25 22:45:20",
+  "lkjditgfJhsgruaCustomerName": "Customer",
+  "apiUserName": "myuser",
+  "ojudhfgKaswsxsUUID": "1102967588",
+  "iuytredfHsdededAccountNumber": "4622785548",
+  "tyghfderrMode": [
+    "TUND_PUDF"
+  ],
+  "zxcvfgtrNsdfdfdMSISDN": "254726173860",
+  "apiFunctionName": "",
+  "kjhxcTransactionID": [
+    "PHP82TK6MY"
+  ],
+  "apiPassword": "mysecret",
+  "kjhcvbnUUID": "1102967588",
+  "dfcxvbnClientCode": [
+    "SAFKE"
+  ],
+  "sslCertificatePath": "",
+  "isTokenService": 0,
+  "wsazxcvgbgthyujAmount": 1070,
+  "plsjdhfhPusherProcessorClass": "abc",
+  "requestOriginIDs": [
+    "21"
+  ],
+  "firstSend": "",
+  "maxNumberOfSends": 0,
+  "narration": "The service request is processed successfully.",
+  "hubCreationDate": "2021-08-25 22:45:20",
+  "allowsPolling": 1,
+  "serviceID": 3004,
+  "lastSend": "2021-08-25 19:45:20",
+  "nextSend": "2021-08-25 22:45:20",
+  "autoAcknowledgejfhtysidj": 0
+}

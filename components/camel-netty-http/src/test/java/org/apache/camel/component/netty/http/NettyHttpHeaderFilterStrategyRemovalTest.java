@@ -28,7 +28,7 @@ import static org.apache.camel.Exchange.HTTP_QUERY;
 public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
 
     @BindToRegistry("headerFilterStrategy")
-    NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
+    final NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
     @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
@@ -41,7 +41,7 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
 
         template.sendBody("netty-http:http://localhost:" + getPort() + "/?" + options, "message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,14 +55,14 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter,
                 "headerValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/").to(mockEndpoint);
             }
         };

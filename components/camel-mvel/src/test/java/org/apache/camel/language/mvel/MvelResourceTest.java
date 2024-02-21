@@ -17,6 +17,7 @@
 package org.apache.camel.language.mvel;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,14 +32,14 @@ public class MvelResourceTest extends CamelTestSupport {
 
         template.sendBody("direct:start", 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("multiplier", constant(2))
                         .transform().mvel("resource:classpath:mymvel.txt")

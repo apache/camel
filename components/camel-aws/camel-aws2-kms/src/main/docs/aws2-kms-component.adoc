@@ -1,0 +1,161 @@
+= AWS Key Management Service (KMS) Component
+:doctitle: AWS Key Management Service (KMS)
+:shortname: aws2-kms
+:artifactid: camel-aws2-kms
+:description: Manage keys stored in AWS KMS instances.
+:since: 3.1
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-kms
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 KMS component supports the ability to work with keys stored in
+https://aws.amazon.com/kms/[AWS KMS] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon KMS. More information is available at
+https://aws.amazon.com/kms/[Amazon KMS].
+
+== URI Format
+
+-------------------------
+aws2-kms://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+Required KMS component options
+
+You have to provide the amazonKmsClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/kms/[Amazon KMS] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials. 
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== KMS Producer operations
+
+Camel-AWS KMS component provides the following operation on the producer side:
+
+- listKeys
+- createKey
+- disableKey
+- scheduleKeyDeletion
+- describeKey
+- enableKey
+
+== Producer Examples
+
+- listKeys: this operation will list the available keys in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listKeys")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
+--------------------------------------------------------------------------------
+
+- createKey: this operation will create a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createKey")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
+--------------------------------------------------------------------------------
+
+- disableKey: this operation will disable a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:disableKey")
+      .setHeader(KMS2Constants.KEY_ID, constant("123")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
+--------------------------------------------------------------------------------
+
+- enableKey: this operation will enable a key in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:enableKey")
+      .setHeader(KMS2Constants.KEY_ID, constant("123")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=enableKey")
+--------------------------------------------------------------------------------
+
+== Using a POJO as body
+
+Sometimes building an AWS Request can be complex because of multiple options.
+We introduce the possibility to use a POJO as the body.
+In AWS KMS there are multiple operations you can submit, as an example for List keys request, you can do something like:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:createUser")
+     .setBody(ListKeysRequest.builder().limit(10).build())
+     .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-kms</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

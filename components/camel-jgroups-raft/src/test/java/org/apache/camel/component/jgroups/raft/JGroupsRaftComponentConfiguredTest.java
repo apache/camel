@@ -37,7 +37,7 @@ public class JGroupsRaftComponentConfiguredTest extends CamelTestSupport {
             = String.format("my-config-jgroupsraft2:%s?raftId=C&channelProperties=raftXXX.xml", CLUSTER_NAME2);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

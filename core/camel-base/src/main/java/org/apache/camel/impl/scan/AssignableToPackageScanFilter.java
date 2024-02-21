@@ -78,7 +78,7 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
         for (Class<?> parent : parents) {
             sb.append(parent.getSimpleName()).append(", ");
         }
-        sb.setLength(sb.length() > 0 ? sb.length() - 2 : 0);
+        sb.setLength(!sb.isEmpty() ? sb.length() - 2 : 0);
         return "is assignable to any of " + sb;
     }
 }

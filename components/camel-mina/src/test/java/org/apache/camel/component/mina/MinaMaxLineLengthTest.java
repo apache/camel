@@ -27,32 +27,32 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
 
     @Test
     public void testSendToServer() {
-        String request = "";
+        StringBuilder request = new StringBuilder(4000);
         for (int c = 0; c < 4000; c++) {
-            request += "A";
+            request.append("A");
         }
 
         // START SNIPPET: e3
         String out = (String) template.requestBody(String.format(
                 "mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
-                getPort()), request);
-        assertEquals(request, out);
+                getPort()), request.toString());
+        assertEquals(request.toString(), out);
         // END SNIPPET: e3
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // lets setup a server on port %1$s
                 // we set the sync option so we will send a reply
                 // and we let the request-reply be processed in the MyServerProcessor
-                from(String.format(
-                        "mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
-                        getPort())).process(new MyServerProcessor());
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
+                        getPort())
+                        .process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };
@@ -62,7 +62,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
     private static class MyServerProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);
             // echo back the response on the OUT body

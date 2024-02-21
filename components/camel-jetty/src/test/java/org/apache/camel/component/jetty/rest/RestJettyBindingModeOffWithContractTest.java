@@ -53,7 +53,7 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         }
         assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
@@ -65,10 +65,10 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.off);
 
                 JsonDataFormat jsondf = new JsonDataFormat();
@@ -79,9 +79,9 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
                 transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
                         // REST binding does nothing
-                        .post("new").route()
-                        // contract advice converts betweeen JSON and UserPojoEx
-                        // directly
+                        .post("new").to("direct:new");
+                from("direct:new")
+                        // contract advice converts between JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class).outputType("json").process(ex -> {
                             ex.getIn().getBody(UserPojoEx.class).setActive(true);
                         }).to("mock:input");

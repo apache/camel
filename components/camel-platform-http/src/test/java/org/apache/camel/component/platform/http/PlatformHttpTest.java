@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.Iterator;
+
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -28,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PlatformHttpTest extends AbstractPlatformHttpTest {
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         given()
                 .header("Accept", "application/json")
                 .port(port)
@@ -47,13 +49,19 @@ public class PlatformHttpTest extends AbstractPlatformHttpTest {
         int statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
         assertEquals("TEST", response.body().asString().trim());
+
+        PlatformHttpComponent phc = getContext().getComponent("platform-http", PlatformHttpComponent.class);
+        assertEquals(2, phc.getHttpEndpoints().size());
+        Iterator<HttpEndpointModel> it = phc.getHttpEndpoints().iterator();
+        assertEquals("/get", it.next().getUri());
+        assertEquals("/post", it.next().getUri());
     }
 
     @Override
     protected RouteBuilder routes() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("platform-http:/get")
                         .setBody().constant("get");
                 from("platform-http:/post")

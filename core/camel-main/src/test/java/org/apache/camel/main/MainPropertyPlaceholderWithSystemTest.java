@@ -19,19 +19,24 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class MainPropertyPlaceholderWithSystemTest {
     @Test
     public void testCustomPropertyPlaceholderLocation() {
         Main main = new Main();
         try {
-            System.setProperty(Main.PROPERTY_PLACEHOLDER_LOCATION, "classpath:default.properties");
+            System.setProperty(MainConstants.PROPERTY_PLACEHOLDER_LOCATION, "classpath:default.properties");
             main.start();
             assertEquals("default", main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
         } finally {
-            System.clearProperty(Main.PROPERTY_PLACEHOLDER_LOCATION);
+            System.clearProperty(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
             main.stop();
         }
     }
@@ -40,11 +45,11 @@ public class MainPropertyPlaceholderWithSystemTest {
     public void testInitialProperties() {
         Main main = new Main();
         try {
-            System.setProperty(Main.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
+            System.setProperty(MainConstants.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
             main.start();
             assertEquals("initial", main.getCamelContext().resolvePropertyPlaceholders("{{type}}"));
         } finally {
-            System.clearProperty(Main.INITIAL_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.INITIAL_PROPERTIES_LOCATION);
             main.stop();
         }
     }
@@ -56,12 +61,12 @@ public class MainPropertyPlaceholderWithSystemTest {
             Properties properties = new Properties();
             properties.setProperty("type", "custom");
 
-            System.setProperty(Main.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
+            System.setProperty(MainConstants.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
             main.setInitialProperties(properties);
             main.start();
             assertEquals("custom", main.getCamelContext().resolvePropertyPlaceholders("{{type}}"));
         } finally {
-            System.clearProperty(Main.INITIAL_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.INITIAL_PROPERTIES_LOCATION);
             main.stop();
         }
     }
@@ -70,11 +75,11 @@ public class MainPropertyPlaceholderWithSystemTest {
     public void testOverrideProperties() {
         Main main = new Main();
         try {
-            System.setProperty(Main.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
+            System.setProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
             main.start();
             assertEquals("override", main.getCamelContext().resolvePropertyPlaceholders("{{type}}"));
         } finally {
-            System.clearProperty(Main.OVERRIDE_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
             main.stop();
         }
     }
@@ -86,12 +91,12 @@ public class MainPropertyPlaceholderWithSystemTest {
             Properties properties = new Properties();
             properties.setProperty("type", "custom");
 
-            System.setProperty(Main.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
+            System.setProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
             main.setOverrideProperties(properties);
             main.start();
             assertEquals("custom", main.getCamelContext().resolvePropertyPlaceholders("{{type}}"));
         } finally {
-            System.clearProperty(Main.OVERRIDE_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
             main.stop();
         }
     }
@@ -100,9 +105,10 @@ public class MainPropertyPlaceholderWithSystemTest {
     public void testAll() {
         Main main = new Main();
         try {
-            System.setProperty(Main.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
-            System.setProperty(Main.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
-            System.setProperty(Main.PROPERTY_PLACEHOLDER_LOCATION, "classpath:default.properties,classpath:user.properties");
+            System.setProperty(MainConstants.INITIAL_PROPERTIES_LOCATION, "classpath:initial.properties");
+            System.setProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION, "classpath:override.properties");
+            System.setProperty(MainConstants.PROPERTY_PLACEHOLDER_LOCATION,
+                    "classpath:default.properties,classpath:user.properties");
 
             main.start();
 
@@ -111,9 +117,9 @@ public class MainPropertyPlaceholderWithSystemTest {
             assertEquals("user-value", main.getCamelContext().resolvePropertyPlaceholders("{{user-key}}"));
             assertEquals("initial-value", main.getCamelContext().resolvePropertyPlaceholders("{{initial-key}}"));
         } finally {
-            System.clearProperty(Main.INITIAL_PROPERTIES_LOCATION);
-            System.clearProperty(Main.OVERRIDE_PROPERTIES_LOCATION);
-            System.clearProperty(Main.PROPERTY_PLACEHOLDER_LOCATION);
+            System.clearProperty(MainConstants.INITIAL_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
+            System.clearProperty(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
             main.stop();
         }
     }

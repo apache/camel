@@ -16,78 +16,93 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+public class JmsMultipleConsumersTest extends AbstractJMSTest {
 
-public class JmsMultipleConsumersTest extends CamelTestSupport {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testMultipleConsumersTopic() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("jms:topic:foo").to("mock:foo");
+            public void configure() {
+                from("jms:topic:JmsMultipleConsumersTest").to("mock:foo");
 
-                from("direct:start").to("mock:result");
+                from("direct:JmsMultipleConsumersTest").to("mock:result");
 
-                from("jms:topic:foo").to("mock:bar");
+                from("jms:topic:JmsMultipleConsumersTest").to("mock:bar");
             }
         });
-        context.start();
-
-        // give it a bit time to setup both topic listeners
-        Thread.sleep(2000);
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("jms:topic:foo", "Hello World");
+        template.sendBody("jms:topic:JmsMultipleConsumersTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testMultipleConsumersQueue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("jms:queue:foo").to("mock:result");
+            public void configure() {
+                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
 
-                from("direct:start").to("mock:result");
+                from("direct:JmsMultipleConsumersTest").to("mock:result");
 
-                from("jms:queue:foo").to("mock:result");
+                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
             }
         });
 
-        context.start();
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("jms:queue:foo", "Hello World");
-        template.sendBody("jms:queue:foo", "Bye World");
+        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Hello World");
+        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder createRouteBuilder() {
+        return null;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

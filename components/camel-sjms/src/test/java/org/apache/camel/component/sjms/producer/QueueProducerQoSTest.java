@@ -16,35 +16,73 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.jmx.DestinationViewMBean;
-import org.apache.activemq.broker.region.policy.PolicyEntry;
-import org.apache.activemq.broker.region.policy.PolicyMap;
-import org.apache.activemq.command.ActiveMQQueue;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-public class QueueProducerQoSTest extends JmsTestSupport {
+public class QueueProducerQoSTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(QueueProducerQoSTest.class);
 
-    private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly";
-    private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout";
+    private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly.QueueProducerQoSTest";
+    private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout.QueueProducerQoSTest";
 
     private static final String EXPIRED_MESSAGE_ROUTE_ID = "expiredAdvisoryRoute";
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
+    @RegisterExtension
+    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+            .withPersistent(true)
+            .withCustomConfiguration(configuration -> configureArtemis(configuration))
+            .build();
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
     @EndpointInject(MOCK_EXPIRED_ADVISORY)
     MockEndpoint mockExpiredAdvisory;
 
+    private Connection connection;
+    private Session session;
+    private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+
+        return camelContext;
+    }
+
     @Test
     public void testInOutQueueProducerTTL() throws Exception {
-        assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500",
@@ -59,54 +97,40 @@ public class QueueProducerQoSTest extends JmsTestSupport {
             // we're just interested in the message becoming expired
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        DestinationViewMBean queue = getQueueMBean(TEST_INOUT_DESTINATION_NAME);
-        assertEquals(0, queue.getQueueSize(),
+        assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
     }
 
     @Test
     public void testInOnlyQueueProducerTTL() throws Exception {
-        assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000", TEST_INONLY_DESTINATION_NAME);
         template.sendBody(endpoint, "test message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        DestinationViewMBean queue = getQueueMBean(TEST_INONLY_DESTINATION_NAME);
-        assertEquals(0, queue.getQueueSize(),
+        assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
     }
 
-    @Override
-    protected void configureBroker(BrokerService broker) throws Exception {
-        broker.setUseJmx(true);
-        broker.setPersistent(true);
-        broker.setDataDirectory("target/activemq-data");
-        broker.deleteAllMessages();
-        broker.setAdvisorySupport(true);
-        broker.addConnector(brokerUri);
-
-        // configure expiration rate
-        ActiveMQQueue queueName = new ActiveMQQueue(">");
-        PolicyEntry entry = new PolicyEntry();
-        entry.setDestination(queueName);
-        entry.setExpireMessagesPeriod(1000);
-
-        PolicyMap policyMap = new PolicyMap();
-        policyMap.put(queueName, entry);
-        broker.setDestinationPolicy(policyMap);
+    private static Configuration configureArtemis(Configuration configuration) {
+        return configuration.addAddressSetting("#",
+                new AddressSettings()
+                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
+                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue"))
+                        .setExpiryDelay(1000L))
+                .setMessageExpiryScanPeriod(500L);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("sjms:topic:ActiveMQ.Advisory.Expired.Queue.>")
+            public void configure() {
+                from("sjms:topic:ExpiryQueue")
                         .routeId(EXPIRED_MESSAGE_ROUTE_ID)
                         .log("Expired message")
                         .to(MOCK_EXPIRED_ADVISORY);

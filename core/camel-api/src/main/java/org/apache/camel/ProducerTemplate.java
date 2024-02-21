@@ -23,8 +23,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.camel.spi.Synchronization;
-
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}.
  * <br/>
@@ -95,40 +93,40 @@ public interface ProducerTemplate extends Service {
     int getCurrentCacheSize();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
-     * 
-     * @return if async* methods will dipatch processing with the executor
+     *
+     * @return if async* methods will dispatch processing with the executor
      */
     boolean isThreadedAsyncMode();
 
     /**
-     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true). In
+     * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
-     * 
-     * @param useExecutor if async* methods will dipatch processing with the executor
+     *
+     * @param useExecutor if async* methods will dispatch processing with the executor
      */
     void setThreadedAsyncMode(boolean useExecutor);
 
     /**
      * Get the default endpoint to use if none is specified
-     * 
+     *
      * @return the default endpoint instance
      */
     Endpoint getDefaultEndpoint();
 
     /**
      * Sets the default endpoint to use if none is specified
-     * 
+     *
      * @param defaultEndpoint the default endpoint instance
      */
     void setDefaultEndpoint(Endpoint defaultEndpoint);
 
     /**
      * Sets the default endpoint uri to use if none is specified
-     * 
+     *
      * @param endpointUri the default endpoint uri
      */
     void setDefaultEndpointUri(String endpointUri);
@@ -928,6 +926,10 @@ public interface ProducerTemplate extends Service {
     /**
      * Sends an asynchronous exchange to the given endpoint.
      *
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
+     *
      * @param  endpointUri the endpoint URI to send the exchange to
      * @param  processor   the transformer used to populate the new exchange
      * @return             a handle to be used to get the response in the future
@@ -1020,6 +1022,10 @@ public interface ProducerTemplate extends Service {
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
+     *
+     * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
+     * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
+     * transformer processor.
      *
      * @param  endpoint  the endpoint to send the exchange to
      * @param  processor the transformer used to populate the new exchange
@@ -1131,90 +1137,5 @@ public interface ProducerTemplate extends Service {
      */
     <T> T extractFutureBody(Future<?> future, long timeout, TimeUnit unit, Class<T> type)
             throws TimeoutException, CamelExecutionException;
-
-    // Asynchronous methods with callback
-    // -----------------------------------------------------------------------
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  exchange     the exchange to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Exchange> asyncCallback(String endpointUri, Exchange exchange, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  exchange     the exchange to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Exchange exchange, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint using a supplied processor.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  processor    the transformer used to populate the new exchange {@link Processor} to populate the exchange
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Exchange> asyncCallback(String endpointUri, Processor processor, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint using a supplied processor.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  processor    the transformer used to populate the new exchange {@link Processor} to populate the exchange
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Processor processor, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOnly} message exchange
-     * pattern.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Object> asyncCallbackSendBody(String endpointUri, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOnly} message exchange
-     * pattern.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Object> asyncCallbackRequestBody(String endpointUri, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
 }

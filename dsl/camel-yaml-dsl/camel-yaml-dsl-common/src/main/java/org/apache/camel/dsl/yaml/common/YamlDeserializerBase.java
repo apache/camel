@@ -18,6 +18,10 @@ package org.apache.camel.dsl.yaml.common;
 
 import java.util.Locale;
 
+import org.apache.camel.LineNumberAware;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -27,6 +31,7 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport implements ConstructNode {
+
     private final Class<T> type;
 
     public YamlDeserializerBase(Class<T> type) {
@@ -41,16 +46,27 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     public Object construct(Node node) {
         final T target;
 
+        int line = -1;
+        if (node.getStartMark().isPresent()) {
+            line = node.getStartMark().get().getLine();
+        }
+
         if (node.getNodeType() == NodeType.SCALAR) {
             ScalarNode mn = (ScalarNode) node;
             target = newInstance(mn.getValue());
+            // line number points to the scalar itself, so it should be +1
+            if (line != -1) {
+                line++;
+            }
+            onNewTarget(node, target, line);
         } else if (node.getNodeType() == NodeType.MAPPING) {
             MappingNode mn = (MappingNode) node;
             target = newInstance();
-
+            onNewTarget(node, target, line);
             setProperties(target, mn);
+            afterPropertiesSet(target, mn);
         } else {
-            throw new IllegalArgumentException("Unsupported node type: " + node);
+            throw new UnsupportedNodeTypeException(node);
         }
 
         return target;
@@ -64,12 +80,19 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     protected abstract T newInstance();
 
     /**
+     * Allows custom validation after the properties has been set on the target
+     */
+    protected void afterPropertiesSet(T target, Node node) {
+        // noop
+    }
+
+    /**
      * Creates a Java instance of the expected type from a string.
      *
      * @return the instance.
      */
     protected T newInstance(String value) {
-        throw new IllegalArgumentException("Unsupported " + value);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -91,7 +114,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
      * @param target the target object
      */
     protected void setProperties(T target, MappingNode node) {
-        org.apache.camel.dsl.yaml.common.YamlDeserializationContext dc = getDeserializationContext(node);
+        YamlDeserializationContext dc = getDeserializationContext(node);
 
         for (NodeTuple tuple : node.getValue()) {
             final ScalarNode key = (ScalarNode) tuple.getKeyNode();
@@ -107,6 +130,27 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     }
 
     protected void handleUnknownProperty(T target, String propertyKey, String propertyName, Node value) {
-        throw new IllegalArgumentException("Unsupported field: " + propertyName + " on " + target.getClass().getName());
+        throw new UnsupportedFieldException(value, propertyName);
     }
+
+    protected void onNewTarget(Node node, T target, int line) {
+        // enrich model with source location:line number
+        if (target instanceof LineNumberAware && line != -1) {
+            LineNumberAware lna = (LineNumberAware) target;
+            lna.setLineNumber(line);
+
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                lna.setLocation(ctx.getResource().getLocation());
+            }
+        }
+        if (target instanceof ResourceAware) {
+            ResourceAware ra = (ResourceAware) target;
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                ra.setResource(ctx.getResource());
+            }
+        }
+    }
+
 }

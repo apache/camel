@@ -1,0 +1,32 @@
+= XML Tokenize Language
+:doctitle: XML Tokenize
+:shortname: xtokenize
+:artifactid: camel-stax
+:description: Tokenize XML payloads.
+:since: 2.14
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: stax
+
+*Since Camel {since}*
+
+The XML Tokenize language is a built-in language in `camel-stax`, which
+is a truly XML-aware tokenizer that can be used with the xref:eips:split-eip.adoc[Split] EIP
+as the conventional xref:tokenize-language.adoc[Tokenize] to efficiently and
+effectively tokenize XML documents.
+
+XML Tokenize is capable of not only recognizing XML namespaces and hierarchical structures of the document
+but also more efficiently tokenizing XML documents than the conventional xref:tokenize-language.adoc[Tokenize] language.
+
+== XML Tokenizer Options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Example
+
+See xref:eips:split-eip.adoc[Split EIP], which has examples using the XML Tokenize language.
+
+include::spring-boot:partial$starter.adoc[]

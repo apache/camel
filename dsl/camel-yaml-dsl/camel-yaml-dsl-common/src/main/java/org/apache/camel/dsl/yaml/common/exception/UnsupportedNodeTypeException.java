@@ -16,14 +16,15 @@
  */
 package org.apache.camel.dsl.yaml.common.exception;
 
+import java.util.Optional;
+
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
 
-public class UnsupportedNodeTypeException extends IllegalArgumentException {
-    public UnsupportedNodeTypeException(int nodeType) {
-        super("Unsupported type (" + nodeType + ")");
-    }
+public class UnsupportedNodeTypeException extends MarkedYamlEngineException {
 
     public UnsupportedNodeTypeException(Node node) {
-        super("Unsupported type (" + node.getNodeType() + ") for node: " + node);
+        super(null, Optional.empty(), "Unsupported type: " + node.getNodeType(), node.getStartMark());
     }
+
 }

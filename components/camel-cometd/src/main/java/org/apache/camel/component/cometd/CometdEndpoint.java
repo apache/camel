@@ -18,7 +18,6 @@ package org.apache.camel.component.cometd;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -38,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * the browser using an AJAX based mechanism.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
-             category = { Category.WEBSOCKET })
+             category = { Category.NETWORKING, Category.MESSAGING }, headersClass = CometdBinding.class)
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;
@@ -46,13 +45,13 @@ public class CometdEndpoint extends DefaultEndpoint {
     private URI uri;
     @UriPath(description = "Hostname")
     @Metadata(required = true)
-    private String host;
+    private String host; // TODO field is reported unread
     @UriPath(description = "Host port number")
     @Metadata(required = true)
-    private int port;
+    private int port; // TODO field is reported unread
     @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
     @Metadata(required = true)
-    private String channelName;
+    private String channelName; // TODO field is reported unread
     @UriParam
     private String baseResource;
     @UriParam(defaultValue = "240000")
@@ -78,7 +77,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     @UriParam(label = "producer")
     private boolean disconnectLocalSession;
 
-    public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
+    public CometdEndpoint(CometdComponent component, String uri, String remaining) {
         super(uri, component);
         this.component = component;
         try {
@@ -94,8 +93,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(component, "component");
-        CometdProducer producer = new CometdProducer(this);
-        return producer;
+        return new CometdProducer(this);
     }
 
     @Override

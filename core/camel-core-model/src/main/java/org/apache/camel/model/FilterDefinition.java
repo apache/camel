@@ -16,9 +16,10 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -33,6 +34,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterDefinition extends OutputExpressionNode {
+
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String statusPropertyName;
 
     public FilterDefinition() {
     }
@@ -60,6 +65,14 @@ public class FilterDefinition extends OutputExpressionNode {
         return "filter[" + getExpression() + "]";
     }
 
+    public String getStatusPropertyName() {
+        return statusPropertyName;
+    }
+
+    public void setStatusPropertyName(String statusPropertyName) {
+        this.statusPropertyName = statusPropertyName;
+    }
+
     /**
      * Expression to determine if the message should be filtered or not. If the expression returns an empty value or
      * <tt>false</tt> then the message is filtered (dropped), otherwise the message is continued being routed.
@@ -68,5 +81,15 @@ public class FilterDefinition extends OutputExpressionNode {
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
+    }
+
+    /**
+     * Name of exchange property to use for storing the status of the filtering.
+     *
+     * Setting this allows to know if the filter predicate evaluated as true or false.
+     */
+    public FilterDefinition statusPropertyName(String statusPropertyName) {
+        this.statusPropertyName = statusPropertyName;
+        return this;
     }
 }

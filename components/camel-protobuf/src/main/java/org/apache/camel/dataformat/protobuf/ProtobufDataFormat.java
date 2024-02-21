@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.google.protobuf.Message;
@@ -34,6 +35,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -41,6 +43,10 @@ import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
+@Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
+                              "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
+                              "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
+                              "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class ProtobufDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -96,7 +102,7 @@ public class ProtobufDataFormat extends ServiceSupport
         }
     }
 
-    public void setInstanceClass(String className) throws Exception {
+    public void setInstanceClass(String className) {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
         instanceClassName = className;
     }
@@ -130,7 +136,7 @@ public class ProtobufDataFormat extends ServiceSupport
 
         String contentTypeHeader = CONTENT_TYPE_HEADER_NATIVE;
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
-            IOUtils.write(JsonFormat.printer().print(inputMessage), outputStream, "UTF-8");
+            IOUtils.write(JsonFormat.printer().print(inputMessage), outputStream, StandardCharsets.UTF_8);
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_NATIVE)) {
             inputMessage.writeTo(outputStream);

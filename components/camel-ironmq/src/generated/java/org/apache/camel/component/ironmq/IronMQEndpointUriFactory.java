@@ -19,42 +19,46 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(32);
-        props.add("backoffMultiplier");
-        props.add("wait");
-        props.add("initialDelay");
-        props.add("timeout");
-        props.add("batchDelete");
-        props.add("scheduler");
-        props.add("bridgeErrorHandler");
-        props.add("useFixedDelay");
-        props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
-        props.add("client");
-        props.add("greedy");
-        props.add("maxMessagesPerPoll");
-        props.add("scheduledExecutorService");
-        props.add("repeatCount");
-        props.add("timeUnit");
-        props.add("ironMQCloud");
-        props.add("visibilityDelay");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("schedulerProperties");
-        props.add("exchangePattern");
-        props.add("preserveHeaders");
-        props.add("concurrentConsumers");
         props.add("backoffIdleThreshold");
-        props.add("token");
-        props.add("lazyStartProducer");
-        props.add("queueName");
+        props.add("backoffMultiplier");
+        props.add("batchDelete");
+        props.add("bridgeErrorHandler");
+        props.add("client");
+        props.add("concurrentConsumers");
         props.add("delay");
-        props.add("pollStrategy");
-        props.add("startScheduler");
-        props.add("projectId");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("greedy");
+        props.add("initialDelay");
+        props.add("ironMQCloud");
+        props.add("lazyStartProducer");
+        props.add("maxMessagesPerPoll");
+        props.add("pollStrategy");
+        props.add("preserveHeaders");
+        props.add("projectId");
+        props.add("queueName");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startScheduler");
+        props.add("timeUnit");
+        props.add("timeout");
+        props.add("token");
+        props.add("useFixedDelay");
+        props.add("visibilityDelay");
+        props.add("wait");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -82,6 +86,11 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> multiValuePrefixes() {
+        return MULTI_VALUE_PREFIXES;
     }
 
     @Override

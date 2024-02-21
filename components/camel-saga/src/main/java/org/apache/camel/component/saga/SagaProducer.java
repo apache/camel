@@ -37,17 +37,14 @@ public class SagaProducer extends DefaultAsyncProducer {
 
         CamelSagaService sagaService = endpoint.getCamelContext().hasService(CamelSagaService.class);
         if (sagaService == null) {
-            sagaService = CamelContextHelper.findByType(endpoint.getCamelContext(), CamelSagaService.class);
-        }
-        if (sagaService == null) {
-            throw new IllegalStateException("Cannot find saga service: saga producers can only be used within a saga");
+            sagaService = CamelContextHelper.mandatoryFindSingleByType(endpoint.getCamelContext(), CamelSagaService.class);
         }
         this.camelSagaService = sagaService;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
+        String currentSaga = exchange.getIn().getHeader(SagaConstants.SAGA_LONG_RUNNING_ACTION, String.class);
         if (currentSaga == null) {
             exchange.setException(
                     new IllegalStateException("Current exchange is not bound to a saga context: cannot complete"));
@@ -62,9 +59,9 @@ public class SagaProducer extends DefaultAsyncProducer {
             return coordinator;
         }).thenCompose(coordinator -> {
             if (success) {
-                return coordinator.complete();
+                return coordinator.complete(exchange);
             } else {
-                return coordinator.compensate();
+                return coordinator.compensate(exchange);
             }
         }).whenComplete((res, ex) -> {
             if (ex != null) {

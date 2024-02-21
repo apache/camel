@@ -75,11 +75,12 @@ public class XmppDirectProducer extends DefaultProducer {
             } else {
                 throw new Exception("Body does not contain Stanza/Stanza[] object(s)");
             }
-        } catch (XMPPException xmppe) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeExchangeException(
-                    "Cannot send XMPP direct: from " + endpoint.getUser() + " to: "
+                    "Interrupted while sending XMPP direct: from " + endpoint.getUser() + " to: "
                                                + XmppEndpoint.getConnectionMessage(connection),
-                    exchange, xmppe);
+                    exchange, e);
 
         } catch (Exception e) {
             throw new RuntimeExchangeException(

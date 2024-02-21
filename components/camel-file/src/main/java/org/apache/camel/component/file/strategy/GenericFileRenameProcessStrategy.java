@@ -45,7 +45,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(operations, exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
-            FileEndpoint fe = null;
+            FileEndpoint fe;
             if (endpoint instanceof FileEndpoint) {
                 fe = (FileEndpoint) endpoint;
                 if (to != null) {
@@ -73,7 +73,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 // create a copy and bind the file to the exchange to be used by
                 // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
-                FileEndpoint fe = null;
+                FileEndpoint fe;
                 if (endpoint instanceof FileEndpoint) {
                     fe = (FileEndpoint) endpoint;
                     file.bindToExchange(copy, fe.isProbeContentType());
@@ -81,7 +81,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                     file.bindToExchange(copy);
                 }
                 // must preserve message id
-                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.getMessage().setMessageId(exchange.getMessage().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
                 GenericFile<T> newName = failureRenamer.renameFile(operations, copy, file);
@@ -106,7 +106,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 // create a copy and bind the file to the exchange to be used by
                 // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
-                FileEndpoint fe = null;
+                FileEndpoint fe;
                 if (endpoint instanceof FileEndpoint) {
                     fe = (FileEndpoint) endpoint;
                     file.bindToExchange(copy, fe.isProbeContentType());
@@ -114,7 +114,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                     file.bindToExchange(copy);
                 }
                 // must preserve message id
-                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.getMessage().setMessageId(exchange.getMessage().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
                 GenericFile<T> newName = commitRenamer.renameFile(operations, copy, file);

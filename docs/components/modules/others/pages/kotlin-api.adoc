@@ -1,0 +1,1 @@
+../../../../../dsl/camel-kotlin-api/src/main/docs/kotlin-api.adoc

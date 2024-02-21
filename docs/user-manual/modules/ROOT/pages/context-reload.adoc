@@ -1,0 +1,65 @@
+= Context Reload
+
+The context reload functionality in Camel is capable of reloading all existing routes and property placeholders,
+upon an external triggered event.
+
+For example if you are using xref:components::aws-secrets-manager-component.adoc[AWS Secrets] then
+enabling context-reload would then reload Camel routes upon a secret is updated in AWS.
+
+The context reload is limited to refresh the following on reload:
+
+- xref:using-propertyplaceholder.adoc[property placeholders]
+- every existing xref:routes.adoc[routes] (no changes to structure of routes; see xref:route-reload.adoc[]])
+
+General services in xref:camelcontext.adoc[CamelContext] and java beans or Camel xref:processor.adoc[] is not updated.
+
+== Using context reloading
+
+The context reloading can be configured in Java or with Spring Boot, Quarkus in the following way:
+
+[source,java]
+----
+CamelContext context = ...
+
+ContextReloadStrategy reload = new DefaultContextReloadStrategy();
+context.addService(reload);
+----
+
+And with Camel Quarkus / Camel Main you can configure this in `application.properties:`
+
+[source,properties]
+----
+# turn on context reloading
+camel.main.context-reload-enabled = true
+----
+
+And in Spring Boot:
+
+[source,properties]
+----
+# turn on context reloading
+camel.springboot.context-reload-enabled = true
+----
+
+== Triggering context reloading
+
+Any custom code can trigger context reloading. This is done by ensuring the context reload is enabled (see above), and
+then from Java you can get hold of `ContextReloadStrategy` as follows:
+
+[source,java]
+----
+ContextReloadStrategy reload = context.hasService(ContextReloadStrategy.class);
+if (reload != null) {
+    // trigger reload
+    reload.onReload(this);
+}
+----
+
+The method `onReload` will then reload all the xref:using-propertyplaceholder.adoc[property placeholders] and
+then afterwards reload all existing xref:routes.adoc[routes].
+
+
+== See Also
+
+See related xref:route-reload.adoc[].
+
